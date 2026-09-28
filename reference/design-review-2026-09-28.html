@@ -1,0 +1,263 @@
+<title>Ashbridge T2 Design Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+/* Layout: one reading column like a working paper; tickmark-red marks what needs action. */
+:root{
+  --paper:#f7f8f6; --ink:#1d2327; --muted:#5b666c; --rule:#d9dedb; --panel:#eef1ee;
+  --tick:#b3261e; --ok:#2f6b4f; --amber:#9a6a00; --chip:#e4e8e5;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#15191b; --ink:#e3e8e5; --muted:#9aa6a0; --rule:#2c3437; --panel:#1c2225;
+  --tick:#ef7d72; --ok:#7cc3a0; --amber:#e0b14f; --chip:#262e31; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15191b; --ink:#e3e8e5; --muted:#9aa6a0; --rule:#2c3437; --panel:#1c2225;
+  --tick:#ef7d72; --ok:#7cc3a0; --amber:#e0b14f; --chip:#262e31; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font:15px/1.55 var(--sans)}
+.wrap{max-width:46rem;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:grid;gap:34px}
+h1,h2{font-family:var(--serif);text-wrap:balance;margin:0}
+h1{font-size:1.75rem;line-height:1.2}
+h2{font-size:1.2rem;display:flex;align-items:baseline;gap:10px}
+h2 .n{font:500 .75rem var(--mono);color:var(--muted);letter-spacing:.06em}
+.meta{color:var(--muted);font-size:.85rem;margin-top:6px}
+section{display:grid;gap:14px}
+.verdict{border-left:3px solid var(--tick);padding:4px 0 4px 16px;font-size:1.02rem}
+.verdict p{margin:0 0 6px}
+ol.top{list-style:none;margin:0;padding:0;display:grid;gap:18px;counter-reset:t}
+ol.top>li{counter-increment:t;display:grid;grid-template-columns:2rem 1fr;gap:4px 10px;padding-bottom:18px;border-bottom:1px solid var(--rule)}
+ol.top>li::before{content:counter(t);font:600 1.05rem var(--mono);color:var(--tick);grid-row:span 4}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.head b{font-weight:600}
+.effort{font:500 .7rem var(--mono);text-transform:uppercase;letter-spacing:.06em;background:var(--chip);color:var(--muted);padding:2px 7px;border-radius:3px}
+.p{margin:0;min-width:0}
+.lab{font:500 .7rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:6px}
+.paste{position:relative;background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:10px 12px 10px 12px;margin:2px 0 0;min-width:0}
+.paste p{margin:0;padding-right:58px}
+.copy{position:absolute;top:8px;right:8px;font:500 .7rem var(--mono);background:transparent;color:var(--muted);border:1px solid var(--rule);border-radius:3px;padding:3px 7px;cursor:pointer}
+.copy:hover{color:var(--ink);border-color:var(--muted)}
+.copy:focus-visible,a:focus-visible{outline:2px solid var(--tick);outline-offset:2px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;vertical-align:top;padding:8px 10px 8px 0;border-bottom:1px solid var(--rule)}
+th{font:500 .7rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td:first-child{width:52%}
+ul.l{margin:0;padding-left:1.1rem;display:grid;gap:6px}
+.alts{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:14px}
+.alt{border:1px solid var(--rule);border-radius:4px;padding:12px 14px;min-width:0;display:grid;gap:6px;align-content:start}
+.alt b{font-family:var(--serif);font-weight:600}
+.alt p{margin:0}
+.gain{color:var(--ok)} .cost{color:var(--amber)}
+sup a{font:500 .68rem var(--mono);color:var(--tick);text-decoration:none;margin-left:1px}
+.src{font-size:.82rem;color:var(--muted)}
+.src ol{margin:6px 0 0;padding-left:1.4rem;display:grid;gap:3px}
+.src a{color:var(--muted)}
+.note{font-size:.82rem;color:var(--muted);margin:0}
+a{color:inherit}
+</style>
+
+<div class="wrap">
+
+<header>
+  <h1>Ashbridge T2 Design Review</h1>
+  <div class="meta">Review of the production system design, 28 Sep 2026. Numbered links are checked sources. Everything else is judgment.</div>
+</header>
+
+<section>
+  <h2><span class="n">1</span>Verdict</h2>
+  <div class="verdict">
+    <p>The spine is right: source at birth, a CSV round trip with diffs, and a full review with flags first.</p>
+    <p>But the round trip as written cannot prove what Taxprep holds, the ledger has no home for adjustments and judgment, and three rules break your own fixed decisions.</p>
+    <p>All of it can be fixed on paper before phase 1, and most fixes make the build smaller.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">2</span>Top 10 improvements</h2>
+  <ol class="top">
+
+    <li>
+      <div class="head"><b>Prove every round trip</b><span class="effort">Medium</span></div>
+      <p class="p"><span class="lab">Problem</span>One compare at lock cannot tell a failed import from a preparer edit, or a rolled-forward value from a typed one. Taxprep numbers repeating rows by copy ([1], [2]) and does not import blank cells.<sup><a href="#s1">1</a></sup> The whole trace, and the learning loop, stand on this diff.</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Round trip in four exports. 0 Baseline: after roll-forward, before any import. 1 Receipt: right after import, with Taxprep's import report; every imported cell must be there with its value. 2 Lock. 3 Transmit. Each import carries a token in a cell that is never sent to CRA; every export must return the latest token, the business number and the year end. Repeating rows match by a natural key (CCA class, shareholder, slip), never by copy number. Re-imports send changed cells only. Export settings are fixed, and a file saved through Excel is refused.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Add a transmit gate</b><span class="effort">Small</span></div>
+      <p class="p"><span class="lab">Problem</span>"Any later change voids approval" cannot work. The system only sees Taxprep through exports, so an unlock and edit after approval is invisible. The key control question is: is what we filed what the CPA approved?</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Before the T183CORP goes out, and again before transmit, ops uploads a fresh export. It must match the CPA-final fingerprint cell for cell. If not, the step is blocked and the changed cells go back to review.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Add an adjustments layer</b><span class="effort">Large</span></div>
+      <p class="p"><span class="lab">Problem</span>"Figure = formula of facts" has no place for reclasses, accruals, allocations, estimates or corrections, which is most year-end work. Judgment hides inside formulas, and the CPA cannot see "client's books, what we changed, and why".</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Figures come from a working trial balance. Each account starts at the client's balance, or zero when there are no books. Every change is an adjusting entry that nets to zero, with a type (reclass, accrual, allocation, estimate, correction), a reason and its sources. Each account maps to one GIFI code. The trace shows the client balance, each entry, then the final figure. Bank-only files start from categorised bank lines, each sourced to its page and line. The balance sheet and retained earnings then tie by construction.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Stop AI guessing sources</b><span class="effort">Medium</span></div>
+      <p class="p"><span class="lab">Problem</span>Orphans get an AI-proposed source. Rule 1 names this exact failure. A plausible wrong link is worse than none, because it looks sourced.</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Judgment inputs (CCA claims, dividend designations, elections, business limit sharing) are entered in our app with a reason, then imported. Typing in Taxprep is allowed only on an approved cell list. The preparer sources every orphan. AI may list documents that contain the exact value, but never pre-selects one.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Split ties from reconciliations</b><span class="effort">Medium</span></div>
+      <p class="p"><span class="lab">Problem</span>Several "hard ties" have normal differences. GST/HST line 101 includes exempt and zero-rated sales under the regular method, but includes the tax and excludes them under the quick method.<sup><a href="#s4">4</a></sup><sup><a href="#s5">5</a></sup> Bank balances have outstanding items. T4 and T5 run by calendar year. With no materiality threshold, these will fire on nearly every file, and people learn to click past flags.</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>A tie must agree to the dollar. A reconciliation shows both amounts and a list of reconciling items, each with a type (timing, exempt or zero-rated, outstanding items, calendar versus fiscal year) and a source. Only the unexplained remainder raises an exception. AI may propose items; code checks that they add up.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Enforce the full review</b><span class="effort">Small</span></div>
+      <p class="p"><span class="lab">Problem</span>Nothing records that every part of the return was seen. Rule 7 should be a record, not a habit. A fixed order is also faster.</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Sections come in a fixed order: brief, balance sheet, income statement, Schedule 1, then each schedule present. A section is marked reviewed once shown and passed. Approve stays off until every section is marked. The approval stores the sections, the time on each and every source opened.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Grade evidence by who made it</b><span class="effort">Small</span></div>
+      <p class="p"><span class="lab">Problem</span>"CRA data" counts as independent, but HST returns, remittances and T4 and T5 summaries are the client's own filings. Judgment figures have no marker. Red mixes an exception into a strength scale. A green dot on a client-reported number is false comfort.</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Each source has an origin: third party (bank, lender, OHIP, slips issued to the company, CRA's own records such as instalments credited and assessments), client filed with CRA, client prepared, client said, or judgment. Dot: green when a third party agrees, grey for one third-party source, amber for client only, purple for judgment. An open exception is a separate flag, not a dot colour.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Make AI grounding a code check</b><span class="effort">Medium</span></div>
+      <p class="p"><span class="lab">Problem</span>"No ledger record, discard" throws away findings about missing items, which are the red team's best output. Nothing checks that an extracted number is really on the page.</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Every AI output is JSON with citations: a ledger record, a document box or a return cell. Code checks each one; a quoted number must appear in the OCR words inside its box. A failed citation drops the item and is counted against that step. A finding about a missing item cites where it should be. The red team uses a different model and reads the printed return and the raw documents, not our facts or notes. AI never clears an item.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Fix learning-loop blame</b><span class="effort">Medium</span></div>
+      <p class="p"><span class="lab">Problem</span>The table says any preparer change means "the AI got it wrong". Many are cells AI was not allowed to fill, facts it held back, fixes made in our app before the draft was saved, or late client information. Wrong causes build the wrong fixes, and the AI match rate will look better than it is.</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Each cell has an owner: AI-filled, held back, preparer-only, rolled forward or calculated. Only AI-filled cells count against AI. The AI's raw facts are saved before any person touches them, and AI accuracy is measured on those. Code rules set the cause first (late information, reading, mapping, judgment); AI tags only what is left, marked unconfirmed. Each week the top ten become draft build tasks, each with a failing test built from anonymised facts. A fixed test set runs before any model or prompt change.</p></div>
+    </li>
+
+    <li>
+      <div class="head"><b>Pin the contracts first</b><span class="effort">Medium</span></div>
+      <p class="p"><span class="lab">Problem</span>The doc lists stages, but not states, transitions, what voids what, or data shapes. Coding agents fill gaps by inventing. OCR and AI jobs do not belong inside web requests.</p>
+      <div class="paste"><button class="copy" type="button">Copy</button><p>Before phase 1, approve: the return state machine (states, moves, who, what each move voids); the tables; the CSV contract with sample files; one JSON schema per AI step; and the check format (inputs, rule, tie or reconciliation, when it applies). OCR, AI and diffs run as queued jobs with retries and a status per file. Every output stores the model, prompt and mapping versions. Staff screens deploy apart from the client app and share only the database.</p></div>
+    </li>
+
+  </ol>
+</section>
+
+<section>
+  <h2><span class="n">3</span>Errors</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>What is wrong</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>The saved filter holds input cells only. It cannot draw the full return, the six-number brief, or the "Calculated" category.</td><td>A second saved filter of calculated review lines, exported every time. The printed PDF is the record of the full return.</td></tr>
+      <tr><td>CCH's help says blank cells are not imported, and T2 year-start and year-end cells are ignored on import.<sup><a href="#s1">1</a></sup><sup><a href="#s2">2</a></sup> That limits "any cell".</td><td>Never rely on import to clear a value or set the year end. Test both in phase 0 and prove them by export.</td></tr>
+      <tr><td>"Older than the last change" cannot be checked. Taxprep changes are invisible to us.</td><td>Tokens and exports 0 to 3 (item 1), plus the transmit gate.</td></tr>
+      <tr><td>AI writes the client summary and drafts client questions. Preparer free text also reaches the client. This breaks "no AI talks to clients" and "preparers never contact clients".</td><td>Summary from a code template filled from CPA-final. Questions from an approved bank with slots, chosen per file.</td></tr>
+      <tr><td>Two guardrails say "material", but there is no threshold.</td><td>"AI never clears any item alone."</td></tr>
+      <tr><td>Retained earnings formula leaves out prior-period adjustments and other items, such as share redemptions.<sup><a href="#s9">9</a></sup></td><td>GIFI 3849 equals 3660 plus 3680, 3700, 3720 and 3740, with Schedule 100's signs. 3660 equals last year's 3849.</td></tr>
+      <tr><td>Passive income: the test uses the group's tax years ending in the preceding calendar year, and the federal cut is the greater of the passive and taxable-capital cuts. Ontario skips the passive cut but applies the capital cut.<sup><a href="#s6">6</a></sup><sup><a href="#s7">7</a></sup></td><td>Reword the check to match.</td></tr>
+      <tr><td>Payroll remittances are deductions, not wages.</td><td>Reconcile wages to the T4 Summaries for the calendar years the fiscal year spans.</td></tr>
+      <tr><td>Shareholder loan: oldest-first is right, but a repayment that is part of a series of loans and repayments does not count.<sup><a href="#s8">8</a></sup></td><td>Flag a repayment followed by a new advance, or one paid from a new loan.</td></tr>
+      <tr><td>Values converted from other software are the converter's output, not last year's return.</td><td>Amber until tied to the prior T2 PDF or the notice of assessment.</td></tr>
+      <tr><td>Phase 4 has no gate. Gates say "few" and "fully".</td><td>Numbers or 100%, for example "every fact's value found in its box". Move signing and filing records to phase 3; they are needed for the first real filing.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2><span class="n">4</span>Cut or defer</h2>
+  <ul class="l">
+    <li>The second AI that trims questions. Code already knows which facts are found.</li>
+    <li>The story check. It overlaps the checklist and the red team.</li>
+    <li>AI-drafted fixes for CPA comments.</li>
+    <li>The AI that challenges thin answers. A code rule (no source, or a banned phrase such as "per client") does it.</li>
+    <li>AI cause tagging and AI fix proposals. Start with code rules and a ranked list.</li>
+    <li>Our own map of Taxprep's calculations. Use the calculated-lines export.</li>
+    <li>Redrawing every schedule. Structure the GIFI and key schedules; show the rest as the printed return inside the coverage tracker.</li>
+    <li>PDF "file details" forensics. Keep the fingerprint and roll checks.</li>
+    <li>"Two AI passes that disagree". It is undefined; drop it until two passes exist.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">5</span>Missing</h2>
+  <ul class="l">
+    <li><b>Tax pools:</b> RDTOH (eligible and non-eligible), GRIP, CDA, losses and donations open at last year's assessed closing.</li>
+    <li><b>Schedule 1 ties:</b> amortization add-back equals GIFI 8670; CCA equals Schedule 8; half of GIFI 8523 meals added back; tax penalties and interest added back.<sup><a href="#s9">9</a></sup></li>
+    <li><b>Specified investment business:</b> flag property income when the company has five or fewer full-time employees.<sup><a href="#s13">13</a></sup></li>
+    <li><b>Foreign reporting:</b> T1135 when foreign property cost tops $100,000 (from memory, not re-checked), plus T106 and T1134 triggers.</li>
+    <li><b>Slips the return implies:</b> dividends paid need T5s, and accrued bonuses need T4s. Flag when CRA data shows none.</li>
+    <li><b>Associated group record:</b> Schedule 23 shares must match on every group return and total no more than $500,000.</li>
+    <li><b>Due dates:</b> filing at six months; balance due at two months, or three for qualifying CCPCs.<sup><a href="#s11">11</a></sup></li>
+    <li><b>Late evidence:</b> a document after lock reopens only the facts it touches; it voids approval only if a linked figure changes.</li>
+    <li><b>After filing:</b> an assessment that differs opens a work item. An amended return needs a new T183CORP.<sup><a href="#s10">10</a></sup></li>
+    <li><b>Ontario annual return:</b> filed on the Ontario Business Registry since 2021, not with the T2.<sup><a href="#s12">12</a></sup> Add it to the after-filing steps, or list it as manual.</li>
+    <li><b>Locked records:</b> the database refuses edits and deletes on events and versions. Keep the binder at least six years.<sup><a href="#s10">10</a></sup></li>
+    <li><b>Image redaction:</b> black out SINs and account numbers on page images before any AI sees them, not only in text.</li>
+    <li><b>File ownership:</b> one preparer holds a file at a time; roles for preparer, ops and CPA.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">6</span>Better alternatives</h2>
+  <div class="alts">
+    <div class="alt">
+      <b>Our app is the only input surface</b>
+      <p>Every input, judgment included, is entered in our app and imported. Taxprep only calculates and files.</p>
+      <p class="gain">Gain: orphans nearly vanish, every value is sourced at birth, and the learning signal is clean.</p>
+      <p class="cost">Cost: an input screen for each judgment area, and an import and export loop each time the preparer wants Taxprep's result.</p>
+    </div>
+    <div class="alt">
+      <b>Review on the printed return</b>
+      <p>Put click targets on Taxprep's own printed PDF instead of redrawing schedules from CSV.</p>
+      <p class="gain">Gain: the CPA sees the real return, every schedule and calculated line, with nothing lost by our renderer.</p>
+      <p class="cost">Cost: a map from cells to page positions for each release, and repeated values can be ambiguous.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">7</span>Research requests</h2>
+  <ul class="l">
+    <li>CCH: how to clear a cell by CSV; what happens to copy numbers when a copy is deleted; whether forced calculated values appear in the input filter; which cell can hold a note that is never transmitted; whether a saved filter can hold calculated cells; the import file's encoding.</li>
+    <li>CCH: whether scripting the import and export clicks in iFirm with a browser tool is allowed under the licence.</li>
+    <li>CRA: which Represent a Client screens show HST line 101, payroll totals, and T4 and T5 summary totals.</li>
+    <li>CPA Ontario or a practice adviser: when the firm assembles the financial statements, what engagement that is, and how Schedule 141 must be answered.</li>
+    <li>OCR and AI vendors: which endpoints keep data in Canada and keep nothing after the call.</li>
+    <li>A list of the most common CRA adjustments on small CCPC T2s, to seed the checklist and the red team.</li>
+  </ul>
+  <p class="note">The seven requests already in the doc stay as they are.</p>
+</section>
+
+<footer class="src">
+  <b>Sources</b>
+  <ol>
+    <li id="s1"><a href="https://support.cchifirm.ca/en/content/cch_ifirm/tax/tax_-_csv_syntax.htm">CCH iFirm: CSV syntax</a></li>
+    <li id="s2"><a href="https://support.cchifirm.ca/en/content/cch_ifirm/tax/tax_-_import_csv.htm">CCH iFirm: Import a CSV file</a></li>
+    <li id="s3"><a href="https://support.cchifirm.ca/en/content/cch_ifirm/tax/tax_-_export_data.htm">CCH iFirm: Export data</a></li>
+    <li id="s4"><a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/calculate-prepare-report/instructions-preparing-return.html">CRA: Instructions for a GST/HST return (line 101)</a></li>
+    <li id="s5"><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4058/quick-method-accounting-gst-hst.html">CRA: RC4058 Quick Method</a></li>
+    <li id="s6"><a href="https://www.canada.ca/en/revenue-agency/programs/about-canada-revenue-agency-cra/federal-government-budgets/budget-2018-equality-growth-strong-middle-class/passive-investment-income/small-business-deduction-rules.html">CRA: Small business deduction rules</a></li>
+    <li id="s7"><a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/provincial-territorial-corporation-tax/ontario-provincial-corporation-tax/ontario-small-business-deduction.html">CRA: Ontario small business deduction</a></li>
+    <li id="s8"><a href="https://www.canada.ca/en/revenue-agency/services/tax/technical-information/income-tax/income-tax-folios-index/series-3-property-investments-savings-plans/folio-1-shares-shareholders-security-transactions/income-tax-folio-s3-f1-c1-shareholder-loans-debts.html">CRA: Folio S3-F1-C1, paragraphs 1.71, 1.81 to 1.85</a></li>
+    <li id="s9"><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4088/general-index-financial-information-gifi.html">CRA: RC4088 GIFI guide</a></li>
+    <li id="s10"><a href="https://www.canada.ca/en/revenue-agency/services/e-services/digital-services-businesses/corporation-internet-filing/t183corp-information-return-corporations-filing-electronically.html">CRA: T183CORP</a></li>
+    <li id="s11"><a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-payments/paying-your-balance-corporation-tax/balance-day.html">CRA: Balance-due day</a></li>
+    <li id="s12"><a href="https://www.taxcycle.com/news/cra-no-longer-collecting-s546-s547-s548-and-rc232-for-ontario/">TaxCycle: Ontario annual returns leave the T2</a></li>
+    <li id="s13"><a href="https://laws-lois.justice.gc.ca/eng/acts/i-3.3/section-125.html">Income Tax Act, section 125</a></li>
+  </ol>
+</footer>
+
+</div>
+
+<script>
+document.querySelectorAll('.copy').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var text = btn.parentElement.querySelector('p').innerText;
+    var done = function(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = 'Copy'; }, 1400); };
+    var fallback = function(){
+      var r = document.createRange(); r.selectNodeContents(btn.parentElement.querySelector('p'));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected';
+    };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch(e){ fallback(); }
+  });
+});
+</script>

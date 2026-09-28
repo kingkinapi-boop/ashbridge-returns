@@ -1,0 +1,104 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git grep*)",
+      "Bash(git ls-remote*)",
+      "Bash(git ls-tree*)",
+      "Bash(git rev-parse*)",
+      "Bash(git rev-list*)",
+      "Bash(git branch --list*)",
+      "Bash(git worktree list*)",
+      "Bash(git fetch*)",
+      "Bash(git -C * status*)",
+      "Bash(git -C * diff*)",
+      "Bash(git -C * log*)",
+      "Bash(git -C * show*)",
+      "Bash(git -C * rev-parse*)",
+      "Bash(git -C * fetch*)",
+      "Bash(git commit *)",
+      "Bash(git add *)",
+      "Bash(git pull*)",
+      "Bash(git push *)",
+      "Bash(git merge *)",
+      "Bash(git checkout *)",
+      "Bash(git worktree prune*)",
+      "Bash(npm run typecheck*)",
+      "Bash(npm test*)",
+      "Bash(npm run test*)",
+      "Bash(npx vitest run*)",
+      "Bash(node tools/*)",
+      "Bash(node --check *)"
+    ],
+    "deny": [
+      "Bash(git add -A*)",
+      "Bash(git add .)",
+      "Bash(git add . *)",
+      "Bash(git -C * add -A*)",
+      "Bash(git -C * add .*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f*)",
+      "Bash(git -C * push --force*)",
+      "Bash(git -C * push -f*)",
+      "Bash(git -C * push * --force*)",
+      "Bash(git -C * push * -f*)",
+      "Bash(cat .env*)",
+      "Bash(type .env*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(./.next/**)",
+      "Read(./node_modules/**)"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node tools/statusline.mjs"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/main-push-guard.mjs"]
+          },
+          {
+            "type": "command",
+            "if": "Bash(git -C * push*)",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/main-push-guard.mjs"]
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task|RemoteTrigger",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/budget-guard.mjs"]
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/now-is-current.mjs"]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.env
+.env.*
+playwright-report/
+test-results/
+coverage/
+plan/usage-now.json
+.claude/worktrees/
+.claude/settings.local.json
