@@ -7,7 +7,7 @@ True at every moment. 60 lines max. Last rewritten: 29 Sep 2026, evening (the Cr
 - The plan review is settled: decision 0008 records Zo's answers. The plain end state v1.1 is approved (first section of blueprint/README.md). The review doc is archived; Zo talks through plan/TODO-ZO.md from now on.
 - What changed: the books live in QBO (no bookkeeping module); Zo's five phases are the spine, and real Taxprep is proven first on a one-week trial; tax choices are made in Taxprep; one lock export plus one check before transmit; AI runs through a Claude project on the subscription, not the API; no chat runs by itself (no routines); the Critic runs about every two days when Zo opens it, and he approves each proposal.
 - Mode: prep. Weekly usage 86% until the reset on Thu 1 Oct, 12:00 Toronto. Cloud credit about $230.
-- Ten sample clients: spec in reference/sample-clients/README.md; a helper is generating them tonight.
+- Ten sample clients: done and verified (reference/sample-clients/, verify.mjs 236 passes). CPA-confirm items listed in its README.
 - Taxprep trial: not started. Zo starts it only when the to-do says "ready". Plan: plan/taxprep-trial-plan.md.
 - Research: reference/research/INDEX.md. The prompt for redesigning the client app's /internal sits in toDelete/ (kept out of git).
 
@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 29 Sep 2026, evening (the Cr
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| sample clients | generator helper (Sonnet 5.5) | main checkout, reference/sample-clients/ | 29 Sep, evening | none |
+| none | | | | |
 
 ## Next, in order (the Lead, after the reset)
 

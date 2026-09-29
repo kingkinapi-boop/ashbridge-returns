@@ -31,7 +31,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 - b) In turbo, may the Lead start cloud workers itself after you type `turbo on`? Nothing is scheduled, and they stop when the queue is empty. Otherwise you open cloud sessions and type `work` yourself.
 - My recommendation: a) like; b) yes. Reply `5 like, yes`, or correct me.
 
-**What the Lead is doing now:** nothing until the weekly reset on Thu 1 Oct at 12:00 Toronto (usage is at 86%). Tonight a helper is generating the ten sample clients. After the reset: repairs to the job queue, the new helper roles, the blueprint brought in line with your answers, and trial readiness.
+**What the Lead is doing now:** nothing until the weekly reset on Thu 1 Oct at 12:00 Toronto (usage is at 86%). The ten sample clients are done: about 8,800 made-up transactions with onboarding answers and answer keys, all checks passing (`reference\sample-clients\README.md`; a few tax points are marked for your CPA check). After the reset: repairs to the job queue, the new helper roles, the blueprint brought in line with your answers, and trial readiness.
 
 ## 2. Coming up (no action yet)
 
@@ -60,7 +60,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 | Phase | What gets built | The gate you can see | Status and next step |
 |---|---|---|---|
-| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Sample clients being generated tonight. The trial waits for "ready". |
+| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Sample clients done and checked. The trial waits for "ready". |
 | 1 Evidence and the source viewer | Documents and QuickBooks read into facts with their sources; the source viewer; an early slice of the CPA review | 10 test files fully traced to source | Designs first (sittings from about 3 Oct). |
 | 2 Return build, lock and trace | The Taxprep import file; the lock export; the trace (orphans, overrides, the cite button); every version saved | A simple T2 built with few hand-typed cells | After phase 1. |
 | 3 Checks and the CPA review screen | Ties, reconciliations, flags; the AI checklist and red team through the Claude project; the brief; the full review with marks | You review 20 test files end to end in the screen | After phase 2. |
