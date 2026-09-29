@@ -1,6 +1,9 @@
 // Clause coverage: every blueprint clause and the test files that name it.
 // Writes plan/MATRIX.md (generated; only the Lead runs this, at merge time).
-// Usage: node tools/matrix.mjs [--summary]
+// Usage: node tools/matrix.mjs [--summary] [--plan]
+// --plan also checks the card list: cards citing unknown clauses, testable
+// clauses no card cites, non-family carded cards with no card file or no
+// acceptance checks, and unknown dependencies. Exit 1 if any.
 import fs from 'node:fs'
 import path from 'node:path'
 import { ROOT } from './lib.mjs'
@@ -69,4 +72,25 @@ if (!process.argv.includes('--summary')) {
   }
   if (unknown.size) out.push('', `Unknown clause IDs named in tests: ${[...unknown].sort().join(' ')}`)
   fs.writeFileSync(path.join(ROOT, 'plan', 'MATRIX.md'), out.join('\n') + '\n')
+}
+
+if (process.argv.includes('--plan')) {
+  const { cards } = JSON.parse(fs.readFileSync(path.join(ROOT, 'plan', 'slices.json'), 'utf8'))
+  const ids = new Set(cards.map((c) => c.id))
+  const problems = []
+  const cited = new Set(cards.flatMap((c) => c.clauses || []))
+  for (const c of cards) {
+    for (const k of c.clauses || []) if (!clauses.has(k)) problems.push(`${c.id} cites unknown clause ${k}`)
+    for (const d of c.deps || []) if (!ids.has(d)) problems.push(`${c.id} depends on unknown card ${d}`)
+    if (c.status === 'carded' && !c.family) {
+      const f = path.join(ROOT, 'plan', 'cards', `${c.id}.md`)
+      if (!fs.existsSync(f)) problems.push(`${c.id} is carded but has no card file`)
+      else if (!/## Acceptance checks/.test(fs.readFileSync(f, 'utf8'))) problems.push(`${c.id} card has no acceptance checks`)
+    }
+    if (c.family && !fs.existsSync(path.join(ROOT, 'plan', 'cards', 'families', `${c.family}.md`))) problems.push(`${c.id} family ${c.family} has no template`)
+  }
+  for (const id of testable) if (!cited.has(id)) problems.push(`clause ${id} is cited by no card`)
+  const nl = String.fromCharCode(10) + '  '
+  console.log(problems.length ? `PLAN: ${problems.length} problem(s)` + nl + problems.slice(0, 30).join(nl) : 'PLAN OK: every testable clause has a card, every card cites known clauses')
+  if (problems.length) process.exitCode = 1
 }

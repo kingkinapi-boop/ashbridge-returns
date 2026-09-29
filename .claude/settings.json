@@ -68,13 +68,17 @@
             "type": "command",
             "if": "Bash(git push*)",
             "command": "node",
-            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/main-push-guard.mjs"]
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/main-push-guard.mjs"
+            ]
           },
           {
             "type": "command",
             "if": "Bash(git -C * push*)",
             "command": "node",
-            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/main-push-guard.mjs"]
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/main-push-guard.mjs"
+            ]
           }
         ]
       },
@@ -84,7 +88,21 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/budget-guard.mjs"]
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/budget-guard.mjs"
+            ]
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-spec.mjs"
+            ]
           }
         ]
       }
@@ -95,7 +113,9 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/now-is-current.mjs"]
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/now-is-current.mjs"
+            ]
           }
         ]
       }

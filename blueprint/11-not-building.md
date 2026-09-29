@@ -5,6 +5,7 @@
 - **OUT-3** The system never files, pays, moves money, writes to QuickBooks or connects to a bank. Ops transmits returns from Taxprep.
 - **OUT-4** No Taxprep API.
 - **OUT-5** Edge cases for a handful of clients are handled by a person and listed in the firm's manual, not built.
+- **OUT-6** Personal returns (T1) are not prepared in this system. A client-app record with only personal returns, or a company with no T2 bought, is skipped without error and without stopping the others.
 
 ## Future ideas (not this build; moved in only by Zo)
 

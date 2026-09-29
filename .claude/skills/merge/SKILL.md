@@ -1,20 +1,36 @@
 ---
 name: merge
-description: How a card's branch reaches main, how a card closes, and how the progress page is refreshed at a phase gate. Use for every merge.
+description: How checked cards reach main through the train (a batch branch tested in the cloud), how a card closes, and how the progress page is refreshed at a phase gate. Use for every merge.
 ---
 
-# Merge and close
+# Merge: the train
 
-1. The branch has, on its latest commit: checker PASS; tester PASS if the card has screens; the full suite and journeys PASS (`check <card> full` in the cloud, or GitHub Actions); `node tools/scope.mjs <card>` clean.
-2. `git fetch -q && git checkout -q main && git pull -q && git merge --no-ff origin/claude/<card> -m "Merge <card>: <title> (checker, tester, full suite pass)"`. A conflict: `git merge --abort`, then dispatch `build <card>` with one line "rebase on main".
-3. `node tools/matrix.mjs`; in `plan/slices.json` set the card to `done` with the date; one line in `plan/metrics.jsonl`; rewrite NOW.md. Commit these on main. `git push origin main`.
-4. Delete the branch: `git push origin --delete claude/<card>`. Remove any local worktree: junction first (`cmd //c rmdir "<wt>\node_modules"`), then `git worktree remove <wt>`.
+Main only ever moves to a commit that passed the full suite and every journey in the cloud. Cards reach it in batches (the train), so the expensive cloud run happens once per batch, not once per card. All train work happens in its own worktree, `.claude/worktrees/train`: the main checkout stays on `main`, clean, because Zo reads his to-do from it.
 
-Metrics line (never leave a field empty):
-`{"card":"R07","closed":"2026-10-02","mode":"ultra","build_loops":1,"checker_fails":0,"tester_fails":0,"dispatches":4,"amber":1,"red":0,"accepted":true}`
+## 1. Board the train
+A card boards when, on its latest commit: check PASS (from a worker that did not spec or build it); GitHub checks green (typecheck and unit tests); `node tools/scope.mjs <card>` clean; its acceptance tests unchanged since the spec commit; and, for a card marked `security`, a clean security review.
+```
+W=.claude/worktrees/train
+git fetch -q origin
+[ -d $W ] || git worktree add -q $W origin/main
+git -C $W checkout -q -B train origin/claude/train 2>/dev/null || git -C $W checkout -q -B train origin/main
+git -C $W merge --no-ff origin/claude/<card> -m "Merge <card>: <title> (spec, build, check by three workers)"
+git -C $W push -q origin train:claude/train
+```
+A conflict: `git merge --abort`, release the card's build job with the note "rebase on main", and it goes back in the queue.
+
+## 2. Run the train
+When due (mode table: every 3 green cards in normal, 6 or hourly in turbo): fire a cloud check of the train (`check train full`): `npm ci`, typecheck, the full unit suite, every journey for every kind built so far, mutation tests on changed core modules. Report in `reports/train-<time>.md` on `claude/train`.
+
+## 3. Land it
+- Green: in the main checkout (on `main`): `git pull -q --ff-only && git merge --ff-only origin/claude/train && git push -q origin main`. Then for each card: `node tools/metrics.mjs <card>` appends its metrics line; `plan/slices.json` status done with the date; `node tools/claim.mjs update <card> build released --worker lead --note merged`; `node tools/matrix.mjs`. Rewrite NOW.md. Commit these on main and push. Delete merged card branches, and delete the train (`git push origin --delete claude/train`) so the next one starts from the new main.
+- Red: the report names the failing journey or test and module. Rebuild the train from main without the card that owns that module, re-run, and mark that card's build failed with the report's line. Never land a red train; never fix on the train itself.
+
+Metrics line (never leave a field empty; 0 is a value):
+`{"card":"F03","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":3,"amber":1,"red":0,"accepted":true}`
 
 ## Phase gate
-A phase is done when all its cards are done and its journey card (R19, R29, R39, R49, R59) passes for all twelve return kinds.
-- Refresh the progress page: `reports/progress.html`, published with the Artifact tool to the same URL every time. Plain words: what works now, 3 to 6 screenshots from the latest journey run (made-up data), the matrix percentage, open ambers, what is next.
+A phase is done when all its cards are merged and its thirteen journeys (J2 to J5) pass on main.
+- Refresh the progress page: `reports/progress.html`, published with the Artifact tool to the same URL every time: in plain words what works now and what it is for, 3 to 6 screenshots from the last journey run (made-up data), clause coverage, open ambers, what is next and why.
 - One line in TODO-ZO section 2: "Optional look: <link>. Nothing waits on it."
-- Zo's comments: each becomes a test that runs everywhere and a fix card; a blueprint-altering one becomes red. No follow-up questions.
+- Zo's comments: each becomes a test that runs on every screen or every kind, plus a fix card; a blueprint-altering one becomes red. No follow-up questions.
