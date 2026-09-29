@@ -1,0 +1,109 @@
+# ashbridge-app /internal forensics: why the staff area hurts (read-only pass, 29 Sep 2026)
+
+Read: ashbridge-app main, 2,683 commits (3 to 29 Sep); src/app/internal (34 files, 6,545 lines), src/lib/queue (4,454), src/lib/copy/internal* (1,184), plan/, reviews/, decisions/, .claude/, git history. Nothing run, no .env read. Labels: [fact] path:line or hash, [inference], [guess]. Paths are ashbridge-app unless marked R: (ashbridge-returns). No first-hand statement by a staff user about /internal exists in the repo or in Zo's memory notes (not found); pain is read from code, tester reports, follow-up lists and guide workarounds.
+
+## Summary
+1. /internal is 12 real screens (15 page files, 3 redirects) that arrived as by-products of client slices and of "this function has no caller" repairs; no staff task list, design, owner or usability check ever existed. [fact]
+2. The front door (`/internal/engagements`, 946 lines) stacks 5 counts, a 15-column table of v1 states, 36 work-list boxes (empty ones too), two 9-field forms and a legend; every action reloads it to the top (33 redirects, 0 anchors). No search, filter, bulk or paging exists on any staff screen. [fact]
+3. Desk work got phone and citizen shapes: main is 680px, 14 staff routes must pass a 375px check, the CRA table became full-width cards with 44px buttons, GOV.UK error summaries and a typed "Your name" sit on staff forms. [fact]
+4. 6 of 12 screens are linked from nowhere and there is no layout or nav, so the 200-line staff guide is the navigation, and it has already drifted from the code. [fact]
+5. Every gate looked at the client: tester persona is a new client, staff defects were "internal, not counted", 79 of about 3,993 tests and 2 of 12 journeys touch staff pages, the Reviewer and metrics never ask. [fact]
+6. Ranked causes: 1 no task model, design or owner; 2 database-shaped overloaded front door; 3 phone-first and citizen patterns on desk work; 4 no navigation model; 5 identity typed into every form; 6 client-only tests and reviews; 7 unbounded sequential loading; 8 accretion; 9 developer language on screen; 10 work pushed out of the app.
+7. returns already covers design-first, GOV.UK/MOJ from packages, axe, keyboard, per-person login, dense desktop-first. It misses task budgets, find and bulk, list paging and load budgets, a built-app reachability test, a list after-action rule, a staff-language scan and a real-staff feedback loop. [inference]
+8. Cheapest fix: card the 5 daily tasks per role with click, page-load and second budgets before any design, and have the tester agent count them (see "What they miss"). [inference]
+
+## Screen map (lines = page plus its form and action files)
+| Route | For | Lines | Find / filter / bulk / paging | Look |
+|---|---|---|---|---|
+| /internal | redirect to the queue (page.tsx:9) | 10 | none | none |
+| /internal/engagements | "Alia's queue": counts, threshold panel, 15-col engagement table (v1 states), 36 work-list boxes, finding form (9 fields), dividend form (9), legend, 20 outcome banners from 21 query params (page.tsx:104-170, 238-301) | 946+538 | none / fixed sort (sorting.ts:9-22) / none (one row per action) / none | CSS module, 13px table, 12px buttons |
+| /internal/clients | read-only: every client, entity cards, each task and status | 115 | none; oldest first (clientOverview.ts:129); all clients, one page | inline px |
+| /internal/cra | per entity: Confirm or Undo CRA access, Mark help handled | 216 | none; one card per entity; name typed each time (CraList.tsx:40-47) | inline, 44px full-width buttons (:32) |
+| /internal/corporations/[id]/answers | one company's answers (5 stacked lines each), Drive pointers, Send fresh link | 377 | none; companies only, no personal returns (Internal.md:512) | bare + dl.status |
+| .../[id]/review | v1 intake-review checklist, 76 form elements | 915 | none | 49 inline styles |
+| /internal/documents | post a PDF (5 fields), list every post, Remove (no confirm, NOW.md:16) | 469 | none; unbounded table | inline |
+| /internal/requests | raise "We need something from you" (3 to 4 fields), list open | 359 | none | inline |
+| /internal/incorporation | record a business number as filed | 201 | list of waiting | bare |
+| /internal/messages | message log, 9 lines per message plus body | 188 | 2 selects (client, kind); cap 200 (read.ts:92); no address search (read.ts:47-53) | bare dl |
+| /internal/offboarding, /measurement, /health | close a company (no undo); figures; env presence | 394; 412; 128 | select and radios; none; none | bare |
+- APIs: /api/internal/requests/upload and /attachment, /api/internal/documents/upload. Unmerged: `/internal/view`, "staff's own copy of /view" (S15 worktree). [fact]
+- No src/app/internal/layout.tsx (layouts exist only for root, dashboard, e, setup, sign-in, test/flow); root layout is a test banner plus `<main>` (layout.tsx:47-53): no header, logo or nav. [fact]
+- The front door links 3 pages (page.tsx:211-220; internalEngagements.ts:76-78). Nothing links to incorporation, messages, documents, requests, health or measurement except self and back links; /internal/requests appears only as text in a work-list note (internalEngagements.ts:432-435); /internal/cra has no way back (cra/page.tsx:33-46). [fact]
+
+## Task costs (from code; start at /internal, no bookmarks; load = navigation incl. redirect after post; tasks inferred from Internal.md:625-635 and MANUAL.md)
+| Task | Path | Loads | Clicks | Fields | Notes |
+|---|---|---|---|---|---|
+| Find a client, see where they stand | front page, small link "Clients and their tasks" (page.tsx:215-217) | 2 | 1 + Ctrl+F | 0 | no search; all clients and all task lines; personal-return-only clients absent from queue (Internal.md:476) |
+| See what they told us, open a file | queue row name link, answers page, then Drive | 2 (+Drive) | 2 (+1 per file) | 0 | companies only; 5 lines per answer (answers/page.tsx:89-114); Drive folders "Name (8 hex)" and "Personal return (8 hex)" (drive/folders.ts:64, flow/uploads.ts:118) |
+| Check what is still missing | /internal/clients | 2 | 1 | 0 | task-level status only; no staff screen lists missing required answers (not found); answers page lists only "not sure" items |
+| Confirm CRA access (daily) | box 31 of 36, deep link /internal/cra#entity, name, Confirm | 3 | 3 | 1 (name) | repeats per entity; page lists all entities; back = browser Back |
+| Mark a submission seen | queue box 34, clients, Answers, queue again, name, Mark seen | 5 | 5 | 1 | POST recomputes all clients (clientOverview.ts:196); redirect lands at page top |
+| Post a document | /internal/documents (URL only) | 2 | about 6 | 5 (2 prefilled) | native select of every client's entities (StaffEntityPicker.tsx:28-46) |
+| Raise a request | /internal/requests (URL only) | 2 | about 5 | 3 to 4 | work-list row later shows the reply, not what was asked (S13-requests.md:33) |
+| Check an email went out | /internal/messages (URL only) | 2 | 2 to 3 | 1 to 2 | filter is by company, guide says "by email address" (Internal.md:538) |
+| Change a client's email or detail | not built (Internal.md:601, 656) | | | | |
+- Load cost: front page runs buildQueue plus buildWorkList (19 sequential `await db.query`, workList.ts) and the all-clients pass `listClientOverviews` (loop of several awaits per client, clientOverview.ts:123-176) twice (workList.ts:1161, then via openRequestReplies :1221, requests.ts:324); /internal/requests runs it twice (page.tsx:73,75). Tester saw a staff page blank "for about 5 seconds" (S13-requests-r5.md:24); NOW.md:16 "first click after load sometimes lost on staff pages". The link between the two is [inference]. [fact]
+
+## Patterns and density
+- GOV.UK Frontend and MOJ Frontend: not installed (package.json: radix, tailwind, cva); zero `govuk-` classes under src/app/internal; no MOJ pattern. The client's "GOV.UK" is redrawn by hand in flow.css. [fact]
+- Three dialects: CSS module (queue.module.css), inline style objects with hex colours (clients, cra, documents, requests, review: 13 to 49 `style={` each), bare HTML on global `dl.status`. Four button looks: 12px/30px (queue.module.css:266-276, 400-411), 44px full width (CraList.tsx:32), bare browser `<button>` (StaffSubmitButton.tsx:21-27; no button rule in globals.css). [fact]
+- Type: body 16px/1.55, h1 24px (globals.css:134-135, 172); table 13px, headers 12px, cells 5px 8px (queue.module.css:144-162); Tailwind preflight is off so bare elements use browser defaults on purpose (globals.css:9-35). [fact]
+- Citizen patterns on staff work: phone-first column and 375/390 gate on 14 staff routes (phoneRoutes.ts:81-175); client-screens.md loads for src/app/** (:2-6) with "Mobile first" (:57-59), "One white box" (:29), "Six sentences" (:30); one-thing pages; stacked cards; hand-copied GOV.UK error summary in inline styles (StaffErrorSummary.tsx:6-33); two-step confirm with tick box (offboarding/page.tsx:296-322). Start pages and check-your-answers not reused. [fact]
+- Opposite fixes for one problem: queue built dense (queue.module.css:1-21, "Optimise for information density"), while messages and answers say "MOBILE FIRST, THE OPPOSITE OF /internal/engagements' MISTAKE" (messages/page.tsx:26-32, answers/page.tsx:41-47) and review says "BUILT FOR A LAPTOP, CHECKED ON A PHONE" (review/page.tsx:47-57). [fact]
+- Keyboard: native controls only (no onKeyDown, accessKey, aria-keyshortcuts under app/internal or components/staff); no axe in package.json. [fact]
+
+## History
+- 4 Sep, commits at 01:42 (b80a9c86 "a plain internal list"), 03:55 (2557ac71 "Build the queue", 14 files, +3,142) and 06:52 (58cb664f "readable at the density it was built for": "found by opening the screenshots rather than by reading the pass line"; the alarm column overflowed the client name while tests passed). [fact]
+- 4 to 19 Sep (38 commits, v1 director/session process, 12 review lenses, none dedicated to staff use): pages added because a function had no caller: offboarding "existed and could not be started" (engagements/page.tsx:204-210), health (635b5a7e), answers (D54, "no human being can see that today", answers/page.tsx:13-24), messages (728ee611), incorporation (incorporation/page.tsx:10-23). Phone repairs on desk pages: 621d7969, 70609f25. Work-list kinds: 6 in the spec's own list (workList.ts:28-49; spec-v8.md:1401-1410 has 8), 9 in the first build, 16 by 7 Sep (phoneRoutes.ts:102), 36 now (workList.ts:85-364). [fact]
+- 24 Sep 17:14, 9b0b5da1 "v2 reset": introduces the Lead/Reviewer/Zo model (reviews/REVIEWER.md, plan/NOW.md, TODO-ZO.md, slices.json, checker and tester agents, client-screens.md) and deletes the v1 director, lenses and design-authority agent. The 24 Sep review kept "state machine, internal work list" while client screens were rebuilt (_strategy/REVIEW-BRIEF-2026-09-24.md:184; REVIEW-RESPONSE:103). [fact]
+- After (18 commits): /internal/cra (25 Sep; first a 5-column table that failed 375px, craPageFitsPhone.test.ts:9-16, then cards 67dc0712), /internal/clients (27 Sep, 6502a01f), requests and documents (28 to 29 Sep). 9 of 18 are "tester round" fixes on staff forms (missing confirmation, errors, double submit, client names); no reverts. [fact]
+- Churn: 56 commits touch src/app/internal, +7,242/-697 lines; engagements/page.tsx 23 commits +1,123/-177 with headers naming a dozen sessions (D47, D54, A5, A6, F-009, S10, S13). Before vs after the reset: client screens got design-first, rules on every screen and 3 independent checks; /internal got tester rounds that fixed form basics but no design, persona or budget. [inference]
+- Recorded pain: v1 LEARNINGS "The people doing the work were the last audience anyone designed for" and "Hand-styled form controls read as 1998... adopt a component library before the first review" (git show pre-v2:project/LEARNINGS.md, lines 73-78), kept as lesson 9 (reference/lessons.md:13) with no owner or check; NOW.md:16, 38-41 follow-ups; Internal.md:652-662 lists 9 things "staff would need". Zo asked to look at /internal once (plan/TODO-ZO-archive.md:15-19, item 29, one step of four); no staff-user review found. [fact]
+
+## Root causes (ranked)
+1. No task model, design step or owner. BRIEF.md:9-20,34-40 defines job and "done" for clients only; slices S01 to S15 have no staff slice; spec Part 15 is 25 lines; spec/designs has 40 files, all client; CLAUDE.md:15 owns "the whole client journey" and has no staff twin; screens were made to give code a caller (health/page.tsx:1-10, offboarding/page.tsx:33-38, incorporation/page.tsx:10-23); the "cheap labour" rule (reference/MANUAL.md:3-6; v1 CLAUDE.md:11) made tooling optional.
+2. Database-shaped, overloaded front door. 36 enum-kind boxes render even when empty, grouped by kind not by client (page.tsx:526-533), so one client's CRA confirm, submitted mark, reply and waiting task sit in 4 boxes; the table shows v1 states v2 never moves and drops personal returns (Internal.md:475-476; NOW.md:16); v2 answers land in "Other answers" with screen codes (Internal.md:510); messages print provider ids (messages/page.tsx:165-171).
+3. Phone-first and citizen patterns on desk work (see Patterns). Root: no staff rule file in the app; client-screens.md matches src/app/**; the only staff gate is a 375px capture, so a tester failure turned a table into cards.
+4. No navigation model: no layout, 3 links from the front door, 6 unlinked screens, no way back from /internal/cra; the guide has 200 lines (Internal.md:461-662) and drifted ("sorted by name" :536 vs sorting.ts:9-22; "still runs v1" :8).
+5. Identity typed into every form: 6 field names (recordedBy, repliedBy, preparedBy, raisedBy, postedBy, decidedBy) on 14 name inputs across 6 pages and 30 `<form action=` sites, one entity per submit (CraList.tsx:40-47; engagements/page.tsx:596,645,668,689); decision 0015 V2-67 keeps one shared passphrase and "no record of who did each action", yet forms still demand a name. [inference: friction without accountability]
+6. Client-only tests and reviews: tester.md:8 persona is a client; staff findings "internal, not counted" (S13-requests-r5.md:4,24); 79 of about 3,993 tests, 2 of 12 journeys, no axe; REVIEWER.md:14-22 and metrics (CLAUDE.md:50) carry no staff measure; REVIEW.md 29 Sep is silent; lesson 9 unenforced. Green tests hid an unreadable queue (58cb664f).
+7. Unbounded sequential loading: 12 pages `force-dynamic`, no paging except messages cap 200, 19 sequential queries plus a per-client loop, run 2 to 3 times per action (see Task costs).
+8. Accretion with no owner: +7,242/-697; a new work-list kind needs SQL, label, heading, note and test seed (REVIEW-BRIEF:1086), so adding a box is the cheapest way to surface anything; a "patch inbox" served files owned by another builder (635b5a7e); tester rounds fixed one form at a time (requests 5 rounds, documents 4).
+9. Developer language on screen: work-list notes show "Decisions log P1 and P2", "Spec Part 12 step 4", "S13 part 1, decision 0017 V2-73" (internalEngagements.ts:311-337, 432-435, rendered at page.tsx:529); threshold panel "Decisions log O19/O6/T4" (:124-127); "Not switched on yet (ASHBRIDGE_DOCUMENTS_ON): migration 0035 is not applied" (documents/page.tsx:118).
+10. Work pushed out of the app: files stay in Drive under uuid8 folder names; the morning routine spans info@, tawk.to, 5 /internal pages, Drive and CRA (Internal.md:625-635); no change of client email, no add-file (Internal.md:601, 656-657).
+
+## What returns' rules already cover
+- Design first, one look, build to it, visual test: RV-53 (R:blueprint/06-screens.md:40), cards D00 to D11, R:reference/design-basis.md:99-106. Covers cause 1 (design part) and cause 3 (dialects).
+- Real GOV.UK/MOJ from packages, only govuk-/moj-/app- classes, no inline style: RV-52, R:.claude/rules/staff-screens.md:14,19-20. design-basis.md:14 already records "How GOV.UK was lost once" on /internal (cause 3).
+- Dense, desktop-first, wide container, phone-first "not carried": RV-51, design-basis.md:33,49; sortable tables over 5 rows with stated order (rule 6); filters and paging "once a list outgrows a screen" (:68).
+- Accessibility and keyboard: axe on every state, keyboard-only journeys, visible shortcuts, 24px targets, 320px reflow with a table exception (rules 3, 10 to 13); no dead controls, no disabled buttons, GOV.UK error pattern, loading state (rules 8, 9, 16). Covers the client app's form defects.
+- Per-person login and roles (SEC-1, SEC-2, V00) remove cause 5. Staff-persona tester with keyboard-first walks, RV-4 under 1 s timing, findings appended as found (R:.claude/agents/tester.md:8-14; R:.claude/rules/testing.md:37-38); J5 walks staff screens per kind.
+- Map first: D01 (every lifecycle state with a person acting has a screen; no dead-end links; service navigation by role); lessons 3, 4, 9 (R:reference/lessons.md:7,8,13); U02 shared behaviour and sweeps; comments become tests (R:CLAUDE.md loop 6). Covers causes 1 and 4 on paper only. R:reference/lessons-deep.md has no staff-side pattern at all (23 patterns, none on /internal usability).
+
+## What they miss (root causes with no rule, clause or test in returns)
+1. Task budgets (causes 1, 6): RV-51 is adjectives; only RV-4 is timed. Add per role a card for the 5 daily tasks with page-load, click, field and second budgets, and a Playwright counter that fails above budget (client app: CRA confirm 3 loads, mark seen 5).
+2. Find, search, bulk (cause 2): no clause finds a return by name, BN, client email or preparer; no bulk mark or assign; design-basis.md:68 defers filters. Add one header search on every screen and bulk actions on lists.
+3. Load and paging budget (cause 7): nothing bounds a list page. Add "every staff page renders under 1 s with a query budget on the largest test world; lists page at 50".
+4. Reachability on the built app (cause 4): D01 checks a paper map; rule 16 catches links to nowhere, not screens nothing links to. Add a crawler: from the header every route in 2 clicks, every page a way back and a named task.
+5. Screen-to-task check (cause 1): the reverse of D01 acceptance 2. Every route must sit in design/map with a role and task, so no screen exists only to give a function a caller.
+6. After-action rule for lists (cause 2): staff-screens.md:39 carries the client rule "after a save the next page opens at the top"; on repeat-use lists that is the client app's defect (33 redirects, no anchor). Replace for lists: stay in place, focus the next row, announce the result.
+7. Staff-language scan (cause 9): client-screens.md:35 bans jargon for clients only; staff rule 16 does not stop clause IDs, decision IDs, env names, migration numbers or "test mode". Add a rendered-HTML scan.
+8. Real staff loop (cause 6): the D11 look is Zo's and optional (R:.claude/skills/merge/SKILL.md:35); no timed day-in-the-life by the actual preparer or CPA with made-up data at a phase gate; design-basis.md:53 itself says deviations need user research. Add one, comments become tests. [inference]
+9. Cross-screen state equality (cause 2): rule 7 covers words and colour, not "same return, same state on queue, review and board". Add to U02. [guess: not checked in cards]
+10. Guides as a smell (causes 4, 10): a task needing a paragraph of instruction means the screen is wrong; generate any staff guide from task cards. Reviewer check: budgets pass (R:reviews/REVIEWER.md check F).
+- Where each lands [inference]: 1, 3 to D01/U02 acceptance and tester.md; 2, 6, 7 to new staff-screens.md rules 18 to 20; 4, 5 to a U02 crawler; 8 to the merge skill phase gate; 9 to U02; 10 to REVIEWER check F.
+
+## Infra differences (ashbridge-app has, returns lacks)
+- plan/Internal.md living staff guide, updated at each slice close (CLAUDE.md:48); plan/BRIEF.md one-page brief; reference/MANUAL.md hand-work list; TODO-ZO-archive.md; 15 memory notes on Zo. A long guide is a symptom (cause 4), not something to copy.
+- Skills deploy, live-data, migration, plus a real deployed preview walked by a browser tester and scripts/phone.ts viewport registry. Absent in returns by decision 0003 (no hosting); R:lessons-deep.md pattern 12 already flags a go-live migration gap. Per-round reports checked in (reviews/tester 35 files, reviews/builds 37).
+- returns has (built or carded) and the app lacks: claim queue, modes and ledger caps, read-only acceptance tests, mutation tests, trains, staff-screens rules, per-person login, protect-spec hook.
+
+## Documented failures of the app's infrastructure
+- Main red 75 min after an untested migration-file move (.claude/hooks/main-push-guard.mjs:8-10); 0034 applied before its code broke spouse sign-ups about 35 min; previews share the live database; parallel builders without Zo's ask; stale status (reviews/REVIEW.md:22-38; NOW.md:46).
+- Tester could not resize to 375 or type; hidden tab, values set by script (NOW.md:23; S13-requests-r5.md:4). Metrics counts null for S01 to S07 (metrics.jsonl:1-5); S08 14 loops, 8 tester fails (:6); classifier refused removing DRAFT markers (NOW.md:15).
+- Reviewer orders never test staff usability (REVIEWER.md:14-22); lesson 9 has no owner; Internal.md drift (:8, :536) with S14 "tidy" not started (slices.json). Deploys are laptop-only, one at a time, and a worktree build ships a broken server (.claude/skills/deploy/SKILL.md); Netlify credits over 75% (NOW.md:10).
+
+## Limits and not found
+- Not found: any statement by a staff user; any timing or usage data for /internal; any staff task list; any Zo comment on /internal screens (reviews/zo-56 and his memory notes have none).
+- Task counts are counted from code, not measured; the 5 s figure is one tester remark. Ranking is my judgement [inference]: causes 1 to 4 and 6 are best supported by files; 5 and the link in 7 are inferences.
+- Ignored: client-app worktree copies (except the S15 `/internal/view` peek), src/flow, the quote-site repo.

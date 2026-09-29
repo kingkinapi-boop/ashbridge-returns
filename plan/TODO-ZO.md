@@ -1,17 +1,25 @@
 # Zo's to-do (Ashbridge Returns)
 
-The only file you need to read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Only red questions come here: things that change the blueprint, cost money, touch live data or change who sees what. Reply in the Lead chat with the number, for example "1 blueprint ok". What to type in which chat: `README.md` in this folder.
+The only file you need to read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Only red questions come here: things that change the blueprint, cost money, touch live data or change who sees what. Item 1 is answered inside the review doc itself; anything else, reply in the Lead chat with its number. What to type in which chat: `README.md` in this folder.
 
 ## 1. Needs you now
 
-**1. Approve the blueprint (15 minutes).**
+**1. Answer the plan review (about 45 minutes, whenever you like).**
+- **What it is:** a critic's review of the whole plan and build system, with questions that each carry a default, in one doc you can type into: https://claude.ai/code/artifact/754b9ceb-5cb2-4743-b887-7ebeabf075b4
+- **Why it matters:** it found the plan drifted from your own design (your "prove Taxprep first" step moved to go-live) and that nothing checks whether a feature is practical. Starting turbo before this is settled risks another /internal.
+- **What happens after:** the plan is finalised, then this to-do and the README are rewritten and the Lead starts.
+- **Please do not type `blueprint ok` yet.** The old item below waits for the review.
+
+**What the Lead is doing now:** nothing, on purpose, until you answer the review. Mode stays prep; nothing runs in the cloud.
+
+**On hold: approve the blueprint (15 minutes).**
 - **What it is:** the finished system in plain words: `blueprint\README.md`, first section, 13 short points.
 - **Why it matters:** every card, test and check in the build is tied to one of its 216 numbered rules. Once you say ok, builders build only what it says, the Reviewer checks every merged piece against it, and nothing in it changes without your yes. This is what stops the drift you saw in the client app build.
 - **New since your last look:** design rules (GOV.UK and MOJ patterns in the Ashbridge look, designs you approve before anything is built), testing rules, a 13th made-up company (a catch-up of two unfiled years), and "ops confirms anything the client app leaves unclear" (the client app does not store tax years cleanly, so the system never guesses them).
 - **What happens after your ok:** the empty app is built on the laptop, then one practice run of the whole loop (see section 2), then the first tests are written.
-- Reply `1 blueprint ok`, or name what to change. My recommendation: ok.
+- Waits for the plan review; the review proposes you approve the plain end state and the designs instead of the 216 rules.
 
-**What the Lead is doing now:**
+**What the setup finished on 28 Sep:**
 - Tonight's setup is finished and pushed to GitHub. Everything for this build now lives in `ashbridge-returns`; `ashbridge-app` is clear of it.
 - The turbo system is ready and switched off: one job queue that many builders pull from at once, so no two take the same job and nobody checks their own work (tested tonight: four builders claiming at the same moment got four different jobs).
 - The work is cut into 255 cards in 17 waves; up to 36 can run side by side.
@@ -22,6 +30,8 @@ The only file you need to read: `C:\Users\User\Documents\GitHub\ashbridge-return
 - Dates: you wrote "expires on September 10"; I read it as 10 October (resets 1 and 8 October). If that is wrong, say so.
 
 ## 2. Coming up (no action yet)
+
+On hold until the plan review is answered: the steps and dates below will change.
 
 **After your "blueprint ok" (prep, low usage):**
 1. **F00, the empty app.** Built on the laptop: the app shell, the test tools, free GitHub checks on every branch (typecheck and tests, never the browser journeys), and safe settings for outside packages. Everything later is built on it.
