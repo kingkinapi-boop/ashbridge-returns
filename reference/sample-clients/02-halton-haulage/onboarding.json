@@ -1,0 +1,213 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Halton Haulage Ltd. (Test)",
+    "business_number": "779886143",
+    "financial_year_end": "2026-03-31",
+    "fiscal_year_start": "2025-04-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2021-08-09",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "monthly",
+    "hst_basis": "regular",
+    "books_kept_by": "client (spreadsheet, bank downloads)"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "779886143RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "779886143RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Marco Bellini (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/maplestone-chequing-5530.csv",
+      "institution": "B: Maplestone Bank (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-business-card-4408.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "hst", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 0,
+    "payroll_account": false,
+    "note": "The owner drives; no employees."
+  },
+  "hst": {
+    "basis": "regular",
+    "frequency": "monthly",
+    "note": "June 2025 return is a refund because of the tractor."
+  },
+  "vehicle": {
+    "description": "used tractor unit, bought 2 Jun 2025",
+    "business_use_percent": 100,
+    "note": "Client says no personal use."
+  },
+  "loan": {
+    "lender": "Lakeview Equipment Finance (Test)",
+    "principal": 100000,
+    "annual_rate": 0.085,
+    "term_months": 60,
+    "first_payment": "2025-07-28",
+    "level_payment": 2051.65,
+    "note": "Paid by the lender straight to the dealer on 2 Jun 2025; payments come out of chequing.",
+    "schedule": [
+      {"n":1,"date":"2025-07-28","payment":2051.65,"interest":708.33,"principal":1343.32,"balance_after":98656.68},
+      {"n":2,"date":"2025-08-28","payment":2051.65,"interest":698.82,"principal":1352.83,"balance_after":97303.85},
+      {"n":3,"date":"2025-09-29","payment":2051.65,"interest":689.24,"principal":1362.41,"balance_after":95941.44},
+      {"n":4,"date":"2025-10-28","payment":2051.65,"interest":679.59,"principal":1372.06,"balance_after":94569.38},
+      {"n":5,"date":"2025-11-28","payment":2051.65,"interest":669.87,"principal":1381.78,"balance_after":93187.6},
+      {"n":6,"date":"2025-12-29","payment":2051.65,"interest":660.08,"principal":1391.57,"balance_after":91796.03},
+      {"n":7,"date":"2026-01-28","payment":2051.65,"interest":650.22,"principal":1401.43,"balance_after":90394.6},
+      {"n":8,"date":"2026-02-27","payment":2051.65,"interest":640.3,"principal":1411.35,"balance_after":88983.25},
+      {"n":9,"date":"2026-03-30","payment":2051.65,"interest":630.3,"principal":1421.35,"balance_after":87561.9},
+      {"n":10,"date":"2026-04-28","payment":2051.65,"interest":620.23,"principal":1431.42,"balance_after":86130.48},
+      {"n":11,"date":"2026-05-28","payment":2051.65,"interest":610.09,"principal":1441.56,"balance_after":84688.92},
+      {"n":12,"date":"2026-06-29","payment":2051.65,"interest":599.88,"principal":1451.77,"balance_after":83237.15},
+      {"n":13,"date":"2026-07-28","payment":2051.65,"interest":589.6,"principal":1462.05,"balance_after":81775.1},
+      {"n":14,"date":"2026-08-28","payment":2051.65,"interest":579.24,"principal":1472.41,"balance_after":80302.69},
+      {"n":15,"date":"2026-09-28","payment":2051.65,"interest":568.81,"principal":1482.84,"balance_after":78819.85},
+      {"n":16,"date":"2026-10-28","payment":2051.65,"interest":558.31,"principal":1493.34,"balance_after":77326.51},
+      {"n":17,"date":"2026-11-30","payment":2051.65,"interest":547.73,"principal":1503.92,"balance_after":75822.59},
+      {"n":18,"date":"2026-12-28","payment":2051.65,"interest":537.08,"principal":1514.57,"balance_after":74308.02},
+      {"n":19,"date":"2027-01-28","payment":2051.65,"interest":526.35,"principal":1525.3,"balance_after":72782.72},
+      {"n":20,"date":"2027-02-26","payment":2051.65,"interest":515.54,"principal":1536.11,"balance_after":71246.61},
+      {"n":21,"date":"2027-03-29","payment":2051.65,"interest":504.66,"principal":1546.99,"balance_after":69699.62},
+      {"n":22,"date":"2027-04-28","payment":2051.65,"interest":493.71,"principal":1557.94,"balance_after":68141.68},
+      {"n":23,"date":"2027-05-28","payment":2051.65,"interest":482.67,"principal":1568.98,"balance_after":66572.7},
+      {"n":24,"date":"2027-06-28","payment":2051.65,"interest":471.56,"principal":1580.09,"balance_after":64992.61},
+      {"n":25,"date":"2027-07-28","payment":2051.65,"interest":460.36,"principal":1591.29,"balance_after":63401.32},
+      {"n":26,"date":"2027-08-30","payment":2051.65,"interest":449.09,"principal":1602.56,"balance_after":61798.76},
+      {"n":27,"date":"2027-09-28","payment":2051.65,"interest":437.74,"principal":1613.91,"balance_after":60184.85},
+      {"n":28,"date":"2027-10-28","payment":2051.65,"interest":426.31,"principal":1625.34,"balance_after":58559.51},
+      {"n":29,"date":"2027-11-29","payment":2051.65,"interest":414.8,"principal":1636.85,"balance_after":56922.66},
+      {"n":30,"date":"2027-12-28","payment":2051.65,"interest":403.2,"principal":1648.45,"balance_after":55274.21},
+      {"n":31,"date":"2028-01-28","payment":2051.65,"interest":391.53,"principal":1660.12,"balance_after":53614.09},
+      {"n":32,"date":"2028-02-28","payment":2051.65,"interest":379.77,"principal":1671.88,"balance_after":51942.21},
+      {"n":33,"date":"2028-03-28","payment":2051.65,"interest":367.92,"principal":1683.73,"balance_after":50258.48},
+      {"n":34,"date":"2028-04-28","payment":2051.65,"interest":356,"principal":1695.65,"balance_after":48562.83},
+      {"n":35,"date":"2028-05-29","payment":2051.65,"interest":343.99,"principal":1707.66,"balance_after":46855.17},
+      {"n":36,"date":"2028-06-28","payment":2051.65,"interest":331.89,"principal":1719.76,"balance_after":45135.41},
+      {"n":37,"date":"2028-07-28","payment":2051.65,"interest":319.71,"principal":1731.94,"balance_after":43403.47},
+      {"n":38,"date":"2028-08-28","payment":2051.65,"interest":307.44,"principal":1744.21,"balance_after":41659.26},
+      {"n":39,"date":"2028-09-28","payment":2051.65,"interest":295.09,"principal":1756.56,"balance_after":39902.7},
+      {"n":40,"date":"2028-10-30","payment":2051.65,"interest":282.64,"principal":1769.01,"balance_after":38133.69},
+      {"n":41,"date":"2028-11-28","payment":2051.65,"interest":270.11,"principal":1781.54,"balance_after":36352.15},
+      {"n":42,"date":"2028-12-28","payment":2051.65,"interest":257.49,"principal":1794.16,"balance_after":34557.99},
+      {"n":43,"date":"2029-01-29","payment":2051.65,"interest":244.79,"principal":1806.86,"balance_after":32751.13},
+      {"n":44,"date":"2029-02-28","payment":2051.65,"interest":231.99,"principal":1819.66,"balance_after":30931.47},
+      {"n":45,"date":"2029-03-28","payment":2051.65,"interest":219.1,"principal":1832.55,"balance_after":29098.92},
+      {"n":46,"date":"2029-04-30","payment":2051.65,"interest":206.12,"principal":1845.53,"balance_after":27253.39},
+      {"n":47,"date":"2029-05-28","payment":2051.65,"interest":193.04,"principal":1858.61,"balance_after":25394.78},
+      {"n":48,"date":"2029-06-28","payment":2051.65,"interest":179.88,"principal":1871.77,"balance_after":23523.01},
+      {"n":49,"date":"2029-07-30","payment":2051.65,"interest":166.62,"principal":1885.03,"balance_after":21637.98},
+      {"n":50,"date":"2029-08-28","payment":2051.65,"interest":153.27,"principal":1898.38,"balance_after":19739.6},
+      {"n":51,"date":"2029-09-28","payment":2051.65,"interest":139.82,"principal":1911.83,"balance_after":17827.77},
+      {"n":52,"date":"2029-10-29","payment":2051.65,"interest":126.28,"principal":1925.37,"balance_after":15902.4},
+      {"n":53,"date":"2029-11-28","payment":2051.65,"interest":112.64,"principal":1939.01,"balance_after":13963.39},
+      {"n":54,"date":"2029-12-28","payment":2051.65,"interest":98.91,"principal":1952.74,"balance_after":12010.65},
+      {"n":55,"date":"2030-01-28","payment":2051.65,"interest":85.08,"principal":1966.57,"balance_after":10044.08},
+      {"n":56,"date":"2030-02-28","payment":2051.65,"interest":71.15,"principal":1980.5,"balance_after":8063.58},
+      {"n":57,"date":"2030-03-28","payment":2051.65,"interest":57.12,"principal":1994.53,"balance_after":6069.05},
+      {"n":58,"date":"2030-04-29","payment":2051.65,"interest":42.99,"principal":2008.66,"balance_after":4060.39},
+      {"n":59,"date":"2030-05-28","payment":2051.65,"interest":28.76,"principal":2022.89,"balance_after":2037.5},
+      {"n":60,"date":"2030-06-28","payment":2051.93,"interest":14.43,"principal":2037.5,"balance_after":0}
+    ]
+  },
+  "cra_record": {
+    "note": "What the CRA account shows for corporate instalments in the fiscal year (client printed it after year end).",
+    "instalments_credited": [
+      {
+        "date": "2025-06-30",
+        "amount": 3500
+      },
+      {
+        "date": "2025-09-30",
+        "amount": 3500
+      },
+      {
+        "date": "2026-03-31",
+        "amount": 3500
+      }
+    ]
+  },
+  "client_notes": ["Transcan is the only carrier I haul for. I drive the truck myself.", "The tractor was financed through Lakeview Equipment Finance; the down payment and the tax came out of the bank.", "Sometimes I use the business card at the grocery store. I will tell you which ones.", "I paid all four instalments of $3,500 for the year."],
+  "prior_year_closing_balances": {
+    "as_of": "2025-03-31",
+    "accounts": [
+      {
+        "account": "1010",
+        "name": "Chequing (CAD)",
+        "gifi": 1002,
+        "gifiName": "Deposits in Canadian banks and institutions - Canadian currency",
+        "gifiStatus": "settled",
+        "debit": 17135.42,
+        "credit": 0
+      },
+      {
+        "account": "2010",
+        "name": "Credit card payable",
+        "gifi": 2707,
+        "gifiName": "Credit card loans",
+        "gifiStatus": "confirm",
+        "note": "credit card loans (2707) or accounts payable (2620)",
+        "debit": 0,
+        "credit": 1825.31
+      },
+      {
+        "account": "2050",
+        "name": "HST payable (receivable)",
+        "gifi": 2680,
+        "gifiName": "Taxes payable",
+        "gifiStatus": "settled",
+        "debit": 0,
+        "credit": 2846.15
+      },
+      {
+        "account": "3010",
+        "name": "Common shares",
+        "gifi": 3500,
+        "gifiName": "Common shares",
+        "gifiStatus": "settled",
+        "debit": 0,
+        "credit": 100
+      },
+      {
+        "account": "3600",
+        "name": "Retained earnings, opening",
+        "gifi": 3600,
+        "gifiName": "Retained earnings/deficit",
+        "gifiStatus": "settled",
+        "debit": 0,
+        "credit": 12363.96
+      }
+    ],
+    "ucc": []
+  }
+}

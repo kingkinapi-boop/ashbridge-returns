@@ -1,0 +1,96 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Danforth Cleaning Co. Ltd. (Test)",
+    "business_number": "404759750",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "unsure",
+    "incorporation_date": "2015-10-05",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "quarterly",
+    "hst_basis": "regular",
+    "books_kept_by": "the owner, from bank downloads"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "404759750RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "404759750RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Rosa Ferreira (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/harbourline-chequing-4460.csv",
+      "institution": "C: Harbourline Credit Union (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-business-card-8815.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "hst", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 0,
+    "note": "The owner says her husband helps with the cleaning and she pays him every second Friday."
+  },
+  "hst": {
+    "basis": "regular",
+    "frequency": "quarterly",
+    "note": "Two returns filed late this year."
+  },
+  "vehicle": {
+    "description": "SUV bought March 2025",
+    "business_use_percent": null,
+    "note": "Client is not sure of the business share; used for client visits and family."
+  },
+  "spouse": {
+    "name": "Carlos Ferreira (Test)",
+    "paid_by_company": true,
+    "note": "Paid $2,000 every two weeks; no payroll account used."
+  },
+  "client_notes": ["The bank sent me the file in pieces. I think May is missing and the first page has last year's December on it.", "My husband Carlos helps us and I pay him $2,000 every two weeks.", "The camp in July was for the kids. The groceries and the family phone plan go through the business account because it is easier.", "I bought an SUV in March for visiting customers."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-12-31",
+    "accounts": [
+      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":39021.82,"credit":0},
+      {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":9800,"credit":0},
+      {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"gifiName":"Accumulated amortization of machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":0,"credit":5880},
+      {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":1087.1},
+      {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":3120.4},
+      {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":38634.32}
+    ],
+    "ucc": [
+      {
+        "class": "8",
+        "ucc": 2940,
+        "note": "made-up"
+      }
+    ]
+  }
+}

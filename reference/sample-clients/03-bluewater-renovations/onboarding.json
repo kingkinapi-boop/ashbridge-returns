@@ -1,0 +1,157 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Bluewater Renovations Inc. (Test)",
+    "business_number": "413840162",
+    "financial_year_end": "2025-06-30",
+    "fiscal_year_start": "2024-07-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2017-06-05",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "quarterly",
+    "hst_basis": "regular",
+    "books_kept_by": "client with a part-time bookkeeper"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "413840162RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "413840162RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Sarah Kowalski (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/harbourline-chequing-2287.csv",
+      "institution": "C: Harbourline Credit Union (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-business-card-9034.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "hst", "payroll", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 2,
+    "owner_on_payroll": true,
+    "pay": "owner monthly; two employees every two weeks",
+    "workers_comp": "WSIB, quarterly"
+  },
+  "hst": {
+    "basis": "regular",
+    "frequency": "quarterly",
+    "note": "The return for the quarter ending 30 Jun 2025 is filed 31 Jul 2025, after year end."
+  },
+  "payroll": {
+    "note": "Simulated figures. Runs cover calendar 2024 and 2025; remittances are on the 15th of the following month.",
+    "by_month": [
+      {"month":"2024-01","runs":5,"gross":14320,"employee_cpp":802.65,"employee_ei":237.71,"income_tax":2754.95,"employer_cpp":802.65,"employer_ei":332.79,"remittance_due":4930.75,"remittance_date":"2024-02-15"},
+      {"month":"2024-02","runs":5,"gross":13975.5,"employee_cpp":782.15,"employee_ei":232,"income_tax":2636.56,"employer_cpp":782.15,"employer_ei":324.81,"remittance_due":4757.67,"remittance_date":"2024-03-15"},
+      {"month":"2024-03","runs":7,"gross":19016.5,"employee_cpp":1066.07,"employee_ei":315.67,"income_tax":3655.3,"employer_cpp":1066.07,"employer_ei":441.94,"remittance_due":6545.05,"remittance_date":"2024-04-15"},
+      {"month":"2024-04","runs":5,"gross":14643,"employee_cpp":821.87,"employee_ei":243.08,"income_tax":2857.72,"employer_cpp":821.87,"employer_ei":340.31,"remittance_due":5084.85,"remittance_date":"2024-05-15"},
+      {"month":"2024-05","runs":5,"gross":14715.5,"employee_cpp":826.19,"employee_ei":244.27,"income_tax":2882.74,"employer_cpp":826.19,"employer_ei":341.98,"remittance_due":5121.37,"remittance_date":"2024-06-17"},
+      {"month":"2024-06","runs":5,"gross":14206,"employee_cpp":795.86,"employee_ei":235.82,"income_tax":2709.87,"employer_cpp":795.86,"employer_ei":330.14,"remittance_due":4867.55,"remittance_date":"2024-07-15"},
+      {"month":"2024-07","runs":5,"gross":14464,"employee_cpp":811.22,"employee_ei":240.1,"income_tax":2795.45,"employer_cpp":811.22,"employer_ei":336.15,"remittance_due":4994.14,"remittance_date":"2024-08-15"},
+      {"month":"2024-08","runs":7,"gross":19117,"employee_cpp":1072.05,"employee_ei":317.34,"income_tax":3698.46,"employer_cpp":1072.05,"employer_ei":444.28,"remittance_due":6604.18,"remittance_date":"2024-09-16"},
+      {"month":"2024-09","runs":5,"gross":14560.5,"employee_cpp":816.96,"employee_ei":241.71,"income_tax":2829.15,"employer_cpp":816.96,"employer_ei":338.4,"remittance_due":5043.18,"remittance_date":"2024-10-15"},
+      {"month":"2024-10","runs":5,"gross":14585,"employee_cpp":818.42,"employee_ei":242.11,"income_tax":2844.47,"employer_cpp":818.42,"employer_ei":338.95,"remittance_due":5062.37,"remittance_date":"2024-11-15"},
+      {"month":"2024-11","runs":5,"gross":14474.5,"employee_cpp":811.85,"employee_ei":240.28,"income_tax":2804.26,"employer_cpp":811.85,"employer_ei":336.39,"remittance_due":5004.63,"remittance_date":"2024-12-16"},
+      {"month":"2024-12","runs":5,"gross":14219.5,"employee_cpp":796.67,"employee_ei":189.56,"income_tax":2712.23,"employer_cpp":796.67,"employer_ei":265.39,"remittance_due":4760.52,"remittance_date":"2025-01-15"},
+      {"month":"2025-01","runs":7,"gross":18882.5,"employee_cpp":1058.11,"employee_ei":309.67,"income_tax":3612.57,"employer_cpp":1058.11,"employer_ei":433.54,"remittance_due":6472,"remittance_date":"2025-02-17"},
+      {"month":"2025-02","runs":5,"gross":14447,"employee_cpp":810.2,"employee_ei":236.94,"income_tax":2793.38,"employer_cpp":810.2,"employer_ei":331.71,"remittance_due":4982.43,"remittance_date":"2025-03-17"},
+      {"month":"2025-03","runs":5,"gross":14691.5,"employee_cpp":824.75,"employee_ei":240.95,"income_tax":2875.55,"employer_cpp":824.75,"employer_ei":337.32,"remittance_due":5103.32,"remittance_date":"2025-04-15"},
+      {"month":"2025-04","runs":5,"gross":14691.5,"employee_cpp":824.76,"employee_ei":240.94,"income_tax":2879.76,"employer_cpp":824.76,"employer_ei":337.31,"remittance_due":5107.53,"remittance_date":"2025-05-15"},
+      {"month":"2025-05","runs":5,"gross":14753.5,"employee_cpp":828.44,"employee_ei":241.96,"income_tax":2901.47,"employer_cpp":828.44,"employer_ei":338.74,"remittance_due":5139.05,"remittance_date":"2025-06-16"},
+      {"month":"2025-06","runs":5,"gross":14633,"employee_cpp":821.27,"employee_ei":239.98,"income_tax":2856.42,"employer_cpp":821.27,"employer_ei":335.97,"remittance_due":5074.91,"remittance_date":"2025-07-15"},
+      {"month":"2025-07","runs":5,"gross":14516,"employee_cpp":814.31,"employee_ei":238.08,"income_tax":2816.17,"employer_cpp":814.31,"employer_ei":333.3,"remittance_due":5016.17,"remittance_date":"2025-08-15"},
+      {"month":"2025-08","runs":7,"gross":19546.5,"employee_cpp":1097.6,"employee_ei":320.55,"income_tax":3832.63,"employer_cpp":1097.6,"employer_ei":448.76,"remittance_due":6797.14,"remittance_date":"2025-09-15"},
+      {"month":"2025-09","runs":5,"gross":14588.5,"employee_cpp":818.63,"employee_ei":239.25,"income_tax":2846.57,"employer_cpp":818.63,"employer_ei":334.95,"remittance_due":5058.03,"remittance_date":"2025-10-15"},
+      {"month":"2025-10","runs":5,"gross":14805,"employee_cpp":831.51,"employee_ei":242.8,"income_tax":2914.51,"employer_cpp":831.51,"employer_ei":339.91,"remittance_due":5160.24,"remittance_date":"2025-11-17"},
+      {"month":"2025-11","runs":5,"gross":14536.5,"employee_cpp":815.53,"employee_ei":238.4,"income_tax":2822.77,"employer_cpp":815.53,"employer_ei":333.75,"remittance_due":5025.98,"remittance_date":"2025-12-15"},
+      {"month":"2025-12","runs":6,"gross":39488,"employee_cpp":1523.95,"employee_ei":232.69,"income_tax":9552.34,"employer_cpp":1523.95,"employer_ei":325.76,"remittance_due":13158.69,"remittance_date":"2026-01-15"}
+    ],
+    "t4_summaries": [
+      {
+        "year": 2024,
+        "slips": 3,
+        "totalEmploymentIncome": 182297,
+        "employeeCpp": 10221.96,
+        "employeeSecondCpp": 0,
+        "employeeEi": 2979.65,
+        "taxDeducted": 35181.16,
+        "employerCpp": 10221.96,
+        "employerEi": 4171.53,
+        "remittancesDueForTheYear": 62776.26
+      },
+      {
+        "year": 2025,
+        "slips": 3,
+        "totalEmploymentIncome": 209579.5,
+        "employeeCpp": 10673.06,
+        "employeeSecondCpp": 396,
+        "employeeEi": 3022.21,
+        "taxDeducted": 42704.14,
+        "employerCpp": 11069.06,
+        "employerEi": 4231.02,
+        "remittancesDueForTheYear": 72095.49
+      }
+    ]
+  },
+  "owner_bonus": {
+    "declared_on": "2025-06-30",
+    "amount": 25000,
+    "paid_on": "2025-12-28",
+    "resolution_on_file": true,
+    "note": "Paid by payroll with deductions; on the 2025 T4."
+  },
+  "vehicle": {
+    "description": "pickup truck bought 15 Sep 2024",
+    "business_use_percent": 100,
+    "note": "Client says work use only."
+  },
+  "client_notes": ["Sarah: I declared a $25,000 bonus at year end and paid it on 28 December.", "A customer paid $15,000 in June for a kitchen we start in August.", "The truck is only for the business. I bought a table saw in February.", "I pay WSIB every quarter. Most electrical, plumbing and drywall is done by subcontractors."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-06-30",
+    "accounts": [
+      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":8686.05,"credit":0},
+      {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":24600,"credit":0},
+      {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"gifiName":"Accumulated amortization of machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":0,"credit":12300},
+      {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":1475.27},
+      {"account":"2040","name":"Payroll deductions payable (CPP, EI, employer share)","gifi":2627,"gifiName":"Employee deductions payable","gifiStatus":"settled","debit":0,"credit":2157.68},
+      {"account":"2041","name":"Income tax withheld payable","gifi":2628,"gifiName":"Withholding taxes payable","gifiStatus":"confirm","note":"withholding taxes payable is worded for non-residents too","debit":0,"credit":2709.87},
+      {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":9412.55},
+      {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":5130.68}
+    ],
+    "ucc": [
+      {
+        "class": "8",
+        "ucc": 9840,
+        "note": "brought forward from last year, made-up figure"
+      }
+    ]
+  }
+}

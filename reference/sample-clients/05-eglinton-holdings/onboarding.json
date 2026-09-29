@@ -1,0 +1,110 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Eglinton Holdings Inc. (Test)",
+    "business_number": "290325330",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2016-09-02",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": null,
+    "hst_basis": null,
+    "books_kept_by": "accountant"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "290325330RC0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Daniel Okafor (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/lakeview-chequing-3318.csv",
+      "institution": "A: Lakeview Bank (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/crestview-brokerage-9051.csv",
+      "institution": "Crestview Investing (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "bookkeeping"],
+  "related_entities": [
+    {
+      "entity_role": "subsidiary",
+      "entity_name": "Eglinton Retail Ltd. (Test)",
+      "ownership_percent": 100,
+      "note": "client 06 in this sample set"
+    }
+  ],
+  "staff": {
+    "employees": 0,
+    "note": "No payroll."
+  },
+  "hst": {
+    "registered": false
+  },
+  "business_limit": {
+    "client_statement": "Holdco keeps $100,000 of the business limit",
+    "allocated_to_this_corporation": 100000,
+    "allocated_to_related_corporations": null,
+    "note": "The subsidiary's own onboarding allocates all $500,000 to itself."
+  },
+  "capital_dividend": {
+    "paid_on": "2025-11-20",
+    "amount": 30000,
+    "election_filed": false,
+    "note": "We did not file anything with CRA for this one."
+  },
+  "declared_dividends": [
+    {
+      "declared_on": "2025-12-20",
+      "amount": 25000,
+      "kind": "eligible",
+      "designated_eligible": true,
+      "resolution_on_file": true
+    }
+  ],
+  "grip": {
+    "opening_balance": 3000,
+    "source": "client note from last year's return, not checked"
+  },
+  "investments_held": {
+    "term_deposits_gic": 200000,
+    "listed_shares_and_etf_at_cost": 520000,
+    "investment_in_subsidiary_at_cost": 1000
+  },
+  "client_notes": ["The retail company paid me two dividends up to Holdco. I paid $30,000 to myself in November as a capital dividend; no forms were filed.", "On 20 December I took $25,000 as an eligible dividend.", "Holdco keeps $100,000 of the small business limit."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-12-31",
+    "accounts": [
+      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":78539.01,"credit":0},
+      {"account":"1020","name":"Brokerage cash","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"confirm","note":"cash at a broker: 1002 or 1001, guide does not settle","debit":3203.14,"credit":0},
+      {"account":"1310","name":"Term deposits (GICs)","gifi":1181,"gifiName":"Canadian term deposits","gifiStatus":"settled","debit":200000,"credit":0},
+      {"account":"1320","name":"Investments: listed shares and ETF units (at cost)","gifi":2308,"gifiName":"Equity securities","gifiStatus":"confirm","note":"short-term (1182) or long-term (2308) is a presentation choice","debit":520000,"credit":0},
+      {"account":"1340","name":"Investment in Eglinton Retail Ltd. (Test), at cost","gifi":2242,"gifiName":"Shares in Canadian related corporations","gifiStatus":"settled","debit":1000,"credit":0},
+      {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":802642.15}
+    ],
+    "ucc": []
+  }
+}

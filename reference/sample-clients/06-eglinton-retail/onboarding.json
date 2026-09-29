@@ -1,0 +1,133 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Eglinton Retail Ltd. (Test)",
+    "business_number": "332698207",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2018-05-14",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "quarterly",
+    "hst_basis": "regular",
+    "books_kept_by": "accounting firm (Cedar and Lee)"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "332698207RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "332698207RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Eglinton Holdings Inc. (Test)",
+      "role": "owner",
+      "holder_kind": "corporation",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/maplestone-chequing-cad-1176.csv",
+      "institution": "B: Maplestone Bank (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/maplestone-chequing-usd-1183.csv",
+      "institution": "B: Maplestone Bank (Test) chequing",
+      "currency": "USD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-business-card-5527.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "hst", "bookkeeping"],
+  "related_entities": [
+    {
+      "entity_role": "parent",
+      "entity_name": "Eglinton Holdings Inc. (Test)",
+      "ownership_percent": 100,
+      "note": "client 05 in this sample set"
+    }
+  ],
+  "staff": {
+    "employees": 0,
+    "note": "Fulfilment is outsourced; no payroll."
+  },
+  "hst": {
+    "basis": "regular",
+    "frequency": "quarterly",
+    "note": "Canadian sales taxed at 13%; US sales zero-rated."
+  },
+  "business_limit": {
+    "allocated_to_this_corporation": 500000,
+    "note": "The whole business limit goes to this company."
+  },
+  "inventory": {
+    "opening_count_value": 42000,
+    "closing_count_value": 51500,
+    "count_date": "2025-12-31",
+    "method": "physical count at cost"
+  },
+  "fx": {
+    "usd_cad_year_end": 1.39,
+    "note": "test rate, made up",
+    "usd_cad_prior_year_end": 1.438
+  },
+  "sales_channels": [
+    {
+      "channel": "Shopify store",
+      "currency": "CAD",
+      "hst": "charged 13%"
+    },
+    {
+      "channel": "Stripe checkout for US customers",
+      "currency": "USD",
+      "hst": "zero-rated export"
+    }
+  ],
+  "declared_dividends": [
+    {
+      "declared_on": "2025-06-30",
+      "amount": 60000,
+      "kind": "non-eligible",
+      "resolution_on_file": true
+    },
+    {
+      "declared_on": "2025-12-15",
+      "amount": 40000,
+      "kind": "non-eligible",
+      "resolution_on_file": true
+    }
+  ],
+  "client_notes": ["Twice a week Shopify sends a payout, and Stripe pays our US sales into the US dollar account.", "We counted stock on 31 December: $51,500.", "The whole small business limit should go to this company."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-12-31",
+    "accounts": [
+      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":13708.94,"credit":0},
+      {"account":"1015","name":"Chequing (USD, held in CAD at book rates)","gifi":1003,"gifiName":"Deposits in Canadian banks and institutions - Foreign currency","gifiStatus":"settled","debit":35950,"credit":0},
+      {"account":"1150","name":"Inventory","gifi":1121,"gifiName":"Inventory of goods for sale","gifiStatus":"settled","debit":42000,"credit":0},
+      {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":462.49},
+      {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":6234.1},
+      {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":1000},
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":83962.35}
+    ],
+    "ucc": []
+  }
+}

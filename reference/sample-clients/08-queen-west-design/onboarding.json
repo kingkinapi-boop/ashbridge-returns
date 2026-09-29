@@ -1,0 +1,200 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Queen West Design Studio Inc. (Test)",
+    "business_number": "706169250",
+    "financial_year_end": "2025-09-30",
+    "fiscal_year_start": "2024-10-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2020-01-13",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "annual",
+    "hst_basis": "regular",
+    "books_kept_by": "part-time bookkeeper"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "706169250RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "706169250RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Amir Rahimi (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/lakeview-chequing-8102.csv",
+      "institution": "A: Lakeview Bank (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/lakeview-chequing-usd-8119.csv",
+      "institution": "A: Lakeview Bank (Test) chequing",
+      "currency": "USD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-business-card-6650.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-personal-card-1846.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "hst", "payroll", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 1,
+    "owner_on_payroll": true,
+    "pay": "owner monthly, one designer every two weeks"
+  },
+  "hst": {
+    "basis": "regular",
+    "frequency": "annual",
+    "instalments": "quarterly, $1,500.00 each",
+    "note": "Annual return is due three months after year end."
+  },
+  "payroll": {
+    "note": "Simulated figures; runs cover calendar 2024 and 2025.",
+    "by_month": [
+      {"month":"2024-01","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":179.28,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":251,"remittance_due":3909.54,"remittance_date":"2024-02-15"},
+      {"month":"2024-02","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":179.28,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":251,"remittance_due":3909.54,"remittance_date":"2024-03-15"},
+      {"month":"2024-03","runs":4,"gross":13200,"employee_cpp":744.02,"employee_ei":219.12,"income_tax":2731.2,"employer_cpp":744.02,"employer_ei":306.78,"remittance_due":4745.14,"remittance_date":"2024-04-15"},
+      {"month":"2024-04","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":179.28,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":251,"remittance_due":3909.54,"remittance_date":"2024-05-15"},
+      {"month":"2024-05","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":179.28,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":251,"remittance_due":3909.54,"remittance_date":"2024-06-17"},
+      {"month":"2024-06","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":179.28,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":251,"remittance_due":3909.54,"remittance_date":"2024-07-15"},
+      {"month":"2024-07","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":179.28,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":251,"remittance_due":3909.54,"remittance_date":"2024-08-15"},
+      {"month":"2024-08","runs":4,"gross":13200,"employee_cpp":744.02,"employee_ei":219.12,"income_tax":2731.2,"employer_cpp":744.02,"employer_ei":306.78,"remittance_due":4745.14,"remittance_date":"2024-09-16"},
+      {"month":"2024-09","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":179.28,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":251,"remittance_due":3909.54,"remittance_date":"2024-10-15"},
+      {"month":"2024-10","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":179.28,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":251,"remittance_due":3909.54,"remittance_date":"2024-11-15"},
+      {"month":"2024-11","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":132.8,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":185.93,"remittance_due":3797.99,"remittance_date":"2024-12-16"},
+      {"month":"2024-12","runs":3,"gross":10800,"employee_cpp":540.93,"employee_ei":79.68,"income_tax":2260.8,"employer_cpp":540.93,"employer_ei":111.56,"remittance_due":3533.9,"remittance_date":"2025-01-15"},
+      {"month":"2025-01","runs":4,"gross":13200,"employee_cpp":744.02,"employee_ei":216.48,"income_tax":2731.2,"employer_cpp":744.02,"employer_ei":303.06,"remittance_due":4738.78,"remittance_date":"2025-02-17"},
+      {"month":"2025-02","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":177.12,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":247.96,"remittance_due":3904.34,"remittance_date":"2025-03-17"},
+      {"month":"2025-03","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":177.12,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":247.96,"remittance_due":3904.34,"remittance_date":"2025-04-15"},
+      {"month":"2025-04","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":177.12,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":247.96,"remittance_due":3904.34,"remittance_date":"2025-05-15"},
+      {"month":"2025-05","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":177.12,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":247.96,"remittance_due":3904.34,"remittance_date":"2025-06-16"},
+      {"month":"2025-06","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":177.12,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":247.96,"remittance_due":3904.34,"remittance_date":"2025-07-15"},
+      {"month":"2025-07","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":177.12,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":247.96,"remittance_due":3904.34,"remittance_date":"2025-08-15"},
+      {"month":"2025-08","runs":4,"gross":13200,"employee_cpp":744.02,"employee_ei":216.48,"income_tax":2731.2,"employer_cpp":744.02,"employer_ei":303.06,"remittance_due":4738.78,"remittance_date":"2025-09-15"},
+      {"month":"2025-09","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":177.12,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":247.96,"remittance_due":3904.34,"remittance_date":"2025-10-15"},
+      {"month":"2025-10","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":177.12,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":247.96,"remittance_due":3904.34,"remittance_date":"2025-11-17"},
+      {"month":"2025-11","runs":3,"gross":10800,"employee_cpp":609.23,"employee_ei":172.2,"income_tax":2260.8,"employer_cpp":609.23,"employer_ei":241.07,"remittance_due":3892.53,"remittance_date":"2025-12-15"},
+      {"month":"2025-12","runs":3,"gross":10800,"employee_cpp":595.53,"employee_ei":78.72,"income_tax":2260.8,"employer_cpp":595.53,"employer_ei":110.2,"remittance_due":3640.78,"remittance_date":"2026-01-15"}
+    ],
+    "t4_summaries": [
+      {
+        "year": 2024,
+        "slips": 2,
+        "totalEmploymentIncome": 134400,
+        "employeeCpp": 7372.04,
+        "employeeSecondCpp": 140,
+        "employeeEi": 2084.96,
+        "taxDeducted": 28070.4,
+        "employerCpp": 7512.04,
+        "employerEi": 2919.05,
+        "remittancesDueForTheYear": 48098.49
+      },
+      {
+        "year": 2025,
+        "slips": 2,
+        "totalEmploymentIncome": 134400,
+        "employeeCpp": 7538.64,
+        "employeeSecondCpp": 28,
+        "employeeEi": 2100.84,
+        "taxDeducted": 28070.4,
+        "employerCpp": 7566.64,
+        "employerEi": 2941.07,
+        "remittancesDueForTheYear": 48245.59
+      }
+    ]
+  },
+  "fx": {
+    "usd_cad_year_end": 1.39,
+    "note": "test rate, made up",
+    "usd_cad_prior_year_end": 1.35
+  },
+  "personal_card_business_items": {
+    "note": "Five software subscriptions the owner pays on his personal card every month for the business.",
+    "subscriptions": [
+      {
+        "merchant": "ADOBE *CREATIVE CLOUD",
+        "monthly_amount": 83.99,
+        "months": 12
+      },
+      {
+        "merchant": "FIGMA",
+        "monthly_amount": 22.6,
+        "months": 12
+      },
+      {
+        "merchant": "NOTION LABS",
+        "monthly_amount": 11.3,
+        "months": 12
+      },
+      {
+        "merchant": "DROPBOX",
+        "monthly_amount": 16.95,
+        "months": 12
+      },
+      {
+        "merchant": "SLACK",
+        "monthly_amount": 11.3,
+        "months": 12
+      }
+    ],
+    "total_for_the_year": 1753.68
+  },
+  "client_notes": ["One client, Bayview Print and Pack, went bankrupt in the summer. The invoice from February was never paid; I wrote it off in September.", "Our accountant bills the year-end work after the year ends: $3,500.", "I put my design software on my own card. The list is above.", "I paid for a conference in the US in April."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-09-30",
+    "accounts": [
+      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":9325.2,"credit":0},
+      {"account":"1015","name":"Chequing (USD, held in CAD at book rates)","gifi":1003,"gifiName":"Deposits in Canadian banks and institutions - Foreign currency","gifiStatus":"settled","debit":20250,"credit":0},
+      {"account":"1200","name":"Prepaid expenses","gifi":1484,"gifiName":"Prepaid expenses","gifiStatus":"settled","debit":1320,"credit":0},
+      {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":8600,"credit":0},
+      {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"gifiName":"Accumulated amortization of machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":0,"credit":5160},
+      {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":758.04},
+      {"account":"2040","name":"Payroll deductions payable (CPP, EI, employer share)","gifi":2627,"gifiName":"Employee deductions payable","gifiStatus":"settled","debit":0,"credit":1648.74},
+      {"account":"2041","name":"Income tax withheld payable","gifi":2628,"gifiName":"Withholding taxes payable","gifiStatus":"confirm","note":"withholding taxes payable is worded for non-residents too","debit":0,"credit":2260.8},
+      {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":6340.55},
+      {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":23227.07}
+    ],
+    "ucc": [
+      {
+        "class": "8",
+        "ucc": 3440,
+        "note": "made-up"
+      },
+      {
+        "class": "50",
+        "ucc": 1210,
+        "note": "made-up"
+      }
+    ]
+  }
+}

@@ -1,0 +1,412 @@
+{
+  "client": "05",
+  "name": "Eglinton Holdings Inc. (Test)",
+  "fiscalYear": {
+    "start": "2025-01-01",
+    "end": "2025-12-31",
+    "days": 365
+  },
+  "generator": {
+    "file": "generate.mjs",
+    "seed": 1105
+  },
+  "idRule": "id = <client>-<TAG>-<YYYY>-<MM>-<seq>. TAG names the account (CHQ chequing, USD US-dollar chequing, BCD business card, PCD personal card, BRK brokerage). YYYY-MM is the month of the row date. seq is the 1-based position of the row among that account and month, in file order (header lines do not count). Rows missing from an export get the next numbers of their month.",
+  "amountConvention": "amount is the cash effect on the company account: money in is positive, money out is negative. On a card a charge is negative and a payment positive (the card CSV shows the opposite sign). post lines list the coded entry: dr and cr in dollars, the last line is the bank or card account itself.",
+  "postingCurrency": "CAD: every post line, adjusting entry and trial balance figure is in Canadian dollars; USD rows are posted at the monthly test rate in fx",
+  "accounts": [
+    {
+      "key": "CHQ",
+      "tag": "CHQ",
+      "layout": "A: Lakeview Bank (Test) chequing",
+      "role": "bank",
+      "currency": "CAD",
+      "file": "accounts/lakeview-chequing-3318.csv",
+      "qboFile": "qbo/lakeview-chequing-3318.csv",
+      "glAccount": "1010",
+      "openingBalance": 78539.01,
+      "closingBalance": 206767.21,
+      "balanceMeaning": "cash balance",
+      "rowsInExport": 56,
+      "rowsMissingFromExport": 0
+    },
+    {
+      "key": "BRK",
+      "tag": "BRK",
+      "layout": "Crestview Investing (Test)",
+      "role": "broker",
+      "currency": "CAD",
+      "file": "accounts/crestview-brokerage-9051.csv",
+      "qboFile": "qbo/crestview-brokerage-9051.csv",
+      "glAccount": "1020",
+      "openingBalance": 3203.14,
+      "closingBalance": 49023.76,
+      "balanceMeaning": "cash balance",
+      "rowsInExport": 34,
+      "rowsMissingFromExport": 0
+    }
+  ],
+  "transactions": [
+    {"id":"05-CHQ-2025-01-0001","acct":"CHQ","date":"2025-01-02","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":2,"qboLine":2,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-01-0002","acct":"CHQ","date":"2025-01-15","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":3,"qboLine":3,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-01-0003","acct":"CHQ","date":"2025-01-20","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":4,"qboLine":4,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-01-0004","acct":"CHQ","date":"2025-01-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":5,"qboLine":5,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-02-0001","acct":"CHQ","date":"2025-02-03","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":6,"qboLine":6,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-02-0002","acct":"CHQ","date":"2025-02-10","description":"TRANSFER TO CRESTVIEW INVESTING TEST","amount":-60000,"currency":"CAD","kind":"transfer","line":7,"qboLine":7,"account":"1020 Brokerage cash","accountNo":"1020","gifi":1002,"gifiStatus":"confirm","post":[{"a":"1020","dr":60000},{"a":"1010","cr":60000}],"pair":"05-BRK-2025-02-0001"},
+    {"id":"05-CHQ-2025-02-0003","acct":"CHQ","date":"2025-02-17","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":8,"qboLine":8,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-02-0004","acct":"CHQ","date":"2025-02-20","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":9,"qboLine":9,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-02-0005","acct":"CHQ","date":"2025-02-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":10,"qboLine":10,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-03-0001","acct":"CHQ","date":"2025-03-03","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":11,"qboLine":11,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-03-0002","acct":"CHQ","date":"2025-03-10","description":"ONLINE BILL PAYMENT ONTARIO ANNUAL RETURN FILING TEST","amount":-50,"currency":"CAD","kind":"expense","line":12,"qboLine":12,"account":"6080 Licences, dues and memberships","accountNo":"6080","gifi":8760,"gifiStatus":"settled","post":[{"a":"6080","dr":50},{"a":"1010","cr":50}]},
+    {"id":"05-CHQ-2025-03-0003","acct":"CHQ","date":"2025-03-17","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":13,"qboLine":13,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-03-0004","acct":"CHQ","date":"2025-03-20","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":14,"qboLine":14,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-03-0005","acct":"CHQ","date":"2025-03-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":15,"qboLine":15,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-04-0001","acct":"CHQ","date":"2025-04-02","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":16,"qboLine":16,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-04-0002","acct":"CHQ","date":"2025-04-15","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":17,"qboLine":17,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-04-0003","acct":"CHQ","date":"2025-04-21","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":18,"qboLine":18,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-04-0004","acct":"CHQ","date":"2025-04-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":19,"qboLine":19,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-05-0001","acct":"CHQ","date":"2025-05-02","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":20,"qboLine":20,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-05-0002","acct":"CHQ","date":"2025-05-15","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":21,"qboLine":21,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-05-0003","acct":"CHQ","date":"2025-05-20","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":22,"qboLine":22,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-05-0004","acct":"CHQ","date":"2025-05-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":23,"qboLine":23,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-06-0001","acct":"CHQ","date":"2025-06-02","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":24,"qboLine":24,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-06-0002","acct":"CHQ","date":"2025-06-16","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":25,"qboLine":25,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-06-0003","acct":"CHQ","date":"2025-06-20","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":26,"qboLine":26,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-06-0004","acct":"CHQ","date":"2025-06-30","description":"DEPOSIT EGLINTON RETAIL LTD TEST DIVIDEND","amount":60000,"currency":"CAD","kind":"dividend-received","line":27,"qboLine":27,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":60000},{"a":"1010","dr":60000}],"flags":["05-F05"]},
+    {"id":"05-CHQ-2025-06-0005","acct":"CHQ","date":"2025-06-30","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":28,"qboLine":28,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-07-0001","acct":"CHQ","date":"2025-07-02","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":29,"qboLine":29,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-07-0002","acct":"CHQ","date":"2025-07-15","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":30,"qboLine":30,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-07-0003","acct":"CHQ","date":"2025-07-21","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":31,"qboLine":31,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-07-0004","acct":"CHQ","date":"2025-07-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":32,"qboLine":32,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-08-0001","acct":"CHQ","date":"2025-08-04","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":33,"qboLine":33,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-08-0002","acct":"CHQ","date":"2025-08-15","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":34,"qboLine":34,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-08-0003","acct":"CHQ","date":"2025-08-20","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":35,"qboLine":35,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-08-0004","acct":"CHQ","date":"2025-08-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":36,"qboLine":36,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-09-0001","acct":"CHQ","date":"2025-09-02","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":37,"qboLine":37,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-09-0002","acct":"CHQ","date":"2025-09-15","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":38,"qboLine":38,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-09-0003","acct":"CHQ","date":"2025-09-16","description":"TRANSFER FROM CRESTVIEW INVESTING TEST","amount":150000,"currency":"CAD","kind":"transfer","line":39,"qboLine":39,"account":"1020 Brokerage cash","accountNo":"1020","gifi":1002,"gifiStatus":"confirm","mirror":true,"pair":"05-BRK-2025-09-0003","postedVia":"05-BRK-2025-09-0003"},
+    {"id":"05-CHQ-2025-09-0004","acct":"CHQ","date":"2025-09-22","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":40,"qboLine":40,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-09-0005","acct":"CHQ","date":"2025-09-29","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":41,"qboLine":41,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-10-0001","acct":"CHQ","date":"2025-10-02","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":42,"qboLine":42,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-10-0002","acct":"CHQ","date":"2025-10-15","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":43,"qboLine":43,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-10-0003","acct":"CHQ","date":"2025-10-20","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":44,"qboLine":44,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-10-0004","acct":"CHQ","date":"2025-10-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":45,"qboLine":45,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-11-0001","acct":"CHQ","date":"2025-11-03","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":46,"qboLine":46,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-11-0002","acct":"CHQ","date":"2025-11-12","description":"ONLINE BILL PAYMENT BOUCHER HALL LLP TEST","amount":-1695,"currency":"CAD","kind":"expense","line":47,"qboLine":47,"account":"6105 Legal fees","accountNo":"6105","gifi":8861,"gifiStatus":"settled","post":[{"a":"6105","dr":1695},{"a":"1010","cr":1695}]},
+    {"id":"05-CHQ-2025-11-0003","acct":"CHQ","date":"2025-11-17","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":48,"qboLine":48,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-11-0004","acct":"CHQ","date":"2025-11-20","description":"E-TRANSFER SENT DANIEL OKAFOR TEST","amount":-30000,"currency":"CAD","kind":"capital-dividend","line":49,"qboLine":49,"account":"3700 Dividends declared","accountNo":"3700","gifi":3700,"gifiStatus":"settled","post":[{"a":"3700","dr":30000},{"a":"1010","cr":30000}],"flags":["05-F02"],"notes":["capital dividend of $30,000.00; no election filed (onboarding)"]},
+    {"id":"05-CHQ-2025-11-0005","acct":"CHQ","date":"2025-11-20","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":50,"qboLine":50,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-11-0006","acct":"CHQ","date":"2025-11-28","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":51,"qboLine":51,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-12-0001","acct":"CHQ","date":"2025-12-02","description":"PRE-AUTH DEBIT ADDISON ACCOUNTING TEST INC","amount":-350,"currency":"CAD","kind":"expense","line":52,"qboLine":52,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":350},{"a":"1010","cr":350}]},
+    {"id":"05-CHQ-2025-12-0002","acct":"CHQ","date":"2025-12-15","description":"DEPOSIT EGLINTON RETAIL LTD TEST DIVIDEND","amount":40000,"currency":"CAD","kind":"dividend-received","line":53,"qboLine":53,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":40000},{"a":"1010","dr":40000}],"flags":["05-F05"]},
+    {"id":"05-CHQ-2025-12-0003","acct":"CHQ","date":"2025-12-15","description":"PRE-AUTH DEBIT MICROSOFT*365 MSBILL.INFO","amount":-16.95,"currency":"CAD","kind":"expense","line":54,"qboLine":54,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-CHQ-2025-12-0004","acct":"CHQ","date":"2025-12-20","description":"E-TRANSFER SENT DANIEL OKAFOR TEST","amount":-25000,"currency":"CAD","kind":"dividend","line":55,"qboLine":55,"account":"3700 Dividends declared","accountNo":"3700","gifi":3700,"gifiStatus":"settled","post":[{"a":"3700","dr":25000},{"a":"1010","cr":25000}],"flags":["05-F03"],"notes":["dividend of $25,000.00 designated eligible (onboarding)"]},
+    {"id":"05-CHQ-2025-12-0005","acct":"CHQ","date":"2025-12-22","description":"PRE-AUTH DEBIT INTUIT *QUICKBOOKS","amount":-35,"currency":"CAD","kind":"expense","line":56,"qboLine":56,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":35},{"a":"1010","cr":35}]},
+    {"id":"05-CHQ-2025-12-0006","acct":"CHQ","date":"2025-12-29","description":"MONTHLY ACCOUNT FEE","amount":-16.95,"currency":"CAD","kind":"expense","line":57,"qboLine":57,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":16.95},{"a":"1010","cr":16.95}]},
+    {"id":"05-BRK-2025-01-0001","acct":"BRK","date":"2025-01-27","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":2,"qboLine":2,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-02-0001","acct":"BRK","date":"2025-02-10","description":"DEPOSIT FROM CHEQUING LAKEVIEW BANK TEST","amount":60000,"currency":"CAD","kind":"transfer","line":3,"qboLine":3,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"05-CHQ-2025-02-0002","postedVia":"05-CHQ-2025-02-0002"},
+    {"id":"05-BRK-2025-02-0002","acct":"BRK","date":"2025-02-12","description":"BUY MAPLEGATE BANC TEST CORP","amount":-58900,"currency":"CAD","kind":"investment-purchase","line":4,"qboLine":4,"account":"1320 Investments: listed shares and ETF units (at cost)","accountNo":"1320","gifi":2308,"gifiStatus":"confirm","post":[{"a":"1320","dr":58900},{"a":"1020","cr":58900}]},
+    {"id":"05-BRK-2025-02-0003","acct":"BRK","date":"2025-02-12","description":"FEE TRADE COMMISSION CRESTVIEW INVESTING TEST","amount":-9.99,"currency":"CAD","kind":"expense","line":5,"qboLine":5,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":9.99},{"a":"1020","cr":9.99}]},
+    {"id":"05-BRK-2025-02-0004","acct":"BRK","date":"2025-02-27","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":6,"qboLine":6,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-03-0001","acct":"BRK","date":"2025-03-27","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":7,"qboLine":7,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-03-0002","acct":"BRK","date":"2025-03-28","description":"DIVIDEND MAPLEGATE BANC TEST CORP","amount":1150,"currency":"CAD","kind":"dividend-received-portfolio","line":8,"qboLine":8,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":1150},{"a":"1020","dr":1150}]},
+    {"id":"05-BRK-2025-03-0003","acct":"BRK","date":"2025-03-28","description":"DIVIDEND NORTHERN POWER UTILITIES TEST CORP","amount":980,"currency":"CAD","kind":"dividend-received-portfolio","line":9,"qboLine":9,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":980},{"a":"1020","dr":980}]},
+    {"id":"05-BRK-2025-03-0004","acct":"BRK","date":"2025-03-28","description":"DIVIDEND CEDARWOOD TELECOM TEST CORP","amount":820,"currency":"CAD","kind":"dividend-received-portfolio","line":10,"qboLine":10,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":820},{"a":"1020","dr":820}]},
+    {"id":"05-BRK-2025-03-0005","acct":"BRK","date":"2025-03-31","description":"INTEREST GIC LAKEVIEW BANK TEST","amount":2000,"currency":"CAD","kind":"interest-received","line":11,"qboLine":11,"account":"4200 Interest income","accountNo":"4200","gifi":8094,"gifiStatus":"settled","post":[{"a":"4200","cr":2000},{"a":"1020","dr":2000}],"flags":["05-F01"]},
+    {"id":"05-BRK-2025-04-0001","acct":"BRK","date":"2025-04-28","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":12,"qboLine":12,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-05-0001","acct":"BRK","date":"2025-05-27","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":13,"qboLine":13,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-06-0001","acct":"BRK","date":"2025-06-27","description":"DIVIDEND MAPLEGATE BANC TEST CORP","amount":1150,"currency":"CAD","kind":"dividend-received-portfolio","line":14,"qboLine":14,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":1150},{"a":"1020","dr":1150}]},
+    {"id":"05-BRK-2025-06-0002","acct":"BRK","date":"2025-06-27","description":"DIVIDEND NORTHERN POWER UTILITIES TEST CORP","amount":980,"currency":"CAD","kind":"dividend-received-portfolio","line":15,"qboLine":15,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":980},{"a":"1020","dr":980}]},
+    {"id":"05-BRK-2025-06-0003","acct":"BRK","date":"2025-06-27","description":"DIVIDEND CEDARWOOD TELECOM TEST CORP","amount":820,"currency":"CAD","kind":"dividend-received-portfolio","line":16,"qboLine":16,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":820},{"a":"1020","dr":820}]},
+    {"id":"05-BRK-2025-06-0004","acct":"BRK","date":"2025-06-27","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":17,"qboLine":17,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-06-0005","acct":"BRK","date":"2025-06-30","description":"INTEREST GIC LAKEVIEW BANK TEST","amount":2000,"currency":"CAD","kind":"interest-received","line":18,"qboLine":18,"account":"4200 Interest income","accountNo":"4200","gifi":8094,"gifiStatus":"settled","post":[{"a":"4200","cr":2000},{"a":"1020","dr":2000}],"flags":["05-F01"]},
+    {"id":"05-BRK-2025-07-0001","acct":"BRK","date":"2025-07-28","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":19,"qboLine":19,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-08-0001","acct":"BRK","date":"2025-08-27","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":20,"qboLine":20,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-09-0001","acct":"BRK","date":"2025-09-12","description":"SELL CRESTVIEW CDN DIVIDEND ETF TEST","amount":175000,"currency":"CAD","kind":"investment-sale","line":21,"qboLine":21,"account":"4220 Realized gain on sale of investments","accountNo":"4220","gifi":8211,"gifiStatus":"settled","post":[{"a":"1320","cr":85000},{"a":"4220","cr":90000},{"a":"1020","dr":175000}],"flags":["05-F01","05-F06"],"notes":["proceeds $175,000.00, cost $85,000.00, gain $90,000.00"]},
+    {"id":"05-BRK-2025-09-0002","acct":"BRK","date":"2025-09-12","description":"FEE TRADE COMMISSION CRESTVIEW INVESTING TEST","amount":-9.99,"currency":"CAD","kind":"expense","line":22,"qboLine":22,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":9.99},{"a":"1020","cr":9.99}]},
+    {"id":"05-BRK-2025-09-0003","acct":"BRK","date":"2025-09-16","description":"WITHDRAWAL TO CHEQUING LAKEVIEW BANK TEST","amount":-150000,"currency":"CAD","kind":"transfer","line":23,"qboLine":23,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","post":[{"a":"1010","dr":150000},{"a":"1020","cr":150000}],"pair":"05-CHQ-2025-09-0003"},
+    {"id":"05-BRK-2025-09-0004","acct":"BRK","date":"2025-09-26","description":"DIVIDEND MAPLEGATE BANC TEST CORP","amount":1150,"currency":"CAD","kind":"dividend-received-portfolio","line":24,"qboLine":24,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":1150},{"a":"1020","dr":1150}]},
+    {"id":"05-BRK-2025-09-0005","acct":"BRK","date":"2025-09-26","description":"DIVIDEND NORTHERN POWER UTILITIES TEST CORP","amount":980,"currency":"CAD","kind":"dividend-received-portfolio","line":25,"qboLine":25,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":980},{"a":"1020","dr":980}]},
+    {"id":"05-BRK-2025-09-0006","acct":"BRK","date":"2025-09-26","description":"DIVIDEND CEDARWOOD TELECOM TEST CORP","amount":820,"currency":"CAD","kind":"dividend-received-portfolio","line":26,"qboLine":26,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":820},{"a":"1020","dr":820}]},
+    {"id":"05-BRK-2025-09-0007","acct":"BRK","date":"2025-09-29","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":27,"qboLine":27,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-09-0008","acct":"BRK","date":"2025-09-30","description":"INTEREST GIC LAKEVIEW BANK TEST","amount":2000,"currency":"CAD","kind":"interest-received","line":28,"qboLine":28,"account":"4200 Interest income","accountNo":"4200","gifi":8094,"gifiStatus":"settled","post":[{"a":"4200","cr":2000},{"a":"1020","dr":2000}],"flags":["05-F01"]},
+    {"id":"05-BRK-2025-10-0001","acct":"BRK","date":"2025-10-27","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":29,"qboLine":29,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-11-0001","acct":"BRK","date":"2025-11-27","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":30,"qboLine":30,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-12-0001","acct":"BRK","date":"2025-12-29","description":"DIVIDEND MAPLEGATE BANC TEST CORP","amount":1150,"currency":"CAD","kind":"dividend-received-portfolio","line":31,"qboLine":31,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":1150},{"a":"1020","dr":1150}]},
+    {"id":"05-BRK-2025-12-0002","acct":"BRK","date":"2025-12-29","description":"DIVIDEND NORTHERN POWER UTILITIES TEST CORP","amount":980,"currency":"CAD","kind":"dividend-received-portfolio","line":32,"qboLine":32,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":980},{"a":"1020","dr":980}]},
+    {"id":"05-BRK-2025-12-0003","acct":"BRK","date":"2025-12-29","description":"DIVIDEND CEDARWOOD TELECOM TEST CORP","amount":820,"currency":"CAD","kind":"dividend-received-portfolio","line":33,"qboLine":33,"account":"4210 Dividend income","accountNo":"4210","gifi":8096,"gifiStatus":"settled","post":[{"a":"4210","cr":820},{"a":"1020","dr":820}]},
+    {"id":"05-BRK-2025-12-0004","acct":"BRK","date":"2025-12-29","description":"FEE ACCOUNT ADMIN FEE CRESTVIEW INVESTING TEST","amount":-4.95,"currency":"CAD","kind":"expense","line":34,"qboLine":34,"account":"6230 Brokerage fees","accountNo":"6230","gifi":8869,"gifiStatus":"settled","post":[{"a":"6230","dr":4.95},{"a":"1020","cr":4.95}]},
+    {"id":"05-BRK-2025-12-0005","acct":"BRK","date":"2025-12-31","description":"INTEREST GIC LAKEVIEW BANK TEST","amount":2000,"currency":"CAD","kind":"interest-received","line":35,"qboLine":35,"account":"4200 Interest income","accountNo":"4200","gifi":8094,"gifiStatus":"settled","post":[{"a":"4200","cr":2000},{"a":"1020","dr":2000}],"flags":["05-F01"]}
+  ],
+  "statementBalances": {
+    "CHQ": [
+      {"month":"2025-01","opening":78539.01,"closing":78120.11,"exportActivity":-418.9,"rolls":true},
+      {"month":"2025-02","opening":78120.11,"closing":17701.21,"exportActivity":-60418.9,"rolls":true},
+      {"month":"2025-03","opening":17701.21,"closing":17232.31,"exportActivity":-468.9,"rolls":true},
+      {"month":"2025-04","opening":17232.31,"closing":16813.41,"exportActivity":-418.9,"rolls":true},
+      {"month":"2025-05","opening":16813.41,"closing":16394.51,"exportActivity":-418.9,"rolls":true},
+      {"month":"2025-06","opening":16394.51,"closing":75975.61,"exportActivity":59581.1,"rolls":true},
+      {"month":"2025-07","opening":75975.61,"closing":75556.71,"exportActivity":-418.9,"rolls":true},
+      {"month":"2025-08","opening":75556.71,"closing":75137.81,"exportActivity":-418.9,"rolls":true},
+      {"month":"2025-09","opening":75137.81,"closing":224718.91,"exportActivity":149581.1,"rolls":true},
+      {"month":"2025-10","opening":224718.91,"closing":224300.01,"exportActivity":-418.9,"rolls":true},
+      {"month":"2025-11","opening":224300.01,"closing":192186.11,"exportActivity":-32113.9,"rolls":true},
+      {"month":"2025-12","opening":192186.11,"closing":206767.21,"exportActivity":14581.1,"rolls":true}
+    ],
+    "BRK": [
+      {"month":"2025-01","opening":3203.14,"closing":3198.19,"exportActivity":-4.95,"rolls":true},
+      {"month":"2025-02","opening":3198.19,"closing":4283.25,"exportActivity":1085.06,"rolls":true},
+      {"month":"2025-03","opening":4283.25,"closing":9228.3,"exportActivity":4945.05,"rolls":true},
+      {"month":"2025-04","opening":9228.3,"closing":9223.35,"exportActivity":-4.95,"rolls":true},
+      {"month":"2025-05","opening":9223.35,"closing":9218.4,"exportActivity":-4.95,"rolls":true},
+      {"month":"2025-06","opening":9218.4,"closing":14163.45,"exportActivity":4945.05,"rolls":true},
+      {"month":"2025-07","opening":14163.45,"closing":14158.5,"exportActivity":-4.95,"rolls":true},
+      {"month":"2025-08","opening":14158.5,"closing":14153.55,"exportActivity":-4.95,"rolls":true},
+      {"month":"2025-09","opening":14153.55,"closing":44088.61,"exportActivity":29935.06,"rolls":true},
+      {"month":"2025-10","opening":44088.61,"closing":44083.66,"exportActivity":-4.95,"rolls":true},
+      {"month":"2025-11","opening":44083.66,"closing":44078.71,"exportActivity":-4.95,"rolls":true},
+      {"month":"2025-12","opening":44078.71,"closing":49023.76,"exportActivity":4945.05,"rolls":true}
+    ]
+  },
+  "adjustingEntries": [],
+  "trialBalance": {
+    "basis": "debits and credits in dollars; unadjusted = opening balances plus every coded transaction; adjusted = plus the adjusting entries; income tax is not booked (Taxprep computes it)",
+    "opening": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":78539.01,"credit":0},
+        {"account":"1020","name":"Brokerage cash","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"confirm","note":"cash at a broker: 1002 or 1001, guide does not settle","debit":3203.14,"credit":0},
+        {"account":"1310","name":"Term deposits (GICs)","gifi":1181,"gifiName":"Canadian term deposits","gifiStatus":"settled","debit":200000,"credit":0},
+        {"account":"1320","name":"Investments: listed shares and ETF units (at cost)","gifi":2308,"gifiName":"Equity securities","gifiStatus":"confirm","note":"short-term (1182) or long-term (2308) is a presentation choice","debit":520000,"credit":0},
+        {"account":"1340","name":"Investment in Eglinton Retail Ltd. (Test), at cost","gifi":2242,"gifiName":"Shares in Canadian related corporations","gifiStatus":"settled","debit":1000,"credit":0},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":802642.15}
+      ],
+      "totalDebit": 802742.15,
+      "totalCredit": 802742.15
+    },
+    "unadjusted": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":206767.21,"credit":0},
+        {"account":"1020","name":"Brokerage cash","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"confirm","note":"cash at a broker: 1002 or 1001, guide does not settle","debit":49023.76,"credit":0},
+        {"account":"1310","name":"Term deposits (GICs)","gifi":1181,"gifiName":"Canadian term deposits","gifiStatus":"settled","debit":200000,"credit":0},
+        {"account":"1320","name":"Investments: listed shares and ETF units (at cost)","gifi":2308,"gifiName":"Equity securities","gifiStatus":"confirm","note":"short-term (1182) or long-term (2308) is a presentation choice","debit":493900,"credit":0},
+        {"account":"1340","name":"Investment in Eglinton Retail Ltd. (Test), at cost","gifi":2242,"gifiName":"Shares in Canadian related corporations","gifiStatus":"settled","debit":1000,"credit":0},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":802642.15},
+        {"account":"3700","name":"Dividends declared","gifi":3700,"gifiName":"Dividends declared","gifiStatus":"settled","debit":55000,"credit":0},
+        {"account":"4200","name":"Interest income","gifi":8094,"gifiName":"Interest from other Canadian sources","gifiStatus":"settled","debit":0,"credit":8000},
+        {"account":"4210","name":"Dividend income","gifi":8096,"gifiName":"Dividends from Canadian sources","gifiStatus":"settled","debit":0,"credit":111800},
+        {"account":"4220","name":"Realized gain on sale of investments","gifi":8211,"gifiName":"Realized gains/losses on sale of investments","gifiStatus":"settled","debit":0,"credit":90000},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","debit":203.4,"credit":0},
+        {"account":"6080","name":"Licences, dues and memberships","gifi":8760,"gifiName":"Business taxes, licences, and memberships","gifiStatus":"settled","debit":50,"credit":0},
+        {"account":"6100","name":"Accounting fees","gifi":8862,"gifiName":"Accounting fees","gifiStatus":"settled","debit":4200,"credit":0},
+        {"account":"6105","name":"Legal fees","gifi":8861,"gifiName":"Legal fees","gifiStatus":"settled","debit":1695,"credit":0},
+        {"account":"6155","name":"Software and computer expenses","gifi":9150,"gifiName":"Computer-related expenses","gifiStatus":"settled","debit":623.4,"credit":0},
+        {"account":"6230","name":"Brokerage fees","gifi":8869,"gifiName":"Brokerage fees","gifiStatus":"settled","debit":79.38,"credit":0}
+      ],
+      "totalDebit": 1012542.15,
+      "totalCredit": 1012542.15
+    },
+    "adjusted": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":206767.21,"credit":0},
+        {"account":"1020","name":"Brokerage cash","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"confirm","note":"cash at a broker: 1002 or 1001, guide does not settle","debit":49023.76,"credit":0},
+        {"account":"1310","name":"Term deposits (GICs)","gifi":1181,"gifiName":"Canadian term deposits","gifiStatus":"settled","debit":200000,"credit":0},
+        {"account":"1320","name":"Investments: listed shares and ETF units (at cost)","gifi":2308,"gifiName":"Equity securities","gifiStatus":"confirm","note":"short-term (1182) or long-term (2308) is a presentation choice","debit":493900,"credit":0},
+        {"account":"1340","name":"Investment in Eglinton Retail Ltd. (Test), at cost","gifi":2242,"gifiName":"Shares in Canadian related corporations","gifiStatus":"settled","debit":1000,"credit":0},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":802642.15},
+        {"account":"3700","name":"Dividends declared","gifi":3700,"gifiName":"Dividends declared","gifiStatus":"settled","debit":55000,"credit":0},
+        {"account":"4200","name":"Interest income","gifi":8094,"gifiName":"Interest from other Canadian sources","gifiStatus":"settled","debit":0,"credit":8000},
+        {"account":"4210","name":"Dividend income","gifi":8096,"gifiName":"Dividends from Canadian sources","gifiStatus":"settled","debit":0,"credit":111800},
+        {"account":"4220","name":"Realized gain on sale of investments","gifi":8211,"gifiName":"Realized gains/losses on sale of investments","gifiStatus":"settled","debit":0,"credit":90000},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","debit":203.4,"credit":0},
+        {"account":"6080","name":"Licences, dues and memberships","gifi":8760,"gifiName":"Business taxes, licences, and memberships","gifiStatus":"settled","debit":50,"credit":0},
+        {"account":"6100","name":"Accounting fees","gifi":8862,"gifiName":"Accounting fees","gifiStatus":"settled","debit":4200,"credit":0},
+        {"account":"6105","name":"Legal fees","gifi":8861,"gifiName":"Legal fees","gifiStatus":"settled","debit":1695,"credit":0},
+        {"account":"6155","name":"Software and computer expenses","gifi":9150,"gifiName":"Computer-related expenses","gifiStatus":"settled","debit":623.4,"credit":0},
+        {"account":"6230","name":"Brokerage fees","gifi":8869,"gifiName":"Brokerage fees","gifiStatus":"settled","debit":79.38,"credit":0}
+      ],
+      "totalDebit": 1012542.15,
+      "totalCredit": 1012542.15
+    },
+    "netIncomeLossBeforeTax": 202948.82
+  },
+  "t2Inputs": {
+    "netIncomeLossPerBooksBeforeTax": 202948.82,
+    "schedule1": {
+      "addBacks": [
+        {
+          "item": "Taxable capital gain from Schedule 6",
+          "amount": 45000,
+          "reason": "half of the $90,000.00 gain (inclusion rate: confirm); Taxprep computes it from Schedule 6",
+          "source": {
+            "transactions": ["05-BRK-2025-09-0001"],
+            "adjustingEntries": [],
+            "onboarding": []
+          },
+          "confirm": true
+        }
+      ],
+      "deductions": [
+        {
+          "item": "Taxable dividends received from taxable Canadian corporations (Schedule 3 to Schedule 1)",
+          "amount": 111800,
+          "note": "carried from Schedule 3; Taxprep computes the deduction",
+          "confirm": true
+        },
+        {
+          "item": "Book gain on the ETF sale (taxed as a capital gain instead)",
+          "amount": 90000,
+          "note": "the $90,000.00 gain is in book income (account 4220); the taxable part comes back through Schedule 6",
+          "confirm": true
+        }
+      ],
+      "note": "Inputs only. Taxprep computes taxable income and tax."
+    },
+    "schedule8": {
+      "openingUcc": [],
+      "classes": [],
+      "note": "No additions or disposals in the year."
+    },
+    "schedule50": [
+      {
+        "name": "Daniel Okafor (Test)",
+        "sin": "547489163",
+        "percentCommonShares": 100,
+        "percentPreferredShares": 0
+      }
+    ],
+    "schedule3": {
+      "dividendsReceived": [
+        {
+          "payer": "Eglinton Retail Ltd. (Test)",
+          "connected": true,
+          "amount": 100000,
+          "dates": ["2025-06-30", "2025-12-15"],
+          "designation": "as designated by the payer (client says ordinary, not eligible)",
+          "transactions": ["05-CHQ-2025-06-0004", "05-CHQ-2025-12-0002"]
+        },
+        {
+          "payer": "Maplegate Banc Corp. (Test), Northern Power Utilities Corp. (Test) and Cedarwood Telecom Corp. (Test)",
+          "connected": false,
+          "amount": 11800,
+          "designation": "eligible",
+          "transactions": ["05-BRK-2025-03-0002", "05-BRK-2025-03-0003", "05-BRK-2025-03-0004", "05-BRK-2025-06-0001", "05-BRK-2025-06-0002", "05-BRK-2025-06-0003", "05-BRK-2025-09-0004", "05-BRK-2025-09-0005", "05-BRK-2025-09-0006", "05-BRK-2025-12-0001", "05-BRK-2025-12-0002", "05-BRK-2025-12-0003"]
+        }
+      ],
+      "dividendsPaid": [
+        {
+          "date": "2025-12-20",
+          "amount": 25000,
+          "designation": "eligible (designated by the client)",
+          "recipient": "Daniel Okafor (Test)",
+          "transaction": "05-CHQ-2025-12-0004"
+        },
+        {
+          "date": "2025-11-20",
+          "amount": 30000,
+          "designation": "capital dividend",
+          "electionFiled": false,
+          "recipient": "Daniel Okafor (Test)",
+          "transaction": "05-CHQ-2025-11-0004"
+        }
+      ]
+    },
+    "schedule6": {
+      "dispositions": [
+        {
+          "security": "Crestview CDN Dividend ETF (Test)",
+          "date": "2025-09-12",
+          "units": 4000,
+          "proceeds": 175000,
+          "adjustedCostBase": 85000,
+          "gain": 90000,
+          "transaction": "05-BRK-2025-09-0001"
+        }
+      ]
+    },
+    "investmentIncomeCheck": {
+      "interest": 8000,
+      "taxableCapitalGainHalfOfGain": 45000,
+      "total": 53000,
+      "threshold": 50000,
+      "over": true,
+      "note": "arithmetic on the given amounts only; Taxprep computes the reduction (confirm inclusion rate)"
+    },
+    "schedule23": {
+      "required": true,
+      "businessLimitToShare": 500000,
+      "allocations": [
+        {
+          "corporation": "Eglinton Holdings Inc. (Test)",
+          "allocated": 100000,
+          "source": "this onboarding"
+        },
+        {
+          "corporation": "Eglinton Retail Ltd. (Test)",
+          "allocated": 500000,
+          "source": "the subsidiary onboarding"
+        }
+      ],
+      "total": 600000,
+      "consistent": false
+    },
+    "schedule9": {
+      "relatedCorporations": [
+        {
+          "name": "Eglinton Retail Ltd. (Test)",
+          "businessNumber": "332698207",
+          "ownershipPercent": 100
+        }
+      ]
+    },
+    "slips": {
+      "T4": [],
+      "T5": [
+        {
+          "recipient": "Daniel Okafor (Test)",
+          "sin": "547489163",
+          "actualAmountOfEligibleDividends": 25000,
+          "note": "taxable amount and dividend tax credit are computed by the slip software; the capital dividend is not reported as an ordinary dividend"
+        }
+      ],
+      "T5Received": [
+        {
+          "issuer": "Crestview Investing (Test)",
+          "interestFromCanadianSources": 8000,
+          "eligibleDividends": 11800
+        }
+      ]
+    },
+    "schedule4": {
+      "note": "no loss"
+    }
+  },
+  "hst": {
+    "method": "none",
+    "collectedOnSales": 0,
+    "itcClaimedOnPurchases": 0,
+    "paidToCraNetOfRefunds": 0,
+    "balanceAtYearEndPayable": 0
+  },
+  "flags": [
+    {"id":"05-F01","rule":"investment income over $50,000 in the group: business limit reduction","detail":"Interest $8,000.00 plus a taxable capital gain of $45,000.00 (half of the $90,000.00 gain on the ETF sale; inclusion rate confirm) is $53,000.00, over the $50,000.00 threshold, before anything Eglinton Retail adds. Portfolio and connected dividends are left out of that sum (confirm). The reduction of the business limit is computed by Taxprep and must be reflected in the Schedule 23 agreement.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":["05-BRK-2025-09-0001","05-BRK-2025-03-0005","05-BRK-2025-06-0005","05-BRK-2025-09-0008","05-BRK-2025-12-0005"],"onboarding":["business_limit"],"adjustingEntries":[]}},
+    {"id":"05-F02","rule":"capital dividend paid with no election filed","detail":"A $30,000.00 capital dividend was paid 20 Nov 2025 and onboarding says no election was filed. A capital dividend is tax-free only with an election made at or before payment. A person decides how to fix it (late election with penalty, or treat as an ordinary dividend) (confirm). It is not reported as an ordinary T5 dividend by the client.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":["05-CHQ-2025-11-0004"],"onboarding":["capital_dividend"],"adjustingEntries":[]}},
+    {"id":"05-F03","rule":"eligible dividend designated above GRIP","detail":"The $25,000.00 dividend on 20 Dec 2025 is designated eligible. The client's own note gives a general rate income pool of $3,000.00 at the start of the year; eligible dividends received ($11,800.00 from listed shares) may add to it, but the designation looks well above GRIP. Risk of an excessive eligible dividend designation (Schedule 53). A person checks.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":["05-CHQ-2025-12-0004"],"onboarding":["grip","declared_dividends"],"adjustingEntries":[]}},
+    {"id":"05-F04","rule":"business limit allocation contradicts Eglinton Retail","detail":"This company's onboarding says Holdco keeps $100,000.00 of the business limit. Eglinton Retail Ltd. (Test) allocates the whole $500,000.00 to itself. The two agreements add to $600,000.00. Schedule 23 needs one agreement that adds to no more than the limit. A person asks the client.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["business_limit"],"adjustingEntries":[]}},
+    {"id":"05-F05","rule":"dividends from a connected corporation","detail":"$60,000.00 (30 Jun) and $40,000.00 (15 Dec) came from Eglinton Retail Ltd. (Test), a 100% owned subsidiary: Schedule 3, connected. Part IV tax depends on the subsidiary's dividend refund (Taxprep, with 06's return).","severity":"must fire","action":"flag for a person; do not decide alone","evidence":{"transactions":["05-CHQ-2025-06-0004","05-CHQ-2025-12-0002"],"onboarding":[],"adjustingEntries":[]}},
+    {"id":"05-F06","rule":"capital gain on ETF units","detail":"Sold 4,000 ETF units 12 Sep 2025: proceeds $175,000.00, adjusted cost base $85,000.00, gain $90,000.00. Schedule 6. The non-taxable half feeds the capital dividend account; the $30,000.00 capital dividend must fit inside it (Taxprep).","severity":"must fire","action":"flag for a person; do not decide alone","evidence":{"transactions":["05-BRK-2025-09-0001"],"onboarding":[],"adjustingEntries":[]}},
+    {"id":"05-F07","rule":"not registered for HST","detail":"The company is not registered: expenses carry HST inside the cost, no input tax credits. A person confirms it makes no taxable supplies.","severity":"info","action":"flag for a person; do not decide alone","evidence":{"transactions":[],"onboarding":[],"adjustingEntries":[]}}
+  ],
+  "parties": [
+    {"name":"Daniel Okafor (Test)","kind":"person"},
+    {"name":"Eglinton Retail Ltd. (Test)","kind":"company"},
+    {"name":"Maplegate Banc Corp. (Test)","kind":"company"},
+    {"name":"Northern Power Utilities Corp. (Test)","kind":"company"},
+    {"name":"Cedarwood Telecom Corp. (Test)","kind":"company"},
+    {"name":"Crestview CDN Dividend ETF (Test)","kind":"company"},
+    {"name":"Addison Accounting Inc. (Test)","kind":"company"},
+    {"name":"Boucher Hall LLP (Test)","kind":"company"}
+  ],
+  "notes": ["The brokerage export carries about three rows a month on purpose (a small admin fee each month, dividends, GIC interest, one sale)."]
+}

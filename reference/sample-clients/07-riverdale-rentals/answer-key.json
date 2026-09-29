@@ -1,0 +1,432 @@
+{
+  "client": "07",
+  "name": "Riverdale Rentals Inc. (Test)",
+  "fiscalYear": {
+    "start": "2025-01-01",
+    "end": "2025-12-31",
+    "days": 365
+  },
+  "generator": {
+    "file": "generate.mjs",
+    "seed": 1107
+  },
+  "idRule": "id = <client>-<TAG>-<YYYY>-<MM>-<seq>. TAG names the account (CHQ chequing, USD US-dollar chequing, BCD business card, PCD personal card, BRK brokerage). YYYY-MM is the month of the row date. seq is the 1-based position of the row among that account and month, in file order (header lines do not count). Rows missing from an export get the next numbers of their month.",
+  "amountConvention": "amount is the cash effect on the company account: money in is positive, money out is negative. On a card a charge is negative and a payment positive (the card CSV shows the opposite sign). post lines list the coded entry: dr and cr in dollars, the last line is the bank or card account itself.",
+  "postingCurrency": "CAD: every post line, adjusting entry and trial balance figure is in Canadian dollars; USD rows are posted at the monthly test rate in fx",
+  "accounts": [
+    {
+      "key": "CHQ",
+      "tag": "CHQ",
+      "layout": "C: Harbourline Credit Union (Test) chequing",
+      "role": "bank",
+      "currency": "CAD",
+      "file": "accounts/harbourline-chequing-7745.csv",
+      "qboFile": "qbo/harbourline-chequing-7745.csv",
+      "glAccount": "1010",
+      "openingBalance": 15876.66,
+      "closingBalance": 7693.02,
+      "balanceMeaning": "cash balance",
+      "rowsInExport": 150,
+      "rowsMissingFromExport": 0
+    }
+  ],
+  "transactions": [
+    {"id":"07-CHQ-2025-01-0001","acct":"CHQ","date":"2025-01-01","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":1,"qboLine":2,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-01-0002","acct":"CHQ","date":"2025-01-01","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":2,"qboLine":3,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1619.75},{"a":"2095","dr":860.25},{"a":"1010","cr":2480}],"flags":["07-F06"]},
+    {"id":"07-CHQ-2025-01-0003","acct":"CHQ","date":"2025-01-02","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":3,"qboLine":4,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-01-0004","acct":"CHQ","date":"2025-01-02","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":4,"qboLine":5,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-01-0005","acct":"CHQ","date":"2025-01-03","description":"POS PURCHASE RONA #3157 BRAMPTON ON","amount":-182.19,"currency":"CAD","kind":"expense","line":5,"qboLine":6,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":182.19},{"a":"1010","cr":182.19}]},
+    {"id":"07-CHQ-2025-01-0006","acct":"CHQ","date":"2025-01-16","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-109.43,"currency":"CAD","kind":"expense","line":6,"qboLine":7,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":109.43},{"a":"1010","cr":109.43}]},
+    {"id":"07-CHQ-2025-01-0007","acct":"CHQ","date":"2025-01-20","description":"PRE-AUTH DEBIT HEARTHSIDE GAS TEST","amount":-170.15,"currency":"CAD","kind":"expense","line":7,"qboLine":8,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":170.15},{"a":"1010","cr":170.15}]},
+    {"id":"07-CHQ-2025-01-0008","acct":"CHQ","date":"2025-01-20","description":"ONLINE BILL PAYMENT FROSTLINE SNOW TEST","amount":-227.7,"currency":"CAD","kind":"expense","line":8,"qboLine":9,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":227.7},{"a":"1010","cr":227.7}]},
+    {"id":"07-CHQ-2025-01-0009","acct":"CHQ","date":"2025-01-21","description":"POS PURCHASE HOME HARDWARE #8293 OAKVILLE ON","amount":-40.92,"currency":"CAD","kind":"expense","line":9,"qboLine":10,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":40.92},{"a":"1010","cr":40.92}]},
+    {"id":"07-CHQ-2025-01-0010","acct":"CHQ","date":"2025-01-21","description":"POS PURCHASE RONA #3169 MISSISSAUGA ON","amount":-39.22,"currency":"CAD","kind":"expense","line":10,"qboLine":11,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":39.22},{"a":"1010","cr":39.22}]},
+    {"id":"07-CHQ-2025-01-0011","acct":"CHQ","date":"2025-01-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":11,"qboLine":12,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-02-0001","acct":"CHQ","date":"2025-02-03","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":12,"qboLine":13,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-02-0002","acct":"CHQ","date":"2025-02-03","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":13,"qboLine":14,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-02-0003","acct":"CHQ","date":"2025-02-03","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":14,"qboLine":15,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1616.42},{"a":"2095","dr":863.58},{"a":"1010","cr":2480}],"flags":["07-F06"]},
+    {"id":"07-CHQ-2025-02-0004","acct":"CHQ","date":"2025-02-03","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":15,"qboLine":16,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-02-0005","acct":"CHQ","date":"2025-02-03","description":"POS PURCHASE HOME DEPOT #1862 ETOBICOKE ON","amount":-167.74,"currency":"CAD","kind":"expense","line":16,"qboLine":17,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":167.74},{"a":"1010","cr":167.74}]},
+    {"id":"07-CHQ-2025-02-0006","acct":"CHQ","date":"2025-02-05","description":"POS PURCHASE HOME HARDWARE #1273 SCARBOROUGH ON","amount":-146.86,"currency":"CAD","kind":"expense","line":17,"qboLine":18,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":146.86},{"a":"1010","cr":146.86}]},
+    {"id":"07-CHQ-2025-02-0007","acct":"CHQ","date":"2025-02-10","description":"POS PURCHASE CANADIAN TIRE #559 MISSISSAUGA ON","amount":-45.33,"currency":"CAD","kind":"expense","line":18,"qboLine":19,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":45.33},{"a":"1010","cr":45.33}]},
+    {"id":"07-CHQ-2025-02-0008","acct":"CHQ","date":"2025-02-17","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-83.52,"currency":"CAD","kind":"expense","line":19,"qboLine":20,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":83.52},{"a":"1010","cr":83.52}]},
+    {"id":"07-CHQ-2025-02-0009","acct":"CHQ","date":"2025-02-20","description":"PRE-AUTH DEBIT HEARTHSIDE GAS TEST","amount":-96.07,"currency":"CAD","kind":"expense","line":20,"qboLine":21,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":96.07},{"a":"1010","cr":96.07}]},
+    {"id":"07-CHQ-2025-02-0010","acct":"CHQ","date":"2025-02-20","description":"ONLINE BILL PAYMENT FROSTLINE SNOW TEST","amount":-238.41,"currency":"CAD","kind":"expense","line":21,"qboLine":22,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":238.41},{"a":"1010","cr":238.41}]},
+    {"id":"07-CHQ-2025-02-0011","acct":"CHQ","date":"2025-02-24","description":"POS PURCHASE HOME HARDWARE #7978 MARKHAM ON","amount":-123.1,"currency":"CAD","kind":"expense","line":22,"qboLine":23,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":123.1},{"a":"1010","cr":123.1}]},
+    {"id":"07-CHQ-2025-02-0012","acct":"CHQ","date":"2025-02-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":23,"qboLine":24,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-03-0001","acct":"CHQ","date":"2025-03-03","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":24,"qboLine":25,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-03-0002","acct":"CHQ","date":"2025-03-03","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":25,"qboLine":26,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-03-0003","acct":"CHQ","date":"2025-03-03","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":26,"qboLine":27,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1613.07},{"a":"2095","dr":866.93},{"a":"1010","cr":2480}],"flags":["07-F06"]},
+    {"id":"07-CHQ-2025-03-0004","acct":"CHQ","date":"2025-03-03","description":"ONLINE BILL PAYMENT MUNICIPAL TAX BILL TEST","amount":-2966.5,"currency":"CAD","kind":"property-tax","line":27,"qboLine":28,"account":"6160 Property taxes","accountNo":"6160","gifi":9180,"gifiStatus":"settled","post":[{"a":"6160","dr":2966.5},{"a":"1010","cr":2966.5}]},
+    {"id":"07-CHQ-2025-03-0005","acct":"CHQ","date":"2025-03-03","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":28,"qboLine":29,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-03-0006","acct":"CHQ","date":"2025-03-10","description":"POS PURCHASE HOME DEPOT #3205 OAKVILLE ON","amount":-117.26,"currency":"CAD","kind":"expense","line":29,"qboLine":30,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":117.26},{"a":"1010","cr":117.26}]},
+    {"id":"07-CHQ-2025-03-0007","acct":"CHQ","date":"2025-03-11","description":"POS PURCHASE HOME DEPOT #7537 SCARBOROUGH ON","amount":-28.8,"currency":"CAD","kind":"expense","line":30,"qboLine":31,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":28.8},{"a":"1010","cr":28.8}]},
+    {"id":"07-CHQ-2025-03-0008","acct":"CHQ","date":"2025-03-17","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-115.57,"currency":"CAD","kind":"expense","line":31,"qboLine":32,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":115.57},{"a":"1010","cr":115.57}]},
+    {"id":"07-CHQ-2025-03-0009","acct":"CHQ","date":"2025-03-17","description":"POS PURCHASE RONA #781 PICKERING ON","amount":-54.37,"currency":"CAD","kind":"expense","line":32,"qboLine":33,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":54.37},{"a":"1010","cr":54.37}]},
+    {"id":"07-CHQ-2025-03-0010","acct":"CHQ","date":"2025-03-20","description":"PRE-AUTH DEBIT HEARTHSIDE GAS TEST","amount":-165.48,"currency":"CAD","kind":"expense","line":33,"qboLine":34,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":165.48},{"a":"1010","cr":165.48}]},
+    {"id":"07-CHQ-2025-03-0011","acct":"CHQ","date":"2025-03-20","description":"ONLINE BILL PAYMENT FROSTLINE SNOW TEST","amount":-263.25,"currency":"CAD","kind":"expense","line":34,"qboLine":35,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":263.25},{"a":"1010","cr":263.25}]},
+    {"id":"07-CHQ-2025-03-0012","acct":"CHQ","date":"2025-03-21","description":"POS PURCHASE HOME DEPOT #4811 TORONTO ON","amount":-85.97,"currency":"CAD","kind":"expense","line":35,"qboLine":36,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":85.97},{"a":"1010","cr":85.97}]},
+    {"id":"07-CHQ-2025-03-0013","acct":"CHQ","date":"2025-03-27","description":"POS PURCHASE HOME HARDWARE #8769 TORONTO ON","amount":-128.18,"currency":"CAD","kind":"expense","line":36,"qboLine":37,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":128.18},{"a":"1010","cr":128.18}]},
+    {"id":"07-CHQ-2025-03-0014","acct":"CHQ","date":"2025-03-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":37,"qboLine":38,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-03-0015","acct":"CHQ","date":"2025-03-31","description":"POS PURCHASE HOME DEPOT #268 NORTH YORK ON","amount":-19.32,"currency":"CAD","kind":"expense","line":38,"qboLine":39,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":19.32},{"a":"1010","cr":19.32}]},
+    {"id":"07-CHQ-2025-04-0001","acct":"CHQ","date":"2025-04-01","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":39,"qboLine":40,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1609.71},{"a":"2095","dr":870.29},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-04-0002","acct":"CHQ","date":"2025-04-02","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":40,"qboLine":41,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-04-0003","acct":"CHQ","date":"2025-04-03","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":41,"qboLine":42,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-04-0004","acct":"CHQ","date":"2025-04-04","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":42,"qboLine":43,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-04-0005","acct":"CHQ","date":"2025-04-09","description":"POS PURCHASE RONA #8895 TORONTO ON","amount":-139.56,"currency":"CAD","kind":"expense","line":43,"qboLine":44,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":139.56},{"a":"1010","cr":139.56}]},
+    {"id":"07-CHQ-2025-04-0006","acct":"CHQ","date":"2025-04-09","description":"POS PURCHASE HOME HARDWARE #9875 SCARBOROUGH ON","amount":-115.39,"currency":"CAD","kind":"expense","line":44,"qboLine":45,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":115.39},{"a":"1010","cr":115.39}]},
+    {"id":"07-CHQ-2025-04-0007","acct":"CHQ","date":"2025-04-14","description":"ONLINE BILL PAYMENT GREENEDGE LAWN TEST","amount":-130.02,"currency":"CAD","kind":"expense","line":45,"qboLine":46,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":130.02},{"a":"1010","cr":130.02}]},
+    {"id":"07-CHQ-2025-04-0008","acct":"CHQ","date":"2025-04-16","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-84.84,"currency":"CAD","kind":"expense","line":46,"qboLine":47,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":84.84},{"a":"1010","cr":84.84}]},
+    {"id":"07-CHQ-2025-04-0009","acct":"CHQ","date":"2025-04-21","description":"PRE-AUTH DEBIT HEARTHSIDE GAS TEST","amount":-155.78,"currency":"CAD","kind":"expense","line":47,"qboLine":48,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":155.78},{"a":"1010","cr":155.78}]},
+    {"id":"07-CHQ-2025-04-0010","acct":"CHQ","date":"2025-04-25","description":"POS PURCHASE HOME DEPOT #9954 BRAMPTON ON","amount":-66.85,"currency":"CAD","kind":"expense","line":48,"qboLine":49,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":66.85},{"a":"1010","cr":66.85}]},
+    {"id":"07-CHQ-2025-04-0011","acct":"CHQ","date":"2025-04-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":49,"qboLine":50,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-04-0012","acct":"CHQ","date":"2025-04-28","description":"POS PURCHASE HOME HARDWARE #1647 TORONTO ON","amount":-70.23,"currency":"CAD","kind":"expense","line":50,"qboLine":51,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":70.23},{"a":"1010","cr":70.23}]},
+    {"id":"07-CHQ-2025-05-0001","acct":"CHQ","date":"2025-05-01","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":51,"qboLine":52,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-05-0002","acct":"CHQ","date":"2025-05-01","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":52,"qboLine":53,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1606.34},{"a":"2095","dr":873.66},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-05-0003","acct":"CHQ","date":"2025-05-02","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":53,"qboLine":54,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-05-0004","acct":"CHQ","date":"2025-05-05","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":54,"qboLine":55,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-05-0005","acct":"CHQ","date":"2025-05-05","description":"POS PURCHASE HOME DEPOT #2020 NORTH YORK ON","amount":-30.97,"currency":"CAD","kind":"expense","line":55,"qboLine":56,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":30.97},{"a":"1010","cr":30.97}]},
+    {"id":"07-CHQ-2025-05-0006","acct":"CHQ","date":"2025-05-12","description":"ONLINE BILL PAYMENT GREENEDGE LAWN TEST","amount":-126.3,"currency":"CAD","kind":"expense","line":56,"qboLine":57,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":126.3},{"a":"1010","cr":126.3}]},
+    {"id":"07-CHQ-2025-05-0007","acct":"CHQ","date":"2025-05-14","description":"ONLINE BILL PAYMENT BLUELINE PLUMBING TEST INC","amount":-640,"currency":"CAD","kind":"expense","line":57,"qboLine":58,"account":"6126 Repairs, building","accountNo":"6126","gifi":8961,"gifiStatus":"settled","post":[{"a":"6126","dr":640},{"a":"1010","cr":640}],"flags":["07-F02"],"notes":["plumbing repair"]},
+    {"id":"07-CHQ-2025-05-0008","acct":"CHQ","date":"2025-05-16","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-104.49,"currency":"CAD","kind":"expense","line":58,"qboLine":59,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":104.49},{"a":"1010","cr":104.49}]},
+    {"id":"07-CHQ-2025-05-0009","acct":"CHQ","date":"2025-05-19","description":"POS PURCHASE HOME HARDWARE #1709 MILTON ON","amount":-154.63,"currency":"CAD","kind":"expense","line":59,"qboLine":60,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":154.63},{"a":"1010","cr":154.63}]},
+    {"id":"07-CHQ-2025-05-0010","acct":"CHQ","date":"2025-05-23","description":"POS PURCHASE RONA #1482 BRAMPTON ON","amount":-24.42,"currency":"CAD","kind":"expense","line":60,"qboLine":61,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":24.42},{"a":"1010","cr":24.42}]},
+    {"id":"07-CHQ-2025-05-0011","acct":"CHQ","date":"2025-05-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":61,"qboLine":62,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-06-0001","acct":"CHQ","date":"2025-06-02","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":62,"qboLine":63,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-06-0002","acct":"CHQ","date":"2025-06-02","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":63,"qboLine":64,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-06-0003","acct":"CHQ","date":"2025-06-02","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":64,"qboLine":65,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1602.95},{"a":"2095","dr":877.05},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-06-0004","acct":"CHQ","date":"2025-06-02","description":"ONLINE BILL PAYMENT MUNICIPAL TAX BILL TEST","amount":-2966.5,"currency":"CAD","kind":"property-tax","line":65,"qboLine":66,"account":"6160 Property taxes","accountNo":"6160","gifi":9180,"gifiStatus":"settled","post":[{"a":"6160","dr":2966.5},{"a":"1010","cr":2966.5}]},
+    {"id":"07-CHQ-2025-06-0005","acct":"CHQ","date":"2025-06-02","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":66,"qboLine":67,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-06-0006","acct":"CHQ","date":"2025-06-04","description":"POS PURCHASE HOME HARDWARE #2286 BURLINGTON ON","amount":-151.1,"currency":"CAD","kind":"expense","line":67,"qboLine":68,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":151.1},{"a":"1010","cr":151.1}]},
+    {"id":"07-CHQ-2025-06-0007","acct":"CHQ","date":"2025-06-12","description":"ONLINE BILL PAYMENT GREENEDGE LAWN TEST","amount":-133.94,"currency":"CAD","kind":"expense","line":68,"qboLine":69,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":133.94},{"a":"1010","cr":133.94}]},
+    {"id":"07-CHQ-2025-06-0008","acct":"CHQ","date":"2025-06-12","description":"POS PURCHASE CANADIAN TIRE #3430 TORONTO ON","amount":-107.71,"currency":"CAD","kind":"expense","line":69,"qboLine":70,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":107.71},{"a":"1010","cr":107.71}]},
+    {"id":"07-CHQ-2025-06-0009","acct":"CHQ","date":"2025-06-16","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-107.87,"currency":"CAD","kind":"expense","line":70,"qboLine":71,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":107.87},{"a":"1010","cr":107.87}]},
+    {"id":"07-CHQ-2025-06-0010","acct":"CHQ","date":"2025-06-25","description":"POS PURCHASE CANADIAN TIRE #7428 SCARBOROUGH ON","amount":-117.12,"currency":"CAD","kind":"expense","line":71,"qboLine":72,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":117.12},{"a":"1010","cr":117.12}]},
+    {"id":"07-CHQ-2025-06-0011","acct":"CHQ","date":"2025-06-30","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":72,"qboLine":73,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-06-0012","acct":"CHQ","date":"2025-06-30","description":"POS PURCHASE RONA #3948 MARKHAM ON","amount":-151.05,"currency":"CAD","kind":"expense","line":73,"qboLine":74,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":151.05},{"a":"1010","cr":151.05}]},
+    {"id":"07-CHQ-2025-07-0001","acct":"CHQ","date":"2025-07-01","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":74,"qboLine":75,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-07-0002","acct":"CHQ","date":"2025-07-01","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":75,"qboLine":76,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-07-0003","acct":"CHQ","date":"2025-07-01","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":76,"qboLine":77,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1599.55},{"a":"2095","dr":880.45},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-07-0004","acct":"CHQ","date":"2025-07-02","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":77,"qboLine":78,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-07-0005","acct":"CHQ","date":"2025-07-02","description":"POS PURCHASE CANADIAN TIRE #8754 AJAX ON","amount":-62,"currency":"CAD","kind":"expense","line":78,"qboLine":79,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":62},{"a":"1010","cr":62}]},
+    {"id":"07-CHQ-2025-07-0006","acct":"CHQ","date":"2025-07-14","description":"ONLINE BILL PAYMENT GREENEDGE LAWN TEST","amount":-122.38,"currency":"CAD","kind":"expense","line":79,"qboLine":80,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":122.38},{"a":"1010","cr":122.38}]},
+    {"id":"07-CHQ-2025-07-0007","acct":"CHQ","date":"2025-07-16","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-97.6,"currency":"CAD","kind":"expense","line":80,"qboLine":81,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":97.6},{"a":"1010","cr":97.6}]},
+    {"id":"07-CHQ-2025-07-0008","acct":"CHQ","date":"2025-07-18","description":"POS PURCHASE HOME HARDWARE #7035 HAMILTON ON","amount":-180.06,"currency":"CAD","kind":"expense","line":81,"qboLine":82,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":180.06},{"a":"1010","cr":180.06}]},
+    {"id":"07-CHQ-2025-07-0009","acct":"CHQ","date":"2025-07-21","description":"POS PURCHASE HOME HARDWARE #4984 PICKERING ON","amount":-112.72,"currency":"CAD","kind":"expense","line":82,"qboLine":83,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":112.72},{"a":"1010","cr":112.72}]},
+    {"id":"07-CHQ-2025-07-0010","acct":"CHQ","date":"2025-07-23","description":"POS PURCHASE CANADIAN TIRE #3516 MILTON ON","amount":-25.83,"currency":"CAD","kind":"expense","line":83,"qboLine":84,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":25.83},{"a":"1010","cr":25.83}]},
+    {"id":"07-CHQ-2025-07-0011","acct":"CHQ","date":"2025-07-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":84,"qboLine":85,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-07-0012","acct":"CHQ","date":"2025-07-28","description":"POS PURCHASE RONA #6472 AJAX ON","amount":-187.55,"currency":"CAD","kind":"expense","line":85,"qboLine":86,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":187.55},{"a":"1010","cr":187.55}]},
+    {"id":"07-CHQ-2025-07-0013","acct":"CHQ","date":"2025-07-31","description":"POS PURCHASE HOME DEPOT #2798 MILTON ON","amount":-23.01,"currency":"CAD","kind":"expense","line":86,"qboLine":87,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":23.01},{"a":"1010","cr":23.01}]},
+    {"id":"07-CHQ-2025-08-0001","acct":"CHQ","date":"2025-08-01","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":87,"qboLine":88,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1596.14},{"a":"2095","dr":883.86},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-08-0002","acct":"CHQ","date":"2025-08-04","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":88,"qboLine":89,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-08-0003","acct":"CHQ","date":"2025-08-04","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":89,"qboLine":90,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-08-0004","acct":"CHQ","date":"2025-08-04","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":90,"qboLine":91,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-08-0005","acct":"CHQ","date":"2025-08-12","description":"ONLINE BILL PAYMENT GREENEDGE LAWN TEST","amount":-139.94,"currency":"CAD","kind":"expense","line":91,"qboLine":92,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":139.94},{"a":"1010","cr":139.94}]},
+    {"id":"07-CHQ-2025-08-0006","acct":"CHQ","date":"2025-08-15","description":"POS PURCHASE HOME HARDWARE #5200 ETOBICOKE ON","amount":-89.38,"currency":"CAD","kind":"expense","line":92,"qboLine":93,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":89.38},{"a":"1010","cr":89.38}]},
+    {"id":"07-CHQ-2025-08-0007","acct":"CHQ","date":"2025-08-18","description":"E-TRANSFER RECEIVED GRACE LIU TEST","amount":15000,"currency":"CAD","kind":"shareholder-loan-received","line":93,"qboLine":94,"account":"2080 Due to shareholders (loans)","accountNo":"2080","gifi":2781,"gifiStatus":"confirm","post":[{"a":"2080","cr":15000},{"a":"1010","dr":15000}],"flags":["07-F04"]},
+    {"id":"07-CHQ-2025-08-0008","acct":"CHQ","date":"2025-08-18","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-120.63,"currency":"CAD","kind":"expense","line":94,"qboLine":95,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":120.63},{"a":"1010","cr":120.63}]},
+    {"id":"07-CHQ-2025-08-0009","acct":"CHQ","date":"2025-08-18","description":"POS PURCHASE HOME DEPOT #2706 VAUGHAN ON","amount":-98.11,"currency":"CAD","kind":"expense","line":95,"qboLine":96,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":98.11},{"a":"1010","cr":98.11}]},
+    {"id":"07-CHQ-2025-08-0010","acct":"CHQ","date":"2025-08-20","description":"ONLINE BILL PAYMENT SUMMIT ROOFING TEST LTD","amount":-18400,"currency":"CAD","kind":"capital-purchase","line":96,"qboLine":97,"account":"1510 Building","accountNo":"1510","gifi":1680,"gifiStatus":"settled","post":[{"a":"1510","dr":18400},{"a":"1010","cr":18400}],"flags":["07-F02","07-F04"],"notes":["new roof, capital; not a repair"]},
+    {"id":"07-CHQ-2025-08-0011","acct":"CHQ","date":"2025-08-20","description":"POS PURCHASE HOME DEPOT #1202 OAKVILLE ON","amount":-138.96,"currency":"CAD","kind":"expense","line":97,"qboLine":98,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":138.96},{"a":"1010","cr":138.96}]},
+    {"id":"07-CHQ-2025-08-0012","acct":"CHQ","date":"2025-08-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":98,"qboLine":99,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-09-0001","acct":"CHQ","date":"2025-09-01","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":99,"qboLine":100,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1592.72},{"a":"2095","dr":887.28},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-09-0002","acct":"CHQ","date":"2025-09-02","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":100,"qboLine":101,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-09-0003","acct":"CHQ","date":"2025-09-02","description":"ONLINE BILL PAYMENT MUNICIPAL TAX BILL TEST","amount":-2966.5,"currency":"CAD","kind":"property-tax","line":101,"qboLine":102,"account":"6160 Property taxes","accountNo":"6160","gifi":9180,"gifiStatus":"settled","post":[{"a":"6160","dr":2966.5},{"a":"1010","cr":2966.5}]},
+    {"id":"07-CHQ-2025-09-0004","acct":"CHQ","date":"2025-09-02","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":102,"qboLine":103,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-09-0005","acct":"CHQ","date":"2025-09-04","description":"POS PURCHASE RONA #3361 MISSISSAUGA ON","amount":-25.72,"currency":"CAD","kind":"expense","line":103,"qboLine":104,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":25.72},{"a":"1010","cr":25.72}]},
+    {"id":"07-CHQ-2025-09-0006","acct":"CHQ","date":"2025-09-05","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":104,"qboLine":105,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-09-0007","acct":"CHQ","date":"2025-09-12","description":"ONLINE BILL PAYMENT GREENEDGE LAWN TEST","amount":-121.78,"currency":"CAD","kind":"expense","line":105,"qboLine":106,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":121.78},{"a":"1010","cr":121.78}]},
+    {"id":"07-CHQ-2025-09-0008","acct":"CHQ","date":"2025-09-15","description":"POS PURCHASE CANADIAN TIRE #202 TORONTO ON","amount":-132.72,"currency":"CAD","kind":"expense","line":106,"qboLine":107,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":132.72},{"a":"1010","cr":132.72}]},
+    {"id":"07-CHQ-2025-09-0009","acct":"CHQ","date":"2025-09-16","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-88.89,"currency":"CAD","kind":"expense","line":107,"qboLine":108,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":88.89},{"a":"1010","cr":88.89}]},
+    {"id":"07-CHQ-2025-09-0010","acct":"CHQ","date":"2025-09-17","description":"POS PURCHASE RONA #1418 NORTH YORK ON","amount":-160.46,"currency":"CAD","kind":"expense","line":108,"qboLine":109,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":160.46},{"a":"1010","cr":160.46}]},
+    {"id":"07-CHQ-2025-09-0011","acct":"CHQ","date":"2025-09-22","description":"POS PURCHASE RONA #7898 SCARBOROUGH ON","amount":-168.83,"currency":"CAD","kind":"expense","line":109,"qboLine":110,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":168.83},{"a":"1010","cr":168.83}]},
+    {"id":"07-CHQ-2025-09-0012","acct":"CHQ","date":"2025-09-25","description":"POS PURCHASE CANADIAN TIRE #2802 BURLINGTON ON","amount":-185.03,"currency":"CAD","kind":"expense","line":110,"qboLine":111,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":185.03},{"a":"1010","cr":185.03}]},
+    {"id":"07-CHQ-2025-09-0013","acct":"CHQ","date":"2025-09-29","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":111,"qboLine":112,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-09-0014","acct":"CHQ","date":"2025-09-29","description":"POS PURCHASE RONA #5165 VAUGHAN ON","amount":-93.57,"currency":"CAD","kind":"expense","line":112,"qboLine":113,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":93.57},{"a":"1010","cr":93.57}]},
+    {"id":"07-CHQ-2025-10-0001","acct":"CHQ","date":"2025-10-01","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":113,"qboLine":114,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-10-0002","acct":"CHQ","date":"2025-10-01","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":114,"qboLine":115,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1589.28},{"a":"2095","dr":890.72},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-10-0003","acct":"CHQ","date":"2025-10-01","description":"PRE-AUTH DEBIT NORTHSHORE MUTUAL INSURANCE TEST","amount":-2160,"currency":"CAD","kind":"insurance-prepaid","line":115,"qboLine":116,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":2160},{"a":"1010","cr":2160}],"flags":["07-F03"],"notes":["twelve months from 1 Oct 2025"]},
+    {"id":"07-CHQ-2025-10-0004","acct":"CHQ","date":"2025-10-01","description":"POS PURCHASE RONA #8940 TORONTO ON","amount":-112.19,"currency":"CAD","kind":"expense","line":116,"qboLine":117,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":112.19},{"a":"1010","cr":112.19}]},
+    {"id":"07-CHQ-2025-10-0005","acct":"CHQ","date":"2025-10-02","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":117,"qboLine":118,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-10-0006","acct":"CHQ","date":"2025-10-03","description":"POS PURCHASE RONA #8989 AJAX ON","amount":-106.79,"currency":"CAD","kind":"expense","line":118,"qboLine":119,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":106.79},{"a":"1010","cr":106.79}]},
+    {"id":"07-CHQ-2025-10-0007","acct":"CHQ","date":"2025-10-13","description":"ONLINE BILL PAYMENT GREENEDGE LAWN TEST","amount":-116.39,"currency":"CAD","kind":"expense","line":119,"qboLine":120,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":116.39},{"a":"1010","cr":116.39}]},
+    {"id":"07-CHQ-2025-10-0008","acct":"CHQ","date":"2025-10-16","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-121.85,"currency":"CAD","kind":"expense","line":120,"qboLine":121,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":121.85},{"a":"1010","cr":121.85}]},
+    {"id":"07-CHQ-2025-10-0009","acct":"CHQ","date":"2025-10-22","description":"POS PURCHASE CANADIAN TIRE #2708 BRAMPTON ON","amount":-184.9,"currency":"CAD","kind":"expense","line":121,"qboLine":122,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":184.9},{"a":"1010","cr":184.9}]},
+    {"id":"07-CHQ-2025-10-0010","acct":"CHQ","date":"2025-10-24","description":"POS PURCHASE HOME DEPOT #9128 TORONTO ON","amount":-47.09,"currency":"CAD","kind":"expense","line":122,"qboLine":123,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":47.09},{"a":"1010","cr":47.09}]},
+    {"id":"07-CHQ-2025-10-0011","acct":"CHQ","date":"2025-10-27","description":"POS PURCHASE RONA #5809 TORONTO ON","amount":-36.04,"currency":"CAD","kind":"expense","line":123,"qboLine":124,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":36.04},{"a":"1010","cr":36.04}]},
+    {"id":"07-CHQ-2025-10-0012","acct":"CHQ","date":"2025-10-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":124,"qboLine":125,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-11-0001","acct":"CHQ","date":"2025-11-03","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":125,"qboLine":126,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-11-0002","acct":"CHQ","date":"2025-11-03","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":126,"qboLine":127,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1585.83},{"a":"2095","dr":894.17},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-11-0003","acct":"CHQ","date":"2025-11-03","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":127,"qboLine":128,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-11-0004","acct":"CHQ","date":"2025-11-05","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":128,"qboLine":129,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-11-0005","acct":"CHQ","date":"2025-11-07","description":"POS PURCHASE HOME HARDWARE #9039 MISSISSAUGA ON","amount":-181.62,"currency":"CAD","kind":"expense","line":129,"qboLine":130,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":181.62},{"a":"1010","cr":181.62}]},
+    {"id":"07-CHQ-2025-11-0006","acct":"CHQ","date":"2025-11-12","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":975,"currency":"CAD","kind":"revenue","line":130,"qboLine":131,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":975},{"a":"1010","dr":975}],"flags":["07-F05"],"notes":["half of the missed October rent"]},
+    {"id":"07-CHQ-2025-11-0007","acct":"CHQ","date":"2025-11-17","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-77.59,"currency":"CAD","kind":"expense","line":131,"qboLine":132,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":77.59},{"a":"1010","cr":77.59}]},
+    {"id":"07-CHQ-2025-11-0008","acct":"CHQ","date":"2025-11-17","description":"POS PURCHASE CANADIAN TIRE #7303 BRAMPTON ON","amount":-182.02,"currency":"CAD","kind":"expense","line":132,"qboLine":133,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":182.02},{"a":"1010","cr":182.02}]},
+    {"id":"07-CHQ-2025-11-0009","acct":"CHQ","date":"2025-11-20","description":"PRE-AUTH DEBIT HEARTHSIDE GAS TEST","amount":-92.74,"currency":"CAD","kind":"expense","line":133,"qboLine":134,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":92.74},{"a":"1010","cr":92.74}]},
+    {"id":"07-CHQ-2025-11-0010","acct":"CHQ","date":"2025-11-26","description":"POS PURCHASE CANADIAN TIRE #6412 NORTH YORK ON","amount":-85.69,"currency":"CAD","kind":"expense","line":134,"qboLine":135,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":85.69},{"a":"1010","cr":85.69}]},
+    {"id":"07-CHQ-2025-11-0011","acct":"CHQ","date":"2025-11-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":135,"qboLine":136,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"07-CHQ-2025-11-0012","acct":"CHQ","date":"2025-11-28","description":"POS PURCHASE HOME DEPOT #7080 SCARBOROUGH ON","amount":-167.23,"currency":"CAD","kind":"expense","line":136,"qboLine":137,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":167.23},{"a":"1010","cr":167.23}]},
+    {"id":"07-CHQ-2025-12-0001","acct":"CHQ","date":"2025-12-01","description":"E-TRANSFER RECEIVED KAVYA MENON TEST","amount":2100,"currency":"CAD","kind":"revenue","line":137,"qboLine":138,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":2100},{"a":"1010","dr":2100}]},
+    {"id":"07-CHQ-2025-12-0002","acct":"CHQ","date":"2025-12-01","description":"PRE-AUTH DEBIT MORTGAGE PAYMENT HARBOURLINE CREDIT UNION TEST","amount":-2480,"currency":"CAD","kind":"mortgage-payment","line":138,"qboLine":139,"account":"6071 Interest on mortgage","accountNo":"6071","gifi":8713,"gifiStatus":"settled","post":[{"a":"6071","dr":1582.36},{"a":"2095","dr":897.64},{"a":"1010","cr":2480}]},
+    {"id":"07-CHQ-2025-12-0003","acct":"CHQ","date":"2025-12-01","description":"POS PURCHASE CANADIAN TIRE #2649 MARKHAM ON","amount":-20.68,"currency":"CAD","kind":"expense","line":139,"qboLine":140,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":20.68},{"a":"1010","cr":20.68}]},
+    {"id":"07-CHQ-2025-12-0004","acct":"CHQ","date":"2025-12-01","description":"POS PURCHASE RONA #1448 NORTH YORK ON","amount":-149.09,"currency":"CAD","kind":"expense","line":140,"qboLine":141,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":149.09},{"a":"1010","cr":149.09}]},
+    {"id":"07-CHQ-2025-12-0005","acct":"CHQ","date":"2025-12-02","description":"PRE-AUTH DEBIT ARBOUR BOOKKEEPING TEST","amount":-95,"currency":"CAD","kind":"expense","line":141,"qboLine":142,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":95},{"a":"1010","cr":95}]},
+    {"id":"07-CHQ-2025-12-0006","acct":"CHQ","date":"2025-12-05","description":"E-TRANSFER RECEIVED OWEN BLACKWOOD TEST","amount":1950,"currency":"CAD","kind":"revenue","line":142,"qboLine":143,"account":"4100 Rental revenue","accountNo":"4100","gifi":8141,"gifiStatus":"settled","post":[{"a":"4100","cr":1950},{"a":"1010","dr":1950}]},
+    {"id":"07-CHQ-2025-12-0007","acct":"CHQ","date":"2025-12-05","description":"POS PURCHASE HOME HARDWARE #9219 BRAMPTON ON","amount":-182.59,"currency":"CAD","kind":"expense","line":143,"qboLine":144,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":182.59},{"a":"1010","cr":182.59}]},
+    {"id":"07-CHQ-2025-12-0008","acct":"CHQ","date":"2025-12-08","description":"POS PURCHASE CANADIAN TIRE #555 OAKVILLE ON","amount":-164.43,"currency":"CAD","kind":"expense","line":144,"qboLine":145,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":164.43},{"a":"1010","cr":164.43}]},
+    {"id":"07-CHQ-2025-12-0009","acct":"CHQ","date":"2025-12-16","description":"PRE-AUTH DEBIT LAKESHORE UTILITIES TEST","amount":-93.98,"currency":"CAD","kind":"expense","line":145,"qboLine":146,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":93.98},{"a":"1010","cr":93.98}]},
+    {"id":"07-CHQ-2025-12-0010","acct":"CHQ","date":"2025-12-22","description":"PRE-AUTH DEBIT HEARTHSIDE GAS TEST","amount":-105.13,"currency":"CAD","kind":"expense","line":146,"qboLine":147,"account":"6180 Utilities","accountNo":"6180","gifi":9220,"gifiStatus":"settled","post":[{"a":"6180","dr":105.13},{"a":"1010","cr":105.13}]},
+    {"id":"07-CHQ-2025-12-0011","acct":"CHQ","date":"2025-12-22","description":"ONLINE BILL PAYMENT FROSTLINE SNOW TEST","amount":-247.76,"currency":"CAD","kind":"expense","line":147,"qboLine":148,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":247.76},{"a":"1010","cr":247.76}]},
+    {"id":"07-CHQ-2025-12-0012","acct":"CHQ","date":"2025-12-23","description":"POS PURCHASE RONA #787 MISSISSAUGA ON","amount":-59.89,"currency":"CAD","kind":"expense","line":148,"qboLine":149,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":59.89},{"a":"1010","cr":59.89}]},
+    {"id":"07-CHQ-2025-12-0013","acct":"CHQ","date":"2025-12-26","description":"POS PURCHASE CANADIAN TIRE #702 SCARBOROUGH ON","amount":-121.77,"currency":"CAD","kind":"expense","line":149,"qboLine":150,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":121.77},{"a":"1010","cr":121.77}]},
+    {"id":"07-CHQ-2025-12-0014","acct":"CHQ","date":"2025-12-29","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":150,"qboLine":151,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]}
+  ],
+  "statementBalances": {
+    "CHQ": [
+      {"month":"2025-01","opening":15876.66,"closing":16569.1,"exportActivity":692.44,"rolls":true},
+      {"month":"2025-02","opening":16569.1,"closing":17130.12,"exportActivity":561.02,"rolls":true},
+      {"month":"2025-03","opening":17130.12,"closing":14647.47,"exportActivity":-2482.65,"rolls":true},
+      {"month":"2025-04","opening":14647.47,"closing":15346.85,"exportActivity":699.38,"rolls":true},
+      {"month":"2025-05","opening":15346.85,"closing":15728.09,"exportActivity":381.24,"rolls":true},
+      {"month":"2025-06","opening":15728.09,"closing":13454.85,"exportActivity":-2273.24,"rolls":true},
+      {"month":"2025-07","opening":13454.85,"closing":14105.75,"exportActivity":650.9,"rolls":true},
+      {"month":"2025-08","opening":14105.75,"closing":11580.78,"exportActivity":-2524.97,"rolls":true},
+      {"month":"2025-09","opening":11580.78,"closing":9099.33,"exportActivity":-2481.45,"rolls":true},
+      {"month":"2025-10","opening":9099.33,"closing":5726.13,"exportActivity":-3373.2,"rolls":true},
+      {"month":"2025-11","opening":5726.13,"closing":7376.29,"exportActivity":1650.16,"rolls":true},
+      {"month":"2025-12","opening":7376.29,"closing":7693.02,"exportActivity":316.73,"rolls":true}
+    ]
+  },
+  "adjustingEntries": [
+    {
+      "id": "07-AJE-01",
+      "date": "2025-12-31",
+      "amount": 1620,
+      "reason": "Release the prepaid insurance brought forward from last year: the old policy has expired",
+      "note": "the policy of 1 Oct 2024 to 30 Sep 2025 cost $2,160.00; nine months were left at 1 Jan 2025",
+      "lines": [
+        {"account":"6060","name":"Insurance","gifi":8690,"debit":1620,"credit":0},
+        {"account":"1200","name":"Prepaid expenses","gifi":1484,"debit":0,"credit":1620}
+      ],
+      "source": {
+        "transactions": [],
+        "onboarding": ["prior_year_closing_balances (1200 Prepaid expenses)"]
+      }
+    },
+    {
+      "id": "07-AJE-02",
+      "date": "2025-12-31",
+      "amount": 1620,
+      "reason": "Prepaid insurance: the policy of 1 Oct 2025 covers 12 months, 9 of them fall after year end",
+      "note": "2160.00 x 9/12 = 1620.00",
+      "lines": [
+        {"account":"1200","name":"Prepaid expenses","gifi":1484,"debit":1620,"credit":0},
+        {"account":"6060","name":"Insurance","gifi":8690,"debit":0,"credit":1620}
+      ],
+      "source": {
+        "transactions": ["07-CHQ-2025-10-0003"],
+        "onboarding": []
+      }
+    },
+    {
+      "id": "07-AJE-03",
+      "date": "2025-12-31",
+      "amount": 975,
+      "reason": "Unit 2 rent: October ($1,950.00) was half paid in November and $975.00 is still owed at year end (the tenant left): rent earned but not received",
+      "lines": [
+        {"account":"1110","name":"Rent receivable (tenant arrears)","gifi":1062,"debit":975,"credit":0},
+        {"account":"4100","name":"Rental revenue","gifi":8141,"debit":0,"credit":975}
+      ],
+      "source": {
+        "transactions": ["07-CHQ-2025-11-0006"],
+        "onboarding": ["tenants"]
+      }
+    },
+    {
+      "id": "07-AJE-04",
+      "date": "2025-12-31",
+      "amount": 22670.2,
+      "reason": "Book amortization on the building (straight-line, 25 years)",
+      "note": "straight-line book amortization: building brought forward 22400.00 (25 years); new roof 270.20 (25 years)",
+      "lines": [
+        {"account":"6050","name":"Amortization of tangible assets","gifi":8670,"debit":22670.2,"credit":0},
+        {"account":"1511","name":"Accumulated amortization, building","gifi":1681,"debit":0,"credit":22670.2}
+      ],
+      "source": {
+        "transactions": ["07-CHQ-2025-08-0010"],
+        "onboarding": []
+      }
+    }
+  ],
+  "trialBalance": {
+    "basis": "debits and credits in dollars; unadjusted = opening balances plus every coded transaction; adjusted = plus the adjusting entries; income tax is not booked (Taxprep computes it)",
+    "opening": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":15876.66,"credit":0},
+        {"account":"1200","name":"Prepaid expenses","gifi":1484,"gifiName":"Prepaid expenses","gifiStatus":"settled","debit":1620,"credit":0},
+        {"account":"1500","name":"Land","gifi":1600,"gifiName":"Land","gifiStatus":"settled","debit":310000,"credit":0},
+        {"account":"1510","name":"Building","gifi":1680,"gifiName":"Buildings","gifiStatus":"settled","debit":560000,"credit":0},
+        {"account":"1511","name":"Accumulated amortization, building","gifi":1681,"gifiName":"Accumulated amortization of buildings","gifiStatus":"settled","debit":0,"credit":112000},
+        {"account":"2095","name":"Mortgage payable","gifi":3141,"gifiName":"Mortgages","gifiStatus":"settled","debit":0,"credit":418000},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":200000},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":157496.66}
+      ],
+      "totalDebit": 887496.66,
+      "totalCredit": 887496.66
+    },
+    "unadjusted": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":7693.02,"credit":0},
+        {"account":"1200","name":"Prepaid expenses","gifi":1484,"gifiName":"Prepaid expenses","gifiStatus":"settled","debit":1620,"credit":0},
+        {"account":"1500","name":"Land","gifi":1600,"gifiName":"Land","gifiStatus":"settled","debit":310000,"credit":0},
+        {"account":"1510","name":"Building","gifi":1680,"gifiName":"Buildings","gifiStatus":"settled","debit":578400,"credit":0},
+        {"account":"1511","name":"Accumulated amortization, building","gifi":1681,"gifiName":"Accumulated amortization of buildings","gifiStatus":"settled","debit":0,"credit":112000},
+        {"account":"2080","name":"Due to shareholders (loans)","gifi":2781,"gifiName":"Due to individual shareholder(s)","gifiStatus":"confirm","note":"current (2781) or long-term (3261) depends on terms","debit":0,"credit":15000},
+        {"account":"2095","name":"Mortgage payable","gifi":3141,"gifiName":"Mortgages","gifiStatus":"settled","debit":0,"credit":407454.12},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":200000},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":157496.66},
+        {"account":"4100","name":"Rental revenue","gifi":8141,"gifiName":"Real estate rental revenue","gifiStatus":"settled","debit":0,"credit":47625},
+        {"account":"6060","name":"Insurance","gifi":8690,"gifiName":"Insurance","gifiStatus":"settled","debit":2160,"credit":0},
+        {"account":"6071","name":"Interest on mortgage","gifi":8713,"gifiName":"Interest on mortgages","gifiStatus":"settled","debit":19214.12,"credit":0},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","debit":155.4,"credit":0},
+        {"account":"6100","name":"Accounting fees","gifi":8862,"gifiName":"Accounting fees","gifiStatus":"settled","debit":1140,"credit":0},
+        {"account":"6120","name":"Repairs and maintenance","gifi":8960,"gifiName":"Repairs and maintenance","gifiStatus":"settled","debit":7662.13,"credit":0},
+        {"account":"6126","name":"Repairs, building","gifi":8961,"gifiName":"Repairs and maintenance - Buildings","gifiStatus":"settled","debit":640,"credit":0},
+        {"account":"6160","name":"Property taxes","gifi":9180,"gifiName":"Property taxes","gifiStatus":"settled","debit":8899.5,"credit":0},
+        {"account":"6180","name":"Utilities","gifi":9220,"gifiName":"Utilities","gifiStatus":"settled","debit":1991.61,"credit":0}
+      ],
+      "totalDebit": 939575.78,
+      "totalCredit": 939575.78
+    },
+    "adjusted": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":7693.02,"credit":0},
+        {"account":"1110","name":"Rent receivable (tenant arrears)","gifi":1062,"gifiName":"Trade accounts receivable","gifiStatus":"confirm","note":"trade receivable vs other receivable","debit":975,"credit":0},
+        {"account":"1200","name":"Prepaid expenses","gifi":1484,"gifiName":"Prepaid expenses","gifiStatus":"settled","debit":1620,"credit":0},
+        {"account":"1500","name":"Land","gifi":1600,"gifiName":"Land","gifiStatus":"settled","debit":310000,"credit":0},
+        {"account":"1510","name":"Building","gifi":1680,"gifiName":"Buildings","gifiStatus":"settled","debit":578400,"credit":0},
+        {"account":"1511","name":"Accumulated amortization, building","gifi":1681,"gifiName":"Accumulated amortization of buildings","gifiStatus":"settled","debit":0,"credit":134670.2},
+        {"account":"2080","name":"Due to shareholders (loans)","gifi":2781,"gifiName":"Due to individual shareholder(s)","gifiStatus":"confirm","note":"current (2781) or long-term (3261) depends on terms","debit":0,"credit":15000},
+        {"account":"2095","name":"Mortgage payable","gifi":3141,"gifiName":"Mortgages","gifiStatus":"settled","debit":0,"credit":407454.12},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":200000},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":157496.66},
+        {"account":"4100","name":"Rental revenue","gifi":8141,"gifiName":"Real estate rental revenue","gifiStatus":"settled","debit":0,"credit":48600},
+        {"account":"6050","name":"Amortization of tangible assets","gifi":8670,"gifiName":"Amortization of tangible assets","gifiStatus":"settled","debit":22670.2,"credit":0},
+        {"account":"6060","name":"Insurance","gifi":8690,"gifiName":"Insurance","gifiStatus":"settled","debit":2160,"credit":0},
+        {"account":"6071","name":"Interest on mortgage","gifi":8713,"gifiName":"Interest on mortgages","gifiStatus":"settled","debit":19214.12,"credit":0},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","debit":155.4,"credit":0},
+        {"account":"6100","name":"Accounting fees","gifi":8862,"gifiName":"Accounting fees","gifiStatus":"settled","debit":1140,"credit":0},
+        {"account":"6120","name":"Repairs and maintenance","gifi":8960,"gifiName":"Repairs and maintenance","gifiStatus":"settled","debit":7662.13,"credit":0},
+        {"account":"6126","name":"Repairs, building","gifi":8961,"gifiName":"Repairs and maintenance - Buildings","gifiStatus":"settled","debit":640,"credit":0},
+        {"account":"6160","name":"Property taxes","gifi":9180,"gifiName":"Property taxes","gifiStatus":"settled","debit":8899.5,"credit":0},
+        {"account":"6180","name":"Utilities","gifi":9220,"gifiName":"Utilities","gifiStatus":"settled","debit":1991.61,"credit":0}
+      ],
+      "totalDebit": 963220.98,
+      "totalCredit": 963220.98
+    },
+    "netIncomeLossBeforeTax": -15932.96
+  },
+  "t2Inputs": {
+    "netIncomeLossPerBooksBeforeTax": -15932.96,
+    "schedule1": {
+      "addBacks": [
+        {
+          "item": "Book amortization",
+          "amount": 22670.2,
+          "reason": "accounting amortization is added back; capital cost allowance is claimed on Schedule 8",
+          "source": {
+            "account": "6050",
+            "adjustingEntries": ["07-AJE-04"]
+          }
+        }
+      ],
+      "deductions": [],
+      "note": "Inputs only. Taxprep computes taxable income and tax."
+    },
+    "schedule8": {
+      "openingUcc": [
+        {
+          "class": "1",
+          "ucc": 481200,
+          "note": "brought forward from last year, made-up figure"
+        }
+      ],
+      "classes": [
+        {
+          "class": "1",
+          "additions": [
+            {
+              "date": "2025-08-20",
+              "description": "New roof on the duplex",
+              "capitalCost": 18400,
+              "transactions": ["07-CHQ-2025-08-0010"],
+              "note": "capital improvement; the company is not registered for HST so the whole $18,400.00 is cost"
+            }
+          ],
+          "disposals": []
+        }
+      ],
+      "note": "Capital cost is before recoverable HST. Disposals: none unless listed."
+    },
+    "schedule50": [
+      {
+        "name": "Grace Liu (Test)",
+        "sin": "170717188",
+        "percentCommonShares": 100,
+        "percentPreferredShares": 0
+      }
+    ],
+    "schedule3": {
+      "dividendsReceived": [],
+      "dividendsPaid": []
+    },
+    "schedule4": {
+      "note": "no loss brought forward (made-up)"
+    },
+    "schedule23": {
+      "required": false,
+      "note": "no associated corporations"
+    },
+    "slips": {
+      "T4": [],
+      "T5": [],
+      "note": "No payroll and no dividends."
+    },
+    "specifiedInvestmentBusiness": {
+      "fullTimeEmployees": 0,
+      "note": "rent is income from a specified investment business (confirm)"
+    }
+  },
+  "hst": {
+    "method": "none",
+    "collectedOnSales": 0,
+    "itcClaimedOnPurchases": 0,
+    "paidToCraNetOfRefunds": 0,
+    "balanceAtYearEndPayable": 0
+  },
+  "flags": [
+    {"id":"07-F01","rule":"specified investment business: no employees","detail":"The company owns a duplex, has no employees and earns rent. Rental income is investment income in a specified investment business (fewer than six full-time employees): the small business deduction is not available and the passive income rules and refundable taxes apply. A person confirms and Taxprep computes.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["staff"],"adjustingEntries":[]}},
+    {"id":"07-F02","rule":"new roof is capital, not repair","detail":"The $18,400.00 roof on 20 Aug 2025 replaces the old one: added to the building (class 1) and amortized, not expensed. The $640.00 plumbing repair on 14 May is an ordinary repair. The company is not registered, so no HST is claimed.","severity":"must fire","action":"flag for a person; do not decide alone","evidence":{"transactions":["07-CHQ-2025-08-0010","07-CHQ-2025-05-0007"],"onboarding":["client_notes"],"adjustingEntries":[]}},
+    {"id":"07-F03","rule":"prepaid insurance","detail":"The $2,160.00 premium paid 1 Oct 2025 covers twelve months; nine are after year end, so $1,620.00 is a prepaid asset. The $1,620.00 prepaid brought forward is released to expense.","severity":"must fire","action":"flag for a person; do not decide alone","evidence":{"transactions":["07-CHQ-2025-10-0003"],"onboarding":["prior_year_closing_balances"],"adjustingEntries":["07-AJE-01","07-AJE-02"]}},
+    {"id":"07-F04","rule":"owner lent the company money","detail":"Grace Liu lent $15,000.00 on 18 Aug 2025, two days before the roof was paid. Due to shareholder (2080), no interest, no written terms. A person confirms terms and whether the loan is current or long term.","severity":"must fire","action":"flag for a person; do not decide alone","evidence":{"transactions":["07-CHQ-2025-08-0007","07-CHQ-2025-08-0010"],"onboarding":["client_notes"],"adjustingEntries":[]}},
+    {"id":"07-F05","rule":"rent arrears at year end","detail":"Unit 2 missed October, paid half in November and left at year end owing $975.00. Booked as rent receivable; whether it can be collected, reserved or written off is a person's decision.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":["07-CHQ-2025-11-0006"],"onboarding":["tenants"],"adjustingEntries":["07-AJE-03"]}},
+    {"id":"07-F06","rule":"mortgage payments: interest and principal","detail":"Twelve payments of $2,480.00. Only the interest (split in onboarding) is an expense; the rest reduces the mortgage. Mortgage interest is deductible against rent.","severity":"must fire","action":"flag for a person; do not decide alone","evidence":{"transactions":["07-CHQ-2025-01-0002","07-CHQ-2025-02-0003","07-CHQ-2025-03-0003"],"onboarding":["mortgage"],"adjustingEntries":[]}},
+    {"id":"07-F07","rule":"not registered for HST: residential rent is exempt","detail":"Rent from residential units is exempt, so no registration and no input tax credits; HST on costs is part of the cost.","severity":"info","action":"flag for a person; do not decide alone","evidence":{"transactions":[],"onboarding":[],"adjustingEntries":[]}}
+  ],
+  "parties": [
+    {"name":"Grace Liu (Test)","kind":"person"},
+    {"name":"Kavya Menon (Test)","kind":"person"},
+    {"name":"Owen Blackwood (Test)","kind":"person"},
+    {"name":"Harbourline Credit Union (Test)","kind":"company"},
+    {"name":"Summit Roofing Ltd. (Test)","kind":"company"},
+    {"name":"Blueline Plumbing Inc. (Test)","kind":"company"},
+    {"name":"Frostline Snow Services (Test)","kind":"company"},
+    {"name":"Greenedge Lawn Care (Test)","kind":"company"},
+    {"name":"Lakeshore Utilities (Test)","kind":"company"},
+    {"name":"Hearthside Gas (Test)","kind":"company"},
+    {"name":"Northshore Mutual Insurance (Test)","kind":"company"},
+    {"name":"Arbour Bookkeeping (Test)","kind":"company"}
+  ],
+  "notes": []
+}

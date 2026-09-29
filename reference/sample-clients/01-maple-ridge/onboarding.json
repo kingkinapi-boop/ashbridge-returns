@@ -1,0 +1,188 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Maple Ridge Consulting Inc. (Test)",
+    "business_number": "983056423",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2019-03-14",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "quarterly",
+    "hst_basis": "regular",
+    "books_kept_by": "client (QuickBooks Online with bank feeds)"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "983056423RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "983056423RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Priya Nair (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/lakeview-chequing-4821.csv",
+      "institution": "A: Lakeview Bank (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-business-card-7712.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-personal-card-3309.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "hst", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 0,
+    "payroll_account": false,
+    "note": "The owner takes money as needed; no salary, no source deductions."
+  },
+  "hst": {
+    "basis": "regular",
+    "frequency": "quarterly",
+    "filings": [
+      {
+        "period": "Q4 2025",
+        "due": "2026-02-02",
+        "paid": "2026-01-30"
+      }
+    ]
+  },
+  "home_office": {
+    "share_percent": 15,
+    "monthly_rent_paid_personally": 2800,
+    "annual_amount_if_claimed": 5040,
+    "note": "Rent is paid from her personal account. The company has never reimbursed her."
+  },
+  "vehicle": {
+    "business_use_percent": null,
+    "note": "No vehicle owned or leased by the company."
+  },
+  "personal_card_business_items": [
+    {
+      "date": "2025-02-04",
+      "merchant": "Adobe Creative Cloud",
+      "amount": 659.88,
+      "what_for": "annual design software plan"
+    },
+    {
+      "date": "2025-04-16",
+      "merchant": "East Side Mario's",
+      "amount": 86.4,
+      "what_for": "lunch with a client"
+    },
+    {
+      "date": "2025-05-22",
+      "merchant": "VIA Rail",
+      "amount": 88,
+      "what_for": "train to a client meeting"
+    },
+    {
+      "date": "2025-06-11",
+      "merchant": "Best Buy",
+      "amount": 379.99,
+      "what_for": "second monitor for the home office"
+    },
+    {
+      "date": "2025-09-10",
+      "merchant": "Moxies",
+      "amount": 124.15,
+      "what_for": "lunch with a client"
+    },
+    {
+      "date": "2025-10-21",
+      "merchant": "TechForward Conference (Test)",
+      "amount": 450,
+      "what_for": "conference ticket"
+    }
+  ],
+  "declared_dividends": [
+    {
+      "declared_on": "2025-12-20",
+      "amount": 20000,
+      "kind": "non-eligible",
+      "resolution_on_file": true
+    }
+  ],
+  "client_notes": ["Northwind is my main client. On Northwind days I work in their office, 9 to 5, on their laptop, and they call me a contractor. On other days I work from home.", "I take money out of the company when I need it. I put back $12,000 on 18 December. I will probably take about $10,000 again in January.", "I pay $2,800 a month rent for my home. About 15% of it is my office.", "The $20,000 on 20 December was a dividend.", "I put a few business things on my own card by mistake. The list is above."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-12-31",
+    "accounts": [
+      {
+        "account": "1010",
+        "name": "Chequing (CAD)",
+        "gifi": 1002,
+        "gifiName": "Deposits in Canadian banks and institutions - Canadian currency",
+        "gifiStatus": "settled",
+        "debit": 8011.69,
+        "credit": 0
+      },
+      {
+        "account": "2010",
+        "name": "Credit card payable",
+        "gifi": 2707,
+        "gifiName": "Credit card loans",
+        "gifiStatus": "confirm",
+        "note": "credit card loans (2707) or accounts payable (2620)",
+        "debit": 0,
+        "credit": 1835.43
+      },
+      {
+        "account": "2050",
+        "name": "HST payable (receivable)",
+        "gifi": 2680,
+        "gifiName": "Taxes payable",
+        "gifiStatus": "settled",
+        "debit": 0,
+        "credit": 5113.28
+      },
+      {
+        "account": "3010",
+        "name": "Common shares",
+        "gifi": 3500,
+        "gifiName": "Common shares",
+        "gifiStatus": "settled",
+        "debit": 0,
+        "credit": 100
+      },
+      {
+        "account": "3600",
+        "name": "Retained earnings, opening",
+        "gifi": 3600,
+        "gifiName": "Retained earnings/deficit",
+        "gifiStatus": "settled",
+        "debit": 0,
+        "credit": 962.98
+      }
+    ],
+    "ucc": []
+  }
+}

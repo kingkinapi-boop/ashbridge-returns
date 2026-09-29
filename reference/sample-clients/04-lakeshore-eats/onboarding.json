@@ -1,0 +1,145 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Lakeshore Eats Inc. (Test)",
+    "business_number": "565724300",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2020-02-18",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "quarterly",
+    "hst_basis": "quick",
+    "books_kept_by": "part-time bookkeeper"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "565724300RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "565724300RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Tom Nguyen (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 60,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    },
+    {
+      "name": "Lina Haddad (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 40,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/lakeview-chequing-6640.csv",
+      "institution": "A: Lakeview Bank (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-business-card-2251.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "hst", "payroll", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 6,
+    "employment": "part-time, paid every two weeks; card tips paid out with pay"
+  },
+  "hst": {
+    "basis": "quick",
+    "frequency": "quarterly",
+    "quick_method_rate": {
+      "value": 0.088,
+      "note": "confirm against CRA"
+    }
+  },
+  "payroll": {
+    "note": "Simulated figures.",
+    "by_month": [
+      {"month":"2025-01","runs":18,"gross":12399.86,"tips_included_in_gross":1710.76,"employee_cpp":593.62,"employee_ei":203.35,"income_tax":1077.64,"employer_cpp":593.62,"employer_ei":284.7,"remittance_due":2752.93,"remittance_date":"2025-02-17"},
+      {"month":"2025-02","runs":12,"gross":8764.75,"tips_included_in_gross":1488.75,"employee_cpp":425.39,"employee_ei":143.73,"income_tax":780.82,"employer_cpp":425.39,"employer_ei":201.21,"remittance_due":1976.54,"remittance_date":"2025-03-17"},
+      {"month":"2025-03","runs":12,"gross":8573.44,"tips_included_in_gross":1584.74,"employee_cpp":414.03,"employee_ei":140.62,"income_tax":759.33,"employer_cpp":414.03,"employer_ei":196.86,"remittance_due":1924.87,"remittance_date":"2025-04-15"},
+      {"month":"2025-04","runs":12,"gross":8270.92,"tips_included_in_gross":1689.52,"employee_cpp":396.01,"employee_ei":135.65,"income_tax":723.41,"employer_cpp":396.01,"employer_ei":189.9,"remittance_due":1840.98,"remittance_date":"2025-05-15"},
+      {"month":"2025-05","runs":12,"gross":7927.96,"tips_included_in_gross":1455.16,"employee_cpp":375.6,"employee_ei":130.02,"income_tax":669.95,"employer_cpp":375.6,"employer_ei":182.02,"remittance_due":1733.19,"remittance_date":"2025-06-16"},
+      {"month":"2025-06","runs":12,"gross":8805.7,"tips_included_in_gross":1829.3,"employee_cpp":427.84,"employee_ei":144.42,"income_tax":786.98,"employer_cpp":427.84,"employer_ei":202.2,"remittance_due":1989.28,"remittance_date":"2025-07-15"},
+      {"month":"2025-07","runs":12,"gross":8992.71,"tips_included_in_gross":1890.41,"employee_cpp":438.95,"employee_ei":147.47,"income_tax":816.56,"employer_cpp":438.95,"employer_ei":206.46,"remittance_due":2048.39,"remittance_date":"2025-08-15"},
+      {"month":"2025-08","runs":18,"gross":14786.9,"tips_included_in_gross":2756.5,"employee_cpp":735.65,"employee_ei":242.5,"income_tax":1414.93,"employer_cpp":735.65,"employer_ei":339.52,"remittance_due":3468.25,"remittance_date":"2025-09-15"},
+      {"month":"2025-09","runs":12,"gross":9203.69,"tips_included_in_gross":1784.99,"employee_cpp":451.5,"employee_ei":150.95,"income_tax":838.28,"employer_cpp":451.5,"employer_ei":211.31,"remittance_due":2103.54,"remittance_date":"2025-10-15"},
+      {"month":"2025-10","runs":12,"gross":8519.07,"tips_included_in_gross":1613.47,"employee_cpp":410.77,"employee_ei":139.69,"income_tax":755.14,"employer_cpp":410.77,"employer_ei":195.58,"remittance_due":1911.95,"remittance_date":"2025-11-17"},
+      {"month":"2025-11","runs":12,"gross":9045.65,"tips_included_in_gross":1625.75,"employee_cpp":442.1,"employee_ei":148.35,"income_tax":831.04,"employer_cpp":442.1,"employer_ei":207.68,"remittance_due":2071.27,"remittance_date":"2025-12-15"},
+      {"month":"2025-12","runs":12,"gross":8497.54,"tips_included_in_gross":1672.04,"employee_cpp":409.49,"employee_ei":139.34,"income_tax":749.75,"employer_cpp":409.49,"employer_ei":195.06,"remittance_due":1903.13,"remittance_date":"2026-01-15"}
+    ],
+    "t4_summaries": [
+      {
+        "year": 2025,
+        "slips": 6,
+        "totalEmploymentIncome": 113788.19,
+        "employeeCpp": 5520.95,
+        "employeeSecondCpp": 0,
+        "employeeEi": 1866.09,
+        "taxDeducted": 10203.83,
+        "employerCpp": 5520.95,
+        "employerEi": 2612.5,
+        "remittancesDueForTheYear": 25724.32
+      }
+    ]
+  },
+  "card_processing_fees_by_month": [
+    {"month":"2025-01","processing_fees":732.34,"gross_card_batches":28167.07},
+    {"month":"2025-02","processing_fees":686.92,"gross_card_batches":26419.78},
+    {"month":"2025-03","processing_fees":788.34,"gross_card_batches":30321.6},
+    {"month":"2025-04","processing_fees":730.08,"gross_card_batches":28080.21},
+    {"month":"2025-05","processing_fees":732.39,"gross_card_batches":28168.94},
+    {"month":"2025-06","processing_fees":918.1,"gross_card_batches":35310.37},
+    {"month":"2025-07","processing_fees":884.89,"gross_card_batches":34034.12},
+    {"month":"2025-08","processing_fees":821.9,"gross_card_batches":31611.27},
+    {"month":"2025-09","processing_fees":940.93,"gross_card_batches":36189.64},
+    {"month":"2025-10","processing_fees":797.85,"gross_card_batches":30685.93},
+    {"month":"2025-11","processing_fees":744.91,"gross_card_batches":28650.09},
+    {"month":"2025-12","processing_fees":887.28,"gross_card_batches":34126.33}
+  ],
+  "client_notes": ["We use the quick method for HST. Card sales come in daily; the deposit is after the fees.", "Tips go to the staff every second Friday with their pay.", "Rent is $6,500 a month. We bought a new range and hood in May."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-12-31",
+    "accounts": [
+      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":20166.31,"credit":0},
+      {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":62000,"credit":0},
+      {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"gifiName":"Accumulated amortization of machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":0,"credit":28000},
+      {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":1396.41},
+      {"account":"2040","name":"Payroll deductions payable (CPP, EI, employer share)","gifi":2627,"gifiName":"Employee deductions payable","gifiStatus":"settled","debit":0,"credit":982.39},
+      {"account":"2041","name":"Income tax withheld payable","gifi":2628,"gifiName":"Withholding taxes payable","gifiStatus":"confirm","note":"withholding taxes payable is worded for non-residents too","debit":0,"credit":609.77},
+      {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":7950.4},
+      {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":200},
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":43027.34}
+    ],
+    "ucc": [
+      {
+        "class": "8",
+        "ucc": 21400,
+        "note": "brought forward from last year, made-up figure"
+      }
+    ]
+  }
+}

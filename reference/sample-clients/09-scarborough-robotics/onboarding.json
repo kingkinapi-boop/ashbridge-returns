@@ -1,0 +1,128 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Scarborough Robotics Labs Inc. (Test)",
+    "business_number": "603783528",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-04-15",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2025-04-15",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "quarterly",
+    "hst_basis": "regular",
+    "hst_registration_effective": "2025-07-01",
+    "first_taxation_year": true,
+    "books_kept_by": "the owners with an accountant"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "603783528RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "603783528RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Wei Zhang (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 70,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    },
+    {
+      "name": "Olu Adeyemi (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 30,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/lakeview-chequing-9273.csv",
+      "institution": "A: Lakeview Bank (Test) chequing",
+      "currency": "CAD",
+      "months": 9
+    },
+    {
+      "file": "accounts/aurora-business-card-3390.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 9
+    }
+  ],
+  "services": ["t2", "hst", "incorporation", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 0,
+    "note": "The two owners are not paid this year."
+  },
+  "hst": {
+    "basis": "regular",
+    "frequency": "quarterly",
+    "registered_from": "2025-07-01"
+  },
+  "shares": {
+    "class": "common",
+    "issued_on": "2025-04-20",
+    "total_paid": 100,
+    "holders": [
+      {
+        "name": "Wei Zhang (Test)",
+        "percent": 70,
+        "paid": 70
+      },
+      {
+        "name": "Olu Adeyemi (Test)",
+        "percent": 30,
+        "paid": 30
+      }
+    ]
+  },
+  "shareholder_loans": [
+    {
+      "lender": "Wei Zhang (Test)",
+      "amount": 40000,
+      "received_on": "2025-04-22",
+      "interest": "none",
+      "written_terms": false
+    },
+    {
+      "lender": "Olu Adeyemi (Test)",
+      "amount": 15000,
+      "received_on": "2025-05-05",
+      "interest": "none",
+      "written_terms": false
+    }
+  ],
+  "grant": {
+    "grantor": "Ontario Innovation Voucher (Test)",
+    "amount": 25000,
+    "received_on": "2025-09-10",
+    "purpose": "prototype development",
+    "conditions": "spent on research and development"
+  },
+  "research": {
+    "description": "a robotic arm prototype: contract engineering, lab time and components",
+    "note": "The owners think it may be scientific research; not checked."
+  },
+  "client_notes": ["The grant covers our prototype work; we have not decided how to record it.", "We registered for HST on 1 July. Before that we paid tax on everything.", "We lent the company $55,000 together. Nothing is signed.", "The 3D printer was bought in June, the laptops in July."],
+  "prior_year_note": "First year: no prior-year closing balances.",
+  "prior_year_closing_balances": {
+    "as_of": "2025-04-14",
+    "accounts": [],
+    "ucc": []
+  }
+}

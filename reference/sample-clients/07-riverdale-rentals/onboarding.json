@@ -1,0 +1,113 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Riverdale Rentals Inc. (Test)",
+    "business_number": "378085437",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2018-11-20",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "no",
+    "hst_filing_frequency": null,
+    "hst_basis": null,
+    "books_kept_by": "part-time bookkeeper"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "378085437RC0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Grace Liu (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/harbourline-chequing-7745.csv",
+      "institution": "C: Harbourline Credit Union (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 0,
+    "note": "No employees. A snow and lawn contractor is paid per visit."
+  },
+  "hst": {
+    "registered": false,
+    "note": "Residential rent only."
+  },
+  "tenants": [
+    {
+      "unit": 1,
+      "tenant": "Kavya Menon (Test)",
+      "monthly_rent": 2100
+    },
+    {
+      "unit": 2,
+      "tenant": "Owen Blackwood (Test)",
+      "monthly_rent": 1950,
+      "note": "missed October; paid half of it on 12 Nov; left 31 Dec 2025 owing 975.00"
+    }
+  ],
+  "mortgage": {
+    "lender": "Harbourline Credit Union (Test)",
+    "opening_balance": 418000,
+    "annual_rate": 0.0465,
+    "monthly_payment": 2480,
+    "schedule": [
+      {"date":"2025-01-01","payment":2480,"interest":1619.75,"principal":860.25,"balance_after":417139.75},
+      {"date":"2025-02-03","payment":2480,"interest":1616.42,"principal":863.58,"balance_after":416276.17},
+      {"date":"2025-03-03","payment":2480,"interest":1613.07,"principal":866.93,"balance_after":415409.24},
+      {"date":"2025-04-01","payment":2480,"interest":1609.71,"principal":870.29,"balance_after":414538.95},
+      {"date":"2025-05-01","payment":2480,"interest":1606.34,"principal":873.66,"balance_after":413665.29},
+      {"date":"2025-06-02","payment":2480,"interest":1602.95,"principal":877.05,"balance_after":412788.24},
+      {"date":"2025-07-01","payment":2480,"interest":1599.55,"principal":880.45,"balance_after":411907.79},
+      {"date":"2025-08-01","payment":2480,"interest":1596.14,"principal":883.86,"balance_after":411023.93},
+      {"date":"2025-09-01","payment":2480,"interest":1592.72,"principal":887.28,"balance_after":410136.65},
+      {"date":"2025-10-01","payment":2480,"interest":1589.28,"principal":890.72,"balance_after":409245.93},
+      {"date":"2025-11-03","payment":2480,"interest":1585.83,"principal":894.17,"balance_after":408351.76},
+      {"date":"2025-12-01","payment":2480,"interest":1582.36,"principal":897.64,"balance_after":407454.12}
+    ]
+  },
+  "property": {
+    "type": "duplex (two rental units)",
+    "land_cost": 310000,
+    "building_cost": 560000
+  },
+  "client_notes": ["The second tenant did not pay in October and paid half in November. She moved out at the end of December owing me $975.", "I put $15,000 of my own money in on 18 August because the roof had to be replaced. Nothing is written down about interest.", "The insurance renewed on 1 October."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-12-31",
+    "accounts": [
+      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":15876.66,"credit":0},
+      {"account":"1200","name":"Prepaid expenses","gifi":1484,"gifiName":"Prepaid expenses","gifiStatus":"settled","debit":1620,"credit":0},
+      {"account":"1500","name":"Land","gifi":1600,"gifiName":"Land","gifiStatus":"settled","debit":310000,"credit":0},
+      {"account":"1510","name":"Building","gifi":1680,"gifiName":"Buildings","gifiStatus":"settled","debit":560000,"credit":0},
+      {"account":"1511","name":"Accumulated amortization, building","gifi":1681,"gifiName":"Accumulated amortization of buildings","gifiStatus":"settled","debit":0,"credit":112000},
+      {"account":"2095","name":"Mortgage payable","gifi":3141,"gifiName":"Mortgages","gifiStatus":"settled","debit":0,"credit":418000},
+      {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":200000},
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":157496.66}
+    ],
+    "ucc": [
+      {
+        "class": "1",
+        "ucc": 481200,
+        "note": "brought forward from last year, made-up figure"
+      }
+    ]
+  }
+}
