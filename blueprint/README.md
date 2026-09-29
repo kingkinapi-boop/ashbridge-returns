@@ -1,24 +1,28 @@
 # Blueprint: Ashbridge Returns
 
-Version v1 DRAFT, 28 Sep 2026. Waiting for Zo's "blueprint ok" (TODO-ZO item 1). After that, only Zo changes it (skill `blueprint-change`). Built from Zo's design of 28 Sep (`reference/design-2026-09-28.md`) with the fixes from its review folded in as the Lead's recommendations (decision 0006).
+Version v1.1, 29 Sep 2026. The plain end state below is what Zo approves; he approved this version on 29 Sep (decision 0008, Z8-18). The numbered clauses in the files below are the Lead's to keep in line with it: a clause change is amber, checked by the Critic and the Reviewer, and tax rules also get a CPA's check. Changing the plain end state needs Zo's yes (skill `blueprint-change`). v1 was built from Zo's design of 28 Sep (`reference/design-2026-09-28.md`) and decision 0006; v1.1 brings back his build order and applies his answers of 29 Sep.
 
 ## The end state on one page (for Zo)
 
-1. Every corporation and year a client bought a T2 for becomes a return here, with no typing.
-2. Documents are read as they arrive. Every figure keeps a pointer to its page and box, or to the client's answer, or to a reason a preparer wrote.
-3. The client's own books become a working trial balance. Every change we make is a visible adjusting entry with a reason and a source.
-4. The system writes the Taxprep import file. The preparer imports it, makes the judgment choices in our app, locks, and uploads Taxprep's exports. Four exports prove what Taxprep holds at each step.
-5. Code runs the ties and reconciliations. AI runs the judgment checks and a red team, and every AI finding must point to something code can verify. AI never clears anything.
-6. The CPA reviews the full return in a fixed order, flags first. Any number opens its source in under a second. Approve appears only after every section has been seen.
-7. What we file must equal what the CPA approved. The system checks this before the T183CORP goes out and again before transmit.
-8. Every difference between the AI draft, the preparer, the CPA and CRA is captured, blamed on the right cause, ranked, and turned into a build task with a failing test. Nobody has to log anything.
-9. Clients never use this system. Their year-end questions and approval summary appear in the client app. No AI talks to clients.
-10. Nothing costs money until go-live. Paid services sit behind switches that stay off.
-11. It is built and tested on thirteen made-up corporations and a Taxprep simulator. Going live needs a real Taxprep proof and Zo's yes on vendors and the live database.
-12. Staff screens use GOV.UK and MOJ patterns in the Ashbridge look. Every screen is designed first with made-up data, and Zo approves the designs in one sitting before they are built.
-13. Every piece is specified, built and checked by three different agents, tested against the clause it proves, and merged only in batches that passed the full test suite in the cloud.
+1. Every corporation and year a client bought a T2 for becomes a return here, with no typing. Where the client app leaves something unclear (the year end, which years), ops confirms it in one step.
+2. The books live in QuickBooks Online. For clients with bank statements only (about 60%), the firm keeps their books in QBO; clients with their own QBO connect through the client app. QBO makes the financial statements and the GIFI mapping. Returns has no bookkeeping module.
+3. Returns reads the books from QBO (trial balance, GIFI mapping, transactions, adjusting entries) and the client's documents (PDFs with every word's position; spreadsheets and CSVs cell by cell). Every figure keeps a pointer to its source: a document box, a QBO line, a client answer, CRA data, last year's return, or a reason a person wrote. Every adjustment needs a reason and a source.
+4. Returns writes the Taxprep import file, so nobody types the numbers. The preparer imports it, makes the tax choices in Taxprep (CCA, dividends, elections, the business limit), gives any typed value a source with a cite button, locks, and uploads one export and the printed return.
+5. Code runs the ties and reconciliations. AI reads messy documents and runs the judgment checks and a red team; every AI claim must point to something code can verify, and AI never clears anything. AI runs through Claude on the firm's subscription, in its own project with its own rules, not through a paid API.
+6. The CPA (Zo) reviews the full return in a fixed order, flags first. Any number opens its source in under a second, on a second monitor if wanted. The CPA marks each section "Reviewed"; the mark comes off if a number in it changes; Approve appears only when every section is marked. AI drafts fixes for simple comments, and the preparer approves them.
+7. What is filed equals what the CPA approved: a check export just before transmit is compared with the approval.
+8. Every difference between the AI draft, the preparer, the CPA and CRA is captured and ranked, and a weekly lesson list proposes fixes. Nobody has to log anything.
+9. Clients never use this system. Their year-end questions and approval summary appear in the client app, which the firm controls. No AI talks to clients.
+10. Nothing costs money before go-live beyond the Claude subscription. Paid services sit behind switches that stay off.
+11. It is built and tested on made-up companies (ten sample clients with a year of transactions, and more), in QBO test companies and in a real Taxprep trial. Going live needs Zo's yes on real data and vendors.
+12. Staff screens use the GOV.UK look, built for repeat desk work on a laptop with two monitors: as many screens as the work needs, each with one job, in a logical order, with search everywhere. Every screen is designed first with made-up data, and Zo approves the designs before they are built.
+13. Every piece is specified, built and checked by three different agents and merged only in batches that passed the full test suite.
 
-Three things to notice: the adjustments layer (item 3) is the largest build item; client screens stay in the client app (item 9); at go-live this system shares the client app's database, in its own section.
+Not in this build: financial statements or CSRS 4200 work (QBO makes the statements), a bookkeeping module, slip preparation (Returns only checks slips), measuring time saved.
+
+## Clauses still to bring into line with v1.1 (the Lead, first job of the new plan)
+
+TB-1 to TB-9 (books come from QBO); RT-1 to RT-23 (one lock export plus one check before transmit; token and gates settled on the Taxprep trial); TB-6 and RV-22 (tax choices in Taxprep, cite button); RV-5 and RV-7 (explicit marks that reset on change; AI-drafted fixes); ARC-6 (the AI adapter is a Claude project on the subscription); CK additions (shareholder-loan continuity, CCA additions, the income tax provision, instalment tests as code, bonus paid by day 179, CRA's last-day due-date rule); END-9 and ARC-8 (the sample clients become the test world); OUT (the "not in this build" list above).
 
 ## Files (agents read only what a card names)
 

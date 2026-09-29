@@ -1,62 +1,67 @@
 # Zo's to-do (Ashbridge Returns)
 
-The only file you need to read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Only red questions come here: things that change the blueprint, cost money, touch live data or change who sees what. Item 1 is answered inside the review doc itself; anything else, reply in the Lead chat with its number. What to type in which chat: `README.md` in this folder.
+The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number, for example `3 own`. What each chat does and what to type: `README.md` in this folder. Your answers of 29 Sep are recorded in `decisions\0008-zo-answers-2026-09-29.md`; the review doc is archived.
 
 ## 1. Needs you now
 
-**1. Answer the plan review (about 45 minutes, whenever you like).**
-- **What it is:** a critic's review of the whole plan and build system, with questions that each carry a default, in one doc you can type into: https://claude.ai/code/artifact/754b9ceb-5cb2-4743-b887-7ebeabf075b4
-- **Why it matters:** it found the plan drifted from your own design (your "prove Taxprep first" step moved to go-live) and that nothing checks whether a feature is practical. Starting turbo before this is settled risks another /internal.
-- **What happens after:** the plan is finalised, then this to-do and the README are rewritten and the Lead starts.
-- **Please do not type `blueprint ok` yet.** The old item below waits for the review.
+**1. Do not start the Taxprep trial yet.**
+- **What it is:** the one-week trial is where we prove everything about Taxprep. Day 1 needs the ten sample clients, their import files and the walk script ready, or days are lost.
+- **What comes next:** I write "ready" here, aiming for Thu 1 Oct in the evening. The day-by-day plan: `plan\taxprep-trial-plan.md`.
 
-**What the Lead is doing now:** nothing, on purpose, until you answer the review. Mode stays prep; nothing runs in the cloud.
+**2. Make a separate Chrome profile for testing (5 minutes).**
+- **Why:** an agent will click through Taxprep and QuickBooks in your Chrome. It must never be able to reach a real client account.
+- **Clicks:** in Chrome, your profile picture (top right), Add, "Continue without an account", name it "Ashbridge Test", Done. In that new window, install the Claude extension from the Chrome Web Store and sign in to Claude. Sign in to nothing else; the trial and the QuickBooks test companies are added there later.
+- Reply `2 done`.
 
-**On hold: approve the blueprint (15 minutes).**
-- **What it is:** the finished system in plain words: `blueprint\README.md`, first section, 13 short points.
-- **Why it matters:** every card, test and check in the build is tied to one of its 216 numbered rules. Once you say ok, builders build only what it says, the Reviewer checks every merged piece against it, and nothing in it changes without your yes. This is what stops the drift you saw in the client app build.
-- **New since your last look:** design rules (GOV.UK and MOJ patterns in the Ashbridge look, designs you approve before anything is built), testing rules, a 13th made-up company (a catch-up of two unfiled years), and "ops confirms anything the client app leaves unclear" (the client app does not store tax years cleanly, so the system never guesses them).
-- **What happens after your ok:** the empty app is built on the laptop, then one practice run of the whole loop (see section 2), then the first tests are written.
-- Waits for the plan review; the review proposes you approve the plain end state and the designs instead of the 216 rules.
+**3. Choose the business for the real Auto-fill test (red: real data).**
+- **What it is:** on trial day 4, Taxprep's Auto-fill pulls one real business's CRA data. The AI walker sees it on screen; we save only its shape (which boxes fill, in what format), never the numbers.
+- **My recommendation:** your own corporation, so no client's data is involved and the consent is yours.
+- Reply `3 own`, or name the business and confirm its owner agrees.
 
-**What the setup finished on 28 Sep:**
-- Tonight's setup is finished and pushed to GitHub. Everything for this build now lives in `ashbridge-returns`; `ashbridge-app` is clear of it.
-- The turbo system is ready and switched off: one job queue that many builders pull from at once, so no two take the same job and nobody checks their own work (tested tonight: four builders claiming at the same moment got four different jobs).
-- The work is cut into 255 cards in 17 waves; up to 36 can run side by side.
-- Research, all in `reference\`: 23 mistakes from the client app build and how each is now prevented (`lessons-deep.md`); current best practice with sources (`build-practices.md`); the GOV.UK and MOJ design basis (`design-basis.md`); exactly what the client app hands over (`onboarding-contract.md`).
-- The Reviewer now has a strict checklist: drift from the blueprint, whether tests are real, independence, usage, your time, screens, safety. It can slow or stop the build, never speed it up.
-- Mode: prep. Nothing runs in the cloud until you approve the blueprint, and turbo only when you type `turbo on`.
-- I made 23 small calls on my own (`plan\AMBER.md`). Read them whenever you like; nothing waits on them.
-- Dates: you wrote "expires on September 10"; I read it as 10 October (resets 1 and 8 October). If that is wrong, say so.
+**4. Your brother's computer.**
+- **My answer: yes, for the build,** with made-up data only. It is a real upgrade.
+- **What it gives:** on all day with fast, steady internet, so the Lead and local workers run through the night without your laptop or hotspot; more memory, so more local workers and faster tests; you steer its chats from your phone or laptop through Claude's Remote Control (claude.ai/code).
+- **What it costs:** when Claude updates or signs out, someone must restart it (your brother, when you ask); your Claude and GitHub accounts are signed in on his machine; the Taxprep trial walk still runs on your laptop, because it drives your Chrome.
+- **Conditions:** a separate Windows user for you with its disk encrypted, your own sign-ins, Claude Code's automatic updates paused during turbo. At go-live, anything with real client data runs on a machine the firm controls.
+- **Google Workspace** offers no computers to run programs on (it is Gmail, Drive and Docs). Google Cloud is separate and paid, and not needed: Claude's cloud sessions already give each worker its own machine, paid first from your $230 credit.
+- Reply `4 yes` and I write the setup steps for him (about 30 minutes of his time), or `4 no`.
+
+**5. Two quick confirmations.**
+- a) Excel and Salesforce: tools you like working in, whose feel we copy (record pages, list views, grids), or ones to avoid?
+- b) In turbo, may the Lead start cloud workers itself after you type `turbo on`? Nothing is scheduled, and they stop when the queue is empty. Otherwise you open cloud sessions and type `work` yourself.
+- My recommendation: a) like; b) yes. Reply `5 like, yes`, or correct me.
+
+**What the Lead is doing now:** nothing until the weekly reset on Thu 1 Oct at 12:00 Toronto (usage is at 86%). Tonight a helper is generating the ten sample clients. After the reset: repairs to the job queue, the new helper roles, the blueprint brought in line with your answers, and trial readiness.
 
 ## 2. Coming up (no action yet)
 
-On hold until the plan review is answered: the steps and dates below will change.
+**Your question about the 4%.** It was seven research helpers, not a couple, plus my own session: about 3 million tokens in all. Normal for deep web research, but more than needed. Each helper made 75 to 280 page reads and searches, and each step re-reads everything the helper has gathered so far, so long sessions cost far more per finding. The fixes are now rules: at most 60 steps per research helper, narrow questions, web pages read by a cheap summarizer that passes back only what matters, findings written down as they go. My estimate: research now costs about half as much. From today's numbers, one weekly allowance is roughly 70 to 80 million tokens of this kind of work (a rough estimate), so the three allowances cover the plan only if every job stays lean.
 
-**After your "blueprint ok" (prep, low usage):**
-1. **F00, the empty app.** Built on the laptop: the app shell, the test tools, free GitHub checks on every branch (typecheck and tests, never the browser journeys), and safe settings for outside packages. Everything later is built on it.
-2. **The practice run.** One small card goes through the whole loop with nobody at the keyboard: a laptop worker and one cloud worker take jobs, the tests are written, the card is built and checked by different workers, lands on the main code, and the Reviewer runs once. Any permission prompt or snag it hits gets fixed now, not at 3 a.m. during turbo. It uses a little of the cloud credit.
-3. **Tests first and designs.** Workers write the tests for the first waves, and the staff screen designs are drafted (static pages with made-up data, in the GOV.UK and MOJ style with the Ashbridge logo and colours).
+**Which chats to run, and how often.**
 
-**The design look (one sitting, about 45 minutes, when the designs are ready):** a link here to every staff screen, in batches (review, preparer, ops and owner), each with one line on what to look at. Screens are built only to the designs you approve, and a test keeps each built screen matching its design.
+| Chat | When | Type |
+|---|---|---|
+| Lead | Every morning, and evenings in turbo; it says when to clear | `go` |
+| Critic | About every two days; its proposals come here for your yes | `critic` |
+| Reviewer | Daily in turbo; every two or three days otherwise | `review` |
+| Workers | Only in turbo (see item 5b) | `work` |
 
-**Before Thu 1 Oct:** set the laptop to never sleep when plugged in: Settings, System, Power and battery, "Screen, sleep and hibernate timeouts", "When plugged in, put my device to sleep after": Never.
+**Thu 1 Oct, after 12:00 Toronto:** type `go` in the Lead chat. It repairs the queue, sets up the roles and gets the trial ready, then says "ready" here.
 
-**Thu 1 Oct: type `turbo on` in the Lead chat.** 6 to 12 cloud workers and 4 to 6 laptop workers start taking jobs from the queue, each card written, built and checked by three different workers, landing on the main code only in batches that passed every test and every made-up company in the cloud. Cloud work spends the $240 cloud credit first, then your plan. Want even more: open claude.ai/code, pick `ashbridge-returns`, type `work`, send; as many as you like.
+**The trial week (once ready):** day 1 the cell map, day 2 the round trip and the six open questions, day 3 the preparer's work in Taxprep, day 4 Auto-fill (you sign in), day 5 all ten companies, day 6 changes after lock and the check before transmit, day 7 buffer and write-up. You are needed on day 1 (sign in to the trial in the test profile) and day 4.
 
-**After that:** when the week's usage runs out, everything pauses by itself; use your one extra reset, then type `go`. Thu 8 Oct: weekly reset, type `go`. Fri 9 Oct 18:00: the build winds down by itself and lands what is in flight. Sat 10 Oct: your plan ends; the main code holds only finished, tested work.
+**Design sittings:** about 3, 6 and 8 Oct, 30 to 45 minutes each: the flow, then two or three versions of each key screen, then the final look. Links will appear here.
 
-**Later, for the client app (not now):** the client app never confirms a company's year end with the client and stores prior years only as text. This system works around both (ops confirms in one step), but a fix in the client app would save ops that step. I will write it up for the client app's Lead when it is useful.
+**Turbo:** type `turbo on` once the Lead says the rehearsal is clean. Sonnet 5.5 does most of the work and Opus 5.5 the judgment; it runs every night; wind-down Fri 9 Oct at 18:00; your plan ends Sat 10 Oct, and after that we move to a slower pace.
+
+**The client app's /internal:** the prompt is ready at `C:\Users\User\Documents\GitHub\ashbridge-returns\toDelete\internal-redesign-prompt.md`. Open a new session in `ashbridge-app` on Opus 5.5 and paste it (steps at the top of the file). It plans first and builds nothing until you approve its designs.
 
 ## 3. What is left of the build
 
-| Phase | What gets built | What it is for | Cards | Status and next step |
-|---|---|---|---|---|
-| 0 Prep | Blueprint, rules, card list, research | Builders never guess; the client app's mistakes are designed out | 1 | Done tonight, apart from your blueprint ok. Next: F00 and the practice run. |
-| 1 Foundations and design | The empty app; data shapes; 13 made-up companies with all their documents; the Taxprep simulator; free stand-ins for reading, AI, storage and sign-in; a thin end-to-end version from day one; the screen designs | Everything can be built and tested with no real data, no Taxprep account and no money | 68 | First cards written (F00 to F07, SK0, D00, D01) plus templates for the rest. |
-| 2 Evidence | Reading every document type into facts with their page and box; the client's books with our adjusting entries; the gap list | Every number starts with a source | 48 | Listed; templates written. |
-| 3 Round trip | The Taxprep import file, the four exports, the trace, the two gates | Proves what is in Taxprep, and that what is filed is what the CPA approved | 35 | Listed; templates written. |
-| 4 Checks and AI | 26 code checks, the AI tax checklist, a red team, tiers | Errors are caught before the CPA sees the return | 57 | Listed; templates written. |
-| 5 Screens | CPA review, preparer, ops, owner | The full review on one screen, any source in under a second | 27 | Waits for your design look. |
-| 6 Learning loop | Versions, causes, the weekly lesson list | The system improves itself, with no one logging anything | 13 | Listed; templates written. |
-| 7 Go-live readiness | Live connections built but switched off, a real Taxprep proof kit, an OCR test to choose a vendor, the live database plan | Ready to switch on when you say yes | 6 | Each step needs your yes at the end (money, live data). |
+| Phase | What gets built | The gate you can see | Status and next step |
+|---|---|---|---|
+| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Sample clients being generated tonight. The trial waits for "ready". |
+| 1 Evidence and the source viewer | Documents and QuickBooks read into facts with their sources; the source viewer; an early slice of the CPA review | 10 test files fully traced to source | Designs first (sittings from about 3 Oct). |
+| 2 Return build, lock and trace | The Taxprep import file; the lock export; the trace (orphans, overrides, the cite button); every version saved | A simple T2 built with few hand-typed cells | After phase 1. |
+| 3 Checks and the CPA review screen | Ties, reconciliations, flags; the AI checklist and red team through the Claude project; the brief; the full review with marks | You review 20 test files end to end in the screen | After phase 2. |
+| 4 Learning list and sign-off | Versions compared and the weekly lesson list; the approval summary and T183CORP; the check before transmit; the frozen binder | One return from import to frozen binder | After phase 3. |

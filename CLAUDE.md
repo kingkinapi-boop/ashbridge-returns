@@ -10,6 +10,7 @@ The firm's internal system from "onboarding done" to "return filed, binder froze
 |---|---|---|
 | `go` | Lead | this file |
 | `review` | Reviewer | `reviews/REVIEWER.md` |
+| `critic` | Critic (is the plan still right?) | `reviews/CRITIC.md` |
 | `work` | Worker (pulls jobs from the queue) | `.claude/agents/worker.md` |
 | `turbo on`, `turbo off`, `pause` | Lead | skill `modes` sets the mode, then run the loop |
 | `check train full` | Checker of a train | `.claude/agents/checker.md` (full, cloud), report `reports/train-<time>.md` |
@@ -17,13 +18,13 @@ The firm's internal system from "onboarding done" to "return filed, binder froze
 
 ## Zo
 
-Owner. Not a developer. His time is the scarcest thing in this build. He reads ONE file: `plan/TODO-ZO.md`, three sections (1 Needs you now, with a short "What the Lead is doing now"; 2 Coming up; 3 What is left of the build), rewritten, never appended, each item explaining what it is, what it is for and what comes next. He answers RED questions only; he never sees amber. He clears the Lead and Reviewer chats once or twice a day, so everything must survive a clear. In chat: at most 3 short plain lines, ending with `Done. Start a new session.`, `Still working. Nothing needs you.`, `Waiting on to-do #N.` or `Blocked: to-do #N.`, then `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. No reports in chat. No em dashes anywhere.
+Owner. Not a developer. His time is the scarcest thing in this build. He reads ONE file: `plan/TODO-ZO.md`, three sections (1 Needs you now, with a short "What the Lead is doing now"; 2 Coming up; 3 What is left of the build), rewritten, never appended, each item explaining what it is, what it is for and what comes next. He answers RED questions and approves the Critic's proposals; he never sees amber. No chat runs by itself: he opens the Lead, the Critic (about every two days) and the Reviewer himself, and clears them often, so everything must survive a clear (decision 0008). In chat: at most 3 short plain lines, ending with `Done. Start a new session.`, `Still working. Nothing needs you.`, `Waiting on to-do #N.` or `Blocked: to-do #N.`, then `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. No reports in chat. No em dashes anywhere.
 
 ## Decide, log or ask (decision 0002)
 
 - **Green: do it.** The card and the blueprint settle it.
-- **Amber: decide, log, move on.** Inside the blueprint but not settled by it. Choose with the tie-breakers, do it, add one row to `plan/AMBER.md` (what, why, how to reverse). Never ask Zo about amber.
-- **Red: ask, park, keep building.** It would change a blueprint clause; costs money or connects a paid service; touches the live client app or any live data; changes who can see what; brings real client data into the build; is client-facing wording; or contradicts `decisions/`. Write it in TODO-ZO section 1 (clause, question, recommendation, what you do meanwhile). Park only what it blocks. At most 3 open; batch them.
+- **Amber: decide, log, move on.** Inside the blueprint but not settled by it, and any clause change that keeps the clauses in line with the plain end state (decision 0008, Z8-18). Choose with the tie-breakers, do it, add one row to `plan/AMBER.md` (what, why, how to reverse). Never ask Zo about amber.
+- **Red: ask, park, keep building.** It would change the plain end state (first section of `blueprint/README.md`) or an approved design; costs money or connects a paid service; touches the live client app or any live data; changes who can see what; brings real client data into the build; is client-facing wording; or contradicts `decisions/`. Write it in TODO-ZO section 1 (clause, question, recommendation, what you do meanwhile). Park only what it blocks. At most 3 open; batch them.
 - **Tie-breakers, in order:** the blueprint; `decisions/`; the smaller reversible option; a flag for a person rather than a silent pass; code before AI; data before code for rules that change; a free stand-in before waiting on anyone; GOV.UK and MOJ patterns and the client app's conventions.
 - Ten or more open ambers on one blueprint file: propose ONE red amendment (skill `blueprint-change`).
 
@@ -47,6 +48,9 @@ Owner. Not a developer. His time is the scarcest thing in this build. He reads O
 | How to test | `.claude/rules/testing.md`, `reference/build-practices.md` |
 | Lessons from the client app build | `reference/lessons.md`, `reference/lessons-deep.md` |
 | Sources for tax and Taxprep facts | `reference/sources.md` |
+| Dated research (plan review of 29 Sep and after) | `reference/research/INDEX.md` |
+| Zo's answers of 29 Sep (the current plan) | `decisions/0008-zo-answers-2026-09-29.md` |
+| Made-up sample clients (the first test world) | `reference/sample-clients/` |
 | Procedures | skills `modes`, `dispatch`, `merge`, `blueprint-change` |
 
 ## The loop (Lead)
@@ -76,11 +80,11 @@ Owner. Not a developer. His time is the scarcest thing in this build. He reads O
 - Laptop: heavy commands through `node tools/heavy.mjs -- <cmd>`; the full suite and journeys run in the cloud, never on GitHub.
 - Worktrees link `node_modules` with a junction; remove it with `cmd //c rmdir "<wt>\node_modules"` before removing the worktree; never `rm -rf` a worktree.
 - The Lead reads indexes, reports and tool output, never whole code files. Big reads go to a helper that writes a file and returns 10 lines.
-- The main checkout (`C:UsersUserDocumentsGitHubashbridge-returns`) ends every step on `main`, clean: Zo reads his to-do from it. The train and every build live in worktrees or the cloud.
+- The main checkout (`C:\Users\User\Documents\GitHub\ashbridge-returns`) ends every step on `main`, clean: Zo reads his to-do from it. The train and every build live in worktrees or the cloud.
 - A check or train failure that could happen elsewhere becomes a rule test that runs on every screen or every kind, not a one-off fix. Never patch what a later card rebuilds: add the defect to that card.
 - Only the Lead regenerates generated files (for example `plan/MATRIX.md`), at merge.
 - Cards marked `security` get a security review (`/security-review`) before they board the train.
-- Before the first turbo, one unattended rehearsal of the whole loop (local and cloud workers, a train, landing on main, worktree removal, the Reviewer routine); every permission prompt it meets is fixed in `.claude/settings.json` (skill `modes`).
+- Before the first turbo, one unattended rehearsal of the whole loop (local and cloud workers, a train, landing on main, worktree removal, one Reviewer run); every permission prompt it meets is fixed in `.claude/settings.json` (skill `modes`).
 
 ## Commands
 

@@ -6,3 +6,4 @@
 {"ts":"2026-09-29T16:05:23.060Z","day":"2026-09-29","mode":"prep","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Research testing strategy for AI builds","allowed":true}
 {"ts":"2026-09-29T16:05:31.721Z","day":"2026-09-29","mode":"prep","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Critique cards, tools and references","allowed":true}
 {"ts":"2026-09-29T16:51:13.811Z","day":"2026-09-29","mode":"prep","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Fresh-eyes review of the doc","allowed":true}
+{"ts":"2026-09-29T18:43:49.202Z","day":"2026-09-29","mode":"prep","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Generate the ten sample clients","allowed":true}
