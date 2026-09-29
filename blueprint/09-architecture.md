@@ -17,7 +17,20 @@
   | Taxprep | the simulator (RT-23) | people importing and exporting by hand |
 
 - **ARC-7** Code is split into modules, each in its own folder with its own tests, so builders can work in parallel. Shared types live in `src/contracts/` and change one card at a time.
-- **ARC-8** The test world (`testworld/`) generates the twelve return kinds: the right answers as data, the documents as PDFs (some as scans), and planted faults with the flags they must raise.
+- **ARC-8** The test world (`testworld/`) generates the thirteen return kinds: the right answers as data, the documents as PDFs (some as scans), and planted faults with the flags they must raise.
 - **ARC-9** Tests carry clause IDs. `node tools/matrix.mjs` lists every clause and the tests that cover it.
 - **ARC-10** Every AI output and every derived record stores the versions that made it (AI-10).
 - **ARC-11** Page images and word boxes are prepared when a document arrives, so sources open fast (RV-4).
+
+## How it is built and tested
+
+- **ARC-12** Every card's acceptance tests are written by a different agent from the one that builds it, before the build, named with the clause IDs they prove, and shown to fail first. The builder never edits them.
+- **ARC-13** Money is stored as integer cents. Money and tax arithmetic is tested with property-based tests as well as examples.
+- **ARC-14** Taxprep CSV files are tested with golden files: a known file in, the same file out.
+- **ARC-15** Mutation testing runs on the core modules (ledger, books, round trip, checks, approval). A surviving mutant in a core module fails the train.
+- **ARC-16** Tests pin clocks and random seeds. A flaky test counts as a failure: it is fixed or removed within a day, never retried until it passes.
+- **ARC-17** GitHub runs typecheck and unit tests on every build branch. The full suite and the browser journeys run in Claude cloud sessions. Main moves only to a batch of cards (the train) that passed both.
+- **ARC-18** Dependencies are pinned to exact versions with a committed lockfile, and a free audit shows no high or critical issue.
+- **ARC-19** Work reaches builders through one queue (`tools/claim.mjs`): each card is specified, built and checked by three different workers, and no two workers hold overlapping files.
+- **ARC-20** Each adapter's live side is tested from the start against a fake of the vendor's web interface, and a test flips its switch both ways, so the live path is never first run at go-live.
+- **ARC-21** Browser journeys run against the production build (`next build`, then `next start`), never the development server.

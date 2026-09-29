@@ -1,7 +1,7 @@
 // Statusline for Lead sessions: shows the mode and plan usage, and copies the
 // usage numbers Claude Code passes in (rate_limits) to plan/usage-now.json so
-// the Lead and the Reviewer can pace ultra without asking Zo (decision 0004,
-// M-3). Fields Claude Code does not send are shown as "?". Never fails.
+// the Lead and the Reviewer can pace turbo without asking Zo (decisions 0004
+// and 0007). Fields Claude Code does not send are shown as "?". Never fails.
 import fs from 'node:fs'
 import path from 'node:path'
 

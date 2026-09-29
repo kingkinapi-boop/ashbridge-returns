@@ -1,13 +1,13 @@
 /**
  * PreToolUse hook for Agent (Task in older builds) and RemoteTrigger.
  * Logs every dispatch to plan/ledger.jsonl and refuses it when the mode in
- * plan/mode.json allows no more today (decision 0004, M-3).
+ * plan/mode.json allows no more today (decisions 0004 and 0007).
  *
  * Why: usage must stay under control without the Lead spending tokens on
- * counting, and ultra must be something Zo unleashes on purpose, not a
+ * counting, and turbo must be something Zo unleashes on purpose, not a
  * Lead's drift. The ledger is also what the Reviewer reads for waste.
  *
- * Caps per UTC day: pause 0, hold 0, prep 15, steady 40; ultra and wind-down
+ * Caps per UTC day: pause 0, hold 0, prep 15, normal 40; turbo and wind-down
  * have no cap (wind-down's "no new cards" is a Lead rule). RemoteTrigger
  * calls that only read (list, get, status) are neither counted nor blocked.
  *
@@ -18,7 +18,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-const CAPS = { pause: 0, hold: 0, prep: 15, steady: 40 }
+const CAPS = { pause: 0, hold: 0, prep: 15, normal: 40 }
 
 let input = ''
 process.stdin.on('data', (chunk) => (input += chunk))

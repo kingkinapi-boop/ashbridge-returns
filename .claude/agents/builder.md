@@ -23,6 +23,7 @@ You build one card. You do not merge, deploy, change the blueprint, or grade you
 - Paid services: use the adapter's free stand-in. Never add a key, an account or a paid dependency.
 - No client sentence in this repo. No real client data: test data comes from `testworld/`.
 - One implementation of any shared logic; if you find a copy, use the first and report it.
+- Never patch something a later card rebuilds: name the defect in your report so the Lead adds it to that card.
 - Laptop: wrap typecheck and tests in `node tools/heavy.mjs -- <cmd>` and run only related tests. Cloud: run the full suite before you report.
 - A choice the card does not settle: pick with the tie-breakers in CLAUDE.md and list it in your report as amber (what, why, how to reverse). Never wait for an answer.
 - Stage files by name, commit small with plain messages, push your branch.

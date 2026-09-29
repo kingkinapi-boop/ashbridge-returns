@@ -39,7 +39,17 @@ process.stdin.on('end', () => {
       return null
     }
   }
-  if (git('rev-parse', '--abbrev-ref', 'HEAD') !== 'main') process.exit(0)
+  const branch = git('rev-parse', '--abbrev-ref', 'HEAD')
+  // Zo reads his to-do from the laptop's main checkout: it must end every turn on main.
+  const top = (git('rev-parse', '--show-toplevel') || '').split(String.fromCharCode(92)).join('/').toLowerCase()
+  if (branch !== 'main' && top.endsWith('/documents/github/ashbridge-returns')) {
+    process.stderr.write(
+      `Lead: the main checkout is on "${branch}". Zo reads plan/TODO-ZO.md from it, so switch back: git checkout main. ` +
+        'Do train and build work in worktrees.' + String.fromCharCode(10),
+    )
+    process.exit(2)
+  }
+  if (branch !== 'main') process.exit(0)
   const lastNow = git('log', '-1', '--format=%H', '--', 'plan/NOW.md')
   if (!lastNow) process.exit(0)
   const count = Number(git('rev-list', '--count', `${lastNow}..HEAD`, '--', ...CODE_PATHS) || 0)
