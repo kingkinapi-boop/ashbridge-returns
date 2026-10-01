@@ -101,3 +101,5 @@
 {"ts":"2026-10-01T19:59:51.984Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Phase 2 card fixes, day 3 findings","allowed":true}
 {"ts":"2026-10-01T20:05:28.991Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Independent phase 2 card review","allowed":true}
 {"ts":"2026-10-01T20:08:08.744Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-01T20:08:33.509Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T20:08:33.939Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
