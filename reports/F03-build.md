@@ -1,9 +1,7 @@
-# F03 build: released (void spec)
+# F03 build released (cloud-451039)
 
-Worker cloud-3b6e2d. Branch claude/F03 (no new code).
+Not started. plan/cards/F03.md says "Re-spec needed (1 Oct 2026)": any spec written against the old card is void, and the only spec reported (80 tests, cloud-d367f7, 326 min old) predates the re-carded text. Building to it would build the wrong CSV format. The queue still offers the build because the old spec is marked reported.
 
-The acceptance tests on claude/F03 (`src/contracts/taxprep.acceptance.test.ts`, 80 tests) follow the OLD card (CCH help page: `[name|return id|language]` header, `T4SLIP[1].TOATSC4`, `57565.00`, blank = "no import", CRLF and Windows-1252 as faults, LF writer, UTF-8). The card's "Re-spec needed (1 Oct 2026)" section says any earlier spec is void. They contradict the current card (header `[name|0|0|GUID]`, quoted values, CRLF, Windows-1252, `""` = clear, RT-21 grammar, apostrophe negative, ignored-on-import list). Building to them would be wrong; editing them is forbidden.
-
-Needed: reopen the spec (`update F03 spec reopened --worker lead`) and re-spec from the current card, then build.
+Needed from the Lead: reopen the spec (`update F03 spec reopened --worker lead`), run a fresh spec job from the current card (12 acceptance checks, apostrophe negatives included), then build.
 
 Permission gaps: none. Model: Sonnet 5.5.
