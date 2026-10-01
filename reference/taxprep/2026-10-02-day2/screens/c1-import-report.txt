@@ -1,0 +1,6 @@
+Riverdale (Test) import of rt-07-import.csv (regenerated, 13 data rows, header GUID all zeros), 1 Oct 2026 2:51 pm, defaults.
+Report listed only 2 rows (both replaced because the probe left values there):
+ S1599 1002 "The value of this cell has been replaced by a new imported value." (7693 -> 7693 same value written again)
+ S8299 8141 same wording.
+The 11 other rows (new cells) produced no report row at all: no "rows read / rows imported" count is shown.
+Status bar after import: net income for income tax 6,737; taxable income 6,737; Part I tax payable 1,010.

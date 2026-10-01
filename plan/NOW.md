@@ -13,34 +13,42 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, afternoon (the L
 
 ## In flight
 
-Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger run; decision 0010: one-off runs only, never a schedule). Light document helpers may still run locally.
+Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (its prompt only points at .claude/cloud-worker-run.md; edit that file, not the routine) (RemoteTrigger run; decision 0010: one-off runs only, never a schedule). Light document helpers may still run locally.
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Taxprep trial day 1 (cell map) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
-| QBO sandbox checks (retry) | Sonnet walker, own tab | local | 1 Oct | reference/qbo/ |
-| queue: F00 build, D01 spec (the rehearsal) | 2 cloud workers, runs cse_01UaSXaBy5XRsUopyN1whFtX and cse_01MsA6SHdAiP5aDXMnNkMwYF | cloud | 1 Oct 17:40Z | claude/F00, claude/D01 |
-| phase 1 cards batch b (A06, A07, U00, L00, L01, E00, Claude project setup) | Opus drafter | local | 1 Oct | claude/cards-phase1b |
-| findings review of the three design panels | findings-reviewer (Opus) | local | 1 Oct | claude/findings-designs |
+| Trial findings into FINDINGS.md and the RT, TB, EV clauses; F03 re-spec | Opus drafter | local | 1 Oct | claude/trial-findings-1 |
+| Taxprep trial day 3 (tax choices, diagnostics, print) | Sonnet walker, Chrome | local | 1 Oct | reference/taxprep/2026-10-03-day3/ |
+| queue: F00 check FAIL round 2 (Stryker 10 vs Vitest 5, scope paths); 8 specs reported; workers loop on specs whose deps are unbuilt | cloud runs idle; none fired until queue repair 2 lands | cloud | 1 Oct | |
+| findings review F00 round 2 | findings-reviewer (Opus) | local | 1 Oct | claude/F00-findings-2 |
+| queue repair 2: dependency gate, spec reopen | builder (local, the one) | local | 1 Oct | claude/queue-repair-2 |
+| design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
+| design fix round: source viewer (D03) | designer | local | 1 Oct | claude/design-source-viewer-2 |
 
-Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
+Done today: phase 0 and phase 1 cards written and independently reviewed (no phase 1 todo left); trial day 1 (reference/taxprep/); decisions 0010 to 0014; trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
 ## Next, in order
 
 1. Research done for now (four pairs reconciled, clauses applied). Next research only as cards need it.
-2. Phase 0 cards written and reviewed (A81 to A92). The rehearsal runs on F00 locally: build, then a check by a different worker, then a local train. Next cards to write: F06, W20, A02 to A05 (phase 1), and a card for where the real pipeline is wired (review-phase0 asks).
+2. Cards: phase 2 cards (M00, T01, T02, T04, T05, T07 and the rest) wait for trial day 2 findings, since RT-3, RT-9 and the cell ids change (F03 parked for the same reason). Gaps to card now: the four new sample clients for kinds K1, K5, K6, K13 (review-phase1); V05 shows "waiting on AI run"; B03 amalgamation field in the bridge.
 3. Queue repairs landed (P04 done).
 4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
 5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Draft import CSVs are on main; cell ids from day 1 replace the guesses.
-6. Rehearsal at small width once Zo answers to-do #1; then widen.
+6. Rehearsal running in the cloud (F00). Learned so far: claim.mjs hands out specs and builds whose deps are not built (needs a dep gate: queue repair 2, with F08); claim.mjs cannot reopen a spec (the Lead set F00 spec to null in slices.json and released the old spec claim instead); a cloud worker sent Zo a push notification (routine prompt now forbids it). Widen past 3 cloud runs only after F00 lands through a train and the cold sign-off on the repairs and rehearsal.
 
 ## Watch out
 
-- The trial lasts one week: nothing starts on it until the to-do says ready. Real Auto-fill data: structure only, never values (decision 0008, Z8-7).
+- The trial ends about 16 Oct (15 days left on 1 Oct; 100 PDFs left). Release CCH iFirm 2026.20.198267. The trial lasts until then: nothing starts on it until the to-do says ready. Real Auto-fill data: structure only, never values (decision 0008, Z8-7).
 - Chrome: only the "Ashbridge Test" profile. QBO: Intuit developer sandbox companies only, never the firm's real client list.
 - No routines, no schedules (until Zo answers to-do #1). Ask Zo in the to-do for anything only he can do; if he does not answer, keep going on everything else.
 - Findings review before every fix round; cold sign-off for big chunks only.
 - The main checkout stays on main; train work in .claude/worktrees/train. The push guard lets only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ go straight to main.
-- Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B` (that drags old plan files back).
+- Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B`. For plan/slices.json the branch copy replaces main's, so re-apply any Lead edit made on main after the branch started (F03 parked was lost once).
+- Cloud worker names: the first two runs both called themselves cloud-vm (same hostname); the routine prompt now uses a random id. Watch for the two cloud-vm runs blocking each other.
+- Chrome downloads land in C:SERSSERDOWNLOADS (ZO, 1 OCT); WALKERS COPY ONLY THEIR OWN EXPORTS TO C:SERSSERDOCUMENTS	AXPREP-TRIALINBOX AND TOUCH NOTHING ELSE THERE.
+- NEXT IN CHROME, ONE AT A TIME and only with the window visible (to-do #1): the trial walker (day 1b, then day 2), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI from QBO Accountant on "Probe Co. (Test)" (decision 0013, with its limits).
+- Trial checkpoint landed (300 GIFI ids; reference/taxprep/cell-map-status.md lists what to export next). Chrome order, one at a time, window visible: the QBO walker (done: Transaction List by Date carries Transaction ID and the full memo), then the trial walker (running) (balance-sheet forms S2008, S2178, S3849, then S1, S8, S50; round trip steps 16 to 19; Q21, Q22), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI on "Probe Co. (Test)" in QBO Accountant (decision 0013, with its limits). Downloads land in C:\Users\User\Downloads; walkers copy only their own exports to C:\Users\User\Documents\taxprep-trial\inbox.
+- If the Chrome extension drops, it may reconnect to Zo's other Chrome: run switch_browser so Zo confirms "Ashbridge Test" before any walker starts.
+- Only one helper drives Chrome at a time: two walkers shared the tab group on 1 Oct and one tab was taken over.
 - Edit files with the Edit tool, not shell scripts with escapes (Git Bash mangles backslashes).
 - Another Lead works in ashbridge-app: read-only there, always. GitHub Actions: 2,000 free minutes a month: keep branch checks lean.
