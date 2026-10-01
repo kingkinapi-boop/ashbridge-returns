@@ -18,7 +18,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Taxprep trial day 1 (cell map) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
-| queue: F00 build, D01 spec (the rehearsal) | 2 cloud workers, runs cse_01UaSXaBy5XRsUopyN1whFtX and cse_01MsA6SHdAiP5aDXMnNkMwYF | cloud | 1 Oct 17:40Z | claude/F00, claude/D01 |
+| queue: F00 reported, F01 spec working; a third run for the F00 check | 3 cloud runs: cse_01UaSXaBy5XRsUopyN1whFtX, cse_01MsA6SHdAiP5aDXMnNkMwYF (both named cloud-vm), cse_01WvokbrF6aSimESpr5gLRNg | cloud | 1 Oct | claude/F00, claude/F01 |
 | phase 1 cards batch b (A06, A07, U00, L00, L01, E00, Claude project setup) | Opus drafter | local | 1 Oct | claude/cards-phase1b |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | design versions: source viewer (D03) | designer | local | 1 Oct | claude/design-source-viewer |
@@ -42,6 +42,7 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 - Findings review before every fix round; cold sign-off for big chunks only.
 - The main checkout stays on main; train work in .claude/worktrees/train. The push guard lets only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ go straight to main.
 - Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B` (that drags old plan files back).
+- Cloud worker names: the first two runs both called themselves cloud-vm (same hostname); the routine prompt now uses a random id. Watch for the two cloud-vm runs blocking each other.
 - Only one helper drives Chrome at a time: two walkers shared the tab group on 1 Oct and one tab was taken over.
 - Edit files with the Edit tool, not shell scripts with escapes (Git Bash mangles backslashes).
 - Another Lead works in ashbridge-app: read-only there, always. GitHub Actions: 2,000 free minutes a month: keep branch checks lean.
