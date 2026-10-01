@@ -1,6 +1,6 @@
 # Family: screen design ({screen})
 
-Cards D02 to D12 (D06 parked). Every screen card (V) depends on its design card, and a design card is done only when Zo approves it at a design sitting (RV-53); the Lead marks it done then. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 06, `reference/design-basis.md`, `design/basis/` (D00), `design/map/` (D01) and `.claude/rules/staff-screens.md`.
+Cards D02 to D13 (D06 parked). Every screen card (V) depends on its design card, and a design card is done only when Zo approves it at a design sitting (RV-53); the Lead marks it done then. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 06, `reference/design-basis.md`, `design/basis/` (D00), `design/map/` (D01) and `.claude/rules/staff-screens.md`.
 
 ## Goal
 A static, clickable design of the "{screen}" screens, with made-up data from the test world, built from GOV.UK and MOJ components in the Ashbridge brand, ready for Zo's design sitting and for builders to match exactly.

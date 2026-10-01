@@ -519,7 +519,8 @@
       "id": "F02",
       "title": "Lifecycle, due dates and holds",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
       "status": "carded",
@@ -592,7 +593,8 @@
       "id": "F07",
       "title": "Client-app bridge on made-up data",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "security": true
     },
     {
       "status": "carded",
@@ -917,7 +919,8 @@
         "ARC-8",
         "ARC-16",
         "SEC-11",
-        "EV-6"
+        "EV-6",
+        "ARC-18"
       ],
       "id": "W20",
       "title": "Document renderer framework (PDF and scans)",
@@ -1482,6 +1485,10 @@
         "ARC-20",
         "ARC-22",
         "AI-1",
+        "AI-4",
+        "AI-5",
+        "AI-6",
+        "AI-7",
         "AI-8",
         "AI-9",
         "AI-10",
@@ -1529,7 +1536,9 @@
         "RV-20",
         "RV-30",
         "RV-40",
-        "RV-50"
+        "RV-50",
+        "RV-51",
+        "SEC-2"
       ],
       "id": "D01",
       "title": "Staff screen map and navigation",
@@ -1765,7 +1774,10 @@
         "ARC-11",
         "ARC-5",
         "ARC-10",
-        "SEC-11"
+        "SEC-11",
+        "EV-14",
+        "RV-4",
+        "SEC-4"
       ],
       "id": "E00",
       "title": "Document intake: fingerprint, store, pages and word boxes on arrival",
@@ -1779,6 +1791,7 @@
       "spec": null,
       "deps": [
         "E00",
+        "E03",
         "F05",
         "W20"
       ],
@@ -1786,13 +1799,15 @@
         "src/modules/documents/classify/**",
         "src/modules/documents/index.ts",
         "data/documents/kinds.json",
-        "db/schema/10_documents.sql"
+        "db/schema/10_documents.sql",
+        "src/pipeline/steps/read.ts"
       ],
       "clauses": [
         "EV-3",
         "EV-4",
         "EV-7",
-        "EV-10"
+        "EV-10",
+        "ARC-10"
       ],
       "id": "E02",
       "title": "Documents: split, classify, period and entity, tamper signs",
@@ -2311,7 +2326,8 @@
         "B04",
         "L00",
         "SK0",
-        "F10"
+        "F10",
+        "F07"
       ],
       "paths": [
         "src/modules/books/read/**",
@@ -2326,6 +2342,7 @@
         "TB-5",
         "TB-7",
         "TB-9",
+        "TB-10",
         "EV-5",
         "ARC-13"
       ],
@@ -2395,7 +2412,8 @@
       "paths": [
         "src/modules/books/prior/**",
         "src/modules/books/index.ts",
-        "data/ledger/agree-rules.json"
+        "data/ledger/agree-rules.json",
+        "src/pipeline/steps/books.ts"
       ],
       "clauses": [
         "TB-8",
@@ -2416,18 +2434,21 @@
         "B05",
         "L01",
         "E10",
-        "E11"
+        "E11",
+        "F07"
       ],
       "paths": [
         "src/modules/books/bankmatch/**",
         "src/modules/books/index.ts",
-        "data/books/match-rules.json"
+        "data/books/match-rules.json",
+        "src/pipeline/steps/books.ts"
       ],
       "clauses": [
         "TB-4",
         "EV-13",
         "EV-11",
-        "ARC-13"
+        "ARC-13",
+        "ARC-10"
       ],
       "id": "B07",
       "title": "Bank-only clients: match QBO bank and card lines to statement lines",
@@ -2444,18 +2465,21 @@
         "F05",
         "F07",
         "E03",
-        "G01"
+        "G01",
+        "F10"
       ],
       "paths": [
         "src/modules/gaps/core/**",
         "src/modules/gaps/index.ts",
-        "data/gaps/required.json"
+        "data/gaps/required.json",
+        "src/pipeline/steps/gaps.ts"
       ],
       "clauses": [
         "AI-12",
         "FLOW-3",
         "FLOW-2",
-        "EV-8"
+        "EV-8",
+        "FLOW-10"
       ],
       "id": "G00",
       "title": "Gap pass: required facts, found, missing, conflicting, weak",
@@ -2497,7 +2521,8 @@
       ],
       "paths": [
         "src/modules/gaps/slots/**",
-        "src/modules/gaps/index.ts"
+        "src/modules/gaps/index.ts",
+        "src/pipeline/steps/gaps.ts"
       ],
       "clauses": [
         "AI-12",
@@ -2853,7 +2878,8 @@
         "EV-5",
         "EV-14",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "SEC-2"
       ],
       "id": "V01",
       "title": "Source viewer",
@@ -2871,6 +2897,7 @@
         "F02",
         "G00",
         "B05",
+        "E02",
         "D04",
         "U01",
         "U02"
@@ -2884,7 +2911,8 @@
         "FLOW-7",
         "FLOW-3",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "SEC-2"
       ],
       "id": "V05",
       "title": "Preparer queue",
@@ -2915,7 +2943,8 @@
         "AI-12",
         "END-7",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "FLOW-10"
       ],
       "id": "V08",
       "title": "Gap review",
@@ -2951,7 +2980,8 @@
         "EV-11",
         "EV-12",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "SEC-2"
       ],
       "id": "V14",
       "title": "CPA review, early slice: one return section by section, any number opens its source",
@@ -3644,7 +3674,8 @@
       "family": "design",
       "params": {
         "screen": "roundtrip"
-      }
+      },
+      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1)."
     },
     {
       "status": "parked",
@@ -4250,7 +4281,8 @@
       "phase": 2,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "note": "Owns the .GFI upload screen on top of B01 importGfi (review-phase1)."
     },
     {
       "status": "parked",
