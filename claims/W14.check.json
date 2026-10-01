@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-01T21:54:11.273Z",
  "worker": "cloud-c4f1c0",
- "state": "working",
- "at": "2026-10-01T22:24:57.535Z",
+ "state": "failed",
+ "at": "2026-10-01T22:28:29.290Z",
  "mode": "turbo",
- "beat": "2026-10-01T22:25:21.158Z"
+ "beat": "2026-10-01T22:25:21.158Z",
+ "note": "FAIL: wording, contract ids, prior-year ties, see reports/W14-check.md"
 }
