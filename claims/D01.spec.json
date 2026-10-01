@@ -2,7 +2,9 @@
  "card": "D01",
  "role": "spec",
  "worker": "cloud-c4f1c0",
- "state": "working",
- "at": "2026-10-01T22:28:35.213Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T22:30:05.957Z",
+ "mode": "turbo",
+ "note": "19 tests (10 fail pre-build: files missing; 9 planted-fault tests pass); needs design/**/*.test.ts in vitest unit include",
+ "commit": "d082015"
 }
