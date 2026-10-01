@@ -2,7 +2,8 @@
  "card": "F01",
  "role": "spec",
  "worker": "cloud-vm",
- "state": "working",
- "at": "2026-10-01T17:38:51.502Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T17:38:58.322Z",
+ "mode": "turbo",
+ "note": "waits on F00 build; re-claimed by next at once, queue needs a dep gate"
 }
