@@ -1,12 +1,10 @@
 {
  "card": "F00",
  "role": "build",
- "round": 4,
- "spec": "7eb6b94",
- "worker": "cloud-1b601c",
- "state": "reopened",
- "at": "2026-10-01T21:17:15.846Z",
- "mode": "turbo",
- "beat": "2026-10-01T19:39:07.160Z",
- "note": "round 2: 43+2 tests pass, mutation 74.47, flake 5/5, e2e ok; canary 77.78 (amber)"
+ "round": 5,
+ "spec": "5446295",
+ "worker": "cloud-3f94c2",
+ "state": "working",
+ "at": "2026-10-01T21:17:43.484Z",
+ "mode": "turbo"
 }
