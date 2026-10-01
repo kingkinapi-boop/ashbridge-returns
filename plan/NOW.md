@@ -15,7 +15,6 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 |---|---|---|---|---|
 | Design fix round 2: queues-record, workbench (builds design/parts/cite-or-reason/), cpa-review V1 (V1 to V8 from claude/design-verify 1f3fdda) | 3 designers | local worktrees | 2 Oct 00:45Z | claude/design-*-2 |
 | Checks of F01, F05, F08, F09 (builds reported; F01 and F09 note spec defects); F03 re-spec | 3 cloud runs | cloud | 2 Oct 03:35Z | claude/<card> |
-| Card side of reports/findings-W14-D01.md (new card TH test homes, W14 amended, fix rounds F01 F09 D01 W15 F04 W00 D00 F08, spec-writer done step) | Opus helper | local worktree | 2 Oct 04:10Z | claude/cards-findings-w14 |
 | Queue repair 3 build (reopened build re-offers check; next.mjs reads spec claims; async tools tests A247; shellProblems A253; parked-dep check test) | builder | local worktree | 2 Oct 03:00Z | claude/queue-repair-3 |
 
 All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
@@ -24,7 +23,7 @@ All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -c
 
 1. Queue repair 2 LANDED (ed9435b, A247: vitest RPC timeout noise to fix in the next queue repair; dispatch skill line 40 should name `update <card> spec reopened --worker lead`; add a test that a check on a card with a parked dep still flows; a reopened build must reset its check, today the Lead releases the check by hand).
 2. F00 LANDED 5a70f12. Cold sign-off SIGNED OFF (reports/signoff-rehearsal.md) with conditions before going past 3 runs: (1) F03 and S00 specs reopened, done; (2) queue repair 3 (in flight: build, then check by another helper, then local train); (3) merge skill land step rewritten (rebase on main plus code-diff guard), done. Widen to 6 runs when queue repair 3 lands. Soon after: mutation score drift (74.43 vs 75.00 same code), dispatch skill vs decision 0010, metrics tokens and minutes.
-3. Re-specs: F03 and S00 (re-carded from the trial). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 done (dep gate).
+3. Spec refits reopened 2 Oct: F01, F09, W14 (fix rounds in cards; reports/findings-W14-D01.md). After TH lands: D01 re-check, W00, D00, F04 refits; W15 re-spec after W14 spec; F08 validate. F03 and S00 re-specs reopened. New card TH (test homes) is in the queue.
 4. Phase 2: reviewed and fixed (reports/review-phase2.md, A234 to A246; red 1 settled as amber A245, RT-25 changed, CPA check item 33). Specs wait on S03 (FINDINGS final). Next design: D05 brief with Ready and the clear.
 5. Day 5: imports 01 to 07 done by script; exports and the 02 print (counter 96, file never arrived) blocked, window hidden. On Zo's "2 done": walker retries exports for 01 to 07, creates and imports 08 to 10, diagnostics 06, 07, then 5D. Then "After day 5" helper.
 6. .GFI: Accountant view reached (firm "Ashbridge Tax"); path Your books > Workpapers > Books to tax actions > Export GIFI file; header-only file (blank books). To-do #1: made-up accounts in the firm books (red: firm data) or Zo exports one (shape only). Then gfi-file.md and B01 spec.
