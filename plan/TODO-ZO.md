@@ -18,6 +18,11 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 - Why: our research could not confirm from Intuit's pages whether QuickBooks reports carry the transaction ids the trace needs; a free test company answers it in minutes. No card, no real clients.
 - Steps: developer.intuit.com, Sign up with a new login (not your firm's QBO login), then Dashboard, Sandbox, Add a sandbox company, region Canada. Reply `3 done`; the Lead then asks for nothing else (no keys in chat).
 
+**4. The Taxprep trial is ready: start it when you have 15 minutes at the laptop (Fri 2 Oct morning is ideal).**
+- What: day 1 maps every Taxprep input cell on made-up companies. The trial lasts one week, so nothing starts until you do this.
+- Steps: open Chrome with the "Ashbridge Test" profile only; create the CCH iFirm Taxprep T2 trial and sign in yourself (the Lead never types a password); choose the **T2 2025** edition; note the trial's last day. Optional: in that profile, Settings, Downloads, set the location to `C:\Users\User\Documents\taxprep-trial\inbox` and turn "Ask where to save" off.
+- Then reply `4 started, ends <date>` and leave that Chrome window open. The walker does day 1 (script: `plan\trial\day1-script.md`). You are needed again on day 4 (Auto-fill); the Lead tells you the day before.
+
 **What the Lead is doing now:** research on the checks (ties, reconciliations, flags) and QuickBooks; three screen families being designed (CPA review, preparer workbench, queues and the return page) for your first sitting about 3 Oct; the trial day 1 script; repairs to the job queue; the blueprint clauses brought into line with v1.1.
 
 ## 2. Coming up (no action yet)

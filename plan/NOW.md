@@ -34,7 +34,7 @@ Done today: trial day 1 script (plan/trial/day1-script.md); QBO pair; ties B, re
 2. Clauses: review the drafter's branch (reports/clauses-v1-1.md), merge blueprint to main, add its amber rows. Then re-cut slices.json into the five phases, one phase ahead, F00 first; then the phase 1 card review by an independent worker.
 3. Queue repairs: when built, a different worker checks it; then the first train (also carries the design briefs and prototypes).
 4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
-5. Trial: day 1 script is on main; an Opus read of it, then write "ready" in the to-do with when to open the Chrome profile. Zo starts the trial.
+5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Import CSVs (claude/sample-csv) must be on main before day 2; cell ids from day 1 replace the guesses.
 6. Rehearsal at small width once Zo answers to-do #1; then widen.
 
 ## Watch out

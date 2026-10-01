@@ -27,3 +27,9 @@
 {"ts":"2026-10-01T17:01:52.967Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"research-checker","model":"opus","where":"worktree","desc":"Check QBO research pair","allowed":true}
 {"ts":"2026-10-01T17:02:02.950Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"worktree","desc":"Research F9 lists, angle A","allowed":true}
 {"ts":"2026-10-01T17:02:07.695Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"worktree","desc":"Research F9 lists, angle B","allowed":true}
+{"ts":"2026-10-01T17:02:53.555Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"research-checker","model":"opus","where":"worktree","desc":"Check flags research pair","allowed":true}
+{"ts":"2026-10-01T17:02:58.022Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"research-checker","model":"opus","where":"worktree","desc":"Check reconciliations research pair","allowed":true}
+{"ts":"2026-10-01T17:03:09.487Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Opus read of trial day 1 script","allowed":true}
+{"ts":"2026-10-01T17:04:08.651Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"research-checker","model":"opus","where":"worktree","desc":"Check ties research pair","allowed":true}
+{"ts":"2026-10-01T17:05:23.675Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"research-checker","model":"opus","where":"worktree","desc":"Check F9 research pair","allowed":true}
+{"ts":"2026-10-01T17:06:11.636Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"worktree","desc":"Draft Taxprep import CSVs","allowed":true}
