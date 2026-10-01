@@ -1,11 +1,10 @@
 {
  "card": "F00",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "n/a",
- "worker": "cloud-vm",
- "state": "reopened",
- "at": "2026-10-01T18:21:49.647Z",
- "mode": "turbo",
- "note": "fix round 1: build to the Fix round 1 list and the new spec tests"
+ "worker": "cloud-fb8d96",
+ "state": "working",
+ "at": "2026-10-01T18:22:49.133Z",
+ "mode": "turbo"
 }
