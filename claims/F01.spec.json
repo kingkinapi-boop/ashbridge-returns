@@ -2,8 +2,10 @@
  "card": "F01",
  "role": "spec",
  "worker": "cloud-vm",
- "state": "working",
- "at": "2026-10-01T17:42:35.448Z",
+ "state": "reported",
+ "at": "2026-10-01T17:57:57.920Z",
  "mode": "turbo",
- "beat": "2026-10-01T17:42:59.085Z"
+ "beat": "2026-10-01T17:42:59.085Z",
+ "note": "63 tests, checks 1-12",
+ "commit": "ea1e06ef122a9776cd17e5abe1abf9dc211b2525"
 }
