@@ -3868,13 +3868,15 @@
         "RT-4",
         "RT-13",
         "ARC-13",
-        "ARC-10"
+        "ARC-10",
+        "TB-6",
+        "ARC-7"
       ],
       "id": "M00",
       "title": "Mapping framework and identifier drift check",
       "phase": 2,
       "size": "L",
-      "note": "Carded 2 Oct (reports/cards-phase2.md): mapping format, GIFI rows read from the release descriptions, copy lookup by natural key, whole-dollar rounding with the Schedule 100 plug, drift check, roll-forward map and tax-choice cells as data. Trial-dependent points marked in the card.",
+      "note": "Carded 2 Oct (reports/cards-phase2.md): mapping format, GIFI rows read from the release descriptions, copy lookup by natural key, whole-dollar rounding with the Schedule 100 plug, drift check, roll-forward map and tax-choice cells as data. Trial-dependent points marked in the card. Review phase 2: roundGifi spec held until the Lead settles RT-25 plug line against CK-11 (reports/review-phase2.md red 1).",
       "hard": true,
       "core": true
     },
@@ -4290,7 +4292,8 @@
         "F07",
         "A05",
         "SK0",
-        "F10"
+        "F10",
+        "F02"
       ],
       "paths": [
         "src/modules/roundtrip/figures/**",
@@ -4318,7 +4321,10 @@
         "RT-25",
         "TB-9",
         "ARC-10",
-        "ARC-14"
+        "ARC-14",
+        "RT-22",
+        "FLOW-2",
+        "AI-7"
       ],
       "id": "T01",
       "title": "Import writer: AI draft and changed-cell re-imports",
@@ -4351,7 +4357,9 @@
         "RT-22",
         "ARC-14",
         "EV-1",
-        "EV-2"
+        "EV-2",
+        "RT-7",
+        "RT-14"
       ],
       "id": "T02",
       "title": "Export reader and identity checks",
@@ -4408,7 +4416,10 @@
         "RT-8",
         "TB-6",
         "EV-5",
-        "ARC-10"
+        "ARC-10",
+        "RT-2",
+        "RT-7",
+        "EV-1"
       ],
       "id": "T04",
       "title": "Trace: traced, overridden, dropped, rolled forward (roll-forward map), orphan, calculated",
@@ -4505,7 +4516,8 @@
         "RT-17",
         "EV-5",
         "AI-7",
-        "FLOW-2"
+        "FLOW-2",
+        "EV-1"
       ],
       "id": "T12",
       "title": "Trace resolutions: the cite, override reasons, dropped cells and the sign-off gate",
