@@ -19,16 +19,15 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 |---|---|---|---|---|
 | Taxprep trial day 1b and day 2 (re-sent; window visible, decision 0013) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
 | queue: F00 build reopened (fix round 1, spec reported); specs reported for F01, F03 (parked), F04, F05; D01 spec next | 2 cloud runs cse_017hMiW9j3fVnNJe2RGaGGDD, cse_01LqmYtxUesTx2VN94G1rGxG | cloud | 1 Oct 18:15Z | claude/F00 and others |
-| phase 1 cards batch c (the rest of phase 1: E01, B cards, ...) | Opus drafter | local | 1 Oct | claude/cards-phase1c |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | usability panel: source viewer (D03) | tester (panel) | local | 1 Oct | claude/panel-source-viewer |
 
-Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
+Done today: phase 0 and phase 1 cards written and independently reviewed (no phase 1 todo left); trial day 1 (reference/taxprep/); decisions 0010 to 0014; trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
 ## Next, in order
 
 1. Research done for now (four pairs reconciled, clauses applied). Next research only as cards need it.
-2. Phase 0 cards written and reviewed (A81 to A92). The rehearsal runs on F00 locally: build, then a check by a different worker, then a local train. Next cards to write: F06, W20, A02 to A05 (phase 1), and a card for where the real pipeline is wired (review-phase0 asks).
+2. Cards: phase 2 cards (M00, T01, T02, T04, T05, T07 and the rest) wait for trial day 2 findings, since RT-3, RT-9 and the cell ids change (F03 parked for the same reason). Gaps to card now: the four new sample clients for kinds K1, K5, K6, K13 (review-phase1); V05 shows "waiting on AI run"; B03 amalgamation field in the bridge.
 3. Queue repairs landed (P04 done).
 4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
 5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Draft import CSVs are on main; cell ids from day 1 replace the guesses.
