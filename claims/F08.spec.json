@@ -1,9 +1,8 @@
 {
  "card": "F08",
  "role": "spec",
- "worker": "cloud-7528cb",
- "state": "released",
- "at": "2026-10-01T18:23:17.937Z",
- "mode": "turbo",
- "note": "dep F00 not merged; queue re-hands F08 (no dep gate), stopping"
+ "worker": "cloud-fb8d96",
+ "state": "working",
+ "at": "2026-10-01T18:31:42.969Z",
+ "mode": "turbo"
 }
