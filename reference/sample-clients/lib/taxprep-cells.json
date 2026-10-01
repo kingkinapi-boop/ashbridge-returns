@@ -1,0 +1,28 @@
+{
+  "_note": "Taxprep cell identifiers for the sample-client import CSVs. EVERY identifier here is a GUESS (confirmed: false) until trial day 1's cell map replaces it. Templates: {code} is a GIFI code, {n} a 1-based copy number, {i} a 1-based list position. Edit this file after day 1, set confirmed to true, then run: node reference/sample-clients/make-csv.mjs",
+  "header": { "confirmed": false, "language": "EN", "returnIdPrefix": "TEST-", "note": "RT-3: [taxpayer name|return id|language]. Language code EN is a guess." },
+  "gifi": {
+    "schedule100": { "cell": "S100.{code}", "confirmed": false, "guess": true, "note": "Balance sheet GIFI codes below 4000, keyed by GIFI code. Guess." },
+    "schedule125": { "cell": "S125.{code}", "confirmed": false, "guess": true, "note": "Income statement GIFI codes 8000 and up, keyed by GIFI code. Guess." }
+  },
+  "schedule1": {
+    "netIncomePerBooks": { "cell": "S1.NETINCOME", "confirmed": false, "guess": true },
+    "addBackDescription": { "cell": "S1.ADD[{i}].DESC", "confirmed": false, "guess": true, "naturalKey": "item text" },
+    "addBackAmount": { "cell": "S1.ADD[{i}].AMT", "confirmed": false, "guess": true },
+    "deductionDescription": { "cell": "S1.DED[{i}].DESC", "confirmed": false, "guess": true, "naturalKey": "item text" },
+    "deductionAmount": { "cell": "S1.DED[{i}].AMT", "confirmed": false, "guess": true },
+    "_note": "Items marked confirm in the answer key that Taxprep computes itself (for example the taxable capital gain) are still written; day 1 shows which cells Taxprep fills itself (the orphan risk)."
+  },
+  "schedule8": {
+    "class": { "cell": "S8[{n}].CLASS", "confirmed": false, "guess": true, "naturalKey": "CCA class (RT-7)" },
+    "openingUcc": { "cell": "S8[{n}].OPENUCC", "confirmed": false, "guess": true },
+    "additions": { "cell": "S8[{n}].ADDITIONS", "confirmed": false, "guess": true, "note": "Sum of the class's additions, capital cost before recoverable HST." }
+  },
+  "schedule50": {
+    "name": { "cell": "S50[{n}].NAME", "confirmed": false, "guess": true, "naturalKey": "shareholder name (RT-7)" },
+    "sin": { "cell": "S50[{n}].SIN", "confirmed": false, "guess": true, "note": "Made-up SIN that fails its check digit." },
+    "businessNumber": { "cell": "S50[{n}].BN", "confirmed": false, "guess": true, "note": "Corporate shareholder (client 06 only)." },
+    "commonPercent": { "cell": "S50[{n}].COMMONPCT", "confirmed": false, "guess": true },
+    "preferredPercent": { "cell": "S50[{n}].PREFPCT", "confirmed": false, "guess": true }
+  }
+}

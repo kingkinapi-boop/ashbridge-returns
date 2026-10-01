@@ -16,6 +16,11 @@ Ten made-up Ontario corporations, each with a year of bank and card transactions
 - **Left as flags for a person, not decided:** home office, the grant, research costs, the spouse's pay, personal spending, the SUV's personal use, the capital dividend election, GRIP and personal services business signs. The spouse's pay and the grant sit in a suspense account until then.
 - **Choices to know:** layouts B, C and the card have no balance column, so month-end statement balances are in each `profile.md` and answer key. Events after year end (client 03's bonus on 28 Dec 2025, client 01's Q4 HST on 30 Jan 2026) are in onboarding and the answer key, not the twelve-month files. SINs appear only in answer keys. Payroll deductions and exchange rates are simulated test figures.
 
+## Taxprep import CSVs (for trial days 2 and 5)
+Each client has `taxprep/import.csv`: the GIFI Schedule 100 and 125 figures plus the Schedule 1, 8 and 50 inputs from its answer key, in CCH's CSV syntax (RT-3: header `[name|return id|language]`, rows of cell and this year's value; no blank cells, RT-12; no year start or end, RT-13).
+- Regenerate: `node reference/sample-clients/make-csv.mjs`. Verify only: `node reference/sample-clients/make-csv.mjs --check` (every row equals the answer key's figure, Schedule 100 balances, no blank cells).
+- **The cell identifiers are unconfirmed guesses** until trial day 1's cell map. They live in one file, `lib/taxprep-cells.json`, each marked `"confirmed": false`. After day 1, put the real identifiers there, set `confirmed` to true, and regenerate. The language code in the header is also a guess.
+
 ## What each client folder holds
 | File | What it is |
 | --- | --- |
