@@ -4,7 +4,10 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-Nothing right now. Thank you for items 1 to 3 (decision 0011).
+**1. QuickBooks test company: one look, 2 minutes, when you can.**
+- What: the Sandboxes page on developer.intuit.com shows "Sorry, something went wrong" for our helper, twice, so we cannot see whether the Canadian test company exists. Please open developer.intuit.com, My Hub, Sandboxes in the "Ashbridge Test" Chrome and tell us what you see.
+- Reply `1 one company` (then the helper uses that test company's own QuickBooks screens, no keys), `1 none`, or `1 error`. If you see an "Open" or company link, nothing else is needed.
+- Why: it answers whether QuickBooks reports carry the transaction ids the trace needs. Meanwhile everything else continues.
 
 **Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before. Keep the "Ashbridge Test" Chrome window open while the walker works in it.
 

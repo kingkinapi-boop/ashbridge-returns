@@ -18,10 +18,10 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Taxprep trial day 1 (cell map) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
-| QBO sandbox checks (retry) | Sonnet walker, own tab | local | 1 Oct | reference/qbo/ |
 | queue: F00 build, D01 spec (the rehearsal) | 2 cloud workers, runs cse_01UaSXaBy5XRsUopyN1whFtX and cse_01MsA6SHdAiP5aDXMnNkMwYF | cloud | 1 Oct 17:40Z | claude/F00, claude/D01 |
 | phase 1 cards batch b (A06, A07, U00, L00, L01, E00, Claude project setup) | Opus drafter | local | 1 Oct | claude/cards-phase1b |
-| findings review of the three design panels | findings-reviewer (Opus) | local | 1 Oct | claude/findings-designs |
+| design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
+| design brief: source viewer (D03) | design researcher | local | 1 Oct | claude/brief-source-viewer |
 
 Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
@@ -42,5 +42,6 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 - Findings review before every fix round; cold sign-off for big chunks only.
 - The main checkout stays on main; train work in .claude/worktrees/train. The push guard lets only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ go straight to main.
 - Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B` (that drags old plan files back).
+- Only one helper drives Chrome at a time: two walkers shared the tab group on 1 Oct and one tab was taken over.
 - Edit files with the Edit tool, not shell scripts with escapes (Git Bash mangles backslashes).
 - Another Lead works in ashbridge-app: read-only there, always. GitHub Actions: 2,000 free minutes a month: keep branch checks lean.
