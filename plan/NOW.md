@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, morning (the Critic, before the Lead starts turbo).
+True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, afternoon (the Lead, wave 1 started; F9 research pair waits for a free slot).
 
 ## State
 
@@ -15,7 +15,15 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, morning (the Cri
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| none | | | | |
+| research ties CK-10..19 | researcher A (CRA, ITA) + B (practice) | cloud agent | 1 Oct | claude/research-ties-a, -b |
+| research reconciliations CK-20..26 | researcher A + B | cloud agent | 1 Oct | claude/research-recs-a, -b |
+| research flags CK-30..42 | researcher A + B | cloud agent | 1 Oct | claude/research-flags-a, -b |
+| research QBO trace | researcher A (Intuit docs, API) + B (practice, exports) | cloud agent | 1 Oct | claude/research-qbo-a, -b |
+| design brief cpa-review (with source viewer) | design-researcher | cloud agent | 1 Oct | claude/brief-cpa-review |
+| design brief workbench | design-researcher | cloud agent | 1 Oct | claude/brief-workbench |
+| design brief queues and record page | design-researcher | cloud agent | 1 Oct | claude/brief-queues-record |
+| trial day 1 script | researcher (Taxprep help) | cloud agent | 1 Oct | claude/trial-day1-script |
+| queue repairs | builder | local worktree | 1 Oct | claude/queue-repairs |
 
 ## Next, in order
 
