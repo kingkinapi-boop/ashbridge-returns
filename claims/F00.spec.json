@@ -2,8 +2,8 @@
  "card": "F00",
  "role": "spec",
  "worker": "cloud-ca3282",
- "state": "reported",
- "at": "2026-10-01T19:31:52.254Z",
+ "state": "reopened",
+ "at": "2026-10-01T20:45:50.696Z",
  "mode": "turbo",
  "note": "round 2: 9 toolchain tests (4 fail as expected), canary fixture, db-rules .stryker-tmp skip. Model: sonnet",
  "commit": "7eb6b94"
