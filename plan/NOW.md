@@ -13,10 +13,10 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
+| Design re-test, changed tasks on the four families (panel mode) | tester | local worktree | 1 Oct 23:15Z | claude/design-retest |
 | F00 round 3 spec (security fixes, reports/F00-findings-3.md; spec reopened) | cloud run | cloud | 1 Oct 22:25Z | claude/F00 |
-| design fix round: source viewer D03 | designer (old session) | local | 1 Oct | claude/design-source-viewer-2 |
 
-Done and on branches, not yet re-tested: claude/design-queues-record-2, claude/design-workbench-2, claude/design-cpa-review-2 (V1 only; reports/design-cpa-review.md).
+All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
 
 ## Next, in order
 
