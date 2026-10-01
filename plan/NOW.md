@@ -17,7 +17,8 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Taxprep trial day 1b and day 2 (re-sent; window visible, decision 0013) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
+| Trial checkpoint: real cell ids into taxprep-cells.json, import.csv regenerated in the trial format | Sonnet helper | local | 1 Oct | claude/cells-checkpoint |
+| QBO sandbox company: reports, ids, a test AJE (Chrome; trial walker waits) | Sonnet walker | local | 1 Oct | reference/qbo/ |
 | queue: F00 build reopened (fix round 1, spec reported); specs reported for F01, F03 (parked), F04, F05; D01 spec next | 2 cloud runs cse_017hMiW9j3fVnNJe2RGaGGDD, cse_01LqmYtxUesTx2VN94G1rGxG | cloud | 1 Oct 18:15Z | claude/F00 and others |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | usability panel: source viewer (D03) | tester (panel) | local | 1 Oct | claude/panel-source-viewer |
