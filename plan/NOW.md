@@ -13,11 +13,11 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, afternoon (the L
 
 ## In flight
 
-All helpers run on the laptop for now: `claude --cloud` needs a person at a terminal and the Agent tool's "remote" option ran locally (amber A25; to-do #1 asks Zo). Light helpers only; one build worker.
+Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger run; decision 0010: one-off runs only, never a schedule). Light document helpers may still run locally.
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| queue: F00 build, then D01 spec (the rehearsal) | worker (local, the one) | local | 1 Oct | claude/F00, claude/D01 |
+| queue: F00 build first (the rehearsal) | cloud worker 1 (routine trig_01MWQ7hW5yecn8VaiMTq1xbp, one-off runs) | cloud | 1 Oct | claude/F00 |
 | phase 1 cards (F06, W20, A02 to A05, pipeline wiring) | Opus drafter | local | 1 Oct | claude/cards-phase1a |
 | usability panel cpa-review | tester (panel) | local | 1 Oct | claude/panel-cpa-review |
 | usability panels queues-record, workbench | tester (panel) x2 | local | 1 Oct | claude/panel-<family> |
