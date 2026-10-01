@@ -1,4 +1,4 @@
-# Design report: queues and return record (family queues-record), fix round 2
+# Design report: queues and return record (family queues-record), fix round 2 (round 2 of the re-test added below)
 
 Brief: `design/briefs/queues-record.md`. Findings: `reports/findings-designs.md` section (a) "Queues-record (A)". Branch: `claude/design-queues-record-2`. Open `design/prototypes/queues-record/index.html` (works from disk, no network needed).
 
@@ -16,7 +16,7 @@ Only version A (`design/prototypes/queues-record/a-tabs/index.html`), with B's n
 8. Real buttons (no aria-pressed links, no links drawn as buttons); every table region is labelled for 320 px; focus goes to the nudge banner (`rec-danforth-cleaning.html#history`); sources open in a viewer beside the list with "Send to second window" (`rec-halton-haulage.html#documents`).
 Also from RC4, RC9: tab changes are client-side routes (`#documents/2`, 0 page loads); in-place actions all run from one shared script, `_shared/proto.js` (there was no shared prototype script in the repo, so this is it); no `zoom`, no third-party font.
 
-## Check numbers (design card checks 6 to 9; staff-screens rules 18 to 23)
+## Check numbers, first fix round (superseded by the round 2 numbers below)
 Run: `node design/prototypes/queues-record/build/check.mjs` (lint) and, with playwright-core and axe-core installed outside the repo, `node tools/heavy.mjs -- node design/prototypes/queues-record/build/verify.mjs` (browser). Raw output: `design/prototypes/queues-record/build/verify-output.txt`.
 
 | Check | Result |
@@ -30,6 +30,33 @@ Run: `node design/prototypes/queues-record/build/check.mjs` (lint) and, with pla
 | 8 budgets, 1093 x 525 | First list row starts inside the first screen but ends below it (My work 453 to 566, Ready to review 428 to 541, Next ops step 478 to 641): not met for a whole row, one row short; Board strip inside; record tabs end at 487, heading at 525 (at the edge); Documents viewer beside the list at both sizes, never stacked (height 509 of 525). |
 | 9 basis | Only govuk-, moj- and app- classes; every `app-` class used or styled is listed in `basis.md` (lint). No `zoom`, no `@import`, no third-party font in `a.css` (Roboto if installed, else Arial). `design/basis/` does not exist yet, so `basis.md` stands in. |
 | Tasks (rules 18 to 22) | 34 of 34 pass: tab changes 0 loads; o, j, n, p keys; Back restores filter, count and sort; search 1, 2, 0 matches; no checkbox on flagged rows; bulk error in place with focus on the summary and `Error:` title; result announced, next row focused and in view; ops forms with the error pattern and unlocking steps; nudge banner focused; viewer focus and cited line in view; opening a source adds no history entry; second window opens by script and follows the next selection and a tab change. |
+
+## Round 2 (reports/findings-designs-2.md, "Queues-record (A)" 1 to 7 and checks V1 to V8)
+Where to see each fix:
+1. One global hidden-attribute guard in `_shared/a.css`; per-class patches removed. No error before Assign or Upload is pressed (Q1): `queue-ops.html` with a row ticked, `rec-scarborough-robotics.html#ops` on load.
+2. Bulk error: the summary sits at the top of the bar, focused with no scroll; the page keeps its place (list scrolled to 600: moved 0 px). The quiet bar is one row (60 px at both sizes). The result of an assign shows in a sticky strip at the foot of the window, so the rows do not move. Ops errors: the summary sits at the top of that form, focused, no scroll; the field and its button share a row.
+3. Viewer: the heading, source line and "Send to second window" stay put; only the source lines scroll, in their own labelled box, set by that box's `scrollTop` to the cited line (a 40-line sample, cited line 18). No `scrollIntoView` on the viewer; opening a source moves the page 0 px (was 662).
+4. Board: visible "Showing 33 of 300 returns, state Rework" with a "Clear filter" button at the head of the list, updated by every filter; Clear moves focus to the caption.
+5. Scope words: "My rework" (5, preparer lists) and "All rework" (33, CPA list and the board strip); "Ready to review, due in 14 days or overdue" no longer shares a name with the preparer's "Due in 14 days or overdue".
+6. Search matches year end as shown: "31 Mar 2026", "Mar 2026" and "2026-03" all find Halton; lists filter on the same.
+7. Back (button or browser) restores filter, sort and scroll and puts focus on the row you came from, also from the search results page.
+To make the work fit the first screen (rule 20, found by V3, not in the fix list): the record's facts moved from above the tabs into the Overview tab; the list navigation moved into the identity bar beside the tags; the "since you last opened" strip is one line; the service navigation and tabs lost padding. The tabs now end at 250 px (was 487) and the tab heading at 283 (was 525). Choosing the tab you are already on moves focus to its heading (V7 found it did nothing). An Ops step with a form is listed first; the "left to do" line is now for screen readers only.
+
+Check numbers, round 2 (served over http, 1366 x 650 and 1093 x 525, `build/verify.mjs`, output in `build/verify-output.txt`):
+| Check | Result |
+|---|---|
+| 6 retired terms and 7 prototype lint (`build/check.mjs`) | 0 problems in 318 pages |
+| 8 axe, wcag2a to 22aa | 116 page states: 0 violations, 0 incomplete |
+| 8 keyboard Tab walk | 12 pages: 0 stops without a focus style, 0 covered |
+| 8 reflow 320 px | 38 page states: 0 fail (the first run found the new Ops form 60 px too wide; fixed) |
+| 8 budgets 1366 x 650 | first row wholly inside: My work 402 to 515, Ready to review 402 to 490, Next ops step 427 to 590; Board strip 217 to 398; record tabs end 250, heading 283; Documents viewer beside the list, 634 px of 650 |
+| 8 budgets 1093 x 525 | Ready to review wholly inside (402 to 515, was 428 to 541); My work 427 to 540 and Next ops step 452 to 615 still end below (Q8: 15 px and 90 px over; the rest is Zo's call on the filter line or the view tabs); Board strip inside; record tabs end 250, heading 283 (was 487 and 525); Documents viewer beside the list, 509 px of 525 |
+| Tasks (rules 18 to 22) | 34 of 34 pass |
+| V1 to V8 (`design/verify/rules.mjs`), both sizes | 118 of 118 pass (59 per size) |
+
+V1 to V8 detail, per size: V1 no early error on 67 page states (every list page, 7 records on 7 tabs) plus the ops list with rows ticked. V2 page stays put: bulk error (scroll 0 and 600), bulk assign in the middle of the list, Ops error and success, nudge, Documents open source twice, list filter and sort. V3 work in view: Documents with a source open on 3 returns, Ops tab with an open step on 3 returns (4 returns have no open step, so nothing to decide), the Ops error state, the bulk bar. V4 focus lands: 11 actions plus `/` and `j`, browser Back to the same row. V5: 164 counts on 22 pages all carry a scope word or "N of M", same name and scope gives the same number on every page, the board caption follows its filter, the open view tab equals the "of M" of its list. V6: name, number and year end in three formats. V7: every control on 9 pages (list, Ops list, Board, search results, Documents, Ops, History, Overview), skip link by keyboard. V8: not applicable (no option-tied field in this family).
+How the checks were fitted: the shared `click` action uses Playwright's `page.click`, which scrolls the control into view first and so hides a page that moves; I used mouse clicks at the control's own position for V2 (a control outside the first screen is then a failure). V2 on lists uses the list's h1 as the identity bar (`data-identity-bar`). V7 skips the skip link (tested by keyboard instead, it is off-screen until focused) and the header Search button on the results page (it repeats the same query). V2 is not applied to a Board state click: it deliberately scrolls the filtered list into view (the caption and Clear sit at the head of it); V5 and V4 cover it.
+Found by the new checks and fixed beyond the list: V1 none; V2 the Playwright scroll artefact above, the nudge banner focus scrolled 21 px; V3 the viewer and the Ops form were below the fold at both sizes (layout changes above); V5 chip and badge names clashed across pages and the empty-state page; V7 dead current-tab and "Chase in History" style buttons.
 
 ## Not done, or to know
 - The 1093 x 525 first-row budget: the row's top is in view, its bottom is 15 to 116 px below. Cutting further means dropping the filter line or the view tabs; left for Zo's sitting.

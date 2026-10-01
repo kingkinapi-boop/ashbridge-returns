@@ -1,3 +1,5 @@
+/* One guard for every hidden part: the GOV.UK error, notification and summary classes set display, which would otherwise beat the hidden attribute (V1). */
+[hidden] { display: none !important; }
 /* Ashbridge look, prototype only. In the build this comes from design/basis/settings.scss
    (GOV.UK Frontend settings: brand, Roboto, functional colours). Here the same values are set as CSS variables.
    Every app- class below is listed in design/prototypes/queues-record/basis.md with its reason. */
@@ -71,7 +73,6 @@ html { scroll-padding-bottom: 7rem; }
 .app-pipe--zero { background: #f3f5f8; }
 /* app-bulkbar: appears only when rows are selected (no disabled button), sticky at the foot of the window */
 .app-bulkbar { position: sticky; bottom: 0; z-index: 5; background: #fff; border: 2px solid #355b7d; padding: 10px; margin: 10px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: end; box-shadow: 0 -3px 8px rgba(21, 40, 59, .2); }
-.app-bulkbar[hidden] { display: none; }
 /* app-facts: the record's facts, compact, four to a row so the tabs stay near the top of the screen */
 .app-facts { background: #fff; border: 1px solid #b6bfc9; padding: 8px 16px; margin-bottom: 12px; font-size: 1rem; }
 .app-facts__list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 16px; margin: 0; }
@@ -101,8 +102,6 @@ html { scroll-padding-bottom: 7rem; }
 .app-step__head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .app-step__name { font-weight: 700; }
 .app-opsform { margin-top: 12px; max-width: 34rem; }
-.app-opsform[hidden] { display: none; }
-.app-panel[hidden] { display: none; }
 
 /* ---- compact layout so the work starts inside the first screen at 1366 x 650 and 1093 x 525 ---- */
 /* app-header-row, app-search, app-search__label, app-search__input, app-search__button: the search sits in the header row beside the logo (GOV.UK has no staff search) */
@@ -138,3 +137,66 @@ html { scroll-padding-bottom: 7rem; }
 .moj-sub-navigation__link[aria-current="page"]::before { display: none; }
 .moj-sub-navigation__link[aria-current="page"] { box-shadow: inset 0 -5px 0 #355b7d; }
 .moj-sub-navigation__link[aria-current="page"]:focus { box-shadow: inset 0 -5px 0 #15283b; }
+
+/* app-bulkbar__row, app-bulkbar__summary, app-bulkbar__field: the bulk bar is one row; its error summary sits at the top of the bar so the page does not move */
+.app-bulkbar { flex-direction: column; align-items: stretch; gap: 6px; }
+.app-bulkbar__row { display: flex; flex-wrap: nowrap; align-items: end; gap: 10px 16px; }
+.app-bulkbar__field { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; }
+.app-bulkbar__field .govuk-select { min-height: 36px; height: 36px; }
+.app-bulkbar .govuk-button { min-height: 36px; padding: 4px 16px; }
+.app-bulkbar__summary { margin: 0; padding: 8px 12px; border-width: 4px; }
+.app-bulkbar__summary .govuk-error-summary__title { font-size: 1.125rem; margin: 0 0 4px; }
+.app-bulkbar__summary .govuk-error-summary__list { margin: 0; }
+@media (max-width: 40em) { .app-bulkbar__row { flex-wrap: wrap; } }
+/* app-listcaption: the visible count and filter of a list, with its Clear link, kept next to the list */
+.app-listcaption { font-weight: 700; }
+/* app-bulkresult: the result of a bulk assign, sticky at the foot of the window like the bar, so the rows do not move */
+.app-bulkresult { position: sticky; bottom: 0; z-index: 5; background: #fff; border: 2px solid #00703c; padding: 8px 12px; margin: 10px 0; }
+.app-opsform .govuk-error-summary { margin-bottom: 12px; padding: 10px 14px; }
+.app-opsform .govuk-error-summary__title { font-size: 1.125rem; margin: 0 0 4px; }
+.app-opsform .govuk-error-summary__list { margin: 0; }
+/* app-identity-row: the tags and the list navigation share one row of the identity bar, so the tabs and the work start higher (rule 20) */
+.app-identity-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 24px; }
+.app-identity-row .app-listnav { margin: 0; }
+.moj-identity-bar__details .govuk-heading-m { margin-bottom: 4px; }
+.moj-identity-bar__container { align-items: center; }
+/* the since strip is one line: heading, then the items */
+.app-since { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; padding: 4px 12px; margin-bottom: 6px; }
+.app-since h2 { font-size: 1rem; }
+.moj-identity-bar { padding-top: 4px; padding-bottom: 4px; }
+.govuk-service-navigation__item, .govuk-service-navigation__service-name { padding-top: 8px; padding-bottom: 8px; }
+.govuk-service-navigation__item--active { padding-bottom: 3px; }
+/* app-viewer__head, __meta, __send, __scroll: the viewer's heading, source line and button stay put; only the source lines scroll, inside their own box, and the cited line is set to the top of it */
+.app-viewer { display: flex; flex-direction: column; overflow: hidden; padding: 8px 12px; }
+.app-viewer__head { flex: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 12px; padding-bottom: 6px; }
+.app-viewer__meta { flex-basis: 100%; }
+.app-viewer__send { min-height: 32px; padding: 2px 12px; }
+.app-viewer__scroll { flex: 1 1 auto; min-height: 0; overflow: auto; border-top: 1px solid #b6bfc9; }
+.app-viewer__scroll thead th { position: sticky; top: 0; background: #fff; }
+.app-viewer__scroll .govuk-table__cell, .app-viewer__scroll .govuk-table__header { padding-top: 4px; padding-bottom: 4px; }
+.app-src__hit .govuk-tag { white-space: nowrap; }
+@media (max-width: 40em) { .app-viewer { overflow: visible; } }
+/* compact error summaries: title and the one message side by side */
+.app-opsform .govuk-error-summary, .app-bulkbar__summary { display: block; }
+.app-opsform .govuk-error-summary > div, .app-bulkbar__summary > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 16px; }
+.app-opsform .govuk-error-summary__body, .app-bulkbar__summary .govuk-error-summary__body { margin: 0; }
+
+.app-panel > h2 { font-size: 1.25rem; margin-bottom: 8px; }
+.app-docs { gap: 16px; }
+.moj-identity-bar__details { padding-top: 0; padding-bottom: 0; }
+.app-src__hit td:nth-child(2) { white-space: normal; }
+.app-viewer [data-viewer-body] { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.app-viewer__head h3 { flex: 1 1 8rem; min-width: 0; }
+.app-viewer__send { flex: none; }
+.app-viewer__head [role=status]:empty { display: none; }
+/* app-opsform: the field and its button share a row, so the open step, its error and its button stay inside the first screen (rule 20) */
+.app-opsform { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0 12px; max-width: 46rem; margin-top: 6px; }
+.app-opsform .govuk-error-summary { flex: 0 0 100%; }
+.app-opsform .govuk-form-group { flex: 1 1 18rem; margin-bottom: 8px; }
+.app-opsform .govuk-button { flex: none; margin-bottom: 8px; }
+.app-opsform .govuk-hint { margin-bottom: 4px; }
+.app-step { padding: 8px 0; }
+.app-opsform .govuk-form-group { flex: 1 1 min(18rem, 100%); min-width: 0; }
+.app-opsform .govuk-file-upload, .app-opsform .govuk-input { max-width: 100%; }
+.moj-sub-navigation__link { padding-top: 6px; padding-bottom: 6px; }
+.app-opsform { margin-top: 2px; }

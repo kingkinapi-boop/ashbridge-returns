@@ -38,4 +38,13 @@ MOJ: sub navigation (list views and record tabs; the current view is a span, not
 8. Real buttons everywhere (no aria-pressed links, no links drawn as buttons); every table region is labelled for 320 px; focus goes to the nudge banner; sources open in the viewer beside the list.
 
 ## Rules checked by script (`node build/check.mjs`)
-Retired terms; no self-link, no `#` link to nothing, no link drawn as a button, no filler in a data cell, view badges, chips, strip and captions agree with the rows; one h1, unique ids, no dash, no inline style; only govuk-, moj- and app- classes, each listed here; no zoom, no third-party font in `a.css`. Browser checks (axe, keyboard walk, 320 px, budgets) are in `build/verify.mjs`.
+Retired terms; no self-link, no `#` link to nothing, no link drawn as a button, no filler in a data cell, view badges, chips, strip and captions agree with the rows; one h1, unique ids, no dash, no inline style; only govuk-, moj- and app- classes, each listed here; no zoom, no third-party font in `a.css`. Browser checks (axe, keyboard walk, 320 px, budgets, rule checks V1 to V8) are in `build/verify.mjs`.
+
+## Fix round 2b, parts added (findings-designs-2, Queues-record (A))
+- `app-bulkbar__row`, `app-bulkbar__field`, `app-bulkbar__summary`: the bulk bar is one row; its GOV.UK error summary sits at the top of the bar, so the error appears where the person is looking and the page does not move.
+- `app-bulkresult`: the result of a bulk assign, sticky at the foot of the window like the bar, so the rows above do not move. GOV.UK has no sticky result.
+- `app-listcaption`: the visible "Showing 33 of 300 returns, state Rework" and its Clear link, at the head of the Board list, so the active filter stays in view after the list scrolls into view.
+- `app-identity-row`: the state tags and "Back, previous, next" share one row inside the MOJ identity bar, so the tabs and the work start about 150 px higher (staff-screens rule 20). The record's facts moved from above the tabs into the Overview tab for the same reason.
+- `app-viewer__head`, `app-viewer__meta`, `app-viewer__send`, `app-viewer__scroll`: the source viewer's heading, source line and "Send to second window" stay put; only the source lines scroll, inside their own labelled box, and the cited line is set to the top of it by that box's `scrollTop` (never `scrollIntoView`, which moves the page).
+- `app-opsform` now lays the field and its button on one row, and an Ops step with a form is listed before the locked and done steps, so the open step, its error and its button fit the first screen.
+- One global hidden-attribute guard in `a.css` replaces the per-part patches (the GOV.UK error and summary classes set `display` and beat the attribute).

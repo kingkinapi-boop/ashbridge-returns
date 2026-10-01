@@ -18,9 +18,9 @@ export const nextStep = (r) => {
 const dash = (n) => `${n}`;
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
-const identity = (r, menu) => `<div class="moj-identity-bar"><div class="moj-identity-bar__container">
+const identity = (r, menu, listnav = '') => `<div class="moj-identity-bar" data-identity-bar><div class="moj-identity-bar__container">
 <div class="moj-identity-bar__details"><h1 class="govuk-heading-m govuk-!-margin-bottom-1">${esc(r.name)}, year end ${fmt(r.ye)}</h1>
-<p class="govuk-body govuk-!-margin-bottom-0"><span data-state-tag>${stateTag(r.state)}</span> ${tierTag(r.tier)} ${r.waiting ? waitTag(r.waiting) : ''}${r.blocker && !r.waiting ? ` <strong class="govuk-tag govuk-tag--red">Blocked</strong>` : ''}</p></div>
+<div class="app-identity-row"><p class="govuk-body govuk-!-margin-bottom-0"><span data-state-tag>${stateTag(r.state)}</span> ${tierTag(r.tier)} ${r.waiting ? waitTag(r.waiting) : ''}${r.blocker && !r.waiting ? ` <strong class="govuk-tag govuk-tag--red">Blocked</strong>` : ''}</p>${listnav}</div></div>
 <div class="moj-identity-bar__menu">${menu || ''}</div></div></div>`;
 
 const goBtn = (label, tab, secondary) => `<button type="button" class="govuk-button${secondary ? ' govuk-button--secondary' : ''} moj-button-menu__item" data-goto="${tab}">${esc(label)}</button>`;
@@ -40,7 +40,7 @@ const since = (r) => {
   if (c.comments) items.push(`<li><a class="govuk-link" href="#history">${plural(c.comments, 'new comment', 'new comments')} in History</a></li>`);
   if (c.docs) items.push(`<li><a class="govuk-link" href="#documents">${plural(c.docs, 'new document', 'new documents')} in Documents</a></li>`);
   if (c.events) items.push(`<li><a class="govuk-link" href="#history">${plural(c.events, 'event', 'events')} in History</a></li>`);
-  return `<section class="app-since" aria-labelledby="since-h"><h2 class="govuk-heading-s govuk-!-margin-bottom-1" id="since-h">Since you last opened this return (${c.when})</h2><ul class="app-since__list">${items.join('')}</ul></section>`;
+  return `<section class="app-since" aria-labelledby="since-h"><h2 class="govuk-heading-s govuk-!-margin-bottom-0" id="since-h">Since you last opened this return (${c.when}):</h2><ul class="app-since__list">${items.join('')}</ul></section>`;
 };
 
 const facts = (r) => {
@@ -98,14 +98,14 @@ const opsPanel = (r) => {
     const st = stepState(r, s, i);
     const f = s.form;
     const form = st !== 'done' ? `<form class="app-opsform"${st === 'locked' ? ' hidden' : ''} data-ops-form data-step="${s.k}" data-done="${esc(f.done)}"${f.next ? ` data-next="${f.next}"` : ''} novalidate>
-<div class="govuk-form-group" data-field-group>${f.none ? '' : `<label class="govuk-label govuk-label--s" for="f-${s.k}">${f.file || f.text}</label><div class="govuk-hint" id="f-${s.k}-hint">${f.hint}</div><p class="govuk-error-message" id="f-${s.k}-error" hidden><span class="govuk-visually-hidden">Error:</span> <span data-error-text>${f.file ? 'Choose the file to upload' : 'Enter the confirmation number'}</span></p>${f.file ? `<input class="govuk-file-upload" id="f-${s.k}" name="f" type="file" aria-describedby="f-${s.k}-hint">` : `<input class="govuk-input govuk-input--width-20" id="f-${s.k}" name="f" type="text" autocomplete="off" spellcheck="false" aria-describedby="f-${s.k}-hint">`}`}</div>
-<button class="govuk-button govuk-!-margin-bottom-0" type="submit" data-module="govuk-button" data-prevent-double-click="true">${f.btn}</button></form>` : '';
+<div class="govuk-form-group" data-field-group data-evidence>${f.none ? '' : `<label class="govuk-label govuk-label--s" for="f-${s.k}">${f.file || f.text}</label><div class="govuk-hint" id="f-${s.k}-hint">${f.hint}</div><p class="govuk-error-message" id="f-${s.k}-error" hidden><span class="govuk-visually-hidden">Error:</span> <span data-error-text>${f.file ? 'Choose the file to upload' : 'Enter the confirmation number'}</span></p>${f.file ? `<input class="govuk-file-upload" id="f-${s.k}" name="f" type="file" aria-describedby="f-${s.k}-hint">` : `<input class="govuk-input govuk-input--width-20" id="f-${s.k}" name="f" type="text" autocomplete="off" spellcheck="false" aria-describedby="f-${s.k}-hint">`}`}</div>
+<button class="govuk-button govuk-!-margin-bottom-0" type="submit" data-module="govuk-button" data-prevent-double-click="true" data-primary>${f.btn}</button></form>` : '';
     const status = st === 'done' ? done : st === 'todo' ? todo : cant;
-    return `<li class="app-step" data-step-item="${s.k}" data-step-state="${st}"><div class="app-step__head"><span class="app-step__name">${s.label}</span><span class="app-step__status" data-status-slot>${status}</span></div>${st === 'locked' ? `<p class="govuk-hint govuk-!-margin-bottom-0" data-lock-why>${LOCK_WHY[s.k]}</p>` : ''}${form}</li>`;
+    return `<li class="app-step" data-step-item="${s.k}" data-step-state="${st}" data-order="${i}"><div class="app-step__head"><span class="app-step__name">${s.label}</span><span class="app-step__status" data-status-slot>${status}</span></div>${st === 'locked' ? `<p class="govuk-hint govuk-!-margin-bottom-0" data-lock-why>${LOCK_WHY[s.k]}</p>` : ''}${form}</li>`;
   });
   const left = STEPS.filter((s, i) => stepState(r, s, i) !== 'done');
-  const leftTxt = left.length ? `Left to do on this return: ${left.map((s) => s.label.split(',')[0].toLowerCase()).join(', then ')}.` : 'Every ops step is done.';
-  return panel('ops', 'Ops steps', `<p class="govuk-body" data-ops-left>${leftTxt}</p><p class="govuk-body" role="status" tabindex="-1" data-ops-result hidden></p><div class="govuk-error-summary" data-module="govuk-error-summary" data-ops-summary hidden tabindex="-1"><div role="alert"><h2 class="govuk-error-summary__title">There is a problem</h2><div class="govuk-error-summary__body"><ul class="govuk-list govuk-error-summary__list"><li><a href="#ops" data-error-link>Fix the field</a></li></ul></div></div></div><ol class="app-steps">${items.join('')}</ol>`);
+  const leftTxt = left.length ? `Left to do on this return: ${left.map((s) => s.label.split(',')[0].replace(/ \(.*\)/, '').toLowerCase()).join(', then ')}.` : 'Every ops step is done.';
+  return panel('ops', 'Ops steps', `<p class="govuk-visually-hidden" data-ops-left>${leftTxt}</p><p class="govuk-body" role="status" tabindex="-1" data-ops-result hidden></p><div class="govuk-error-summary" data-module="govuk-error-summary" data-ops-summary hidden tabindex="-1"><div role="alert"><h2 class="govuk-error-summary__title">There is a problem</h2><div class="govuk-error-summary__body"><ul class="govuk-list govuk-error-summary__list"><li><a href="#ops" data-error-link>Fix the field</a></li></ul></div></div></div><ol class="app-steps">${items.map((h, i) => [h, stepState(r, STEPS[i], i), i]).sort((a, b) => ({ todo: 0, locked: 1, done: 2 }[a[1]] - { todo: 0, locked: 1, done: 2 }[b[1]]) || a[2] - b[2]).map((x) => x[0]).join('')}</ol>`);
 };
 
 function panels(r) {
@@ -113,7 +113,7 @@ function panels(r) {
   const docs = docsOf(r), exc = excOf(r), hist = histOf(r);
   const ps = [];
   // overview
-  let o = '';
+  let o = facts(r);
   if (r.voided) o += `<div class="moj-alert moj-alert--warning" role="region" aria-label="Approval void" data-module="moj-alert"><div><svg class="moj-alert__icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="14" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 8v9M15 20v2" stroke="currentColor" stroke-width="3"/></svg></div><div class="moj-alert__content"><strong>Approval void.</strong> ${r.changed} cells changed after approval. The CPA sees only those cells, before and after. <a class="govuk-link" href="${t('exceptions')}">See the exceptions</a></div></div>`;
   if (r.blocker) o += `<div class="govuk-warning-text"><span class="govuk-warning-text__icon" aria-hidden="true">!</span><strong class="govuk-warning-text__text"><span class="govuk-visually-hidden">Warning</span>Blocked by: ${esc(r.blocker)}. <a class="govuk-link" href="${t(r.blockerLink || 'overview')}">See where</a></strong></div>`;
   o += stepper(r);
@@ -156,7 +156,7 @@ const landing = (r) => (r.state === 'review' ? 'review' : ['approved', 'ready_to
 export function recordPage(r) {
   const nav = `<nav class="moj-sub-navigation" aria-label="Sections of this return"><ul class="moj-sub-navigation__list">${TABS.map(([k, l]) => `<li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#${k}" data-route="${k}">${l}</a></li>`).join('')}</ul></nav>`;
   const pn = `<p class="govuk-body app-listnav" data-listnav><a class="govuk-link" href="queue-preparer.html" data-back>Back to the list</a> <a class="govuk-link" href="queue-preparer.html" data-key-prev aria-keyshortcuts="p" hidden>Previous return (p)</a> <a class="govuk-link" href="queue-preparer.html" data-key-next aria-keyshortcuts="n" hidden>Next return (n)</a></p>`;
-  const html = `${pn}${identity(r, actions(r))}${since(r)}${facts(r)}${nav}<p class="govuk-visually-hidden" role="status" data-route-status></p>${panels(r)}`;
+  const html = `${identity(r, actions(r), pn)}${since(r)}${nav}<p class="govuk-visually-hidden" role="status" data-route-status></p>${panels(r)}`;
   const sc = [['n', 'Next return in the list you came from'], ['p', 'Previous return in the list you came from']];
   return page({ title: 'Return', ret: r, nav: landing(r), body: html, shortcuts: sc, self: recFile(r), bodyClass: 'app-record', ctx: `<script>window.APP_REC=${JSON.stringify({ slug: r.slug, name: r.name, ye: fmt(r.ye) })};</script>` });
 }

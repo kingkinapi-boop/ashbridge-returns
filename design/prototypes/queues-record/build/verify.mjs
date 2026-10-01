@@ -1,19 +1,31 @@
 // Browser checks for version A (design card check 8): axe, keyboard Tab walk, 320 px reflow, budgets at both screen sizes,
-// and the task scenarios (in-place actions, list context, search, second window).
-// Run through the heavy-command guard, with playwright-core and axe-core installed OUTSIDE the repo:
-//   PW=<dir with node_modules/playwright-core> AXE=<dir with node_modules/axe-core> node tools/heavy.mjs -- node design/prototypes/queues-record/build/verify.mjs [axe|walk|reflow|budget|tasks]
+// the task scenarios, and the shared rule checks V1 to V8 (design/verify/rules.mjs) at 1366 x 650 and 1093 x 525.
+// Served over http. Run: PW_NM=<node_modules with playwright and axe-core> node tools/heavy.mjs -- node design/prototypes/queues-record/build/verify.mjs [axe|walk|reflow|budget|tasks|rules]
 import fs from 'node:fs';
+import http from 'node:http';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
+import * as R from '../../../verify/rules.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const A = path.resolve(here, '..', 'a-tabs');
-const PW = process.env.PW || 'C:/Users/User/Documents/GitHub/ashbridge-app';
-const AXE = process.env.AXE;
-const reqPW = createRequire(path.join(PW, 'package.json'));
-const { chromium } = reqPW('playwright-core');
-const axeSrc = fs.readFileSync(path.join(AXE, 'node_modules', 'axe-core', 'axe.min.js'), 'utf8');
-const url = (f) => { const m = /^([^?#]*)(.*)$/.exec(f); return pathToFileURL(path.join(A, m[1])).href + m[2]; };
+const NM = (process.env.PW_NM || '').replace(/[\\/]$/, '');
+if (!NM) throw new Error('Set PW_NM to a node_modules folder holding playwright and axe-core');
+const reqPW = createRequire(path.join(NM, '..', 'x.js'));
+const { chromium } = (() => { try { return reqPW('playwright'); } catch (e) { return reqPW('playwright-core'); } })();
+const axeSrc = fs.readFileSync(path.join(NM, 'axe-core', 'axe.min.js'), 'utf8');
+// serve the prototype over http (never file://): the family root, so ../_shared resolves
+const ROOT = path.resolve(here, '..');
+const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript' };
+const srv = http.createServer((q, r) => {
+  const f = path.join(ROOT, decodeURIComponent(q.url.split('?')[0].split('#')[0]));
+  if (!f.startsWith(ROOT)) { r.statusCode = 403; return r.end(); }
+  fs.readFile(f, (e, d) => { if (e) { r.statusCode = 404; return r.end('not found'); } r.setHeader('content-type', MIME[path.extname(f)] || 'application/octet-stream'); r.end(d); });
+});
+await new Promise((r) => srv.listen(0, '127.0.0.1', r));
+const BASE = `http://127.0.0.1:${srv.address().port}/a-tabs/`;
+const url = (f) => BASE + f;
+const listFiles = () => fs.readdirSync(A).filter((f) => f.endsWith('.html') && !f.startsWith('rec-'));
 const SIZES = [[1366, 650], [1093, 525]];
 const which = process.argv[2] || 'all';
 const want = (k) => which === 'all' || which === k;
@@ -38,7 +50,7 @@ async function runAxe(p, label, tally) {
 if (want('axe')) {
   const t = { pages: 0, violations: 0, incomplete: 0 };
   const p = await newPage();
-  const files = fs.readdirSync(A).filter((f) => f.endsWith('.html') && !f.startsWith('rec-'));
+  const files = listFiles();
   for (const f of files) { await p.goto(url(f)); await runAxe(p, f, t); }
   const recs = fs.readdirSync(A).filter((f) => f.startsWith('rec-') && !f.includes('filler')).concat(['rec-filler-007.html', 'rec-filler-120.html', 'rec-filler-250.html']);
   for (const f of recs) for (const tab of ['overview', 'workbench', 'review', 'documents', 'exceptions', 'history', 'ops']) {
@@ -58,7 +70,7 @@ if (want('axe')) {
 // ---------- 320 px reflow ----------
 if (want('reflow')) {
   const p = await newPage(320, 640); let bad = 0, n = 0;
-  const list = fs.readdirSync(A).filter((f) => f.endsWith('.html') && !f.startsWith('rec-')).concat(['rec-halton-haulage.html', 'rec-maple-ridge.html', 'rec-scarborough-robotics.html', 'rec-danforth-cleaning.html', 'rec-filler-007.html']);
+  const list = listFiles().concat(['rec-halton-haulage.html', 'rec-maple-ridge.html', 'rec-scarborough-robotics.html', 'rec-danforth-cleaning.html', 'rec-filler-007.html']);
   for (const f of list) {
     const tabs = f.startsWith('rec-') ? ['overview', 'documents', 'ops', 'history'] : [''];
     for (const tab of tabs) {
@@ -139,7 +151,7 @@ if (want('tasks')) {
   await p.keyboard.press('Tab'); await p.locator('#returns tbody tr:not([hidden]) a[data-pick]').first().focus(); await p.keyboard.press('j'); await p.keyboard.press('o'); await p.waitForURL(/rec-/);
   ok('open key o opens the row on Workbench', /#workbench$/.test(p.url()), p.url().split('/').pop());
   const first = await p.locator('h1').textContent();
-  ok('"Since you last opened" is first under the identity bar', await p.evaluate(() => { const s = document.querySelector('.app-since'), i = document.querySelector('.moj-identity-bar'), f = document.querySelector('.app-facts'); return !s || (i.getBoundingClientRect().bottom <= s.getBoundingClientRect().top && s.getBoundingClientRect().bottom <= f.getBoundingClientRect().top); }));
+  ok('"Since you last opened" is first under the identity bar', await p.evaluate(() => { const s = document.querySelector('.app-since'), i = document.querySelector('.moj-identity-bar'), t = document.querySelector('.moj-sub-navigation'); return !s || (i.getBoundingClientRect().bottom <= s.getBoundingClientRect().top && s.getBoundingClientRect().bottom <= t.getBoundingClientRect().top); }));
   const nxt = p.locator('[data-key-next]'); ok('next return link visible', await nxt.isVisible());
   loads = 0; await p.locator('[data-route="documents"]').click(); await p.locator('[data-route="history"]').click(); await p.locator('[data-route="ops"]').click();
   ok('tab changes are client-side routes (0 page loads)', loads === 0, loads + ' loads');
@@ -203,5 +215,152 @@ if (want('tasks')) {
   await p.locator('[data-route="exceptions"]').click(); await pop.waitForTimeout(300); ok('second window still open after a tab change', !pop.isClosed());
   say(`TASKS: ${results.filter(Boolean).length} of ${results.length} pass`);
 }
-await browser.close();
+// ---------- shared rule checks V1 to V8 (design/verify/rules.mjs), at both rule-18 sizes ----------
+if (want('rules')) {
+  const results = [];
+  const ck = (r, name) => { results.push(r.ok); say(`  ${r.ok ? 'PASS' : 'FAIL'} ${r.rule} ${name}${r.ok ? '' : ': ' + r.failures.slice(0, 4).join('; ')}`); };
+  const own = (rule, name, ok, detail = '') => ck({ rule, ok, failures: ok ? [] : [detail || 'failed'] }, name);
+  const RECS = ['rec-halton-haulage.html', 'rec-scarborough-robotics.html', 'rec-riverdale-rentals.html', 'rec-queen-west-design.html', 'rec-danforth-cleaning.html', 'rec-lakeshore-eats.html', 'rec-filler-007.html'];
+  const TABS = ['overview', 'workbench', 'review', 'documents', 'exceptions', 'history', 'ops'];
+  const m = (name, sel) => ({ name, run: async (q) => { const b = await q.locator(sel).first().boundingBox(); if (!b || b.y < 0 || b.y + b.height > (await q.evaluate(() => innerHeight))) throw new Error(`${sel} is not wholly inside the first screen`); await q.mouse.click(b.x + b.width / 2, b.y + b.height / 2); } });
+  const safe = async (fn) => { try { return await fn(); } catch (e) { return { rule: 'V2', ok: false, failures: [String(e.message).split('\n')[0]] }; } };
+  const FILE = { name: 'check.csv', mimeType: 'text/csv', buffer: Buffer.from('a,b') };
+  const counted = [];
+  for (const [w, h] of SIZES) {
+    say(`RULES at ${w} x ${h}`);
+    const ctxs = [];
+    const fresh = async (f) => { const c = await browser.newContext({ viewport: { width: w, height: h } }); ctxs.push(c); const p = await c.newPage(); await p.goto(url(f)); if (f.includes('#')) await p.reload(); return p; };
+    const tick = async (p, n) => { for (let i = 0; i < n; i++) await p.locator('[data-row-select]').nth(i).check(); await p.evaluate(() => window.scrollTo(0, 0)); };
+
+    // V1 no early error: every list page, and each tab of seven records
+    {
+      const fails = []; let n = 0;
+      for (const f of listFiles()) { const p = await fresh(f); const r = await R.V1(p); n++; for (const x of r.failures) fails.push(f + ': ' + x); await p.context().close(); }
+      for (const f of RECS) for (const t of TABS) { const p = await fresh(f + '#' + t); const r = await R.V1(p); n++; for (const x of r.failures) fails.push(f + '#' + t + ': ' + x); await p.context().close(); }
+      ck({ rule: 'V1', ok: fails.length === 0, failures: fails }, `no early error on load or after input, ${n} page states`);
+      const p = await fresh('queue-ops.html'); await tick(p, 2); ck(await R.V1(p), 'ops list with two rows ticked, nothing pressed');
+    }
+
+    // V2 the page stays put
+    {
+      let p = await fresh('queue-ops.html'); await tick(p, 2);
+      ck(await safe(() => R.V2(p, m('Assign with nobody chosen', '[data-bulkbar] button[type=submit]'))), 'bulk Assign, nobody chosen (scroll 0)');
+      const bar = await p.evaluate(() => Math.round(document.querySelector('[data-bulkbar]').getBoundingClientRect().height));
+      say(`  bulk bar height in the error state: ${bar} px of ${h}`);
+      // assign in the middle of the list, as a person would: scroll, tick a row that has a row below it in view, choose, press
+      p = await fresh('queue-ops.html'); await p.evaluate(() => window.scrollTo(0, 600));
+      const spot = await p.evaluate(() => { const rows = [...document.querySelectorAll('tbody tr[data-slug]')].filter((r) => r.querySelector('[data-row-select]')); const r = rows.find((x) => { const b = x.getBoundingClientRect(); const n = x.nextElementSibling; const nb = n && n.getBoundingClientRect(); return b.top >= 0 && n && !n.hidden && nb.bottom <= innerHeight - 70; }); if (!r) return null; const b = r.querySelector('[data-row-select]').getBoundingClientRect(); return [b.x + b.width / 2, b.y + b.height / 2]; });
+      own('V2', 'a row with a next row in view exists in the middle of the list', !!spot, 'none found');
+      if (spot) {
+        await p.mouse.click(spot[0], spot[1]); await p.selectOption('#assign-to', { index: 1 });
+        const y0 = await p.evaluate(() => scrollY); const bb = await p.locator('[data-bulkbar] button[type=submit]').boundingBox();
+        await p.mouse.click(bb.x + bb.width / 2, bb.y + bb.height / 2); await p.waitForTimeout(250);
+        const y1 = await p.evaluate(() => scrollY);
+        const fo = await p.evaluate(() => { const a = document.activeElement; const r = a && a.closest('tr'); const b = a.getBoundingClientRect(); return !!r && b.top >= 0 && b.bottom <= innerHeight; });
+        own('V2', `bulk Assign to a chosen preparer in the middle of the list: scroll moved ${y1 - y0} px, next row focused and in view`, Math.abs(y1 - y0) <= 8 && fo, `moved ${y1 - y0}, focusInView ${fo}`);
+      }
+      p = await fresh('queue-ops.html'); await tick(p, 2);
+      const quiet = await p.evaluate(() => Math.round(document.querySelector('[data-bulkbar]').getBoundingClientRect().height));
+      await p.evaluate(() => window.scrollTo(0, 600)); const y0 = await p.evaluate(() => scrollY);
+      await p.mouse.click(...(await p.locator('[data-bulkbar] button[type=submit]').boundingBox().then((b) => [b.x + b.width / 2, b.y + b.height / 2]))); await p.waitForTimeout(200);
+      const y1 = await p.evaluate(() => scrollY); const inView = await p.evaluate(() => { const b = document.querySelector('[data-bulk-summary]').getBoundingClientRect(); return b.top >= 0 && b.bottom <= innerHeight; });
+      own('V2', `bulk error with the list scrolled to ${y0}: scroll moved ${y1 - y0} px, summary in view`, Math.abs(y1 - y0) <= 8 && inView, `moved ${y1 - y0}, summaryInView ${inView}`);
+      own('V2', `bulk bar one row when quiet (${quiet} px at ${h} high)`, quiet <= 80, `${quiet} px`);
+      p = await fresh('rec-scarborough-robotics.html#ops');
+      ck(await safe(() => R.V2(p, m('Upload with no file', '[data-step=chk] button'))), 'Ops form error in place');
+      await p.setInputFiles('#f-chk', FILE);
+      ck(await safe(() => R.V2(p, m('Upload the check export', '[data-step=chk] button'))), 'Ops form success in place');
+      p = await fresh('rec-danforth-cleaning.html#history'); ck(await safe(() => R.V2(p, m('Send the nudge', '[data-nudge]'))), 'nudge in place');
+      p = await fresh('rec-halton-haulage.html#documents');
+      ck(await safe(() => R.V2(p, m('Open a source', '[data-doc="1"]'))), 'Documents: open a source (Q7)');
+      ck(await safe(() => R.V2(p, m('Open the next source', '[data-doc="2"]'))), 'Documents: open another source');
+      p = await fresh('queue-preparer.html');
+      ck(await safe(() => R.V2(p, m('Choose a filter chip', '.app-chip >> nth=0'))), 'list: filter chip');
+      ck(await safe(() => R.V2(p, m('Sort by a heading', 'th[aria-sort] button >> nth=1'))), 'list: sort');
+    }
+
+    // V3 the work is in view
+    {
+      for (const f of ['rec-halton-haulage.html', 'rec-maple-ridge.html', 'rec-riverdale-rentals.html']) { const p = await fresh(f + '#documents/1'); ck(await R.V3(p), `Documents with a source open, ${f.slice(4, -5)}`); }
+      let open = 0, na = 0;
+      for (const f of RECS) { const p = await fresh(f + '#ops'); const has = await p.locator('[data-ops-form]:not([hidden])').count(); if (!has) { na++; continue; } open++; ck(await R.V3(p), `Ops tab, open step, ${f.slice(4, -5)}`); }
+      say(`  ops pages with no open step (nothing to decide): ${na}; with one: ${open}`);
+      let p = await fresh('rec-scarborough-robotics.html#ops'); { const b = await p.locator('[data-step=chk] button').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); } await p.waitForTimeout(150);
+      ck(await R.V3(p), 'Ops tab in the error state (summary above the field)');
+      p = await fresh('queue-ops.html'); await tick(p, 1); ck(await R.V3(p, { evidence: '[data-sel-count]' }), 'bulk bar: what is selected and Assign');
+    }
+
+    // V4 focus lands
+    {
+      let p = await fresh('rec-halton-haulage.html#documents'); ck(await R.V4(p, { name: 'Open a source', click: '[data-doc="1"]', expect: '[data-viewer-title]' }, { shortcuts: [{ key: '/', selector: '#header-search' }] }), 'Documents: focus on the viewer heading');
+      p = await fresh('queue-ops.html'); await tick(p, 2);
+      ck(await R.V4(p, { name: 'Assign, nobody chosen', click: '[data-bulkbar] button[type=submit]', expect: '[data-bulk-summary]' }), 'bulk error: focus on the summary');
+      await p.selectOption('#assign-to', { index: 1 });
+      ck(await R.V4(p, { name: 'Assign to a preparer', click: '[data-bulkbar] button[type=submit]', expect: 'tr[data-slug] a[data-pick]' }), 'bulk success: focus on the next row');
+      p = await fresh('rec-scarborough-robotics.html#ops');
+      ck(await R.V4(p, { name: 'Upload with no file', click: '[data-step=chk] button', expect: '[data-ops-summary]' }), 'Ops error: focus on the summary');
+      await p.setInputFiles('#f-chk', FILE);
+      ck(await R.V4(p, { name: 'Upload the check export', click: '[data-step=chk] button', expect: '[data-ops-result]' }), 'Ops success: focus on the result');
+      p = await fresh('rec-danforth-cleaning.html#history'); ck(await R.V4(p, { name: 'Send the nudge', click: '[data-nudge]', expect: '[data-nudge-banner]' }), 'nudge: focus on the banner');
+      p = await fresh('board.html'); ck(await R.V4(p, { name: 'Choose Rework', click: '.app-pipe[data-filter-value="rework"]', expect: '#list-top' }, { shortcuts: [{ key: '/', selector: '#header-search' }] }), 'board: focus on the list caption');
+      ck(await R.V4(p, { name: 'Clear the filter', click: '[data-list-caption] ~ [data-filter-clear]', expect: '#list-top' }), 'board: Clear keeps focus on the caption');
+      p = await fresh('queue-preparer.html');
+      ck(await R.V4(p, null, { shortcuts: [{ key: '/', selector: '#header-search' }, { key: 'j', selector: 'tr[data-slug] a[data-pick]' }] }), 'list shortcuts / and j');
+      // Back from a record focuses the row you came from (Q9)
+      const slug = await p.evaluate(() => { const a = document.querySelectorAll('tr[data-slug] a[data-pick]')[3]; const s = a.closest('tr').getAttribute('data-slug'); a.click(); return s; });
+      await p.waitForURL(/rec-/);
+      const r = await R.V4(p, { name: 'Browser Back', run: (q) => q.goBack(), expect: 'tr[data-slug] a[data-pick]', wait: 700 });
+      const same = await p.evaluate((s) => document.activeElement && document.activeElement.closest('tr') && document.activeElement.closest('tr').getAttribute('data-slug') === s, slug);
+      ck(r, 'browser Back: focus on a row'); own('V4', 'browser Back: the row you came from', same, 'a different row has focus');
+    }
+
+    // V5 counts carry their scope
+    {
+      const all = []; const fails = [];
+      for (const f of listFiles().filter((x) => x !== 'index.html' && x !== 'source.html' && x !== 'search.html' && x !== 'search-no-match.html')) { const p = await fresh(f); const r = await R.V5(p); all.push(r); for (const x of r.failures) fails.push(f + ': ' + x); await p.context().close(); }
+      for (const f of RECS) { const p = await fresh(f + '#overview'); const r = await R.V5(p); all.push(r); for (const x of r.failures) fails.push(f + ': ' + x); await p.context().close(); }
+      ck({ rule: 'V5', ok: fails.length === 0, failures: fails }, `every visible count has a scope word or "N of M", ${all.length} pages, ${all.reduce((n, r) => n + r.counts.length, 0)} counts`);
+      ck(R.V5same(all), 'same name and scope, same number on every page');
+      const p = await fresh('board.html'); ck(await R.V5caption(p, { name: 'Choose Rework', click: '.app-pipe[data-filter-value="rework"]' }, { caption: '[data-list-caption]' }), 'board caption follows the filter');
+      const cap = await p.locator('[data-list-caption]').textContent(); const clr = await p.locator('[data-list-caption] ~ [data-filter-clear]').isVisible();
+      own('V5', `board caption reads "${cap.trim()}" with a visible Clear`, /^Showing 33 of 300 returns, state Rework$/.test(cap.trim()) && clr, cap);
+      const q = await fresh('queue-preparer.html'); await q.fill('[data-list-filter]', 'zzz-no-such');
+      own('V5', 'list filter updates its count line', /Showing 0 of /.test(await q.locator('[data-list-status]').textContent()));
+      // the tab badges agree with the rows of their own page
+      const bad = []; for (const f of ['queue-preparer.html', 'queue-rework.html', 'queue-cpa.html', 'queue-cpa-rework.html', 'queue-ops.html']) { const q2 = await fresh(f); const t = await q2.evaluate(() => { const b = document.querySelector('[aria-current="page"][data-count] .moj-badge'); return [b ? +b.textContent.replace(/\D/g, '') : -1, +(/of (\d+)/.exec(document.querySelector('[data-list-status]').textContent) || [0, -2])[1]]; }); if (t[0] !== t[1]) bad.push(`${f}: tab ${t[0]}, rows ${t[1]}`); await q2.context().close(); }
+      own('V5', 'the open view tab count equals the "of M" of its list', bad.length === 0, bad.join('; '));
+    }
+
+    // V6 search keeps its promise
+    {
+      const p = await fresh('queue-preparer.html');
+      const dp = await fresh('search.html?q=bakery');
+      const data = await dp.evaluate(() => (window.APP_ALL || []).filter((r) => r[5] === 'halton-haulage')[0] || []);
+      const name = data[0], bn = data[1], yeFmt = data[2], iso = data[8];
+      const [yy, mm] = (iso || '2025-12-31').split('-'); const mon = yeFmt.split(' ')[1];
+      const r = await R.V6(p, { input: '#header-search', result: '[data-search-table] tbody tr, [data-identity-bar]', label: '.app-search__label', kinds: [{ kind: 'name', value: name }, { kind: 'number', value: bn }, { kind: 'year end', value: yeFmt }, { kind: 'year end', value: `${mon} ${yy}` }, { kind: 'year end', value: `${yy}-${mm}` }] });
+      ck(r, `search by name "${name}", number "${bn}", year end "${yeFmt}", "${mon} ${yy}", "${yy}-${mm}"`);
+    }
+
+    // V7 every click does something
+    {
+      const reset = (u) => async (q) => { await q.goto('about:blank'); await q.goto(u); };
+      for (const [f, lim] of [['queue-preparer.html', 70], ['queue-ops.html', 70], ['board.html', 70], ['search.html?q=eglinton', 40], ['rec-halton-haulage.html#documents/1', 60], ['rec-scarborough-robotics.html#ops', 60], ['rec-danforth-cleaning.html#history', 60], ['rec-eglinton-holdings.html#overview', 60], ['rec-riverdale-rentals.html#ops', 60]]) {
+        const p = await fresh(f);
+        const skip = '[disabled], [aria-disabled=true], [data-noop-ok], .govuk-skip-link' + (f.startsWith('search') ? ', .app-search__button' : '');
+        ck(await R.V7(p, { reset: reset(url(f)), limit: lim, skip }), `every control does something on ${f}`);
+        const q = await fresh(f); await q.keyboard.press('Tab'); await q.keyboard.press('Enter'); await q.waitForTimeout(100);
+        own('V7', `skip link works by keyboard on ${f}`, await q.evaluate(() => location.hash === '#main-content'), 'hash did not change');
+        await p.context().close();
+      }
+    }
+
+    // V8 one choice, one action
+    own('V8', 'not applicable: no field in this family is tied to an option (the bulk assign is one select and one button)', true);
+    for (const c of ctxs) await c.close().catch(() => {});
+  }
+  say(`RULES: ${results.filter(Boolean).length} of ${results.length} pass`);
+}
+
+await browser.close(); srv.close();
 fs.writeFileSync(path.join(here, 'verify-output.txt'), out.join('\n') + '\n');

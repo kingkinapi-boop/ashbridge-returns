@@ -63,16 +63,16 @@ export const pick = (role, v) => ALL.filter(VIEWS[role][v]);
 // where a row opens: the preparer on the Workbench, the CPA on Review, ops on Ops (fix 2)
 export const LANDING = { prep: 'workbench', cpa: 'review', ops: 'ops', board: 'overview' };
 
-export const stateChips = (rows, which) => { const c = counts(rows); return chips('Filter by state', STATES.filter((s) => c[s[0]] && (!which || which.includes(s[0]))).map((s) => ['state', s[0], s[1], c[s[0]]])); };
-export const tierChips = (rows) => chips('Filter by tier or date', [['tier', 'red', 'Tier red', rows.filter((r) => r.tier === 'red').length], ['tier', 'amber', 'Tier amber', rows.filter((r) => r.tier === 'amber').length], ['tier', 'green', 'Tier green', rows.filter((r) => r.tier === 'green').length], ['wait', 'yes', 'Waiting on client', rows.filter((r) => r.waiting).length], ['due', '14', 'Due in 14 days or overdue', rows.filter((r) => !isDone(r) && diffDays(r.filing) <= 14).length]]);
-export const bandChips = (rows) => chips('Filter by filing due week', [['band', 'overdue', 'Overdue', rows.filter((r) => band(r) === 'overdue').length], ['band', 'week', 'Due in the next 7 days', rows.filter((r) => band(r) === 'week').length], ['band', 'month', 'Due in 8 to 28 days', rows.filter((r) => band(r) === 'month').length], ['band', 'later', 'Due later', rows.filter((r) => band(r) === 'later').length]]);
+export const stateChips = (rows, which, scope = '') => { const c = counts(rows); return chips('Filter by state', STATES.filter((s) => c[s[0]] && (!which || which.includes(s[0]))).map((s) => ['state', s[0], s[1], c[s[0]]]), scope); };
+export const tierChips = (rows, scope = '') => chips('Filter by tier or date', [['tier', 'red', 'Tier red', rows.filter((r) => r.tier === 'red').length], ['tier', 'amber', 'Tier amber', rows.filter((r) => r.tier === 'amber').length], ['tier', 'green', 'Tier green', rows.filter((r) => r.tier === 'green').length], ['wait', 'yes', 'Waiting on client', rows.filter((r) => r.waiting).length], ['due', '14', 'Due in 14 days or overdue', rows.filter((r) => !isDone(r) && diffDays(r.filing) <= 14).length]], scope);
+export const bandChips = (rows, scope = '') => chips('Filter by filing due week', [['band', 'overdue', 'Overdue', rows.filter((r) => band(r) === 'overdue').length], ['band', 'week', 'Due in the next 7 days', rows.filter((r) => band(r) === 'week').length], ['band', 'month', 'Due in 8 to 28 days', rows.filter((r) => band(r) === 'month').length], ['band', 'later', 'Due later', rows.filter((r) => band(r) === 'later').length]], scope);
 
 export const VIEW_DEFS = {
-  prep: [['mine', 'My work', 'queue-preparer.html'], ['all', 'All returns', 'queue-all.html'], ['waiting', 'Waiting on client', 'queue-waiting.html'], ['due14', 'Due in 14 days or overdue', 'queue-due.html'], ['rework', 'Rework', 'queue-rework.html']],
-  cpa: [['ready', 'Ready to review', 'queue-cpa.html'], ['rework', 'Rework', 'queue-cpa-rework.html'], ['due14', 'Due in 14 days or overdue', 'queue-cpa-due.html'], ['all', 'All in review flow', 'queue-cpa-all.html']],
+  prep: [['mine', 'My work', 'queue-preparer.html'], ['all', 'All returns', 'queue-all.html'], ['waiting', 'Waiting on client', 'queue-waiting.html'], ['due14', 'Due in 14 days or overdue', 'queue-due.html'], ['rework', 'My rework', 'queue-rework.html']],
+  cpa: [['ready', 'Ready to review', 'queue-cpa.html'], ['rework', 'All rework', 'queue-cpa-rework.html'], ['due14', 'Ready to review, due in 14 days or overdue', 'queue-cpa-due.html'], ['all', 'All in review flow', 'queue-cpa-all.html']],
   ops: [['next', 'Next ops step', 'queue-ops.html'], ['filed', 'Filed, waiting for assessment', 'queue-ops-filed.html'], ['waiting', 'Waiting on client', 'queue-ops-waiting.html'], ['all', 'All returns', 'queue-ops-all.html']],
 };
 export function views(role, active, override = {}) {
   const n = (v) => (override[v] != null ? override[v] : pick(role, v).length);
-  return `<h2 class="govuk-visually-hidden">List views</h2>` + subNav('List views', VIEW_DEFS[role].map(([k, l, h]) => [k, l, h, n(k)]), active);
+  return `<h2 class="govuk-visually-hidden">List views</h2>` + subNav('List views', VIEW_DEFS[role].map(([k, l, h]) => [k, l, h, n(k), override[k] != null ? `${l} (empty-state example)` : l]), active);
 }
