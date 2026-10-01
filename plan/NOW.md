@@ -17,7 +17,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (its pro
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Taxprep trial: waits for Zo to sign in again (to-do #1). Round trip done (13 of 13 identical). Next walker: Riverdale, the bell, download the two newest exports ("bs forms", "sched forms") with a real mouse click; then S8 copy-number test (Q21), Q22, the ContactPartner token check, part A | none | | 1 Oct | |
+| Taxprep trial walker (reconnected to "Ashbridge Test" by switch_browser; Zo picks the window). Round trip done (13 of 13 identical). This run: Riverdale, the bell, download the two newest exports ("bs forms", "sched forms") with a real mouse click; then S8 copy-number test (Q21), Q22, the ContactPartner token check, part A | Sonnet walker | local | 1 Oct | reference/taxprep/ |
 | queue: F00 build reported (fix round 1), check next; specs reported F01, F04, F05, F08, F09, W00 (F03 parked) | 3 cloud runs cse_01Hr7Az98VbKzfckRMPp1LtF, cse_01HjjamHjojvtdvfpU7G3L4B, cse_01W4VQVBLUYDkcCpF7Np3Hej | cloud | 1 Oct 18:50Z | claude/<card> |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | usability panel: source viewer (D03) | tester (panel) | local | 1 Oct | claude/panel-source-viewer |
@@ -45,6 +45,7 @@ Done today: phase 0 and phase 1 cards written and independently reviewed (no pha
 - Chrome downloads land in C:SERSSERDOWNLOADS (ZO, 1 OCT); WALKERS COPY ONLY THEIR OWN EXPORTS TO C:SERSSERDOCUMENTS	AXPREP-TRIALINBOX AND TOUCH NOTHING ELSE THERE.
 - NEXT IN CHROME, ONE AT A TIME and only with the window visible (to-do #1): the trial walker (day 1b, then day 2), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI from QBO Accountant on "Probe Co. (Test)" (decision 0013, with its limits).
 - Trial checkpoint landed (300 GIFI ids; reference/taxprep/cell-map-status.md lists what to export next). Chrome order, one at a time, window visible: the QBO walker (done: Transaction List by Date carries Transaction ID and the full memo), then the trial walker (running) (balance-sheet forms S2008, S2178, S3849, then S1, S8, S50; round trip steps 16 to 19; Q21, Q22), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI on "Probe Co. (Test)" in QBO Accountant (decision 0013, with its limits). Downloads land in C:\Users\User\Downloads; walkers copy only their own exports to C:\Users\User\Documents\taxprep-trial\inbox.
+- If the Chrome extension drops, it may reconnect to Zo's other Chrome: run switch_browser so Zo confirms "Ashbridge Test" before any walker starts.
 - Only one helper drives Chrome at a time: two walkers shared the tab group on 1 Oct and one tab was taken over.
 - Edit files with the Edit tool, not shell scripts with escapes (Git Bash mangles backslashes).
 - Another Lead works in ashbridge-app: read-only there, always. GitHub Actions: 2,000 free minutes a month: keep branch checks lean.
