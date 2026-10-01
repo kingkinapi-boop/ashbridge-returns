@@ -21,7 +21,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (its pro
 | Taxprep trial day 3 (tax choices, diagnostics, print) | Sonnet walker, Chrome | local | 1 Oct | reference/taxprep/2026-10-03-day3/ |
 | queue: F00 build reported (fix round 1), check next; specs reported F01, F04, F05, F08, F09, W00 (F03 parked) | 3 cloud runs cse_01Hr7Az98VbKzfckRMPp1LtF, cse_01HjjamHjojvtdvfpU7G3L4B, cse_01W4VQVBLUYDkcCpF7Np3Hej | cloud | 1 Oct 18:50Z | claude/<card> |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
-| usability panel: source viewer (D03) | tester (panel) | local | 1 Oct | claude/panel-source-viewer |
+| findings review: source viewer panel | findings-reviewer (Opus) | local | 1 Oct | claude/findings-source-viewer |
 
 Done today: phase 0 and phase 1 cards written and independently reviewed (no phase 1 todo left); trial day 1 (reference/taxprep/); decisions 0010 to 0014; trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
