@@ -1,0 +1,70 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Kensington Market Crafts Inc. (Test)",
+    "business_number": "445500509",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2023-08-14",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": null,
+    "hst_basis": null,
+    "books_kept_by": "owner, no software"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "445500509RC0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Tamsin Reyes (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [],
+  "services": ["t2"],
+  "related_entities": [],
+  "staff": {
+    "employees": 0,
+    "note": "The owner works alone."
+  },
+  "hst": {
+    "registered": false,
+    "note": "Sales under $30,000: a small supplier."
+  },
+  "answers": [
+    {"question_asked":"BQ2.earn: What the business sold in the year","answer_verbatim":"28,640.00","what_it_resolves":"Revenue for the year (FL:106)","channel":"screen"},
+    {"question_asked":"YE2.materials: Materials for what you make","answer_verbatim":"11,480.00","what_it_resolves":"Cost of materials (FL:107)","channel":"screen"},
+    {"question_asked":"YE2.booths: Market and booth fees","answer_verbatim":"4,350.00","what_it_resolves":"Main expense groups (FL:107)","channel":"screen"},
+    {"question_asked":"YE2.ads: Advertising and promotion","answer_verbatim":"960.00","what_it_resolves":"Main expense groups (FL:107)","channel":"screen"},
+    {"question_asked":"YE2.packing: Packaging and shipping","answer_verbatim":"2,214.20","what_it_resolves":"Main expense groups (FL:107)","channel":"screen"},
+    {"question_asked":"YE2.phone: Phone and internet","answer_verbatim":"1,140.00","what_it_resolves":"Main expense groups (FL:107)","channel":"screen"},
+    {"question_asked":"YE2.fees: Bank and payment fees","answer_verbatim":"980.00","what_it_resolves":"Main expense groups (FL:107)","channel":"screen"},
+    {"question_asked":"YE1.vehicle: Vehicle costs for the year","answer_verbatim":"3,900.00","what_it_resolves":"Vehicle costs (FL:91)","channel":"screen"},
+    {"question_asked":"ARB.bal: Business bank balance on the last day of the year","answer_verbatim":"6,215.80","what_it_resolves":"Year-end cash (FL:96)","channel":"screen"},
+    {"question_asked":"BQ7.loan: Money you lent the company that it still owes you","answer_verbatim":"2,500.00","what_it_resolves":"Shareholder loan (FL:104)","channel":"screen"},
+    {"question_asked":"INC3.shares: Amount paid in for the shares","answer_verbatim":"100.00","what_it_resolves":"Share capital (FL:98)","channel":"screen"},
+    {"question_asked":"YE1.pcost: Home costs you pay personally for the year","answer_verbatim":"16,800.00","what_it_resolves":"Home office costs (FL:93)","channel":"screen"},
+    {"question_asked":"YE1.puse: Share of your home used for the business, in percent","answer_verbatim":"10","what_it_resolves":"Home office share (FL:93)","channel":"screen"},
+    {"question_asked":"YE1.vkm: Kilometres driven in the year","answer_verbatim":"12,400","what_it_resolves":"Vehicle kilometres (FL:95)","channel":"screen"},
+    {"question_asked":"YE1.vbkm: Kilometres driven for the business","answer_verbatim":"4,100","what_it_resolves":"Vehicle business kilometres (FL:95)","channel":"screen"}
+  ],
+  "client_notes": ["I sell at markets and online. I do not have bank statements for the company; the balance is what the app showed on 31 December.", "I lent the company $2,500 when I started."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-12-31",
+    "accounts": [],
+    "ucc": []
+  }
+}

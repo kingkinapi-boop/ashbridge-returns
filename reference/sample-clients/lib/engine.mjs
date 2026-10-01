@@ -246,7 +246,7 @@ export class Client {
   }
   flag(o) {
     const id = `${this.num}-F${String(this.flagList.length + 1).padStart(2, '0')}`;
-    const f = { id, rule: o.rule, detail: o.detail, tx: NL(o.tx), onb: NL(o.onb), aje: NL(o.aje), severity: o.severity ?? 'must fire', action: o.action ?? 'flag for a person; do not decide alone', judgement: !!o.judgement };
+    const f = { id, rule: o.rule, detail: o.detail, tx: NL(o.tx), onb: NL(o.onb), aje: NL(o.aje), severity: o.severity ?? 'must fire', action: o.action ?? 'flag for a person; do not decide alone', judgement: !!o.judgement, blocking: o.blocking };
     for (const t of f.tx) if (typeof t === 'object') t.flags.push(id);
     this.flagList.push(f); return id;
   }

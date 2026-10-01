@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds the ten made-up sample clients (01-maple-ridge to 10-danforth-cleaning) next to this file.
+// Builds the twelve made-up sample clients (01-maple-ridge to 12-kensington-market-crafts) next to this file.
 // Fixed seeds, no packages, Node 20 or later.  Usage: node generate.mjs [client numbers, e.g. 01 05]
 import fs from 'node:fs';
 import path from 'node:path';
