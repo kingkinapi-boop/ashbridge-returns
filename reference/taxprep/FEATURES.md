@@ -34,3 +34,9 @@
 - Export (default filter) also lists IDENT.Ident120/121/311/230/451/492 and IFirm.ContactPartner (empty); header carries the real return GUID.
 - Custom filter form picker: S2008/2009, S2178/2179 are single combined forms; S2589 long-term assets, S3139, S3450, S3620, S3849 are the other S100 parts; each has an "-1" opening-balance copy. "S8" is the CCA form, third in the list for the typed text "S8".
 - Export notifications: bell with badge in the return header; each completed export has a Download button that needs a real mouse click.
+- (2 Oct) Return bell (blue button in the return header, right of the share icon) holds the export notifications; open the top row, then a real click on "Download". The detail view can show a stale older entry: use "Back to notifications".
+- (2 Oct) Data-export file shape vs cell-list export: exports of a filter with no data give columns id, "Current Year", "Last Year", description (all empty values); same shape as data exports.
+- (2 Oct) S8 CCA rows are copies of workchart S8CCA; ids CCACat.FD08C[n].FED.Ttw08cA1 (class number); copy numbers renumber after a delete (no gaps).
+- (2 Oct) A custom filter built with "Select all" (not input only) exports calculated cells with values (S1 net income for tax Ttwone66, totals). Combine filters has Exclude summary / blank / calculated options.
+- (2 Oct) Tools panel (right): Copy cell ID, Copy cell raw value, Add cell to monitor, Jump to source, Use linked value, Remove override, Delete value. Review tab filter view shows Current year, Last year, Difference columns.
+- (2 Oct) Custom filters made in one return are listed in another (Probe sees Riverdale's): shared.
