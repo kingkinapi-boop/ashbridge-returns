@@ -14,13 +14,13 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Design fix round 2: queues-record, workbench (builds design/parts/cite-or-reason/), cpa-review V1 (V1 to V8 from claude/design-verify 1f3fdda) | 3 designers | local worktrees | 2 Oct 00:45Z | claude/design-*-2 |
-| F00 round 3 check (build reported: 89 of 89, canary 100, mutate 74.43) | cloud run | cloud | 2 Oct 00:30Z | claude/F00 |
+| F00 round 3 check (check released by hand: queue did not re-hand it) | cloud run | cloud | 2 Oct 01:15Z | claude/F00 |
 
 All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
 
 ## Next, in order
 
-1. Queue repair 2 LANDED (ed9435b, A247: vitest RPC timeout noise to fix in the next queue repair; dispatch skill line 40 should name `update <card> spec reopened --worker lead`; add a test that a check on a card with a parked dep still flows).
+1. Queue repair 2 LANDED (ed9435b, A247: vitest RPC timeout noise to fix in the next queue repair; dispatch skill line 40 should name `update <card> spec reopened --worker lead`; add a test that a check on a card with a parked dep still flows; a reopened build must reset its check, today the Lead releases the check by hand).
 2. F00: after findings review 3, card updated, spec job (rule tests), build, check, then board the train: write plan/train.json {status: requested}, merge into claude/train, fire a cloud run (it takes the train first, A249). Green: land, cold sign-off on queue repairs + rehearsal, widen to 6 runs.
 3. Re-specs: F03 and S00 (re-carded from the trial). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 done (dep gate).
 4. Phase 2: reviewed and fixed (reports/review-phase2.md, A234 to A246; red 1 settled as amber A245, RT-25 changed, CPA check item 33). Specs wait on S03 (FINDINGS final). Next design: D05 brief with Ready and the clear.
