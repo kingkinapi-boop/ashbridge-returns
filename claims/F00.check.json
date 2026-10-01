@@ -1,10 +1,9 @@
 {
  "card": "F00",
  "role": "check",
- "for": "2026-10-01T17:42:32.806Z",
- "worker": "cloud-d367f7",
- "state": "failed",
- "at": "2026-10-01T17:53:31.104Z",
- "mode": "turbo",
- "note": "FAIL: db test flaky (PGlite cold start timeout 5s), see reports/F00-check.md"
+ "for": "2026-10-01T18:31:38.086Z",
+ "worker": "cloud-5a0720",
+ "state": "working",
+ "at": "2026-10-01T18:53:38.531Z",
+ "mode": "turbo"
 }
