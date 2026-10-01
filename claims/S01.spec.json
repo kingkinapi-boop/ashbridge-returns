@@ -2,7 +2,8 @@
  "card": "S01",
  "role": "spec",
  "worker": "cloud-eff764",
- "state": "working",
- "at": "2026-10-01T18:53:47.852Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T18:54:03.480Z",
+ "mode": "turbo",
+ "note": "dep S00 not built; no package.json or src on main (no code base). Permission gaps: none. Model: sonnet"
 }
