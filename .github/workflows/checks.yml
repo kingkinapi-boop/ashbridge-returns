@@ -1,0 +1,44 @@
+name: checks
+on:
+  push:
+    branches:
+      - 'claude/**'
+      - '!claude/claims'
+      - '!claude/train'
+      - '!claude/review-*'
+    paths-ignore:
+      - 'reports/**'
+      - 'plan/**'
+      - '**/*.md'
+  pull_request:
+    paths-ignore:
+      - 'reports/**'
+      - 'plan/**'
+      - '**/*.md'
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm audit signatures
+      - run: npm audit --audit-level=high
+      - name: gitleaks
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks detect --no-banner --redact
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run deps:check
+      - run: npm test
