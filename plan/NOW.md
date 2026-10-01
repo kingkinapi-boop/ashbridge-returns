@@ -14,14 +14,15 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Design fix round 2: queues-record, workbench (builds design/parts/cite-or-reason/), cpa-review V1 (V1 to V8 from claude/design-verify 1f3fdda) | 3 designers | local worktrees | 2 Oct 00:45Z | claude/design-*-2 |
-| F00 train (da59ba0, F00 only; plan/train.json requested; the next cloud run takes it first, A249). Rehearsal step. | cloud run | cloud | 2 Oct 01:50Z | claude/train |
+| F00 follow-on builds and specs (F01, F04, F05, F08, F09, W00 builds; W14, D01 specs) | 3 cloud runs | cloud | 2 Oct 02:40Z | claude/<card> |
+| Cold sign-off: queue repairs 1 and 2 + the rehearsal (F00 spec, build, check, security, train, landing) | signoff (Opus, fresh) | local | 2 Oct 02:40Z | reports/signoff-rehearsal.md |
 
 All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
 
 ## Next, in order
 
 1. Queue repair 2 LANDED (ed9435b, A247: vitest RPC timeout noise to fix in the next queue repair; dispatch skill line 40 should name `update <card> spec reopened --worker lead`; add a test that a check on a card with a parked dep still flows; a reopened build must reset its check, today the Lead releases the check by hand).
-2. F00: after findings review 3, card updated, spec job (rule tests), build, check, then board the train: write plan/train.json {status: requested}, merge into claude/train, fire a cloud run (it takes the train first, A249). Green: land, cold sign-off on queue repairs + rehearsal, widen to 6 runs.
+2. F00 LANDED on main 5a70f12 (2 Oct, train green, reports/train-20261001-2255.md): the rehearsal is complete. After the cold sign-off: widen to 6 runs (turbo). Every phase 0 build now has its base.
 3. Re-specs: F03 and S00 (re-carded from the trial). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 done (dep gate).
 4. Phase 2: reviewed and fixed (reports/review-phase2.md, A234 to A246; red 1 settled as amber A245, RT-25 changed, CPA check item 33). Specs wait on S03 (FINDINGS final). Next design: D05 brief with Ready and the clear.
 5. Day 5: imports 01 to 07 done by script; exports and the 02 print (counter 96, file never arrived) blocked, window hidden. On Zo's "2 done": walker retries exports for 01 to 07, creates and imports 08 to 10, diagnostics 06, 07, then 5D. Then "After day 5" helper.

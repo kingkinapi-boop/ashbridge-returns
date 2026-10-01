@@ -11,7 +11,7 @@
   },
   "cards": [
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -59,7 +59,8 @@
       "title": "Scaffold: app, tests, CI, database helper",
       "phase": 0,
       "size": "M",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "done",
