@@ -1,0 +1,10 @@
+{
+ "card": "F01",
+ "role": "build",
+ "round": 1,
+ "spec": "ea1e06ef122a9776cd17e5abe1abf9dc211b2525",
+ "worker": "cloud-173eff",
+ "state": "working",
+ "at": "2026-10-01T23:23:43.199Z",
+ "mode": "turbo"
+}
