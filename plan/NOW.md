@@ -18,6 +18,7 @@ All helpers run on the laptop for now: `claude --cloud` needs a person at a term
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | queue: F00 build, then D01 spec (the rehearsal) | worker (local, the one) | local | 1 Oct | claude/F00, claude/D01 |
+| phase 1 cards (F06, W20, A02 to A05, pipeline wiring) | Opus drafter | local | 1 Oct | claude/cards-phase1a |
 | usability panel cpa-review | tester (panel) | local | 1 Oct | claude/panel-cpa-review |
 | usability panels queues-record, workbench | tester (panel) x2 | local | 1 Oct | claude/panel-<family> |
 
