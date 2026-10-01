@@ -1,3 +1,4 @@
+// @mutate
 // Sortable ids: 12 hex digits of milliseconds, 4 of a counter, then random hex.
 import { randomBytes } from 'node:crypto'
 import { now } from './clock'

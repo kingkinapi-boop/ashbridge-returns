@@ -1,9 +1,8 @@
-/** Changed money, tax, CSV and citation files only: npm run mutate:changed */
+/** Mutation targets are chosen only by the `// @mutate` marker: npm run mutate:changed (tools/mutate-changed.mjs). */
 export default {
   testRunner: 'vitest',
   plugins: ['@stryker-mutator/vitest-runner'],
-  vitest: { configFile: 'vitest.config.ts' },
-  mutate: ['src/core/money.ts', 'src/core/ids.ts'],
+  vitest: { configFile: 'vitest.mutate.config.ts', related: true },
   incremental: true,
   incrementalFile: 'reports/mutation/stryker-incremental.json',
   thresholds: { high: 90, low: 80, break: 70 },

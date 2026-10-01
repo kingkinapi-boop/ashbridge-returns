@@ -18,7 +18,8 @@
     "test:changed": "vitest run --changed --project unit && vitest run --changed --project db --passWithNoTests",
     "test:flake": "node tools/test-flake.mjs",
     "e2e": "next build && playwright test",
-    "mutate:changed": "stryker run --incremental"
+    "mutate:changed": "node tools/mutate-changed.mjs",
+    "mutate:canary": "stryker run tools/test/__fixtures__/mutation-canary/stryker.canary.config.mjs"
   },
   "dependencies": {
     "fast-check": "4.10.2",
@@ -36,11 +37,11 @@
     "@types/node": "26.6.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@vitest/coverage-v8": "5.0.1",
+    "@vitest/coverage-v8": "4.1.11",
     "dependency-cruiser": "18.4.0",
     "eslint": "10.11.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.70.1",
-    "vitest": "5.0.1"
+    "vitest": "4.1.11"
   }
 }
