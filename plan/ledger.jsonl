@@ -113,3 +113,8 @@
 {"ts":"2026-10-01T21:11:39.331Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"tester","model":"sonnet","where":"worktree","desc":"Re-test four design families","allowed":true}
 {"ts":"2026-10-01T21:17:23.555Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T21:44:33.059Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Design re-test findings review","allowed":true}
+{"ts":"2026-10-01T21:49:33.497Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T21:49:33.514Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Shared design rule checks","allowed":true}
+{"ts":"2026-10-01T21:53:50.605Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Design fix round 2: queues","allowed":true}
+{"ts":"2026-10-01T21:53:55.858Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Design fix round 2: workbench","allowed":true}
+{"ts":"2026-10-01T21:54:00.793Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Design fix round 2: CPA review","allowed":true}
