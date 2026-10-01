@@ -1,9 +1,11 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "da59ba0",
-  "cards": ["F00"],
+  "cards": [
+    "F00"
+  ],
   "requested_at": "2026-10-02T01:50:00Z",
-  "by": null,
+  "by": "cloud-a33104",
   "report": null
 }
