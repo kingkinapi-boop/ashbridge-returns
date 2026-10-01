@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "n/a",
  "worker": "cloud-fb8d96",
- "state": "working",
- "at": "2026-10-01T18:22:49.133Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T18:31:38.086Z",
+ "mode": "turbo",
+ "note": "35 tests pass incl 11 spec; stryker incompatible with vitest 5 (see report)"
 }
