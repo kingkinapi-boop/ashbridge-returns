@@ -14,7 +14,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Design re-test, changed tasks on the four families (panel mode) | tester | local worktree | 1 Oct 23:15Z | claude/design-retest |
-| F00 round 3 spec (security fixes, reports/F00-findings-3.md; spec reopened) | cloud run | cloud | 1 Oct 22:25Z | claude/F00 |
+| F00 round 3 build (spec reported: 37 tests, 24 fail pre-build) | cloud run | cloud | 1 Oct 23:45Z | claude/F00 |
 
 All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
 
