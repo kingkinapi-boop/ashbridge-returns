@@ -4,32 +4,13 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**Answered 1 Oct, thank you:** 1 A (one-off cloud runs, decision 0010), 2 watcher done, 3 Intuit account done. Items 1 to 3 are removed from the next rewrite.
+**1. The Taxprep trial (you said: in progress).**
+- When it is set up: the trial signed in inside the "Ashbridge Test" Chrome profile, the **T2 2025** edition, and you know its last day. Optional: that profile's download folder set to `C:\Users\User\Documents\taxprep-trial\inbox` with "Ask where to save" off.
+- Then reply `1 started, ends <date>` and say which Chrome window to connect to. The walker then runs day 1 (`plan\trial\day1-script.md`). You are needed again on day 4 (Auto-fill); the Lead tells you the day before.
 
-**OLD 1. How should the Lead start cloud workers? (answered: A)**
-- What: the Lead cannot open cloud sessions from its own chat. The command only works when a person sits at a terminal, and the background "remote" option quietly ran on this laptop instead. So turbo's 6 to 12 cloud workers cannot start yet.
-- Why it matters: without cloud workers the build runs about one card at a time on the laptop, and it spends your plan usage instead of the cloud credit.
-- Choose one. **A (recommended):** let the Lead fire one-off cloud runs through Claude's "run once" trigger. No schedules; the Lead fires each run and stops it, and nothing runs on a timer. This changes decision 0008's "no routines" for one-off runs only. **B:** you open cloud sessions yourself at claude.ai/code on this repo and type `work` in each (each keeps taking jobs until the queue is empty). Opening 6 now and again each morning would do.
-- Reply `1 A` or `1 B`.
-- Meanwhile: research and screen design run as light helpers on the laptop (no heavy commands), and one build worker runs locally.
-
-**2. Start the watcher, before you leave the desk tonight (10 minutes).** Skip if done.
-- It clears the Lead when its context gets full and starts it again, so nothing stops overnight. Steps: `C:\Users\User\Documents\GitHub\ashbridge-returns\toDelete\lead-watcher-prompt.md`.
-
-**3. Create a free Intuit developer account (10 minutes, when you can).**
-- Why: our research could not confirm from Intuit's pages whether QuickBooks reports carry the transaction ids the trace needs; a free test company answers it in minutes. No card, no real clients.
-- Steps: developer.intuit.com, Sign up with a new login (not your firm's QBO login), then Dashboard, Sandbox, Add a sandbox company, region Canada. Reply `3 done`; the Lead then asks for nothing else (no keys in chat).
-
-**4. The Taxprep trial is ready: start it when you have 15 minutes at the laptop (Fri 2 Oct morning is ideal).**
-- What: day 1 maps every Taxprep input cell on made-up companies. The trial lasts one week, so nothing starts until you do this.
-- Steps: open Chrome with the "Ashbridge Test" profile only; create the CCH iFirm Taxprep T2 trial and sign in yourself (the Lead never types a password); choose the **T2 2025** edition; note the trial's last day. Optional: in that profile, Settings, Downloads, set the location to `C:\Users\User\Documents\taxprep-trial\inbox` and turn "Ask where to save" off.
-- Then reply `4 started, ends <date>` and leave that Chrome window open. The walker does day 1 (script: `plan\trial\day1-script.md`). You are needed again on day 4 (Auto-fill); the Lead tells you the day before.
-
-**What the Lead is doing now:** research on the checks (ties, reconciliations, flags) and QuickBooks; three screen families being designed (CPA review, preparer workbench, queues and the return page) for your first sitting about 3 Oct; the trial day 1 script; repairs to the job queue; the blueprint clauses brought into line with v1.1.
+**What the Lead is doing now:** starting cloud workers (your answer 1 A, decision 0010); the first one builds the empty app (F00), then the queue widens. The screen designs (CPA review, preparer workbench, queues) are being fixed after the usability panel, for your first sitting about 3 Oct. The QuickBooks test company checks start in the "Ashbridge Test" profile once you say which Chrome to connect to (the same answer as item 1 is fine).
 
 ## 2. Coming up (no action yet)
-
-**The Taxprep trial:** the Lead writes "ready" here, likely today or tomorrow, and says when to open the "Ashbridge Test" Chrome profile for the walker. Day 4 is your corporation's Auto-fill; it tells you the day before.
 
 **Tax rules for your CPA check (when you have an hour, any day this week):** `reference\cpa-check.md` lists 32 tax rules the checks will use (shareholder loans, unpaid bonuses, the business limit, instalments, GST/HST line 101 and more), each with its source and a worked example on made-up numbers. Reply `cpa ok`, or the item numbers you disagree with and why. Nothing waits on it until the checks are built (phase 3).
 
@@ -40,7 +21,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 | Chat | When | Type |
 |---|---|---|
 | Lead | Running all the time in turbo; restart it with `go` if it stops | `go` |
-| Watcher | Overnight and whenever you are away; clear it once a day | see item 2 |
+| Watcher | Overnight and whenever you are away; clear it once a day | running |
 | Reviewer | Daily in turbo, from Fri 2 Oct | `review` |
 | Critic | About every two days, from Sat 3 Oct; its proposals come here for your yes | `critic` |
 
