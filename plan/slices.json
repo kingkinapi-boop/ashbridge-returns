@@ -169,7 +169,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00"
@@ -192,7 +192,8 @@
       "phase": 0,
       "size": "M",
       "hard": true,
-      "core": true
+      "core": true,
+      "note": "Held by the Lead 1 Oct: trial day 1 shows RT-3 header, RT-9 settings and cell ids differ (reference/taxprep/day1-findings.md). Re-spec after trial day 2 and the RT clause update; then unpark."
     },
     {
       "status": "carded",
