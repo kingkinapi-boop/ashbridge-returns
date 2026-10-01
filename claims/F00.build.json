@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "n/a",
  "worker": "cloud-vm",
- "state": "reported",
- "at": "2026-10-01T17:42:32.806Z",
+ "state": "hold-findings",
+ "at": "2026-10-01T17:53:31.104Z",
  "mode": "turbo",
- "note": "23 tests pass, e2e pass, checks 1-6 ok"
+ "note": "FAIL: db test flaky (PGlite cold start timeout 5s), see reports/F00-check.md"
 }
