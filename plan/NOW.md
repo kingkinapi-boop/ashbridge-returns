@@ -23,7 +23,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (its pro
 | findings review F00 round 2 | findings-reviewer (Opus) | local | 1 Oct | claude/F00-findings-2 |
 | queue repair 2: dependency gate, spec reopen | builder (local, the one) | local | 1 Oct | claude/queue-repair-2 |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
-| findings review: source viewer panel | findings-reviewer (Opus) | local | 1 Oct | claude/findings-source-viewer |
+| design fix round: source viewer (D03) | designer | local | 1 Oct | claude/design-source-viewer-2 |
 
 Done today: phase 0 and phase 1 cards written and independently reviewed (no phase 1 todo left); trial day 1 (reference/taxprep/); decisions 0010 to 0014; trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
