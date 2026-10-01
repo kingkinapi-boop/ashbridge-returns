@@ -601,7 +601,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "W14"
       ],
       "paths": [
         "testworld/kinds/K01/**"
@@ -690,7 +691,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "W14"
       ],
       "paths": [
         "testworld/kinds/K05/**"
@@ -713,7 +715,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "W15"
       ],
       "paths": [
         "testworld/kinds/K06/**"
@@ -883,7 +886,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "W15"
       ],
       "paths": [
         "testworld/kinds/K13/**"
@@ -902,6 +906,68 @@
       "params": {
         "kind": "K13"
       }
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "reference/sample-clients/clients/c11_12.mjs",
+        "reference/sample-clients/11-*/**",
+        "reference/sample-clients/12-*/**",
+        "reference/sample-clients/lib/**",
+        "reference/sample-clients/generate.mjs",
+        "reference/sample-clients/make-csv.mjs",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md"
+      ],
+      "clauses": [
+        "ARC-8",
+        "END-9",
+        "END-2",
+        "END-6",
+        "SEC-11",
+        "ARC-16"
+      ],
+      "id": "W14",
+      "title": "Sample clients 11 and 12: K01 (returning, clean) and K05 (onboarding answers only)",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W14"
+      ],
+      "paths": [
+        "reference/sample-clients/clients/c13_15.mjs",
+        "reference/sample-clients/13-*/**",
+        "reference/sample-clients/14-*/**",
+        "reference/sample-clients/15-*/**",
+        "reference/sample-clients/lib/**",
+        "reference/sample-clients/generate.mjs",
+        "reference/sample-clients/make-csv.mjs",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md"
+      ],
+      "clauses": [
+        "ARC-8",
+        "END-9",
+        "END-1",
+        "CK-21",
+        "CK-12",
+        "SEC-11",
+        "ARC-16"
+      ],
+      "id": "W15",
+      "title": "Sample clients 13 to 15: K06 (physician corporation) and K13 (two catch-up years)",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "security": true
     },
     {
       "status": "carded",
@@ -2408,7 +2474,8 @@
         "L01",
         "E17",
         "E18",
-        "E19"
+        "E19",
+        "E03"
       ],
       "paths": [
         "src/modules/books/prior/**",
@@ -2901,7 +2968,8 @@
         "E02",
         "D04",
         "U01",
-        "U02"
+        "U02",
+        "F06"
       ],
       "paths": [
         "src/app/(staff)/prepare/queue/**",
@@ -2913,7 +2981,8 @@
         "FLOW-3",
         "RV-53",
         "RV-54",
-        "SEC-2"
+        "SEC-2",
+        "ARC-5"
       ],
       "id": "V05",
       "title": "Preparer queue",
