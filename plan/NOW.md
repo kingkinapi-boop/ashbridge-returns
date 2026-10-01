@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| F00: check PASS, CRLF ok; security review FINDINGS (3 medium, 3 low; reports/F00-security.md); findings review 3 | Opus findings reviewer | local worktree | 1 Oct 22:10Z | claude/F00 |
+| F00 round 3 spec (security fixes, reports/F00-findings-3.md; spec reopened) | cloud run | cloud | 1 Oct 22:25Z | claude/F00 |
 | QBO .GFI walker, second try (Zo signs in if needed, Z16-1) | Sonnet walker, Chrome | local | 1 Oct 22:05Z | rewrites reference/qbo/gfi-file.md, uncommitted |
 | design fix round: cpa-review V1 | designer (old session) | local | 1 Oct | claude/design-cpa-review-2 |
 | design fix round: source viewer D03 | designer (old session) | local | 1 Oct | claude/design-source-viewer-2 |
