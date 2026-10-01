@@ -19,7 +19,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 |---|---|---|---|---|
 | Taxprep trial day 1 (cell map) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
 | queue: F00 reported, F01 spec working; a third run for the F00 check | 3 cloud runs: cse_01UaSXaBy5XRsUopyN1whFtX, cse_01MsA6SHdAiP5aDXMnNkMwYF (both named cloud-vm), cse_01WvokbrF6aSimESpr5gLRNg | cloud | 1 Oct | claude/F00, claude/F01 |
-| phase 1 cards batch b (A06, A07, U00, L00, L01, E00, Claude project setup) | Opus drafter | local | 1 Oct | claude/cards-phase1b |
+| phase 1 cards batch c (the rest of phase 1: E01, B cards, ...) | Opus drafter | local | 1 Oct | claude/cards-phase1c |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | design versions: source viewer (D03) | designer | local | 1 Oct | claude/design-source-viewer |
 
