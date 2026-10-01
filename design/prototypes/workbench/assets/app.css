@@ -1,0 +1,126 @@
+/*
+  Prototype stand-in for design/basis/settings.scss and src/ui/styles/app.scss.
+  GOV.UK Frontend 6 and MOJ Frontend 11 are linked from the CDN. GOV.UK 6 reads its colours
+  from custom properties, so the Ashbridge palette is set here, which is what the Sass settings
+  will do in the build. Roboto stands in for $govuk-font-family.
+  Every class below that starts app- is listed, with its reason, in the version's PARTS.md.
+*/
+:root {
+  --govuk-brand-colour: #355b7d;
+  --govuk-text-colour: #15283b;
+  --govuk-secondary-text-colour: #627283;
+  --govuk-link-colour: #355b7d;
+  --govuk-link-hover-colour: #4d7092;
+  --govuk-link-visited-colour: #4c4a7a;
+  --govuk-link-active-colour: #15283b;
+  --govuk-error-colour: #b3413a;
+  --govuk-success-colour: #1f6e50;
+  --govuk-focus-colour: #f5c94c;
+  --govuk-focus-text-colour: #15283b;
+  --govuk-border-colour: #c7d0d9;
+  --govuk-hover-colour: #e4e9ee;
+  --govuk-body-background-colour: #ffffff;
+}
+body, .govuk-template__body,
+[class*="govuk-"], [class*="moj-"], input, button, select, textarea, table {
+  font-family: Roboto, Arial, sans-serif;
+}
+.govuk-template { background: #f3f5f8; }
+.govuk-button:not(.govuk-button--secondary):not(.govuk-button--warning) { background-color: #355b7d; box-shadow: 0 2px 0 #15283b; }
+.govuk-button:not(.govuk-button--secondary):not(.govuk-button--warning):hover { background-color: #4d7092; }
+
+/* app-logo: text mark standing in for the Ashbridge Tax logo PNG (public/brand in the client app). */
+.app-logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.01em; color: #fff; text-decoration: none; }
+.app-logo:link, .app-logo:visited, .app-logo:hover { color: #fff; }
+
+/* app-wide: laptop and second monitor, repeat desk work. GOV.UK's 960px container is too narrow for dense tables. */
+.app-wide { max-width: 1480px; padding-left: 15px; padding-right: 15px; box-sizing: border-box; margin-left: auto; margin-right: auto; }
+.app-return-bar .moj-identity-bar__container { max-width: none; margin: 0; padding-left: 0; padding-right: 0; }
+.app-logo { word-spacing: normal; }
+.app-dense .govuk-tag { font-size: 0.875rem; line-height: 1.2; padding: 2px 6px; max-width: none; }
+.app-wide .app-wide { padding-left: 0; padding-right: 0; }
+
+/* app-search-bar: search is on every screen (RV-50); GOV.UK has no site-wide search slot in the Generic header. */
+.app-search-bar { background: #fff; border-bottom: 1px solid var(--govuk-border-colour); }
+.app-search-bar__inner { display: flex; gap: 20px; align-items: center; justify-content: space-between; padding-top: 8px; padding-bottom: 8px; flex-wrap: wrap; }
+.app-search-bar .govuk-form-group { margin-bottom: 0; }
+.app-search-bar .moj-search { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+.app-search-bar .govuk-input { width: 22rem; max-width: 100%; }
+.app-search-bar .govuk-button { margin-bottom: 0; }
+
+/* app-return-bar: the MOJ identity bar as a quiet strip (identity bar is "to be reviewed" in MOJ). */
+.app-return-bar .moj-identity-bar { margin-bottom: 0; }
+.app-return-bar .moj-identity-bar__details { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; }
+.app-return-bar .moj-identity-bar__title { margin: 0; font-size: 1.25rem; }
+.app-hold { color: var(--govuk-secondary-text-colour); font-size: 1rem; }
+
+/* app-next-step: the one next step named under the identity bar, always as a link (brief, option A). No GOV.UK part names "what to do next". */
+.app-next-step { background: #e8eef4; border-left: 5px solid #355b7d; padding: 10px 15px; margin: 0 0 20px; }
+.app-next-step p { margin: 0; }
+.app-next-step ul { margin: 5px 0 0; padding-left: 20px; }
+
+/* app-dense: dense editable tables, sticky header, tabular figures (default GOV.UK row is about 46px). */
+.app-dense { font-size: 1rem; }
+.app-dense th, .app-dense td { padding: 6px 10px 6px 0; vertical-align: top; }
+.app-dense thead th { position: sticky; top: 0; background: #fff; z-index: 1; box-shadow: 0 1px 0 var(--govuk-border-colour); }
+.app-numeric { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.app-dense .govuk-checkboxes__item { margin-bottom: 0; }
+.app-scroll { overflow-x: auto; }
+
+/* app-row-flag: a flagged row has a thick left edge and a pale fill, and always the words "Flagged for a person" in its status cell (never colour alone). */
+.app-row-flag > * { background: #fdf3cf; }
+.app-row-flag > :first-child { border-left: 6px solid #15283b; padding-left: 8px; }
+
+/* app-bulk-bar: bulk confirm with a count (no GOV.UK pattern for acting on selected rows). Only present when rows are selected. */
+.app-bulk-bar { position: sticky; bottom: 0; background: #fff; border-top: 3px solid #355b7d; padding: 10px 15px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; z-index: 2; }
+.app-bulk-bar .govuk-button { margin-bottom: 0; }
+
+/* app-source: the source pane (no pattern exists). Opens with :target, so there is no page load and no script. */
+.app-source-pane { background: #fff; border: 1px solid var(--govuk-border-colour); border-top: 5px solid #355b7d; padding: 15px; }
+.app-source { display: none; }
+.app-source:target { display: block; }
+.app-source-pane:has(.app-source:target) .app-source-empty { display: none; }
+.app-source-doc { border: 1px solid var(--govuk-border-colour); background: #fbfcfd; padding: 10px; font-variant-numeric: tabular-nums; }
+.app-source-doc table { margin: 0; font-size: 1rem; }
+.app-highlight { background: #fdf3cf; outline: 2px solid #15283b; outline-offset: -2px; font-weight: 700; }
+.app-source-caption { margin: 8px 0 0; font-size: 1rem; }
+
+/* app-split: list and detail (option B). */
+.app-split { display: grid; grid-template-columns: 200px minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+.app-split__pane { position: sticky; top: 8px; }
+.app-pane__item { display: none; }
+.app-pane__item--default { display: block; }
+.app-pane:has(.app-pane__item:target) .app-pane__item--default { display: none; }
+.app-pane__item:target { display: block; }
+.app-row-selected { background: #e8eef4; }
+@media (max-width: 1100px) { .app-split { grid-template-columns: 180px minmax(0, 1fr); } .app-split__pane { grid-column: 1 / -1; position: static; } }
+@media (max-width: 640px) { .app-split { grid-template-columns: minmax(0, 1fr); } }
+
+/* app-split-2: the second window layout (option C). */
+.app-two-col { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; }
+@media (max-width: 800px) { .app-two-col { grid-template-columns: minmax(0, 1fr); } }
+
+/* app-proto: prototype-only storyboard note. Not built. */
+.app-proto { border: 2px dashed #627283; background: #fff; padding: 8px 12px; margin-bottom: 20px; font-size: 1rem; color: var(--govuk-text-colour); }
+
+/* app-keys: on-screen key legend (no pattern exists; the rules need every shortcut listed). */
+.app-keys kbd { border: 1px solid #627283; border-radius: 3px; padding: 1px 6px; background: #fff; font-family: Roboto, Arial, sans-serif; font-weight: 700; }
+
+/* app-req: red asterisk on required fields, carried over from the client app (amber A20). */
+.app-req { color: #b3413a; font-weight: 700; }
+
+/* app-badge-row: sub navigation links with a count badge beside the words. */
+.app-count { margin-left: 6px; }
+.moj-sub-navigation { margin-bottom: 20px; }
+.moj-sub-navigation__list { display: flex; flex-wrap: wrap; }
+
+.app-filter-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: end; margin-bottom: 15px; }
+.app-filter-row .govuk-form-group { margin-bottom: 0; }
+.app-slot-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.app-slot-row .govuk-form-group { margin-bottom: 8px; }
+.app-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.app-actions .govuk-button { margin-bottom: 0; }
+.app-window-bar { background: #355b7d; color: #fff; padding: 10px 15px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.app-window-bar a { color: #fff; }
+.app-window-bar a:focus { color: #15283b; }
+.app-stack > * + * { margin-top: 20px; }
