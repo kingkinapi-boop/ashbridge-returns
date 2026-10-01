@@ -1805,7 +1805,8 @@
       "phase": 1,
       "size": "L",
       "hard": true,
-      "core": true
+      "core": true,
+      "note": "F00 check: src/core/ids.ts scores 36% mutation (7 survivors at ids.ts 9, 11, 17, 18); L00, the first card to use ids, adds tests that kill them."
     },
     {
       "status": "carded",
