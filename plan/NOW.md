@@ -25,11 +25,11 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 
 ## Next, in order
 
-1. As each research pair lands: put both files on main, run the research checker (Opus), add a line to reference/research/INDEX.md. Ties and flags already show clause errors (CK-15 add-back is 8670 + 8459 + 9791; CK-38 accrued bonuses get no T4; CK-19 percentages not dollars; CK-12 latest assessed figure): fold the reconciled answers into the clauses as ambers and list them for the CPA's check.
+1. Research done for now (four pairs reconciled, clauses applied). Next research only as cards need it.
 2. Slices re-cut (reports/slices-v1-1.md, A75 to A80). When the phase 0 cards land: an independent Opus worker reviews all phase 0 cards against the blueprint, the Lead fixes them, then F00 spec starts (the rehearsal: spec, build, check by three workers, local train). Then write phase 1 cards one phase ahead.
-3. Queue repairs landed. Rehearsal of the loop (spec, build, check, train) on F00 once slices are re-cut.
+3. Queue repairs landed (P04 done).
 4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
-5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Import CSVs (claude/sample-csv) must be on main before day 2; cell ids from day 1 replace the guesses.
+5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Draft import CSVs are on main; cell ids from day 1 replace the guesses.
 6. Rehearsal at small width once Zo answers to-do #1; then widen.
 
 ## Watch out
