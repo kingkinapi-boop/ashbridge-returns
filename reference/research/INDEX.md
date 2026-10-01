@@ -4,6 +4,10 @@ Dated research, newest first. Each file marks claims as fact (with a source), in
 
 | Date | File | Question it answers |
 |---|---|---|
+| 1 Oct 2026 | 2026-10-01-qbo-reconciled.md (from qbo-a, qbo-b) | Which QBO data gives the trace; GIFI mapping lives only in QBOA Workpapers (.GFI file, no API); first sandbox calls to make |
+| 1 Oct 2026 | 2026-10-01-ties-a.md, ties-b.md | Ties CK-10 to CK-19: rules, GIFI lines, where the clauses are wrong (reconciled file to follow) |
+| 1 Oct 2026 | 2026-10-01-recs-a.md, recs-b.md | Reconciliations CK-20 to CK-26: rules, reconciling item types (reconciled file to follow) |
+| 1 Oct 2026 | 2026-10-01-flags-a.md, flags-b.md | Flags CK-30 to CK-42: ITA rules, tests, noise (reconciled file to follow) |
 | 29 Sep 2026 | 2026-09-29-plan-audit.md | Where the cards, tools and queue break; what changed from Zo's own design |
 | 29 Sep 2026 | 2026-09-29-internal-forensics.md | Why the client app's staff area (/internal) is painful, from its code and history |
 | 29 Sep 2026 | 2026-09-29-staff-ux-patterns.md | How the best staff, tax and review tools lay out screens; where GOV.UK and MOJ fit |
