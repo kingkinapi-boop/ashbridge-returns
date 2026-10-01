@@ -14,7 +14,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Design fix round 2: queues-record, workbench (builds design/parts/cite-or-reason/), cpa-review V1 (V1 to V8 from claude/design-verify 1f3fdda) | 3 designers | local worktrees | 2 Oct 00:45Z | claude/design-*-2 |
-| F00 round 3 check (check released by hand: queue did not re-hand it) | cloud run | cloud | 2 Oct 01:15Z | claude/F00 |
+| F00 train (da59ba0, F00 only; plan/train.json requested; the next cloud run takes it first, A249). Rehearsal step. | cloud run | cloud | 2 Oct 01:50Z | claude/train |
 
 All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
 
