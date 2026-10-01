@@ -90,3 +90,8 @@
 {"ts":"2026-10-01T19:26:47.563Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":null,"where":"worktree","desc":"Design fixes: source viewer","allowed":true}
 {"ts":"2026-10-01T19:29:18.095Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T19:30:28.810Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"checker","model":null,"where":"worktree","desc":"Check queue repair 2","allowed":true}
+{"ts":"2026-10-01T19:36:14.376Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T19:36:14.506Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T19:36:32.094Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"QBO .GFI walker","allowed":true}
+{"ts":"2026-10-01T19:36:41.368Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"local","desc":"Plan trial days 4 to 6","allowed":true}
+{"ts":"2026-10-01T19:37:09.743Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Draft phase 2 cards","allowed":true}

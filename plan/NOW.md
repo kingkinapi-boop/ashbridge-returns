@@ -15,6 +15,9 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, evening, by the 
 |---|---|---|---|---|
 | F00 fix round 2 build (spec reported; build reopened) + W14/D01 specs | 2 cloud runs | cloud | 1 Oct 19:40Z | claude/F00 |
 | queue repair 2 (dep gate, spec reopen): built 23 of 23; check running | checker (local) | local | 1 Oct | claude/queue-repair-2 |
+| QBO .GFI walker (decision 0013 limits) | Sonnet walker, Chrome | local | 1 Oct 19:45Z | writes reference/qbo/gfi-file.md uncommitted |
+| Trial days 4 to 6 scripts (incl. day 3 leftovers) | Opus helper | local | 1 Oct 19:45Z | commits plan/taxprep-trial-plan.md to main |
+| Phase 2 cards draft (M00 T01 T02 T04 T05 T07 V06 V12 N00) | Opus helper | local worktree | 1 Oct 19:47Z | claude/cards-phase2 |
 | design fix round: cpa-review V1 | designer | local | 1 Oct | claude/design-cpa-review-2 |
 | design fix round: source viewer D03 | designer | local | 1 Oct | claude/design-source-viewer-2 |
 
