@@ -87,3 +87,4 @@
 {"ts":"2026-10-01T19:22:38.102Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Findings review: source viewer panel","allowed":true}
 {"ts":"2026-10-01T19:25:22.640Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Findings review: F00 round 2","allowed":true}
 {"ts":"2026-10-01T19:25:28.514Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"builder","model":null,"where":"worktree","desc":"Queue dependency gate","allowed":true}
+{"ts":"2026-10-01T19:26:47.563Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":null,"where":"worktree","desc":"Design fixes: source viewer","allowed":true}
