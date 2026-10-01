@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "d6807e553a2a8504e1d74d1d582b6a3345e2bdd6",
  "worker": "cloud-3b6e2d",
- "state": "working",
- "at": "2026-10-01T23:24:15.026Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T23:24:21.780Z",
+ "mode": "turbo",
+ "note": "re-offered; spec still void, Lead must reopen spec (update F03 spec reopened --worker lead) and hold build"
 }
