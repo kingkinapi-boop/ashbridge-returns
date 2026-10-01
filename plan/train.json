@@ -1,0 +1,12 @@
+{
+  "status": "landed",
+  "branch": "claude/train",
+  "head": "da59ba0",
+  "cards": [
+    "F00"
+  ],
+  "requested_at": "2026-10-02T01:50:00Z",
+  "by": "cloud-a33104",
+  "report": "reports/train-20261001-2255.md",
+  "landed": "5a70f12"
+}

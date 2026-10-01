@@ -1,0 +1,5 @@
+import { PGlite } from '@electric-sql/pglite'
+
+// planted fault: a test file that boots its own database
+const db = new PGlite()
+export { db }

@@ -1,0 +1,47 @@
+{
+  "name": "ashbridge-returns",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "dev": "node tools/run-next.mjs dev",
+    "dev:testworld": "node -e \"console.log('test world not loaded yet')\"",
+    "build": "node tools/run-next.mjs build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "deps:check": "depcruise src --config .dependency-cruiser.cjs",
+    "test": "vitest run --project unit && vitest run --project db",
+    "test:changed": "vitest run --changed --project unit && vitest run --changed --project db --passWithNoTests",
+    "test:flake": "node tools/test-flake.mjs",
+    "e2e": "node tools/run-next.mjs build && playwright test",
+    "mutate:changed": "node tools/mutate-changed.mjs",
+    "mutate:canary": "stryker run tools/test/__fixtures__/mutation-canary/stryker.canary.config.mjs"
+  },
+  "dependencies": {
+    "fast-check": "4.10.2",
+    "next": "16.3.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@stryker-mutator/core": "10.0.0",
+    "@stryker-mutator/vitest-runner": "10.0.0",
+    "@types/node": "26.6.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitest/coverage-v8": "4.1.11",
+    "dependency-cruiser": "18.4.0",
+    "eslint": "10.11.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.1",
+    "vitest": "4.1.11"
+  }
+}

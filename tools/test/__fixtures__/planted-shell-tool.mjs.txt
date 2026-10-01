@@ -1,0 +1,9 @@
+// planted (Test): file names from git diff joined into a shell command line on Windows
+import { spawnSync } from 'node:child_process'
+
+const targets = process.argv.slice(2)
+const r = spawnSync('npx', ['stryker', 'run', '--mutate', targets.join(',')], {
+  stdio: 'inherit',
+  shell: process.platform === 'win32',
+})
+process.exit(r.status ?? 1)

@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.pdf binary
+**/__golden__/** -text
+**/__fixtures__/** -text
+plan/metrics.jsonl merge=union
+plan/ledger.jsonl merge=union
+plan/AMBER.md merge=union
