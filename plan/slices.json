@@ -3763,7 +3763,7 @@
       "params": {
         "screen": "roundtrip"
       },
-      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1)."
+      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1). Also (review-phase2): the Ready button on the lock step (T12 markReady), and the \"Taxprep still holds\" list with its clear action and reason box (T01 stillHeld, requestClear)."
     },
     {
       "status": "parked",
@@ -3870,13 +3870,14 @@
         "ARC-13",
         "ARC-10",
         "TB-6",
-        "ARC-7"
+        "ARC-7",
+        "CK-11"
       ],
       "id": "M00",
       "title": "Mapping framework and identifier drift check",
       "phase": 2,
       "size": "L",
-      "note": "Carded 2 Oct (reports/cards-phase2.md): mapping format, GIFI rows read from the release descriptions, copy lookup by natural key, whole-dollar rounding with the Schedule 100 plug, drift check, roll-forward map and tax-choice cells as data. Trial-dependent points marked in the card. Review phase 2: roundGifi spec held until the Lead settles RT-25 plug line against CK-11 (reports/review-phase2.md red 1).",
+      "note": "Carded 2 Oct (reports/cards-phase2.md): mapping format, GIFI rows read from the release descriptions, copy lookup by natural key, whole-dollar rounding with the Schedule 100 plug, drift check, roll-forward map and tax-choice cells as data. Trial-dependent points marked in the card. Review phase 2 red 1 settled as amber A245 (RT-25 plug on largest liability line, 3680 from rounded S125); roundGifi unheld.",
       "hard": true,
       "core": true
     },

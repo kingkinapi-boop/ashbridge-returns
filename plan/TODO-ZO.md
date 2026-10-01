@@ -14,6 +14,8 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 2. Coming up (no action yet)
 
+**One new rule for your CPA check, when convenient:** item 33 at the end of `reference\cpa-check.md` (how amounts are rounded to whole dollars so the retained earnings ties still hold). Write "right" or a correction under it. Nothing waits on it; the build follows the rule as written until you say otherwise.
+
 **Design sittings:** about 3, 6 and 8 Oct, 30 to 45 minutes each: the flow, then two or three versions of each key screen, then the final look. Built your way: top to bottom, separate tabs for separate things, a laptop with two monitors. Links will appear here.
 
 **Which chats to run, and how often**
