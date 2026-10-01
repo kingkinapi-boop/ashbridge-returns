@@ -17,7 +17,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Taxprep trial: Opus read of day 1, writing day 1b and day 2 script | Opus helper | local | 1 Oct | plan/trial/, reference/taxprep/ |
+| Taxprep trial day 1b and day 2 (plan/trial/day1b-day2-script.md) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
 | queue: F00 check FAIL (flaky PGlite cold start) on hold-findings; F01 spec reported; F03, F04 specs working | cloud runs cse_01UaSXaBy5XRsUopyN1whFtX, cse_01WvokbrF6aSimESpr5gLRNg (third run ended after 1 job) | cloud | 1 Oct | claude/F00, F01, F03, F04 |
 | F00 fix round 1: spec job queued (tests from the findings review); when it reports, run `node tools/claim.mjs update F00 build reopened --worker lead` | queue | cloud | 1 Oct | claude/F00 |
 | phase 1 cards batch c (the rest of phase 1: E01, B cards, ...) | Opus drafter | local | 1 Oct | claude/cards-phase1c |
