@@ -4,7 +4,8 @@
  "round": 4,
  "spec": "d6807e553a2a8504e1d74d1d582b6a3345e2bdd6",
  "worker": "cloud-451039",
- "state": "working",
- "at": "2026-10-01T23:26:32.926Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T23:26:38.470Z",
+ "mode": "turbo",
+ "note": "re-offered; Lead must reopen F03 spec"
 }
