@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 |---|---|---|---|---|
 | Design fix round 2: queues-record, workbench (builds design/parts/cite-or-reason/), cpa-review V1 (V1 to V8 from claude/design-verify 1f3fdda) | 3 designers | local worktrees | 2 Oct 00:45Z | claude/design-*-2 |
 | Checks of F01, F05, F08, F09 (builds reported; F01 and F09 note spec defects); F03 re-spec | 3 cloud runs | cloud | 2 Oct 03:35Z | claude/<card> |
-| Findings review: W14 and D01 check FAILs (+ F01/F09 spec-vs-toolchain notes) | Opus findings reviewer | local | 2 Oct 03:35Z | text, recorded as reports/findings-W14-D01.md |
+| Card side of reports/findings-W14-D01.md (new card TH test homes, W14 amended, fix rounds F01 F09 D01 W15 F04 W00 D00 F08, spec-writer done step) | Opus helper | local worktree | 2 Oct 04:10Z | claude/cards-findings-w14 |
 | Queue repair 3 build (reopened build re-offers check; next.mjs reads spec claims; async tools tests A247; shellProblems A253; parked-dep check test) | builder | local worktree | 2 Oct 03:00Z | claude/queue-repair-3 |
 
 All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
