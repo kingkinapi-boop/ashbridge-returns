@@ -1,0 +1,9 @@
+[Natural Key Example (Test)|0|0]
+S50[2].NAME,John Example (Test)
+S50[2].SIN,046454294
+S50[1].NAME,Jane Example (Test)
+S50[1].SIN,046454286
+S8[1].CLASS,8
+S8[1].UCC,12000.00
+S8[2].CLASS,10.1
+S8[2].UCC,30000.00
