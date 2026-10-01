@@ -109,3 +109,4 @@
 {"ts":"2026-10-01T20:42:10.160Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"F00 security findings review","allowed":true}
 {"ts":"2026-10-01T20:46:06.148Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T20:47:07.034Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"QBO .GFI walker, third try","allowed":true}
+{"ts":"2026-10-01T20:53:25.239Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"Trial day 5, 5A imports","allowed":true}

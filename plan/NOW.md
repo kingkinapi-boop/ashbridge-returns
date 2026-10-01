@@ -13,6 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
+| Trial day 5: 5A imports by script (Z16-3), then 5B | Sonnet walker, Chrome 8f110f0a | local | 1 Oct 22:50Z | notes in reference/taxprep/2026-10-05-day5/, uncommitted |
 | F00 round 3 spec (security fixes, reports/F00-findings-3.md; spec reopened) | cloud run | cloud | 1 Oct 22:25Z | claude/F00 |
 | design fix round: cpa-review V1 | designer (old session) | local | 1 Oct | claude/design-cpa-review-2 |
 | design fix round: source viewer D03 | designer (old session) | local | 1 Oct | claude/design-source-viewer-2 |
