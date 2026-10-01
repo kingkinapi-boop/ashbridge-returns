@@ -20,8 +20,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 | QBO sandbox: first API checks (report columns, transaction ids, attachments) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/qbo/ |
 | queue: F00 build, D01 spec (the rehearsal) | 2 cloud workers, runs cse_01UaSXaBy5XRsUopyN1whFtX and cse_01MsA6SHdAiP5aDXMnNkMwYF | cloud | 1 Oct 17:40Z | claude/F00, claude/D01 |
 | phase 1 cards (F06, W20, A02 to A05, pipeline wiring) | Opus drafter | local | 1 Oct | claude/cards-phase1a |
-| usability panel cpa-review | tester (panel) | local | 1 Oct | claude/panel-cpa-review |
-| usability panels queues-record, workbench | tester (panel) x2 | local | 1 Oct | claude/panel-<family> |
+| findings review of the three design panels | findings-reviewer (Opus) | local | 1 Oct | claude/findings-designs |
 
 Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
