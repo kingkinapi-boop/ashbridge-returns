@@ -23,9 +23,15 @@ if (targets.length === 0) {
   console.log('no mutation targets changed')
   process.exit(0)
 }
+const bad = targets.filter((f) => !/^[\w./-]+$/.test(f))
+if (bad.length > 0) {
+  console.error(`refusing mutation target with unsafe characters: ${bad.join(', ')}`)
+  process.exit(1)
+}
 console.log(`mutating: ${targets.join(', ')}`)
-const r = spawnSync('npx', ['stryker', 'run', '--incremental', '--mutate', targets.join(',')], {
+const stryker = 'node_modules/@stryker-mutator/core/bin/stryker.js'
+const r = spawnSync(process.execPath, [stryker, 'run', '--incremental', '--mutate', targets.join(',')], {
   stdio: 'inherit',
-  shell: process.platform === 'win32',
+  shell:false,
 })
 process.exit(r.status ?? 1)

@@ -8,9 +8,9 @@ let failed = 0
 for (let i = 1; i <= RUNS; i++) {
   const t0 = Date.now()
   const r = spawnSync(
-    'npx',
-    ['vitest', 'run', '--project', 'db', '--sequence.shuffle', '--sequence.seed=20261001', '--passWithNoTests'],
-    { encoding: 'utf8', shell: process.platform === 'win32' },
+    process.execPath,
+    ['node_modules/vitest/vitest.mjs', 'run', '--project', 'db', '--sequence.shuffle', '--sequence.seed=20261001', '--passWithNoTests'],
+    { encoding: 'utf8', shell:false },
   )
   const out = `${r.stdout ?? ''}${r.stderr ?? ''}`
   const boot = /schema booted in (\d+) ms/.exec(out)

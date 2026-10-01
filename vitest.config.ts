@@ -17,6 +17,7 @@ export default defineConfig({
           name: 'unit',
           include: ['src/**/*.test.ts', 'tools/test/**/*.test.mjs'],
           exclude: ['src/**/*.db.test.ts', 'src/**/*.eval.test.ts', 'node_modules/**'],
+          setupFiles: ['src/core/test-no-network.ts'],
           env: { TZ: 'America/Toronto' },
         },
       },
@@ -26,7 +27,7 @@ export default defineConfig({
           include: ['src/**/*.db.test.ts'],
           env: { TZ: 'America/Toronto' },
           globalSetup: ['src/core/db/global-setup.ts'],
-          setupFiles: ['src/core/db/vitest-setup.ts'],
+          setupFiles: ['src/core/test-no-network.ts', 'src/core/db/vitest-setup.ts'],
           // isolate:false: the template lives once per worker, not once per file.
           isolate: false,
           // hookTimeout: measured on the cloud machine, 10 cold runs (1 Oct): boot p95 2.8 s, so 3x = 8.4 s; floor 30 s.
@@ -40,6 +41,7 @@ export default defineConfig({
         test: {
           name: 'evals',
           include: ['evals/**/*.test.ts', 'src/**/*.eval.test.ts'],
+          setupFiles: ['src/core/test-no-network.ts'],
           env: { TZ: 'America/Toronto' },
         },
       },

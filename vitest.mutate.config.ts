@@ -8,6 +8,7 @@ export default defineConfig({
     name: 'unit',
     include: ['src/**/*.test.ts'],
     exclude: ['src/**/*.db.test.ts', 'src/**/*.eval.test.ts', 'node_modules/**'],
+    setupFiles: ['src/core/test-no-network.ts'],
     env: { TZ: 'America/Toronto' },
   },
 })
