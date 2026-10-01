@@ -2,7 +2,9 @@
  "card": "F00",
  "role": "spec",
  "worker": "cloud-d367f7",
- "state": "working",
- "at": "2026-10-01T18:05:50.225Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T18:07:02.944Z",
+ "mode": "turbo",
+ "note": "11 tests (5 db acceptance, 6 rules); 7 fail as expected, 4 planted-fault proofs pass",
+ "commit": "ae075e5908c462ebe2feee6e378edbbefca264b7"
 }
