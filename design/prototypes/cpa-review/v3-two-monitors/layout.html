@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+<meta charset="utf-8">
+<title>Two-monitor layout - Ashbridge Tax</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#355b7d">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.css">
+<link rel="stylesheet" href="../assets/ashbridge.css">
+
+</head>
+<body class="govuk-template__body" >
+<script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+<a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+<header class="govuk-header" data-module="govuk-header">
+  <div class="govuk-header__container govuk-header__container--full-width">
+    <div class="govuk-header__logo"><a href="queue.html" class="govuk-header__homepage-link"><span class="app-wordmark">Ashbridge <span>Tax</span></span></a></div>
+  </div>
+</header>
+<section aria-label="Service information" class="govuk-service-navigation" data-module="govuk-service-navigation">
+  <div class="govuk-width-container app-wide"><div class="govuk-service-navigation__container">
+    <span class="govuk-service-navigation__service-name"><a class="govuk-service-navigation__link" href="queue.html">Return review</a></span>
+    <nav aria-label="Menu" class="govuk-service-navigation__wrapper"><ul class="govuk-service-navigation__list">
+      <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="queue.html">Review queue</a></li>
+      <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="notes.html">Prototype notes</a></li>
+    </ul></nav>
+  </div></div>
+</section>
+
+<div class="govuk-width-container app-wide">
+  <main class="govuk-main-wrapper govuk-!-padding-top-3 govuk-!-padding-bottom-4" id="main-content" role="main">
+<h1 class="govuk-heading-l">Two-monitor layout</h1>
+<p class="govuk-body">Monitor 1 (the laptop) holds the return and the trace. Monitor 2 holds the source viewer, which follows every click on monitor 1 in under a second and has its own Previous and Next.</p>
+<div class="app-monitors">
+<div class="app-monitor app-monitor--1" role="img" aria-label="Monitor 1: identity bar, tabs, Reviewed bar, return grid on the left, trace on the right, source status strip at the bottom"><span class="app-monitor__name">Monitor 1: review window</span>
+<div class="app-monitor__box">Identity bar: Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025, Red tier</div>
+<div class="app-monitor__box">Tabs: Brief, Flags, Balance sheet, Income statement, Schedule 1, Other schedules, Comments, History</div>
+<div class="app-monitor__box">Section 3 of 5: Income statement. Not reviewed. Mark section Reviewed (r). Next section (n)</div>
+<div class="app-monitor__row"><div class="app-monitor__box">Return grid: each number, status, this year, last year, change, flags (j, k, f)</div><div class="app-monitor__box">Trace: built from, sources and status, agrees with, last year, notes. Comment (c)</div></div>
+<div class="app-monitor__box app-monitor__box--src">Source on monitor 2: Bank statement, Mar 2025, page 3 (source 2 of 4). Open on second monitor (o)</div>
+<div class="app-monitor__box">Keyboard shortcuts legend</div></div>
+<div class="app-monitor app-monitor--2" role="img" aria-label="Monitor 2: source viewer with follow control, caption, boxed statement page, previous and next"><span class="app-monitor__name">Monitor 2: source window</span>
+<div class="app-monitor__box">Follow my clicks in the review window (checked). Previous source ([). Next source (])</div>
+<div class="app-monitor__box app-monitor__box--src">Caption: Bank statement, Mar 2025, page 3 (source 2 of 4)<br><br>The statement page, the figure boxed with a thick outline and the label "Boxed figure: $15,820.00"<br><br>A spreadsheet shows sheet, row and column. An entry, client answer or CRA capture shows as a card, never a blank pane.</div>
+<div class="app-monitor__box">Documents in this return</div></div>
+</div>
+<h2 class="govuk-heading-m govuk-!-margin-top-6">States on monitor 2</h2>
+<ul class="govuk-list govuk-list--bullet"><li>Loading: a skeleton and the words "Loading source 2 of 4".</li><li>Failed: a warning, and the number stays not Traced.</li><li>No evidence: a card saying "Not checked: no evidence", with a link to comment.</li><li>Window closed: monitor 1 says so and offers to open it.</li></ul>
+<p class="govuk-body"><a class="govuk-link" href="red-income-statement.html">Open the red return's income statement</a> and press <kbd>o</kbd>.</p>
+  </main>
+</div>
+<footer class="govuk-footer"><div class="govuk-width-container app-wide"><p class="govuk-body-s govuk-!-margin-top-3 govuk-!-margin-bottom-0">Prototype for Zo to look at. Made-up data only (sample clients). Prototype date: 10 Mar 2026.</p></div></footer>
+<div id="app-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
+<script type="module" src="https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.js"></script>
+<script type="module">import { initAll } from 'https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.js'; initAll();</script>
+<script src="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.js"></script>
+<script>if (window.MOJFrontend) { window.MOJFrontend.initAll(); }</script>
+<script src="../assets/review.js"></script>
+</body>
+</html>

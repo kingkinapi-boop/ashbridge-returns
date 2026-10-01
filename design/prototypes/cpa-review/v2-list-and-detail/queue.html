@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+<meta charset="utf-8">
+<title>Review queue - Ashbridge Tax</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#355b7d">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.css">
+<link rel="stylesheet" href="../assets/ashbridge.css">
+
+</head>
+<body class="govuk-template__body" >
+<script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+<a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+<header class="govuk-header" data-module="govuk-header">
+  <div class="govuk-header__container govuk-header__container--full-width">
+    <div class="govuk-header__logo"><a href="queue.html" class="govuk-header__homepage-link"><span class="app-wordmark">Ashbridge <span>Tax</span></span></a></div>
+  </div>
+</header>
+<section aria-label="Service information" class="govuk-service-navigation" data-module="govuk-service-navigation">
+  <div class="govuk-width-container app-wide"><div class="govuk-service-navigation__container">
+    <span class="govuk-service-navigation__service-name"><a class="govuk-service-navigation__link" href="queue.html">Return review</a></span>
+    <nav aria-label="Menu" class="govuk-service-navigation__wrapper"><ul class="govuk-service-navigation__list">
+      <li class="govuk-service-navigation__item govuk-service-navigation__item--active"><a class="govuk-service-navigation__link" href="queue.html" aria-current="true"><strong class="govuk-service-navigation__active-fallback">Review queue</strong></a></li>
+      <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="notes.html">Prototype notes</a></li>
+    </ul></nav>
+  </div></div>
+</section>
+
+<div class="govuk-width-container app-wide">
+  <main class="govuk-main-wrapper govuk-!-padding-top-3 govuk-!-padding-bottom-4" id="main-content" role="main">
+<h1 class="govuk-heading-l govuk-!-margin-bottom-3">Review queue</h1>
+<p class="govuk-body">6 returns waiting. Ordered by tier (red first), then due date. Select a heading to sort. Open a return with its name.</p>
+<div class="govuk-inset-text">This prototype opens two returns: Maple Ridge (red tier) and Queen West (green tier). The other rows show the list only.</div>
+<table class="govuk-table" data-module="moj-sortable-table"><caption class="govuk-table__caption govuk-visually-hidden">Returns waiting for review, ordered by tier then due date</caption><thead class="govuk-table__head"><tr>
+<th scope="col" class="govuk-table__header" aria-sort="none">Return</th><th scope="col" class="govuk-table__header" aria-sort="none">Year end</th><th scope="col" class="govuk-table__header" aria-sort="ascending">Tier</th><th scope="col" class="govuk-table__header" aria-sort="none">Due</th><th scope="col" class="govuk-table__header" aria-sort="none">State</th><th scope="col" class="govuk-table__header" aria-sort="none">What blocks</th></tr></thead><tbody class="govuk-table__body">
+<tr class="govuk-table__row"><th scope="row" class="govuk-table__header">Bluewater Renovations Inc. (Test)</th><td class="govuk-table__cell" data-sort-value="30 Jun 2025">30 Jun 2025</td><td class="govuk-table__cell" data-sort-value="1"><strong class="govuk-tag govuk-tag--red">Red tier</strong></td><td class="govuk-table__cell" data-sort-value="2025-12-31">31 Dec 2025 <strong class="govuk-tag govuk-tag--red">Overdue</strong></td><td class="govuk-table__cell">Ready for review</td><td class="govuk-table__cell">2 red flags open</td></tr><tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="red-brief.html">Maple Ridge Consulting Inc. (Test)</a></th><td class="govuk-table__cell" data-sort-value="31 Dec 2025">31 Dec 2025</td><td class="govuk-table__cell" data-sort-value="1"><strong class="govuk-tag govuk-tag--red">Red tier</strong></td><td class="govuk-table__cell" data-sort-value="2026-06-30">30 Jun 2026</td><td class="govuk-table__cell">Ready for review</td><td class="govuk-table__cell">4 red flags open</td></tr><tr class="govuk-table__row"><th scope="row" class="govuk-table__header">Eglinton Holdings Inc. (Test)</th><td class="govuk-table__cell" data-sort-value="31 Dec 2025">31 Dec 2025</td><td class="govuk-table__cell" data-sort-value="1"><strong class="govuk-tag govuk-tag--red">Red tier</strong></td><td class="govuk-table__cell" data-sort-value="2026-06-30">30 Jun 2026</td><td class="govuk-table__cell">Ready for review</td><td class="govuk-table__cell">3 red flags open</td></tr><tr class="govuk-table__row"><th scope="row" class="govuk-table__header">Eglinton Retail Ltd. (Test)</th><td class="govuk-table__cell" data-sort-value="31 Dec 2025">31 Dec 2025</td><td class="govuk-table__cell" data-sort-value="2"><strong class="govuk-tag govuk-tag--orange">Amber tier</strong></td><td class="govuk-table__cell" data-sort-value="2026-06-30">30 Jun 2026</td><td class="govuk-table__cell">Back from rework</td><td class="govuk-table__cell">2 changed numbers to re-check</td></tr><tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="green-brief.html">Queen West Design Studio Inc. (Test)</a></th><td class="govuk-table__cell" data-sort-value="30 Sep 2025">30 Sep 2025</td><td class="govuk-table__cell" data-sort-value="3"><strong class="govuk-tag govuk-tag--green">Green tier</strong></td><td class="govuk-table__cell" data-sort-value="2026-03-31">31 Mar 2026</td><td class="govuk-table__cell">Ready for review</td><td class="govuk-table__cell">Nothing blocks</td></tr><tr class="govuk-table__row"><th scope="row" class="govuk-table__header">Riverdale Rentals Inc. (Test)</th><td class="govuk-table__cell" data-sort-value="31 Dec 2025">31 Dec 2025</td><td class="govuk-table__cell" data-sort-value="3"><strong class="govuk-tag govuk-tag--green">Green tier</strong></td><td class="govuk-table__cell" data-sort-value="2026-06-30">30 Jun 2026</td><td class="govuk-table__cell">Ready for review</td><td class="govuk-table__cell">Nothing blocks</td></tr></tbody></table>
+  </main>
+</div>
+<footer class="govuk-footer"><div class="govuk-width-container app-wide"><p class="govuk-body-s govuk-!-margin-top-3 govuk-!-margin-bottom-0">Prototype for Zo to look at. Made-up data only (sample clients). Prototype date: 10 Mar 2026.</p></div></footer>
+<div id="app-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
+<script type="module" src="https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.js"></script>
+<script type="module">import { initAll } from 'https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.js'; initAll();</script>
+<script src="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.js"></script>
+<script>if (window.MOJFrontend) { window.MOJFrontend.initAll(); }</script>
+<script src="../assets/review.js"></script>
+</body>
+</html>
