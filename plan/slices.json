@@ -1413,17 +1413,26 @@
       "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "F01"
       ],
       "paths": [
-        "src/modules/auth/**"
+        "src/modules/auth/**",
+        "src/contracts/auth.ts",
+        "db/schema/15_auth.sql"
       ],
       "clauses": [
+        "SEC-1",
+        "SEC-6",
+        "SEC-7",
         "ARC-6",
-        "SEC-1"
+        "ARC-20",
+        "END-8",
+        "SEC-10",
+        "SEC-11"
       ],
       "id": "A06",
       "title": "Staff sign-in stand-in and roles",
@@ -1432,21 +1441,62 @@
       "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "F09"
       ],
       "paths": [
-        "src/modules/sheets/**"
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts",
+        "package.json",
+        "package-lock.json"
       ],
       "clauses": [
-        "EV-14"
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
       ],
       "id": "A07",
       "title": "Spreadsheet and CSV reader",
       "phase": 1,
-      "size": "S"
+      "size": "S",
+      "core": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "ai-project/**",
+        "src/modules/ai/project/**",
+        "package.json"
+      ],
+      "clauses": [
+        "ARC-6",
+        "ARC-20",
+        "ARC-22",
+        "AI-1",
+        "AI-8",
+        "AI-9",
+        "AI-10",
+        "END-8",
+        "SEC-5",
+        "SEC-10",
+        "SEC-11"
+      ],
+      "id": "A08",
+      "title": "The Claude project that runs AI jobs: orders, permissions, run once",
+      "phase": 1,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true
     },
     {
       "status": "carded",
@@ -1585,14 +1635,17 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00",
         "D00"
       ],
       "paths": [
-        "src/ui/**"
+        "src/ui/**",
+        "e2e/ui/**",
+        "package.json",
+        "package-lock.json"
       ],
       "clauses": [
         "RV-52",
@@ -1606,15 +1659,18 @@
       "hard": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F01",
+        "F02",
         "F04",
         "SK0"
       ],
       "paths": [
         "src/modules/ledger/core/**",
+        "src/modules/ledger/index.ts",
+        "src/contracts/ledger.ts",
         "db/schema/20_ledger.sql"
       ],
       "clauses": [
@@ -1623,22 +1679,29 @@
         "EV-8",
         "EV-9",
         "TB-9",
-        "FLOW-6"
+        "FLOW-6",
+        "ARC-10",
+        "SEC-7"
       ],
       "id": "L00",
       "title": "Ledger core: facts, links, events, resets",
       "phase": 1,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "L00"
+        "L00",
+        "F05"
       ],
       "paths": [
-        "src/modules/ledger/dots/**"
+        "src/modules/ledger/dots/**",
+        "src/modules/ledger/index.ts",
+        "data/ledger/origins.json",
+        "data/ledger/agree-rules.json"
       ],
       "clauses": [
         "EV-10",
@@ -1649,41 +1712,77 @@
       "id": "L01",
       "title": "Origins and dots",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F01",
         "F06",
-        "A01",
-        "A05",
-        "SK0",
         "F09",
-        "F10"
+        "F10",
+        "A01",
+        "A02",
+        "A05",
+        "A07",
+        "SK0"
       ],
       "paths": [
-        "src/modules/documents/**",
+        "src/modules/documents/intake/**",
+        "src/modules/documents/index.ts",
+        "src/contracts/documents.ts",
         "db/schema/10_documents.sql",
         "src/pipeline/steps/intake.ts"
       ],
       "clauses": [
         "EV-2",
-        "EV-3",
-        "EV-4",
-        "ARC-11"
+        "ARC-11",
+        "ARC-5",
+        "ARC-10",
+        "SEC-11"
       ],
       "id": "E00",
-      "title": "Document intake: fingerprint, split, classify, pages, word boxes",
+      "title": "Document intake: fingerprint, store, pages and word boxes on arrival",
       "phase": 1,
-      "size": "L"
+      "size": "L",
+      "hard": true,
+      "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "E00",
+        "F05",
+        "W20"
+      ],
+      "paths": [
+        "src/modules/documents/classify/**",
+        "src/modules/documents/index.ts",
+        "data/documents/kinds.json",
+        "db/schema/10_documents.sql"
+      ],
+      "clauses": [
+        "EV-3",
+        "EV-4",
+        "EV-7",
+        "EV-10"
+      ],
+      "id": "E02",
+      "title": "Documents: split, classify, period and entity, tamper signs",
+      "phase": 1,
+      "size": "M",
+      "hard": true,
+      "core": true
     },
     {
       "status": "todo",
       "spec": null,
       "deps": [
         "E00",
+        "E02",
         "L00",
         "A04",
         "F10"
@@ -2505,7 +2604,8 @@
       "spec": null,
       "deps": [
         "A04",
-        "E01"
+        "E01",
+        "A08"
       ],
       "paths": [
         "src/modules/ai/grounding/**",
@@ -3417,7 +3517,7 @@
       "params": {
         "screen": "judgment"
       },
-      "note": "Removed in v1.1: no judgment input sheet in our app (A32); tax choices are cited in Taxprep with the cite button (D12)."
+      "note": "Removed by v1.1: no judgment input sheet in our app (amber A32). Replaced by D12."
     },
     {
       "status": "carded",
@@ -5874,7 +5974,8 @@
       "spec": null,
       "deps": [
         "A04",
-        "W00"
+        "W00",
+        "A08"
       ],
       "paths": [
         "src/modules/ai/evals/**"
