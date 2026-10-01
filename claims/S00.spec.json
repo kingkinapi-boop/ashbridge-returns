@@ -2,7 +2,8 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-b38563",
- "state": "working",
- "at": "2026-10-01T20:09:06.931Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T20:09:13.409Z",
+ "mode": "turbo",
+ "note": "dep F03 not built; queue re-hands it (needs dep gate). Stopping"
 }
