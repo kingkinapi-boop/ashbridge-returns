@@ -2,8 +2,7 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-5a0720",
- "state": "released",
- "at": "2026-10-01T18:57:56.039Z",
- "mode": "turbo",
- "note": "dep F03 not built (parked); no parser/writer to import. Model: sonnet"
+ "state": "working",
+ "at": "2026-10-01T18:57:58.603Z",
+ "mode": "turbo"
 }
