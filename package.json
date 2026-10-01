@@ -14,8 +14,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "deps:check": "depcruise src --config .dependency-cruiser.cjs",
-    "test": "vitest run --project unit --project db",
-    "test:changed": "vitest run --changed --project unit --project db",
+    "test": "vitest run --project unit && vitest run --project db",
+    "test:changed": "vitest run --changed --project unit && vitest run --changed --project db --passWithNoTests",
+    "test:flake": "node tools/test-flake.mjs",
     "e2e": "next build && playwright test",
     "mutate:changed": "stryker run --incremental"
   },

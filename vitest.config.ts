@@ -25,6 +25,15 @@ export default defineConfig({
           name: 'db',
           include: ['src/**/*.db.test.ts'],
           env: { TZ: 'America/Toronto' },
+          globalSetup: ['src/core/db/global-setup.ts'],
+          setupFiles: ['src/core/db/vitest-setup.ts'],
+          // isolate:false: the template lives once per worker, not once per file.
+          isolate: false,
+          // hookTimeout: measured on the cloud machine, 10 cold runs (1 Oct): boot p95 2.8 s, so 3x = 8.4 s; floor 30 s.
+          // Laptop (3 runs through tools/heavy.mjs) not yet measured: the Lead adds it.
+          hookTimeout: 30_000,
+          // testTimeout: measured on the cloud machine, 10 cold runs: slowest test body 1.7 s, so 3x = 5.1 s, set to 6 s.
+          testTimeout: 6_000,
         },
       },
       {
