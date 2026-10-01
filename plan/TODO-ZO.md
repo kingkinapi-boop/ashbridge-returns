@@ -4,7 +4,10 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-Nothing right now.
+**1. Please sign in to CCH iFirm again in the "Ashbridge Test" Chrome (2 minutes).**
+- What: the Chrome helper lost its connection and iFirm signed out, so the trial work stopped. Good news first: the round trip worked, 13 of 13 imported cells came back identical.
+- Sign in (the walker never types passwords), leave the window on screen, reply `1 done`. The walker then downloads the last two exports and finishes the cell map.
+
 
 **Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before.
 
