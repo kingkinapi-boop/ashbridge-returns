@@ -4,7 +4,9 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. How should the Lead start cloud workers? (question, 1 minute)**
+**Answered 1 Oct, thank you:** 1 A (one-off cloud runs, decision 0010), 2 watcher done, 3 Intuit account done. Items 1 to 3 are removed from the next rewrite.
+
+**OLD 1. How should the Lead start cloud workers? (answered: A)**
 - What: the Lead cannot open cloud sessions from its own chat. The command only works when a person sits at a terminal, and the background "remote" option quietly ran on this laptop instead. So turbo's 6 to 12 cloud workers cannot start yet.
 - Why it matters: without cloud workers the build runs about one card at a time on the laptop, and it spends your plan usage instead of the cloud credit.
 - Choose one. **A (recommended):** let the Lead fire one-off cloud runs through Claude's "run once" trigger. No schedules; the Lead fires each run and stops it, and nothing runs on a timer. This changes decision 0008's "no routines" for one-off runs only. **B:** you open cloud sessions yourself at claude.ai/code on this repo and type `work` in each (each keeps taking jobs until the queue is empty). Opening 6 now and again each morning would do.
