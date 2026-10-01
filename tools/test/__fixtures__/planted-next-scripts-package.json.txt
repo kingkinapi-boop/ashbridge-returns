@@ -1,0 +1,9 @@
+{
+  "name": "planted-test",
+  "private": true,
+  "scripts": {
+    "dev": "node tools/run-next.mjs dev",
+    "build": "next build",
+    "e2e": "node tools/run-next.mjs build && playwright test"
+  }
+}
