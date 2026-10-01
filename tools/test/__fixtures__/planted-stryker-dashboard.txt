@@ -1,0 +1,5 @@
+export default {
+  testRunner: 'vitest',
+  reporters: ['clear-text', 'json', 'dashboard'],
+  thresholds: { high: 90, low: 80, break: 70 },
+}

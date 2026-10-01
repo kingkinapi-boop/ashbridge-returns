@@ -1,0 +1,4 @@
+export default {
+  testRunner: 'vitest',
+  mutate: ['src/core/money.ts', 'src/core/ids.ts'],
+}
