@@ -1,10 +1,9 @@
 {
  "card": "F00",
  "role": "check",
- "for": "2026-10-01T19:40:49.376Z",
- "worker": "cloud-c892b8",
- "state": "released",
- "at": "2026-10-01T22:20:18.312Z",
- "mode": "turbo",
- "note": "round 3 build needs a fresh check"
+ "for": "2026-10-01T21:24:52.787Z",
+ "worker": "cloud-c4f1c0",
+ "state": "working",
+ "at": "2026-10-01T22:20:55.780Z",
+ "mode": "turbo"
 }
