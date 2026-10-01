@@ -11,7 +11,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 **Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before. Keep the "Ashbridge Test" Chrome window open while the walker works in it.
 
-**What the Lead is doing now:** the trial walker is doing day 1 in your Chrome (the cell map), saving every feature it tries to `reference\taxprep\`. Two cloud workers are building the empty app (F00) and the screen map spec. The three screen designs are getting one consolidated fix round after the usability panel, and the shared source viewer is being researched, for your first sitting about 3 Oct.
+**What the Lead is doing now:** the trial walker is on day 1b and day 2 in your Chrome (the full cell map, then the import and export round trip), saving every feature it tries to `reference\taxprep\`; the trial runs to about 16 Oct. Cloud workers are writing the tests for the first cards; the empty app (F00) gets one fix round after its check. The three screen designs are in their fix round and the source viewer is being designed, for your first sitting about 3 Oct.
 
 ## 2. Coming up (no action yet)
 
