@@ -19,7 +19,9 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (its pro
 |---|---|---|---|---|
 | Trial findings into FINDINGS.md and the RT, TB, EV clauses; F03 re-spec | Opus drafter | local | 1 Oct | claude/trial-findings-1 |
 | Taxprep trial day 3 (tax choices, diagnostics, print) | Sonnet walker, Chrome | local | 1 Oct | reference/taxprep/2026-10-03-day3/ |
-| queue: F00 build reported (fix round 1), check next; specs reported F01, F04, F05, F08, F09, W00 (F03 parked) | 3 cloud runs cse_01Hr7Az98VbKzfckRMPp1LtF, cse_01HjjamHjojvtdvfpU7G3L4B, cse_01W4VQVBLUYDkcCpF7Np3Hej | cloud | 1 Oct 18:50Z | claude/<card> |
+| queue: F00 check FAIL round 2 (Stryker 10 vs Vitest 5, scope paths); 8 specs reported; workers loop on specs whose deps are unbuilt | cloud runs idle; none fired until queue repair 2 lands | cloud | 1 Oct | |
+| findings review F00 round 2 | findings-reviewer (Opus) | local | 1 Oct | claude/F00-findings-2 |
+| queue repair 2: dependency gate, spec reopen | builder (local, the one) | local | 1 Oct | claude/queue-repair-2 |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | findings review: source viewer panel | findings-reviewer (Opus) | local | 1 Oct | claude/findings-source-viewer |
 

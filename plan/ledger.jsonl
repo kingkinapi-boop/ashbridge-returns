@@ -83,3 +83,7 @@
 {"ts":"2026-10-01T19:08:16.987Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Taxprep trial: downloads and Q21/Q22","allowed":true}
 {"ts":"2026-10-01T19:20:00.502Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Trial findings into RT clauses","allowed":true}
 {"ts":"2026-10-01T19:20:40.233Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"GIFI .GFI file from QBO Accountant","allowed":true}
+{"ts":"2026-10-01T19:22:04.363Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Taxprep trial day 3","allowed":true}
+{"ts":"2026-10-01T19:22:38.102Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Findings review: source viewer panel","allowed":true}
+{"ts":"2026-10-01T19:25:22.640Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Findings review: F00 round 2","allowed":true}
+{"ts":"2026-10-01T19:25:28.514Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"builder","model":null,"where":"worktree","desc":"Queue dependency gate","allowed":true}
