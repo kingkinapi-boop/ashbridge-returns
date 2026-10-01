@@ -2,7 +2,8 @@
  "card": "F01",
  "role": "spec",
  "worker": "cloud-329cd2",
- "state": "working",
- "at": "2026-10-01T23:59:47.517Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T23:59:52.740Z",
+ "mode": "turbo",
+ "note": "Released again: queue re-offers F01 spec after a failed check; waits on Lead findings review. Queue repair: do not offer spec while build is hold-findings"
 }
