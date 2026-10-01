@@ -103,3 +103,4 @@
 {"ts":"2026-10-01T20:08:08.744Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
 {"ts":"2026-10-01T20:08:33.509Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T20:08:33.939Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T20:16:46.529Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"Trial day 5, run 5C resume","allowed":true}

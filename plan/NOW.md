@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 |---|---|---|---|---|
 | F00 round 2 check (build reported: 45 tests pass, mutation 74.47, canary 77.78 amber) + W14/D01 specs | 2 cloud runs | cloud | 1 Oct 21:05Z | claude/F00 |
 | Queue repair 2: check PASS; train c9c4e88 built in .claude/worktrees/train; tools tests running (npx vitest@3, no node_modules on main until F00) | Lead | local | 1 Oct 20:30Z | train (local) |
-| Trial day 5 run 5C (Eglinton pair, no imports) | Sonnet walker, Chrome | local | 1 Oct 20:35Z | notes in reference/taxprep/2026-10-05-day5/, uncommitted |
+| Trial day 5 run 5C resume (Eglinton pair, no imports; Zo reconnected Chrome) | Sonnet walker, Chrome | local | 1 Oct 21:20Z | notes in reference/taxprep/2026-10-05-day5/, uncommitted |
 | Independent phase 2 card review (fixes landed on main, A228 to A233) | Opus reviewer | local worktree | 1 Oct 20:50Z | claude/review-phase2 |
 | design fix round: cpa-review V1 | designer (old session) | local | 1 Oct | claude/design-cpa-review-2 |
 | design fix round: source viewer D03 | designer (old session) | local | 1 Oct | claude/design-source-viewer-2 |
@@ -35,7 +35,7 @@ Done and on branches, not yet re-tested: claude/design-queues-record-2, claude/d
 ## Watch out
 
 - Train worktree: create it with `git worktree add -B train .claude/worktrees/train origin/main` BEFORE any `git -C` into it. On 1 Oct `git -C` into a non-worktree folder switched the MAIN checkout to train (fixed). Main has no node_modules yet.
-- Only the "Ashbridge Test" Chrome, one walker at a time, window on screen. Tab group can vanish: list_connected_browsers, select or switch_browser. iFirm host ashbridge.cchifirm.ca. Walkers cannot supply import files (no native picker; script staging blocked by the guard): to-do #2.
+- Only the "Ashbridge Test" Chrome, one walker at a time, window on screen. Tab group can vanish: list_connected_browsers, select or switch_browser. Zo (1 Oct): "connected. send a request again if connection needed again": walkers may run switch_browser again and wait up to 10 minutes; no to-do item for reconnects. iFirm host ashbridge.cchifirm.ca. Walkers cannot supply import files (no native picker; script staging blocked by the guard): to-do #2.
 - Taking a helper branch: only the files in `git diff --name-only $(git merge-base main B) B`; for plan/slices.json use `git merge-file` (ours, base, theirs).
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`. Cloud workers sometimes push reports straight to main: pull before pushing.
 - Findings review before every fix round; aim for two rounds. Cold sign-off for big chunks only.
