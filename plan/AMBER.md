@@ -85,3 +85,7 @@ Calls the Lead made without asking, because the blueprint allows them. Zo reads 
 | A78 | 1 Oct | plan | The mapping (M00, so M10 to M23 and the round trip) waits on S03, the simulator fed by the trial findings | Building on guessed cell ids would be rebuilt after the trial | Drop S03 from M00 and build on placeholders | open |
 | A79 | 1 Oct | plan | CK-48 to CK-50 go on one engine-level card (Q01) that every reconciliation depends on | They are rules for all reconciliations; the check template does not fit | Split into three cards | open |
 | A80 | 1 Oct | plan | Journey params renamed from phase to stage | Phases were renumbered | Restore the old params and paths | open |
+| A81 | 1 Oct | plan | F08: matrix.mjs counts a clause only when a test name starts with its ID; tool paths move to tools/ | Testing rule: tests are named with clause IDs first; a mention anywhere overstates coverage | Count mentions anywhere | open |
+| A82 | 1 Oct | plan | JH0: the kinds journey runs the ten sample clients plus every kind built, and fails on missing kinds only with --require-all (the END-9 gate) | Otherwise every train stays red until W01 to W13 land | Fail on any missing kind | open |
+| A83 | 1 Oct | plan | A01 adds a free PDF library (pdfjs-dist or similar) | Free until go-live; word boxes need a text layer reader | Another free library | open |
+| A84 | 1 Oct | plan | S03's spec waits for reference/taxprep/FINDINGS.md from the trial | The simulator must copy what Taxprep really does | Build on placeholders and rebuild | open |

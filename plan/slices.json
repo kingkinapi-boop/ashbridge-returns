@@ -238,18 +238,22 @@
       "size": "S"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00"
       ],
       "paths": [
-        "src/core/tools/**"
+        "tools/test/**",
+        "tools/matrix.mjs",
+        "tools/next.mjs",
+        "tools/lib.mjs",
+        "tools/status.mjs"
       ],
       "clauses": [
+        "ARC-9",
         "ARC-12",
-        "ARC-19",
-        "ARC-9"
+        "ARC-19"
       ],
       "id": "F08",
       "title": "Tests for the build tools (queue, scope, matrix, next)",
@@ -257,27 +261,30 @@
       "size": "S"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00"
       ],
       "paths": [
         "src/contracts/reading.ts",
-        "src/contracts/reading.test.ts"
+        "src/contracts/reading.test.ts",
+        "src/contracts/reading.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-6",
         "ARC-10",
+        "EV-5",
         "EV-6"
       ],
       "id": "F09",
       "title": "Reading contract: normalised words and boxes for every engine",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00"
@@ -285,43 +292,50 @@
       "paths": [
         "testworld/model/**",
         "testworld/index.ts",
-        "testworld/generate.ts"
+        "testworld/generate.ts",
+        "testworld/clients/**"
       ],
       "clauses": [
         "ARC-8",
+        "END-9",
         "SEC-11",
-        "END-9"
+        "ARC-13",
+        "ARC-16"
       ],
       "id": "W00",
       "title": "Test world model and generator",
       "phase": 0,
       "size": "L",
       "hard": true,
-      "security": true
+      "security": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F03"
       ],
       "paths": [
-        "src/modules/taxprep-sim/core/**"
+        "src/modules/taxprep-sim/core/**",
+        "src/modules/taxprep-sim/index.ts"
       ],
       "clauses": [
         "RT-3",
         "RT-12",
         "RT-13",
-        "RT-23"
+        "RT-23",
+        "ARC-14"
       ],
       "id": "S00",
       "title": "Taxprep simulator: import, export, report",
       "phase": 0,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "S00"
@@ -332,16 +346,18 @@
       "clauses": [
         "RT-23",
         "RT-1",
+        "RT-7",
         "RT-9",
         "RT-20"
       ],
       "id": "S01",
       "title": "Taxprep simulator: fault injection",
       "phase": 0,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "S00"
@@ -351,15 +367,18 @@
         "data/taxprep/releases/**"
       ],
       "clauses": [
-        "RT-22"
+        "RT-22",
+        "RT-21",
+        "RT-23"
       ],
       "id": "S02",
       "title": "Taxprep simulator: release identifier lists",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "S00",
@@ -369,21 +388,26 @@
       ],
       "paths": [
         "src/modules/taxprep-sim/trial/**",
-        "data/taxprep/trial/**"
+        "data/taxprep/trial/**",
+        "data/taxprep/releases/**"
       ],
       "clauses": [
         "RT-23",
         "RT-2",
+        "RT-9",
+        "RT-10",
+        "RT-17",
         "RT-24"
       ],
       "id": "S03",
       "title": "Taxprep simulator: apply the trial findings (cell map, token cell, roll-forward, diagnostics, export settings)",
       "phase": 0,
       "size": "M",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00",
@@ -391,35 +415,44 @@
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
-        "src/modules/ocr/index.ts"
+        "src/modules/ocr/index.ts",
+        "package.json",
+        "package-lock.json"
       ],
       "clauses": [
         "ARC-6",
-        "ARC-11"
+        "ARC-11",
+        "END-8"
       ],
       "id": "A01",
       "title": "Reading PDFs: text layer with word boxes",
       "phase": 0,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "W00",
         "F01"
       ],
       "paths": [
-        "e2e/_harness/**"
+        "e2e/_harness/**",
+        "package.json"
       ],
       "clauses": [
         "END-9",
-        "ARC-21"
+        "ARC-4",
+        "ARC-16",
+        "ARC-21",
+        "SEC-11"
       ],
       "id": "JH0",
       "title": "Journey harness: load a kind, run the pipeline",
       "phase": 0,
-      "size": "M"
+      "size": "M",
+      "security": true
     },
     {
       "status": "carded",
