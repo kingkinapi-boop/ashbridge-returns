@@ -2,7 +2,9 @@
  "card": "D00",
  "role": "spec",
  "worker": "cloud-3f94c2",
- "state": "working",
- "at": "2026-10-01T21:41:50.676Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T21:43:31.231Z",
+ "mode": "turbo",
+ "note": "15 tests; vitest include lacks design/** (use design/basis/vitest.d00.config.ts); build installs axe, playwright, sass, nunjucks, govuk-frontend, moj",
+ "commit": "ad8c5b4dc4eec68aafc1f705d61cb383c93d820a"
 }
