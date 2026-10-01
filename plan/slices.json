@@ -3837,16 +3837,23 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F03",
         "S02",
         "S03",
-        "F10"
+        "F10",
+        "B01"
       ],
       "paths": [
         "src/modules/mapping/core/**",
+        "src/modules/mapping/index.ts",
+        "src/contracts/mapping.ts",
+        "data/taxprep/map/_format.md",
+        "data/taxprep/map/gifi.json",
+        "data/taxprep/rollforward/**",
+        "data/taxprep/tax-choices/**",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
         "e2e/steps/skeleton-*.ts"
@@ -3857,13 +3864,18 @@
         "RT-7",
         "RT-24",
         "RT-25",
-        "RT-4"
+        "RT-4",
+        "RT-13",
+        "ARC-13",
+        "ARC-10"
       ],
       "id": "M00",
       "title": "Mapping framework and identifier drift check",
       "phase": 2,
-      "size": "M",
-      "note": "When carded: mapping keys are Taxprep internal identifiers (RT-21, for example GFBGII[1].GFGIJ.Ttwgij104) with jump code, line or GIFI code and description kept for people; GIFI code to identifier read from the release export's descriptions; the natural-key cell of each repeating group (CCACat.FD08C keyed by FED.Ttw08cA1, RT-7) and the copy lookup from the latest export; whole-dollar rounding per GIFI code with the Schedule 100 plug line (RT-25); refuse any identifier not on the release's input list (RT-4). Source: reference/taxprep/FINDINGS.md."
+      "size": "L",
+      "note": "Carded 2 Oct (reports/cards-phase2.md): mapping format, GIFI rows read from the release descriptions, copy lookup by natural key, whole-dollar rounding with the Schedule 100 plug, drift check, roll-forward map and tax-choice cells as data. Trial-dependent points marked in the card.",
+      "hard": true,
+      "core": true
     },
     {
       "status": "carded",
@@ -4216,17 +4228,26 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "M00",
+        "T02",
         "B05",
         "B01",
+        "L00",
+        "F07",
+        "A05",
         "SK0",
         "F10"
       ],
       "paths": [
+        "src/modules/roundtrip/figures/**",
         "src/modules/roundtrip/import/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/40_figures.sql",
+        "db/schema/45_roundtrip.sql",
         "src/pipeline/steps/figures.ts",
         "src/pipeline/steps/import.ts",
         "e2e/skeleton/stubs.ts",
@@ -4239,33 +4260,55 @@
         "RT-3",
         "RT-4",
         "RT-5",
+        "RT-7",
         "RT-8",
         "RT-12",
-        "RT-13"
+        "RT-13",
+        "RT-25",
+        "TB-9",
+        "ARC-10",
+        "ARC-14"
       ],
       "id": "T01",
       "title": "Import writer: AI draft and changed-cell re-imports",
       "phase": 2,
-      "size": "M"
+      "size": "L",
+      "hard": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "M00",
-        "SK0"
+        "SK0",
+        "A05",
+        "F02",
+        "S01"
       ],
       "paths": [
-        "src/modules/roundtrip/export/**"
+        "src/modules/roundtrip/export/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/45_roundtrip.sql"
       ],
       "clauses": [
         "RT-1",
-        "RT-9"
+        "RT-2",
+        "RT-9",
+        "RT-20",
+        "RT-22",
+        "ARC-14",
+        "EV-1",
+        "EV-2"
       ],
       "id": "T02",
       "title": "Export reader and identity checks",
       "phase": 2,
-      "size": "M"
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true
     },
     {
       "status": "parked",
@@ -4285,16 +4328,21 @@
       "note": "Removed by v1.1: the receipt export and RT-6 are dropped; a partial import shows as \"dropped\" cells in the trace (amber A30). Replaced by T04 (dropped class)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T01",
         "T02",
         "M00",
+        "L00",
         "F10"
       ],
       "paths": [
         "src/modules/roundtrip/trace/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/45_roundtrip.sql",
+        "data/taxprep/allowed-typing/**",
         "src/pipeline/steps/trace.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
@@ -4303,76 +4351,163 @@
       "clauses": [
         "RT-14",
         "RT-15",
-        "RT-16",
-        "RT-18",
         "RT-20",
-        "RT-24"
+        "RT-24",
+        "RT-26",
+        "RT-8",
+        "TB-6",
+        "EV-5",
+        "ARC-10"
       ],
       "id": "T04",
       "title": "Trace: traced, overridden, dropped, rolled forward (roll-forward map), orphan, calculated",
       "phase": 2,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "E00"
+        "E00",
+        "T07",
+        "F02"
       ],
       "paths": [
-        "src/modules/diagnostics/**"
+        "src/modules/diagnostics/**",
+        "src/contracts/diagnostics.ts",
+        "db/schema/47_diagnostics.sql",
+        "data/taxprep/diagnostics/**"
       ],
       "clauses": [
-        "RT-17"
+        "RT-17",
+        "RULE-2",
+        "EV-1",
+        "ARC-10",
+        "AI-7"
       ],
       "id": "T05",
       "title": "Diagnostics from the printed return",
       "phase": 2,
-      "size": "S"
+      "size": "M",
+      "hard": false,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "T02"
+        "T02",
+        "M00",
+        "E00",
+        "W20",
+        "A05"
       ],
       "paths": [
-        "src/modules/roundtrip/reviewlines/**"
+        "src/modules/roundtrip/reviewlines/**",
+        "src/modules/roundtrip/printed/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/45_roundtrip.sql",
+        "data/taxprep/review-lines/**",
+        "testworld/taxprep/printed/**"
       ],
       "clauses": [
         "RT-10",
-        "RT-11"
+        "RT-11",
+        "RT-22",
+        "EV-2",
+        "ARC-11",
+        "ARC-10",
+        "SEC-11"
       ],
       "id": "T07",
       "title": "Review lines in the lock export, and the printed return",
       "phase": 2,
-      "size": "S"
+      "size": "M",
+      "hard": false,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "T04",
+        "T05",
+        "N00",
+        "L00",
+        "L01",
+        "F02"
+      ],
+      "paths": [
+        "src/modules/roundtrip/resolve/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/45_roundtrip.sql"
+      ],
+      "clauses": [
+        "RT-16",
+        "RT-18",
+        "TB-6",
+        "RT-14",
+        "RT-17",
+        "EV-5",
+        "AI-7",
+        "FLOW-2"
+      ],
+      "id": "T12",
+      "title": "Trace resolutions: the cite, override reasons, dropped cells and the sign-off gate",
+      "phase": 2,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "note": "Split from T04 on 2 Oct (reports/cards-phase2.md): T04 classes the cells, T12 resolves them and holds the sign-off gate."
+    },
+    {
+      "status": "carded",
       "spec": null,
       "deps": [
         "V05",
-        "T04",
         "D05",
-        "U02"
+        "U01",
+        "U02",
+        "B01",
+        "T01",
+        "T02",
+        "T04",
+        "T05",
+        "T07",
+        "T12",
+        "F02"
       ],
       "paths": [
-        "src/app/(staff)/prepare/roundtrip/**"
+        "src/app/(staff)/prepare/roundtrip/**",
+        "e2e/staff/roundtrip.spec.ts"
       ],
       "clauses": [
         "RV-21",
+        "TB-3",
+        "RT-1",
+        "RT-5",
+        "RT-26",
+        "RT-11",
+        "RT-17",
+        "RT-18",
+        "FLOW-2",
+        "FLOW-10",
+        "SEC-2",
         "RV-53",
         "RV-54"
       ],
       "id": "V06",
       "title": "Preparer round-trip checklist",
       "phase": 2,
-      "size": "M",
+      "size": "L",
       "screens": true,
       "hard": false,
-      "note": "Owns the .GFI upload screen on top of B01 importGfi (review-phase1)."
+      "note": "Owns the .GFI upload screen on top of B01 importGfi (review-phase1).",
+      "security": true
     },
     {
       "status": "parked",
@@ -4401,22 +4536,30 @@
       "note": "Removed by v1.1: no judgment input sheet in our app; tax choices are typed in Taxprep and sourced with the cite button (amber A32). Replaced by V12."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V05",
-        "T04",
+        "V01",
         "D12",
-        "U02"
+        "U01",
+        "U02",
+        "T04",
+        "T12"
       ],
       "paths": [
-        "src/app/(staff)/prepare/cite/**"
+        "src/app/(staff)/prepare/cite/**",
+        "e2e/staff/cite.spec.ts"
       ],
       "clauses": [
         "RV-22",
+        "RV-24",
         "TB-6",
+        "RT-14",
         "RT-16",
         "RT-18",
+        "AI-7",
+        "SEC-2",
         "RV-53",
         "RV-54"
       ],
@@ -4428,22 +4571,34 @@
       "hard": false
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "T04"
+        "T04",
+        "T01",
+        "L00",
+        "F01"
       ],
       "paths": [
-        "src/modules/learning/versions/**"
+        "src/modules/learning/versions/**",
+        "src/modules/learning/index.ts",
+        "src/contracts/versions.ts",
+        "db/schema/60_versions.sql",
+        "src/pipeline/steps/import.ts"
       ],
       "clauses": [
         "LL-1",
-        "LL-2"
+        "LL-2",
+        "LL-3",
+        "EV-1",
+        "SEC-7",
+        "ARC-10"
       ],
       "id": "N00",
       "title": "Versions and cell owners",
       "phase": 2,
-      "size": "M"
+      "size": "M",
+      "hard": false
     },
     {
       "status": "carded",
