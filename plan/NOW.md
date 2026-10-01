@@ -13,9 +13,8 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, evening, by the 
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| F00 fix round 2 spec (toolchain rule tests, mutation canary) | cloud run cse_018WDCuJ7pXckYvBAXDdE6D6 | cloud | 1 Oct 19:20Z | claude/F00 |
+| F00 fix round 2 build (spec reported; build reopened) + W14/D01 specs | 2 cloud runs | cloud | 1 Oct 19:40Z | claude/F00 |
 | queue repair 2 (dep gate, spec reopen): built 23 of 23; check running | checker (local) | local | 1 Oct | claude/queue-repair-2 |
-| Taxprep trial day 3 (tax choices, diagnostics, print) | Sonnet walker, Chrome | local | 1 Oct | files land uncommitted in reference/taxprep/2026-10-03-day3/ |
 | design fix round: cpa-review V1 | designer | local | 1 Oct | claude/design-cpa-review-2 |
 | design fix round: source viewer D03 | designer | local | 1 Oct | claude/design-source-viewer-2 |
 
@@ -23,7 +22,7 @@ Done and on branches, not yet re-tested: claude/design-queues-record-2, claude/d
 
 ## Next, in order
 
-1. `git status`: commit any `reference/taxprep/2026-10-03-day3/` files and FEATURES.md lines the day 3 walker left (structure only).
+1. Trial day 3 landed partial (610666f). Not done: dividend designation (S3/S53), Schedule 23 on the Eglinton pair, Eglinton diagnostics, "Track changes" export, print "More options", whether diagnostics print. The iFirm tab group vanished mid-run: next walker re-establishes it (to-do item if it cannot). Fold these into day 4 planning (item 6).
 2. Queue repair 2: read `reports/queue-repair-2-check.md` on its branch; PASS: local train (skill merge; node_modules junction into `.claude/worktrees/train`, `node tools/heavy.mjs -- npx vitest run tools/test`), land, delete branches. FAIL: findings review first.
 3. F00: when its round 2 spec is reported, `node tools/claim.mjs update F00 build reopened --worker lead`, fire a cloud run. Then check by a different worker, then a train in the cloud. F00 landing ends the rehearsal; then a cold sign-off (signoff.md) on the queue repairs and the rehearsal, then widen to 6 runs.
 4. Re-specs: F03 and S00 were re-carded from the trial (any earlier spec void). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 being done (the dep gate).
