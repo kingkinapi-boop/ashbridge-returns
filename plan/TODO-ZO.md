@@ -4,19 +4,11 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. The Taxprep trial (you said: in progress).**
-- When it is set up: the trial signed in inside the "Ashbridge Test" Chrome profile, the **T2 2025** edition, and you know its last day. Optional: that profile's download folder set to `C:\Users\User\Documents\taxprep-trial\inbox` with "Ask where to save" off.
-- Then reply `1 started, ends <date>` (Chrome is connected already). The walker then runs day 1 (`plan\trial\day1-script.md`). You are needed again on day 4 (Auto-fill); the Lead tells you the day before.
+Nothing right now. Thank you for items 1 to 3 (decision 0011).
 
-**2. Is `ashbridge.cchifirm.ca` the trial, or the firm's real iFirm? (question, 1 minute)**
-- What: the "Ashbridge Test" Chrome profile has a tab open on `ashbridge.cchifirm.ca`. Nobody touched it. If that address is the firm's real CCH iFirm (with real clients), the walker must not work in it (decision 0003: made-up data only; the trial plan: never the firm's real Taxprep).
-- Reply `2 trial` if it is a separate trial account holding no real clients, or `2 real` if it is the firm's account. Recommendation: if real, sign out of it in that profile and create the trial under a new login, so the walker can never reach real clients.
-- Meanwhile: the walker does nothing in iFirm.
+**Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before. Keep the "Ashbridge Test" Chrome window open while the walker works in it.
 
-**3. QuickBooks test company: please check one screen (2 minutes, when you can).**
-- The helper created a Canadian sandbox company on developer.intuit.com (Dashboard, Sandboxes), but the page then showed "Sorry, something went wrong" three times. Open that page in the "Ashbridge Test" profile and reply `3 one`, `3 none` or `3 error`. Do not create another one yourself; the Lead retries if there is none.
-
-**What the Lead is doing now:** two cloud workers are building the empty app (F00) and the screen map spec (your answer 1 A, decision 0010); the queue widens after that. The screen designs (CPA review, preparer workbench, queues) get one consolidated fix after the usability panel, for your first sitting about 3 Oct. Connected to the "Ashbridge Test" Chrome (thank you).
+**What the Lead is doing now:** the trial walker is doing day 1 in your Chrome (the cell map), saving every feature it tries to `reference	axprep\`; a second helper is checking the QuickBooks test company in its own tab. Two cloud workers are building the empty app (F00) and the screen map spec. The screen designs get one consolidated fix after the usability panel, for your first sitting about 3 Oct.
 
 ## 2. Coming up (no action yet)
 
