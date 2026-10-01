@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "n/a",
  "worker": "cloud-fb8d96",
- "state": "hold-findings",
- "at": "2026-10-01T18:57:38.994Z",
+ "state": "reopened",
+ "at": "2026-10-01T19:35:44.932Z",
  "mode": "turbo",
  "note": "FAIL: mutation 0% (stryker 10 vs vitest 5), scope paths; see reports/F00-check.md"
 }
