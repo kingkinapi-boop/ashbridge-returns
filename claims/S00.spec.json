@@ -1,9 +1,8 @@
 {
  "card": "S00",
  "role": "spec",
- "worker": "cloud-5a0720",
- "state": "released",
- "at": "2026-10-01T18:58:06.148Z",
- "mode": "turbo",
- "note": "dep F03 not built; queue re-hands it (needs dep gate). Stopping to avoid loop. Model: sonnet"
+ "worker": "cloud-dd8c04",
+ "state": "working",
+ "at": "2026-10-01T19:36:35.444Z",
+ "mode": "turbo"
 }
