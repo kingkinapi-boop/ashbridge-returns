@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "0e448ae858ab4d982c947277e010602fa9dd0ec3",
  "worker": "cloud-620523",
- "state": "working",
- "at": "2026-10-01T21:49:52.492Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T21:54:11.273Z",
+ "mode": "turbo",
+ "note": "295 of 295 verify checks pass"
 }
