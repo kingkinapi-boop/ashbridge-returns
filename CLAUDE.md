@@ -19,7 +19,7 @@ The firm's staff system from "onboarding done" to "return filed, binder frozen":
 
 ## Zo
 
-Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: three sections (1 Needs you now, with a short "What the Lead is doing now"; 2 Coming up; 3 What is left of the build), rewritten, never appended; each item says what it is, why, and what comes next. He answers red questions and approves the Critic's proposals; he never sees amber. If he does not answer, keep going on everything else (decision 0009).
+Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: three sections (1 Needs you now, with a short "What the Lead is doing now"; 2 Coming up; 3 What is left of the build), rewritten, never appended; each item says what it is, why, and what comes next. He answers red questions and approves the Critic's proposals; he never sees amber. If he does not answer, keep going on everything else (decision 0009). **No small questions** (decision 0014): wording, formats, conventions, layout details and anything with a sensible default are decided by the Lead and logged as amber; before adding a to-do item, ask "would a wrong guess here change the end state, cost money or touch real data?" and if not, decide.
 
 **In chat, one line only** (decision 0009): `Done. Start a new session.`, `Still working. Nothing needs you.`, `Waiting on to-do #N.` or `Blocked: to-do #N.`, then `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. No updates or reports in chat. No em dashes anywhere. No chat runs by itself, and he clears chats often, so everything lives in files.
 
@@ -73,6 +73,7 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 - Screens: the GOV.UK look, built for repeat desk work on a laptop with two monitors; as many screens as the work needs, each with one job, in a logical top-to-bottom order, separate tabs for separate things, search everywhere; designed first and approved by Zo; built to match; axe-clean.
 - Tests: written first by another worker, named with clause IDs, fail before the build, never edited by the builder; money and tax arithmetic property-tested; clocks and seeds pinned; a flaky test is a failure (`.claude/rules/testing.md`).
 - AI never clears, closes or approves anything, never talks to clients, and every AI output carries citations that code checks.
+- Never kill processes by name (`taskkill /IM`, `pkill`, `killall`): only process IDs you started yourself. Zo's browsers and apps share the laptop.
 - Never read or print `.env` or any secret. Print names or booleans only.
 - Stage files by name; never `git add -A` or `git add .`; never force-push. Code reaches main only through a green train (a hook refuses other code pushes; plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ may go straight to main).
 - Status files are rewritten, never appended; only `metrics.jsonl`, `ledger.jsonl` and `AMBER.md` rows are added to.

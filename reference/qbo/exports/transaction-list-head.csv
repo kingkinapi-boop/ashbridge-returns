@@ -1,0 +1,29 @@
+Sandbox Company CA 7cf6,,,,,,,,
+Transaction List by Date,,,,,,,,
+All Dates,,,,,,,,
+
+Date,Transaction type,#,Posting (Y/N),Name,Memo,Account name,Split,Amount
+04/10/2025,Cheque,2020,Yes,Jacque Hudspeth,,Chequing,,-791.00
+04/10/2025,Billable Expense Charge,,No,Benjamin Yeung,Catering -- food & beverage with 20% markup,Accounts Receivable,,840.00
+04/10/2025,Cheque,2021,Yes,Garcia's Event Space,,Chequing,,-847.50
+04/10/2025,Billable Expense Charge,,No,Benjamin Yeung,Venue Rental with 20% markup,Accounts Receivable,,900.00
+04/10/2025,Cheque,2022,Yes,Bank of AnyCity,,Chequing,,-471.78
+04/10/2025,Invoice,1003,Yes,Benjamin Yeung,,Accounts Receivable,,"4,165.47"
+09/10/2025,Cheque,2023,Yes,Cass Hayden,,Chequing,,-847.50
+25/10/2025,Journal Entry,6,Yes,,,,,
+22/11/2025,Journal Entry,7,Yes,,,,,
+23/12/2025,Journal Entry,8,Yes,,,,,
+22/01/2026,Journal Entry,9,Yes,,,,,
+22/02/2026,Journal Entry,10,Yes,,,,,
+24/03/2026,Journal Entry,11,Yes,,,,,
+17/04/2026,Journal Entry,12,Yes,,,,,
+24/04/2026,Journal Entry,13,Yes,,,,,
+16/05/2026,Journal Entry,14,Yes,,,,,
+16/05/2026,Journal Entry,,Yes,,Filed sales tax,,,
+16/05/2026,Journal Entry,,Yes,,Filed sales tax,,,
+25/06/2026,Journal Entry,1,Yes,,,,,
+25/07/2026,Journal Entry,2,Yes,,,,,
+24/08/2026,Journal Entry,3,Yes,,,,,
+24/08/2026,Journal Entry,4,Yes,,,,,
+24/09/2026,Journal Entry,5,Yes,,,,,
+01/10/2026,Journal Entry,15,Yes,,AJE accrual: test entry | source: probe note,,,
