@@ -111,3 +111,6 @@
 {"ts":"2026-10-01T20:47:07.034Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"QBO .GFI walker, third try","allowed":true}
 {"ts":"2026-10-01T20:53:25.239Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"Trial day 5, 5A imports","allowed":true}
 {"ts":"2026-10-01T21:11:39.331Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"tester","model":"sonnet","where":"worktree","desc":"Re-test four design families","allowed":true}
+{"ts":"2026-10-01T21:25:22.845Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"Spec W14 verify entries","allowed":true}
+{"ts":"2026-10-01T21:34:29.720Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"Spec A05 storage tests","allowed":true}
+{"ts":"2026-10-01T21:42:02.355Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"spec-writer","model":"sonnet","where":"local","desc":"Spec D00 design basis tests","allowed":true}
