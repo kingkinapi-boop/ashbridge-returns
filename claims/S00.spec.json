@@ -2,8 +2,7 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-c56def",
- "state": "released",
- "at": "2026-10-01T18:53:57.631Z",
- "mode": "turbo",
- "note": "deps F03 not built; main has no code base"
+ "state": "working",
+ "at": "2026-10-01T18:54:00.340Z",
+ "mode": "turbo"
 }
