@@ -8,7 +8,7 @@ Nothing right now. Thank you for items 1 to 3 (decision 0011).
 
 **Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before. Keep the "Ashbridge Test" Chrome window open while the walker works in it.
 
-**What the Lead is doing now:** the trial walker is doing day 1 in your Chrome (the cell map), saving every feature it tries to `reference	axprep\`; a second helper is checking the QuickBooks test company in its own tab. Two cloud workers are building the empty app (F00) and the screen map spec. The screen designs get one consolidated fix after the usability panel, for your first sitting about 3 Oct.
+**What the Lead is doing now:** the trial walker is doing day 1 in your Chrome (the cell map), saving every feature it tries to `reference\taxprep\`; a second helper is checking the QuickBooks test company in its own tab. Two cloud workers are building the empty app (F00) and the screen map spec. The screen designs get one consolidated fix after the usability panel, for your first sitting about 3 Oct.
 
 ## 2. Coming up (no action yet)
 
