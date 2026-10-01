@@ -2,7 +2,8 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-c56def",
- "state": "working",
- "at": "2026-10-01T18:54:00.340Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T18:54:08.439Z",
+ "mode": "turbo",
+ "note": "deps F03 not built; claim.mjs re-hands it out (no dep gate)"
 }
