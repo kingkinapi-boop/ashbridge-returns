@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "d6807e553a2a8504e1d74d1d582b6a3345e2bdd6",
  "worker": "cloud-3b6e2d",
- "state": "working",
- "at": "2026-10-01T23:23:45.709Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T23:24:12.577Z",
+ "mode": "turbo",
+ "note": "spec on branch is the void pre-trial one (CCH help page format); card needs re-spec, see reports/F03-build.md"
 }
