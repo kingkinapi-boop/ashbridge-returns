@@ -522,22 +522,54 @@
       "size": "M"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F01"
       ],
       "paths": [
         "src/modules/jobs/**",
+        "src/contracts/jobs.ts",
         "db/schema/80_jobs.sql"
       ],
       "clauses": [
-        "ARC-5"
+        "ARC-5",
+        "ARC-10",
+        "ARC-16",
+        "SEC-6"
       ],
       "id": "F06",
       "title": "Jobs table and worker",
       "phase": 1,
       "size": "M"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F06",
+        "SK0",
+        "A05"
+      ],
+      "paths": [
+        "src/pipeline/**",
+        ".dependency-cruiser.cjs",
+        "e2e/skeleton/**",
+        "e2e/steps/**",
+        "e2e/_harness/pipeline.ts"
+      ],
+      "clauses": [
+        "ARC-5",
+        "ARC-7",
+        "ARC-10",
+        "END-2",
+        "END-9"
+      ],
+      "id": "F10",
+      "title": "Pipeline composition root: the real wiring in src/pipeline",
+      "phase": 1,
+      "size": "M",
+      "hard": true
     },
     {
       "status": "carded",
@@ -869,21 +901,29 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "F09",
+        "A01"
       ],
       "paths": [
-        "testworld/render/_core/**"
+        "testworld/render/_core/**",
+        "package.json",
+        "package-lock.json"
       ],
       "clauses": [
-        "ARC-8"
+        "ARC-8",
+        "ARC-16",
+        "SEC-11",
+        "EV-6"
       ],
       "id": "W20",
       "title": "Document renderer framework (PDF and scans)",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "security": true
     },
     {
       "status": "carded",
@@ -1269,78 +1309,108 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A01",
-        "F09"
+        "F09",
+        "W20"
       ],
       "paths": [
-        "src/modules/ocr/tesseract/**"
+        "src/modules/ocr/tesseract/**",
+        "src/modules/ocr/index.ts",
+        "package.json",
+        "package-lock.json"
       ],
       "clauses": [
-        "ARC-6"
+        "ARC-6",
+        "ARC-10",
+        "ARC-11",
+        "END-8",
+        "EV-6"
       ],
       "id": "A02",
       "title": "Reading scans: Tesseract",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A01",
         "F09"
       ],
       "paths": [
-        "src/modules/ocr/recorded/**"
+        "src/modules/ocr/recorded/**",
+        "src/modules/ocr/index.ts"
       ],
       "clauses": [
-        "ARC-6"
+        "ARC-6",
+        "ARC-10",
+        "ARC-16",
+        "SEC-11"
       ],
       "id": "A03",
       "title": "Reading: recorded results for tests",
       "phase": 1,
-      "size": "S"
+      "size": "S",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F04",
         "F06"
       ],
       "paths": [
-        "src/modules/ai/runner/**"
+        "src/modules/ai/runner/**",
+        "src/modules/ai/index.ts",
+        "data/ai/approved.json"
       ],
       "clauses": [
         "ARC-6",
+        "ARC-16",
+        "ARC-20",
         "ARC-22",
+        "AI-1",
+        "AI-9",
         "AI-10",
-        "AI-11"
+        "AI-11",
+        "END-8",
+        "SEC-11"
       ],
       "id": "A04",
       "title": "AI runner: recorded answers and the Claude project job queue (subscription, no paid API)",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00"
       ],
       "paths": [
-        "src/modules/storage/**"
+        "src/modules/storage/**",
+        "src/contracts/storage.ts"
       ],
       "clauses": [
-        "ARC-6"
+        "ARC-6",
+        "END-8",
+        "SEC-10",
+        "SEC-11"
       ],
       "id": "A05",
       "title": "File storage and Drive stand-ins",
       "phase": 1,
-      "size": "S"
+      "size": "S",
+      "security": true
     },
     {
       "status": "todo",
@@ -1590,11 +1660,13 @@
         "A01",
         "A05",
         "SK0",
-        "F09"
+        "F09",
+        "F10"
       ],
       "paths": [
         "src/modules/documents/**",
-        "db/schema/10_documents.sql"
+        "db/schema/10_documents.sql",
+        "src/pipeline/steps/intake.ts"
       ],
       "clauses": [
         "EV-2",
@@ -1613,10 +1685,15 @@
       "deps": [
         "E00",
         "L00",
-        "A04"
+        "A04",
+        "F10"
       ],
       "paths": [
-        "src/modules/extraction/_core/**"
+        "src/modules/extraction/_core/**",
+        "src/pipeline/steps/facts.ts",
+        "e2e/skeleton/stubs.ts",
+        "e2e/skeleton/stubs.md",
+        "e2e/steps/skeleton-*.ts"
       ],
       "clauses": [
         "EV-5",
@@ -2072,10 +2149,12 @@
       "deps": [
         "B04",
         "L00",
-        "SK0"
+        "SK0",
+        "F10"
       ],
       "paths": [
-        "src/modules/books/read/**"
+        "src/modules/books/read/**",
+        "src/pipeline/steps/books.ts"
       ],
       "clauses": [
         "TB-1",
@@ -2429,7 +2508,8 @@
         "E01"
       ],
       "paths": [
-        "src/modules/ai/grounding/**"
+        "src/modules/ai/grounding/**",
+        "src/modules/ai/index.ts"
       ],
       "clauses": [
         "AI-1",
@@ -3393,10 +3473,14 @@
       "deps": [
         "F03",
         "S02",
-        "S03"
+        "S03",
+        "F10"
       ],
       "paths": [
-        "src/modules/mapping/core/**"
+        "src/modules/mapping/core/**",
+        "e2e/skeleton/stubs.ts",
+        "e2e/skeleton/stubs.md",
+        "e2e/steps/skeleton-*.ts"
       ],
       "clauses": [
         "RT-21",
@@ -3766,10 +3850,16 @@
         "M00",
         "B05",
         "B01",
-        "SK0"
+        "SK0",
+        "F10"
       ],
       "paths": [
-        "src/modules/roundtrip/import/**"
+        "src/modules/roundtrip/import/**",
+        "src/pipeline/steps/figures.ts",
+        "src/pipeline/steps/import.ts",
+        "e2e/skeleton/stubs.ts",
+        "e2e/skeleton/stubs.md",
+        "e2e/steps/skeleton-*.ts"
       ],
       "clauses": [
         "RT-1",
@@ -3828,10 +3918,15 @@
       "deps": [
         "T01",
         "T02",
-        "M00"
+        "M00",
+        "F10"
       ],
       "paths": [
-        "src/modules/roundtrip/trace/**"
+        "src/modules/roundtrip/trace/**",
+        "src/pipeline/steps/trace.ts",
+        "e2e/skeleton/stubs.ts",
+        "e2e/skeleton/stubs.md",
+        "e2e/steps/skeleton-*.ts"
       ],
       "clauses": [
         "RT-14",
@@ -4647,11 +4742,16 @@
       "deps": [
         "F05",
         "L00",
-        "SK0"
+        "SK0",
+        "F10"
       ],
       "paths": [
         "src/modules/checks/engine/**",
-        "db/schema/70_checks.sql"
+        "db/schema/70_checks.sql",
+        "src/pipeline/steps/checks.ts",
+        "e2e/skeleton/stubs.ts",
+        "e2e/skeleton/stubs.md",
+        "e2e/steps/skeleton-*.ts"
       ],
       "clauses": [
         "CK-1",
