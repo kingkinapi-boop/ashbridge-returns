@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>V5 planted</title></head><body>
+<!-- Query: ?page=a or ?page=b, plus &good=1.
+     Bad: "Rework 5" on a, "Rework 33" on b, no scope; the filter does not update the caption.
+     Good: "Rework: 33 on this queue" on both; the caption follows the filter. -->
+<div data-identity-bar>Identity bar</div>
+<p id="c"></p><p id="cap">Showing all 33 on this queue</p>
+<button id="filter">Mine only</button>
+<script>
+const q = new URLSearchParams(location.search), good = q.has('good'), b = q.get('page') === 'b'
+const c = document.getElementById('c')
+c.setAttribute('data-count', 'rework'); c.setAttribute('data-scope', 'on this queue')
+c.textContent = good ? 'Rework: 33 on this queue' : 'Rework ' + (b ? 33 : 5)
+document.getElementById('filter').onclick = () => { if (good) document.getElementById('cap').textContent = 'Showing 5 of 33 on this queue (mine only)' }
+</script></body></html>

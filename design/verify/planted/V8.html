@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>V8 planted</title></head><body>
+<!-- Bad: the W2 form. Typing an amount leaves the option unchosen and Continue says "Choose an option". Good (?good=1): typing picks the option. -->
+<div data-identity-bar>Identity bar</div>
+<div id="summary"></div>
+<fieldset><legend>How do you want to record it</legend>
+<label><input type="radio" name="how" id="w2" value="w2"> From a W2 slip</label>
+<label>W2 box 1 amount <input type="text" id="amt"></label>
+<label><input type="radio" name="how" id="manual" value="manual"> Enter by hand</label></fieldset>
+<button id="go">Continue</button>
+<script>
+const good = location.search.includes('good')
+if (good) document.getElementById('amt').addEventListener('input', () => { document.getElementById('w2').checked = true })
+document.getElementById('go').onclick = () => {
+  const s = document.getElementById('summary')
+  if (!document.querySelector('[name=how]:checked')) s.innerHTML = '<p class="govuk-error-message">Choose an option</p>'
+  else s.textContent = 'Saved'
+}
+</script></body></html>
