@@ -12,7 +12,7 @@
   "cards": [
     {
       "status": "carded",
-      "spec": "n/a",
+      "spec": null,
       "deps": [],
       "paths": [
         "package.json",
@@ -33,7 +33,13 @@
         "src/app/layout.tsx",
         "src/app/page.tsx",
         "src/core/**",
-        "e2e/smoke/**"
+        "e2e/smoke/**",
+        "tools/test-flake.mjs",
+        "tools/mutate-changed.mjs",
+        "tools/test/db-rules.test.mjs",
+        "tools/test/toolchain-rules.test.mjs",
+        "tools/test/__fixtures__/**",
+        "vitest.mutate.config.ts"
       ],
       "clauses": [
         "ARC-1",
@@ -169,7 +175,7 @@
       "core": true
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00"
@@ -181,10 +187,13 @@
       "clauses": [
         "RT-3",
         "RT-7",
+        "RT-8",
         "RT-9",
         "RT-12",
         "RT-13",
         "RT-14",
+        "RT-21",
+        "RT-25",
         "ARC-14"
       ],
       "id": "F03",
@@ -193,7 +202,7 @@
       "size": "M",
       "hard": true,
       "core": true,
-      "note": "Held by the Lead 1 Oct: trial day 1 shows RT-3 header, RT-9 settings and cell ids differ (reference/taxprep/day1-findings.md). Re-spec after trial day 2 and the RT clause update; then unpark."
+      "note": "Re-carded 1 Oct from the trial findings (reference/taxprep/FINDINGS.md; amber clause changes to RT-3, RT-7, RT-8, RT-9, RT-12, RT-13, RT-21, RT-25): needs a fresh spec; any earlier spec is void."
     },
     {
       "status": "carded",
@@ -329,18 +338,22 @@
       ],
       "clauses": [
         "RT-3",
+        "RT-8",
         "RT-12",
         "RT-13",
         "RT-23",
-        "ARC-14",
-        "RT-2"
+        "RT-25",
+        "RT-26",
+        "RT-2",
+        "ARC-14"
       ],
       "id": "S00",
       "title": "Taxprep simulator: import, export, report",
       "phase": 0,
       "size": "L",
       "hard": true,
-      "core": true
+      "core": true,
+      "note": "Card changed 1 Oct to the trial's import behaviour (blank clears, header not read, report lists only cells that held a value): re-spec; any earlier spec is void."
     },
     {
       "status": "carded",
@@ -378,7 +391,8 @@
       "clauses": [
         "RT-22",
         "RT-21",
-        "RT-23"
+        "RT-23",
+        "RT-4"
       ],
       "id": "S02",
       "title": "Taxprep simulator: release identifier lists",
@@ -408,7 +422,9 @@
         "RT-9",
         "RT-10",
         "RT-17",
-        "RT-24"
+        "RT-24",
+        "RT-7",
+        "RT-4"
       ],
       "id": "S03",
       "title": "Taxprep simulator: apply the trial findings (cell map, token cell, roll-forward, diagnostics, export settings)",
@@ -601,7 +617,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "W14"
       ],
       "paths": [
         "testworld/kinds/K01/**"
@@ -690,7 +707,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "W14"
       ],
       "paths": [
         "testworld/kinds/K05/**"
@@ -713,7 +731,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "W15"
       ],
       "paths": [
         "testworld/kinds/K06/**"
@@ -883,7 +902,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00",
+        "W15"
       ],
       "paths": [
         "testworld/kinds/K13/**"
@@ -902,6 +922,68 @@
       "params": {
         "kind": "K13"
       }
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "reference/sample-clients/clients/c11_12.mjs",
+        "reference/sample-clients/11-*/**",
+        "reference/sample-clients/12-*/**",
+        "reference/sample-clients/lib/**",
+        "reference/sample-clients/generate.mjs",
+        "reference/sample-clients/make-csv.mjs",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md"
+      ],
+      "clauses": [
+        "ARC-8",
+        "END-9",
+        "END-2",
+        "END-6",
+        "SEC-11",
+        "ARC-16"
+      ],
+      "id": "W14",
+      "title": "Sample clients 11 and 12: K01 (returning, clean) and K05 (onboarding answers only)",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W14"
+      ],
+      "paths": [
+        "reference/sample-clients/clients/c13_15.mjs",
+        "reference/sample-clients/13-*/**",
+        "reference/sample-clients/14-*/**",
+        "reference/sample-clients/15-*/**",
+        "reference/sample-clients/lib/**",
+        "reference/sample-clients/generate.mjs",
+        "reference/sample-clients/make-csv.mjs",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md"
+      ],
+      "clauses": [
+        "ARC-8",
+        "END-9",
+        "END-1",
+        "CK-21",
+        "CK-12",
+        "SEC-11",
+        "ARC-16"
+      ],
+      "id": "W15",
+      "title": "Sample clients 13 to 15: K06 (physician corporation) and K13 (two catch-up years)",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "security": true
     },
     {
       "status": "carded",
@@ -2305,6 +2387,7 @@
       "clauses": [
         "TB-1",
         "TB-10",
+        "TB-13",
         "EV-5",
         "ARC-6",
         "ARC-20",
@@ -2408,7 +2491,8 @@
         "L01",
         "E17",
         "E18",
-        "E19"
+        "E19",
+        "E03"
       ],
       "paths": [
         "src/modules/books/prior/**",
@@ -2901,7 +2985,8 @@
         "E02",
         "D04",
         "U01",
-        "U02"
+        "U02",
+        "F06"
       ],
       "paths": [
         "src/app/(staff)/prepare/queue/**",
@@ -2913,7 +2998,8 @@
         "FLOW-3",
         "RV-53",
         "RV-54",
-        "SEC-2"
+        "SEC-2",
+        "ARC-5"
       ],
       "id": "V05",
       "title": "Preparer queue",
@@ -3769,12 +3855,15 @@
         "RT-21",
         "RT-22",
         "RT-7",
-        "RT-24"
+        "RT-24",
+        "RT-25",
+        "RT-4"
       ],
       "id": "M00",
       "title": "Mapping framework and identifier drift check",
       "phase": 2,
-      "size": "M"
+      "size": "M",
+      "note": "When carded: mapping keys are Taxprep internal identifiers (RT-21, for example GFBGII[1].GFGIJ.Ttwgij104) with jump code, line or GIFI code and description kept for people; GIFI code to identifier read from the release export's descriptions; the natural-key cell of each repeating group (CCACat.FD08C keyed by FED.Ttw08cA1, RT-7) and the copy lookup from the latest export; whole-dollar rounding per GIFI code with the Schedule 100 plug line (RT-25); refuse any identifier not on the release's input list (RT-4). Source: reference/taxprep/FINDINGS.md."
     },
     {
       "status": "carded",

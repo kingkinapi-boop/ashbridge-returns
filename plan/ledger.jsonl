@@ -59,3 +59,34 @@
 {"ts":"2026-10-01T17:51:21.788Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"update","allowed":true}
 {"ts":"2026-10-01T17:51:27.436Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T17:55:16.371Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Write phase 1 cards (batch c)","allowed":true}
+{"ts":"2026-10-01T17:59:03.349Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-01T17:59:18.118Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Findings review: F00 check fail","allowed":true}
+{"ts":"2026-10-01T17:59:18.946Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}
+{"ts":"2026-10-01T17:59:34.798Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"update","allowed":true}
+{"ts":"2026-10-01T18:01:05.765Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Opus read of day 1 captures","allowed":true}
+{"ts":"2026-10-01T18:04:27.671Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Taxprep trial day 1b and day 2","allowed":true}
+{"ts":"2026-10-01T18:10:57.812Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Independent review of phase 1 cards","allowed":true}
+{"ts":"2026-10-01T18:20:53.719Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Taxprep trial day 1b and 2 (resend)","allowed":true}
+{"ts":"2026-10-01T18:22:24.579Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-01T18:22:29.043Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T18:22:29.662Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T18:30:58.936Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"tester","model":null,"where":"worktree","desc":"Usability panel: source viewer","allowed":true}
+{"ts":"2026-10-01T18:31:37.080Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Card the phase 1 gaps","allowed":true}
+{"ts":"2026-10-01T18:34:16.265Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"worktree","desc":"Checkpoint: real Taxprep cell ids","allowed":true}
+{"ts":"2026-10-01T18:34:16.291Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"QBO sandbox checks in company UI","allowed":true}
+{"ts":"2026-10-01T18:47:09.811Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Taxprep trial: cells and round trip","allowed":true}
+{"ts":"2026-10-01T18:53:13.868Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-01T18:53:18.813Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T18:53:19.165Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T18:53:19.780Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T18:53:50.216Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"update","allowed":true}
+{"ts":"2026-10-01T19:08:16.987Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Taxprep trial: downloads and Q21/Q22","allowed":true}
+{"ts":"2026-10-01T19:20:00.502Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Trial findings into RT clauses","allowed":true}
+{"ts":"2026-10-01T19:20:40.233Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"GIFI .GFI file from QBO Accountant","allowed":true}
+{"ts":"2026-10-01T19:22:04.363Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Taxprep trial day 3","allowed":true}
+{"ts":"2026-10-01T19:22:38.102Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Findings review: source viewer panel","allowed":true}
+{"ts":"2026-10-01T19:25:22.640Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Findings review: F00 round 2","allowed":true}
+{"ts":"2026-10-01T19:25:28.514Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"builder","model":null,"where":"worktree","desc":"Queue dependency gate","allowed":true}
+{"ts":"2026-10-01T19:26:47.563Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":null,"where":"worktree","desc":"Design fixes: source viewer","allowed":true}
+{"ts":"2026-10-01T19:29:18.095Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T19:30:28.810Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"checker","model":null,"where":"worktree","desc":"Check queue repair 2","allowed":true}

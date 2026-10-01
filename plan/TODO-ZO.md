@@ -1,16 +1,14 @@
 # Zo's to-do (Ashbridge Returns)
 
-The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number. Answered items are deleted at once; the numbers below are today's only (earlier answers are recorded in decisions 0010 to 0012). Chats say only one line; everything they need from you is here. If you do not answer, they keep going on other work. What each chat does: `README.md` in this folder.
+The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number. Answered items are deleted at once; the numbers below are today's only (earlier answers are recorded in decisions 0010 to 0015; only big questions come here). Chats say only one line; everything they need from you is here. If you do not answer, they keep going on other work. What each chat does: `README.md` in this folder.
 
 ## 1. Needs you now
 
-**1. How preparers write adjusting entries in QBO (1 minute).**
-- What: for the trace, every adjusting entry in QBO needs its type, reason and source in the memo. Proposed: `AJE <type>: <reason> | source: <document or note>`, for example `AJE accrual: December rent unpaid | source: lease p.2`. Types: reclass, accrual, allocation, estimate, correction.
-- Reply `1 ok` or give the wording you want. Meanwhile the cards use this format.
+Nothing right now. The Lead has handed over: clear it and type `go` in a fresh Lead chat when convenient; it resumes from `plan\NOW.md`.
 
-**Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before.
+**Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
 
-**What the Lead is doing now:** the walker is back in your Chrome (thank you): Taxprep first, then the QuickBooks test company, then the .GFI on "Probe Co. (Test)" in QBO Accountant (it stops at any billing or subscription screen and never opens a real client). Please keep the window visible; day 1 is saved in `reference\taxprep\`. Cloud workers are writing the tests for the first cards; the empty app (F00) gets one fix round after its check. The three screen designs are in their fix round and the source viewer is being designed, for your first sitting about 3 Oct.
+**What the Lead is doing now:** handing over. Done today: the Taxprep round trip works (13 of 13 cells came back identical) and most open questions are answered (`reference\taxprep\FINDINGS.md`); the QuickBooks test company shows which report carries the transaction ids; all phase 0 and phase 1 cards are written and reviewed; the job queue is repaired; four screen families are in their fix round for your first sitting about 3 Oct. Next: the .GFI on "Probe Co. (Test)" in your QBO Accountant (you signed in, thank you), trial day 3 onward, and the empty app (F00) through its last fix round.
 
 ## 2. Coming up (no action yet)
 
@@ -33,7 +31,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 | Phase | What gets built | The gate you can see | Status and next step |
 |---|---|---|---|
-| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Sample clients done. Trial day 1 done (release recorded, four test returns, export format); day 2 running. Build system repaired; the empty app is in its first fix round. |
+| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Round trip proven on a test company (13 of 13 cells identical); trial days 3 to 7 left (ends about 16 Oct); QuickBooks test company checked; the empty app in its last fix round. |
 | 1 Evidence and the source viewer | Documents and QuickBooks read into facts with their sources; the source viewer; an early slice of the CPA review | 10 test files fully traced to source | Cards written; three screen designs and the source viewer in progress for your sitting about 3 Oct. |
 | 2 Return build, lock and trace | The Taxprep import file; the lock export; the trace (orphans, overrides, the cite button); every version saved | A simple T2 built with few hand-typed cells | After phase 1. |
 | 3 Checks and the CPA review screen | Ties, reconciliations, flags; the AI checklist and red team through the Claude project; the brief; the full review with marks | You review 20 test files end to end in the screen | After phase 2. |

@@ -1,49 +1,43 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, afternoon (the Lead, wave 1 running locally).
+True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, evening, by the Lead at handover (Zo's `handover`).
 
 ## State
 
-- **Mode: turbo** since 1 Oct, "until I say off" (decision 0009). Automatic wind-down Fri 9 Oct 18:00 Toronto unless Zo removes it. Weekly usage reset on 1 Oct; cloud credit about $230.
-- **Cloud first:** workers run in cloud sessions the Lead starts; the laptop runs the Lead plus at most 1 local worker (Zo works on it too). Sonnet 5.5 by default; Opus 5.5 for the Lead, core specs and adversarial checks, findings reviews and cold sign-offs (CLAUDE.md).
-- **The plan:** decisions 0008 (Zo's answers) and 0009 (how turbo runs); the plain end state v1.1 (blueprint/README.md). Zo's phases: 0 prove reality; 1 evidence and the source viewer; 2 return build, lock and trace; 3 checks and the CPA review; 4 learning list and sign-off.
-- **Ready before turbo:** research (reference/research/INDEX.md); ten sample clients (reference/sample-clients/, 236 checks pass); the trial plan (plan/taxprep-trial-plan.md); helper roles in .claude/agents (findings-reviewer, signoff, value, design-researcher, designer, researcher, research-checker; the tester has a panel mode).
-- **Zo:** the Chrome test profile "Ashbridge Test" is made; the Auto-fill corporation is chosen; tell him in the to-do when to start the trial and when to open the profile for the walker. He reads only the to-do; chat is one line.
-- **The watcher:** a separate chat may send `handover` when the Lead's context passes its threshold. Answer by CLAUDE.md loop step 9.
+- **Mode: turbo** since 1 Oct (decision 0009). Wind-down Fri 9 Oct 18:00 Toronto. Plan use at 19:32Z: 5h 35%, week 9%.
+- **Cloud workers:** fire the routine trig_01MWQ7hW5yecn8VaiMTq1xbp with RemoteTrigger `run` (decision 0010: one-off runs, never a schedule). Its prompt only points at `.claude/cloud-worker-run.md`: edit that file, not the routine. Runs cannot notify the Lead: poll `list_runs` and `node tools/claim.mjs list` (ScheduleWakeup about 30 min). Keep at most 3 runs until F00 lands through a train and a cold sign-off covers the repairs and the rehearsal.
+- **Zo:** reads only the to-do; no small questions (decision 0014, in CLAUDE.md). Decisions 0010 to 0014 hold today's answers. CPA check of the 32 tax rules done ("cpa ok", 0012).
+- **Phases:** 0 and 1 fully carded and independently reviewed; phase 2 cards wait for the trial findings (now interim in `reference/taxprep/FINDINGS.md`).
 
-## In flight
-
-Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger run; decision 0010: one-off runs only, never a schedule). Light document helpers may still run locally.
+## In flight (background helpers of the old session may still finish; read their branches)
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Taxprep trial day 1b and day 2 (re-sent; window visible, decision 0013) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
-| queue: F00 build reopened (fix round 1, spec reported); specs reported for F01, F03 (parked), F04, F05; D01 spec next | 2 cloud runs cse_017hMiW9j3fVnNJe2RGaGGDD, cse_01LqmYtxUesTx2VN94G1rGxG | cloud | 1 Oct 18:15Z | claude/F00 and others |
-| phase 1 cards batch c (the rest of phase 1: E01, B cards, ...) | Opus drafter | local | 1 Oct | claude/cards-phase1c |
-| design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
-| design versions: source viewer (D03) | designer | local | 1 Oct | claude/design-source-viewer |
+| F00 fix round 2 build (spec reported; build reopened) + W14/D01 specs | 2 cloud runs | cloud | 1 Oct 19:40Z | claude/F00 |
+| queue repair 2 (dep gate, spec reopen): built 23 of 23; check running | checker (local) | local | 1 Oct | claude/queue-repair-2 |
+| design fix round: cpa-review V1 | designer | local | 1 Oct | claude/design-cpa-review-2 |
+| design fix round: source viewer D03 | designer | local | 1 Oct | claude/design-source-viewer-2 |
 
-Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
+Done and on branches, not yet re-tested: claude/design-queues-record-2, claude/design-workbench-2 (fix rounds applied, check numbers in their reports).
 
 ## Next, in order
 
-1. Research done for now (four pairs reconciled, clauses applied). Next research only as cards need it.
-2. Phase 0 cards written and reviewed (A81 to A92). The rehearsal runs on F00 locally: build, then a check by a different worker, then a local train. Next cards to write: F06, W20, A02 to A05 (phase 1), and a card for where the real pipeline is wired (review-phase0 asks).
-3. Queue repairs landed (P04 done).
-4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
-5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Draft import CSVs are on main; cell ids from day 1 replace the guesses.
-6. Rehearsal running in the cloud (F00). Learned so far: claim.mjs hands out specs and builds whose deps are not built (needs a dep gate: queue repair 2, with F08); claim.mjs cannot reopen a spec (the Lead set F00 spec to null in slices.json and released the old spec claim instead); a cloud worker sent Zo a push notification (routine prompt now forbids it). Widen past 3 cloud runs only after F00 lands through a train and the cold sign-off on the repairs and rehearsal.
+1. Trial day 3 landed partial (610666f). Not done: dividend designation (S3/S53), Schedule 23 on the Eglinton pair, Eglinton diagnostics, "Track changes" export, print "More options", whether diagnostics print. The iFirm tab group vanished mid-run: next walker re-establishes it (to-do item if it cannot). Fold these into day 4 planning (item 6).
+2. Queue repair 2: read `reports/queue-repair-2-check.md` on its branch; PASS: local train (skill merge; node_modules junction into `.claude/worktrees/train`, `node tools/heavy.mjs -- npx vitest run tools/test`), land, delete branches. FAIL: findings review first.
+3. F00: when its round 2 spec is reported, `node tools/claim.mjs update F00 build reopened --worker lead`, fire a cloud run. Then check by a different worker, then a train in the cloud. F00 landing ends the rehearsal; then a cold sign-off (signoff.md) on the queue repairs and the rehearsal, then widen to 6 runs.
+4. Re-specs: F03 and S00 were re-carded from the trial (any earlier spec void). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 being done (the dep gate).
+5. .GFI: Zo signed in to QBO Accountant in the "Ashbridge Test" Chrome ("1: signed in and dropped in your session"; record as decision 0015). Run the .GFI walker with decision 0013's limits (open the Accountant view, add "Probe Co. (Test)", five made-up accounts, Workpapers, save .GFI, delete the client; stop at any billing or subscription screen; never open a real client). Write `reference/qbo/gfi-file.md`; then card B01 can be specced.
+6. Trial: after day 3, an Opus helper reads the captures and writes day 4 (Auto-fill, Zo only: tell him the day before in the to-do), day 5 (all ten companies), day 6 (changes after lock, check export). Open: Q23 token cell (ask nothing; FINDINGS.md lists the fallback); part A (rest of the 395 forms). Trial ends about 16 Oct.
+7. Designs: re-test only the changed tasks on the four families (tester panel mode), then the sitting page for Zo (Artifact, private) with the six questions in reports/findings-designs.md (d), about 3 Oct. Cards D00 (basis) and D01 (map) are next design work.
+8. Phase 2 cards from FINDINGS.md (M00 has no card file yet; its slices.json note says what it must hold), then an independent phase 2 review.
 
 ## Watch out
 
-- The trial ends about 16 Oct (15 days left on 1 Oct; 100 PDFs left). Release CCH iFirm 2026.20.198267. The trial lasts until then: nothing starts on it until the to-do says ready. Real Auto-fill data: structure only, never values (decision 0008, Z8-7).
-- Chrome: only the "Ashbridge Test" profile. QBO: Intuit developer sandbox companies only, never the firm's real client list.
-- No routines, no schedules (until Zo answers to-do #1). Ask Zo in the to-do for anything only he can do; if he does not answer, keep going on everything else.
-- Findings review before every fix round; cold sign-off for big chunks only.
-- The main checkout stays on main; train work in .claude/worktrees/train. The push guard lets only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ go straight to main.
-- Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B`. For plan/slices.json the branch copy replaces main's, so re-apply any Lead edit made on main after the branch started (F03 parked was lost once).
-- Cloud worker names: the first two runs both called themselves cloud-vm (same hostname); the routine prompt now uses a random id. Watch for the two cloud-vm runs blocking each other.
-- Next in Chrome, one at a time and only with the window visible (to-do #1): the trial walker (day 1b, then day 2), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI from QBO Accountant on "Probe Co. (Test)" (decision 0013, with its limits).
-- Only one helper drives Chrome at a time: two walkers shared the tab group on 1 Oct and one tab was taken over.
-- Edit files with the Edit tool, not shell scripts with escapes (Git Bash mangles backslashes).
-- Another Lead works in ashbridge-app: read-only there, always. GitHub Actions: 2,000 free minutes a month: keep branch checks lean.
+- Only the "Ashbridge Test" Chrome, one helper at a time, window on screen. If the extension drops it may reconnect to Zo's other Chrome: run `switch_browser` so Zo picks it. iFirm stops drawing when hidden; QuickBooks does not. Imports through the file picker only (a JS-staged import was blocked). Downloads land in `C:\Users\User\Downloads`; walkers copy only their own files to `C:\Users\User\Documents\taxprep-trial\inbox`.
+- Taking a helper branch: only the files in `git diff --name-only $(git merge-base main B) B`; for plan/slices.json use `git merge-file` (ours, base, theirs) so the Lead's edits on main survive.
+- Always `git add plan/ledger.jsonl` before `git pull --rebase` (the budget hook writes it). Cloud workers sometimes push reports straight to main: pull before pushing.
+- Findings review before every fix round; aim for two rounds. Cold sign-off for big chunks only.
+- RemoteTrigger `run` answers are large: fire runs only when jobs wait.
+- The push guard lets only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ go straight to main. Code only through a green train.
+- Another Lead works in ashbridge-app (it messaged once; told it the repos are separate). Read-only there.
+- Edit files with the Edit tool for anything with backslashes; Python heredocs mangle `\U` and `\t`.
