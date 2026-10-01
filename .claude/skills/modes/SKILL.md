@@ -5,67 +5,57 @@ description: The build's usage modes (pause, prep, normal, turbo, wind-down) - w
 
 # Modes
 
-`plan/mode.json` holds the mode:
-`{"mode":"prep","resume_to":null,"set_by":"...","set_at":"...","why":"...","wind_down_at":"2026-10-09T18:00:00-04:00","heavy_slots":1,"max_workers":12}`
+`plan/mode.json` holds the mode: `{"mode", "resume_to", "set_by", "set_at", "why", "wind_down_at", "heavy_slots", "max_workers", "local_workers"}`.
 
 ## Zo's codes (typed in the Lead chat)
 | Zo types | The Lead sets | Notes |
 |---|---|---|
-| `turbo on` | turbo | The only way usage goes all out (decision 0007, Z-5). |
+| `turbo on` | turbo | The only way usage goes all out. On since 1 Oct 2026 (decision 0009). |
 | `turbo off` | normal | |
-| `pause` | pause | Nothing new starts; in-flight jobs finish. |
+| `pause` | pause | Nothing new starts; in-flight jobs finish. Not used for clearing the Lead (that is `handover`). |
 | `go` | restores `resume_to` after a limit pause; otherwise just runs the loop | |
-| `blueprint ok` (first time) | normal | Prep ends when the blueprint is approved and F00 is merged. |
 
-The Lead lowers the mode by itself only: a usage limit (to pause, `resume_to` = what was running), a Reviewer SLOW (one step down) or HOLD (pause), or `wind_down_at` passing (wind-down). Every change: rewrite mode.json (who, when, why), commit and push it (workers read it from main), and one line in TODO-ZO section 1 "What the Lead is doing now".
+The Lead lowers the mode by itself only: a usage limit (to pause, `resume_to` = what was running), a Reviewer SLOW (one step down) or HOLD (pause), or `wind_down_at` passing (wind-down). Every change: rewrite mode.json (who, when, why), commit and push it, one line in TODO-ZO "What the Lead is doing now".
 
 ## What each mode allows
 | | pause | prep | normal | turbo | wind-down |
 |---|---|---|---|---|---|
-| For | nothing new | blueprint, cards, specs, designs | an everyday build | all out | land what is in flight |
+| For | nothing new | cards, specs, designs | an everyday build | all out | land what is in flight |
 | Lead dispatches a day (hook) | 0 | 15 | 40 | no cap | no cap |
-| Queue jobs at once (claim.mjs) | 0 | 2, specs only | 2 | `max_workers` (12, up to 20) | checks only |
-| Local workers | 0 | 1 | 1 | 4 to 6 | finish only |
-| Cloud workers (routines) | 0 | 0 | 1 | 6 to 12, started 2 min apart | none new |
-| Extra cloud sessions Zo opens with `work` | refused | specs only | counted in the cap | welcome | refused |
-| Models | | opus for specs and designs | sonnet builders, opus for `hard` cards and specs | opus everywhere | as started |
+| Queue jobs at once (claim.mjs) | 0 | 2, specs only | 2 | `max_workers` (12) | checks only |
+| Local workers (laptop) | 0 | 1 | 1 | `local_workers` (1): Zo uses the laptop too | finish only |
+| Cloud workers | 0 | 0 | 1 | start 2 for the rehearsal, then 6, add 2 while first passes and green trains hold, 12 at most | none new |
+| Models | | Opus for specs and designs | Sonnet workers, Opus where CLAUDE.md says | same as normal | as started |
 | Lead wake-up | | 60 min | 30 min | 15 to 20 min | 30 min |
-| Reviewer routine | | on `review` | daily | every 12 hours | one final |
 | Train run (full suite and journeys in the cloud) | | | every 3 green cards | every 6 green cards or hourly | final |
-| heavy_slots (laptop) | | 1 | 1 | 2 | 1 |
+| heavy_slots (laptop) | | 1 | 1 | 1 | 1 |
 
-## Before the first turbo: the rehearsal (in prep, after "blueprint ok")
-Run the whole loop once on one small real card with nobody at the keyboard: a local worker and one cloud worker (routine) each take a job; spec, build and check by three different workers; the card boards a train; a cloud train run; landing on main; worktree removal; the Reviewer routine once. Every permission prompt or failure it meets is fixed (usually in `.claude/settings.json`) and the rehearsal repeated until it runs clean. Record the result in NOW.md. Turbo does not start until the rehearsal is clean.
-
-## Turbo, step by step (only after Zo types `turbo on`)
-1. Set mode turbo, push mode.json.
-2. First time only: create the worker routines if they do not exist (skill `dispatch`, "Cloud workers"), then fire one and wait for it to claim a job, to prove the path.
-3. Fire the cloud workers 2 minutes apart; dispatch the local workers.
-4. Every wake-up: re-fire any routine whose run ended while the queue still has jobs; merge green cards into the train; start a train run when due; keep 10 or more spec'd cards ahead (if fewer, point local workers at spec jobs with `--roles spec`).
-5. Add workers while fewer than 1 in 5 merges conflict and train runs stay green; drop back when either fails.
-6. Pacing: if `plan/usage-now.json` shows the week's use behind the pace needed to use it all before the reset, add workers. Never throttle below this table to save usage in turbo: Zo wants it used.
-7. Quality never drops: spec before build, independent check, green train before main (decision 0004, M-6).
+## Turbo, step by step
+1. Mode turbo is set (decision 0009). Streams that need no queue start at once, as cloud sessions: research pairs, design research, trial preparation, test-world growth from `reference/sample-clients/`.
+2. Queue repairs land first (NOW.md), then the rehearsal at small width: two cloud workers each take a job, spec, build and check by three different workers, a train, landing on main, worktree removal. Fix every prompt in `.claude/settings.json`. A cold sign-off (CLAUDE.md loop 7) before widening.
+3. Every wake-up: re-fire any cloud worker whose session ended while the queue has jobs; board green cards; run the train when due; keep 10 or more spec'd cards ahead.
+4. Add workers while fewer than 1 in 5 merges conflict, first-pass checks stay above half, and trains stay green; drop back when any fails.
+5. Never throttle to save usage in turbo, and never spend it on waiting, polling or re-reading: Zo wants it used on real work.
+6. Quality never drops: spec before build, independent check, findings review before a fix round, green train before main.
 
 ## When a limit stops work
-- Anthropic's docs: an interactive session can wait and continue after the reset; subagents do not resume by themselves; cloud sessions stop and new ones cannot start until the reset.
-- First sign (a usage-limit message from a helper or a tool): rewrite NOW.md with every job in flight, set mode pause with `resume_to`, stop dispatching.
-- On resume (automatic, or Zo's `go`): restore `resume_to`; `node tools/claim.mjs list`; release claims older than 90 minutes with no new commits, so their jobs go back in the queue; re-fire workers.
+- An interactive session can wait and continue after the reset; helpers do not resume by themselves; cloud sessions stop and new ones cannot start until the reset.
+- First sign: rewrite NOW.md with every job in flight, set mode pause with `resume_to`, stop dispatching.
+- On resume (Zo's `go`): restore `resume_to`; `node tools/claim.mjs list`; release claims older than 90 minutes with no new commits; re-fire workers.
 
-## Calendar (October 2026; Zo wrote "September 10", read as 10 October: amber A9)
-- To Wed 30 Sep: prep. Blueprint approved; F00 merged; the spine's specs written; designs drafted.
-- Thu 1 Oct: weekly reset. Turbo only when Zo types `turbo on`.
-- When that allowance runs out: automatic pause. Zo uses his one extra reset, then types `go`.
-- Thu 8 Oct: weekly reset. The session continues, or Zo types `go`.
-- Fri 9 Oct 18:00 Toronto: automatic wind-down: checks and merges only, a final train run, a final review, the handover in NOW.md.
-- Sat 10 Oct: the plan ends. Main holds only finished, tested work.
+## Calendar (October 2026)
+- Thu 1 Oct: weekly reset; turbo on.
+- When that allowance runs out: automatic pause. Zo uses his one saved reset (Settings, Usage, on the web or desktop), then types `go`.
+- Thu 8 Oct: weekly reset; `go`.
+- Fri 9 Oct 18:00 Toronto: automatic wind-down (checks and merges only, a final train, a final review, the handover in NOW.md), unless Zo removes it.
+- Sat 10 Oct: the plan ends; after that, a slower pace.
 
-## Which pool pays (decision 0007, Z-9)
-Cloud sessions and routines spend the cloud credit first ($240 on 28 Sep, expires 5 Nov), then plan usage. Local sessions and helpers spend plan usage. In turbo both run full. Record in NOW.md what stopped work each time (plan limit, credit, or both).
+## Which pool pays
+Cloud sessions spend the cloud credit first (about $230 on 1 Oct, ending 4 Nov at midnight Pacific), then plan usage. Local sessions spend plan usage. Record in NOW.md what stopped work each time.
 
 ## Waste to avoid in every mode
-- A build started with no spec (rework loops).
-- The Lead reading code or long logs (read reports and `tools/` output).
-- Helpers waiting in the foreground, or polling faster than the wake-up.
+- A build started with no spec; a fix round started with no findings review.
+- The Lead reading code or long logs; helpers waiting in the foreground or polling faster than the wake-up.
+- A research helper past 60 tool calls; a web page read whole instead of through a summarizer.
 - A card on its fourth round (the queue stops at three; the Lead parks or re-cards it).
-- Reading the blueprint whole: only the files a card names.
-- A cloud run of the full suite for every single card (use the train).
+- Reading the blueprint whole: only the files a card names. A cloud run of the full suite for every single card (use the train).

@@ -6,14 +6,15 @@ Your daily file is `plan\TODO-ZO.md`. This README explains how the system works 
 
 ## Your chats (no chat runs by itself)
 
-Open each in the Claude desktop app: Code, New session, folder `ashbridge-returns`. Type the first word shown. You can clear any chat at any time: everything lives in files.
+Open each in the Claude desktop app: Code, New session, folder `ashbridge-returns` (the watcher uses its own folder). Type the first word shown. You can clear any chat at any time: everything lives in files. Chats answer in one line only; what they need from you is in the to-do.
 
 | Chat | How often | What you type | What it does |
 |---|---|---|---|
-| **Lead** | Every morning; also evenings in turbo | `go` | Runs the build: plans the next cards, starts helpers, merges checked work, keeps your to-do current. Ends with one of four fixed lines. |
-| **Critic** | About every two days | `critic` | Asks whether the plan is still right and practical, and whether the build system is working. Proposes at most three changes; each waits for your yes in the to-do. |
-| **Reviewer** | Daily in turbo; every two or three days otherwise | `review` | Checks that what was built matches the plan, that tests are real and usage is not wasted. It can slow or stop the build, never speed it up. |
-| **Workers** | Only in turbo | `work` (in a cloud session) | Each takes jobs from the queue: writes tests, builds, or checks. They stop by themselves when the queue is empty. |
+| **Lead** (Opus 5.5) | Runs all the time in turbo; otherwise every morning | `go` | Runs the build: plans the next cards, starts cloud workers and helpers, merges checked work, keeps your to-do current. |
+| **Watcher** (Sonnet 5.5) | Overnight and when you are away | see `toDelete\lead-watcher-prompt.md` | Checks the Lead's context and, when it is full, has the Lead save everything, clears it and starts it again. |
+| **Reviewer** (Opus 5.5) | Daily in turbo; every two or three days otherwise | `review` | Checks that what was built matches the plan, that tests are real and usage is not wasted. It can slow or stop the build, never speed it up. |
+| **Critic** (Opus 5.5) | About every two days | `critic` | Asks whether the plan is still right and practical, and whether the build system is working. Proposes at most three changes; each waits for your yes in the to-do. |
+| **Workers** (Sonnet 5.5) | Only in turbo | nothing: the Lead starts them in cloud sessions (you may open more and type `work`) | Each takes jobs from the queue: writes tests, builds, or checks. They stop by themselves when the queue is empty. |
 
 ## Your codes (type them in the Lead chat)
 
@@ -22,6 +23,7 @@ Open each in the Claude desktop app: Code, New session, folder `ashbridge-return
 | `go` | The Lead carries on from where things stand. |
 | `turbo on` / `turbo off` | Turns the all-out mode on or off. Only you can switch it on. |
 | `pause` | Nothing new starts; what is running finishes. |
+| `handover` | The Lead saves everything and says `Handover done. Clear me.` The watcher uses it before a clear; you rarely need it. |
 | `critic ok`, `critic ok 1 3`, `critic no 2` | Approves all, some or none of the Critic's latest proposals. |
 | `amber ok`, `amber reverse A7` | Accepts or undoes the Lead's small calls in `plan\AMBER.md`. Nothing waits on these. |
 | A to-do number and your answer, for example `2 own company` | Answers that item. |
@@ -35,6 +37,8 @@ The desktop app does not reliably list cloud chats. They are all at **claude.ai/
 - **Five phases, each ending in a gate you can see:** 0 prove reality (the Taxprep trial and QBO test companies); 1 evidence and the source viewer (10 test files traced to source); 2 the return build and lock-and-trace (a simple T2 with few typed cells); 3 checks and the CPA review screen (you review 20 test files in the screen); 4 the learning list and client sign-off.
 - **Before anything is built:** the Value helper asks who uses it, how often and what it replaces; design research finds how the best tools handle the task; designers make two or three clickable versions with made-up data; the usability panel counts clicks and page loads; you pick in a short sitting.
 - **Building:** work is cut into small cards. For each card, one worker writes the tests, a second builds, a third checks; nobody grades their own work. Checked cards land on the main code in tested batches.
+- **When testing finds problems:** before any fix, a fresh Opus reviewer looks at all the findings together, finds their shared causes and where else they can bite, foresees what the fixes could break, and writes one combined fix with new tests. The aim is two rounds, not ten.
+- **Big chunks get a cold sign-off:** each phase, the trial findings and each design batch are signed off by a fresh Opus reviewer with no history before they count as done.
 - **Made-up data only** until go-live, starting with the ten sample clients in `reference\sample-clients\`.
 - **AI inside the product** runs through Claude on your subscription, in its own project with its own rules. Code checks every AI claim, and AI never approves anything.
 
@@ -53,7 +57,7 @@ The desktop app does not reliably list cloud chats. They are all at **claude.ai/
 
 ## The laptop
 
-Keep it plugged in and never sleeping during turbo; it runs every night. It carries the Lead and at most three local workers: nine workers once used 20 GB and made pages take 30 to 45 seconds. Heavier work runs in the cloud.
+Keep it plugged in and never sleeping during turbo; it runs every night. It carries the Lead, the watcher and at most one local worker, so it stays free for your other work (nine workers once used 20 GB and made pages take 30 to 45 seconds). Everything else runs in cloud sessions, paid first from the cloud credit.
 
 ## Adding a role or a rule
 
@@ -73,7 +77,7 @@ A new role is one orders file, one row in the roles table in `CLAUDE.md`, and a 
 | Your to-do (the file you read) | `plan\TODO-ZO.md` |
 | What the finished system does | `blueprint\README.md`, first section |
 | What is happening right now | `plan\NOW.md` |
-| Your decisions | `decisions\` (the latest: 0008, your answers of 29 Sep) |
+| Your decisions | `decisions\` (the latest: 0009, how turbo runs, 1 Oct; 0008, your answers of 29 Sep) |
 | The Taxprep trial week | `plan\taxprep-trial-plan.md` |
 | The sample clients | `reference\sample-clients\` |
 | Research | `reference\research\INDEX.md` |

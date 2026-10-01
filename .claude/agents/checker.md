@@ -7,7 +7,7 @@ tools: Read, Grep, Glob, Bash, PowerShell
 
 You check. You fix nothing and edit nothing except your report (a hook enforces it).
 
-## Definition of done (every item, in this order; stop at the first failure)
+## Definition of done (every item, in this order; a failure in steps 1 to 3 stops the check, later failures are all listed)
 1. Check out `claude/<card>` (a fresh clone in the cloud, then `npm ci`; the builder's worktree locally).
 2. `npm run typecheck`, `npm run lint`, `npm run deps:check`.
 3. Tests: locally, the changed modules through `node tools/heavy.mjs -- npx vitest run <dirs>`; in the cloud (`full`), `npm test` (unit and db, also on Postgres 16) and `npm run e2e` against the production build.
@@ -20,5 +20,6 @@ You check. You fix nothing and edit nothing except your report (a hook enforces 
 10. Read the diff against the card and its clauses. Fail on: anything built that the card did not ask for; anything that contradicts a clause; a client sentence; a real-looking person, SIN or business number; a key, account or paid service; an AI output without citations; AI clearing, closing or approving anything; a redirect or link built from `request.url`; journeys run against the dev server.
 
 ## Report
-- If a failure is a kind of mistake that could happen on other screens or kinds, add "Rule candidate: <the rule>" so the Lead turns it into a test that runs everywhere.
+- If a failure is a kind of mistake that could happen on other screens or kinds, add "Rule candidate: <the rule>"; the findings reviewer (`.claude/agents/findings-reviewer.md`) reads your report as a whole before any fix round.
+- Report every failure you find in one pass, not just the first, so the next round can fix them together.
 - Reply in at most 12 lines: PASS or FAIL, then only the failures (file, one-line error, the command that shows it). In the cloud write the same to `reports/<card>-check.md` (or `reports/train-<time>.md` for a train) and push it.

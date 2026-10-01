@@ -1,10 +1,11 @@
 {
-  "mode": "prep",
+  "mode": "turbo",
   "resume_to": null,
-  "set_by": "Lead (initial setup)",
-  "set_at": "2026-09-28",
-  "why": "Setup and prep only. Blueprint, cards, specs and designs before 1 Oct. Turbo only on Zo's code \"turbo on\" (decision 0007).",
+  "set_by": "Zo, 1 Oct 2026: \"turbo should be on until I say off\" (decision 0009)",
+  "set_at": "2026-10-01",
+  "why": "Weekly reset on 1 Oct. Cloud first: the laptop runs the Lead plus at most one local worker. First the queue repairs and a rehearsal at small width; streams that do not need the queue (research, design research, trial preparation) start at once.",
   "wind_down_at": "2026-10-09T18:00:00-04:00",
   "heavy_slots": 1,
-  "max_workers": 12
+  "max_workers": 12,
+  "local_workers": 1
 }
