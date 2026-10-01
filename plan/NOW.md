@@ -20,7 +20,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (its pro
 | Trial findings into FINDINGS.md and the RT, TB, EV clauses; F03 re-spec | Opus drafter | local | 1 Oct | claude/trial-findings-1 |
 | Taxprep trial day 3 (tax choices, diagnostics, print) | Sonnet walker, Chrome | local | 1 Oct | reference/taxprep/2026-10-03-day3/ |
 | queue: F00 fix round 2 spec released for a worker (toolchain rule tests, mutation canary); when reported, `node tools/claim.mjs update F00 build reopened --worker lead`. Other specs wait for queue repair 2 | 1 cloud run cse_018WDCuJ7pXckYvBAXDdE6D6 | cloud | 1 Oct | claude/F00 |
-| queue repair 2: dependency gate, spec reopen | builder (local, the one) | local | 1 Oct | claude/queue-repair-2 |
+| queue repair 2: built (23 of 23 tests); check by a different worker | checker (local) | local | 1 Oct | claude/queue-repair-2 |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | design fix round: source viewer (D03) | designer | local | 1 Oct | claude/design-source-viewer-2 |
 
