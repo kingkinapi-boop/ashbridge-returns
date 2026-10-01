@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-CA" class="govuk-template">
+<head>
+<meta charset="utf-8">
+<title>Assign returns - Ashbridge Tax</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../_shared/govuk.css">
+<link rel="stylesheet" href="../_shared/moj.css">
+<link rel="stylesheet" href="../_shared/app.css">
+
+</head>
+<body class="govuk-template__body ">
+<script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+<a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+<header class="govuk-header" data-module="govuk-header">
+<div class="govuk-header__container govuk-width-container">
+<div class="govuk-header__logo"><a class="govuk-header__link app-logo" href="index.html" aria-label="Ashbridge Tax, home of this prototype"><svg class="app-logo__mark" aria-hidden="true" focusable="false" width="34" height="34" viewBox="0 0 34 34"><rect width="34" height="34" rx="4" fill="#fff"/><path d="M6 27 L17 7 L28 27 Z" fill="none" stroke="#355b7d" stroke-width="3"/><path d="M10 27 H24" stroke="#355b7d" stroke-width="3"/></svg><span class="app-logo__name">Ashbridge Tax</span></a></div>
+</div></header>
+<section aria-label="Service information" class="govuk-service-navigation" data-module="govuk-service-navigation">
+<div class="govuk-width-container"><div class="govuk-service-navigation__container">
+<span class="govuk-service-navigation__service-name"><span class="govuk-service-navigation__text">Staff returns</span></span>
+<nav aria-label="Menu" class="govuk-service-navigation__wrapper"><ul class="govuk-service-navigation__list"><li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="queue-preparer.html">My work</a></li><li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="queue-cpa.html">CPA review</a></li><li class="govuk-service-navigation__item govuk-service-navigation__item--active"><a class="govuk-service-navigation__link" href="queue-ops.html" aria-current="true"><strong class="govuk-service-navigation__active-fallback">Ops</strong></a></li><li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="board.html">Board</a></li><li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="index.html">Sign out</a></li></ul></nav>
+</div></div></section>
+<div class="govuk-width-container app-search-row">
+<form class="app-search" role="search" action="search-no-match.html" data-app-search>
+<label class="govuk-label govuk-!-display-inline-block govuk-!-margin-right-2 govuk-!-margin-bottom-0" for="header-search">Find a return</label>
+<input class="govuk-input app-search__input" id="header-search" name="q" type="search" autocomplete="off" aria-keyshortcuts="/" aria-describedby="header-search-hint">
+<button class="govuk-button govuk-button--secondary app-search__button govuk-!-margin-bottom-0" type="submit">Search</button>
+<span id="header-search-hint" class="govuk-hint govuk-!-margin-bottom-0 govuk-!-margin-left-2">Name, business number or year end. Enter opens the top match.</span>
+</form></div>
+<div class="govuk-width-container">
+<main class="govuk-main-wrapper govuk-!-padding-top-4" id="main-content" role="main">
+<h1 class="govuk-heading-xl">Assign returns</h1><form action="queue-ops-assign-error.html" data-assign-page><fieldset class="govuk-fieldset"><legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Returns to assign</legend><div class="govuk-checkboxes govuk-checkboxes--small"><div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="a-riverdale-rentals" type="checkbox"><label class="govuk-label govuk-checkboxes__label" for="a-riverdale-rentals">Riverdale Rentals Inc. (Test), year end 31 Dec 2025, next: Run gate 1, then send T183CORP</label></div><div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="a-queen-west-design" type="checkbox"><label class="govuk-label govuk-checkboxes__label" for="a-queen-west-design">Queen West Design Studio Inc. (Test), year end 30 Sep 2025, next: Save the notice of assessment</label></div><div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="a-scarborough-robotics" type="checkbox"><label class="govuk-label govuk-checkboxes__label" for="a-scarborough-robotics">Scarborough Robotics Labs Inc. (Test), year end 31 Dec 2025, next: Enter the confirmation number</label></div></div></fieldset><div class="govuk-form-group govuk-!-margin-top-4"><label class="govuk-label" for="assign-to">Assign to</label><select class="govuk-select" id="assign-to" name="who"><option value="">Choose a person</option><option>Priti Shah (Test)</option><option>Ben Ortiz (Test)</option></select></div><button class="govuk-button" type="submit">Assign</button></form>
+</main>
+</div>
+<footer class="govuk-footer"><div class="govuk-width-container">
+<details class="govuk-details app-shortcuts"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">Keyboard shortcuts</span></summary><div class="govuk-details__text">
+<table class="govuk-table"><caption class="govuk-table__caption govuk-visually-hidden">Keyboard shortcuts</caption><thead class="govuk-table__head"><tr class="govuk-table__row"><th scope="col" class="govuk-table__header">Key</th><th scope="col" class="govuk-table__header">Does</th></tr></thead><tbody class="govuk-table__body"><tr class="govuk-table__row"><td class="govuk-table__cell"><kbd>/</kbd></td><td class="govuk-table__cell">Focus the search box</td></tr></tbody></table>
+<div class="govuk-checkboxes govuk-checkboxes--small"><div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="shortcuts-off" type="checkbox" data-shortcuts-off><label class="govuk-label govuk-checkboxes__label" for="shortcuts-off">Turn off single-key shortcuts</label></div></div>
+</div></details>
+<span class="govuk-footer__meta-item">Ashbridge Tax staff prototype. Made-up data only, every name ends (Test). Pinned date: Monday 8 Jun 2026.</span>
+</div></footer>
+<script>window.APP_RETURNS=[{"n":"Maple Ridge Consulting Inc. (Test)","b":"983056423","y":"31 Dec 2025","h":"rec-maple-ridge-overview.html"},{"n":"Halton Haulage Ltd. (Test)","b":"779886143","y":"31 Mar 2026","h":"rec-halton-haulage-overview.html"},{"n":"Bluewater Renovations Inc. (Test)","b":"413840162","y":"30 Jun 2025","h":"rec-bluewater-renovations-overview.html"},{"n":"Lakeshore Eats Inc. (Test)","b":"565724300","y":"31 Dec 2025","h":"rec-lakeshore-eats-overview.html"},{"n":"Eglinton Holdings Inc. (Test)","b":"290325330","y":"31 Dec 2025","h":"rec-eglinton-holdings-overview.html"},{"n":"Eglinton Retail Ltd. (Test)","b":"332698207","y":"31 Dec 2025","h":"rec-eglinton-retail-overview.html"},{"n":"Riverdale Rentals Inc. (Test)","b":"378085437","y":"31 Dec 2025","h":"rec-riverdale-rentals-overview.html"},{"n":"Queen West Design Studio Inc. (Test)","b":"706169250","y":"30 Sep 2025","h":"rec-queen-west-design-overview.html"},{"n":"Scarborough Robotics Labs Inc. (Test)","b":"603783528","y":"31 Dec 2025","h":"rec-scarborough-robotics-overview.html"},{"n":"Danforth Cleaning Co. Ltd. (Test)","b":"404759750","y":"31 Dec 2025","h":"rec-danforth-cleaning-overview.html"}];</script>
+<script src="../_shared/app.js"></script>
+</body></html>

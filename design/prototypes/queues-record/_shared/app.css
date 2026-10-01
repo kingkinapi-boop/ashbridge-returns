@@ -1,0 +1,88 @@
+/* Ashbridge look, prototype only. In the build this comes from design/basis/settings.scss
+   (GOV.UK Frontend settings: brand, Roboto, functional colours). Here the same values are set as CSS variables.
+   Every app- class below is listed in design/prototypes/queues-record/basis.md with its reason. */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+:root {
+  --govuk-brand-colour: #355b7d;
+  --govuk-link-colour: #355b7d;
+  --govuk-link-hover-colour: #4d7092;
+  --govuk-link-visited-colour: #4a3b72;
+  --govuk-text-colour: #15283b;
+  --govuk-secondary-text-colour: #627283;
+  --govuk-error-colour: #b3413a;
+  --govuk-focus-colour: #f5c94c;
+  --govuk-focus-text-colour: #15283b;
+  --govuk-border-colour: #b6bfc9;
+  --govuk-template-background-colour: #f3f5f8;
+}
+.govuk-template, .govuk-template__body, .govuk-body, .govuk-table, .govuk-label, .govuk-input, .govuk-button, .govuk-heading-xl, .govuk-heading-l, .govuk-heading-m, .govuk-heading-s,
+.govuk-tag, .govuk-hint, .govuk-summary-list, .govuk-service-navigation, .govuk-header, .govuk-details__summary { font-family: Roboto, Arial, sans-serif; }
+.govuk-header { background: #355b7d; border-bottom-color: #15283b; }
+.govuk-header__link, .govuk-header__link:visited { color: #fff; }
+.govuk-main-wrapper { background: transparent; }
+.govuk-width-container { max-width: 1280px; }
+
+/* app-logo: Generic header logo (stand-in mark; the build uses public/brand/ashbridge-tax-logo.png) */
+.app-logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.app-logo__name { font-weight: 700; font-size: 1.5rem; color: #fff; }
+/* app-search-row, app-search: header search (GOV.UK has no site-wide staff search; built from label, input and button) */
+.app-search-row { padding: 10px 0 0; }
+.app-search { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.app-search__input { width: 22rem; max-width: 100%; }
+/* app-filterbar, app-chips, app-chip: inline filter chips with counts; MOJ filter reloads the page, so this is composed */
+.app-filterbar { margin: 0 0 10px; }
+.app-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.app-chip { font: inherit; min-height: 44px; padding: 4px 12px; border: 2px solid #355b7d; background: #fff; color: #15283b; cursor: pointer; border-radius: 0; }
+.app-chip[aria-pressed="true"] { background: #355b7d; color: #fff; box-shadow: inset 0 -4px 0 #f5c94c; }
+.app-chip[aria-pressed="true"] .moj-badge { background: #fff; color: #15283b; }
+.app-chip--clear { border: 0; background: transparent; text-decoration: underline; }
+.app-chip:focus-visible, .app-pipeline a:focus-visible { outline: 3px solid #f5c94c; outline-offset: 0; }
+/* app-pipeline: owner count strip by state in lifecycle order (Option C strip); a table of links, not a chart */
+.app-pipeline { list-style: none; margin: 0 0 20px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.app-pipeline li { margin: 0; }
+.app-pipeline a { display: block; padding: 8px 10px; border: 2px solid #b6bfc9; background: #fff; text-decoration: none; color: #15283b; min-height: 24px; }
+.app-pipeline a:hover { border-color: #355b7d; }
+.app-pipeline a[aria-current="true"] { border-color: #15283b; box-shadow: inset 0 -4px 0 #f5c94c; }
+.app-pipeline__count { display: block; font-size: 1.9rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.app-pipeline__label { display: block; font-weight: 700; }
+.app-pipeline__age { display: block; color: #3f4f60; font-size: .875rem; }
+.app-pipeline__zero { background: #f3f5f8; }
+/* app-bulkbar: appears only when rows are selected (no disabled buttons) */
+.app-bulkbar { background: #fff; border: 2px solid #355b7d; padding: 10px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.app-bulkbar[hidden] { display: none; }
+/* app-split, app-split__list, app-split__pane: Version B list and detail layout */
+.app-split { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; align-items: start; }
+.app-split__list { max-height: 70vh; overflow: auto; background: #fff; border: 1px solid #b6bfc9; }
+.app-split__pane { position: sticky; top: 8px; max-height: 80vh; overflow: auto; background: #fff; border: 1px solid #b6bfc9; padding: 16px; }
+.app-split__list tr[aria-selected="true"] td { background: #e6edf4; box-shadow: inset 4px 0 0 #355b7d; }
+@media (max-width: 48.0575em) { .app-split { grid-template-columns: 1fr; } .app-split__pane { position: static; max-height: none; } }
+/* app-facts: the record header facts, two columns of a summary list */
+.app-facts { background: #fff; border: 1px solid #b6bfc9; padding: 10px 16px 0; margin-bottom: 20px; }
+.app-facts .govuk-summary-list { margin-bottom: 10px; }
+.app-facts .govuk-summary-list__key { width: 40%; }
+/* app-stepper: Version C, lifecycle position in order, a list with words (no dots alone) */
+.app-stepper { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; counter-reset: st; }
+.app-stepper li { padding: 4px 8px; border: 1px solid #b6bfc9; background: #fff; font-size: .875rem; color: #3f4f60; }
+.app-stepper li[aria-current="step"] { border: 2px solid #15283b; color: #15283b; font-weight: 700; box-shadow: inset 0 -4px 0 #f5c94c; }
+.app-stepper .app-stepper__done::before { content: "Done: "; font-weight: 700; }
+/* app-group-head: Version C, state section header on a grouped list */
+.app-group-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 3px solid #355b7d; margin: 24px 0 6px; }
+.app-money { font-variant-numeric: tabular-nums; }
+.app-src { background: #fff; border: 1px solid #b6bfc9; padding: 16px; }
+.app-index li { margin-bottom: 4px; }
+kbd { font-family: ui-monospace, Consolas, monospace; background: #fff; border: 1px solid #b6bfc9; padding: 0 6px; }
+.moj-badge--grey { background: #e4e8ed; color: #15283b; }
+/* sortable header buttons, same as MOJ's output after its script runs */
+[data-app-sortable] th[aria-sort] button { font: inherit; font-weight: 700; background: none; border: 0; padding: 0 14px 0 0; cursor: pointer; color: inherit; text-align: inherit; position: relative; min-height: 24px; }
+[data-app-sortable] th[aria-sort] button::after { content: " \2195"; font-size: .8em; }
+[data-app-sortable] th[aria-sort="ascending"] button::after { content: " \25B2"; }
+[data-app-sortable] th[aria-sort="descending"] button::after { content: " \25BC"; }
+[data-app-sortable] th[aria-sort] button:focus-visible { outline: 3px solid #f5c94c; background: #f5c94c; }
+.govuk-table__cell, .govuk-table__header { padding-top: 8px; padding-bottom: 8px; }
+.app-tablewrap { overflow-x: auto; }
+@media print { .app-search-row { display: none; } }
+
+.moj-identity-bar__container, .moj-identity-bar { padding-left: 0; margin-left: 0; }
+.moj-identity-bar__details { margin-left: 0; padding-left: 0; }
+
+.app-split__list td:first-child, .app-split__list th:first-child { padding-left: 12px; }
