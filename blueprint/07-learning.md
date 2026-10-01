@@ -1,6 +1,6 @@
 # 07 Learning loop
 
-- **LL-1** Saved automatically for every return: the AI's raw facts (before any person touches them), the AI draft import, export 1, export 2 (preparer version), the CPA-final version (export 2 at approval), export 3, and the assessed amounts from the notice.
+- **LL-1** Saved automatically for every return: the AI's raw facts (before any person touches them), the AI draft import, the lock export at sign-off (preparer version), the CPA-final version (the lock export at approval), the check export, and the assessed amounts from the notice.
 - **LL-2** Each cell in each version has an owner: AI-filled, held back (not imported), preparer-only (judgment input or allowed typing), rolled forward, or calculated. Only AI-filled cells count against the AI.
 - **LL-3** Versions are compared by figure key and natural row key, never by copy number.
 - **LL-4** Each difference gets a cause, set by code rules first: late information (a document or answer that arrived after the draft), reading (the extracted value differs from the words in its box), classification, mapping, client data, question design, judgment, tax knowledge, missing check. AI proposes a cause only when no rule applies, marked unconfirmed.

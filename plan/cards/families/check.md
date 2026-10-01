@@ -1,13 +1,13 @@
 # Family: one check ({check})
 
-Cards Q10 to Q41. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read the clause {check} in blueprint 05, `src/contracts/checks.ts` (F05), `src/modules/checks/engine/` (Q00) and `reference/sources.md`.
+Cards Q10 to Q47 (Q33 parked). Deps, paths and clauses: the card's entry in `plan/slices.json`. Read the clause {check} in blueprint 05, `src/contracts/checks.ts` (F05), `src/modules/checks/engine/` (Q00) and `reference/sources.md`.
 
 ## Goal
 {check} runs on every return where its evidence exists, says "not checked: no evidence" where it does not, and never raises a false alarm on a clean test-world kind.
 
 ## Build
 - `src/modules/checks/{kind}/` + the check folder: the check record (CK-1) with its source link, and its rule.
-- Ties agree to the dollar (CK-3). Reconciliations list typed, sourced reconciling items and raise only the unexplained remainder (CK-4). Flags go to a person and are never passed or failed by code (CK-5).
+- Ties agree to the dollar (CK-3). Reconciliations list typed, sourced reconciling items and raise only the unexplained remainder (CK-4), using only the item types the CK-4 table allows for this check, from `src/modules/checks/reconciling/` (Q01; CK-48 to CK-50). Firm parameters (thresholds the research set) are data, never constants in the rule. Flags go to a person and are never passed or failed by code (CK-5).
 - The dollar amount and estimated tax effect on anything raised (CK-6).
 - Tax rules cite a CRA page or statute. If no source settles a point, build it as a flag and log amber.
 

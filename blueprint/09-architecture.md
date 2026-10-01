@@ -10,14 +10,15 @@
   | Adapter | Free stand-in in the build | Live (off until go-live) |
   |---|---|---|
   | Reading documents (OCR) | PDF text layer with word positions; Tesseract for scans; recorded results | a vendor with word boxes, chosen by testing (LIVE-3) |
-  | AI | recorded answers in tests; `claude -p` on the subscription to measure prompts | the Claude API |
+  | AI | recorded answers in tests | a Claude Code project on the firm's subscription (ARC-22), not a paid API |
   | File storage | a local folder | chosen at go-live |
   | Client documents (Google Drive) | a local folder shaped like the Shared Drive | the firm's Shared Drive, read-only |
   | Staff sign-in | test users | per-person logins with two-factor |
   | Taxprep | the simulator (RT-23) | people importing and exporting by hand |
+  | QuickBooks Online (read only: API for balances, transactions and attachments; uploaded .GFI for the mapping) | the sample-client files and Intuit developer sandbox companies | the firm's QBO companies, read only |
 
 - **ARC-7** Code is split into modules, each in its own folder with its own tests, so builders can work in parallel. Shared types live in `src/contracts/` and change one card at a time.
-- **ARC-8** The test world (`testworld/`) generates the thirteen return kinds: the right answers as data, the documents as PDFs (some as scans), and planted faults with the flags they must raise.
+- **ARC-8** The test world (`testworld/`) starts from the ten sample clients in `reference/sample-clients/` and extends them, never inventing a second set, to the thirteen return kinds: the right answers as data, the documents as PDFs (some as scans), their books as QBO data, and planted faults with the flags they must raise.
 - **ARC-9** Tests carry clause IDs. `node tools/matrix.mjs` lists every clause and the tests that cover it.
 - **ARC-10** Every AI output and every derived record stores the versions that made it (AI-10).
 - **ARC-11** Page images and word boxes are prepared when a document arrives, so sources open fast (RV-4).
@@ -34,3 +35,4 @@
 - **ARC-19** Work reaches builders through one queue (`tools/claim.mjs`): each card is specified, built and checked by three different workers, and no two workers hold overlapping files.
 - **ARC-20** Each adapter's live side is tested from the start against a fake of the vendor's web interface, and a test flips its switch both ways, so the live path is never first run at go-live.
 - **ARC-21** Browser journeys run against the production build (`next build`, then `next start`), never the development server.
+- **ARC-22** AI jobs run in a separate Claude Code project on the firm's subscription, with its own orders and rules: Returns queues each job with its inputs, the project returns schema-checked JSON as the job's result (AI-1), code checks every citation (AI-4), and the project has no other write access to Returns.

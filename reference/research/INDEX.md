@@ -4,6 +4,11 @@ Dated research, newest first. Each file marks claims as fact (with a source), in
 
 | Date | File | Question it answers |
 |---|---|---|
+| 1 Oct 2026 | 2026-10-01-qbo-reconciled.md (from qbo-a, qbo-b) | Which QBO data gives the trace; GIFI mapping lives only in QBOA Workpapers (.GFI file, no API); first sandbox calls to make |
+| 1 Oct 2026 | 2026-10-01-ties-reconciled.md (from ties-a, ties-b) | Ties CK-10 to CK-19: settled rules and GIFI lines, seven clause rewrites proposed, open items for the trial |
+| 1 Oct 2026 | 2026-10-01-f9-reconciled.md (from f9-a, f9-b) | T2 review checklist (the review order), owner-manager issues (AI-2), TB-to-GIFI mapping checked on RC4088, iFirm diagnostics policy |
+| 1 Oct 2026 | 2026-10-01-recs-reconciled.md (from recs-a, recs-b) | Reconciliations CK-20 to CK-26: settled rules, one list of 22 reconciling item types, six clause changes proposed |
+| 1 Oct 2026 | 2026-10-01-flags-reconciled.md (from flags-a, flags-b) | Flags CK-30 to CK-42: settled ITA rules and tests, noise control, nine clause changes proposed |
 | 29 Sep 2026 | 2026-09-29-plan-audit.md | Where the cards, tools and queue break; what changed from Zo's own design |
 | 29 Sep 2026 | 2026-09-29-internal-forensics.md | Why the client app's staff area (/internal) is painful, from its code and history |
 | 29 Sep 2026 | 2026-09-29-staff-ux-patterns.md | How the best staff, tax and review tools lay out screens; where GOV.UK and MOJ fit |

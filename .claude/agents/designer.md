@@ -9,4 +9,5 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 2. Make two or three versions that differ in structure, not colour: for example one record page with tabs, one list-and-detail split, one two-monitor layout with the source in a second window. Each follows the brief's task scripts in a logical top-to-bottom order and keeps separate things on separate tabs or screens.
 3. Static HTML pages under `design/prototypes/<family>/<version>/`, built from the official GOV.UK Frontend and MOJ Frontend styles with the Ashbridge look; links between pages so a task can be clicked through; every state the brief names (normal, flagged, error, empty).
 4. Under each version, list the parts it uses and anything composed outside GOV.UK or MOJ, with the reason.
+5. Before pushing, run the checks in `plan/cards/families/design.md` 6 to 9 (retired-term lint, prototype lint, axe, keyboard walk, 320 px, budgets at 1366 x 650 and 1093 x 525) and put the numbers in `reports/design-<family>.md`.
 Push the branch `claude/design-<family>`. Reply in at most 5 lines: the versions and their paths.
