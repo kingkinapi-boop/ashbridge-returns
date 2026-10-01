@@ -1,0 +1,8 @@
+{
+ "card": "F00",
+ "role": "spec",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-01T18:01:57.943Z",
+ "note": "findings review: write the Fix round 1 tests"
+}
