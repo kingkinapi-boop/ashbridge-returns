@@ -2,8 +2,7 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-b38563",
- "state": "released",
- "at": "2026-10-01T20:09:03.582Z",
- "mode": "turbo",
- "note": "dep F03 not built (carded); spec would guess its API. Same as prior release; queue should gate on dep"
+ "state": "working",
+ "at": "2026-10-01T20:09:06.931Z",
+ "mode": "turbo"
 }
