@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title>Source viewer prototypes (D03) - Ashbridge Tax</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/govuk-moj.css">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body class="govuk-template__body">
+  <a href="#main" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+  <header><div class="govuk-generic-header"><div class="govuk-generic-header__container app-wide"><div class="govuk-generic-header__logo"><span class="govuk-generic-header__homepage-link app-brand"><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="6" fill="#ffffff"/><path d="M6 25 L16 6 L26 25 M10.5 19 H21.5" fill="none" stroke="#355b7d" stroke-width="3" stroke-linejoin="round"/></svg><span>Ashbridge Tax</span></span></div></div></div></header>
+  <div class="govuk-width-container"><main id="main" class="govuk-main-wrapper" tabindex="-1">
+    <h1 class="govuk-heading-l">Source viewer prototypes (D03)</h1>
+    <p class="govuk-body">One viewer for every family. Each version shows the seven source kinds, the step through several sources of one figure, the viewer beside a work list and in a second window that follows every selection. Made-up data: Maple Ridge Consulting Inc. (Test).</p>
+    <h2 class="govuk-heading-m">A. Docked pane with numbered steps</h2>
+    <p class="govuk-body">The CPA review. A record page with the figures at the left and the viewer docked at the right. Sources are numbered steps above the card; the CPA marks each source as supporting the figure and the viewer moves on.</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link" href="a-docked-strip/index.html">Work page with the viewer docked</a></li>
+      <li><a class="govuk-link" href="a-docked-strip/window.html">The second window on its own</a></li>
+    </ul>
+    <h2 class="govuk-heading-m">B. Source tabs and the decision beside the evidence</h2>
+    <p class="govuk-body">The preparer's workbench. Sources are MOJ sub navigation tabs with Previous and Next. A figure with no source shows candidate sources with the picker (cite the one shown, or write a reason) beside them. A second tab verifies extracted values.</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link" href="b-tabs-and-decision/index.html">Work page with the viewer docked</a></li>
+      <li><a class="govuk-link" href="b-tabs-and-decision/verify.html">Verify extracted values</a></li>
+      <li><a class="govuk-link" href="b-tabs-and-decision/window.html">The second window on its own</a></li>
+    </ul>
+    <h2 class="govuk-heading-m">C. Window first, for two monitors</h2>
+    <p class="govuk-body">Ops checks. The viewer lives in its own window by default and the work page keeps a one-line summary; with no second window, the same viewer docks at the right as the laptop fallback.</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link" href="c-window-first/index.html">Work page with the viewer docked</a></li>
+      <li><a class="govuk-link" href="c-window-first/window.html">The second window on its own</a></li>
+    </ul>
+    <h2 class="govuk-heading-m">States to try</h2>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link" href="a-docked-strip/index.html?item=f1">Normal: a figure with five sources, one of each of five kinds</a></li>
+      <li><a class="govuk-link" href="a-docked-strip/index.html?item=f4">Flagged: evidence for the flag, then the figure's own source</a></li>
+      <li><a class="govuk-link" href="a-docked-strip/index.html?item=f7">Empty: not checked, no evidence</a></li>
+      <li><a class="govuk-link" href="a-docked-strip/index.html?item=f8">Error: the page image fails first and loads on Try again</a></li>
+      <li><a class="govuk-link" href="a-docked-strip/index.html?item=f5">Masked: the T5 slip with SIN and date of birth blacked out in the image</a></li>
+      <li><a class="govuk-link" href="b-tabs-and-decision/index.html?item=p1">Orphan with candidates and the picker (RV-22)</a></li>
+    </ul>
+  </main></div>
+</body>
+</html>
