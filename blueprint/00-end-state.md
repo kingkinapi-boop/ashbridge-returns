@@ -33,7 +33,7 @@ Made-up corporations with known right answers. A card is done only when all thir
 | K6 | Physician professional corporation | OHIP reconciliation; exempt supplies; no HST return | new |
 | K7 | Holding company with passive income, associated with operating company K7b | Two linked returns; association; Schedule 23 shared limit; passive income test | 05 and 06 |
 | K8 | Consultant with personal services business signs | Shareholder loan past its deadline; a repay and re-borrow series | 01 |
-| K9 | Retailer on the HST quick method, with payroll | Line 101 by method; T4 reconciliation; one bonus paid by day 179, one on day 180 or later (CK-47) | 04, with 03's bonus |
+| K9 | Retailer on the HST quick method, with payroll | Line 101 by method; T4 reconciliation; one bonus paid on day 180 (in time), one on day 181 or later (CK-47) | 04, with 03's bonus |
 | K10 | Company paying dividends | Eligible and non-eligible; GRIP; T5s; a capital dividend election | 05 |
 | K11 | Company with asset additions and a disposal | CCA by class; a vehicle; home office; meals at 50% | 08, with 10's vehicle |
 | K12 | Messy file | Duplicates, a wrong-year statement, a tampered PDF, a missing bank month, a late document after lock, a correction after approval | 10 |
