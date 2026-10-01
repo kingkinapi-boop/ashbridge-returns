@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>V7 planted</title></head><body>
+<!-- Bad: a second "Complete" with no effect. Good (?good=1): both do something. -->
+<div data-identity-bar>Identity bar</div>
+<button id="a">Complete</button>
+<p id="s1">Open</p>
+<button id="b">Complete</button>
+<p id="s2">Open</p>
+<script>
+const good = location.search.includes('good')
+document.getElementById('a').onclick = () => { document.getElementById('s1').textContent = 'Done' }
+if (good) document.getElementById('b').onclick = () => { document.getElementById('s2').textContent = 'Done' }
+</script></body></html>

@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>V1 planted</title>
+<style>[hidden]{display:none}.govuk-error-message{color:#d4351c}</style></head><body>
+<!-- Bad: a hidden error whose class forces display:block. Good (?good=1): hidden stays hidden. -->
+<div data-identity-bar>Identity bar</div>
+<label for="n">Name</label> <input id="n" type="text">
+<p class="govuk-error-message" id="err" hidden>Enter a name</p>
+<script>if (!location.search.includes('good')) document.getElementById('err').style.display = 'block'</script>
+</body></html>

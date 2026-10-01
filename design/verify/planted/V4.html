@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>V4 planted</title></head><body>
+<!-- Bad: Cite leaves focus in the box and shortcut n does nothing. Good (?good=1): focus moves to the result, n focuses Next. -->
+<div data-identity-bar>Identity bar</div>
+<textarea id="box" aria-label="Reason"></textarea>
+<button id="cite">Cite</button> <button id="next">Next</button>
+<p id="result" tabindex="-1"></p>
+<script>
+const good = location.search.includes('good')
+document.getElementById('cite').onclick = () => {
+  const r = document.getElementById('result'); r.textContent = 'Cited'
+  if (good) r.focus(); else document.getElementById('box').focus()
+}
+addEventListener('keydown', (e) => { if (good && e.key === 'n' && e.target.tagName !== 'TEXTAREA') document.getElementById('next').focus() })
+</script></body></html>
