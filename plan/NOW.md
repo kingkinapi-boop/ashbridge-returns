@@ -17,10 +17,9 @@ All helpers run on the laptop for now: `claude --cloud` needs a person at a term
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-
 | slices re-cut into five phases | Opus drafter | local | 1 Oct | claude/slices-v1-1 |
-| designs cpa-review, workbench | designer x2 | local | 1 Oct | claude/design-<family> |
-| usability panel queues-record | tester (panel) | local | 1 Oct | claude/panel-queues-record |
+| design versions cpa-review | designer | local | 1 Oct | claude/design-cpa-review |
+| usability panels queues-record, workbench | tester (panel) x2 | local | 1 Oct | claude/panel-<family> |
 
 Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
