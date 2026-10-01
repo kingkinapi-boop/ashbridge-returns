@@ -17,6 +17,8 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
+| Taxprep trial day 1 (cell map) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
+| QBO sandbox checks (retry) | Sonnet walker, own tab | local | 1 Oct | reference/qbo/ |
 | queue: F00 build, D01 spec (the rehearsal) | 2 cloud workers, runs cse_01UaSXaBy5XRsUopyN1whFtX and cse_01MsA6SHdAiP5aDXMnNkMwYF | cloud | 1 Oct 17:40Z | claude/F00, claude/D01 |
 | phase 1 cards batch b (A06, A07, U00, L00, L01, E00, Claude project setup) | Opus drafter | local | 1 Oct | claude/cards-phase1b |
 | findings review of the three design panels | findings-reviewer (Opus) | local | 1 Oct | claude/findings-designs |
