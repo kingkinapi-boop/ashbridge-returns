@@ -17,7 +17,7 @@ All helpers run on the laptop for now: `claude --cloud` needs a person at a term
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| phase 0 card review | Opus reviewer (independent) | local | 1 Oct | claude/review-phase0 |
+| queue: F00 build, then D01 spec (the rehearsal) | worker (local, the one) | local | 1 Oct | claude/F00, claude/D01 |
 | usability panel cpa-review | tester (panel) | local | 1 Oct | claude/panel-cpa-review |
 | usability panels queues-record, workbench | tester (panel) x2 | local | 1 Oct | claude/panel-<family> |
 
@@ -26,7 +26,7 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 ## Next, in order
 
 1. Research done for now (four pairs reconciled, clauses applied). Next research only as cards need it.
-2. Slices re-cut (reports/slices-v1-1.md, A75 to A80). When the phase 0 cards land: an independent Opus worker reviews all phase 0 cards against the blueprint, the Lead fixes them, then F00 spec starts (the rehearsal: spec, build, check by three workers, local train). Then write phase 1 cards one phase ahead.
+2. Phase 0 cards written and reviewed (A81 to A92). The rehearsal runs on F00 locally: build, then a check by a different worker, then a local train. Next cards to write: F06, W20, A02 to A05 (phase 1), and a card for where the real pipeline is wired (review-phase0 asks).
 3. Queue repairs landed (P04 done).
 4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
 5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Draft import CSVs are on main; cell ids from day 1 replace the guesses.
