@@ -3417,7 +3417,7 @@
       "params": {
         "screen": "judgment"
       },
-      "note": "Removed by v1.1: no judgment input sheet in our app (amber A32). Replaced by D12."
+      "note": "Removed in v1.1: no judgment input sheet in our app (A32); tax choices are cited in Taxprep with the cite button (D12)."
     },
     {
       "status": "carded",

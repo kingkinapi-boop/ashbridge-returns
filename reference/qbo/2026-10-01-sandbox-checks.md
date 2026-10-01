@@ -26,3 +26,11 @@ None of these could be tested because no sandbox company or API Explorer session
 
 - Side observation: the Chrome profile has an open tab "iFirm | Dashboard" at ashbridge.cchifirm.ca (the firm's CCH iFirm). The walker did not open or use it. The plan says the test profile holds no real client account; Zo may want to close it.
 - API Explorer needs an app and OAuth connection to the sandbox, which may involve creating an app in the dashboard and authorising it. That step was not reached; keys and tokens must not be recorded.
+
+## Second attempt (1 Oct 2026, later)
+
+- [fact] developer.intuit.com/sandbox-companies?tab=qbo still shows the red "Sorry, something went wrong. Please try again." after waiting 12 seconds. The company list never loads, so it is unknown whether the Canada sandbox from the first attempt exists. No second sandbox was created.
+- [fact] Playground (developer.intuit.com/app/developer/playground) loads. It says "To use playground, you must first create a workspace", then needs an app, its OAuth keys, a scope, an authorisation code and a realm id. That means creating an app and keys, which the walker rules forbid recording; not attempted.
+- [fact] The shared Chrome tab group was reset mid-run and one tab I opened was navigated to iFirm by the other walker. I switched to a fresh tab, never touched the iFirm tabs, and closed my tab.
+- All six sandbox questions remain untested (TB/GL/TransactionList/JournalReport row ids, Attachable read, journal entry memo, GIFI or Workpapers screen, export columns, unknown column and CDC limit).
+- Next: Zo opens the Sandboxes page in his own window (maybe the error is session or region related), reports the company count and, if a Canada company is listed, opens it via its "Go to" link so the walker can use the QuickBooks screens; or Zo creates the app in the dashboard himself and decides how the walker may use the Playground.
