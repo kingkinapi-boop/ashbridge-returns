@@ -2,7 +2,9 @@
  "card": "F09",
  "role": "spec",
  "worker": "cloud-fb8d96",
- "state": "working",
- "at": "2026-10-01T18:33:43.884Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T18:36:54.913Z",
+ "mode": "turbo",
+ "note": "29 tests; fail on missing ./reading; 6 ambers in agent report",
+ "commit": "87d39e1"
 }
