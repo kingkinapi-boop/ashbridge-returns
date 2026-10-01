@@ -2,7 +2,8 @@
  "card": "F08",
  "role": "spec",
  "worker": "cloud-7528cb",
- "state": "working",
- "at": "2026-10-01T18:23:11.243Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T18:23:17.937Z",
+ "mode": "turbo",
+ "note": "dep F00 not merged; queue re-hands F08 (no dep gate), stopping"
 }
