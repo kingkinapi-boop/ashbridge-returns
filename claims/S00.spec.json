@@ -1,9 +1,8 @@
 {
  "card": "S00",
  "role": "spec",
- "worker": "cloud-1b601c",
- "state": "released",
- "at": "2026-10-01T19:41:15.018Z",
- "mode": "turbo",
- "note": "dep F03 not built; spec would guess its API"
+ "worker": "cloud-b38563",
+ "state": "working",
+ "at": "2026-10-01T20:08:55.042Z",
+ "mode": "turbo"
 }
