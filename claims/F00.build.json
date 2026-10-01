@@ -1,11 +1,10 @@
 {
  "card": "F00",
  "role": "build",
- "round": 3,
- "spec": "n/a",
- "worker": "cloud-fb8d96",
- "state": "reopened",
- "at": "2026-10-01T19:35:44.932Z",
- "mode": "turbo",
- "note": "FAIL: mutation 0% (stryker 10 vs vitest 5), scope paths; see reports/F00-check.md"
+ "round": 4,
+ "spec": "7eb6b94",
+ "worker": "cloud-1b601c",
+ "state": "working",
+ "at": "2026-10-01T19:36:32.742Z",
+ "mode": "turbo"
 }
