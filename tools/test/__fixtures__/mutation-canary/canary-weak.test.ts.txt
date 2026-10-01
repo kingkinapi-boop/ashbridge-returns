@@ -1,0 +1,7 @@
+// Planted weak test: kills nothing, so the canary must score below 100.
+import { expect, test } from 'vitest'
+import { clampCents } from './canary'
+
+test('ARC-15 canary weak: only checks the type', () => {
+  expect(typeof clampCents(5, 10)).toBe('number')
+})

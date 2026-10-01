@@ -15,7 +15,7 @@ function filesConstructingPglite(files) {
 }
 function walk(dir, out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (['node_modules', '.next', '.git', '__fixtures__', 'coverage', 'test-results'].includes(e.name)) continue
+    if (['node_modules', '.next', '.git', '__fixtures__', 'coverage', 'test-results', '.stryker-tmp'].includes(e.name)) continue
     const p = path.join(dir, e.name)
     if (e.isDirectory()) walk(p, out)
     else if (/\.(ts|tsx|mts|mjs|js)$/.test(e.name)) out.push(p)
@@ -56,6 +56,10 @@ function testScriptProblems(pkg) {
 describe('F00 database rules (ARC-4)', () => {
   test('ARC-4 rule: a planted file with new PGlite() outside src/core/db is caught', () => {
     expect(filesConstructingPglite([path.join(FIX, 'planted-new-pglite.txt')])).toHaveLength(1)
+  })
+  test('ARC-4 rule: a planted .stryker-tmp copy of src/core/db is skipped by the walk', () => {
+    const root = path.join(FIX, 'stryker-tmp-root')
+    expect(walk(root).map((f) => path.relative(root, f))).toEqual([path.join('src', 'ok.ts')])
   })
   test('ARC-4 rule: no file outside src/core/db constructs PGlite', () => {
     const dbDir = path.join(ROOT, 'src', 'core', 'db') + path.sep
