@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "n/a",
  "worker": "cloud-fb8d96",
- "state": "reported",
- "at": "2026-10-01T18:31:38.086Z",
+ "state": "hold-findings",
+ "at": "2026-10-01T18:57:38.994Z",
  "mode": "turbo",
- "note": "35 tests pass incl 11 spec; stryker incompatible with vitest 5 (see report)"
+ "note": "FAIL: mutation 0% (stryker 10 vs vitest 5), scope paths; see reports/F00-check.md"
 }

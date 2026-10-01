@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-01T18:31:38.086Z",
  "worker": "cloud-5a0720",
- "state": "working",
- "at": "2026-10-01T18:53:38.531Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-01T18:57:38.994Z",
+ "mode": "turbo",
+ "note": "FAIL: mutation 0% (stryker 10 vs vitest 5), scope paths; see reports/F00-check.md"
 }
