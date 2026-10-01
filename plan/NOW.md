@@ -21,7 +21,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 | queue: F00 build reopened (fix round 1, spec reported); specs reported for F01, F03 (parked), F04, F05; D01 spec next | 2 cloud runs cse_017hMiW9j3fVnNJe2RGaGGDD, cse_01LqmYtxUesTx2VN94G1rGxG | cloud | 1 Oct 18:15Z | claude/F00 and others |
 | phase 1 cards batch c (the rest of phase 1: E01, B cards, ...) | Opus drafter | local | 1 Oct | claude/cards-phase1c |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
-| design versions: source viewer (D03) | designer | local | 1 Oct | claude/design-source-viewer |
+| usability panel: source viewer (D03) | tester (panel) | local | 1 Oct | claude/panel-source-viewer |
 
 Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
