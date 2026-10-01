@@ -6,7 +6,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 **1. Sign in to QuickBooks Online Accountant in the "Ashbridge Test" Chrome.** What: the walker found that window signed in only to the QuickBooks test company ("Sandbox Company CA"), not to your Accountant login, so it had no client list or Workpapers and made no .GFI. Nothing was added or changed. Why: the .GFI file format decides how card B01 reads the books into the return. What comes next: once you sign in with your accountant login (go to qbo.intuit.com and pick the firm, not the sandbox), reply "1 done" and the walker reruns with the same limits. Meanwhile everything else keeps going; only B01's spec waits.
 
-**Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
+**Coming soon from you, Sat 3 Oct (about 30 minutes):** day 4 of the trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". No walker runs that day. Any other day suits too; days 5 and 6 do not wait for it. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
 
 **What the Lead is doing now:** the empty app (F00) is in its last build round in the cloud; the job queue's dependency fix is being checked; two screen designs are in their fix round for your first sitting about 3 Oct; trial day 3 is recorded (part done; the rest moves to day 5); the trial plan for days 4 to 6 and the phase 2 cards are being written.
 

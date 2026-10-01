@@ -15,7 +15,8 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, evening, by the 
 |---|---|---|---|---|
 | F00 fix round 2 build (spec reported; build reopened) + W14/D01 specs | 2 cloud runs | cloud | 1 Oct 19:40Z | claude/F00 |
 | queue repair 2 (dep gate, spec reopen): built 23 of 23; check running | checker (local) | local | 1 Oct | claude/queue-repair-2 |
-| Trial days 4 to 6 scripts (incl. day 3 leftovers) | Opus helper | local | 1 Oct 19:45Z | commits plan/taxprep-trial-plan.md to main |
+| Trial day 5 run 5A (clients 01 to 05; then 5B, 5C, 5D one at a time) | Sonnet walker, Chrome | local | 1 Oct 20:00Z | notes in reference/taxprep/2026-10-05-day5/, uncommitted |
+| strip-values.mjs for day 4 (Zo, Sat 3 Oct; told in to-do) | Sonnet helper | local | 1 Oct 20:00Z | commits reference/taxprep/tools/ to main |
 | Phase 2 cards draft (M00 T01 T02 T04 T05 T07 V06 V12 N00) | Opus helper | local worktree | 1 Oct 19:47Z | claude/cards-phase2 |
 | design fix round: cpa-review V1 | designer | local | 1 Oct | claude/design-cpa-review-2 |
 | design fix round: source viewer D03 | designer | local | 1 Oct | claude/design-source-viewer-2 |
@@ -29,7 +30,7 @@ Done and on branches, not yet re-tested: claude/design-queues-record-2, claude/d
 3. F00: when its round 2 spec is reported, `node tools/claim.mjs update F00 build reopened --worker lead`, fire a cloud run. Then check by a different worker, then a train in the cloud. F00 landing ends the rehearsal; then a cold sign-off (signoff.md) on the queue repairs and the rehearsal, then widen to 6 runs.
 4. Re-specs: F03 and S00 were re-carded from the trial (any earlier spec void). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 being done (the dep gate).
 5. .GFI: BLOCKED, to-do #1. The walker (1 Oct 19:50Z) found the Ashbridge Test Chrome signed in to the QBO sandbox company only, no Accountant view (reference/qbo/gfi-file.md). On Zo's "1 done": run the .GFI walker with decision 0013's limits (open the Accountant view, add "Probe Co. (Test)", five made-up accounts, Workpapers, save .GFI, delete the client; stop at any billing or subscription screen; never open a real client). Write `reference/qbo/gfi-file.md`; then card B01 can be specced.
-6. Trial: after day 3, an Opus helper reads the captures and writes day 4 (Auto-fill, Zo only: tell him the day before in the to-do), day 5 (all ten companies), day 6 (changes after lock, check export). Open: Q23 token cell (ask nothing; FINDINGS.md lists the fallback); part A (rest of the 395 forms). Trial ends about 16 Oct.
+6. Trial: scripts for days 4 to 6 are in plan/taxprep-trial-plan.md (ab6d58c). After each day 5 run an Opus helper reads the notes and adjusts the next run; then the "After day 5" helper. Earlier text: day 4 (Auto-fill, Zo only: tell him the day before in the to-do), day 5 (all ten companies), day 6 (changes after lock, check export). Open: Q23 token cell (ask nothing; FINDINGS.md lists the fallback); part A (rest of the 395 forms). Trial ends about 16 Oct.
 7. Designs: re-test only the changed tasks on the four families (tester panel mode), then the sitting page for Zo (Artifact, private) with the six questions in reports/findings-designs.md (d), about 3 Oct. Cards D00 (basis) and D01 (map) are next design work.
 8. Phase 2 cards from FINDINGS.md (M00 has no card file yet; its slices.json note says what it must hold), then an independent phase 2 review.
 
