@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "n/a",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-01T17:35:54.186Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T17:36:23.170Z",
+ "mode": "turbo",
+ "note": "needs npm install (no package.json, no node_modules); local worktree forbids it; see claude/F00-release reports/F00-build.md"
 }
