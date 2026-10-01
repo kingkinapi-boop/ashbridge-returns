@@ -2,7 +2,9 @@
  "card": "F08",
  "role": "spec",
  "worker": "cloud-fb8d96",
- "state": "working",
- "at": "2026-10-01T18:31:42.969Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T18:33:38.665Z",
+ "mode": "turbo",
+ "note": "32 tests; 4 fail as expected (matrix opens-a-name x3, status parse message)",
+ "commit": "10a96f2"
 }
