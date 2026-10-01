@@ -18,6 +18,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (its pro
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Trial findings into FINDINGS.md and the RT, TB, EV clauses; F03 re-spec | Opus drafter | local | 1 Oct | claude/trial-findings-1 |
+| Taxprep trial day 3 (tax choices, diagnostics, print) | Sonnet walker, Chrome | local | 1 Oct | reference/taxprep/2026-10-03-day3/ |
 | queue: F00 build reported (fix round 1), check next; specs reported F01, F04, F05, F08, F09, W00 (F03 parked) | 3 cloud runs cse_01Hr7Az98VbKzfckRMPp1LtF, cse_01HjjamHjojvtdvfpU7G3L4B, cse_01W4VQVBLUYDkcCpF7Np3Hej | cloud | 1 Oct 18:50Z | claude/<card> |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | usability panel: source viewer (D03) | tester (panel) | local | 1 Oct | claude/panel-source-viewer |
