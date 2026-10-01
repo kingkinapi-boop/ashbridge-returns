@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "n/a",
  "worker": "cloud-vm",
- "state": "working",
- "at": "2026-10-01T17:38:19.922Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T17:42:32.806Z",
+ "mode": "turbo",
+ "note": "23 tests pass, e2e pass, checks 1-6 ok"
 }
