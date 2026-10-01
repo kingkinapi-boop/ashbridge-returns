@@ -2,7 +2,8 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-dd8c04",
- "state": "working",
- "at": "2026-10-01T19:36:35.444Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T19:36:48.205Z",
+ "mode": "turbo",
+ "note": "dep F03 not built or merged (spec only); no code base. Model: sonnet"
 }
