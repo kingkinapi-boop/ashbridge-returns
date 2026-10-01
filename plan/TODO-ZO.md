@@ -1,12 +1,10 @@
 # Zo's to-do (Ashbridge Returns)
 
-The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number. Answered items are deleted at once; the numbers below are today's only (earlier answers are recorded in decisions 0010 to 0012). Chats say only one line; everything they need from you is here. If you do not answer, they keep going on other work. What each chat does: `README.md` in this folder.
+The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number. Answered items are deleted at once; the numbers below are today's only (earlier answers are recorded in decisions 0010 to 0014; only big questions come here). Chats say only one line; everything they need from you is here. If you do not answer, they keep going on other work. What each chat does: `README.md` in this folder.
 
 ## 1. Needs you now
 
-**1. How preparers write adjusting entries in QBO (1 minute).**
-- What: for the trace, every adjusting entry in QBO needs its type, reason and source in the memo. Proposed: `AJE <type>: <reason> | source: <document or note>`, for example `AJE accrual: December rent unpaid | source: lease p.2`. Types: reclass, accrual, allocation, estimate, correction.
-- Reply `1 ok` or give the wording you want. Meanwhile the cards use this format.
+Nothing right now.
 
 **Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before.
 
