@@ -19,7 +19,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 |---|---|---|---|---|
 | Taxprep trial: Opus read of day 1, writing day 1b and day 2 script | Opus helper | local | 1 Oct | plan/trial/, reference/taxprep/ |
 | queue: F00 check FAIL (flaky PGlite cold start) on hold-findings; F01 spec reported; F03, F04 specs working | cloud runs cse_01UaSXaBy5XRsUopyN1whFtX, cse_01WvokbrF6aSimESpr5gLRNg (third run ended after 1 job) | cloud | 1 Oct | claude/F00, F01, F03, F04 |
-| findings review F00 | findings-reviewer (Opus) | local | 1 Oct | claude/F00-findings |
+| F00 fix round 1: spec job queued (tests from the findings review); when it reports, run `node tools/claim.mjs update F00 build reopened --worker lead` | queue | cloud | 1 Oct | claude/F00 |
 | phase 1 cards batch c (the rest of phase 1: E01, B cards, ...) | Opus drafter | local | 1 Oct | claude/cards-phase1c |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | design versions: source viewer (D03) | designer | local | 1 Oct | claude/design-source-viewer |
@@ -33,7 +33,7 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 3. Queue repairs landed (P04 done).
 4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
 5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Draft import CSVs are on main; cell ids from day 1 replace the guesses.
-6. Rehearsal running in the cloud (F00). Learned so far: claim.mjs hands out specs and builds whose deps are not built (needs a dep gate: queue repair 2, with F08); a cloud worker sent Zo a push notification (routine prompt now forbids it). Widen past 3 cloud runs only after F00 lands through a train and the cold sign-off on the repairs and rehearsal.
+6. Rehearsal running in the cloud (F00). Learned so far: claim.mjs hands out specs and builds whose deps are not built (needs a dep gate: queue repair 2, with F08); claim.mjs cannot reopen a spec (the Lead set F00 spec to null in slices.json and released the old spec claim instead); a cloud worker sent Zo a push notification (routine prompt now forbids it). Widen past 3 cloud runs only after F00 lands through a train and the cold sign-off on the repairs and rehearsal.
 
 ## Watch out
 
