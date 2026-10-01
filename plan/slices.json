@@ -12,7 +12,7 @@
   "cards": [
     {
       "status": "carded",
-      "spec": null,
+      "spec": "n/a",
       "deps": [],
       "paths": [
         "package.json",
@@ -169,7 +169,7 @@
       "core": true
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00"
@@ -192,8 +192,7 @@
       "phase": 0,
       "size": "M",
       "hard": true,
-      "core": true,
-      "note": "Held by the Lead 1 Oct: trial day 1 shows RT-3 header, RT-9 settings and cell ids differ (reference/taxprep/day1-findings.md). Re-spec after trial day 2 and the RT clause update; then unpark."
+      "core": true
     },
     {
       "status": "carded",
@@ -1639,6 +1638,30 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "D00",
+        "D01"
+      ],
+      "paths": [
+        "design/screens/shell/**"
+      ],
+      "clauses": [
+        "RV-53",
+        "RV-50",
+        "SEC-1"
+      ],
+      "id": "D13",
+      "title": "Design: Sign-in and the return record shell",
+      "phase": 1,
+      "size": "M",
+      "family": "design",
+      "params": {
+        "screen": "shell"
+      }
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "F00",
         "D00"
       ],
@@ -1779,17 +1802,44 @@
       "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00"
+      ],
+      "paths": [
+        "data/facts/catalogue.json",
+        "src/contracts/facts.ts",
+        "src/contracts/facts.test.ts"
+      ],
+      "clauses": [
+        "EV-5",
+        "EV-10",
+        "SEC-4",
+        "AI-9"
+      ],
+      "id": "E03",
+      "title": "Fact catalogue: fact keys, value types, sensitive keys",
+      "phase": 1,
+      "size": "S",
+      "core": true
+    },
+    {
+      "status": "carded",
       "spec": null,
       "deps": [
         "E00",
         "E02",
+        "E03",
         "L00",
         "A04",
+        "A07",
         "F10"
       ],
       "paths": [
         "src/modules/extraction/_core/**",
+        "src/modules/extraction/index.ts",
+        "data/extraction/labels.json",
         "src/pipeline/steps/facts.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
@@ -1798,13 +1848,18 @@
       "clauses": [
         "EV-5",
         "EV-6",
-        "EV-7"
+        "EV-7",
+        "EV-14",
+        "ARC-10",
+        "AI-6",
+        "END-2"
       ],
       "id": "E01",
       "title": "Extraction framework: facts in boxes, self-checks",
       "phase": 1,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
       "status": "carded",
@@ -2218,7 +2273,7 @@
       "note": "Removed by v1.1: no working trial balance or bookkeeping in Returns; the books are read from QBO (amber A28); judgment inputs are typed in Taxprep and cited (A32). Replaced by B04 and B05."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F01",
@@ -2227,24 +2282,30 @@
       ],
       "paths": [
         "src/modules/qbo/**",
-        "db/schema/35_qbo.sql"
+        "src/contracts/qbo.ts",
+        "db/schema/35_qbo.sql",
+        "testworld/qbo/export.ts"
       ],
       "clauses": [
-        "TB-10",
         "TB-1",
+        "TB-10",
+        "EV-5",
         "ARC-6",
         "ARC-20",
-        "OUT-3"
+        "OUT-3",
+        "SEC-10",
+        "SEC-11"
       ],
       "id": "B04",
       "title": "QBO reader: adapter with the sample-client stand-in, dated fingerprinted snapshots",
       "phase": 1,
       "size": "M",
       "hard": true,
-      "security": true
+      "security": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "B04",
@@ -2254,6 +2315,9 @@
       ],
       "paths": [
         "src/modules/books/read/**",
+        "src/modules/books/index.ts",
+        "src/contracts/books.ts",
+        "db/schema/30_books.sql",
         "src/pipeline/steps/books.ts"
       ],
       "clauses": [
@@ -2262,33 +2326,41 @@
         "TB-5",
         "TB-7",
         "TB-9",
-        "EV-5"
+        "EV-5",
+        "ARC-13"
       ],
       "id": "B05",
       "title": "Books read from QBO: trial balance, adjusting entries with reasons, refusals",
       "phase": 1,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "B05",
+        "A05",
         "A07"
       ],
       "paths": [
         "src/modules/books/gifi/**",
-        "data/gifi/**"
+        "src/modules/books/index.ts",
+        "data/gifi/**",
+        "testworld/qbo/gfi.ts"
       ],
       "clauses": [
         "TB-3",
-        "TB-12"
+        "TB-12",
+        "EV-14",
+        "ARC-13"
       ],
       "id": "B01",
       "title": "GIFI mapping read from the .GFI file QBO makes (refuse total codes)",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
       "status": "parked",
@@ -2311,77 +2383,103 @@
       "note": "Removed by v1.1: categorising bank lines is bookkeeping, done in QBO outside Returns (amber A28, OUT-7); Returns only matches QBO lines to statements (TB-4). Replaced by B07."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "B05",
+        "L01",
         "E17",
-        "E18"
+        "E18",
+        "E19"
       ],
       "paths": [
-        "src/modules/books/prior/**"
+        "src/modules/books/prior/**",
+        "src/modules/books/index.ts",
+        "data/ledger/agree-rules.json"
       ],
       "clauses": [
         "TB-8",
-        "CK-12"
+        "CK-12",
+        "TB-5",
+        "EV-11"
       ],
       "id": "B03",
       "title": "Prior year and converted returns",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "B05",
+        "L01",
         "E10",
         "E11"
       ],
       "paths": [
-        "src/modules/books/bankmatch/**"
+        "src/modules/books/bankmatch/**",
+        "src/modules/books/index.ts",
+        "data/books/match-rules.json"
       ],
       "clauses": [
-        "TB-4"
+        "TB-4",
+        "EV-13",
+        "EV-11",
+        "ARC-13"
       ],
       "id": "B07",
       "title": "Bank-only clients: match QBO bank and card lines to statement lines",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "L00",
-        "F07"
+        "F02",
+        "F05",
+        "F07",
+        "E03",
+        "G01"
       ],
       "paths": [
-        "src/modules/gaps/core/**"
+        "src/modules/gaps/core/**",
+        "src/modules/gaps/index.ts",
+        "data/gaps/required.json"
       ],
       "clauses": [
         "AI-12",
-        "FLOW-3"
+        "FLOW-3",
+        "FLOW-2",
+        "EV-8"
       ],
       "id": "G00",
       "title": "Gap pass: required facts, found, missing, conflicting, weak",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "E03"
       ],
       "paths": [
         "src/modules/gaps/bank/**",
+        "src/modules/gaps/index.ts",
         "data/question-bank/_schema.json"
       ],
       "clauses": [
         "ARC-2",
         "END-7",
-        "RULE-19"
+        "RULE-19",
+        "AI-12"
       ],
       "id": "G01",
       "title": "Question bank format (ids, slots, answer shapes)",
@@ -2389,24 +2487,31 @@
       "size": "S"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
+        "G00",
         "G01",
         "A04",
         "I00"
       ],
       "paths": [
-        "src/modules/gaps/slots/**"
+        "src/modules/gaps/slots/**",
+        "src/modules/gaps/index.ts"
       ],
       "clauses": [
         "AI-12",
-        "AI-1"
+        "AI-1",
+        "AI-4",
+        "AI-6",
+        "AI-7",
+        "END-7"
       ],
       "id": "G02",
       "title": "Question slot fill (AI, grounded)",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
       "status": "carded",
@@ -2601,12 +2706,14 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A04",
+        "A08",
         "E01",
-        "A08"
+        "E03",
+        "L00"
       ],
       "paths": [
         "src/modules/ai/grounding/**",
@@ -2628,19 +2735,24 @@
       "phase": 1,
       "size": "M",
       "hard": true,
-      "security": true
+      "security": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "U00"
+        "U00",
+        "D01"
       ],
       "paths": [
-        "src/ui/keyboard/**"
+        "src/ui/keyboard/**",
+        "e2e/ui/keyboard.spec.ts"
       ],
       "clauses": [
-        "RV-6"
+        "RV-6",
+        "RV-51",
+        "RV-54"
       ],
       "id": "U01",
       "title": "Keyboard framework",
@@ -2648,12 +2760,16 @@
       "size": "S"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "U00",
+        "U01",
         "A06",
-        "F02"
+        "F02",
+        "D01",
+        "E03",
+        "JH0"
       ],
       "paths": [
         "src/ui/behaviour/**",
@@ -2663,7 +2779,8 @@
         "RV-50",
         "RV-54",
         "FLOW-10",
-        "SEC-4"
+        "SEC-4",
+        "RV-52"
       ],
       "id": "U02",
       "title": "Shared screen behaviour and rule sweeps (every screen, every kind)",
@@ -2673,19 +2790,25 @@
       "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "U00",
+        "U01",
+        "U02",
         "A06",
         "F02",
         "D01",
-        "U02"
+        "D13"
       ],
       "paths": [
         "src/app/(staff)/layout.tsx",
         "src/app/(staff)/_shell/**",
-        "src/modules/access/**"
+        "src/app/(staff)/sign-in/**",
+        "src/modules/access/**",
+        "src/contracts/access.ts",
+        "db/schema/16_access.sql",
+        "e2e/staff/shell.spec.ts"
       ],
       "clauses": [
         "SEC-1",
@@ -2706,21 +2829,29 @@
       "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
         "E00",
-        "D03",
-        "U02"
+        "B04",
+        "I00",
+        "U01",
+        "U02",
+        "D03"
       ],
       "paths": [
-        "src/app/(staff)/_viewer/**"
+        "src/app/(staff)/_viewer/**",
+        "src/app/(staff)/source/**",
+        "e2e/staff/viewer.spec.ts"
       ],
       "clauses": [
         "RV-4",
         "ARC-11",
+        "SEC-3",
         "SEC-4",
+        "EV-5",
+        "EV-14",
         "RV-53",
         "RV-54"
       ],
@@ -2733,20 +2864,25 @@
       "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
         "F02",
+        "G00",
+        "B05",
         "D04",
+        "U01",
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/prepare/queue/**"
+        "src/app/(staff)/prepare/queue/**",
+        "e2e/staff/queue.spec.ts"
       ],
       "clauses": [
         "RV-20",
         "FLOW-7",
+        "FLOW-3",
         "RV-53",
         "RV-54"
       ],
@@ -2758,20 +2894,26 @@
       "hard": false
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V05",
+        "V01",
         "G00",
         "G01",
+        "G02",
         "D07",
+        "U01",
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/prepare/gaps/**"
+        "src/app/(staff)/prepare/gaps/**",
+        "e2e/staff/gaps.spec.ts"
       ],
       "clauses": [
         "RV-23",
+        "AI-12",
+        "END-7",
         "RV-53",
         "RV-54"
       ],
@@ -2783,23 +2925,31 @@
       "hard": false
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
         "V01",
+        "L01",
+        "B01",
+        "B03",
+        "B05",
         "D02",
-        "U02",
-        "L01"
+        "U01",
+        "U02"
       ],
       "paths": [
-        "src/app/(staff)/review/early/**"
+        "src/app/(staff)/review/early/**",
+        "e2e/staff/review-early.spec.ts"
       ],
       "clauses": [
         "RV-1",
         "RV-3",
         "RV-4",
         "END-3",
+        "TB-7",
+        "EV-11",
+        "EV-12",
         "RV-53",
         "RV-54"
       ],
