@@ -1,4 +1,9 @@
 {
+  "env": {
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5-5",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5-20251001"
+  },
   "permissions": {
     "allow": [
       "Bash(git status*)",
@@ -26,6 +31,15 @@
       "Bash(git merge *)",
       "Bash(git checkout *)",
       "Bash(git worktree prune*)",
+      "Bash(git worktree add *)",
+      "Bash(git worktree remove *)",
+      "Bash(git -C * merge *)",
+      "Bash(git -C * push *)",
+      "Bash(npm ci)",
+      "Bash(gh run list*)",
+      "Bash(gh run view*)",
+      "Bash(gh pr view*)",
+      "Bash(claude --cloud *)",
       "Bash(npm run typecheck*)",
       "Bash(npm test*)",
       "Bash(npm run test*)",

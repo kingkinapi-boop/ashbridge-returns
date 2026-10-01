@@ -1,6 +1,6 @@
 # Family: mapping and simulator cells ({schedule})
 
-Cards M10 to M23. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 04 (RT-7, RT-21), `src/modules/mapping/core/` (M00) and `src/contracts/taxprep.ts` (F03).
+Cards M10 to M23. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 04 (RT-7, RT-21, RT-24), `src/modules/mapping/core/` (M00), `src/contracts/taxprep.ts` (F03) and `reference/taxprep/FINDINGS.md` (the trial's cell map: use its identifiers where it has them, placeholders only where it does not).
 
 ## Goal
 For "{schedule}", every input line the system fills has a placeholder Taxprep cell identifier in the simulator and a mapping row from our figure key, so the round trip works end to end now and the real identifiers can be dropped in at go-live.

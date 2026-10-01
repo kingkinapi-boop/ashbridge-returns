@@ -15,6 +15,10 @@ let mode = '?'
 try {
   const m = JSON.parse(tryRead('plan/mode.json', '{}'))
   mode = m.mode + (m.resume_to ? ` (resume to ${m.resume_to})` : '')
+  if (m.wind_down_at) {
+    const now = process.env.CLAIMS_NOW ? Date.parse(process.env.CLAIMS_NOW) : Date.now()
+    mode += ` | wind-down at ${m.wind_down_at}${now > Date.parse(m.wind_down_at) ? ' (PASSED: no new builds)' : ''}`
+  }
 } catch {}
 
 const day = todayUtc()

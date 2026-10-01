@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, afternoon (the Lead, wave 1 started; F9 research pair waits for a free slot).
+True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, afternoon (the Lead, wave 1 running locally).
 
 ## State
 
@@ -13,36 +13,34 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, afternoon (the L
 
 ## In flight
 
+Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger run; decision 0010: one-off runs only, never a schedule). Light document helpers may still run locally.
+
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| research ties CK-10..19 | researcher A (CRA, ITA) + B (practice) | cloud agent | 1 Oct | claude/research-ties-a, -b |
-| research reconciliations CK-20..26 | researcher A + B | cloud agent | 1 Oct | claude/research-recs-a, -b |
-| research flags CK-30..42 | researcher A + B | cloud agent | 1 Oct | claude/research-flags-a, -b |
-| research QBO trace | researcher A (Intuit docs, API) + B (practice, exports) | cloud agent | 1 Oct | claude/research-qbo-a, -b |
-| design brief cpa-review (with source viewer) | design-researcher | cloud agent | 1 Oct | claude/brief-cpa-review |
-| design brief workbench | design-researcher | cloud agent | 1 Oct | claude/brief-workbench |
-| design brief queues and record page | design-researcher | cloud agent | 1 Oct | claude/brief-queues-record |
-| trial day 1 script | researcher (Taxprep help) | cloud agent | 1 Oct | claude/trial-day1-script |
-| queue repairs | builder | local worktree | 1 Oct | claude/queue-repairs |
+| Taxprep trial day 1 (cell map) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
+| QBO sandbox checks (retry) | Sonnet walker, own tab | local | 1 Oct | reference/qbo/ |
+| queue: F00 build, D01 spec (the rehearsal) | 2 cloud workers, runs cse_01UaSXaBy5XRsUopyN1whFtX and cse_01MsA6SHdAiP5aDXMnNkMwYF | cloud | 1 Oct 17:40Z | claude/F00, claude/D01 |
+| phase 1 cards batch b (A06, A07, U00, L00, L01, E00, Claude project setup) | Opus drafter | local | 1 Oct | claude/cards-phase1b |
+| findings review of the three design panels | findings-reviewer (Opus) | local | 1 Oct | claude/findings-designs |
+
+Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43) and with the research (A46 to A74, reference/cpa-check.md for Zo); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
 ## Next, in order
 
-1. **Start the streams that need no queue, at once, as cloud sessions** (each writes files and pushes a claude/ branch; the Lead merges documents-only results):
-   - Research pairs (two researchers, then the research checker): the T2 rules each check uses, with CRA sources and worked examples, one question per check group; the F9 requests (a T2 review checklist, an owner-manager issues list, a trial-balance-to-GIFI mapping, which Taxprep diagnostics may be ignored); QBO: which reports, exports and API data give the trace.
-   - Design research for the first screen families: the CPA review with its source viewer; the preparer's workbench; the queues and the return record page.
-   - The trial day 1 script (exact clicks for the cell map). Then write "ready" in the to-do, with when to open the Chrome profile.
-2. **Queue repairs** (a branch built by a worker, checked, merged): claim.mjs retries with backoff and jitter, one batched read of claims, an owner check, a heartbeat, check FAIL in one push with a hold for the findings review before the build reopens; scope.mjs allows acceptance and golden files; wire wind_down_at; allow-list gaps (npm ci, gh, git worktree add, git -C merge and push, claude --cloud); pin model ids in .claude/settings.json env (claude-opus-5-5, claude-sonnet-5-5, claude-haiku-4-5). Evidence: reference/research/2026-09-29-plan-audit.md.
-3. **Bring the clauses into line with v1.1** (one amber row each) and re-cut slices.json into the five phases, one phase ahead, F00 (the empty app) first. Then the phase 1 card review by an independent worker.
-4. **Rehearsal at small width:** two cloud workers, one train, landing on main, Playwright inside a cloud session; confirm `claude --cloud` workers run on Sonnet. Cold sign-off on the repairs and the rehearsal. Then widen: 6 cloud workers, add 2 while first passes and green trains hold, 12 at most.
-5. **The trial week** once Zo starts it (plan/taxprep-trial-plan.md): the walker drives the laptop's "Ashbridge Test" Chrome profile; Zo is needed on day 1 and day 4. Cold sign-off on the findings.
-6. **Design sittings** for Zo about 3, 6 and 8 Oct: links in the to-do, two or three versions each, after the usability panel.
+1. Research done for now (four pairs reconciled, clauses applied). Next research only as cards need it.
+2. Phase 0 cards written and reviewed (A81 to A92). The rehearsal runs on F00 locally: build, then a check by a different worker, then a local train. Next cards to write: F06, W20, A02 to A05 (phase 1), and a card for where the real pipeline is wired (review-phase0 asks).
+3. Queue repairs landed (P04 done).
+4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
+5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Draft import CSVs are on main; cell ids from day 1 replace the guesses.
+6. Rehearsal at small width once Zo answers to-do #1; then widen.
 
 ## Watch out
 
 - The trial lasts one week: nothing starts on it until the to-do says ready. Real Auto-fill data: structure only, never values (decision 0008, Z8-7).
 - Chrome: only the "Ashbridge Test" profile. QBO: Intuit developer sandbox companies only, never the firm's real client list.
-- No routines, no schedules: the Lead starts and re-fires cloud workers itself. Ask Zo in the to-do for anything only he can do; if he does not answer, keep going on everything else.
+- No routines, no schedules (until Zo answers to-do #1). Ask Zo in the to-do for anything only he can do; if he does not answer, keep going on everything else.
 - Findings review before every fix round; cold sign-off for big chunks only.
 - The main checkout stays on main; train work in .claude/worktrees/train. The push guard lets only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ go straight to main.
+- Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B` (that drags old plan files back).
 - Edit files with the Edit tool, not shell scripts with escapes (Git Bash mangles backslashes).
 - Another Lead works in ashbridge-app: read-only there, always. GitHub Actions: 2,000 free minutes a month: keep branch checks lean.

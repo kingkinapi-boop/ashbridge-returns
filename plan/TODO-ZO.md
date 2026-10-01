@@ -4,24 +4,15 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. Start the Lead now (2 minutes).**
-- Claude desktop app: Code, New session, folder `ashbridge-returns`, model **Opus 5.5**. Type `/rename Lead`, then `/remote-control` (so the watcher can see it), then `go`.
-- Turbo is already switched on in the files (decision 0009); `go` starts it. The Lead runs the work in cloud sessions and keeps one local worker at most, so the laptop stays free for your other repo.
-- What comes next: research, screen research and the trial script start in the cloud at once; the job queue gets repaired; then 6 to 12 cloud workers build. You hear from it only here.
+Nothing right now. Thank you for items 1 to 3 (decision 0011).
 
-**2. Start the watcher, before you leave the desk tonight (10 minutes).**
-- It clears the Lead when its context gets full and starts it again, so nothing stops overnight. Steps: `C:\Users\User\Documents\GitHub\ashbridge-returns\toDelete\lead-watcher-prompt.md`.
-- It is set to your 65%. The Lead runs on a window of about a million tokens, so 40% would cost less usage; change the number at the top of the prompt if you agree.
+**Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before. Keep the "Ashbridge Test" Chrome window open while the walker works in it.
 
-**3. Retire the planning chat now.** The chat that wrote this (the Critic) has done its job; close it. Next Critic: a new chat on Sat 3 Oct, type `critic`. First Reviewer: a new chat on Fri 2 Oct in the evening, type `review`.
-
-**What the Lead is doing now:** waiting for your `go` (item 1).
+**What the Lead is doing now:** the trial walker is doing day 1 in your Chrome (the cell map), saving every feature it tries to `reference\taxprep\`; a second helper is checking the QuickBooks test company in its own tab. Two cloud workers are building the empty app (F00) and the screen map spec. The screen designs get one consolidated fix after the usability panel, for your first sitting about 3 Oct.
 
 ## 2. Coming up (no action yet)
 
-**The Taxprep trial:** the Lead writes "ready" here, likely today or tomorrow, and says when to open the "Ashbridge Test" Chrome profile for the walker. Day 4 is your corporation's Auto-fill; it tells you the day before.
-
-**QuickBooks:** when that track starts, the Lead will ask you here to create a free Intuit developer account (it cannot sign up for you). Made-up companies go only into its free test companies, never your real client list.
+**Tax rules for your CPA check (when you have an hour, any day this week):** `reference\cpa-check.md` lists 32 tax rules the checks will use (shareholder loans, unpaid bonuses, the business limit, instalments, GST/HST line 101 and more), each with its source and a worked example on made-up numbers. Reply `cpa ok`, or the item numbers you disagree with and why. Nothing waits on it until the checks are built (phase 3).
 
 **Design sittings:** about 3, 6 and 8 Oct, 30 to 45 minutes each: the flow, then two or three versions of each key screen, then the final look. Built your way: top to bottom, separate tabs for separate things, a laptop with two monitors. Links will appear here.
 
@@ -30,7 +21,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 | Chat | When | Type |
 |---|---|---|
 | Lead | Running all the time in turbo; restart it with `go` if it stops | `go` |
-| Watcher | Overnight and whenever you are away; clear it once a day | see item 2 |
+| Watcher | Overnight and whenever you are away; clear it once a day | running |
 | Reviewer | Daily in turbo, from Fri 2 Oct | `review` |
 | Critic | About every two days, from Sat 3 Oct; its proposals come here for your yes | `critic` |
 
