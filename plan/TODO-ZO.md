@@ -4,7 +4,9 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-Nothing right now.
+**1. QBO Accountant for the .GFI (when convenient; only the .GFI reader card waits).**
+- The "Ashbridge Test" Chrome is signed in to the QuickBooks test company only, so the walker found no Accountant screens (no Clients, no Workpapers) and stopped without touching anything.
+- Either sign in to your QBO Accountant in that Chrome and reply `1 signed in` (the walker then adds "Probe Co. (Test)", saves the .GFI, deletes it), or make the .GFI yourself and drop it in `C:\Users\User\Documents\taxprep-trial\inbox`, then reply `1 dropped`.
 
 **Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before.
 

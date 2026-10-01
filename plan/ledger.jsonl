@@ -82,3 +82,4 @@
 {"ts":"2026-10-01T18:53:50.216Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"update","allowed":true}
 {"ts":"2026-10-01T19:08:16.987Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Taxprep trial: downloads and Q21/Q22","allowed":true}
 {"ts":"2026-10-01T19:20:00.502Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Trial findings into RT clauses","allowed":true}
+{"ts":"2026-10-01T19:20:40.233Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"GIFI .GFI file from QBO Accountant","allowed":true}
