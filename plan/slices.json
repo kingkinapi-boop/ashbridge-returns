@@ -175,7 +175,7 @@
       "core": true
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00"
@@ -187,10 +187,13 @@
       "clauses": [
         "RT-3",
         "RT-7",
+        "RT-8",
         "RT-9",
         "RT-12",
         "RT-13",
         "RT-14",
+        "RT-21",
+        "RT-25",
         "ARC-14"
       ],
       "id": "F03",
@@ -199,7 +202,7 @@
       "size": "M",
       "hard": true,
       "core": true,
-      "note": "Held by the Lead 1 Oct: trial day 1 shows RT-3 header, RT-9 settings and cell ids differ (reference/taxprep/day1-findings.md). Re-spec after trial day 2 and the RT clause update; then unpark."
+      "note": "Re-carded 1 Oct from the trial findings (reference/taxprep/FINDINGS.md; amber clause changes to RT-3, RT-7, RT-8, RT-9, RT-12, RT-13, RT-21, RT-25): needs a fresh spec; any earlier spec is void."
     },
     {
       "status": "carded",
@@ -335,18 +338,22 @@
       ],
       "clauses": [
         "RT-3",
+        "RT-8",
         "RT-12",
         "RT-13",
         "RT-23",
-        "ARC-14",
-        "RT-2"
+        "RT-25",
+        "RT-26",
+        "RT-2",
+        "ARC-14"
       ],
       "id": "S00",
       "title": "Taxprep simulator: import, export, report",
       "phase": 0,
       "size": "L",
       "hard": true,
-      "core": true
+      "core": true,
+      "note": "Card changed 1 Oct to the trial's import behaviour (blank clears, header not read, report lists only cells that held a value): re-spec; any earlier spec is void."
     },
     {
       "status": "carded",
@@ -384,7 +391,8 @@
       "clauses": [
         "RT-22",
         "RT-21",
-        "RT-23"
+        "RT-23",
+        "RT-4"
       ],
       "id": "S02",
       "title": "Taxprep simulator: release identifier lists",
@@ -414,7 +422,9 @@
         "RT-9",
         "RT-10",
         "RT-17",
-        "RT-24"
+        "RT-24",
+        "RT-7",
+        "RT-4"
       ],
       "id": "S03",
       "title": "Taxprep simulator: apply the trial findings (cell map, token cell, roll-forward, diagnostics, export settings)",
@@ -2377,6 +2387,7 @@
       "clauses": [
         "TB-1",
         "TB-10",
+        "TB-13",
         "EV-5",
         "ARC-6",
         "ARC-20",
@@ -3844,12 +3855,15 @@
         "RT-21",
         "RT-22",
         "RT-7",
-        "RT-24"
+        "RT-24",
+        "RT-25",
+        "RT-4"
       ],
       "id": "M00",
       "title": "Mapping framework and identifier drift check",
       "phase": 2,
-      "size": "M"
+      "size": "M",
+      "note": "When carded: mapping keys are Taxprep internal identifiers (RT-21, for example GFBGII[1].GFGIJ.Ttwgij104) with jump code, line or GIFI code and description kept for people; GIFI code to identifier read from the release export's descriptions; the natural-key cell of each repeating group (CCACat.FD08C keyed by FED.Ttw08cA1, RT-7) and the copy lookup from the latest export; whole-dollar rounding per GIFI code with the Schedule 100 plug line (RT-25); refuse any identifier not on the release's input list (RT-4). Source: reference/taxprep/FINDINGS.md."
     },
     {
       "status": "carded",

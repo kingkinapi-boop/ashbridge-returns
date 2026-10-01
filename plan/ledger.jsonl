@@ -88,3 +88,5 @@
 {"ts":"2026-10-01T19:25:22.640Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Findings review: F00 round 2","allowed":true}
 {"ts":"2026-10-01T19:25:28.514Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"builder","model":null,"where":"worktree","desc":"Queue dependency gate","allowed":true}
 {"ts":"2026-10-01T19:26:47.563Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":null,"where":"worktree","desc":"Design fixes: source viewer","allowed":true}
+{"ts":"2026-10-01T19:29:18.095Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T19:30:28.810Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"checker","model":null,"where":"worktree","desc":"Check queue repair 2","allowed":true}
