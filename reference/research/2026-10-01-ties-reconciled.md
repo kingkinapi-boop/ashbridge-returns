@@ -1,0 +1,62 @@
+# Ties CK-10 to CK-19: reconciled (research checker)
+
+Date 1 Oct 2026. Inputs: `2026-10-01-ties-a.md` (CRA and ITA angle) and `2026-10-01-ties-b.md` (practice and Taxprep help). Each deciding claim was re-opened at its source. Labels: [confirmed] re-read on the cited page today; [A only] / [B only] found by one report; [not reconfirmed]; [inference]. The clause file has no CK-16 or CK-17.
+
+## The answer in short
+- Right as written, sharpened: CK-10, CK-18. Wrong or untestable as written: CK-11 (missing two sibling ties, sign of 3700 unknown), CK-12 ("as assessed" has no source for UCC and donations), CK-13 (a tie cannot hold for timing differences: make it a reconciliation), CK-14 (Schedule 50 cannot add to 100%), CK-15 (8670 alone is the wrong amortization set; penalties have no GIFI code), CK-19 ("identical" must be percentages per calendar year; dollars differ by year length).
+- Openings with no assessed figure, and Schedule 50 with no share register, are "not checked: no evidence" (CK-2) plus a flag (CK-5), never a pass.
+
+## Sources re-opened today
+- R1 RC4088 GIFI guide, Rev. 23: canada.ca/en/revenue-agency/services/forms-publications/publications/rc4088/general-index-financial-information-gifi.html
+- R2 Schedule 1, T2 SCH 1 E (25): canada.ca/content/dam/cra-arc/formspubs/pbg/t2sch1/t2sch1-25e.pdf
+- R3 Schedule 23, T2 SCH 23 E (19): canada.ca/content/dam/cra-arc/formspubs/pbg/t2sch23/t2sch23-fill-19e.pdf
+- R4 Schedule 50, T2 SCH 50 E (19): canada.ca/content/dam/cra-arc/formspubs/pbg/t2sch50/t2sch50-fill-19e.pdf
+- R5 T4012 (2025 ed., pages modified 2026-05-28): chapter 2 (Schedule 50), chapter 3 (Schedule 8, meals), chapter 4 (business limit). Under .../publications/t4012/t2-corporation-income-tax-guide-chapter-N-...html
+- R6 ITA s.125, 67.1, 18 (current to 2026-09-21): laws-lois.justice.gc.ca/eng/acts/I-3.3/section-125.html, section-67.1.html, section-18.html
+- R7 Taxprep GIFI transfer list (2019 v11): taxprep.com/assistance/T2/2019/v11/en-ca/Content/GIFI/IGRF32.htm
+- R8 CCH iFirm Taxprep help, Schedule 8 REC (2024): support.cchifirm.ca/en/assistance/T2/2024/content/taxhelp/8rec.htm
+- R9 CRA About T2 Auto-fill (dated 2019-08-20): canada.ca/en/revenue-agency/services/e-services/digital-services-businesses/about-t2-auto-fill.html
+- Could not reconfirm: T4012 line 840 paragraph in the current edition (chapter 8 page text truncated; 2025 PDF not readable here). Schedule 100 and Schedule 8 form PDFs not re-opened.
+
+## Per tie: settled rule, test, source, confidence
+
+**CK-10 Balance sheet.** Rule: 2599 = 3499 + 3620, and 3640 = 2599. All four "must be reported" [confirmed R1]. Contra-assets (accumulated amortization, e.g. 1681, 2009) are reported as negatives: R1's examples show "($3,000)" [confirmed R1; B right, A had "not found"]. Test: the three equalities to the dollar on the export; a gap equal to exactly twice one line is labelled "likely sign error". No tolerance: GIFI amounts are whole dollars, so B's "one dollar per line" tolerance conflicts with CK-3 and is rejected (rounding belongs to CK-18). Confidence high; export sign confirmed in the trial week.
+
+**CK-11 Retained earnings.** Rule: 3849 = 3660 + 3680 + 3700 + 3720 + 3740 [codes confirmed R1]. Siblings: 3680 "should be equal to the amount reported under item 9999" and 3849 "should be the same amount reported under item 3600" [both confirmed R1; A had the second as inference]. A's 9998 adjustment: [A only, not reconfirmed]. Sign of 3700: R1 does not say [both agree]; store the sign as data per field, set from the trial export. 3660 = last year's 3849 as filed; a restatement must sit in 3720, not in 3660 [inference, both]. No prior year (first year, amalgamation): "not checked: no evidence". Confidence high for codes, medium for the 3700 sign.
+
+**CK-12 Openings.** Schedule 8 column 2 is "the undepreciated capital cost at the end of the previous tax year" [confirmed R5 ch.3]. Auto-fill gives assessed balances for non-capital and capital losses, RDTOH/ERDTOH/NERDTOH, GRIP and CDA, from "the last return assessed/reassessed", and "does not include outstanding assessment activity" [confirmed R9, page dated 2019]. Auto-fill gives no UCC and no donations [confirmed R9 by absence]. Settled test: (a) pools Auto-fill covers: opening = the Auto-fill figure, storing the pull date; (b) UCC by class and donations: opening = last year's filed closing, plus a flag when any notice of reassessment for that year is on file; (c) no assessed source and no filed prior return: "not checked: no evidence". Amalgamation or wind-up: flag. Confidence high (rule), medium (Auto-fill coverage: old page).
+
+**CK-13 Instalments.** CRA uses its own account balance when it differs from line 840 [A only, T4012 2017 p.123; not reconfirmed in 2025 ed.]. Auto-fill and account views exclude "amounts not yet applied, or held credits" [confirmed R9]. So a difference is often timing, not error. Settled: make it a reconciliation (CK-4): line 840 vs the CRA account statement credited to this year, items typed "not yet applied", "applied to another year", "transferred from another program account". Evidence is a CRA statement the preparer uploads; without it, "not checked: no evidence". Confidence medium.
+
+**CK-14 Schedule 50.** Private corporations list "any shareholder who holds 10% or more of the corporation's common and/or preferred shares" [confirmed R4]; T4012 adds "Give a maximum of the 10 top shareholders" [confirmed R5 ch.2]. Columns are percentage common (400) and percentage preferred (500) [confirmed R4], not per share class. The 100% sum cannot hold: holders under 10% are omitted [A, agreed]. Settled test, against the share register: every holder at or above 10% (exactly 10% included, B's example) appears, up to 10; each listed percentage equals the register figure at the form's precision; each column totals at most 100%. No register: "not checked: no evidence", but the at-most-100% test still runs. Confidence high.
+
+**CK-15 Schedule 1 add-backs.** Lines [confirmed R2]: 103 interest and penalties on taxes; 104 tangible; 105 natural resource; 106 intangible amortization; 107 recapture; 121 non-deductible meals; 128 fines and penalties under 67.6; 403 CCA from Schedule 8; 404 terminal loss. Taxprep transfers 104 = 8670 + 8459 + 9791, 105 = 8650 + 8460, 106 = 8570 + 9832 + 9833; 121 = 50% of 8523 only when the "Line 8523 of the GIFI" box is ticked [confirmed R7, but 2019 help; B right, A's 8670-only fails]. 8459 is direct-cost amortization in cost of sales [confirmed R1]; the farm codes 9791, 9832, 9833 were not confirmed in R1 (reader gave conflicting meanings): re-check in the 2026 Taxprep help. Meals: 50% of the lesser of actual and reasonable (67.1(1)); exceptions 67.1(2)(a) to (f); long-haul truckers 80% [confirmed R6, R5 ch.3]. Penalties: 18(1)(t) bars tax interest and penalties [confirmed R6]; R1 has no GIFI code for them [confirmed by absence; B right]. Settled tests: 104/105/106 = the code sets above; 403 = Schedule 8 total claimed (never "maximum"); 107 and 404 = Schedule 8; 121 = 50% of (8523 minus amounts the preparer marks excepted, each with its 67.1 paragraph; excepted amounts go to a person as a flag); 103 and 128 = the ledger accounts tagged in the trial-balance mapping, else a flag. Taxprep says its Schedule 8 REC "is not able to highlight all of the discrepancies" and cannot reflect Class 14 [confirmed R8]. Confidence high for lines, medium for code sets.
+
+**CK-18 Recompute equals cell.** No CRA rule; agreed. Compare signed whole dollars after rounding by the rule Taxprep uses (find in trial); a hand override in a cell is an exception naming the override, never a pass. Confidence high.
+
+**CK-19 Associated group.** From R3 [confirmed]: column 4 "business limit for the year before the allocation", "0" for association codes 2, 3, 4; column 5 percentages for code 1 only, total "cannot exceed 100%"; column 6 = column 4 x column 5; "Ensure that the total at line A does not exceed $500,000"; line 050 calendar year; line 075 amended agreement replaces the earlier one; a year under 51 weeks prorates column 6 by days/365 onto line 410; more than one year ending in a calendar year: one agreement each, and the later limit is the lesser of the two (125(5)). ITA 125(2) to (4), 125(5)(b) and 125(5.1) [confirmed R6]: no agreement within 30 days of notice means the Minister allocates. Settled test: for each calendar year, every group return carries the same names, codes and column 5 percentages; code-1 percentages total at most 100%; line A at most 500,000; line 410 = column 6, times days/365 if under 51 weeks, rounded to the dollar; a sister return not in the system or no Schedule 23 is a flag. The 125(5.1) reduction is recomputed under CK-18, not here. Confidence high.
+
+## Where the two reports disagreed
+1. Contra-asset sign: B right (R1 examples). 2. Tolerance on CK-10: A's exact tie wins (CK-3, whole-dollar GIFI). 3. CK-13 tie (A) vs flag (B): neither; a reconciliation keeps the dollar check and explains timing. 4. Penalties tie (A) vs flag (B): B right for GIFI; a tie only through tagged ledger accounts. 5. 3849 = 3600: fact, not inference (R1).
+
+## Clause changes proposed (for the Lead, one amber each)
+- CK-10: "Balance sheet in the Taxprep export: 2599 equals 3499 plus 3620, and 3640 equals 2599; contra-asset lines are negative." Source R1.
+- CK-11: "GIFI 3849 equals 3660 plus 3680, 3700, 3720 and 3740, each with the sign set in the field rules; 3680 equals 9999; 3849 equals 3600; 3660 equals last year's filed 3849, with any restatement in 3720. No prior year: not checked." Source R1.
+- CK-12: "Opening balances: losses, RDTOH (eligible and non-eligible), GRIP and capital dividend account equal the latest CRA assessed figure (Auto-fill, with its date); UCC by class and donations equal last year's filed closing, flagged when a reassessment of that year is on file. No source: not checked." Source R5, R9.
+- CK-13: move to Reconciliations: "Instalments claimed (line 840) against what CRA's account credits to the year; items: not yet applied, applied to another year, transferred from another account." Source T4012 2017, R9.
+- CK-14: "Schedule 50 lists every holder of 10% or more of common or preferred shares in the share register (at most 10), each at the register's percentage; each column totals at most 100%." Source R4, R5.
+- CK-15: "Schedule 1: lines 104, 105, 106 equal their GIFI sets (data, from the Taxprep transfer list); 403, 107 and 404 equal Schedule 8; 121 equals half of 8523 less excepted amounts (each excepted amount flagged with its 67.1(2) paragraph); 103 and 128 equal the ledger accounts tagged for tax interest, penalties and fines, else a flag." Source R2, R6, R7.
+- CK-19: "Associated group: for each calendar year, the Schedule 23 names, codes and percentages are identical on every return; code-1 percentages total at most 100% and line A at most $500,000; line 410 equals column 6, prorated by days/365 under 51 weeks, and the lesser rule for a second year in the calendar year. A missing agreement or sister return is a flag." Source R3, R6.
+
+## For the CPA's check (decision 0008, B8; add each to the CPA list)
+1. CK-19: A and B associated, 70/30, line A 500,000. A full year: 350,000. B's first year 1 Oct to 31 Dec 2026, 92 days: 150,000 x 92 / 365 = 37,808. Same percentages, different dollars: pass.
+2. CK-11: 3660 100,000; 3680 60,000 (= 9999); 3700 (25,000); 3849 135,000 = 3600: pass. Dividends entered +25,000 give 185,000: fail, "likely sign error".
+3. CK-15: 8670 18,000; 8459 2,000: line 104 must be 20,000 (a check on 8670 alone wrongly fails). 8523 6,000 of which 1,000 is a staff party under 67.1(2)(f): line 121 = 50% x 5,000 = 2,500, and the 1,000 is flagged.
+4. CK-12: last year's filed non-capital loss 40,000, reassessed to 32,000; Auto-fill shows 32,000: opening must be 32,000.
+5. CK-14: common 1,000 shares, X 500, Y 400, Z 100: all three listed (Z exactly 10%); column 400 totals 100%.
+6. CK-13: line 840 12,000; CRA account 9,000; one 3,000 payment dated 31 Dec, applied 2 Jan: reconciled, remainder zero.
+
+## Open points
+- Taxprep's export: sign of 3700 and contra assets, the GIFI code sets for lines 104 to 106 in the 2026 version, and its rounding rule (trial week).
+- T4012 line 840 "use the amount in your business account" not reconfirmed in the 2025 edition.
+- Whether Auto-fill (page dated 2019) now gives UCC or donations; meaning of farm codes 9791, 9832, 9833.
