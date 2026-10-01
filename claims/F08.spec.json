@@ -2,8 +2,7 @@
  "card": "F08",
  "role": "spec",
  "worker": "cloud-7528cb",
- "state": "released",
- "at": "2026-10-01T18:23:08.806Z",
- "mode": "turbo",
- "note": "dep F00 not merged: no package.json/vitest/fast-check on main"
+ "state": "working",
+ "at": "2026-10-01T18:23:11.243Z",
+ "mode": "turbo"
 }
