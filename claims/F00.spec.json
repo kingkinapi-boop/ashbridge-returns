@@ -2,9 +2,9 @@
  "card": "F00",
  "role": "spec",
  "worker": "cloud-d367f7",
- "state": "reported",
- "at": "2026-10-01T18:07:02.944Z",
+ "state": "released",
+ "at": "2026-10-01T19:29:02.184Z",
  "mode": "turbo",
- "note": "11 tests (5 db acceptance, 6 rules); 7 fail as expected, 4 planted-fault proofs pass",
+ "note": "fix round 2: write the toolchain rule tests and the mutation canary (card, Fix round 2)",
  "commit": "ae075e5908c462ebe2feee6e378edbbefca264b7"
 }
