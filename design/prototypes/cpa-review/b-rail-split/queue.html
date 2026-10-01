@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en-CA" class="govuk-template">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your review queue - Ashbridge Tax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+<link rel="stylesheet" href="../shared/ashbridge.css">
+</head>
+<body class="govuk-template__body app-dense">
+<script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+<a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+<div class="govuk-generic-header">
+  <div class="govuk-generic-header__container govuk-width-container app-width-container--wide">
+    <div class="govuk-generic-header__logo">
+      <a href="queue.html" class="govuk-generic-header__homepage-link">Ashbridge Tax</a>
+    </div>
+  </div>
+</div>
+<div class="govuk-service-navigation" data-module="govuk-service-navigation">
+  <div class="govuk-width-container app-width-container--wide">
+    <div class="govuk-service-navigation__container">
+      <span class="govuk-service-navigation__service-name"><span class="govuk-service-navigation__text">Returns, CPA review</span></span>
+      <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
+        <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle" aria-controls="navigation" hidden aria-hidden="true">Menu</button>
+        <ul class="govuk-service-navigation__list" id="navigation">
+          <li class="govuk-service-navigation__item govuk-service-navigation__item--active"><a class="govuk-service-navigation__link" href="queue.html" aria-current="page"><strong class="govuk-service-navigation__active-fallback">Review queue</strong></a></li>
+          <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="index.html">Start of this version</a></li>
+          <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="../index.html">All versions</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="govuk-width-container app-width-container--wide">
+  <div class="govuk-phase-banner">
+    <p class="govuk-phase-banner__content"><strong class="govuk-tag govuk-phase-banner__content__tag">Prototype</strong>
+      <span class="govuk-phase-banner__text">Made-up data. Version B: coverage rail, list and detail. <a class="govuk-link" href="#" data-reset>Reset this prototype</a></span></p>
+  </div>
+</div>
+
+<div class="govuk-width-container app-width-container--wide">
+  <main class="govuk-main-wrapper govuk-!-padding-top-3" id="main-content">
+<h1 class="govuk-heading-l">Your review queue</h1>
+<p class="govuk-body">3 returns ready for you. Ordered by tier (red first), then filing due date.</p>
+<div class="app-table-scroll" role="region" aria-label="Returns, by tier then due date, table" tabindex="0"><table class="govuk-table" data-module="moj-sortable-table">
+  <caption class="govuk-table__caption govuk-table__caption--s govuk-visually-hidden">Returns, by tier then due date</caption>
+  <thead class="govuk-table__head"><tr class="govuk-table__row"><th scope="col" class="govuk-table__header" aria-sort="none">Corporation</th><th scope="col" class="govuk-table__header" aria-sort="none">Year end</th><th scope="col" class="govuk-table__header" aria-sort="ascending">Tier</th><th scope="col" class="govuk-table__header" aria-sort="none">State</th><th scope="col" class="govuk-table__header" aria-sort="none">Filing due</th><th scope="col" class="govuk-table__header" aria-sort="none">Blocked by</th></tr></thead>
+  <tbody class="govuk-table__body">
+    <tr class="govuk-table__row"><td class="govuk-table__cell"><a class="govuk-link" href="r01/brief.html">Maple Ridge Consulting Inc. (Test)</a></td><td class="govuk-table__cell">31 Dec 2025</td><td class="govuk-table__cell" data-sort-value="0"><strong class="govuk-tag govuk-tag--red">Tier: red</strong></td><td class="govuk-table__cell">Ready for review</td><td class="govuk-table__cell" data-sort-value="2026-06-30">30 Jun 2026</td><td class="govuk-table__cell">Nothing</td></tr>
+    <tr class="govuk-table__row"><td class="govuk-table__cell"><a class="govuk-link" href="r01b/brief.html">Maple Ridge Consulting Inc. (Test)</a><br><span class="govuk-hint govuk-!-display-inline">the same return after rework (second scenario)</span></td><td class="govuk-table__cell">31 Dec 2025</td><td class="govuk-table__cell" data-sort-value="0"><strong class="govuk-tag govuk-tag--red">Tier: red</strong></td><td class="govuk-table__cell">Back from rework</td><td class="govuk-table__cell" data-sort-value="2026-06-30">30 Jun 2026</td><td class="govuk-table__cell">Nothing</td></tr>
+    <tr class="govuk-table__row"><td class="govuk-table__cell">Danforth Cleaning Co. Ltd. (Test)</td><td class="govuk-table__cell">31 Dec 2025</td><td class="govuk-table__cell" data-sort-value="0"><strong class="govuk-tag govuk-tag--red">Tier: red</strong></td><td class="govuk-table__cell">Preparing</td><td class="govuk-table__cell" data-sort-value="2026-06-30">30 Jun 2026</td><td class="govuk-table__cell">Missing May bank statement</td></tr>
+    <tr class="govuk-table__row"><td class="govuk-table__cell">Eglinton Holdings Inc. (Test)</td><td class="govuk-table__cell">31 Dec 2025</td><td class="govuk-table__cell" data-sort-value="1"><strong class="govuk-tag govuk-tag--orange">Tier: amber</strong></td><td class="govuk-table__cell">Preparing</td><td class="govuk-table__cell" data-sort-value="2026-06-30">30 Jun 2026</td><td class="govuk-table__cell">Waiting on Eglinton Retail Ltd. (Test)</td></tr>
+    <tr class="govuk-table__row"><td class="govuk-table__cell">Halton Haulage Ltd. (Test)</td><td class="govuk-table__cell">31 Mar 2026</td><td class="govuk-table__cell" data-sort-value="1"><strong class="govuk-tag govuk-tag--orange">Tier: amber</strong></td><td class="govuk-table__cell">Preparing</td><td class="govuk-table__cell" data-sort-value="2026-09-30">30 Sep 2026</td><td class="govuk-table__cell">CRA instalment record</td></tr>
+    <tr class="govuk-table__row"><td class="govuk-table__cell"><a class="govuk-link" href="r08/brief.html">Queen West Design Studio Inc. (Test)</a></td><td class="govuk-table__cell">30 Sep 2025</td><td class="govuk-table__cell" data-sort-value="2"><strong class="govuk-tag govuk-tag--green">Tier: green</strong></td><td class="govuk-table__cell">In review, 4 of 5 sections</td><td class="govuk-table__cell" data-sort-value="2026-03-31">31 Mar 2026</td><td class="govuk-table__cell">Nothing</td></tr>
+  </tbody>
+</table></div>
+<p class="govuk-body"><a class="govuk-link" href="queue-empty.html">See the empty queue</a></p>
+  </main>
+</div>
+<div class="govuk-visually-hidden" aria-live="polite" id="app-announce"></div>
+<script>window.CPA_PAGE = {"version":"b","layout":"rail","page":"queue"};</script>
+
+
+
+<script src="../shared/vendor/govuk-frontend.bundle.js"></script>
+<script src="../shared/vendor/moj-frontend.bundle.js"></script>
+<script src="../shared/app.js"></script>
+</body>
+</html>

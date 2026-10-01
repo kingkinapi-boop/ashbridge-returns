@@ -1,0 +1,141 @@
+// Prototype stylesheet for the CPA review designs. GOV.UK Frontend 6.5.1 and MOJ Frontend 11.1.0,
+// branded only through their settings (RV-55), then the few app- parts the review needs (RV-52).
+// Compiled with Dart Sass: sass --load-path=<dir holding node_modules/govuk-frontend and node_modules/moj> \
+//   --no-source-map --quiet-deps --style=compressed ashbridge.scss ashbridge.css
+// then replace the literal em dash in GOV.UK's tabs rule (unused here) with the CSS escape \2014,
+// so no file holds an em dash character.
+// When D00 lands, design/basis/settings.scss replaces the settings block below.
+
+@use "node_modules/moj/moj/all" as moj with (
+  $govuk-functional-colours: (
+    brand: #355b7d,
+    link: #355b7d,
+    link-hover: #4d7092,
+    text: #15283b,
+    secondary-text: #627283,
+    error: #b3413a,
+    focus: #f5c94c,
+    focus-text: #15283b,
+    success: #1f6e50
+  ),
+  $moj-font-family: (Roboto, arial, sans-serif),
+  $moj-page-width: 1600px
+);
+@use "node_modules/govuk-frontend/dist/govuk/index" as govuk;
+
+// ---- app- parts (each listed with its reason in README.md) ----
+
+// Wide container for the review screens (design basis: up to 1600 px for tables and review).
+.app-width-container--wide { @include govuk.govuk-width-container(1600px); }
+
+// Dense type for repeat desk work (RV-51); never below 16 px. Applied to the whole page body.
+.app-dense :where(.govuk-body, .govuk-body-s, .govuk-body-l, .govuk-table, .govuk-tag, .govuk-button, .govuk-summary-list, .govuk-list, .govuk-hint,
+  .govuk-caption-m, .govuk-details, .govuk-label, .govuk-fieldset__legend, .govuk-error-message, .govuk-inset-text, .govuk-task-list,
+  .govuk-pagination, .govuk-error-summary, .govuk-notification-banner, .govuk-textarea, .govuk-checkboxes__label, .govuk-radios__label,
+  .moj-sub-navigation__link, .moj-side-navigation, .moj-identity-bar, .moj-alert, .moj-timeline, .moj-badge,
+  .govuk-service-navigation__link, .govuk-service-navigation__service-name, .govuk-phase-banner__text, .govuk-heading-s) { font-size: 1rem; line-height: 1.3; }
+.app-dense .govuk-heading-l { font-size: 1.75rem; margin-bottom: 8px; }
+.app-dense .govuk-heading-m { font-size: 1.25rem; }
+.app-dense .govuk-main-wrapper { padding-bottom: 16px; }
+.app-dense .govuk-button { padding: 5px 10px 4px; margin-bottom: 8px; }
+.app-dense .govuk-generic-header__container { padding-top: 4px; padding-bottom: 4px; }
+.app-dense .govuk-generic-header__homepage-link { font-size: 1.25rem; font-weight: 700; }
+.app-scroll--short { max-height: 250px; }
+.app-dense .govuk-service-navigation__item { margin-top: 0; margin-bottom: 0; padding: 8px 0; }
+.app-dense .govuk-phase-banner { padding-top: 4px; padding-bottom: 4px; }
+.app-dense .moj-identity-bar { padding-top: 6px; padding-bottom: 6px; }
+.app-dense .moj-sub-navigation { margin-bottom: 12px; }
+.app-dense .moj-sub-navigation__link { padding: 6px 2px 8px; }
+.app-dense .govuk-table__caption--s { margin-bottom: 2px; }
+.app-dense .govuk-button .app-key { background: transparent; color: inherit; border-color: currentColor; }
+.app-dense .govuk-table__cell, .app-dense .govuk-table__header { padding-top: 6px; padding-bottom: 6px; }
+.app-dense .govuk-summary-list__row > * { padding-top: 6px; padding-bottom: 6px; }
+
+// Three panes: return, trace, source (RV-4). Stack below 1280 px and at high zoom (WCAG 1.4.10).
+.app-panes { display: grid; grid-template-columns: minmax(0, 11fr) minmax(0, 8fr) minmax(0, 9fr); gap: 16px; align-items: start; }
+.app-panes--two { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+.app-panes--rail { grid-template-columns: minmax(200px, 1.4fr) minmax(0, 5fr) minmax(0, 5fr); }
+@media (max-width: 1279px) { .app-panes, .app-panes--two, .app-panes--rail { grid-template-columns: minmax(0, 1fr); } }
+.app-pane { border: 1px solid govuk.govuk-functional-colour(border); background: govuk.govuk-functional-colour(body-background); min-width: 0; }
+.app-pane__head { padding: 8px 12px; border-bottom: 1px solid govuk.govuk-functional-colour(border); background: #f3f5f8; }
+.app-pane__head .govuk-heading-s { margin: 0; }
+.app-pane__body { padding: 8px 12px; max-height: calc(100vh - 230px); overflow: auto; }
+.app-pane__body:focus { outline: 3px solid govuk.govuk-functional-colour(focus); outline-offset: -3px; }
+@media (max-width: 1279px) { .app-pane__body { max-height: none; } }
+.app-sticky { position: sticky; top: 0; }
+
+// Dots (EV-11): colour plus a shape plus a word, never colour alone.
+.app-dot { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.app-dot--compact { gap: 0; }
+.app-dot::before { content: ""; display: inline-block; width: 12px; height: 12px; flex: none; }
+.app-dot--green::before { background: #1f6e50; border-radius: 50%; }
+.app-dot--grey::before { background: transparent; border: 2px solid #505a5f; border-radius: 50%; width: 8px; height: 8px; }
+.app-dot--amber::before { width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 12px solid #b06000; background: none; }
+.app-dot--purple::before { background: #5b3c8f; transform: rotate(45deg); width: 10px; height: 10px; }
+.app-dot--none::before { border: 2px dashed #b3413a; width: 8px; height: 8px; }
+
+// A flagged line and a highlighted line (RV-3, RV-8): thick left rule plus words, not colour alone.
+.app-row--hi > :first-child { box-shadow: inset 5px 0 0 #b06000; padding-left: 10px; }
+.app-row--flag > :first-child { box-shadow: inset 5px 0 0 #b3413a; padding-left: 10px; }
+.app-row--total { font-weight: 700; }
+.app-row--current { background: #fff7d6; outline: 2px solid #15283b; outline-offset: -2px; }
+.app-row--changed .app-was { display: block; font-size: 1rem; color: govuk.govuk-functional-colour(secondary-text); text-decoration: line-through; }
+.app-num { font-variant-numeric: tabular-nums; }
+.app-flag { display: inline-block; padding: 0 6px; border: 2px solid #b3413a; color: #b3413a; font-weight: 700; font-size: 1rem; }
+
+// Source viewer: a spreadsheet grid (EV-14) or a page with the figure boxed. Box uses outline plus a label.
+.app-sheet { border-collapse: collapse; font-family: Roboto, arial, sans-serif; color: #15283b; font-size: 1rem; font-variant-numeric: tabular-nums; width: 100%; }
+.app-sheet th, .app-sheet td { border: 1px solid #b1b4b6; padding: 3px 6px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
+.app-sheet thead th, .app-sheet tbody th { background: #f3f2f1; font-weight: 400; color: #505a5f; }
+.app-sheet__row--boxed td { background: #fff7d6; }
+.app-sheet__cell--boxed { outline: 4px solid #15283b; outline-offset: -4px; font-weight: 700; }
+.app-box-label { display: inline-block; margin-left: 6px; padding: 0 4px; background: #15283b; color: #fff; font-size: 0.875rem; font-weight: 700; }
+.app-page { border: 1px solid #b1b4b6; box-shadow: 0 2px 0 #b1b4b6; padding: 20px 24px; background: #fff; max-width: 640px; }
+.app-page__line { display: flex; justify-content: space-between; gap: 16px; padding: 6px 4px; border-bottom: 1px dotted #b1b4b6; }
+.app-page__line--boxed { outline: 4px solid #15283b; outline-offset: 2px; font-weight: 700; }
+.app-source-card { border-left: 5px solid #355b7d; padding: 8px 12px; background: #f3f5f8; }
+.app-source-card--failed { border-left-color: #b3413a; }
+.app-source-card--none { border-left-color: #b3413a; border-left-style: dashed; }
+
+// Keys shown on screen (RV-6, WCAG 2.1.4).
+.app-key { display: inline-block; min-width: 1.4em; padding: 0 4px; border: 1px solid #505a5f; border-bottom-width: 3px; border-radius: 3px; font-family: monospace; font-size: 0.9rem; text-align: center; background: #fff; }
+.app-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.app-toolbar .govuk-button { margin-bottom: 0; }
+
+// Version C: the trace opens inline under the row it explains.
+.app-trace-row > td { background: #f3f5f8; border-left: 5px solid #15283b; }
+
+// Brief: fits one laptop screen; the flag list scrolls inside its own region.
+.app-brief { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.app-brief--single { grid-template-columns: minmax(0, 1fr); }
+.app-brief--three { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) minmax(0, 5fr); gap: 20px; }
+@media (max-width: 1279px) { .app-brief--three { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.app-brief-head { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; margin-bottom: 10px; }
+.app-brief-head .app-coverage { margin-bottom: 0; flex: 1 1 480px; }
+@media (max-width: 1023px) { .app-brief { grid-template-columns: minmax(0, 1fr); } }
+.app-scroll { max-height: 330px; overflow: auto; border: 1px solid govuk.govuk-functional-colour(border); }
+.app-scroll:focus { outline: 3px solid govuk.govuk-functional-colour(focus); }
+
+// Coverage strip (RV-5): sections left as links, or Approve.
+.app-coverage { border: 2px solid #15283b; padding: 6px 12px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+.app-coverage .govuk-button { margin: 0; }
+
+// Version B: the rail column and the two half-height panes on the right.
+.app-panes--railpage { grid-template-columns: minmax(200px, 1.4fr) minmax(0, 10fr); }
+.app-rail-col .moj-side-navigation { padding-top: 0; }
+.app-pane__body--half { max-height: calc(50vh - 130px); }
+.app-pane__body--source { max-height: calc(100vh - 200px); }
+
+// A button that reads as a link (choose a source from the trace list without a page load).
+.app-link-button { background: none; border: 0; padding: 0; font: inherit; color: govuk.govuk-functional-colour(link); text-decoration: underline; cursor: pointer; text-align: left; }
+.app-link-button:focus { outline: 3px solid transparent; background: govuk.govuk-functional-colour(focus); color: govuk.govuk-functional-colour(focus-text); box-shadow: 0 -2px govuk.govuk-functional-colour(focus), 0 4px govuk.govuk-functional-colour(text); text-decoration: none; }
+
+@media (max-width: 1279px) { .app-panes--railpage { grid-template-columns: minmax(0, 1fr); } }
+
+// Tables scroll sideways inside a labelled region on a narrow screen (WCAG 1.4.10).
+.app-table-scroll, .app-pane__body, .app-scroll { position: relative; }
+.app-table-scroll { max-width: 100%; overflow-x: auto; }
+.app-table-scroll:focus { outline: 3px solid govuk.govuk-functional-colour(focus); }
+
+// Two-monitor drawings on the layouts page.
+.app-drawing { width: 100%; height: auto; max-width: 1100px; }

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en-CA" class="govuk-template">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>States - Ashbridge Tax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+<link rel="stylesheet" href="../shared/ashbridge.css">
+</head>
+<body class="govuk-template__body app-dense">
+<script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+<a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+<div class="govuk-generic-header">
+  <div class="govuk-generic-header__container govuk-width-container app-width-container--wide">
+    <div class="govuk-generic-header__logo">
+      <a href="queue.html" class="govuk-generic-header__homepage-link">Ashbridge Tax</a>
+    </div>
+  </div>
+</div>
+<div class="govuk-service-navigation" data-module="govuk-service-navigation">
+  <div class="govuk-width-container app-width-container--wide">
+    <div class="govuk-service-navigation__container">
+      <span class="govuk-service-navigation__service-name"><span class="govuk-service-navigation__text">Returns, CPA review</span></span>
+      <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
+        <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle" aria-controls="navigation" hidden aria-hidden="true">Menu</button>
+        <ul class="govuk-service-navigation__list" id="navigation">
+          <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="queue.html">Review queue</a></li>
+          <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="index.html">Start of this version</a></li>
+          <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="../index.html">All versions</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="govuk-width-container app-width-container--wide">
+  <div class="govuk-phase-banner">
+    <p class="govuk-phase-banner__content"><strong class="govuk-tag govuk-phase-banner__content__tag">Prototype</strong>
+      <span class="govuk-phase-banner__text">Made-up data. Version C: return walk with the source on the second monitor. <a class="govuk-link" href="#" data-reset>Reset this prototype</a></span></p>
+  </div>
+</div>
+
+<div class="govuk-width-container app-width-container--wide">
+  <main class="govuk-main-wrapper govuk-!-padding-top-3" id="main-content">
+<h1 class="govuk-heading-l">States</h1>
+<p class="govuk-body">Every state the brief names, drawn with this version's parts, on Maple Ridge Consulting Inc. (Test). Each also appears in context: the failed source on Income statement line 9200, no evidence on line 9275, the mark removed on the after-rework return, the empty queue and an empty comments tab on Queen West.</p>
+<div class="app-brief">
+  <section class="app-pane" aria-labelledby="h-loading"><div class="app-pane__head"><h2 class="govuk-heading-s" id="h-loading">Loading a source</h2></div><div class="app-pane__body" id="st-loading"></div></section>
+  <section class="app-pane" aria-labelledby="h-failed"><div class="app-pane__head"><h2 class="govuk-heading-s" id="h-failed">A source that failed</h2></div><div class="app-pane__body" id="st-failed"></div></section>
+  <section class="app-pane" aria-labelledby="h-none"><div class="app-pane__head"><h2 class="govuk-heading-s" id="h-none">No evidence (CK-2)</h2></div><div class="app-pane__body" id="st-none"></div></section>
+  <section class="app-pane" aria-labelledby="h-computed"><div class="app-pane__head"><h2 class="govuk-heading-s" id="h-computed">A computed line, no document</h2></div><div class="app-pane__body" id="st-computed"></div></section>
+  <section class="app-pane" aria-labelledby="h-doc"><div class="app-pane__head"><h2 class="govuk-heading-s" id="h-doc">A document page, figure boxed</h2></div><div class="app-pane__body" id="st-doc"></div></section>
+  <section class="app-pane" aria-labelledby="h-trace"><div class="app-pane__head"><h2 class="govuk-heading-s" id="h-trace">A flagged number's trace (three flags)</h2></div><div class="app-pane__body" id="st-trace"></div></section>
+</div>
+<h2 class="govuk-heading-m govuk-!-margin-top-6">Other states, where to see them</h2>
+<ul class="govuk-list govuk-list--bullet">
+  <li><a class="govuk-link" href="queue-empty.html">Empty queue</a></li>
+  <li><a class="govuk-link" href="r08/comments.html">No comments yet</a> (Queen West)</li>
+  <li><a class="govuk-link" href="r01b/s100.html">Reviewed mark removed, with the reason</a> (Maple Ridge after rework)</li>
+  <li><a class="govuk-link" href="r01/brief.html">Approve absent, sections left as links</a>; <a class="govuk-link" href="r08/s50.html">one section left, then Approve appears</a></li>
+  <li>Comment form error: open any number, press <span class="app-key">c</span>, then Send to preparer without choosing</li>
+</ul>
+  </main>
+</div>
+<div class="govuk-visually-hidden" aria-live="polite" id="app-announce"></div>
+<script>window.CPA_PAGE = {"version":"c","layout":"walk","page":"states"};</script>
+
+<script src="../shared/data/r01.js"></script>
+
+<script src="../shared/vendor/govuk-frontend.bundle.js"></script>
+<script src="../shared/vendor/moj-frontend.bundle.js"></script>
+<script src="../shared/app.js"></script>
+</body>
+</html>
