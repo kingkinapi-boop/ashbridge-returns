@@ -98,3 +98,4 @@
 {"ts":"2026-10-01T19:41:51.133Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"Taxprep trial day 5, run 5A","allowed":true}
 {"ts":"2026-10-01T19:41:58.275Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"Write strip-values tool","allowed":true}
 {"ts":"2026-10-01T19:58:49.384Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"Taxprep trial day 5, run 5C","allowed":true}
+{"ts":"2026-10-01T19:59:51.984Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Phase 2 card fixes, day 3 findings","allowed":true}
