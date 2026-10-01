@@ -17,7 +17,6 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Trial checkpoint: real cell ids into taxprep-cells.json, import.csv regenerated in the trial format | Sonnet helper | local | 1 Oct | claude/cells-checkpoint |
 | QBO sandbox company: reports, ids, a test AJE (Chrome; trial walker waits) | Sonnet walker | local | 1 Oct | reference/qbo/ |
 | queue: F00 build reopened (fix round 1, spec reported); specs reported for F01, F03 (parked), F04, F05; D01 spec next | 2 cloud runs cse_017hMiW9j3fVnNJe2RGaGGDD, cse_01LqmYtxUesTx2VN94G1rGxG | cloud | 1 Oct 18:15Z | claude/F00 and others |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
@@ -45,7 +44,7 @@ Done today: phase 0 and phase 1 cards written and independently reviewed (no pha
 - Cloud worker names: the first two runs both called themselves cloud-vm (same hostname); the routine prompt now uses a random id. Watch for the two cloud-vm runs blocking each other.
 - Chrome downloads land in C:SERSSERDOWNLOADS (ZO, 1 OCT); WALKERS COPY ONLY THEIR OWN EXPORTS TO C:SERSSERDOCUMENTS	AXPREP-TRIALINBOX AND TOUCH NOTHING ELSE THERE.
 - NEXT IN CHROME, ONE AT A TIME and only with the window visible (to-do #1): the trial walker (day 1b, then day 2), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI from QBO Accountant on "Probe Co. (Test)" (decision 0013, with its limits).
-- Chrome order, one at a time, window visible: the trial walker, then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI on "Probe Co. (Test)" in QBO Accountant (decision 0013, with its limits). Downloads land in C:\Users\User\Downloads; walkers copy only their own exports to C:\Users\User\Documents\taxprep-trial\inbox.
+- Trial checkpoint landed (300 GIFI ids; reference/taxprep/cell-map-status.md lists what to export next). Chrome order, one at a time, window visible: the QBO walker (running), then the trial walker (balance-sheet forms S2008, S2178, S3849, then S1, S8, S50; round trip steps 16 to 19; Q21, Q22), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI on "Probe Co. (Test)" in QBO Accountant (decision 0013, with its limits). Downloads land in C:\Users\User\Downloads; walkers copy only their own exports to C:\Users\User\Documents\taxprep-trial\inbox.
 - Only one helper drives Chrome at a time: two walkers shared the tab group on 1 Oct and one tab was taken over.
 - Edit files with the Edit tool, not shell scripts with escapes (Git Bash mangles backslashes).
 - Another Lead works in ashbridge-app: read-only there, always. GitHub Actions: 2,000 free minutes a month: keep branch checks lean.
