@@ -17,7 +17,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Taxprep trial day 1b: paused, the Chrome window was hidden (iFirm stops rendering); waits for to-do #1, then re-send the walker (about 202 of 395 forms listed, notes in reference/taxprep/2026-10-02-day2/) | none | | 1 Oct | |
+| Taxprep trial day 1b and day 2 (re-sent; window visible, decision 0013) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
 | queue: F00 check FAIL (flaky PGlite cold start) on hold-findings; F01 spec reported; F03, F04 specs working | cloud runs cse_01UaSXaBy5XRsUopyN1whFtX, cse_01WvokbrF6aSimESpr5gLRNg (third run ended after 1 job) | cloud | 1 Oct | claude/F00, F01, F03, F04 |
 | F00 fix round 1: spec job queued (tests from the findings review); when it reports, run `node tools/claim.mjs update F00 build reopened --worker lead` | queue | cloud | 1 Oct | claude/F00 |
 | phase 1 cards batch c (the rest of phase 1: E01, B cards, ...) | Opus drafter | local | 1 Oct | claude/cards-phase1c |
@@ -44,7 +44,7 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 - The main checkout stays on main; train work in .claude/worktrees/train. The push guard lets only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ go straight to main.
 - Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B` (that drags old plan files back).
 - Cloud worker names: the first two runs both called themselves cloud-vm (same hostname); the routine prompt now uses a random id. Watch for the two cloud-vm runs blocking each other.
-- Next in Chrome, one at a time and only with the window visible (to-do #1): the trial walker (day 1b, then day 2), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys).
+- Next in Chrome, one at a time and only with the window visible (to-do #1): the trial walker (day 1b, then day 2), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI from QBO Accountant on "Probe Co. (Test)" (decision 0013, with its limits).
 - Only one helper drives Chrome at a time: two walkers shared the tab group on 1 Oct and one tab was taken over.
 - Edit files with the Edit tool, not shell scripts with escapes (Git Bash mangles backslashes).
 - Another Lead works in ashbridge-app: read-only there, always. GitHub Actions: 2,000 free minutes a month: keep branch checks lean.

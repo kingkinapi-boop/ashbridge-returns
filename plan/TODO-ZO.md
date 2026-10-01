@@ -4,22 +4,13 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. When can the walker have the "Ashbridge Test" Chrome window on screen? (question, 1 minute)**
-- What: Taxprep stops drawing its lists and dialogs when its Chrome window is minimised or fully covered, so the walker stopped partway through the cell map. It needs that window visible (it can sit on your second monitor or a corner of the screen; it must not be minimised or covered).
-- Reply `1 now` (the window is visible and you will leave it for a few hours), or a time like `1 at 9pm` or `1 overnight`. The walker then runs the Taxprep work first and the QuickBooks look second, one at a time.
-
-**2. A real .GFI file from QuickBooks Online Accountant (question; it touches the firm's real QBO Accountant).**
-- What: the build reads the GIFI mapping from the .GFI file that QBO Accountant's Workpapers saves. Nobody has seen one, and the free test company has no Workpapers. If the file holds only GIFI totals and not each account, the trace from a GIFI line back to accounts needs another route.
-- Recommendation: in your QBO Accountant, add one made-up client named "Probe Co. (Test)" with five accounts, map them in Workpapers, save the .GFI, and drop it in `C:\Users\User\Documents\taxprep-trial\inbox`. Nothing real goes in it; delete it afterwards.
-- Reply `2 yes` (you do it, or say the walker may do it in your Chrome) or `2 no` (the Lead builds on the assumed layout and flags it). Meanwhile only the .GFI reader card waits.
-
-**3. How preparers write adjusting entries in QBO (1 minute).**
+**1. How preparers write adjusting entries in QBO (1 minute).**
 - What: for the trace, every adjusting entry in QBO needs its type, reason and source in the memo. Proposed: `AJE <type>: <reason> | source: <document or note>`, for example `AJE accrual: December rent unpaid | source: lease p.2`. Types: reclass, accrual, allocation, estimate, correction.
-- Reply `3 ok` or give the wording you want. Meanwhile the cards use this format.
+- Reply `1 ok` or give the wording you want. Meanwhile the cards use this format.
 
 **Coming soon from you:** day 4 of the trial is the Auto-fill test on your chosen corporation; the Lead tells you here the day before.
 
-**What the Lead is doing now:** the Taxprep trial (runs to about 16 Oct) waits for the window (item 1); day 1 is saved in `reference\taxprep\`. Cloud workers are writing the tests for the first cards; the empty app (F00) gets one fix round after its check. The three screen designs are in their fix round and the source viewer is being designed, for your first sitting about 3 Oct.
+**What the Lead is doing now:** the walker is back in your Chrome (thank you): Taxprep first, then the QuickBooks test company, then the .GFI on "Probe Co. (Test)" in QBO Accountant (it stops at any billing or subscription screen and never opens a real client). Please keep the window visible; day 1 is saved in `reference\taxprep\`. Cloud workers are writing the tests for the first cards; the empty app (F00) gets one fix round after its check. The three screen designs are in their fix round and the source viewer is being designed, for your first sitting about 3 Oct.
 
 ## 2. Coming up (no action yet)
 
