@@ -1,0 +1,58 @@
+Sandbox Company CA 7cf6,,,,,,,,,
+General Ledger,,,,,,,,,
+All Dates,,,,,,,,,
+
+,Distribution account,Transaction date,Transaction type,#,Name,Description,Split,Amount,Balance
+Chequing,,,,,,,,,
+,Chequing,04/10/2025,Cheque,2020,Jacque Hudspeth,,,-791.00,-791.00
+,Chequing,04/10/2025,Cheque,2021,Garcia's Event Space,,,-847.50,"-1,638.50"
+,Chequing,04/10/2025,Cheque,2022,Bank of AnyCity,,,-471.78,"-2,110.28"
+,Chequing,09/10/2025,Cheque,2023,Cass Hayden,,,-847.50,"-2,957.78"
+,Chequing,30/10/2025,Cheque,2024,Mark Howard,,,"-1,412.50","-4,370.28"
+,Chequing,30/10/2025,Cheque,2025,Town Electric & Gas Service,,,-287.82,"-4,658.10"
+,Accumulated Depreciation,25/10/2025,Journal Entry,6,,monthly depr,,-33.33,-33.33
+,Accumulated Depreciation,22/11/2025,Journal Entry,7,,monthly depr,,-33.33,-66.66
+,Accumulated Depreciation,23/12/2025,Journal Entry,8,,monthly depr,,-33.33,-99.99
+,Accumulated Depreciation,22/01/2026,Journal Entry,9,,monthly depr,,-33.33,-133.32
+,Accumulated Depreciation,22/02/2026,Journal Entry,10,,monthly depr,,-33.33,-166.65
+,Accumulated Depreciation,24/03/2026,Journal Entry,11,,monthly depr,,-33.33,-199.98
+,Accumulated Depreciation,24/04/2026,Journal Entry,13,,monthly depr,,-33.33,-233.31
+,Accumulated Depreciation,25/07/2026,Journal Entry,2,,depreciation on office equipment and furniture,,-33.33,-266.64
+,Accumulated Depreciation,24/08/2026,Journal Entry,3,,depr on office equipment & equipment,,-33.33,-299.97
+,Accumulated Depreciation,24/08/2026,Journal Entry,4,,monthly depr,,-33.33,-333.30
+,Accumulated Depreciation,24/09/2026,Journal Entry,5,,monthly depr,,-33.33,-366.63
+,Furniture and Equipment,25/06/2026,Journal Entry,1,,"Office Furniture -- desks, chairs, conference table",,"1,500.00","1,500.00"
+,Furniture and Equipment,25/06/2026,Journal Entry,1,,Computers and printer/scanner,,"1,250.00","2,750.00"
+,GST/HST Payable,16/05/2026,Journal Entry,,,Filed sales tax,,"-1,495.62","-1,603.61"
+,GST/HST Payable,16/05/2026,Journal Entry,,,Filed sales tax,,-340.69,"-1,944.30"
+,GST/HST Suspense,16/05/2026,Journal Entry,,,Filed sales tax,,"1,495.62","1,495.62"
+,GST/HST Suspense,16/05/2026,Journal Entry,,,Filed sales tax,,340.69,"1,836.31"
+,Opening Balance Equity,16/05/2026,Journal Entry,14,,,,"-3,668.20","-7,500.00"
+,Owner's Equity - Contributions,25/06/2026,Journal Entry,1,,office furniture and Computers and printer/scanner,,"2,750.00","12,750.00"
+,Retained Earnings,17/04/2026,Journal Entry,12,,adjust inventory adjustments,,"9,436.24","9,436.24"
+,Retained Earnings,16/05/2026,Journal Entry,14,,,,"3,668.20","13,104.44"
+,Inventory Shrinkage,17/04/2026,Journal Entry,12,,adjust inventory adjustments,,"9,436.24",$0.00
+,Janitorial Expense,01/10/2026,Journal Entry,15,,line two description probe,,-12.34,405.18
+,Utilities - Water,01/10/2026,Journal Entry,15,,line one description probe,,12.34,735.68
+,Depreciation Expense,25/10/2025,Journal Entry,6,,monthly depr,,12.50,12.50
+,Depreciation Expense,25/10/2025,Journal Entry,6,,monthly depr,,20.83,33.33
+,Depreciation Expense,22/11/2025,Journal Entry,7,,monthly depr,,12.50,45.83
+,Depreciation Expense,22/11/2025,Journal Entry,7,,monthly depr,,20.83,66.66
+,Depreciation Expense,23/12/2025,Journal Entry,8,,monthly depr,,12.50,79.16
+,Depreciation Expense,23/12/2025,Journal Entry,8,,monthly depr,,20.83,99.99
+,Depreciation Expense,22/01/2026,Journal Entry,9,,monthly depr,,12.50,112.49
+,Depreciation Expense,22/01/2026,Journal Entry,9,,monthly depr,,20.83,133.32
+,Depreciation Expense,22/02/2026,Journal Entry,10,,monthly depr,,12.50,145.82
+,Depreciation Expense,22/02/2026,Journal Entry,10,,monthly depr,,20.83,166.65
+,Depreciation Expense,24/03/2026,Journal Entry,11,,monthly depr,,12.50,179.15
+,Depreciation Expense,24/03/2026,Journal Entry,11,,monthly depr,,20.83,199.98
+,Depreciation Expense,24/04/2026,Journal Entry,13,,monthly depr,,12.50,212.48
+,Depreciation Expense,24/04/2026,Journal Entry,13,,monthly depr,,20.83,233.31
+,Depreciation Expense,25/07/2026,Journal Entry,2,,depreciation on office furniture,,12.50,245.81
+,Depreciation Expense,25/07/2026,Journal Entry,2,,depreciation on office equipment,,20.83,266.64
+,Depreciation Expense,24/08/2026,Journal Entry,3,,depr on office furniture,,12.50,279.14
+,Depreciation Expense,24/08/2026,Journal Entry,3,,depr on office equipment,,20.83,299.97
+,Depreciation Expense,24/08/2026,Journal Entry,4,,monthly depr,,12.50,312.47
+,Depreciation Expense,24/08/2026,Journal Entry,4,,monthly depr,,20.83,333.30
+,Depreciation Expense,24/09/2026,Journal Entry,5,,monthly depr,,12.50,345.80
+,Depreciation Expense,24/09/2026,Journal Entry,5,,monthly depr,,20.83,366.63
