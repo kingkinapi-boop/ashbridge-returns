@@ -1,18 +1,23 @@
-/* Version B: the preparer's workbench. Sources as MOJ sub navigation tabs with previous and next;
-   a figure with no source shows candidate sources and the picker beside them (RV-22), or a written reason. */
+/* Version B: the preparer's workbench. Sources as MOJ sub navigation tabs with previous and next; a figure with no source
+   shows candidate sources and the picker beside them (RV-22), or a written reason. Two record tabs, Cite figures and Verify
+   values, are client routes on this one page (0 loads). The decision slot (extra) holds the cite form, or Accept and Reject. */
 (function () {
   'use strict'
   var SV = window.SV, h = SV.h, D = window.SV_DATA
   var cited = {}
+  try { cited = JSON.parse(SV.sstore('sv-cited') || '{}') } catch (e) { cited = {} }
+  var vstate = {}
+  try { vstate = JSON.parse(SV.sstore('sv-verify') || '{}') } catch (e) { vstate = {} }
   var WHO = 'Anita Rao (Test)', TODAY = '1 Oct 2026'
 
   function dynSave(id, s) {
     var m = {}
-    try { m = JSON.parse(localStorage.getItem('sv-dyn') || '{}') } catch (e) {}
+    try { m = JSON.parse(localStorage.getItem('sv-dyn') || '{}') } catch (e) { m = {} }
     m[id] = s
     localStorage.setItem('sv-dyn', JSON.stringify(m))
   }
   function isCited(it) { return it.src.length > 0 || (cited[it.id] || []).length > 0 }
+  function citedDone(id) { return isCited(SV.itemOf('prep', id)) }
   function refresh() {
     var left = 0
     D.lists.prep.forEach(function (it) {
@@ -21,11 +26,22 @@
       if (!ok) left++
       if (cell) { cell.textContent = ''; cell.appendChild(h('strong', { class: 'govuk-tag ' + (ok ? 'govuk-tag--green' : 'govuk-tag--orange'), text: ok ? 'Cited' : 'Needs a source or a reason' })) }
     })
-    var c = document.getElementById('sv-left')
+    var c = document.getElementById('sv-left-cite')
     if (c) c.textContent = String(left)
+    var vleft = 0
+    D.lists.verify.forEach(function (it) {
+      var st = vstate[it.id] || 'open'
+      if (st === 'open') vleft++
+      var cell = document.querySelector('[data-item="' + it.id + '"] [data-status]')
+      var m = { open: ['govuk-tag--grey', 'Not checked'], ok: ['govuk-tag--green', 'Accepted'], no: ['govuk-tag--red', 'Rejected'] }[st]
+      if (cell) { cell.textContent = ''; cell.appendChild(h('strong', { class: 'govuk-tag ' + m[0], text: m[1] })) }
+    })
+    var vl = document.getElementById('sv-left-verify')
+    if (vl) vl.textContent = String(vleft)
   }
   function openLabel(id, sel) {
-    var it = SV.itemOf('prep', id)
+    var it = SV.itemOf('prep', id) || SV.itemOf('verify', id)
+    if (!it.cand && !D.lists.prep.some(function (x) { return x.id === id })) return sel ? 'Showing the box' : 'Show the box'
     var n = it.src.length + (cited[id] || []).length
     return (sel ? 'Showing ' : 'Show ') + (n ? 'sources (' + n + ')' : 'candidates (' + it.cand.length + ')')
   }
@@ -33,18 +49,21 @@
   var api
   function recorded(it, v, sid, what) {
     cited[it.id] = (cited[it.id] || []).concat([sid])
+    SV.sstore('sv-cited', JSON.stringify(cited))
     v.addSource(it.id, sid)
     var nowN = v.ids().length
     refresh()
-    var nxt = null
-    D.lists.prep.forEach(function (x) { if (!nxt && !isCited(x) && x.id !== it.id) nxt = x })
-    var msg = what + ' for ' + it.name + ' recorded as source ' + nowN + ' of ' + nowN + '. ' + (nxt ? 'Next to cite: ' + nxt.name + '.' : 'Nothing is left to cite.')
+    var nxt = api.nextUnhandled(it.id, citedDone)
+    var msg = what + ' for ' + it.name + ' recorded as source ' + nowN + ' of ' + nowN + '. ' + (nxt ? 'Next to cite: ' + nxt.querySelector('th').textContent.replace(/\s*\(tax choice\)/, '') + '.' : 'Nothing is left to cite.')
     v.show(it.id, nowN - 1, { focusIn: true, silent: false })
     v.announce(msg)
     var note = document.getElementById('sv-recorded')
     if (note) { note.textContent = msg; note.hidden = false }
-    if (nxt) { var b = document.getElementById('sv-next-orphan'); if (b) { b.textContent = 'Go to ' + nxt.name; b.hidden = false; b.setAttribute('data-go', nxt.id) } }
-    else { var b2 = document.getElementById('sv-next-orphan'); if (b2) b2.hidden = true }
+    var b = document.getElementById('sv-next-orphan')
+    if (b) {
+      if (nxt) { b.textContent = 'Go to ' + nxt.querySelector('th').textContent.replace(/\s*\(tax choice\)/, ''); b.hidden = false; b.setAttribute('data-go', nxt.getAttribute('data-item')) }
+      else b.hidden = true
+    }
   }
 
   function citeForm(it, sid, v) {
@@ -53,9 +72,9 @@
     form.setAttribute('aria-label', 'Cite ' + it.name)
     var errBox = h('div', { id: 'sv-cite-err' })
     form.appendChild(errBox)
-    form.appendChild(h('p', { class: 'govuk-body-s govuk-!-margin-bottom-2', text: 'Nothing is cited yet. Look at each candidate in the tabs, then cite one or write a reason.' }))
     var row = h('div', { class: 'app-actions' })
     row.appendChild(h('button', { type: 'submit', class: 'govuk-button app-button-compact', name: 'cite', value: 'source' }, 'Cite the source shown (candidate ' + (v.idx + 1) + ' of ' + it.cand.length + ')'))
+    row.appendChild(h('span', { class: 'govuk-body-s', text: 'Look at each candidate in the tabs first.' }))
     form.appendChild(row)
     var det = h('details', { class: 'govuk-details govuk-!-margin-top-2 govuk-!-margin-bottom-0', id: 'sv-reason-details' },
       h('summary', { class: 'govuk-details__summary' }, h('span', { class: 'govuk-details__summary-text', text: 'Write a reason instead' })),
@@ -71,6 +90,7 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault()
       var which = kind || 'source'
+      kind = null
       errBox.textContent = ''
       if (which === 'reason') {
         var t = form.querySelector('#sv-reason').value.trim()
@@ -104,9 +124,33 @@
     return form
   }
 
+  /* Verify values: Accept or Reject in the slot beside the box and in the row; one shared next */
+  function vDone(id) { return (vstate[id] || 'open') !== 'open' }
+  function decide(id, act) {
+    vstate[id] = act
+    SV.sstore('sv-verify', JSON.stringify(vstate))
+    refresh()
+    var it = SV.itemOf('verify', id)
+    var verb = act === 'ok' ? 'accepted' : 'rejected'
+    api.announce('Value on ' + it.name + ' ' + verb + '.')
+    var nxt = api.advance(id, vDone, { focusViewer: true })
+    if (!nxt) api.announce('Value ' + verb + '. All values checked.')
+  }
+  function verifySlot(it, sid, v) {
+    if (v.list !== 'verify' || !sid) return null
+    var foot = h('div', { class: 'app-viewer__foot' })
+    foot.appendChild(h('button', { type: 'button', class: 'govuk-button app-button-compact', onclick: function () { decide(it.id, 'ok') } }, 'Accept', h('span', { class: 'govuk-visually-hidden', text: ' ' + it.name })))
+    foot.appendChild(h('button', { type: 'button', class: 'govuk-button govuk-button--warning app-button-compact', onclick: function () { decide(it.id, 'no') } }, 'Reject', h('span', { class: 'govuk-visually-hidden', text: ' ' + it.name })))
+    return foot
+  }
+
   api = SV.initWork({
-    list: 'prep', layout: 'tabs', windowUrl: 'window.html', openLabel: openLabel, extra: citeForm,
+    list: 'prep', layout: 'tabs', windowUrl: 'window.html', openLabel: openLabel,
+    defaultTab: 'cite',
+    tabs: { cite: { list: 'prep', h1: 'Cite figures' }, verify: { list: 'verify', h1: 'Verify extracted values' } },
+    extra: function (it, sid, v) { return v.list === 'verify' ? verifySlot(it, sid, v) : citeForm(it, sid, v) },
     emptyHelp: 'Choose a figure that needs a source or a reason.',
+    restore: function (a) { Object.keys(cited).forEach(function (id) { cited[id].forEach(function (s) { a.viewer.addSource(id, s) }) }) },
   })
   // recorded notice and the "go to next" control live in the work column
   var go = document.getElementById('sv-next-orphan')
@@ -115,5 +159,11 @@
     var b = document.querySelector('[data-item="' + id + '"] [data-open]')
     if (b) { b.focus(); b.click() }
   })
+  document.querySelectorAll('[data-act]').forEach(function (b) {
+    b.addEventListener('click', function () { decide(b.closest('[data-item]').getAttribute('data-item'), b.getAttribute('data-act')) })
+  })
+  var allDone = D.lists.verify.every(function (x) { return vDone(x.id) })
+  var dn = document.getElementById('sv-done')
+  if (dn && allDone) dn.hidden = false
   refresh()
 })()

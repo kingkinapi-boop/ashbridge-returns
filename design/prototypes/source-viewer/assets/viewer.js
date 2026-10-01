@@ -1,10 +1,15 @@
 /* The one source viewer (D03). Every page and every second window renders it from this file; no page draws its own.
-   Plain script for the static prototypes; the React build wraps the same behaviour. */
+   Plain script for the static prototypes; the React build wraps the same behaviour.
+   Fix round 1: opening zoom that fits the box and keeps text readable, one row of chrome above the page, a decision slot
+   (extra), selection in the URL, a two-way link to the second window with a heartbeat. */
 (function () {
   'use strict'
   var D = window.SV_DATA
   var CHANNEL = 'ashbridge-source-viewer'
   var WIN_NAME = 'ashbridge-source-viewer-window'
+  var RET = (D && D.client && D.client.name) || 'return'
+  var PAGE_W = 612
+  var MIN_TEXT_PX = 12
   var KIND = {
     page: ['Document page', 'govuk-tag--blue'], sheet: ['Sheet row', 'govuk-tag--green'], qbo: ['QBO line', 'govuk-tag--turquoise'],
     answer: ['Client answer', 'govuk-tag--purple'], cra: ['CRA capture', 'govuk-tag--orange'], lastyear: ['Last year\'s return', 'govuk-tag--pink'],
@@ -33,6 +38,7 @@
   }
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v) } catch (e) { return null } }
   function sstore(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v) } catch (e) { return null } }
+  function tabId() { var t = sstore('sv-tab-id'); if (!t) { t = 't' + Math.random().toString(36).slice(2, 8); sstore('sv-tab-id', t) } return t }
 
   function dyn() { try { return JSON.parse(localStorage.getItem('sv-dyn') || '{}') } catch (e) { return {} } }
   function src(id) { return D.sources[id] || dyn()[id] }
@@ -70,7 +76,6 @@
     o = o || {}
     this.itemId = itemId
     this.idx = Math.max(0, Math.min(idx || 0, Math.max(0, this.ids().length - 1)))
-    this.zoom = 100
     this.render(o)
     if (this.o.onChange && !o.silent) this.o.onChange(this.itemId, this.idx)
   }
@@ -84,13 +89,14 @@
 
   Viewer.prototype.render = function (o) {
     o = o || {}
-    var self = this
     var root = this.root
     root.textContent = ''
     var it = this.item()
     var win = this.role === 'window'
-    var section = h('section', { class: 'app-viewer' + (win ? ' app-viewer--window' : ''), 'aria-labelledby': 'sv-title-' + this.role })
+    var section = h('div', { class: 'app-viewer' + (win ? ' app-viewer--window' : '') })
     root.appendChild(section)
+    this._zoomCtl = null
+    this.curSrc = null
     if (!it) {
       section.appendChild(h('div', { class: 'app-viewer__head' }, h('h2', { class: 'app-viewer__title', id: 'sv-title-' + this.role, text: 'Source viewer' })))
       section.appendChild(h('div', { class: 'app-viewer__empty' },
@@ -100,18 +106,15 @@
     }
     var ids = this.ids()
     var n = ids.length
+    var titleText = it.name + (it.amount ? ', ' + it.amount : '')
     var head = h('div', { class: 'app-viewer__head' })
-    head.appendChild(h('h2', { class: 'app-viewer__title', id: 'sv-title-' + this.role, text: it.name + (it.amount ? ', ' + it.amount : '') }))
-    var hb = h('p', { class: 'govuk-body-s app-flagnote' })
-    if (it.flag) {
-      hb.appendChild(h('strong', { class: 'govuk-tag govuk-tag--red', text: 'Flagged for a person' }))
-      hb.appendChild(document.createTextNode(' ' + it.flag.id + ': ' + it.flag.text + '.'))
-    }
-    if (it.flag) head.appendChild(hb)
-    var ctl = h('div', { class: 'app-viewer__controls' })
-    if (this.o.onBack) ctl.appendChild(this.backButton(true))
-    if (ctl.childNodes.length) head.appendChild(ctl)
+    head.appendChild(h('h2', { class: 'app-viewer__title', id: 'sv-title-' + this.role, text: titleText }))
     section.appendChild(head)
+    if (this.o.onBack) head.appendChild(this.backButton(true))
+    if (it.flag) {
+      section.appendChild(h('p', { class: 'govuk-body-s app-flagnote' },
+        h('strong', { class: 'govuk-tag govuk-tag--red', text: 'Flagged for a person' }), ' ' + it.flag.id + ': ' + it.flag.text + '.'))
+    }
 
     if (!n) {
       section.appendChild(h('div', { class: 'app-viewer__stage', tabindex: '0', role: 'region', 'aria-label': 'Source for ' + it.name },
@@ -128,26 +131,27 @@
 
     var sid = ids[this.idx]
     var s = src(sid)
+    this.curSrc = s
     var kind = KIND[s.kind]
-    // step navigation, by layout
-    var nav
-    if (this.layout === 'tabs') nav = this.navTabs(ids)
-    if (this.layout === 'strip') nav = this.navStrip(ids)
-    if (nav) section.appendChild(nav)
-    this._toolbar = null
     var card = this.renderCard(s, it)
+    if (this._zoomCtl) head.appendChild(this._zoomCtl)
 
+    // row 2: the steps (A) or the tabs (B); in the wide window the steps share row 1 with the title and the zoom
+    var nav = this.layout === 'tabs' ? this.navTabs(ids) : this.navStrip(ids)
+    if (win) { head.insertBefore(nav, this._zoomCtl) } else section.appendChild(nav)
+
+    // row 3: which source; row 4: who added it and the words found inside the box
     var meta = h('p', { class: 'app-viewer__meta', id: 'sv-meta-' + this.role })
     meta.appendChild(h('strong', { text: (this.candMode ? 'Candidate source ' : 'Source ') + (this.idx + 1) + ' of ' + n + ': ' }))
     meta.appendChild(h('span', { class: 'govuk-tag ' + kind[1], text: kind[0] }))
-    var role = s.flagEvidence ? ' Evidence for the flag.' : ''
     meta.appendChild(document.createTextNode(' ' + s.title + (s.page ? ', ' + s.page : '') + '.'))
-    meta.appendChild(h('span', { class: 'app-meta-who', text: 'Added: ' + s.who + ', ' + s.when + '.' + role }))
     section.appendChild(meta)
-    if (this._toolbar) section.appendChild(this._toolbar)
+    var who = h('p', { class: 'app-viewer__who' })
+    who.appendChild(h('span', { class: 'app-meta-who', text: 'Added: ' + s.who + ', ' + s.when + '.' + (s.flagEvidence ? ' Evidence for the flag.' : '') }))
+    if (s.kind === 'page' && !this._failedShown) who.appendChild(h('span', { class: 'app-meta-ocr' }, 'Words found inside the box: ', h('span', { class: 'app-ocr', text: s.ocr })))
+    section.appendChild(who)
 
     var body = h('div', { class: 'app-viewer__body' })
-    if (this.layout === 'rail') body.appendChild(this.navRail(ids))
     var stage = h('div', { class: 'app-viewer__stage', tabindex: '0', role: 'region', 'aria-label': 'Source ' + (this.idx + 1) + ' of ' + n + ': ' + kind[0] })
     stage.appendChild(card)
     body.appendChild(stage)
@@ -157,7 +161,7 @@
     if (this.o.extra) { var ex = this.o.extra(it, sid, this); if (ex) section.appendChild(ex) }
 
     this.announce('Source ' + (this.idx + 1) + ' of ' + n + ': ' + kind[0] + ', ' + s.title)
-    if (s.kind === 'page') this.afterPage(o)
+    if (s.kind === 'page') { this.applyZoom(); this.afterPage(o) }
     else if (s.kind === 'sheet') this.afterSheet(o)
     else if (o.focusIn) this.focusCard()
   }
@@ -167,9 +171,12 @@
     return h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact' + (inline ? ' app-only-narrow' : ''), 'aria-keyshortcuts': 'Escape', onclick: function () { self.o.onBack() } }, 'Back to the list ', h('span', { class: 'app-key', 'aria-hidden': 'true', text: 'Esc' }))
   }
 
+  function stepBtn(label, hidden, key, fn) {
+    return h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': key, onclick: fn }, label, h('span', { class: 'govuk-visually-hidden', text: hidden }))
+  }
   Viewer.prototype.navStrip = function (ids) {
     var self = this
-    var nav = h('nav', { 'aria-label': 'Sources of this figure', class: 'app-viewer__meta' })
+    var nav = h('nav', { 'aria-label': 'Sources of this figure', class: 'app-viewer__steps' })
     var ol = h('ol', { class: 'app-steps' })
     ids.forEach(function (id, i) {
       var s = src(id), k = KIND[s.kind]
@@ -177,57 +184,44 @@
       var btn = h('button', { type: 'button', class: 'app-steps__btn' + (marked ? ' app-steps__marked' : ''), 'aria-current': i === self.idx ? 'step' : null, onclick: function () { self.show(self.itemId, i, { keepFocus: true }) } }, (i + 1) + ' ' + SHORT[s.kind], h('span', { class: 'govuk-visually-hidden', text: ': source ' + (i + 1) + ' of ' + ids.length + ', ' + k[0] + (marked ? ', marked as supporting' : '') }))
       ol.appendChild(h('li', {}, btn))
     })
-    ol.appendChild(h('li', {}, h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': '[', onclick: function () { self.step(-1) } }, 'Prev', h('span', { class: 'govuk-visually-hidden', text: 'ious source' }), ' ', h('span', { class: 'app-key', 'aria-hidden': 'true', text: '[' }))))
-    ol.appendChild(h('li', {}, h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': ']', onclick: function () { self.step(1) } }, 'Next', h('span', { class: 'govuk-visually-hidden', text: ' source' }), ' ', h('span', { class: 'app-key', 'aria-hidden': 'true', text: ']' }))))
+    ol.appendChild(h('li', {}, stepBtn('Prev', 'ious source', '[', function () { self.step(-1) })))
+    ol.appendChild(h('li', {}, stepBtn('Next', ' source', ']', function () { self.step(1) })))
     nav.appendChild(ol)
     return nav
   }
 
   Viewer.prototype.navTabs = function (ids) {
     var self = this
-    var nav = h('nav', { class: 'moj-sub-navigation app-viewer__meta', 'aria-label': 'Sources of this figure' })
+    var nav = h('nav', { class: 'moj-sub-navigation app-viewer__steps', 'aria-label': 'Sources of this figure' })
     var ul = h('ul', { class: 'moj-sub-navigation__list' })
     ids.forEach(function (id, i) {
       var s = src(id), k = KIND[s.kind]
       ul.appendChild(h('li', { class: 'moj-sub-navigation__item' }, h('button', { type: 'button', class: 'moj-sub-navigation__link app-reset-button', 'aria-current': i === self.idx ? 'page' : null, onclick: function () { self.show(self.itemId, i, { keepFocus: true }) } }, (i + 1) + ' ' + SHORT[s.kind], h('span', { class: 'govuk-visually-hidden', text: ': source ' + (i + 1) + ' of ' + ids.length + ', ' + k[0] }))))
     })
-    ul.appendChild(h('li', { class: 'moj-sub-navigation__item' }, h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': '[', onclick: function () { self.step(-1) } }, 'Prev', h('span', { class: 'govuk-visually-hidden', text: 'ious source' }), ' ', h('span', { class: 'app-key', 'aria-hidden': 'true', text: '[' }))))
-    ul.appendChild(h('li', { class: 'moj-sub-navigation__item' }, h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': ']', onclick: function () { self.step(1) } }, 'Next', h('span', { class: 'govuk-visually-hidden', text: ' source' }), ' ', h('span', { class: 'app-key', 'aria-hidden': 'true', text: ']' }))))
+    ul.appendChild(h('li', { class: 'moj-sub-navigation__item' }, stepBtn('Prev', 'ious source', '[', function () { self.step(-1) })))
+    ul.appendChild(h('li', { class: 'moj-sub-navigation__item' }, stepBtn('Next', ' source', ']', function () { self.step(1) })))
     nav.appendChild(ul)
     return nav
-  }
-
-  Viewer.prototype.navRail = function (ids) {
-    var self = this
-    var ol = h('ol', { class: 'app-rail', 'aria-label': 'Sources of this figure' })
-    ol.appendChild(h('li', { class: 'app-rail__step' },
-      h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': '[', onclick: function () { self.step(-1) } }, 'Prev', h('span', { class: 'govuk-visually-hidden', text: 'ious source' }), ' ', h('span', { class: 'app-key', 'aria-hidden': 'true', text: '[' })), ' ',
-      h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': ']', onclick: function () { self.step(1) } }, 'Next', h('span', { class: 'govuk-visually-hidden', text: ' source' }), ' ', h('span', { class: 'app-key', 'aria-hidden': 'true', text: ']' }))))
-    ids.forEach(function (id, i) {
-      var s = src(id), k = KIND[s.kind]
-      ol.appendChild(h('li', {}, h('button', { type: 'button', class: 'app-rail__btn', 'aria-current': i === self.idx ? 'step' : null, onclick: function () { self.show(self.itemId, i, { keepFocus: true }) } },
-        h('span', { class: 'app-rail__kind', text: 'Source ' + (i + 1) + ' of ' + ids.length + ': ' + k[0] }), s.title)))
-    })
-    return ol
   }
 
   /* -------- cards, one per source kind (EV-5) -------- */
   Viewer.prototype.renderCard = function (s, it) {
     var self = this
     var card = h('div', { class: 'app-viewer__card', tabindex: '-1', id: 'sv-card-' + this.role })
+    this._failedShown = false
     if (s.kind === 'page') {
-      var zoom = h('div', { class: 'app-viewer__zoom', role: 'group', 'aria-label': 'Zoom the page' },
-        h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', onclick: function () { self.setZoom(-25) } }, 'Zoom out'),
-        h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', onclick: function () { self.setZoom(25) } }, 'Zoom in'),
-        h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', onclick: function () { self.setZoom(0) } }, 'Fit width'),
-        h('span', { class: 'govuk-body-s govuk-!-margin-bottom-0', id: 'sv-zoom-' + this.role, text: this.zoom + '%' }))
       if (this.failedNow(s)) {
+        this._failedShown = true
         card.appendChild(this.failedCard(s))
         return card
       }
-      this._toolbar = h('div', { class: 'app-viewer__toolbar' }, zoom, h('p', { class: 'govuk-body-s govuk-!-margin-bottom-0' }, 'Words found inside the box: ', h('span', { class: 'app-ocr', text: s.ocr })))
+      this._zoomCtl = h('div', { class: 'app-viewer__zoom', role: 'group', 'aria-label': 'Zoom the page' },
+        h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': '-', onclick: function () { self.setZoom(-25) } }, 'Zoom −'),
+        h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': '+', onclick: function () { self.setZoom(25) } }, 'Zoom +'),
+        h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'aria-keyshortcuts': '0', onclick: function () { self.setZoom(0) } }, 'Fit box'),
+        h('span', { class: 'app-zoom-level', id: 'sv-zoom-' + this.role, text: '' }))
       var slow = sstore('sv-slow') === '1'
-      var page = h('div', { class: 'app-page is-loading', style: 'width:' + this.zoom + '%', id: 'sv-pagebox-' + this.role })
+      var page = h('div', { class: 'app-page is-loading', style: 'width:100%', id: 'sv-pagebox-' + this.role, 'data-min-text': s.minText || 11 })
       var img = h('img', { alt: s.alt, width: '612', height: '792' })
       var skel = h('div', { class: 'app-skeleton', role: 'status' }, h('span', { class: 'govuk-visually-hidden', text: 'Loading the page image' }))
       page.appendChild(skel)
@@ -248,13 +242,13 @@
       var load = function () { img.src = D.base + s.img }
       if (slow) setTimeout(load, 1500); else load()
       card.appendChild(page)
-      card.appendChild(h('p', { class: 'govuk-hint govuk-!-margin-bottom-1', text: 'Read from inside the box only. This is what the AI-4 check compares; the viewer shows no confidence score.' }))
+      card.appendChild(h('p', { class: 'govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-1', text: 'Read from inside the box only. This is what the AI-4 check compares; the viewer shows no confidence score.' }))
       if (s.extracted) card.appendChild(h('p', { class: 'govuk-body-s govuk-!-margin-bottom-1', text: 'Extracted value: ' + s.extracted }))
       if (s.masked) card.appendChild(h('p', { class: 'govuk-body-s govuk-!-margin-bottom-0', text: 'Masked in the image: ' + s.masked + '.' }))
     } else if (s.kind === 'sheet') {
-      card.appendChild(h('p', { class: 'govuk-body-s', text: s.sheetNote + ' of ' + s.file + '. The outlined cell is the figure.' }))
+      card.appendChild(h('p', { class: 'govuk-body-s govuk-!-margin-bottom-1', text: s.sheetNote + ' of ' + s.file + '. The outlined cell is the figure.' }))
       var tbl = h('table', { class: 'app-sheet' })
-      tbl.appendChild(h('caption', { text: s.file + ', rows ' + s.rows.filter(function (r) { return r > 1 }).join(', ') + ' and the header' }))
+      tbl.appendChild(h('caption', { class: 'govuk-visually-hidden', text: s.file + ', rows ' + s.rows.filter(function (r) { return r > 1 }).join(', ') + ' and the header' }))
       var thead = h('thead', {})
       var hr = h('tr', {}, h('th', { scope: 'col', text: 'Row' }))
       var letters = 'ABCDEFGH'
@@ -281,7 +275,6 @@
       card.appendChild(h('div', { class: 'govuk-inset-text govuk-!-margin-top-0' }, h('span', { class: 'govuk-visually-hidden', text: 'The client wrote: ' }), s.answer))
     } else if (s.kind === 'reason') {
       card.appendChild(h('div', { class: 'govuk-inset-text govuk-!-margin-top-0' }, s.reason))
-      card.appendChild(h('p', { class: 'govuk-body-s govuk-!-margin-bottom-0', text: s.who + ', ' + s.when + '.' }))
     } else {
       if (s.snapshot) card.appendChild(h('p', { class: 'govuk-body-s', text: s.snapshot + '. A dated snapshot, not live.' }))
       card.appendChild(this.summary(s.fields))
@@ -303,7 +296,6 @@
   Viewer.prototype.markFailed = function (s) {
     var card = document.getElementById('sv-card-' + this.role)
     if (!card) return
-    var self = this
     this._retried = false
     card.textContent = ''
     card.appendChild(this.failedCard(s))
@@ -318,28 +310,56 @@
     return box
   }
 
-  Viewer.prototype.setZoom = function (d) {
-    this.zoom = d === 0 ? 100 : Math.max(50, Math.min(300, this.zoom + d))
+  /* ---------------- zoom: opens readable with the box whole, never clips the box (fix 1) ---------------- */
+  Viewer.prototype.cardWidth = function () {
+    var c = document.getElementById('sv-card-' + this.role)
+    if (!c || !c.clientWidth) return 0
+    var cs = getComputedStyle(c)
+    return c.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+  }
+  Viewer.prototype.bounds = function (s, cw) {
+    var mt = s.minText || 11, bw = s.box.w / 100
+    var read = Math.max(100, Math.ceil(PAGE_W * MIN_TEXT_PX / mt / cw * 100))
+    var fit = Math.floor((cw - 6) * 100 / (cw * bw))
+    return { read: Math.min(300, read), fit: fit, max: Math.min(300, Math.max(fit, read)) }
+  }
+  /* delta undefined: open (saved size for this kind, else readable); 0: back to automatic; else step */
+  Viewer.prototype.applyZoom = function (delta) {
+    var s = this.curSrc
+    if (!s || s.kind !== 'page') return
+    var cw = this.cardWidth()
     var pb = document.getElementById('sv-pagebox-' + this.role)
-    if (pb) pb.style.width = this.zoom + '%'
-    var z = document.getElementById('sv-zoom-' + this.role)
-    if (z) z.textContent = this.zoom + '%'
-    this.announce('Zoom ' + this.zoom + ' percent')
+    if (!pb || cw <= 0) return
+    var b = this.bounds(s, cw), pref = sstore('sv-zoom-page')
+    var want
+    if (delta === 0) { sstore('sv-zoom-page', ''); want = b.read }
+    else if (typeof delta === 'number') { want = (this.zoom || b.read) + delta }
+    else want = pref ? Number(pref) : b.read
+    var z = Math.max(50, Math.min(b.max, want))
+    var capped = typeof delta === 'number' && delta > 0 && want > b.max
+    if (typeof delta === 'number' && delta !== 0) sstore('sv-zoom-page', String(z))
+    this.zoom = z
+    pb.style.width = z + '%'
+    var lab = document.getElementById('sv-zoom-' + this.role)
+    if (lab) lab.textContent = z + '%'
+    if (typeof delta === 'number') this.announce(capped ? 'Zoom ' + z + ' percent, the largest size at which the whole box shows' : 'Zoom ' + z + ' percent')
     this.scrollToBox()
   }
+  Viewer.prototype.setZoom = function (d) { this.applyZoom(d) }
+  Viewer.prototype.refit = function () { if (this.curSrc && this.curSrc.kind === 'page') this.applyZoom() }
   Viewer.prototype.scrollToBox = function () {
     var stage = this.stage, box = document.getElementById('sv-box-' + this.role)
     if (!stage || !box) return
     var sr = stage.getBoundingClientRect(), br = box.getBoundingClientRect()
     stage.scrollTop += (br.top - sr.top) - (stage.clientHeight - br.height) / 3
-    stage.scrollLeft += (br.left - sr.left) - (stage.clientWidth - br.width) / 2
+    if (br.width <= stage.clientWidth - 16) stage.scrollLeft += (br.left - sr.left) - (stage.clientWidth - br.width) / 2
+    else stage.scrollLeft += (br.left - sr.left) - 8 // wider than the pane: its left edge, never both edges clipped
   }
   Viewer.prototype.afterPage = function (o) {
     if (o.focusIn) this._pendingFocus = true
-    if (o.keepFocus) { /* the user is on a step button: leave focus there */ }
-    var self = this
     // the failed card has no box: move focus to the card
     if (o.focusIn && document.getElementById('sv-card-' + this.role) && !document.getElementById('sv-pagebox-' + this.role)) { this._pendingFocus = false; this.focusCard() }
+    if (o.focusIn && this._failedShown) { this._pendingFocus = false; this.focusCard() }
   }
   Viewer.prototype.afterSheet = function (o) {
     var self = this
@@ -371,6 +391,9 @@
       if (f) { e.preventDefault(); f(e) }
     })
   }
+  function zoomKeys(get) {
+    return { '+': function () { get().setZoom(25) }, '=': function () { get().setZoom(25) }, '-': function () { get().setZoom(-25) }, '0': function () { get().setZoom(0) } }
+  }
   function wireKeysToggle() {
     var cb = document.getElementById('sv-keys-off')
     if (!cb) return
@@ -380,43 +403,55 @@
     if (sl) { sl.checked = sstore('sv-slow') === '1'; sl.addEventListener('change', function () { sstore('sv-slow', sl.checked ? '1' : '0') }) }
   }
 
-  /* ---------------- the second window (rule 20) ---------------- */
+  /* ---------------- the second window (rule 20), a two-way link (fix 4) ----------------
+     Every page announces itself on load (work-hello, win-hello) and answers the other's hello. Presence is a heartbeat
+     (every 2 s, closed after 6 s of silence), never a window handle, so a reload of either page keeps the link.
+     Every message carries the return id; another return's page never drives this window. */
   function SecondWindow(o) {
-    // o: url, getState() -> {item, idx}, onState(text, kind)
+    // o: url, getState() -> {item, idx, list, extras}, onState(state, follow), onWindowStep(item, idx)
     this.o = o
-    this.win = null
+    this.tab = tabId()
+    this.alive = false
+    this.follow = true
+    this.lastBeat = 0
     this.ch = ('BroadcastChannel' in window) ? new BroadcastChannel(CHANNEL) : null
-    this.opened = false
     var self = this
     if (this.ch) this.ch.onmessage = function (e) {
       var m = e.data || {}
-      if (m.t === 'hello') { self.push(); self.setState('open') }
-      if (m.t === 'step' && self.o.onWindowStep) self.o.onWindowStep(m.item, m.idx)
-      if (m.t === 'closing') { self.opened = false; self.setState('closed') }
+      if (m.ret !== RET) return
+      if (m.t === 'win-hello' || m.t === 'win-beat' || m.t === 'win-follow') {
+        var was = self.alive
+        self.alive = true; self.follow = m.follow !== false; self.lastBeat = Date.now()
+        if (m.t === 'win-hello' || !was) self.push()
+        self.setState('open')
+      }
+      if (m.t === 'step' && m.target === self.tab && self.o.onWindowStep) self.o.onWindowStep(m.item, m.idx)
+      if (m.t === 'closing') { self.alive = false; self.setState('closed') }
     }
-    setInterval(function () { if (self.opened && self.win && self.win.closed) { self.opened = false; self.setState('closed') } }, 1000)
-    window.addEventListener('pagehide', function () { if (self.ch) self.ch.postMessage({ t: 'workclosed' }) })
+    setInterval(function () {
+      if (!self.ch) return
+      self.ch.postMessage({ t: 'work-beat', ret: RET, tab: self.tab })
+      if (self.alive && Date.now() - self.lastBeat > 6000) { self.alive = false; self.setState('closed') }
+    }, 2000)
+    window.addEventListener('pagehide', function () { if (self.ch) self.ch.postMessage({ t: 'workclosed', ret: RET, tab: self.tab }) })
+    window.addEventListener('focus', function () { if (self.alive) self.push() })
+    if (this.ch) this.ch.postMessage({ t: 'work-hello', ret: RET, tab: this.tab })
   }
   SecondWindow.prototype.open = function () {
-    var w = window.open(this.o.url, WIN_NAME, 'popup=yes,width=900,height=760') // no noopener: the link back is needed
-    if (!w) { this.setState('blocked'); return false }
-    this.win = w
-    this.opened = true
+    var w = null
+    if (this.alive) { try { w = window.open('', WIN_NAME) } catch (e) {} if (w) { try { w.focus() } catch (e2) {} this.push(); return true } }
+    w = window.open(this.o.url + '?ret=' + encodeURIComponent(RET), WIN_NAME, 'popup=yes,width=900,height=760') // no noopener: the link back is needed
+    if (!w) { this.alive = false; this.setState('blocked'); return false }
+    this.alive = true; this.follow = true; this.lastBeat = Date.now()
     this.setState('open')
-    var self = this
-    setTimeout(function () { self.push() }, 600)
     return true
   }
   SecondWindow.prototype.push = function () {
     var s = this.o.getState()
-    if (this.ch) this.ch.postMessage({ t: 'select', item: s.item, idx: s.idx, list: s.list, extras: s.extras })
+    if (this.ch) this.ch.postMessage({ t: 'select', ret: RET, tab: this.tab, item: s.item, idx: s.idx, list: s.list, extras: s.extras })
     store('sv-last', JSON.stringify(s))
   }
-  SecondWindow.prototype.signOut = function () {
-    if (this.ch) this.ch.postMessage({ t: 'signout' })
-    try { if (this.win && !this.win.closed) this.win.close() } catch (e) {}
-  }
-  SecondWindow.prototype.setState = function (st) { this.state = st; if (this.o.onState) this.o.onState(st) }
+  SecondWindow.prototype.setState = function (st) { this.state = st; if (this.o.onState) this.o.onState(st, this.follow) }
 
-  window.SV = { src: src, h: h, Viewer: Viewer, bindKeys: bindKeys, wireKeysToggle: wireKeysToggle, SecondWindow: SecondWindow, itemOf: itemOf, store: store, sstore: sstore, CHANNEL: CHANNEL, KIND: KIND }
+  window.SV = { src: src, h: h, Viewer: Viewer, bindKeys: bindKeys, zoomKeys: zoomKeys, wireKeysToggle: wireKeysToggle, SecondWindow: SecondWindow, itemOf: itemOf, store: store, sstore: sstore, CHANNEL: CHANNEL, KIND: KIND, RET: RET, tabId: tabId }
 })()

@@ -1,46 +1,80 @@
-# Design report: the source viewer (D03)
+# Design report: the source viewer (D03), fix round 1
 
-Branch `claude/design-source-viewer`, 1 Oct 2026. Brief: `design/briefs/source-viewer.md` (blueprint commit 0cdcdd4). Prototypes: `design/prototypes/source-viewer/` (start at `index.html`). Data: `reference/sample-clients/01-maple-ridge` (Maple Ridge Consulting Inc. (Test)); the statement rows and sheet rows are read from the real CSV.
+Branch `claude/design-source-viewer-2` (from `origin/claude/findings-source-viewer`, then `origin/main` for the extended rules 3, 18 to 23 and design check 8 over http), 1 Oct 2026. Brief and fix list: `design/briefs/source-viewer.md`, section "Fix round 1 (findings review, 1 Oct)". Panel report read: `reports/panel-source-viewer.md` (13 faults, branch `claude/panel-source-viewer`). Prototypes: `design/prototypes/source-viewer/` (start at `index.html`). Data: `reference/sample-clients/01-maple-ridge` (Maple Ridge Consulting Inc. (Test)).
 
-Lead's two answers (amber) are built in: the box shows the OCR words found inside it (what AI-4 checks) and never a confidence score; an RV-22 written reason is a source kind in the viewer, "Reason written by <person>, <date>".
+## The three versions after the fix round
 
-## The three versions
-| Version | Path | Task | What differs |
+A (docked strip) is the one base component; B and C are the embed variants the panel named. All three run the same `assets/viewer.js`, `work.js` and `window.js`; they differ only in the source navigation, the decision slot (`extra`) and the family's list.
+
+| Version | Path | Role now |
+|---|---|---|
+| A, docked strip | `a-docked-strip/` | Base component, CPA review. Decision slot: "Supports this figure, next source" and the key `m` (Reviewed, next) |
+| B, tabs and decision slot | `b-tabs-and-decision/` | Preparer. Source tabs; slot holds the cite form (RV-22) or Accept and Reject (EV-6). Cite figures and Verify values are two client routes on one page (`index.html`, `index.html?tab=verify`) |
+| C, window first | `c-window-first/` | Ops. Slot holds Complete and Chase; its "pane hides while the window follows" is now in all three |
+
+Parts used and composed `app-` parts with reasons: `notes.md` in each version folder (the lint fails an `app-` class that is not listed there).
+
+## What changed, by fix (brief, "Fixes for the designer")
+
+1. **Opening zoom** (RC-a, faults 1, 4). Page sources open at the smallest zoom at which the box text is at least 12 CSS px (each source carries `minText`); zoom in stops at the largest size where the whole box still shows, so the box is never clipped; if it cannot be both whole and readable the page opens readable and scrolls to the box's left edge. The size persists per kind for the session; keys `+` or `=`, `-`, `0` (Fit box) and buttons "Zoom +", "Zoom -", "Fit box" repeat them. The page images are SVG, so they stay sharp at any zoom (the real build renders them at 2x).
+2. **Chrome** (RC-a, fault 2). One row for the title and zoom; the steps or tabs; the source line; who added it with the words found in the box (kept visible, in the box's accessible name too). Page area is at least 60% of the height at both sizes, in the pane and in the window (the window puts the steps on the title row).
+3. **One shell** (RC-b, faults 3, 5, 9). The identity bar and record tabs sit in one labelled region; the splitter sits inside the one "Source viewer" pane region; the viewer draws no landmark of its own (the empty state's duplicate is gone); the 1 px overflow came from the visually hidden live region placed after the split (moved to the top). Record tabs are client routes: `pushState`, 0 loads, own URL, Back and Forward, and the window receives the new list.
+4. **Window link both ways** (RC-c, faults 6, 9). Each page says hello on load and answers the other's hello; both beat every 2 s and the other counts the window closed after 6 s (3 missed), or at once on a close; no window handle is used. Every message carries the return id (another return's page is ignored); the window follows the work tab last used on its return and a step in the window drives only that tab. One window layout (A's strip) for all families.
+5. **Sign-out** (RC-c, fault 7). `assets/signout.js` broadcasts `signout` from any page's Sign out link; every same-origin page (work pages, windows, landing) goes to the signed-out page. Note for V00: the server ends the session; this channel is the second line.
+6. **Selection in the URL** (RC-d, fault 8). `history.replaceState` writes `?item=&src=` (and `q=` for the filter, `tab=` for B); the list scroll is kept in session storage; B's cites and reasons are kept in session storage so a reload keeps them. Reload and Back return to the same figure, source and filter with no history entry.
+7. **Decision slot and one shared next** (RC-e, faults 10, 11, 13). From the box 1 Tab reaches the decision in A, B (cite and verify) and C. Shared `advance`: the next unhandled row after this one in list order, then the first unhandled above, else focus and announce the done message ("All items checked" in C). `m` marks and steps, on the last source goes to the first unmarked source of the figure, then the next unmarked figure; it never unmarks ("Remove mark" is a button only).
+8. **Pane hides while the window follows** (fault 12 for C, and all versions). While the window is open and following, the pane hides and the list uses the full width; with Follow off, a closed window or a blocked pop-up the pane returns and says so. C's one-line summary shows only while the pane is hidden.
+9. **C fallback rows** (fault 12). Heading and count, filter and window controls fold into three short rows, the table caption is visually hidden and the item row holds one cell of buttons ("Chase" with a hidden "the client about ..."): 3 full rows beside the pane at both sizes.
+
+Also: the sheet card now shows the header and three rows and fits the pane without sideways scrolling (needed so no cell is half clipped, which axe reports as "incomplete"); the key glyph inside the primary button was white on white and now has its own dark text colour (a real contrast fault axe flagged).
+
+Not the viewer's job, left for D02 as the brief says: the mark comes off when the number changes; Approve only when every section is marked.
+
+## Checks (design.md 6 to 9) and the ten acceptance checks
+
+Script: `design/prototypes/source-viewer/build/verify.mjs` (Playwright and @axe-core/playwright from a scratch folder, headless Chromium only, pages served over **http** by the script on a random local port, never file://, no Chrome extension). Run through `node tools/heavy.mjs --`. Result file: `build/verify-result.json`. **154 checks, 0 failed.** Full run about 6 minutes.
+
+- **6 Retired terms and brief age:** none of the eight retired terms in the brief or any prototype file; no em or en dash, no filler, no SIN digits, no CSS `zoom`, no third-party host. The brief names its blueprint commit.
+- **7 Prototype lint:** 0 findings: every href resolves, no `#` link, no self-link (the current-page record tab keeps the MOJ `aria-current` link), one h1 per page, skip link and Generic header on every page, only `govuk-`, `moj-`, `app-` classes, every `app-` class (62) has CSS and is listed in a `notes.md`, no inline style in HTML (JS sets only the box position and page width), no page draws its own viewer, counts agree (8, 10 and 5 rows against "of N" text).
+- **8 axe over http** (tags wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa, **plus `region` and `landmark-unique`**): 102 page-states (every state, every source of the multi-source figures, the failed image and Try again, the cite error, the recorded reason, all marked, the route to Verify, the three windows with a selection, the three work pages with the pane hidden, landing, signed out, six 320 px views) at 1366 x 650 and 1093 x 525: **0 violations, 0 incomplete.** One exception, reported not hidden: at 320 px a table inside its labelled scroll region is partly clipped by design; one such node (the fifth column header of the figures table in A, 15.0:1) was resolved by calculating its contrast from computed colours, as the old script did; the same view at both desktop sizes is 0 incomplete without calculation.
+- **Keyboard Tab walk** (both sizes; A 32 stops, B 26, B verify 33, C 36, window 5): every stop has a visible focus style, is in view (a tall scroll region counts when its top is) and is at least 24 x 24 px. 0 problems.
+- **9 Basis:** only listed `app-` parts; Roboto 400 and 700 self-hosted; `assets/govuk-moj.css` is still the one compiled from govuk-frontend 6.5.1 and @ministryofjustice/frontend 11.1.0 with the Ashbridge palette (the D00 finding about MOJ's forwarded GOV.UK settings stands).
+- **320 px reflow:** nine views, none scrolls sideways except a table inside a labelled scrollable region; the viewer replaces the list, and Esc returns with focus on the figure's button.
+
+### The ten acceptance checks (brief, "Acceptance tests for D03"), each a check in `verify.mjs`
+
+| # | Check | Result |
+|---|---|---|
+| 1 | Smallest text in the box at opening zoom at least 12 px; box whole or its left edge in view; both sizes (TB-9, rule 20) | 7 page sources x 2 sizes pass: Lakeview p2 opens at 149% (text 12 px, box 442 of 479 px wide, whole), Lakeview p3 at 103% (12.1 px), T5 at 164% (12 px) |
+| 2 | Page area at least 60% of the height at 1093 x 525, in the pane and in the window | pane 323 px (A, 62%), 337 (B, 64%), 324 (C, 62%); all page sources 62% to 65%; window 328 px (62%) in all three. At 1366 x 650: 69% to 71%; window 453 px (70%) |
+| 3 | 3 sources marked with 3 keys and 0 clicks (rule 22) | pass at both sizes: "Checked", 0 clicks |
+| 4 | The mark key pressed twice never unmarks | pass: source 1 stays marked, status "Checking, 1 of 2 sources" |
+| 5 | C Complete on the last unhandled row focuses "All items checked" (rule 19) | pass from the row and from the slot; also Accept on the last value in B |
+| 6 | Reload with the window open shows "open, following" on both within 2 s | work page reload 37 to 82 ms, window reload 68 to 76 ms, all three versions |
+| 7 | Sign-out from the window signs out the work page (SEC) | work page and a second page signed out in 113 to 171 ms; sign-out from the work page closes the window |
+| 8 | Reload and Back keep `?item=&src=` | pass (`item=f1&src=3` and `q=due`); history length 3 before and after; list scroll 119 px kept |
+| 9 | A tab change makes 0 loads and the window follows (rules 18, 20) | pass: marker kept, 1 navigation entry, own URL `?tab=verify`, history +1, window shows the Verify list and its figure; Back and Forward work with 0 loads |
+| 10 | axe over http incl. `region`, `landmark-unique`: 0 violations, 0 incomplete | pass (see check 8 above) |
+
+### Budgets (rule 18), measured by script at both sizes
+
+| Task | A | B | C |
 |---|---|---|---|
-| A | `a-docked-strip/` | CPA check and step through (TB-9) | Viewer docked at the right, full height; sources as numbered steps; CPA marks each source "Supports this figure, next source" |
-| B | `b-tabs-and-decision/` | Preparer cites an orphan or tax choice (RV-22); verifies extracted values (EV-6) | Sources as MOJ sub navigation tabs; candidates plus the picker beside the evidence; written reason with the GOV.UK error pattern; second tab verifies values |
-| C | `c-window-first/` | Ops checks a document or CRA capture | Viewer lives in its own window with a rail of sources; work page keeps a one-line summary; the same viewer docks when no window is open |
+| Open a source (1 click) to box in view, focus on the box | 0 loads, 0 history, 150 to 180 ms | same | same |
+| Esc | focus back on the figure's row | same | same |
+| Full rows beside the pane, 1366 x 650 / 1093 x 525 | 8 / 3 | 6 / 6 | 5 / 3 |
+| Page overflow | 0 px, no sideways scroll | same | same |
+| Step a source | 1 key (`]`) | 1 key | 1 key |
+| Decide | `m`: 1 key per source | cite: 2 clicks; verify: 1 click per value | Complete or Chase: 1 click or Enter |
+| From the box to the decision | 1 Tab | 1 Tab | 1 Tab |
+| Second window | opens from 1 click or `o`; follows in about 0.1 s; closed state in under 0.05 s; blocked message shows | same | same |
 
-Each shows all seven kinds (document page with box, sheet row and column with the cell outlined, QBO line, client answer, CRA capture, last year's cell, written reason), the step through several sources of one figure (figure 1301 has five), "Not checked: no evidence" (CK-2), the flagged case (figure 8000 lists the flag's own evidence, marked, before the figure's source), the failed state with Try again (December page 3, fails once), the skeleton (CSS delay of 300 ms; a prototype setting loads images in 1.5 s), SIN, date of birth and account number blacked out inside the page images (no digits anywhere), and the second window by `window.open(url, name)` without `noopener`, following over a BroadcastChannel with a Follow toggle, "Window closed, open again", a blocked-pop-up message, and closing on sign-out. Under 600 px the viewer replaces the list with a Back control.
+Other panel scripts re-run: zoom in to the cap never clips the box; zoom persists to the next page source; keys typed in the reason or filter field fire nothing; two work tabs on one return (the window follows the last used, a window step drives only that tab); another return's message is ignored; Follow off keeps the window on its source, says what the work page shows, and catches up; the failed page image shows Try again and recovers; the splitter takes Left, Home, Enter.
 
-Parts used and the composed `app-` parts with reasons: `notes.md` in each version folder.
+## Findings and limits for the Lead
 
-## Checks (design.md checks 6 to 9), run headless through `node tools/heavy.mjs`
-Script: `design/prototypes/source-viewer/build/check.mjs` (Playwright and @axe-core/playwright, installed in a scratch folder, nothing global).
-
-- **6 Retired terms and brief age:** none of export 1, export 2, review-lines export, receipt export, gate 1, judgment input sheet, AI-proposed GIFI, Judgment tab in the brief or any prototype file. No em or en dash, no filler, no SIN digits ("SIN ending" absent; the answer key's SIN does not appear). Brief names commit 0cdcdd4.
-- **7 Prototype lint:** 0 findings. Every href resolves to a file or an anchor on the page; no `#` link; no self-link (the current-page record tab keeps the MOJ `aria-current` link, exempt); one h1 per page; only `govuk-`, `moj-` and `app-` classes, every `app-` class has CSS and is listed in `notes.md`; no inline style in the HTML (JS sets only the box position and page width); counts agree (8, 6, 5 and 4 rows against "of N" text and "Showing n of N").
-- **8 axe** (wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa): 86 page-states at 1366 x 650 and 1093 x 525 (every state above, every source of the multi-source figures, the cite error, the recorded reason, all marked, windows, landing, signed out) plus the 320 px views: **0 violations, 0 incomplete**. Eleven runs first reported colour-contrast "incomplete" (cells partly under a scrolling container); each node's contrast was calculated from the computed colours and all are 4.5:1 or better, so none is left open. Earlier runs found and fixed: `aria-label` on a plain div, scroll regions without a focus style, a 19 px sign-out target.
-- **Keyboard Tab walk** (both sizes; A 32 stops, B 26, C 34, window 6, verify 31): every stop has a visible focus style (the GOV.UK checkbox shows focus on its label, checked by eye), every target is at least 24 x 24 px, none is hidden by the header or the pane. Opening, stepping (`]`, `[`), next figure (`j`, `k`), the second window (`o`), Escape, the splitter (arrows, Home, End, Enter), Accept and Reject, Complete, Chase and the cite form all work by keyboard. The cite error moves focus to the error summary and the page title starts "Error: ".
-- **9 Basis:** only `app-` parts listed in the notes; no CSS `zoom`; Roboto 400 and 700 self-hosted (`assets/fonts`), no CDN. `design/basis/` (D00) is not on this branch yet: `assets/govuk-moj.css` is compiled from govuk-frontend 6.5.1 and @ministryofjustice/frontend 11.1.0 with the palette from `reference/design-basis.md`. **Finding for D00:** MOJ's own `vendor/govuk-frontend/_index.scss` forwards GOV.UK base with fixed configuration, which clashes with a configured `@use` of GOV.UK; I patched that one forwarding file in a scratch copy (forward without `with`) to get the Ashbridge settings into both. The real `src/ui/styles/app.scss` will need the same workaround or a load-path alias.
-- **320 px reflow:** nine views (lists, viewers, windows, landing) all fit 320 px with no sideways scroll except tables inside labelled scrollable regions; list and viewer show one at a time with Back (focus returns to the figure's button).
-
-### Budgets (rule 18), measured by script
-| Version, size | Clicks to open | Page loads | History added | Box visible after click | Box in view, focus on box | Pane (beside, full height) | Stage height | Step key presses | Escape returns to |
-|---|---|---|---|---|---|---|---|---|---|
-| A 1366 x 650 | 1 | 0 | 0 | 169 ms | yes, yes | 480 x 650, beside | 324 px | 1 | figure row |
-| B 1366 x 650 | 1 | 0 | 0 | 189 ms | yes, yes | 480 x 650 | 368 px | 1 | figure row |
-| C 1366 x 650 | 1 | 0 | 0 | 215 ms | yes, yes | 480 x 650 | 405 px | 1 | figure row |
-| A 1093 x 525 | 1 | 0 | 0 | 160 ms | yes, yes | 480 x 525 | 199 px | 1 | figure row |
-| B 1093 x 525 | 1 | 0 | 0 | 183 ms | yes, yes | 480 x 525 | 243 px | 1 | figure row |
-| C 1093 x 525 | 1 | 0 | 0 | 168 ms | yes, yes | 480 x 525 | 280 px | 1 | figure row |
-Panes never stack at either size; the divider's minimum is 360 px. "Stage" is the scrolling area of the card under the viewer's own header, steps and caption. A is the tightest (199 px at 1093 x 525) because it carries the steps and the mark button; the page image scrolls inside it with the box centred.
-
-### Second window (script, three versions)
-Opens on a click (popup opened in all three); follows a figure change, a source step and a figure change again; a step made in the window moves the work page's pane; Follow off keeps the window on its source and says what the work page is on, Follow on catches up; closing the window shows "Window closed, open again."; sign-out closes the window (all true) and lands on the signed-out page.
-
-## Not settled by this design (for the panel and Zo's sitting)
-- At 1093 x 525 the A stage is 199 px; B and C give more. The panel should say if the mark button and steps of A are worth that height.
-- The second window is a browser popup; if Zo's browser blocks it, the blocked message shows and the docked pane stays available.
-- The shell shows only the record tabs each prototype fills; the full tab set belongs to D01.
-- A CRA capture and last year's cell are shown as summary cards (fields), not images; if capture images are kept, they use the same page-with-box card.
+- Viewer chrome text is 14 to 15 px (source line 15, who and words 14, tags 14); body text in the list is 16 px; source page text is at least 12 px. Rule 18 says "body text at least 16 px": I read it as paragraphs, not the viewer's chrome rows (making them 16 px costs the 60% page area at 1093 x 525). Lead's call (amber).
+- A at 1093 x 525 shows exactly 3 full list rows beside the pane (C also 3); the pane is 504 px including its 24 px handle.
+- The window shortens its status to "Following the work page." (the figure is named in its title row); the long message shows only when Follow is off or the work page closed.
+- The shared heavy-job lock (`/tmp/ashbridge-returns-heavy-1.lock`) was left behind twice by killed jobs whose process no longer existed; I removed those two orphan locks by hand after checking the pid was gone.
+- Not changed: the brief, rules and plan files (none are mine to edit in this round).

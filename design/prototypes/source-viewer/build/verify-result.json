@@ -1,0 +1,1994 @@
+{
+ "base": "http (127.0.0.1, random port)",
+ "checks": [
+  {
+   "name": "axe over http incl. region and landmark-unique: 0 violations (acceptance 10)",
+   "ok": true,
+   "detail": "102 page-states, 0 violations"
+  },
+  {
+   "name": "axe: 0 incomplete (acceptance 10); 320 px clipped table cells resolved by calculation are counted separately",
+   "ok": true,
+   "detail": "0 incomplete; 1 clipped 320 px view(s) resolved by calculated contrast"
+  },
+  {
+   "name": "A @1366x650: no page overflow (page height equals viewport)",
+   "ok": true,
+   "detail": "0 px, side 0"
+  },
+  {
+   "name": "A @1366x650: page area at least 60% of the height (acceptance 2)",
+   "ok": true,
+   "detail": "448 px = 69%"
+  },
+  {
+   "name": "A @1366x650: at least 3 full rows beside the pane",
+   "ok": true,
+   "detail": "8 rows"
+  },
+  {
+   "name": "A @1366x650: 0 loads, no history entry, focus on the box, Escape to the row",
+   "ok": true,
+   "detail": "0 loads, 0 history, focus true, esc f1"
+  },
+  {
+   "name": "B @1366x650: no page overflow (page height equals viewport)",
+   "ok": true,
+   "detail": "0 px, side 0"
+  },
+  {
+   "name": "B @1366x650: page area at least 60% of the height (acceptance 2)",
+   "ok": true,
+   "detail": "462 px = 71%"
+  },
+  {
+   "name": "B @1366x650: at least 3 full rows beside the pane",
+   "ok": true,
+   "detail": "6 rows"
+  },
+  {
+   "name": "B @1366x650: 0 loads, no history entry, focus on the box, Escape to the row",
+   "ok": true,
+   "detail": "0 loads, 0 history, focus true, esc p3"
+  },
+  {
+   "name": "C @1366x650: no page overflow (page height equals viewport)",
+   "ok": true,
+   "detail": "0 px, side 0"
+  },
+  {
+   "name": "C @1366x650: page area at least 60% of the height (acceptance 2)",
+   "ok": true,
+   "detail": "449 px = 69%"
+  },
+  {
+   "name": "C @1366x650: at least 3 full rows beside the pane",
+   "ok": true,
+   "detail": "5 rows"
+  },
+  {
+   "name": "C @1366x650: 0 loads, no history entry, focus on the box, Escape to the row",
+   "ok": true,
+   "detail": "0 loads, 0 history, focus true, esc o1"
+  },
+  {
+   "name": "A @1093x525: no page overflow (page height equals viewport)",
+   "ok": true,
+   "detail": "0 px, side 0"
+  },
+  {
+   "name": "A @1093x525: page area at least 60% of the height (acceptance 2)",
+   "ok": true,
+   "detail": "323 px = 62%"
+  },
+  {
+   "name": "A @1093x525: at least 3 full rows beside the pane",
+   "ok": true,
+   "detail": "3 rows"
+  },
+  {
+   "name": "A @1093x525: 0 loads, no history entry, focus on the box, Escape to the row",
+   "ok": true,
+   "detail": "0 loads, 0 history, focus true, esc f1"
+  },
+  {
+   "name": "B @1093x525: no page overflow (page height equals viewport)",
+   "ok": true,
+   "detail": "0 px, side 0"
+  },
+  {
+   "name": "B @1093x525: page area at least 60% of the height (acceptance 2)",
+   "ok": true,
+   "detail": "337 px = 64%"
+  },
+  {
+   "name": "B @1093x525: at least 3 full rows beside the pane",
+   "ok": true,
+   "detail": "6 rows"
+  },
+  {
+   "name": "B @1093x525: 0 loads, no history entry, focus on the box, Escape to the row",
+   "ok": true,
+   "detail": "0 loads, 0 history, focus true, esc p3"
+  },
+  {
+   "name": "C @1093x525: no page overflow (page height equals viewport)",
+   "ok": true,
+   "detail": "0 px, side 0"
+  },
+  {
+   "name": "C @1093x525: page area at least 60% of the height (acceptance 2)",
+   "ok": true,
+   "detail": "324 px = 62%"
+  },
+  {
+   "name": "C @1093x525: at least 3 full rows beside the pane",
+   "ok": true,
+   "detail": "3 rows"
+  },
+  {
+   "name": "C @1093x525: 0 loads, no history entry, focus on the box, Escape to the row",
+   "ok": true,
+   "detail": "0 loads, 0 history, focus true, esc o1"
+  },
+  {
+   "name": "A f1 Lakeview p2 @1366x650: opening zoom 149%, smallest text 12 px, box whole, page area 69% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":448,\"stageRatio\":0.69,\"textPx\":12,\"boxW\":442,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"149%\",\"fullRows\":8,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "A f8 Lakeview p3 @1366x650: opening zoom 103%, smallest text 12.1 px, box whole, page area 72% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":466,\"stageRatio\":0.718,\"textPx\":12.1,\"boxW\":204,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":true,\"zoom\":\"103%\",\"fullRows\":8,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "A f5 T5 @1366x650: opening zoom 164%, smallest text 12 px, box whole, page area 69% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":448,\"stageRatio\":0.69,\"textPx\":12,\"boxW\":294,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"164%\",\"fullRows\":8,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "B verify v2 @1366x650: opening zoom 149%, smallest text 12 px, box whole, page area 69% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":449,\"stageRatio\":0.691,\"textPx\":12,\"boxW\":442,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"149%\",\"fullRows\":4,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "B verify v3 @1366x650: opening zoom 149%, smallest text 12 px, box whole, page area 69% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":449,\"stageRatio\":0.691,\"textPx\":12,\"boxW\":442,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"149%\",\"fullRows\":4,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "C o1 p2 @1366x650: opening zoom 149%, smallest text 12 px, box whole, page area 69% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":449,\"stageRatio\":0.691,\"textPx\":12,\"boxW\":442,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"149%\",\"fullRows\":5,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "C o3 T5 @1366x650: opening zoom 164%, smallest text 12 px, box whole, page area 69% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":449,\"stageRatio\":0.691,\"textPx\":12,\"boxW\":294,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"164%\",\"fullRows\":5,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "A f1 Lakeview p2 @1093x525: opening zoom 149%, smallest text 12 px, box whole, page area 62% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":323,\"stageRatio\":0.616,\"textPx\":12,\"boxW\":442,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"149%\",\"fullRows\":3,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "A f8 Lakeview p3 @1093x525: opening zoom 103%, smallest text 12.1 px, box whole, page area 65% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":341,\"stageRatio\":0.65,\"textPx\":12.1,\"boxW\":204,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":true,\"zoom\":\"103%\",\"fullRows\":3,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "A f5 T5 @1093x525: opening zoom 164%, smallest text 12 px, box whole, page area 62% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":323,\"stageRatio\":0.616,\"textPx\":12,\"boxW\":294,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"164%\",\"fullRows\":3,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "B verify v2 @1093x525: opening zoom 149%, smallest text 12 px, box whole, page area 62% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":324,\"stageRatio\":0.618,\"textPx\":12,\"boxW\":442,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"149%\",\"fullRows\":3,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "B verify v3 @1093x525: opening zoom 149%, smallest text 12 px, box whole, page area 62% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":324,\"stageRatio\":0.618,\"textPx\":12,\"boxW\":442,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"149%\",\"fullRows\":3,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "C o1 p2 @1093x525: opening zoom 149%, smallest text 12 px, box whole, page area 62% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":324,\"stageRatio\":0.618,\"textPx\":12,\"boxW\":442,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"149%\",\"fullRows\":3,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "C o3 T5 @1093x525: opening zoom 164%, smallest text 12 px, box whole, page area 62% (acceptances 1 and 2)",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":324,\"stageRatio\":0.618,\"textPx\":12,\"boxW\":294,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"164%\",\"fullRows\":3,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "A window @1366x650: page area at least 60%, no overflow, text readable, box whole or left edge",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":453,\"stageRatio\":0.696,\"textPx\":24,\"boxW\":882,\"stageW\":1366,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"100%\",\"fullRows\":null,\"paneW\":null,\"paneVisible\":false}"
+  },
+  {
+   "name": "B window @1366x650: page area at least 60%, no overflow, text readable, box whole or left edge",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":453,\"stageRatio\":0.696,\"textPx\":24,\"boxW\":882,\"stageW\":1366,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"100%\",\"fullRows\":null,\"paneW\":null,\"paneVisible\":false}"
+  },
+  {
+   "name": "C window @1366x650: page area at least 60%, no overflow, text readable, box whole or left edge",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":453,\"stageRatio\":0.696,\"textPx\":24,\"boxW\":882,\"stageW\":1366,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"100%\",\"fullRows\":null,\"paneW\":null,\"paneVisible\":false}"
+  },
+  {
+   "name": "A window @1093x525: page area at least 60%, no overflow, text readable, box whole or left edge",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":328,\"stageRatio\":0.624,\"textPx\":19.1,\"boxW\":702,\"stageW\":1093,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"100%\",\"fullRows\":null,\"paneW\":null,\"paneVisible\":false}"
+  },
+  {
+   "name": "B window @1093x525: page area at least 60%, no overflow, text readable, box whole or left edge",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":328,\"stageRatio\":0.624,\"textPx\":19.1,\"boxW\":702,\"stageW\":1093,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"100%\",\"fullRows\":null,\"paneW\":null,\"paneVisible\":false}"
+  },
+  {
+   "name": "C window @1093x525: page area at least 60%, no overflow, text readable, box whole or left edge",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":328,\"stageRatio\":0.624,\"textPx\":19.1,\"boxW\":702,\"stageW\":1093,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":false,\"zoom\":\"100%\",\"fullRows\":null,\"paneW\":null,\"paneVisible\":false}"
+  },
+  {
+   "name": "A f4 flagged @1366x650: page area at least 60% of the height",
+   "ok": true,
+   "detail": "444 px"
+  },
+  {
+   "name": "A f4 flagged @1093x525: page area at least 60% of the height",
+   "ok": true,
+   "detail": "319 px"
+  },
+  {
+   "name": "zoom in stops at the largest size where the box shows, and never clips it (fault 4)",
+   "ok": true,
+   "detail": "open 149%, max 149%, clipped 0"
+  },
+  {
+   "name": "zoom persists per kind for the session when stepping to another page source",
+   "ok": true,
+   "detail": "149% then 149%"
+  },
+  {
+   "name": "keys - and 0 zoom out and fit the box (back to the readable size of that page)",
+   "ok": true,
+   "detail": "149% to 99%, 0 gives 103%, text 12.1 px"
+  },
+  {
+   "name": "the zoom buttons repeat the keys (rule 10)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keys typed in the reason field fire nothing (rule 10)",
+   "ok": true,
+   "detail": "m ] [ + - 0 j k o | 1 QBO: source 1 of 2, QBO line | 1 QBO: source 1 of 2, QBO line"
+  },
+  {
+   "name": "keys typed in the filter fire nothing",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "3 sources marked with 3 keys and 0 clicks @1366x650 (acceptance 3)",
+   "ok": true,
+   "detail": "Checked, 0 clicks"
+  },
+  {
+   "name": "after the last source the next unmarked figure opens @1366x650",
+   "ok": true,
+   "detail": "Meals add-back, 970.83"
+  },
+  {
+   "name": "3 sources marked with 3 keys and 0 clicks @1093x525 (acceptance 3)",
+   "ok": true,
+   "detail": "Checked, 0 clicks"
+  },
+  {
+   "name": "after the last source the next unmarked figure opens @1093x525",
+   "ok": true,
+   "detail": "Meals add-back, 970.83"
+  },
+  {
+   "name": "the mark key pressed twice on one source never unmarks (acceptance 4, rule 22)",
+   "ok": true,
+   "detail": "Checking, 1 of 2 sources"
+  },
+  {
+   "name": "\"Remove mark\" is a button only (no key)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1366x650: from the box 1 Tab reaches the decision",
+   "ok": true,
+   "detail": "Supports this figure, next source m"
+  },
+  {
+   "name": "A @1093x525: from the box 1 Tab reaches the decision",
+   "ok": true,
+   "detail": "Supports this figure, next source m"
+  },
+  {
+   "name": "B verify @1366x650: from the box 1 Tab reaches the decision",
+   "ok": true,
+   "detail": "Accept Deposit on 18 Dec"
+  },
+  {
+   "name": "B verify @1093x525: from the box 1 Tab reaches the decision",
+   "ok": true,
+   "detail": "Accept Deposit on 18 Dec"
+  },
+  {
+   "name": "B cite @1366x650: from the box 1 Tab reaches the decision",
+   "ok": true,
+   "detail": "Cite the source shown (candidate 1 of 2)"
+  },
+  {
+   "name": "B cite @1093x525: from the box 1 Tab reaches the decision",
+   "ok": true,
+   "detail": "Cite the source shown (candidate 1 of 2)"
+  },
+  {
+   "name": "C @1366x650: from the box 1 Tab reaches the decision",
+   "ok": true,
+   "detail": "Complete Lakeview chequing statement, De"
+  },
+  {
+   "name": "C @1093x525: from the box 1 Tab reaches the decision",
+   "ok": true,
+   "detail": "Complete Lakeview chequing statement, De"
+  },
+  {
+   "name": "Complete moves focus to the next unhandled row (o3), not the previous one",
+   "ok": true,
+   "detail": "o3"
+  },
+  {
+   "name": "after the last rows, focus goes to the first unhandled above (o1... or o3)",
+   "ok": true,
+   "detail": "o1"
+  },
+  {
+   "name": "Complete on the last unhandled row focuses \"All items checked\" (acceptance 5, rule 19)",
+   "ok": true,
+   "detail": "{\"id\":\"sv-done\",\"text\":\"All items checked. Every item has a decision.\",\"hidden\":false}"
+  },
+  {
+   "name": "Complete and Chase in the decision slot end on \"All items checked\"",
+   "ok": true,
+   "detail": "{\"id\":\"sv-done\"}"
+  },
+  {
+   "name": "B verify: Accept on every value ends on the done message",
+   "ok": true,
+   "detail": "sv-done"
+  },
+  {
+   "name": "A: the second window opens from 1 click",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A: the window follows a selection and the pane hides so the list takes the width",
+   "ok": true,
+   "detail": "Due from shareholder, 13,211.58 | hidden true | list 1366"
+  },
+  {
+   "name": "A: focus is not lost into the hidden pane",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A: ] on the work page steps the window",
+   "ok": true,
+   "detail": "Source 2 of 5: Sheet row Lakeview chequi"
+  },
+  {
+   "name": "A: after a work page reload both show open and following within 2 s (acceptance 6)",
+   "ok": true,
+   "detail": "57 ms | Second window: open, following. The list uses the full width. | Following the work page."
+  },
+  {
+   "name": "A: after a window reload both show open and following, and the window shows the selection (acceptance 6)",
+   "ok": true,
+   "detail": "61 ms | Due from shareholder, 13,211.58"
+  },
+  {
+   "name": "A: Follow off brings the pane back and says so",
+   "ok": true,
+   "detail": "Second window: open, not following. The source shows here."
+  },
+  {
+   "name": "A: Follow off keeps the window on its source and says what the work page shows",
+   "ok": true,
+   "detail": "Due from shareholder, 13,211.58 | Not following. The work page is now on Taxes payable (HST). Turn Follow on to catch up."
+  },
+  {
+   "name": "A: turning Follow on catches up",
+   "ok": true,
+   "detail": "Taxes payable (HST), 5,486.94"
+  },
+  {
+   "name": "A: a closed window shows \"Window closed, open again\" and the pane returns",
+   "ok": true,
+   "detail": "13 ms"
+  },
+  {
+   "name": "A: o opens the window again",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B: the second window opens from 1 click",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B: the window follows a selection and the pane hides so the list takes the width",
+   "ok": true,
+   "detail": "Due from shareholder, 13,211.58 | hidden true | list 1366"
+  },
+  {
+   "name": "B: focus is not lost into the hidden pane",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B: ] on the work page steps the window",
+   "ok": true,
+   "detail": "Source 2 of 5: Sheet row Lakeview chequi"
+  },
+  {
+   "name": "B: after a work page reload both show open and following within 2 s (acceptance 6)",
+   "ok": true,
+   "detail": "29 ms | Second window: open, following. The list uses the full width. | Following the work page."
+  },
+  {
+   "name": "B: after a window reload both show open and following, and the window shows the selection (acceptance 6)",
+   "ok": true,
+   "detail": "51 ms | Due from shareholder, 13,211.58"
+  },
+  {
+   "name": "B: Follow off brings the pane back and says so",
+   "ok": true,
+   "detail": "Second window: open, not following. The source shows here."
+  },
+  {
+   "name": "B: Follow off keeps the window on its source and says what the work page shows",
+   "ok": true,
+   "detail": "Due from shareholder, 13,211.58 | Not following. The work page is now on Meals add-back. Turn Follow on to catch up."
+  },
+  {
+   "name": "B: turning Follow on catches up",
+   "ok": true,
+   "detail": "Meals add-back, 970.83"
+  },
+  {
+   "name": "B: a closed window shows \"Window closed, open again\" and the pane returns",
+   "ok": true,
+   "detail": "12 ms"
+  },
+  {
+   "name": "B: o opens the window again",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C: the second window opens from 1 click",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C: the window follows a selection and the pane hides so the list takes the width",
+   "ok": true,
+   "detail": "Lakeview chequing statement, December 2025 | hidden true | list 1366"
+  },
+  {
+   "name": "C: focus is not lost into the hidden pane",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C: ] on the work page steps the window",
+   "ok": true,
+   "detail": "Source 2 of 2: Document page Lakeview Ba"
+  },
+  {
+   "name": "C: after a work page reload both show open and following within 2 s (acceptance 6)",
+   "ok": true,
+   "detail": "49 ms | Second window: open, following. The list uses the full width. | Following the work page."
+  },
+  {
+   "name": "C: after a window reload both show open and following, and the window shows the selection (acceptance 6)",
+   "ok": true,
+   "detail": "58 ms | Lakeview chequing statement, December 2025"
+  },
+  {
+   "name": "C: Follow off brings the pane back and says so",
+   "ok": true,
+   "detail": "Second window: open, not following. The source shows here."
+  },
+  {
+   "name": "C: Follow off keeps the window on its source and says what the work page shows",
+   "ok": true,
+   "detail": "Lakeview chequing statement, December 2025 | Not following. The work page is now on CRA HST program account capture. Turn Follow on to catch up."
+  },
+  {
+   "name": "C: turning Follow on catches up",
+   "ok": true,
+   "detail": "CRA HST program account capture"
+  },
+  {
+   "name": "C: a closed window shows \"Window closed, open again\" and the pane returns",
+   "ok": true,
+   "detail": "13 ms"
+  },
+  {
+   "name": "C: o opens the window again",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "a blocked pop-up says so and the docked pane stays",
+   "ok": true,
+   "detail": "The browser blocked the second window. Allow pop-ups for this site, then open it again."
+  },
+  {
+   "name": "A: sign-out in the window signs out the work page and every other page (acceptance 7, SEC)",
+   "ok": true,
+   "detail": "114 ms, signed-out.html, signed-out.html"
+  },
+  {
+   "name": "A: sign-out on the work page ends the window",
+   "ok": true,
+   "detail": "closed"
+  },
+  {
+   "name": "B: sign-out in the window signs out the work page and every other page (acceptance 7, SEC)",
+   "ok": true,
+   "detail": "119 ms, signed-out.html, signed-out.html"
+  },
+  {
+   "name": "B: sign-out on the work page ends the window",
+   "ok": true,
+   "detail": "closed"
+  },
+  {
+   "name": "C: sign-out in the window signs out the work page and every other page (acceptance 7, SEC)",
+   "ok": true,
+   "detail": "130 ms, signed-out.html, signed-out.html"
+  },
+  {
+   "name": "C: sign-out on the work page ends the window",
+   "ok": true,
+   "detail": "closed"
+  },
+  {
+   "name": "the window follows the work tab last used on the same return",
+   "ok": true,
+   "detail": "Taxes payable (HST), 5,486.94 | Meals add-back, 970.83"
+  },
+  {
+   "name": "a step in the window drives only the tab it follows",
+   "ok": true,
+   "detail": "Source 2 of 2: Writt | Source 1 of 3: CRA c"
+  },
+  {
+   "name": "another return's work page never drives the window",
+   "ok": true,
+   "detail": "Meals add-back, 970.83"
+  },
+  {
+   "name": "the URL follows the selection (item and source) with replaceState",
+   "ok": true,
+   "detail": "a-docked-strip/index.html?item=f1&src=3"
+  },
+  {
+   "name": "the filter is in the URL too",
+   "ok": true,
+   "detail": "http://127.0.0.1:55490/a-docked-strip/index.html?item=f1&src=3&q=due"
+  },
+  {
+   "name": "reload returns to the same figure, source and filter (acceptance 8)",
+   "ok": true,
+   "detail": "{\"t\":\"Due from shareholder, 13,211.58\",\"meta\":\"Source 3 of 5: QBO line QBO account 1300 Due from shareholder, balance at 31 Dec 2025.\",\"f\":\"due\",\"h\":3}"
+  },
+  {
+   "name": "selecting, stepping and reloading add no history entry",
+   "ok": true,
+   "detail": "3 then 3"
+  },
+  {
+   "name": "Back returns to the same figure and source (acceptance 8)",
+   "ok": true,
+   "detail": "{\"t\":\"Due from shareholder, 13,211.58\",\"meta\":\"Source 3 of 5: QBO line QBO account 1300 Due from shareholder, balance at 31 Dec 2025.\"}"
+  },
+  {
+   "name": "reload keeps the list scroll (rule 21)",
+   "ok": true,
+   "detail": "scrolled 119"
+  },
+  {
+   "name": "a tab change makes 0 loads and has its own URL (acceptance 9, rules 18, 20)",
+   "ok": true,
+   "detail": "{\"marker\":7,\"navs\":1,\"h1\":\"Verify extracted values\",\"title\":\"Verify extracted values, Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025 - Ashbridge Tax\",\"cur\":\"Verify values\",\"hist\":3,\"rows\":4} http://127.0.0.1:55490/b-tabs-and-decision/index.html?tab=verify"
+  },
+  {
+   "name": "the window follows the tab change and shows the new list (acceptance 9)",
+   "ok": true,
+   "detail": "Withdrawal on 20 Dec, 20,000.00"
+  },
+  {
+   "name": "Back after a tab change returns to the first tab with 0 loads",
+   "ok": true,
+   "detail": "{\"marker\":7,\"h1\":\"Cite figures\",\"url\":\"\",\"state\":{\"tab\":\"cite\"},\"entries\":[\"/b-tabs-and-decision/index.html *\",\"/b-tabs-and-decision/index.html?tab=verify&item=v2&src=1\"]}"
+  },
+  {
+   "name": "Forward returns to the second tab",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "a cited source survives a reload (prototype keeps it in session storage)",
+   "ok": true,
+   "detail": "Cited"
+  },
+  {
+   "name": "B T3: cite an orphan in 2 clicks, then a button goes to the next orphan",
+   "ok": true,
+   "detail": "2 clicks, Go to Home office, 15% of rent"
+  },
+  {
+   "name": "B: an empty reason shows the error summary focused, the title starts \"Error: \" and the message sits at the field",
+   "ok": true,
+   "detail": "{\"f\":\"sv-cite-sum\",\"t\":\"Error: \",\"m\":true}"
+  },
+  {
+   "name": "the failed page image shows an error summary with Try again, and recovers with the box in view",
+   "ok": true,
+   "detail": "{\"overflowPx\":0,\"sideScroll\":0,\"stageH\":466,\"stageRatio\":0.718,\"textPx\":12.1,\"boxW\":204,\"stageW\":479,\"boxWhole\":true,\"boxLeftInView\":true,\"focusBox\":true,\"zoom\":\"103%\",\"fullRows\":8,\"paneW\":504,\"paneVisible\":true}"
+  },
+  {
+   "name": "the empty state says \"Not checked: no evidence\" and what to do",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk A @1366x650: 32 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk A @1093x525: 32 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk B @1366x650: 26 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk B @1093x525: 26 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk B verify @1366x650: 33 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk B verify @1093x525: 33 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk C @1366x650: 36 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk C @1093x525: 36 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk A window @1366x650: 5 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "keyboard walk A window @1093x525: 5 stops, focus visible, in view, targets 24 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "the splitter takes Left, Home, Enter (rule 12)",
+   "ok": true,
+   "detail": "480 504 360 480"
+  },
+  {
+   "name": "320 px reflow: A list",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px reflow: A viewer f1",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px reflow: A viewer f7",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px reflow: B viewer p1",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px reflow: B verify",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px reflow: C list",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px reflow: C window",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px reflow: A window",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px reflow: landing",
+   "ok": true,
+   "detail": "{\"docScroll\":320,\"vw\":320,\"over\":[]}"
+  },
+  {
+   "name": "320 px: the viewer replaces the list, Esc goes back with focus on the figure button",
+   "ok": true,
+   "detail": "{\"list\":true,\"f\":\"Showing source\"}"
+  },
+  {
+   "name": "retired-term, dash, filler and SIN lint (check 6)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "prototype lint (check 7): links, classes, one h1, no inline style, counts agree",
+   "ok": true,
+   "detail": ""
+  }
+ ],
+ "axe": [
+  {
+   "label": "A f1 @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1366x650 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1366x650 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1366x650 source 4",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1366x650 source 5",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f4 flagged @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f4 flagged @1366x650 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f4 flagged @1366x650 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f6 flagged @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f7 empty @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f5 masked @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f5 masked @1366x650 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f5 masked @1366x650 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f2 @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f2 @1366x650 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f2 @1366x650 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A list @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p1 orphan @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p1 orphan @1366x650 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p2 choice @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1366x650 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1366x650 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1366x650 source 4",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1366x650 source 5",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B verify v1 @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B verify list @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C list @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o1 @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o1 @1366x650 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o4 empty @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o5 @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o5 @1366x650 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o5 @1366x650 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "landing @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "signed out @1366x650 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f8 image failed @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f8 after Try again @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B cite error @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B reason recorded @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B after tab route to Verify @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A all marked @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A window @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A work page, pane hidden @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B window @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B work page, pane hidden @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C window @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C work page, pane hidden @1366x650",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1093x525 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1093x525 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1093x525 source 4",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f1 @1093x525 source 5",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f4 flagged @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f4 flagged @1093x525 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f4 flagged @1093x525 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f6 flagged @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f7 empty @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f5 masked @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f5 masked @1093x525 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f5 masked @1093x525 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f2 @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f2 @1093x525 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f2 @1093x525 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A list @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p1 orphan @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p1 orphan @1093x525 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p2 choice @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1093x525 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1093x525 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1093x525 source 4",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p3 @1093x525 source 5",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B verify v1 @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B verify list @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C list @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o1 @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o1 @1093x525 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o4 empty @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o5 @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o5 @1093x525 source 2",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o5 @1093x525 source 3",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "landing @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "signed out @1093x525 source 1",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f8 image failed @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A f8 after Try again @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B cite error @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B reason recorded @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B after tab route to Verify @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A all marked @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A window @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A work page, pane hidden @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B window @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B work page, pane hidden @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C window @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C work page, pane hidden @1093x525",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A list @320x640",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": [
+    "A list @320x640: 1 clipped node(s), lowest ratio 15.02"
+   ]
+  },
+  {
+   "label": "A f1 @320x640",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "B p1 @320x640",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "C o1 @320x640",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "A window @320x640",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  },
+  {
+   "label": "landing @320x640",
+   "violations": [],
+   "incomplete": [],
+   "resolvedByCalculation": []
+  }
+ ],
+ "budgets": [
+  {
+   "version": "A",
+   "size": "1366x650",
+   "clicksToOpen": 1,
+   "msToBoxVisible": 154,
+   "pageLoads": 0,
+   "historyAdded": 0,
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 448,
+   "stageRatio": 0.69,
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": true,
+   "zoom": "149%",
+   "fullRows": 8,
+   "paneW": 504,
+   "paneVisible": true,
+   "escapeReturnsTo": "f1"
+  },
+  {
+   "version": "B",
+   "size": "1366x650",
+   "clicksToOpen": 1,
+   "msToBoxVisible": 156,
+   "pageLoads": 0,
+   "historyAdded": 0,
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 462,
+   "stageRatio": 0.711,
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": true,
+   "zoom": "149%",
+   "fullRows": 6,
+   "paneW": 504,
+   "paneVisible": true,
+   "escapeReturnsTo": "p3"
+  },
+  {
+   "version": "C",
+   "size": "1366x650",
+   "clicksToOpen": 1,
+   "msToBoxVisible": 151,
+   "pageLoads": 0,
+   "historyAdded": 0,
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 449,
+   "stageRatio": 0.691,
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": true,
+   "zoom": "149%",
+   "fullRows": 5,
+   "paneW": 504,
+   "paneVisible": true,
+   "escapeReturnsTo": "o1"
+  },
+  {
+   "version": "A",
+   "size": "1093x525",
+   "clicksToOpen": 1,
+   "msToBoxVisible": 180,
+   "pageLoads": 0,
+   "historyAdded": 0,
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 323,
+   "stageRatio": 0.616,
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": true,
+   "zoom": "149%",
+   "fullRows": 3,
+   "paneW": 504,
+   "paneVisible": true,
+   "escapeReturnsTo": "f1"
+  },
+  {
+   "version": "B",
+   "size": "1093x525",
+   "clicksToOpen": 1,
+   "msToBoxVisible": 144,
+   "pageLoads": 0,
+   "historyAdded": 0,
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 337,
+   "stageRatio": 0.642,
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": true,
+   "zoom": "149%",
+   "fullRows": 6,
+   "paneW": 504,
+   "paneVisible": true,
+   "escapeReturnsTo": "p3"
+  },
+  {
+   "version": "C",
+   "size": "1093x525",
+   "clicksToOpen": 1,
+   "msToBoxVisible": 146,
+   "pageLoads": 0,
+   "historyAdded": 0,
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 324,
+   "stageRatio": 0.618,
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": true,
+   "zoom": "149%",
+   "fullRows": 3,
+   "paneW": 504,
+   "paneVisible": true,
+   "escapeReturnsTo": "o1"
+  },
+  {
+   "version": "A f1 Lakeview p2",
+   "size": "1366x650",
+   "opening": true,
+   "zoom": "149%",
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "A f8 Lakeview p3",
+   "size": "1366x650",
+   "opening": true,
+   "zoom": "103%",
+   "textPx": 12.1,
+   "boxW": 204,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "A f5 T5",
+   "size": "1366x650",
+   "opening": true,
+   "zoom": "164%",
+   "textPx": 12,
+   "boxW": 294,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "B verify v2",
+   "size": "1366x650",
+   "opening": true,
+   "zoom": "149%",
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "B verify v3",
+   "size": "1366x650",
+   "opening": true,
+   "zoom": "149%",
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "C o1 p2",
+   "size": "1366x650",
+   "opening": true,
+   "zoom": "149%",
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "C o3 T5",
+   "size": "1366x650",
+   "opening": true,
+   "zoom": "164%",
+   "textPx": 12,
+   "boxW": 294,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "A f1 Lakeview p2",
+   "size": "1093x525",
+   "opening": true,
+   "zoom": "149%",
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "A f8 Lakeview p3",
+   "size": "1093x525",
+   "opening": true,
+   "zoom": "103%",
+   "textPx": 12.1,
+   "boxW": 204,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "A f5 T5",
+   "size": "1093x525",
+   "opening": true,
+   "zoom": "164%",
+   "textPx": 12,
+   "boxW": 294,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "B verify v2",
+   "size": "1093x525",
+   "opening": true,
+   "zoom": "149%",
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "B verify v3",
+   "size": "1093x525",
+   "opening": true,
+   "zoom": "149%",
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "C o1 p2",
+   "size": "1093x525",
+   "opening": true,
+   "zoom": "149%",
+   "textPx": 12,
+   "boxW": 442,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "C o3 T5",
+   "size": "1093x525",
+   "opening": true,
+   "zoom": "164%",
+   "textPx": 12,
+   "boxW": 294,
+   "stageW": 479,
+   "boxWhole": true,
+   "boxLeftInView": true
+  },
+  {
+   "version": "A window",
+   "size": "1366x650",
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 453,
+   "stageRatio": 0.696,
+   "textPx": 24,
+   "boxW": 882,
+   "stageW": 1366,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": false,
+   "zoom": "100%",
+   "fullRows": null,
+   "paneW": null,
+   "paneVisible": false
+  },
+  {
+   "version": "B window",
+   "size": "1366x650",
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 453,
+   "stageRatio": 0.696,
+   "textPx": 24,
+   "boxW": 882,
+   "stageW": 1366,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": false,
+   "zoom": "100%",
+   "fullRows": null,
+   "paneW": null,
+   "paneVisible": false
+  },
+  {
+   "version": "C window",
+   "size": "1366x650",
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 453,
+   "stageRatio": 0.696,
+   "textPx": 24,
+   "boxW": 882,
+   "stageW": 1366,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": false,
+   "zoom": "100%",
+   "fullRows": null,
+   "paneW": null,
+   "paneVisible": false
+  },
+  {
+   "version": "A window",
+   "size": "1093x525",
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 328,
+   "stageRatio": 0.624,
+   "textPx": 19.1,
+   "boxW": 702,
+   "stageW": 1093,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": false,
+   "zoom": "100%",
+   "fullRows": null,
+   "paneW": null,
+   "paneVisible": false
+  },
+  {
+   "version": "B window",
+   "size": "1093x525",
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 328,
+   "stageRatio": 0.624,
+   "textPx": 19.1,
+   "boxW": 702,
+   "stageW": 1093,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": false,
+   "zoom": "100%",
+   "fullRows": null,
+   "paneW": null,
+   "paneVisible": false
+  },
+  {
+   "version": "C window",
+   "size": "1093x525",
+   "overflowPx": 0,
+   "sideScroll": 0,
+   "stageH": 328,
+   "stageRatio": 0.624,
+   "textPx": 19.1,
+   "boxW": 702,
+   "stageW": 1093,
+   "boxWhole": true,
+   "boxLeftInView": true,
+   "focusBox": false,
+   "zoom": "100%",
+   "fullRows": null,
+   "paneW": null,
+   "paneVisible": false
+  }
+ ],
+ "keyboard": [
+  {
+   "page": "A",
+   "size": "1366x650",
+   "stops": 32,
+   "problems": []
+  },
+  {
+   "page": "A",
+   "size": "1093x525",
+   "stops": 32,
+   "problems": []
+  },
+  {
+   "page": "B",
+   "size": "1366x650",
+   "stops": 26,
+   "problems": []
+  },
+  {
+   "page": "B",
+   "size": "1093x525",
+   "stops": 26,
+   "problems": []
+  },
+  {
+   "page": "B verify",
+   "size": "1366x650",
+   "stops": 33,
+   "problems": []
+  },
+  {
+   "page": "B verify",
+   "size": "1093x525",
+   "stops": 33,
+   "problems": []
+  },
+  {
+   "page": "C",
+   "size": "1366x650",
+   "stops": 36,
+   "problems": []
+  },
+  {
+   "page": "C",
+   "size": "1093x525",
+   "stops": 36,
+   "problems": []
+  },
+  {
+   "page": "A window",
+   "size": "1366x650",
+   "stops": 5,
+   "problems": []
+  },
+  {
+   "page": "A window",
+   "size": "1093x525",
+   "stops": 5,
+   "problems": []
+  }
+ ],
+ "reflow": [
+  {
+   "label": "A list",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  },
+  {
+   "label": "A viewer f1",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  },
+  {
+   "label": "A viewer f7",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  },
+  {
+   "label": "B viewer p1",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  },
+  {
+   "label": "B verify",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  },
+  {
+   "label": "C list",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  },
+  {
+   "label": "C window",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  },
+  {
+   "label": "A window",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  },
+  {
+   "label": "landing",
+   "docScroll": 320,
+   "vw": 320,
+   "over": [],
+   "ok": true
+  }
+ ],
+ "window": [],
+ "lint": {
+  "appClasses": [
+   "app-actions",
+   "app-bar-link",
+   "app-box",
+   "app-box--below",
+   "app-box__label",
+   "app-brand",
+   "app-button-compact",
+   "app-cell-boxed",
+   "app-counts",
+   "app-done",
+   "app-filter",
+   "app-flagnote",
+   "app-key",
+   "app-keys-inline",
+   "app-meta-ocr",
+   "app-meta-who",
+   "app-ocr",
+   "app-only-narrow",
+   "app-page",
+   "app-pane-w",
+   "app-reset-button",
+   "app-return",
+   "app-row--selected",
+   "app-scroll",
+   "app-sheet",
+   "app-sheet-wrap",
+   "app-shell",
+   "app-shell--stack",
+   "app-skeleton",
+   "app-split",
+   "app-split--no-pane",
+   "app-split__left",
+   "app-split__pane",
+   "app-split__work",
+   "app-splitter",
+   "app-steps",
+   "app-steps__btn",
+   "app-steps__marked",
+   "app-summary-strip",
+   "app-summary-strip--window",
+   "app-summary-strip--window-top",
+   "app-table-dense",
+   "app-viewer",
+   "app-viewer--window",
+   "app-viewer-root",
+   "app-viewer__body",
+   "app-viewer__card",
+   "app-viewer__empty",
+   "app-viewer__foot",
+   "app-viewer__foot--block",
+   "app-viewer__head",
+   "app-viewer__meta",
+   "app-viewer__stage",
+   "app-viewer__steps",
+   "app-viewer__title",
+   "app-viewer__who",
+   "app-viewer__zoom",
+   "app-what",
+   "app-wide",
+   "app-window-main",
+   "app-worktop",
+   "app-zoom-level"
+  ],
+  "findings": [],
+  "countDisagreements": []
+ },
+ "summary": {
+  "checks": 154,
+  "failed": 0,
+  "axeStates": 102
+ }
+}

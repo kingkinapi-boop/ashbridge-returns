@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="../assets/govuk-moj.css">
   <link rel="stylesheet" href="../assets/app.css">
 </head>
-<body class="govuk-template__body app-shell  app-shell--stack">
+<body class="govuk-template__body app-shell app-shell--stack" data-signed-out="../signed-out.html">
   <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
   <a href="#main" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
-
+  <div id="sv-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
   <header>
     <div class="govuk-generic-header">
       <div class="govuk-generic-header__container app-wide">
@@ -20,38 +20,32 @@
       </div>
     </div>
   </header>
-  <div class="moj-identity-bar app-wide">
-    <div class="moj-identity-bar__container">
-      <div class="moj-identity-bar__details"><span class="moj-identity-bar__title">Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025</span></div>
-      <div class="moj-identity-bar__actions"><a class="govuk-link govuk-link--no-visited-state app-bar-link" id="sv-signout" href="../signed-out.html">Sign out</a></div>
+  <div role="region" aria-label="Return" class="app-return">
+    <div class="moj-identity-bar app-wide">
+      <div class="moj-identity-bar__container">
+        <div class="moj-identity-bar__details"><span class="moj-identity-bar__title">Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025</span></div>
+        <div class="moj-identity-bar__actions"><a class="govuk-link govuk-link--no-visited-state app-bar-link" id="sv-signout" href="../signed-out.html">Sign out</a></div>
+      </div>
     </div>
   </div>
-  <nav class="moj-sub-navigation app-wide" aria-label="Return record">
-    <ul class="moj-sub-navigation__list">
-        <li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="window.html" aria-current="page">Source window</a></li>
-    </ul>
-  </nav>
   <main id="main" tabindex="-1" class="app-window-main">
-    <div class="app-summary-strip">
-      <h1 class="govuk-heading-s govuk-!-margin-bottom-0">Source window</h1>
+    <div class="app-summary-strip app-summary-strip--window-top">
+      <h1 class="govuk-heading-s">Source window</h1>
       <div class="govuk-checkboxes govuk-checkboxes--small">
         <div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="sv-follow" type="checkbox" checked><label class="govuk-label govuk-checkboxes__label" for="sv-follow">Follow the work page</label></div>
       </div>
       <p id="sv-win-msg" role="status"></p>
-    </div>
-    <div id="sv-root" class="app-viewer-root"></div>
-    <div class="app-summary-strip govuk-!-margin-bottom-0">
-      <details class="govuk-details govuk-!-margin-bottom-0">
+      <details class="govuk-details app-keys-inline">
         <summary class="govuk-details__summary"><span class="govuk-details__summary-text">Keyboard shortcuts</span></summary>
         <div class="govuk-details__text">
-          <p class="govuk-body"><span class="app-key">]</span> next source. <span class="app-key">[</span> previous source. The work page moves between figures.</p>
+          <p class="govuk-body"><span class="app-key">]</span> next source. <span class="app-key">[</span> previous source. <span class="app-key">+</span> zoom in. <span class="app-key">-</span> zoom out. <span class="app-key">0</span> fit the box. The work page moves between figures.</p>
           <div class="govuk-checkboxes govuk-checkboxes--small"><div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="sv-keys-off" type="checkbox"><label class="govuk-label govuk-checkboxes__label" for="sv-keys-off">Turn off single-key shortcuts</label></div></div>
         </div>
       </details>
     </div>
+    <div id="sv-root" class="app-viewer-root"></div>
   </main>
-
-  <div id="sv-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
+  <script src="../assets/signout.js"></script>
   <script src="../assets/data.js"></script>
   <script src="../assets/viewer.js"></script>
   <script src="../assets/window.js"></script>

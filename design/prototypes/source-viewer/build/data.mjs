@@ -56,34 +56,34 @@ export const sources = {
   'lv-dec-p2': {
     kind: 'page', title: 'Lakeview Bank (Test) chequing statement, December 2025', page: 'Page 2 of 3',
     img: 'pages/lakeview-dec-p2.svg', alt: 'Lakeview Bank (Test) chequing statement, December 2025, page 2 of 3. Account number blacked out.',
-    box: boxes.dec18, ocr: `${row18.desc} ${row18.dep}`, extracted: `${row18.date}, deposit ${row18.dep}`,
+    minText: 11, box: boxes.dec18, ocr: `${row18.desc} ${row18.dep}`, extracted: `${row18.date}, deposit ${row18.dep}`,
     who: `Uploaded by ${STAFF.client} in the client app`, when: '14 Jan 2026', masked: 'Account number on file (blacked out in the image)',
   },
   'lv-dec-p3': {
     kind: 'page', title: 'Lakeview Bank (Test) chequing statement, December 2025', page: 'Page 3 of 3',
     img: 'pages/lakeview-dec-p3.svg', alt: 'Lakeview Bank (Test) chequing statement, December 2025, page 3 of 3, closing balance. Account number blacked out.',
-    box: boxes.closing, ocr: closingBalance, extracted: `31 Dec 2025, closing balance ${closingBalance}`,
+    minText: 16, box: boxes.closing, ocr: closingBalance, extracted: `31 Dec 2025, closing balance ${closingBalance}`,
     who: `Uploaded by ${STAFF.client} in the client app`, when: '14 Jan 2026', masked: 'Account number on file (blacked out in the image)', failFirst: true,
   },
   't5-draft': {
     kind: 'page', title: 'T5 slip, draft for the December dividend', page: 'Page 1 of 1',
     img: 'pages/t5-draft.svg', alt: 'Draft T5 slip for Priya Nair (Test). Social insurance number and date of birth blacked out.',
-    box: boxes.t5box24, ocr: 'Box 24 Actual amount of dividends other than eligible dividends 20,000.00', extracted: 'Box 24, 20,000.00',
+    minText: 10, box: boxes.t5box24, ocr: 'Box 24 Actual amount of dividends other than eligible dividends 20,000.00', extracted: 'Box 24, 20,000.00',
     who: `Drafted by ${STAFF.prep}`, when: '28 Sep 2026', masked: 'SIN on file and date of birth on file (blacked out in the image)',
   },
   'sh-feb12': {
     kind: 'sheet', title: 'Lakeview chequing export, row 59, column C (Withdrawals)', file: 'lakeview-chequing-4821.csv',
-    rows: [1, 57, 58, 59, 60, 61], boxRow: 59, boxCol: 2, sheetNote: `Row 59 of ${csvTotal}`,
+    rows: [1, 58, 59, 60], boxRow: 59, boxCol: 2, sheetNote: `Row 59 of ${csvTotal}`,
     who: `Imported by ${STAFF.ops}`, when: '14 Jan 2026',
   },
   'sh-dec20': {
     kind: 'sheet', title: 'Lakeview chequing export, row 548, column C (Withdrawals)', file: 'lakeview-chequing-4821.csv',
-    rows: [1, 546, 547, 548, 549, 550], boxRow: 548, boxCol: 2, sheetNote: `Row 548 of ${csvTotal}`,
+    rows: [1, 547, 548, 549], boxRow: 548, boxCol: 2, sheetNote: `Row 548 of ${csvTotal}`,
     who: `Imported by ${STAFF.ops}`, when: '14 Jan 2026',
   },
   'sh-acct': {
     kind: 'sheet', title: 'Lakeview chequing export, row 2, column C (Withdrawals)', file: 'lakeview-chequing-4821.csv',
-    rows: [1, 2, 3, 4, 5, 6], boxRow: 2, boxCol: 2, sheetNote: `Row 2 of ${csvTotal}`,
+    rows: [1, 2, 3, 4], boxRow: 2, boxCol: 2, sheetNote: `Row 2 of ${csvTotal}`,
     who: `Imported by ${STAFF.ops}`, when: '14 Jan 2026',
   },
   'qbo-1300': {

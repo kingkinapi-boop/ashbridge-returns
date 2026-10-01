@@ -7,9 +7,10 @@
   <link rel="stylesheet" href="../assets/govuk-moj.css">
   <link rel="stylesheet" href="../assets/app.css">
 </head>
-<body class="govuk-template__body app-shell ">
+<body class="govuk-template__body app-shell" data-signed-out="../signed-out.html">
   <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
   <a href="#main" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+  <div id="sv-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
   <div class="app-split" id="app-split" data-view="list">
   <div class="app-split__left">
   <header>
@@ -21,36 +22,38 @@
       </div>
     </div>
   </header>
-  <div class="moj-identity-bar app-wide">
-    <div class="moj-identity-bar__container">
-      <div class="moj-identity-bar__details"><span class="moj-identity-bar__title">Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025</span></div>
-      <div class="moj-identity-bar__actions"><a class="govuk-link govuk-link--no-visited-state app-bar-link" id="sv-signout" href="../signed-out.html">Sign out</a></div>
+  <div role="region" aria-label="Return" class="app-return">
+    <div class="moj-identity-bar app-wide">
+      <div class="moj-identity-bar__container">
+        <div class="moj-identity-bar__details"><span class="moj-identity-bar__title">Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025</span></div>
+        <div class="moj-identity-bar__actions"><a class="govuk-link govuk-link--no-visited-state app-bar-link" id="sv-signout" href="../signed-out.html">Sign out</a></div>
+      </div>
     </div>
-  </div>
-  <nav class="moj-sub-navigation app-wide" aria-label="Return record">
-    <ul class="moj-sub-navigation__list">
+    <nav class="moj-sub-navigation app-wide" aria-label="Return record">
+      <ul class="moj-sub-navigation__list">
         <li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="index.html" aria-current="page">CPA review</a></li>
-    </ul>
-  </nav>
+      </ul>
+    </nav>
+  </div>
   <main id="main" tabindex="-1" class="">
-
     <section class="app-split__work" aria-label="Figures to check" tabindex="0">
-      <h1 class="govuk-heading-m govuk-!-margin-bottom-2">Review figures</h1>
-      <p class="govuk-body govuk-!-margin-bottom-2"><span id="sv-checked">0</span> of 8 figures checked. 2 flagged for a person. 1 with no evidence.</p>
+      <div class="app-worktop"><h1 class="govuk-heading-m">Review figures</h1>
+      <p class="govuk-body"><span id="sv-checked">0</span> of 8 figures checked. 2 flagged for a person. 1 with no evidence.</p></div>
+      <p class="govuk-body app-done" id="sv-done" tabindex="-1" hidden>Every figure that has a source is checked. Figures with no evidence stay unchecked.</p>
       <div class="app-summary-strip">
         <p id="sv-win-status" role="status"></p>
         <button type="button" class="govuk-button govuk-button--secondary app-button-compact" data-fig-nav="-1" aria-keyshortcuts="k">Previous<span class="govuk-visually-hidden"> figure</span> <span class="app-key" aria-hidden="true">k</span></button>
         <button type="button" class="govuk-button govuk-button--secondary app-button-compact" data-fig-nav="1" aria-keyshortcuts="j">Next<span class="govuk-visually-hidden"> figure</span> <span class="app-key" aria-hidden="true">j</span></button>
         <button type="button" id="sv-open-window" class="govuk-button govuk-button--secondary app-button-compact" aria-keyshortcuts="o">Open in second window <span class="app-key" aria-hidden="true">o</span></button>
       </div>
-      <div class="app-filter govuk-form-group">
+      <div class="app-filter">
         <label class="govuk-label" for="sv-filter">Filter figures</label>
         <input class="govuk-input" id="sv-filter" type="search" autocomplete="off" spellcheck="false">
-        <p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0" id="sv-filter-count">Showing 8 of 8</p>
+        <p class="govuk-hint" id="sv-filter-count">Showing 8 of 8</p>
       </div>
       <div class="app-scroll" role="region" aria-label="Figures table, scrolls sideways on a small screen" tabindex="0">
         <table class="govuk-table app-table-dense">
-          <caption class="govuk-table__caption govuk-table__caption--s">Figures in return order. Each is checked against its sources.</caption>
+          <caption class="govuk-table__caption govuk-visually-hidden">Figures in return order. Each is checked against its sources.</caption>
           <thead class="govuk-table__head"><tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Line</th><th scope="col" class="govuk-table__header">Figure</th><th scope="col" class="govuk-table__header govuk-table__header--numeric">Amount ($)</th><th scope="col" class="govuk-table__header">Status</th><th scope="col" class="govuk-table__header">Sources</th>
           </tr></thead>
@@ -126,8 +129,12 @@
             <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">k</span></th><td class="govuk-table__cell">Previous figure</td></tr>
             <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">]</span></th><td class="govuk-table__cell">Next source of the figure</td></tr>
             <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">[</span></th><td class="govuk-table__cell">Previous source of the figure</td></tr>
+            <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">+</span></th><td class="govuk-table__cell">Zoom the page in (also =), never past the size where the whole box shows</td></tr>
+            <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">-</span></th><td class="govuk-table__cell">Zoom the page out</td></tr>
+            <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">0</span></th><td class="govuk-table__cell">Fit the box: back to the readable size</td></tr>
             <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">o</span></th><td class="govuk-table__cell">Open the second window, or bring it back</td></tr>
             <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">Esc</span></th><td class="govuk-table__cell">Return focus to the figure you came from (on a small screen, back to the list)</td></tr>
+            <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><span class="app-key">m</span></th><td class="govuk-table__cell">Reviewed, next: mark the source in view as supporting this figure and go on. It never unmarks</td></tr>
           </tbody>
         </table>
         <div class="govuk-form-group">
@@ -139,16 +146,14 @@
       </div>
     </details>
     </section>
-    
   </main>
   </div>
-<div id="app-splitter" class="app-splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize the source pane. Left arrow widens it, right arrow narrows it" aria-controls="source-pane" aria-valuemin="360" aria-valuemax="800" aria-valuenow="480"></div>
-    <div id="source-pane" class="app-split__pane" role="region" aria-label="Source viewer">
-      <div id="sv-root" class="app-viewer-root"></div>
-    </div>
-    
+  <div id="source-pane" class="app-split__pane" role="region" aria-label="Source viewer">
+    <div id="app-splitter" class="app-splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize the source pane. Left arrow widens it, right arrow narrows it" aria-controls="sv-root" aria-valuemin="360" aria-valuemax="800" aria-valuenow="480"></div>
+    <div id="sv-root" class="app-viewer-root"></div>
   </div>
-  <div id="sv-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
+  </div>
+  <script src="../assets/signout.js"></script>
   <script src="../assets/data.js"></script>
   <script src="../assets/viewer.js"></script>
   <script src="../assets/work.js"></script>
