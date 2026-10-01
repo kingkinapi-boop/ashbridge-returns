@@ -38,3 +38,4 @@ From the client app build (items 1 to 25) and for this autonomous build (26 onwa
 31. A usage limit or a crash loses nothing when NOW.md is written before each dispatch, not after.
 32. The Lead's context is the scarcest resource in the build: it reads indexes, reports and tool summaries, never code.
 33. A simulator built from the vendor's published rules lets the build run without the vendor; the real proof still happens before go-live, and every simulator rule names its source.
+34. A helper that kills a hung browser by name kills Zo's browsers too (1 Oct: every Edge window closed). Kill only the process IDs you started.
