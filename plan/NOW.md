@@ -13,20 +13,21 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Design re-test, changed tasks on the four families (panel mode) | tester | local worktree | 1 Oct 23:15Z | claude/design-retest |
-| F00 round 3 build (spec reported: 37 tests, 24 fail pre-build) | cloud run | cloud | 1 Oct 23:45Z | claude/F00 |
+| Design fix round 2: queues-record, workbench (builds design/parts/cite-or-reason/), cpa-review V1 (V1 to V8 from claude/design-verify 1f3fdda) | 3 designers | local worktrees | 2 Oct 00:45Z | claude/design-*-2 |
+| Checks of F01, F05, F08, F09 (builds reported; F01 and F09 note spec defects); F03 re-spec | 3 cloud runs | cloud | 2 Oct 03:35Z | claude/<card> |
+| Queue repair 3 build (reopened build re-offers check; next.mjs reads spec claims; async tools tests A247; shellProblems A253; parked-dep check test) | builder | local worktree | 2 Oct 03:00Z | claude/queue-repair-3 |
 
 All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
 
 ## Next, in order
 
-1. Queue repair 2 LANDED (ed9435b, A247: vitest RPC timeout noise to fix in the next queue repair; dispatch skill line 40 should name `update <card> spec reopened --worker lead`; add a test that a check on a card with a parked dep still flows).
-2. F00: after findings review 3, card updated, spec job (rule tests), build, check, then board the train: write plan/train.json {status: requested}, merge into claude/train, fire a cloud run (it takes the train first, A249). Green: land, cold sign-off on queue repairs + rehearsal, widen to 6 runs.
-3. Re-specs: F03 and S00 (re-carded from the trial). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 done (dep gate).
+1. Queue repair 2 LANDED (ed9435b, A247: vitest RPC timeout noise to fix in the next queue repair; dispatch skill line 40 should name `update <card> spec reopened --worker lead`; add a test that a check on a card with a parked dep still flows; a reopened build must reset its check, today the Lead releases the check by hand).
+2. F00 LANDED 5a70f12. Cold sign-off SIGNED OFF (reports/signoff-rehearsal.md) with conditions before going past 3 runs: (1) F03 and S00 specs reopened, done; (2) queue repair 3 (in flight: build, then check by another helper, then local train); (3) merge skill land step rewritten (rebase on main plus code-diff guard), done. Widen to 6 runs when queue repair 3 lands. Soon after: mutation score drift (74.43 vs 75.00 same code), dispatch skill vs decision 0010, metrics tokens and minutes.
+3. Spec refits reopened 2 Oct: F01, F09, W14 (fix rounds in cards; reports/findings-W14-D01.md). After TH lands: D01 re-check, W00, D00, F04 refits; W15 re-spec after W14 spec; F08 validate. F03 and S00 re-specs reopened. New card TH (test homes) is in the queue.
 4. Phase 2: reviewed and fixed (reports/review-phase2.md, A234 to A246; red 1 settled as amber A245, RT-25 changed, CPA check item 33). Specs wait on S03 (FINDINGS final). Next design: D05 brief with Ready and the clear.
 5. Day 5: imports 01 to 07 done by script; exports and the 02 print (counter 96, file never arrived) blocked, window hidden. On Zo's "2 done": walker retries exports for 01 to 07, creates and imports 08 to 10, diagnostics 06, 07, then 5D. Then "After day 5" helper.
 6. .GFI: Accountant view reached (firm "Ashbridge Tax"); path Your books > Workpapers > Books to tax actions > Export GIFI file; header-only file (blank books). To-do #1: made-up accounts in the firm books (red: firm data) or Zo exports one (shape only). Then gfi-file.md and B01 spec.
-7. Designs: when the two fix rounds report, re-test only the changed tasks on the four families (tester panel mode), then the sitting page for Zo (Artifact, private) with the six questions in reports/findings-designs.md (d), about 3 Oct. Then D00 and D01.
+7. Designs: queues-record round 2 DONE (4acc091; 118 of 118 V checks; Q8 open for Zo; note: V2 must click by mouse, Playwright auto-scroll hides page moves: fix design/verify/rules.mjs on claude/design-verify before the sitting). Fix round 2 running for workbench and cpa-review; the source viewer round starts when workbench pushes its shared cite-or-reason part (its fixes 1 to 3 per reports/findings-designs-2.md). Then re-walk and V1 to V8 on all four, then the sitting page for Zo (Artifact, private) about 3 Oct. Then D00, D01, D05. claude/design-verify is merged into each design branch (design/ cannot go straight to main).
 
 ## Watch out
 
