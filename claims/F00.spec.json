@@ -2,7 +2,9 @@
  "card": "F00",
  "role": "spec",
  "worker": "cloud-54c841",
- "state": "working",
- "at": "2026-10-01T20:46:26.849Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T20:53:45.041Z",
+ "mode": "turbo",
+ "note": "round 3: 37 acceptance tests (24 fail pre-build for the right reason)",
+ "commit": "5446295"
 }
