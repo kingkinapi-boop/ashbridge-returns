@@ -1,10 +1,8 @@
 {
  "card": "F00",
  "role": "spec",
- "worker": "cloud-d367f7",
- "state": "released",
- "at": "2026-10-01T19:29:02.184Z",
- "mode": "turbo",
- "note": "fix round 2: write the toolchain rule tests and the mutation canary (card, Fix round 2)",
- "commit": "ae075e5908c462ebe2feee6e378edbbefca264b7"
+ "worker": "cloud-ca3282",
+ "state": "working",
+ "at": "2026-10-01T19:29:39.757Z",
+ "mode": "turbo"
 }
