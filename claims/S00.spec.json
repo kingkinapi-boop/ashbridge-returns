@@ -2,8 +2,8 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-54c841",
- "state": "released",
- "at": "2026-10-01T20:54:27.259Z",
+ "state": "reopened",
+ "at": "2026-10-01T23:26:54.575Z",
  "mode": "turbo",
  "note": "dep F03 not built; queue re-offers it, Lead to hold S00"
 }
