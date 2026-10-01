@@ -13,12 +13,12 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, afternoon (the L
 
 ## In flight
 
-Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger run; decision 0010: one-off runs only, never a schedule). Light document helpers may still run locally.
+Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (its prompt only points at .claude/cloud-worker-run.md; edit that file, not the routine) (RemoteTrigger run; decision 0010: one-off runs only, never a schedule). Light document helpers may still run locally.
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Taxprep trial: balance-sheet and schedule cells, round trip steps 16 to 19, Q21, Q22 | Sonnet walker, Chrome | local | 1 Oct | reference/taxprep/ |
-| queue: F00 build reopened (fix round 1, spec reported); specs reported for F01, F03 (parked), F04, F05; D01 spec next | 2 cloud runs cse_017hMiW9j3fVnNJe2RGaGGDD, cse_01LqmYtxUesTx2VN94G1rGxG | cloud | 1 Oct 18:15Z | claude/F00 and others |
+| queue: F00 build reported (fix round 1), check next; specs reported F01, F04, F05, F08, F09, W00 (F03 parked) | 3 cloud runs cse_01Hr7Az98VbKzfckRMPp1LtF, cse_01HjjamHjojvtdvfpU7G3L4B, cse_01W4VQVBLUYDkcCpF7Np3Hej | cloud | 1 Oct 18:50Z | claude/<card> |
 | design fix round (queues-record A, workbench B, cpa-review V1) | designer x3 | local | 1 Oct | claude/design-<family>-2 |
 | usability panel: source viewer (D03) | tester (panel) | local | 1 Oct | claude/panel-source-viewer |
 
