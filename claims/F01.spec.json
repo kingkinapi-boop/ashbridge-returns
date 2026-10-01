@@ -2,8 +2,7 @@
  "card": "F01",
  "role": "spec",
  "worker": "cloud-329cd2",
- "state": "released",
- "at": "2026-10-01T23:59:45.297Z",
- "mode": "turbo",
- "note": "Released: F01 check just failed (reports/F01-check.md); Lead findings review comes before any spec rework (CLAUDE.md loop 4)"
+ "state": "working",
+ "at": "2026-10-01T23:59:47.517Z",
+ "mode": "turbo"
 }
