@@ -1,0 +1,65 @@
+AXE: 116 page states, 0 violations, 0 incomplete
+REFLOW 320 px: 38 page states, 0 fail
+  WALK queue-preparer.html: 45 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK queue-cpa.html: 79 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK queue-ops.html: 114 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK queue-ops-waiting.html: 29 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK queue-rework.html: 35 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK board.html: 345 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK search.html?q=eglinton: 19 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK rec-halton-haulage.html#overview: 34 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK rec-halton-haulage.html#documents/1: 30 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK rec-scarborough-robotics.html#ops: 21 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK rec-danforth-cleaning.html#history: 21 tab stops, 0 without a visible focus style, 0 covered by another element
+  WALK rec-maple-ridge.html#review: 21 tab stops, 0 without a visible focus style, 0 covered by another element
+WALK: 12 pages walked by Tab alone, 0 with a problem
+BUDGET at 1366 x 650
+  1366x650 My work, first row: top at 428 px, bottom at 541 px, wholly inside the first screen
+  1366x650 Ready to review, first row: top at 428 px, bottom at 516 px, wholly inside the first screen
+  1366x650 Next ops step, first row: top at 453 px, bottom at 616 px, wholly inside the first screen
+  1366x650 Board, state strip: top at 231 px, bottom at 412 px, wholly inside the first screen
+  1366x650 Record (Halton, Workbench): since-you-last-opened top at 246, tabs bottom at 487, tab heading bottom at 525
+  1366x650 Documents: viewer beside the list = true, viewer height 587 px of 650
+BUDGET at 1093 x 525
+  1093x525 My work, first row: top at 453 px, bottom at 566 px, starts inside the first screen, ends below
+  1093x525 Ready to review, first row: top at 428 px, bottom at 541 px, starts inside the first screen, ends below
+  1093x525 Next ops step, first row: top at 478 px, bottom at 641 px, starts inside the first screen, ends below
+  1093x525 Board, state strip: top at 231 px, bottom at 412 px, wholly inside the first screen
+  1093x525 Record (Halton, Workbench): since-you-last-opened top at 246, tabs bottom at 487, tab heading bottom at 525
+  1093x525 Documents: viewer beside the list = true, viewer height 509 px of 525
+TASKS at 1366 x 650
+  PASS open key o opens the row on Workbench: rec-filler-153.html#workbench
+  PASS "Since you last opened" is first under the identity bar
+  PASS next return link visible
+  PASS tab changes are client-side routes (0 page loads): 0 loads
+  PASS n opens the next return in the list, same tab: rec-filler-259.html#ops
+  PASS Back restores filter text
+  PASS Back restores filter result count
+  PASS Back restores sort
+  PASS search one match opens the return
+  PASS search with 2 matches shows a results list: 2 rows
+  PASS Back from a record returns to the results
+  PASS search no match says so
+  PASS filler returns are reachable from search
+  PASS a filler return opens its record
+  PASS no checkbox on a row flagged for a person: 0 flagged rows with a checkbox
+  PASS bulk bar sticks inside the window at the top of the page
+  PASS bulk assign with nobody chosen: error summary focused, in place
+  PASS error also at the field and in the title
+  PASS bulk assign result announced, no page load, list not reset to the top, next row in view
+  PASS focus moved to the next row
+  PASS ops tab lists RV-30 steps and no gate 1
+  PASS confirmation form is absent until the check export is in
+  PASS check export with no file: GOV.UK error pattern
+  PASS check export result announced
+  PASS confirmation form now shown
+  PASS confirmation saved, return is Filed, 0 loads
+  PASS nudge: banner in place and focused
+  PASS board: choosing a state brings the filtered list into view and counts agree: 51 rows, strip 51
+  PASS board: due-week chip filters
+  PASS viewer opens beside the list with focus inside and the cited row in view
+  PASS opening a source adds no history entry
+  PASS second window opens by script with the document: Business card statements
+  PASS second window follows the next selection: Equipment finance amortisation table
+  PASS second window still open after a tab change
+TASKS: 34 of 34 pass

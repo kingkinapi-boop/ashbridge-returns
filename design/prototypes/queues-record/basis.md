@@ -1,32 +1,41 @@
-# Parts used, and what is composed (queues and return record)
+# Parts used, and what is composed (queues and return record, version A)
 
-Pages are static HTML built by `node build/build-a.mjs`, `build-b.mjs`, `build-c.mjs` (no packages). Styles: GOV.UK Frontend 6.5.1 and MOJ Frontend 11 CSS, vendored in `_shared/` (govuk.css, moj.css), plus `_shared/app.css` (the Ashbridge look as CSS variables, standing in for `design/basis/settings.scss`, and the `app-` classes below). `_shared/app.js` is a classic script because both official scripts are ES modules, which Chrome will not load from file:// (the build uses the official scripts). Data: ten sample clients plus 290 synthetic filler rows (names end "(Test)"); pinned date Monday 8 Jun 2026. Only the ten sample clients have record pages; filler rows are not clickable in A and C, and in B they show a summary with a note.
+Version A is the one kept after the findings review (reports/findings-designs.md, 1 Oct 2026). Versions B and C are kept as folders (`b-split/`, `c-pipeline/`, `build/build-b.mjs`, `build/build-c.mjs`, `_shared/app.css`, `_shared/app.js`) exactly as they were; they are not linked from the index and not built or checked again.
 
-## Official parts in all three versions
-GOV.UK: skip link, Generic header, service navigation (My work, CPA review, Ops, Board or Pipeline), table, tag, summary list, summary card, warning text, inset text, notification banner (nudge sent), error summary and error message, select, text input, checkboxes (small), button, details (keyboard shortcuts), task list (workbench and ops tabs), footer.
-MOJ: sub navigation (list views, record tabs), identity bar (corporation, year end, state and tier tags, actions), button menu (record actions), timeline (history), badge (counts), alert (approval void), sortable table markup (aria-sort headers).
+Pages are static HTML built by `node build/build-a.mjs` (no packages) and linted by `node build/check.mjs`. Styles: GOV.UK Frontend 6.5.1 and MOJ Frontend 11 CSS, vendored in `_shared/govuk.css` and `_shared/moj.css`, plus `_shared/a.css` (the Ashbridge look as CSS variables standing in for `design/basis/settings.scss`, which does not exist yet, and the `app-` classes below). No font is loaded from a third party: the page asks for Roboto and falls back to Arial; the build self-hosts Roboto. `_shared/proto.js` is the shared prototype script: it stands in for the build's React behaviour and for MOJ's sortable-table script (both official scripts are ES modules, which Chrome will not load from file://). It holds every in-place action (filter, sort, bulk assign, tab routes, nudge, ops forms, source viewer, list context) so no page repeats them. Data: ten sample clients plus 290 synthetic filler returns (names end "(Test)"); pinned date Monday 8 Jun 2026. Every return, filler included, has a record page.
 
-## Version A, tabs (a-tabs)
-Parts: the official list above. Record tabs are MOJ sub navigation, one tab per job (Overview, Workbench, Review, Documents, Exceptions, History, Ops). Related lists on Overview at 5 rows with "View all".
-Composed outside GOV.UK or MOJ, and why:
-- `app-search`, `app-search-row`: header search with Enter to the top match. GOV.UK has no staff search; made of label, input and button.
-- `app-filterbar`, `app-chips`, `app-chip`: inline filter and chips with counts, no page load (brief budget 200 ms). MOJ's filter reloads the page (RV-52 gap).
-- Whole-list sort: MOJ's sortable table sorts the one page it is given, which here is the whole list (300 rows, no pagination), so no gap in markup; `app.js` stands in for MOJ's script in the prototype.
-- `app-bulkbar`: appears only when rows are selected (no disabled button); MOJ multi-select and action bar do not give a select-then-assign bar that keeps the list in place.
-- `app-pipeline` (owner count strip, Option C): a list of links with counts and oldest age. GOV.UK has no chart or count strip; it is a table-like list of links, not a chart.
-- `app-facts`: the record header facts as a two-column summary list in a bordered box (summary card has a title bar we do not need).
-- `app-tablewrap`: labelled scrollable region for tables at narrow widths (MOJ scrollable pane is for fixed-height panes).
-- `app-money`: tabular figures for money. `app-logo`, `app-logo__*`: Ashbridge logo in the Generic header (stand-in mark; the build uses the logo file from the client app). `app-index`, `app-shortcuts`, `app-src`: prototype index lists, shortcuts details, the sample source box.
+## Official parts used
+GOV.UK: skip link, Generic header, service navigation, table, tag, summary list, summary card, warning text, inset text, notification banner (nudge sent), error summary and error message, form group, select, text input, file upload, checkboxes (small), button, details (keyboard shortcuts), task list, footer.
+MOJ: sub navigation (list views and record tabs; the current view is a span, not a link to itself), identity bar, button menu (record actions, real buttons), timeline, badge (counts), alert (approval void), sortable table markup (aria-sort headers).
 
-## Version B, split (b-split)
-Uses the same official parts, plus MOJ side navigation for the record's sections (instead of tabs).
-Composed: `app-split`, `app-split__list`, `app-split__pane`: two panes with the selected row's summary (GOV.UK and MOJ have no master-detail layout). Reason: the CPA triage case; the brief flags the cost of width. Pane is a live region; j and k move the selection, n and p move between records; all listed under "Keyboard shortcuts", off switch provided. Plus all of A's composed parts except `app-bulkbar` (bulk assign is its own page here).
+## Composed outside GOV.UK or MOJ, and why
+- `app-logo`, `app-logo__mark`, `app-logo__name`: the Ashbridge logo in the Generic header (stand-in mark; the build uses the logo file from the client app).
+- `app-header-row`, `app-search`, `app-search__label`, `app-search__input`, `app-search__button`: header search, in the header row beside the logo so the list starts higher.  GOV.UK has no staff search; made of label, input and button. One match opens the return; more show a results list (`search.html`); none says so.
+- `app-filterbar`, `app-filterbar__input`: the list filter on one line (label, box, result count).
+- `app-chips`, `app-chip`, `app-chip--clear`: inline filter and toggle buttons with counts, no page load. MOJ's filter reloads the page (RV-52 gap). Real buttons with aria-pressed.
+- `app-pipeline`, `app-pipe`, `app-pipe__count`, `app-pipe__label`, `app-pipe__age`, `app-pipe--zero`: the state strip from version C, on top of the Board; real buttons with counts that filter the list. GOV.UK has no count strip.
+- `app-bulkbar`: appears only when rows are selected (no disabled button), sticky at the foot of the window, with the error in place. MOJ multi-select and action bar do not keep the list in place.
+- `app-tablewrap`: labelled scrollable region around a table so it can scroll sideways at 320 px (WCAG 1.4.10).
+- `app-facts`, `app-facts__list`: the record's facts in four columns (a summary list takes twice the height and pushes the tabs below the fold at 1366 x 650).
+- `app-since`, `app-since__list`: "Since you last opened this return", first under the identity bar. A bordered block; inset text is for a quote or a note, this is a list of links.
+- `app-listnav`: the line with Back to the list, Previous (p) and Next (n), which follow the list you came from.
+- `app-linkbutton`: a real button drawn as a link, for choosing a document (an action, not navigation).
+- `app-docs`, `app-docs__list`, `app-viewer`, `app-src__hit`: the document list with the source viewer beside it (never below), full height, box scrolled into view, focus moved in, "Send to second window" opened by script. A stand-in for the shared source viewer (D03, not yet designed); replace it when D03 lands.
+- `app-steps`, `app-step`, `app-step__head`, `app-step__name`, `app-step__status`, `app-opsform`: the Ops checklist. Each step holds its own in-place form of three fields or fewer. A task list cannot hold a form.
+- `app-panel`: one record tab's content; hidden or shown by the client-side route.
+- `app-stepper`, `app-stepper__done`: lifecycle position (from version C), an ordered list with words ("Done:" prefix), in the Overview tab.
+- `app-money`: tabular figures for money.
+- `app-index`, `app-shortcuts`, `app-record`, `app-sourcepage`: prototype index lists, the shortcuts details, and body hooks for the record and source pages.
 
-## Version C, pipeline first (c-pipeline)
-Uses the same official parts. Composed: `app-pipeline` as the front door (Option C), `app-stepper` (lifecycle position as an ordered list with words, not dots), `app-group-head` (state group header with count). Second window: documents open in a named window ("ashbridge-source") that follows later clicks, by plain `target` and a BroadcastChannel message from `app.js`; no part exists in GOV.UK or MOJ for this.
+## Fix round 2, what changed (findings (a), Queues-record)
+1. Ops tab per RV-30 and RT-19 (A30: nothing between approval and T183CORP): CRA capture checklist, T183CORP sent, signed certificate upload, check export upload, confirmation number, notice of assessment, each an in-place step. Next-ops-step values are real per state.
+2. Back, n and p follow the list you came from (filter, sort, scroll kept in sessionStorage). Enter or `o` opens a row; the preparer lands on Workbench, the CPA on Review, ops on Ops.
+3. `search.html`: a results page when more than one return matches; filler returns reachable (every filler has a record page).
+4. "Days in this state" and "Days waiting on client"; one date format per column; view badges, chips and strip agree with the rows (checked by `build/check.mjs`).
+5. "Since you last opened" first, under the identity bar.
+6. Board: state strip on top, filing-week chips (overdue, next 7 days, 8 to 28 days, later; RV-40), the list scrolls into view when a state is chosen.
+7. Sticky bulk bar, error in place with the GOV.UK pattern, focus to the next row, result announced; rows flagged for a person have no checkbox; Filed has its own view and is not in Next ops step.
+8. Real buttons everywhere (no aria-pressed links, no links drawn as buttons); every table region is labelled for 320 px; focus goes to the nudge banner; sources open in the viewer beside the list.
 
 ## Rules checked by script (`node build/check.mjs`)
-Every local link exists; one h1 per page; only govuk-, moj- and app- classes; no inline style; no em or en dash; unique ids. Not run: axe, keyboard walk, 320 px reflow (needs the build's test rig).
-
-## Not decided here (amber candidates)
-Column sets per role; saved views stored per staff account; bulk assign as a bar (A) or its own page (B); whether filler rows need full records in the build (they will).
+Retired terms; no self-link, no `#` link to nothing, no link drawn as a button, no filler in a data cell, view badges, chips, strip and captions agree with the rows; one h1, unique ids, no dash, no inline style; only govuk-, moj- and app- classes, each listed here; no zoom, no third-party font in `a.css`. Browser checks (axe, keyboard walk, 320 px, budgets) are in `build/verify.mjs`.

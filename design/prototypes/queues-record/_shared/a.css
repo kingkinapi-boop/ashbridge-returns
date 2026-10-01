@@ -1,0 +1,140 @@
+/* Ashbridge look, prototype only. In the build this comes from design/basis/settings.scss
+   (GOV.UK Frontend settings: brand, Roboto, functional colours). Here the same values are set as CSS variables.
+   Every app- class below is listed in design/prototypes/queues-record/basis.md with its reason. */
+:root {
+  --govuk-brand-colour: #355b7d;
+  --govuk-link-colour: #355b7d;
+  --govuk-link-hover-colour: #4d7092;
+  --govuk-link-visited-colour: #4a3b72;
+  --govuk-text-colour: #15283b;
+  --govuk-secondary-text-colour: #627283;
+  --govuk-error-colour: #b3413a;
+  --govuk-focus-colour: #f5c94c;
+  --govuk-focus-text-colour: #15283b;
+  --govuk-border-colour: #b6bfc9;
+  --govuk-template-background-colour: #f3f5f8;
+}
+.govuk-template, .govuk-template__body, .govuk-body, .govuk-table, .govuk-label, .govuk-input, .govuk-button, .govuk-heading-xl, .govuk-heading-l, .govuk-heading-m, .govuk-heading-s,
+.govuk-tag, .govuk-hint, .govuk-summary-list, .govuk-service-navigation, .govuk-header, .govuk-details__summary { font-family: Roboto, Arial, sans-serif; }
+.govuk-header { background: #355b7d; border-bottom-color: #15283b; }
+.govuk-header__link, .govuk-header__link:visited { color: #fff; }
+.govuk-main-wrapper { background: transparent; }
+.govuk-width-container { max-width: 1280px; }
+
+/* app-logo: Generic header logo (stand-in mark; the build uses public/brand/ashbridge-tax-logo.png) */
+.app-logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.app-logo__name { font-weight: 700; font-size: 1.5rem; color: #fff; }
+
+/* app-filterbar, app-chips, app-chip: inline filter chips with counts; MOJ filter reloads the page, so this is composed */
+.app-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.app-chip { font: inherit; min-height: 36px; padding: 2px 10px; border: 2px solid #355b7d; background: #fff; color: #15283b; cursor: pointer; border-radius: 0; }
+.app-chip[aria-pressed="true"] { background: #355b7d; color: #fff; box-shadow: inset 0 -4px 0 #f5c94c; }
+.app-chip[aria-pressed="true"] .moj-badge { background: #fff; color: #15283b; }
+.app-chip--clear { border: 0; background: transparent; text-decoration: underline; }
+/* app-facts: the record header facts, two columns of a summary list */
+/* app-stepper: Version C, lifecycle position in order, a list with words (no dots alone) */
+.app-stepper { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; counter-reset: st; }
+.app-stepper li { padding: 4px 8px; border: 1px solid #b6bfc9; background: #fff; font-size: .875rem; color: #3f4f60; }
+.app-stepper li[aria-current="step"] { border: 2px solid #15283b; color: #15283b; font-weight: 700; box-shadow: inset 0 -4px 0 #f5c94c; }
+.app-stepper .app-stepper__done::before { content: "Done: "; font-weight: 700; }
+.app-money { font-variant-numeric: tabular-nums; }
+.app-index li { margin-bottom: 4px; }
+kbd { font-family: ui-monospace, Consolas, monospace; background: #fff; border: 1px solid #b6bfc9; padding: 0 6px; }
+.moj-badge--grey { background: #e4e8ed; color: #15283b; }
+/* sortable header buttons, same as MOJ's output after its script runs */
+[data-app-sortable] th[aria-sort] button { font: inherit; font-weight: 700; background: none; border: 0; padding: 0 14px 0 0; cursor: pointer; color: inherit; text-align: inherit; position: relative; min-height: 24px; }
+[data-app-sortable] th[aria-sort] button::after { content: " \2195"; font-size: .8em; }
+[data-app-sortable] th[aria-sort="ascending"] button::after { content: " \25B2"; }
+[data-app-sortable] th[aria-sort="descending"] button::after { content: " \25BC"; }
+[data-app-sortable] th[aria-sort] button:focus-visible { outline: 3px solid #f5c94c; background: #f5c94c; }
+.govuk-table__cell, .govuk-table__header { padding-top: 8px; padding-bottom: 8px; }
+.app-tablewrap { overflow-x: auto; }
+@media print { .app-search { display: none; } }
+
+.moj-identity-bar__container, .moj-identity-bar { padding-left: 0; margin-left: 0; }
+.moj-identity-bar__details { margin-left: 0; padding-left: 0; }
+
+
+/* ---- fix round 2 additions (each listed in ../basis.md) ---- */
+html { scroll-padding-bottom: 7rem; }
+.app-chip:focus-visible, .app-pipe:focus-visible, .app-linkbutton:focus-visible { outline: 3px solid #f5c94c; outline-offset: 0; background: #f5c94c; color: #15283b; }
+/* app-pipeline, app-pipe: the state strip (from version C); real buttons that filter the list below */
+.app-pipeline { list-style: none; margin: 0 0 12px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; }
+.app-pipeline li { margin: 0; }
+.app-pipe { font: inherit; display: block; width: 100%; text-align: left; padding: 4px 8px; border: 2px solid #627283; background: #fff; color: #15283b; cursor: pointer; min-height: 24px; }
+.app-pipe:hover { border-color: #355b7d; }
+.app-pipe[aria-pressed="true"] { border-color: #15283b; box-shadow: inset 0 -4px 0 #f5c94c; }
+.app-pipe[aria-pressed="true"] .app-pipe__label::after { content: " (chosen)"; font-weight: 400; }
+.app-pipe__count { display: block; font-size: 1.5rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.app-pipe__label { display: block; font-weight: 700; font-size: .9375rem; }
+.app-pipe__age { display: block; color: #3f4f60; font-size: .8125rem; }
+.app-pipe--zero { background: #f3f5f8; }
+/* app-bulkbar: appears only when rows are selected (no disabled button), sticky at the foot of the window */
+.app-bulkbar { position: sticky; bottom: 0; z-index: 5; background: #fff; border: 2px solid #355b7d; padding: 10px; margin: 10px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: end; box-shadow: 0 -3px 8px rgba(21, 40, 59, .2); }
+.app-bulkbar[hidden] { display: none; }
+/* app-facts: the record's facts, compact, four to a row so the tabs stay near the top of the screen */
+.app-facts { background: #fff; border: 1px solid #b6bfc9; padding: 8px 16px; margin-bottom: 12px; font-size: 1rem; }
+.app-facts__list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 16px; margin: 0; }
+.app-facts__list > div { margin: 0; }
+.app-facts dt { color: #3f4f60; font-size: .875rem; }
+.app-facts dd { margin: 0; line-height: 1.3; }
+@media (max-width: 48em) { .app-facts__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 30em) { .app-facts__list { grid-template-columns: minmax(0, 1fr); } }
+/* app-since: "since you last opened this return", first under the identity bar */
+.app-since { background: #fff; border-left: 5px solid #355b7d; border-top: 1px solid #b6bfc9; border-right: 1px solid #b6bfc9; border-bottom: 1px solid #b6bfc9; padding: 8px 16px; margin-bottom: 12px; }
+.app-since ul { margin-bottom: 0; }
+.app-listnav { margin-bottom: 8px; }
+.app-listnav a + a { margin-left: 16px; }
+/* app-linkbutton: a real button drawn as a link (choosing a document is an action, not navigation) */
+.app-linkbutton { font: inherit; background: none; border: 0; padding: 2px 0; color: #355b7d; text-decoration: underline; cursor: pointer; text-align: left; min-height: 24px; }
+.app-linkbutton[aria-pressed="true"] { font-weight: 700; }
+.app-linkbutton[aria-pressed="true"]::after { content: " (open in the viewer)"; font-weight: 400; }
+/* app-docs, app-viewer: the document list with the source viewer beside it, never below (stand-in for D03) */
+.app-docs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.app-viewer { box-sizing: border-box; position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; background: #fff; border: 1px solid #b6bfc9; padding: 12px; }
+@media (max-width: 40em) { .app-docs { grid-template-columns: minmax(0, 1fr); } .app-viewer { position: static; max-height: none; } }
+.app-src__hit td { background: #fdf3d0; }
+.app-src__hit td:first-child { box-shadow: inset 4px 0 0 #15283b; }
+/* app-steps, app-step, app-opsform: the Ops checklist; each step holds its own in-place form */
+.app-steps { list-style: none; margin: 0; padding: 0; }
+.app-step { border-top: 1px solid #b6bfc9; padding: 12px 0; }
+.app-step__head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.app-step__name { font-weight: 700; }
+.app-opsform { margin-top: 12px; max-width: 34rem; }
+.app-opsform[hidden] { display: none; }
+.app-panel[hidden] { display: none; }
+
+/* ---- compact layout so the work starts inside the first screen at 1366 x 650 and 1093 x 525 ---- */
+/* app-header-row, app-search, app-search__label, app-search__input, app-search__button: the search sits in the header row beside the logo (GOV.UK has no staff search) */
+.app-header-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; }
+.app-header-row .govuk-header__logo { margin: 0; padding: 0; width: auto; float: none; }
+.app-search { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0; }
+.app-search__label { color: #fff; margin: 0; font-size: 1rem; }
+.app-search__input { width: 16rem; max-width: 100%; min-height: 36px; padding: 4px 8px; }
+.app-search__button { min-height: 36px; padding: 4px 12px; margin: 0; }
+/* app-filterbar, app-filterbar__input: label, box and result count on one line */
+.app-filterbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 0 0 8px; }
+.app-filterbar__input { width: 18rem; max-width: 100%; min-height: 36px; padding: 4px 8px; }
+.app-filterbar .govuk-label { font-size: 1rem; }
+.moj-sub-navigation { margin-bottom: 8px; }
+.moj-identity-bar { margin-bottom: 8px; }
+.moj-identity-bar__container { padding-top: 0; padding-bottom: 0; }
+.moj-identity-bar .govuk-tag { margin-bottom: 0; }
+.govuk-service-navigation { margin-bottom: 0; }
+/* app-since__list: the "since you last opened" items on one line */
+.app-since { padding: 6px 16px; margin-bottom: 8px; }
+.app-since__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 24px; }
+.app-facts { padding: 6px 16px; margin-bottom: 8px; }
+.app-listnav { margin-bottom: 4px; font-size: 1rem; }
+.govuk-table__cell, .govuk-table__header { padding-top: 6px; padding-bottom: 6px; }
+@media (max-width: 40em) { .app-search__input { width: 100%; } .app-search { width: 100%; } }
+/* keep MOJ's decorative bars (current tab, timeline) behind the text so contrast can be measured */
+.moj-sub-navigation__link .moj-badge, .moj-sub-navigation__link[aria-current="page"] { position: relative; z-index: 1; }
+.moj-sub-navigation__link[aria-current="page"]::before { z-index: 0; }
+.moj-timeline__title, .moj-timeline__byline { display: block; }
+.moj-timeline__byline, .moj-timeline__date { color: #3f4f60; }
+.moj-timeline::before { z-index: 0; }
+.moj-timeline__item { z-index: 1; }
+.moj-sub-navigation__link[aria-current="page"]::before { display: none; }
+.moj-sub-navigation__link[aria-current="page"] { box-shadow: inset 0 -5px 0 #355b7d; }
+.moj-sub-navigation__link[aria-current="page"]:focus { box-shadow: inset 0 -5px 0 #15283b; }
