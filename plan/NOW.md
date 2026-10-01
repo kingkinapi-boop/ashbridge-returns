@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| F00 fix round 2 build + W14/D01 specs | 2 cloud runs cse_01QgZcxMeHrhwrAZY7pp1uXH, cse_01WjczEuvWH4dQTAwAjZ2ryZ | cloud | 1 Oct 19:40Z | claude/F00 |
+| F00 round 2 check (build reported: 45 tests pass, mutation 74.47, canary 77.78 amber) + W14/D01 specs | 2 cloud runs | cloud | 1 Oct 21:05Z | claude/F00 |
 | Queue repair 2: check PASS; train c9c4e88 built in .claude/worktrees/train; tools tests running (npx vitest@3, no node_modules on main until F00) | Lead | local | 1 Oct 20:30Z | train (local) |
 | Trial day 5 run 5C (Eglinton pair, no imports) | Sonnet walker, Chrome | local | 1 Oct 20:35Z | notes in reference/taxprep/2026-10-05-day5/, uncommitted |
 | Independent phase 2 card review (fixes landed on main, A228 to A233) | Opus reviewer | local worktree | 1 Oct 20:50Z | claude/review-phase2 |
