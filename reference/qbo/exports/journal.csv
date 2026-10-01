@@ -1,0 +1,14 @@
+Sandbox Company CA 7cf6,,,,,,,,,
+Journal,,,,,,,,,
+"October 1, 2026",,,,,,,,,
+
+,Transaction date,Transaction type,#,Name,Description,Account Name,Debit,Credit,Adj
+182,,,,,,,,,
+,01/10/2026,Journal Entry,15,,line one description probe,Utilities - Water,12.34,,No
+,01/10/2026,Journal Entry,15,,line two description probe,Janitorial Expense,,12.34,No
+Total for 182,,,,,,,$12.34,$12.34,
+TOTAL,,,,,,,$12.34,$12.34,
+
+
+
+" Thursday, October 01, 2026 06:39 PM GMTZ",,,,,,,,,
