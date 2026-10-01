@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "87d39e1",
  "worker": "cloud-173eff",
- "state": "working",
- "at": "2026-10-01T23:31:09.144Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T23:32:56.079Z",
+ "mode": "turbo",
+ "note": "29 of 29 acceptance pass; spec file has 8 lint errors, see report"
 }
