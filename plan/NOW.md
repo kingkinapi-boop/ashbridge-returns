@@ -17,22 +17,18 @@ All helpers run on the laptop for now: `claude --cloud` needs a person at a term
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| research ties CK-10..19 | researcher A (B done) | local | 1 Oct | claude/research-ties-a |
-| research reconciliations CK-20..26 | researcher A (B done) | local | 1 Oct | claude/research-recs-a |
-| research flags CK-30..42 | research checker (Opus) | local | 1 Oct | files on main |
-| research QBO trace | research checker (Opus) | local | 1 Oct | files on main |
-| research F9 lists | researcher A + B | local | 1 Oct | claude/research-f9-a, -b |
-| designs cpa-review, workbench, queues-record | designer x3 | local | 1 Oct | claude/design-<family> (briefs on claude/brief-<family>) |
-| clauses into line with v1.1 | Opus drafter | local | 1 Oct | claude/clauses-v1-1 |
-| queue repairs | builder | local | 1 Oct | claude/queue-repairs |
+| research clause proposals (ties, recs, flags, F9) | Opus drafter | local | 1 Oct | claude/clauses-research |
+| slices re-cut into five phases | Opus drafter | local | 1 Oct | claude/slices-v1-1 |
+| designs cpa-review, workbench | designer x2 | local | 1 Oct | claude/design-<family> |
+| usability panel queues-record | tester (panel) | local | 1 Oct | claude/panel-queues-record |
 
-Done today: trial day 1 script (plan/trial/day1-script.md); QBO pair; ties B, recs B, flags A and B; three design briefs (on branches: design/ cannot go straight to main, they ride the first train).
+Done today: trial day 1 script (Opus read) and draft import CSVs on main; all four research pairs reconciled (reference/research/INDEX.md); clauses in line with v1.1 (A28 to A43); queue repairs landed through the first train (local, A44); design versions for queues-record.
 
 ## Next, in order
 
 1. As each research pair lands: put both files on main, run the research checker (Opus), add a line to reference/research/INDEX.md. Ties and flags already show clause errors (CK-15 add-back is 8670 + 8459 + 9791; CK-38 accrued bonuses get no T4; CK-19 percentages not dollars; CK-12 latest assessed figure): fold the reconciled answers into the clauses as ambers and list them for the CPA's check.
 2. Clauses: review the drafter's branch (reports/clauses-v1-1.md), merge blueprint to main, add its amber rows. Then re-cut slices.json into the five phases, one phase ahead, F00 first; then the phase 1 card review by an independent worker.
-3. Queue repairs: when built, a different worker checks it; then the first train (also carries the design briefs and prototypes).
+3. Queue repairs landed. Rehearsal of the loop (spec, build, check, train) on F00 once slices are re-cut.
 4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
 5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Import CSVs (claude/sample-csv) must be on main before day 2; cell ids from day 1 replace the guesses.
 6. Rehearsal at small width once Zo answers to-do #1; then widen.
