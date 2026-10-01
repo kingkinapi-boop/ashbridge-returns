@@ -4,8 +4,8 @@
  "round": 4,
  "spec": "7eb6b94",
  "worker": "cloud-1b601c",
- "state": "reported",
- "at": "2026-10-01T19:40:49.376Z",
+ "state": "reopened",
+ "at": "2026-10-01T21:17:15.846Z",
  "mode": "turbo",
  "beat": "2026-10-01T19:39:07.160Z",
  "note": "round 2: 43+2 tests pass, mutation 74.47, flake 5/5, e2e ok; canary 77.78 (amber)"
