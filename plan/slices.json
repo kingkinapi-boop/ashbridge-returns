@@ -12,7 +12,7 @@
   "cards": [
     {
       "status": "carded",
-      "spec": "n/a",
+      "spec": null,
       "deps": [],
       "paths": [
         "package.json",
@@ -33,7 +33,13 @@
         "src/app/layout.tsx",
         "src/app/page.tsx",
         "src/core/**",
-        "e2e/smoke/**"
+        "e2e/smoke/**",
+        "tools/test-flake.mjs",
+        "tools/mutate-changed.mjs",
+        "tools/test/db-rules.test.mjs",
+        "tools/test/toolchain-rules.test.mjs",
+        "tools/test/__fixtures__/**",
+        "vitest.mutate.config.ts"
       ],
       "clauses": [
         "ARC-1",
