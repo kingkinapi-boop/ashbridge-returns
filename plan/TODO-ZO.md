@@ -10,7 +10,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 **Coming soon from you, Sat 3 Oct (about 30 minutes):** day 4 of the trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". No walker runs that day. Any other day suits too; days 5 and 6 do not wait for it. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
 
-**What the Lead is doing now:** the empty app (F00) passed its tests and is being checked in the cloud; the job queue fix is in its last test run before landing; two screen designs are in their fix round for your first sitting about 3 Oct; trial day 5: clients 01 to 07 imported, exports wait on the window (item 2); then the .GFI in QuickBooks Online (the browser, not Desktop, since the build reads QuickBooks Online); the phase 2 cards are written and reviewed.
+**What the Lead is doing now:** the empty app (F00) is on main, the first card through the whole loop; a fresh reviewer is signing off the loop before more cloud workers start; three cloud workers are building the next cards; three screen designs are in their last fix round for your sitting about 3 Oct; Taxprep day 5 waits on item 2, the .GFI on item 1.
 
 ## 2. Coming up (no action yet)
 
@@ -35,7 +35,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 | Phase | What gets built | The gate you can see | Status and next step |
 |---|---|---|---|
-| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Round trip proven on a test company (13 of 13 cells identical); trial days 3 to 7 left (ends about 16 Oct); QuickBooks test company checked; the empty app in its last fix round. |
+| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Round trip proven on a test company (13 of 13 cells identical); trial days 3 to 7 left (ends about 16 Oct); QuickBooks test company checked; the empty app (F00) is built, checked and on main since 2 Oct, so the other phase 0 cards can now be built. |
 | 1 Evidence and the source viewer | Documents and QuickBooks read into facts with their sources; the source viewer; an early slice of the CPA review | 10 test files fully traced to source | Cards written; three screen designs and the source viewer in progress for your sitting about 3 Oct. |
 | 2 Return build, lock and trace | The Taxprep import file; the lock export; the trace (orphans, overrides, the cite button); every version saved | A simple T2 built with few hand-typed cells | After phase 1. |
 | 3 Checks and the CPA review screen | Ties, reconciliations, flags; the AI checklist and red team through the Claude project; the brief; the full review with marks | You review 20 test files end to end in the screen | After phase 2. |

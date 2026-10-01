@@ -11,7 +11,7 @@
   },
   "cards": [
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -59,7 +59,8 @@
       "title": "Scaffold: app, tests, CI, database helper",
       "phase": 0,
       "size": "M",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -305,6 +306,31 @@
       "spec": null,
       "deps": [
         "F00"
+      ],
+      "paths": [
+        "vitest.config.ts",
+        "vitest.mutate.config.ts",
+        "tsconfig.json",
+        "tools/test-homes.json",
+        "tools/test/toolchain-rules.test.mjs",
+        "tools/test/__fixtures__/**"
+      ],
+      "clauses": [
+        "ARC-17",
+        "ARC-9",
+        "ARC-4"
+      ],
+      "id": "TH",
+      "title": "Test homes: every test runs, every file is typed and linted",
+      "phase": 0,
+      "size": "S"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "TH"
       ],
       "paths": [
         "testworld/model/**",
@@ -937,6 +963,7 @@
         "reference/sample-clients/generate.mjs",
         "reference/sample-clients/make-csv.mjs",
         "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/contract-ids.json",
         "reference/sample-clients/README.md"
       ],
       "clauses": [
@@ -969,6 +996,7 @@
         "reference/sample-clients/generate.mjs",
         "reference/sample-clients/make-csv.mjs",
         "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/contract-ids.json",
         "reference/sample-clients/README.md"
       ],
       "clauses": [
@@ -1594,7 +1622,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "TH"
       ],
       "paths": [
         "design/basis/**"
@@ -1612,7 +1641,9 @@
     {
       "status": "carded",
       "spec": null,
-      "deps": [],
+      "deps": [
+        "TH"
+      ],
       "paths": [
         "design/map/**"
       ],
