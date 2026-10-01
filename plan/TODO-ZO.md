@@ -1,18 +1,20 @@
 # Zo's to-do (Ashbridge Returns)
 
-The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number. Chats say only one line; everything they need from you is here. If you do not answer, they keep going on other work. What each chat does: `README.md` in this folder.
+The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number. Answered items are deleted at once; the numbers below are today's only (earlier answers are recorded in decisions 0010 to 0016; only big questions come here). Chats say only one line; everything they need from you is here. If you do not answer, they keep going on other work. What each chat does: `README.md` in this folder.
 
 ## 1. Needs you now
 
-**1. The Taxprep trial (you said: in progress).**
-- When it is set up: the trial signed in inside the "Ashbridge Test" Chrome profile, the **T2 2025** edition, and you know its last day. Optional: that profile's download folder set to `C:\Users\User\Documents\taxprep-trial\inbox` with "Ask where to save" off.
-- Then reply `1 started, ends <date>` and say which Chrome window to connect to. The walker then runs day 1 (`plan\trial\day1-script.md`). You are needed again on day 4 (Auto-fill); the Lead tells you the day before.
+**1. May the walker put five made-up accounts and one made-up journal entry into your firm's own QuickBooks books ("Ashbridge Tax"), then remove them?** What: you are signed in now and the walker found the .GFI export (Workpapers, "Export GIFI file"), but your firm's own books are blank, so the file had only a header line. Adding a made-up client is not possible without going through Checkout (billing), so it stopped there. Why: the account lines of the .GFI (codes, amounts, signs) decide how card B01 reads the books into the return. Recommendation: reply "1 yes": the walker adds five accounts named "(Test) ..." and one dated journal entry with small made-up amounts, exports the .GFI, then deletes the entry and makes the accounts inactive, and writes down each change. Or reply "1 me": you export a .GFI from any client, and the build keeps only its shape (codes, signs, layout), never names or amounts, as with Auto-fill. Meanwhile everything else keeps going; only B01's spec waits.
 
-**What the Lead is doing now:** starting cloud workers (your answer 1 A, decision 0010); the first one builds the empty app (F00), then the queue widens. The screen designs (CPA review, preparer workbench, queues) are being fixed after the usability panel, for your first sitting about 3 Oct. The QuickBooks test company checks start in the "Ashbridge Test" profile once you say which Chrome to connect to (the same answer as item 1 is fine).
+**2. Please bring the "Ashbridge Test" Chrome to the front, full size, and leave it uncovered; then reply "2 done".** What: Taxprep imported the made-up clients 01 to 07 fine, but its exports and one print never arrived, likely because the window was hidden behind others (Taxprep stops sending files to a hidden window). Why: day 5 needs those exports to compare with what we imported. Next: on "2 done" the walker retries the exports and finishes clients 08 to 10. Nothing else waits.
+
+**Coming soon from you, Sat 3 Oct (about 30 minutes):** day 4 of the trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". No walker runs that day. Any other day suits too; days 5 and 6 do not wait for it. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
+
+**What the Lead is doing now:** the empty app (F00) is on main, the first card through the whole loop; a fresh reviewer is signing off the loop before more cloud workers start; three cloud workers are building the next cards; three screen designs are in their last fix round for your sitting about 3 Oct; Taxprep day 5 waits on item 2, the .GFI on item 1.
 
 ## 2. Coming up (no action yet)
 
-**Tax rules for your CPA check (when you have an hour, any day this week):** `reference\cpa-check.md` lists 32 tax rules the checks will use (shareholder loans, unpaid bonuses, the business limit, instalments, GST/HST line 101 and more), each with its source and a worked example on made-up numbers. Reply `cpa ok`, or the item numbers you disagree with and why. Nothing waits on it until the checks are built (phase 3).
+**One new rule for your CPA check, when convenient:** item 33 at the end of `reference\cpa-check.md` (how amounts are rounded to whole dollars so the retained earnings ties still hold). Write "right" or a correction under it. Nothing waits on it; the build follows the rule as written until you say otherwise.
 
 **Design sittings:** about 3, 6 and 8 Oct, 30 to 45 minutes each: the flow, then two or three versions of each key screen, then the final look. Built your way: top to bottom, separate tabs for separate things, a laptop with two monitors. Links will appear here.
 
@@ -33,8 +35,8 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 | Phase | What gets built | The gate you can see | Status and next step |
 |---|---|---|---|
-| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Sample clients done. Trial script being written; the trial waits for "ready". |
-| 1 Evidence and the source viewer | Documents and QuickBooks read into facts with their sources; the source viewer; an early slice of the CPA review | 10 test files fully traced to source | Screen research starts today; designs before building. |
+| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the ten sample clients; repairs to the build system | An export matches the import cell for cell | Round trip proven on a test company (13 of 13 cells identical); trial days 3 to 7 left (ends about 16 Oct); QuickBooks test company checked; the empty app (F00) is built, checked and on main since 2 Oct, so the other phase 0 cards can now be built. |
+| 1 Evidence and the source viewer | Documents and QuickBooks read into facts with their sources; the source viewer; an early slice of the CPA review | 10 test files fully traced to source | Cards written; three screen designs and the source viewer in progress for your sitting about 3 Oct. |
 | 2 Return build, lock and trace | The Taxprep import file; the lock export; the trace (orphans, overrides, the cite button); every version saved | A simple T2 built with few hand-typed cells | After phase 1. |
 | 3 Checks and the CPA review screen | Ties, reconciliations, flags; the AI checklist and red team through the Claude project; the brief; the full review with marks | You review 20 test files end to end in the screen | After phase 2. |
 | 4 Learning list and sign-off | Versions compared and the weekly lesson list; the approval summary and T183CORP; the check before transmit; the frozen binder | One return from import to frozen binder | After phase 3. |

@@ -1,3 +1,4 @@
+// @mutate
 // Money is integer cents (ARC-13). Formatting happens only at the edge.
 export type Cents = number
 
