@@ -27,3 +27,10 @@
 - Taxprep calculates net income for income tax, taxable income and Part I tax from the GIFI cells at once (status bar).
 - Custom filters: not in Export's filter list until the page is reloaded.
 - Staging an import file without the file picker: set files on the iframe's input[type=file] with a DataTransfer, dispatch change.
+
+## Added 1 Oct 2026 (walker run 3, see 2026-10-02-day2/notes.md and compare-07.md)
+- Round trip proven for Riverdale: 13 of 13 GIFI rows return with identical values; two exports of the same filter are byte-identical (RT-20 can compare bytes).
+- Import report lists only cells that already held a value; new cells import silently and no row counts are shown.
+- Export (default filter) also lists IDENT.Ident120/121/311/230/451/492 and IFirm.ContactPartner (empty); header carries the real return GUID.
+- Custom filter form picker: S2008/2009, S2178/2179 are single combined forms; S2589 long-term assets, S3139, S3450, S3620, S3849 are the other S100 parts; each has an "-1" opening-balance copy. "S8" is the CCA form, third in the list for the typed text "S8".
+- Export notifications: bell with badge in the return header; each completed export has a Download button that needs a real mouse click.
