@@ -7,3 +7,23 @@
 {"ts":"2026-09-29T16:05:31.721Z","day":"2026-09-29","mode":"prep","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Critique cards, tools and references","allowed":true}
 {"ts":"2026-09-29T16:51:13.811Z","day":"2026-09-29","mode":"prep","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Fresh-eyes review of the doc","allowed":true}
 {"ts":"2026-09-29T18:43:49.202Z","day":"2026-09-29","mode":"prep","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Generate the ten sample clients","allowed":true}
+{"ts":"2026-10-01T16:57:59.277Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Research ties, angle A","allowed":true}
+{"ts":"2026-10-01T16:58:07.262Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Research ties, angle B","allowed":true}
+{"ts":"2026-10-01T16:58:12.652Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Research reconciliations, angle A","allowed":true}
+{"ts":"2026-10-01T16:58:18.048Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Research reconciliations, angle B","allowed":true}
+{"ts":"2026-10-01T16:58:23.457Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Research flags, angle A","allowed":true}
+{"ts":"2026-10-01T16:58:29.048Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Research flags, angle B","allowed":true}
+{"ts":"2026-10-01T16:58:35.048Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Research QBO trace, angle A","allowed":true}
+{"ts":"2026-10-01T16:58:40.794Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Research QBO trace, angle B","allowed":true}
+{"ts":"2026-10-01T16:58:45.991Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Design brief: CPA review","allowed":true}
+{"ts":"2026-10-01T16:58:50.749Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Design brief: workbench","allowed":true}
+{"ts":"2026-10-01T16:58:55.320Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Design brief: queues and record","allowed":true}
+{"ts":"2026-10-01T16:59:02.207Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"remote","desc":"Trial day 1 script","allowed":true}
+{"ts":"2026-10-01T16:59:22.958Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"builder","model":null,"where":"worktree","desc":"Build the queue repairs","allowed":true}
+{"ts":"2026-10-01T16:59:57.917Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"remote","desc":"Draft clause alignment to v1.1","allowed":true}
+{"ts":"2026-10-01T17:00:50.475Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":null,"where":"worktree","desc":"Design versions: CPA review","allowed":true}
+{"ts":"2026-10-01T17:00:53.562Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":null,"where":"worktree","desc":"Design versions: workbench","allowed":true}
+{"ts":"2026-10-01T17:01:00.047Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":null,"where":"worktree","desc":"Design versions: queues and record","allowed":true}
+{"ts":"2026-10-01T17:01:52.967Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"research-checker","model":"opus","where":"worktree","desc":"Check QBO research pair","allowed":true}
+{"ts":"2026-10-01T17:02:02.950Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"worktree","desc":"Research F9 lists, angle A","allowed":true}
+{"ts":"2026-10-01T17:02:07.695Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"worktree","desc":"Research F9 lists, angle B","allowed":true}
