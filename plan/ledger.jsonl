@@ -36,3 +36,5 @@
 {"ts":"2026-10-01T17:07:26.567Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"checker","model":null,"where":"worktree","desc":"Check the queue repairs branch","allowed":true}
 {"ts":"2026-10-01T17:09:04.151Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Apply research clause proposals","allowed":true}
 {"ts":"2026-10-01T17:09:30.715Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Re-cut slices into five phases","allowed":true}
+{"ts":"2026-10-01T17:53:48.417Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"F03 spec (core, Opus)","allowed":true}
+{"ts":"2026-10-01T18:01:00.912Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"F05 spec (core, Opus)","allowed":true}
