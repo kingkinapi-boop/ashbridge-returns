@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Design re-test, changed tasks on the four families (panel mode) | tester | local worktree | 1 Oct 23:15Z | claude/design-retest |
+| Design findings review 2 (re-test: 32 fixes in place, 20 findings; reports/design-retest-2026-10-01.md) | Opus findings reviewer | local worktree | 1 Oct 23:55Z | claude/findings-designs-2 |
 | F00 round 3 build (spec reported: 37 tests, 24 fail pre-build) | cloud run | cloud | 1 Oct 23:45Z | claude/F00 |
 
 All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
@@ -26,7 +26,7 @@ All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -c
 4. Phase 2: reviewed and fixed (reports/review-phase2.md, A234 to A246; red 1 settled as amber A245, RT-25 changed, CPA check item 33). Specs wait on S03 (FINDINGS final). Next design: D05 brief with Ready and the clear.
 5. Day 5: imports 01 to 07 done by script; exports and the 02 print (counter 96, file never arrived) blocked, window hidden. On Zo's "2 done": walker retries exports for 01 to 07, creates and imports 08 to 10, diagnostics 06, 07, then 5D. Then "After day 5" helper.
 6. .GFI: Accountant view reached (firm "Ashbridge Tax"); path Your books > Workpapers > Books to tax actions > Export GIFI file; header-only file (blank books). To-do #1: made-up accounts in the firm books (red: firm data) or Zo exports one (shape only). Then gfi-file.md and B01 spec.
-7. Designs: when the two fix rounds report, re-test only the changed tasks on the four families (tester panel mode), then the sitting page for Zo (Artifact, private) with the six questions in reports/findings-designs.md (d), about 3 Oct. Then D00 and D01.
+7. Designs: after findings review 2, fix round 2 by four designers (reuse worktrees agent-a5308 source viewer, agent-aa14 cpa review; fresh for queues and workbench), then the sitting page for Zo (Artifact, private) with the six questions of reports/findings-designs.md (d) and what reports/findings-designs-2.md says Zo should see; about 3 Oct. Then D00, D01, D05.
 
 ## Watch out
 
