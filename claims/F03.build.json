@@ -1,11 +1,10 @@
 {
  "card": "F03",
  "role": "build",
- "round": 3,
+ "round": 4,
  "spec": "d6807e553a2a8504e1d74d1d582b6a3345e2bdd6",
  "worker": "cloud-451039",
- "state": "released",
- "at": "2026-10-01T23:26:30.613Z",
- "mode": "turbo",
- "note": "spec predates re-carded F03 (void); Lead must reopen spec"
+ "state": "working",
+ "at": "2026-10-01T23:26:32.926Z",
+ "mode": "turbo"
 }
