@@ -17,7 +17,6 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| QBO sandbox: first API checks (report columns, transaction ids, attachments) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/qbo/ |
 | queue: F00 build, D01 spec (the rehearsal) | 2 cloud workers, runs cse_01UaSXaBy5XRsUopyN1whFtX and cse_01MsA6SHdAiP5aDXMnNkMwYF | cloud | 1 Oct 17:40Z | claude/F00, claude/D01 |
 | phase 1 cards (F06, W20, A02 to A05, pipeline wiring) | Opus drafter | local | 1 Oct | claude/cards-phase1a |
 | findings review of the three design panels | findings-reviewer (Opus) | local | 1 Oct | claude/findings-designs |
