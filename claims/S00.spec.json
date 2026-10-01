@@ -2,8 +2,7 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-54c841",
- "state": "released",
- "at": "2026-10-01T20:54:13.164Z",
- "mode": "turbo",
- "note": "dep F03 not built (re-spec waits)"
+ "state": "working",
+ "at": "2026-10-01T20:54:15.813Z",
+ "mode": "turbo"
 }
