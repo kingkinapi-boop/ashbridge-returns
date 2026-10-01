@@ -151,7 +151,7 @@
     all('[data-count-reviewed]').forEach(function (e) { e.textContent = nOn(); });
     var tag = one('[data-count-tag]'); if (tag) tag.className = 'govuk-tag ' + (allOn() ? 'govuk-tag--green' : 'govuk-tag--grey');
     all('[data-comment-count]').forEach(function (e) { e.textContent = S.comments.length; });
-    var pg = one('[data-progress]'); if (pg) pg.innerHTML = progressHtml();
+    var sp = one('[data-section-pick]'); if (sp) { var cur = sp.value; sp.innerHTML = '<option value="#/brief">Brief</option>' + D.sections.map(function (s, i) { var w = s.key === 'flags' && openFlags().length ? openFlags().length + ' open' : isOn(s.key) ? 'Reviewed' : isOff(s.key) ? 'mark came off' : 'not reviewed'; return '<option value="#/' + s.slug + '">' + (i + 1) + ' ' + esc(s.title) + ' (' + w + ')</option>'; }).join(''); sp.value = cur || '#/brief'; if (S.route) { var wanted = S.route.a === 'brief' ? '#/brief' : secBySlug[S.route.a] ? '#/' + S.route.a : null; if (wanted) sp.value = wanted; } }
     D.sections.forEach(function (s) {
       var m = one('[data-rail-mark="' + s.key + '"]'); if (!m) return;
       var txt = s.key === 'flags' && openFlags().length ? openFlags().length + ' open' : isOn(s.key) ? 'Reviewed' : isOff(s.key) ? 'Mark came off' : 'Not reviewed';
@@ -169,7 +169,6 @@
 
   /* -------- toolbar */
   function approveHtml() { return '<a class="govuk-button app-btn-sm" role="button" draggable="false" data-approve href="' + esc(D.approveHref) + '" aria-keyshortcuts="a">Approve return</a>'; }
-  function progressHtml() { var n = nOn(); return '<span class="app-progresswrap"><progress class="app-progress" value="' + n + '" max="' + order.length + '" aria-label="Sections Reviewed">' + n + ' of ' + order.length + '</progress> ' + n + ' of ' + order.length + ' Reviewed</span>'; }
   function renderToolbar(r) {
     var html = '';
     var sec = secBySlug[r.a];
@@ -221,7 +220,6 @@
       one('[data-list-foot]').hidden = !sec || sec.printed;
       title = sec ? sec.title : r.a === 'find' ? 'Find a number' : 'Brief';
       one('[data-list-title]').textContent = sec ? (sec.printed ? 'Printed return pages' : sec.key === 'flags' ? 'Flags: red first, then dollar effect' : 'Return, in printed order') : title;
-      listBody.setAttribute('aria-label', title);
       if (r.a === 'find') renderFind(r.b || '');
       if (sec && !sec.printed) {
         var id = r.b && rowEl(r.b) ? r.b : (S.last[sec.key] && rowEl(S.last[sec.key]) ? S.last[sec.key] : sec.rows[0]);
@@ -356,7 +354,7 @@
   function renderCommentsList() {
     var host = one('[data-comments-list]'); if (!host) return;
     if (!S.comments.length) { host.innerHTML = '<div class="govuk-inset-text"><p class="govuk-body"><strong>No comments on this return yet.</strong></p><p class="govuk-body">Open a number and press <kbd>c</kbd> to comment. Comments go to ' + esc(D.preparer) + ' when you send the return back.</p></div>'; return; }
-    host.innerHTML = '<div class="app-scroll-x" role="region" aria-label="Comments" tabindex="0"><table class="govuk-table"><caption class="govuk-table__caption govuk-table__caption--s">Comments, newest last (' + S.comments.length + ')</caption><thead class="govuk-table__head"><tr><th scope="col" class="govuk-table__header">No.</th><th scope="col" class="govuk-table__header">Number</th><th scope="col" class="govuk-table__header">Type</th><th scope="col" class="govuk-table__header">Severity</th><th scope="col" class="govuk-table__header">Comment</th><th scope="col" class="govuk-table__header">State</th><th scope="col" class="govuk-table__header">Who and when</th></tr></thead><tbody class="govuk-table__body">' +
+    host.innerHTML = '<div class="app-scroll-x" role="region" aria-label="Comments table" tabindex="0"><table class="govuk-table"><caption class="govuk-table__caption govuk-table__caption--s">Comments, newest last (' + S.comments.length + ')</caption><thead class="govuk-table__head"><tr><th scope="col" class="govuk-table__header">No.</th><th scope="col" class="govuk-table__header">Number</th><th scope="col" class="govuk-table__header">Type</th><th scope="col" class="govuk-table__header">Severity</th><th scope="col" class="govuk-table__header">Comment</th><th scope="col" class="govuk-table__header">State</th><th scope="col" class="govuk-table__header">Who and when</th></tr></thead><tbody class="govuk-table__body">' +
       S.comments.map(function (c) { return '<tr><td class="govuk-table__cell">' + esc(c.id) + '</td><td class="govuk-table__cell"><a class="govuk-link" href="' + routeFor(c.line) + '">' + esc(labelFor(c.line)) + '</a></td><td class="govuk-table__cell">' + esc(c.type) + '</td><td class="govuk-table__cell">' + esc(c.severity) + '</td><td class="govuk-table__cell">' + esc(c.text) + '</td><td class="govuk-table__cell">' + esc(c.status) + '</td><td class="govuk-table__cell">' + esc(c.who) + ', ' + esc(c.when) + '</td></tr>'; }).join('') + '</tbody></table></div><p class="govuk-body-s">For a presentation comment, or an error on one number, AI drafts the fix with citations when you send the return back. Nothing changes until the preparer approves the draft and it goes through the normal round trip (RV-12).</p>';
   }
   function renderSendBack() {
@@ -450,6 +448,7 @@
     }
     var rail = t.closest('[data-rail],[data-tab],.app-flagmark,[data-left-list] a'); if (rail) { setTimeout(function () { if (!S.route || S.route.a) { /* focus the heading after the route renders, for pointer and Enter alike */ } }, 0); }
   });
+  document.addEventListener('change', function (e) { if (e.target.matches('[data-section-pick]')) location.hash = e.target.value; });
   document.addEventListener('submit', function (e) {
     var f = e.target;
     if (f.matches('[data-comment-form]')) { e.preventDefault(); submitComment(f); }

@@ -4,12 +4,22 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import fs from 'node:fs';
+import http from 'node:http';
 const req = createRequire(path.join(process.env.AUDIT_MODULES, 'package.json'));
 const { chromium } = req('playwright-core');
 const axeSrc = fs.readFileSync(req.resolve('axe-core/axe.min.js'), 'utf8');
 const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const DIR = path.resolve('design/prototypes/cpa-review/v1-record-tabs');
-const url = (f, hash = '') => 'file:///' + path.join(DIR, f).replace(/\\/g, '/') + hash;
+// the pages are served over http, never file:// (design card check 8)
+const SITE = path.resolve('design/prototypes/cpa-review');
+const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript' };
+const server = http.createServer((rq, rs) => {
+  const p = decodeURIComponent(rq.url.split('?')[0]); const f = path.join(SITE, p);
+  if (!f.startsWith(SITE) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { rs.writeHead(404); return rs.end('not found'); }
+  rs.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(rs);
+});
+await new Promise((r) => server.listen(0, '127.0.0.1', r));
+const PORT = server.address().port;
+const url = (f, hash = '') => `http://127.0.0.1:${PORT}/v1-record-tabs/${f}${hash}`;
 const SIZES = [[1366, 650], [1093, 525]];
 const which = process.argv[2] || 'all';
 const results = { fail: 0 };
@@ -20,11 +30,11 @@ const ok = (m) => log('ok  ', m);
 const browser = await chromium.launch({ executablePath: EDGE, headless: true });
 async function open(f, hash = '', size = [1366, 650]) {
   const ctx = await browser.newContext({ viewport: { width: size[0], height: size[1] }, acceptDownloads: false });
-  ctx.setDefaultTimeout(4000);
+  ctx.setDefaultTimeout(4000); ctx.setDefaultNavigationTimeout(45000);
   const page = await ctx.newPage();
   page.errors = [];
   page.on('pageerror', (e) => page.errors.push(e.message));
-  await page.goto(url(f, hash), { waitUntil: 'load' });
+  await page.goto(url(f, hash), { waitUntil: 'load', timeout: 45000 });
   await page.waitForTimeout(250);
   page.ctx = ctx;
   return page;
@@ -42,7 +52,9 @@ const HAND = (n) => /moj-(timeline|badge)/.test(n.t) && /pseudoContent|elmPartia
 const RUN = async (page, opts) => page.evaluate(async (o) => { const r = await window.axe.run(document, o); const f = (l) => l.flatMap((x) => x.nodes.map((n) => ({ id: x.id, t: n.target.join(' ').slice(0, 70), key: ((n.any[0] || n.all[0] || n.none[0] || {}).data || {}).messageKey }))); return { v: f(r.violations), i: f(r.incomplete) }; }, opts);
 async function axeRun(page, label, ruleOut) {
   await page.evaluate(axeSrc);
-  const r1 = await RUN(page, { runOnly: { type: 'tag', values: TAGS }, resultTypes: ['violations', 'incomplete'] });
+  const r1a = await RUN(page, { runOnly: { type: 'tag', values: TAGS }, resultTypes: ['violations', 'incomplete'] });
+  const r1b = await RUN(page, { runOnly: { type: 'rule', values: ['region', 'landmark-unique'] }, resultTypes: ['violations', 'incomplete'] });
+  const r1 = { v: [...r1a.v, ...r1b.v], i: [...r1a.i, ...r1b.i] };
   const vs = page.viewportSize();
   await page.setViewportSize({ width: Math.max(vs.width, 1400), height: 6000 }); // everything inside the window (and wide enough that a table is not clipped), so nothing is judged "obscured" only for lying below the fold or beside the edge
   const st = await page.addStyleTag({ content: EXPAND });
@@ -104,7 +116,7 @@ async function reflow() {
           if (el.closest('[hidden]')) continue;
           const b = el.getBoundingClientRect(); if (b.width === 0 || b.height === 0) continue;
           if (b.right > vw + 1 || b.left < -1) {
-            let p = el, scrollable = false; while ((p = p.parentElement)) { const cs = getComputedStyle(p); if ((cs.overflowX === 'auto' || cs.overflowX === 'scroll') && p.getAttribute('aria-label')) { scrollable = true; break; } }
+            let p = el, scrollable = false; while ((p = p.parentElement)) { const cs = getComputedStyle(p); if ((cs.overflowX === 'auto' || cs.overflowX === 'scroll') && (p.getAttribute('aria-label') || p.getAttribute('aria-labelledby'))) { scrollable = true; break; } }
             if (!scrollable && !el.closest('.govuk-visually-hidden') && getComputedStyle(el).position !== 'absolute') over.push(el.tagName + '.' + String(el.className).slice(0, 40));
           }
         }
@@ -216,6 +228,27 @@ async function budgets() {
     const pn = await page.evaluate(() => [...document.querySelectorAll('.app-pane')].map((p) => { const b = p.getBoundingClientRect(); return [Math.round(b.left), Math.round(b.top), Math.round(b.width), Math.round(b.height)]; }));
     const stacked = new Set(pn.map((p) => p[1])).size > 1; rep.push([`three panes side by side @${tag}`, `${JSON.stringify(pn)} stacked: ${stacked}`]); if (stacked) fail(`panes stacked @${tag}`);
     const doc = await page.evaluate(() => ({ h: document.documentElement.scrollHeight, vh: innerHeight, srcH: Math.round(document.querySelector('[data-source-body]').getBoundingClientRect().height), listH: Math.round(document.querySelector('[data-list-body]').getBoundingClientRect().height) }));
+    // readable text and rows visible beside a pane (rule 18)
+    const rt = await page.evaluate(() => {
+      const skip = '.govuk-tag,.moj-badge,.app-dot,.app-flagmark,.app-madeup,.app-madeup-note,button,kbd,.govuk-hint,.app-caption,.app-source__label,.app-pane__sub';
+      const min = { body: 99, src: 99, bodyN: 0 }; const bad = new Map();
+      for (const r of document.querySelectorAll('.app-pane__body')) {
+        if (r.closest('[hidden]') || !r.getBoundingClientRect().width) continue;
+        const w = document.createTreeWalker(r, NodeFilter.SHOW_TEXT); let n;
+        while ((n = w.nextNode())) {
+          if (!n.textContent.trim()) continue; const e = n.parentElement; if (!e || e.closest('[hidden]') || e.closest('.govuk-visually-hidden') || !e.getBoundingClientRect().width) continue;
+          const px = parseFloat(getComputedStyle(e).fontSize);
+          if (e.closest('.app-source,.app-card,.app-sheet,.app-entry')) { min.src = Math.min(min.src, px); continue; }
+          if (e.closest(skip)) continue;
+          min.body = Math.min(min.body, px); min.bodyN++; if (px < 16) bad.set(e.tagName + '.' + String(e.className).slice(0, 30), px);
+        }
+      }
+      const b = document.querySelector('[data-list-body]').getBoundingClientRect();
+      const rows = [...document.querySelectorAll('[data-panel="stmt"] tr[data-row]')].filter((r) => { const x = r.getBoundingClientRect(); return x.top >= b.top - 1 && x.bottom <= b.bottom + 1; }).length;
+      return { min, bad: [...bad].slice(0, 6), rows, listH: Math.round(b.height) };
+    });
+    rep.push([`readable text and rows beside a pane @${tag}`, `smallest body text ${rt.min.body} px over ${rt.min.bodyN} text nodes (offenders: ${JSON.stringify(rt.bad)}), smallest source text ${rt.min.src} px, ${rt.rows} return rows fully visible in a ${rt.listH} px list pane`]);
+    if (rt.min.body < 16 || rt.min.src < 12) fail(`text too small @${tag}: ${JSON.stringify(rt)}`);
     rep.push([`record page height @${tag}`, `page ${doc.h} px for a ${doc.vh} px window; list body ${doc.listH} px, source body ${doc.srcH} px`]);
     await page.ctx.close();
   }
@@ -310,6 +343,6 @@ try {
   if (which === 'walk' || which === 'all') await walk();
   if (which === 'budgets' || which === 'all') await budgets();
   if (which === 'rules' || which === 'all') await rules();
-} finally { await browser.close(); }
+} finally { await browser.close(); server.close(); }
 log(`\nTOTAL failures: ${results.fail}`);
 process.exit(results.fail ? 1 : 0);
