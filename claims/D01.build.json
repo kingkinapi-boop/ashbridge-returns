@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "d082015",
  "worker": "cloud-a33104",
- "state": "reported",
- "at": "2026-10-01T22:58:31.006Z",
+ "state": "hold-findings",
+ "at": "2026-10-01T23:26:08.481Z",
  "mode": "turbo",
- "note": "19 of 19 acceptance tests pass"
+ "note": "FAIL: design/map tests not in vitest include or lint project, see reports/D01-check.md"
 }
