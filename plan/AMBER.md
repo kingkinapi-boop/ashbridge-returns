@@ -79,3 +79,9 @@ Calls the Lead made without asking, because the blueprint allows them. Zo reads 
 | A73 | 1 Oct | blueprint | RV-1 fixed review order: brief, statements and GIFI, Schedule 1, capital, losses, rate, dividend accounts, shareholders, Ontario, disclosures, payment and filing | F9 research (both reports converge; practice, no CRA order) | Restore "every other schedule present" | open |
 | A74 | 1 Oct | blueprint | RT-17 by iFirm category: Error and Filing error block; Warning needs a named reason; Information and Filing warning may stay with a reason; Hidden never cleared; print behaviour and final list settled on the trial | F9 research (iFirm help) | Restore "settled on the trial" only | open |
 
+| A75 | 1 Oct | plan | Lead-run streams (trial P02, QBO sandbox P03, queue repairs P04) sit in slices.json as parked so the queue never hands them out | They need Zo or the Lead, not a worker | Drop them from the file | open |
+| A76 | 1 Oct | plan | D11 (one look at all screens) is no longer a gate; each screen waits on its own design card, done only on Zo's approval at a sitting | Decision 0008: every screen designed first and approved by Zo | Put D11 back in V00's deps | open |
+| A77 | 1 Oct | plan | The preparer queue (V05, D04) and the gap review (V08, D07) move to phase 1 | V08 must not depend on a later phase | Move V08 to phase 2 | open |
+| A78 | 1 Oct | plan | The mapping (M00, so M10 to M23 and the round trip) waits on S03, the simulator fed by the trial findings | Building on guessed cell ids would be rebuilt after the trial | Drop S03 from M00 and build on placeholders | open |
+| A79 | 1 Oct | plan | CK-48 to CK-50 go on one engine-level card (Q01) that every reconciliation depends on | They are rules for all reconciliations; the check template does not fit | Split into three cards | open |
+| A80 | 1 Oct | plan | Journey params renamed from phase to stage | Phases were renumbered | Restore the old params and paths | open |
