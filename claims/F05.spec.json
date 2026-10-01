@@ -2,7 +2,9 @@
  "card": "F05",
  "role": "spec",
  "worker": "cloud-d367f7",
- "state": "working",
- "at": "2026-10-01T18:00:53.590Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-01T18:05:47.666Z",
+ "mode": "turbo",
+ "note": "38 tests, CK-1..6 ARC-13",
+ "commit": "2c9e48ddf0ce44e1dc4fd0a46c19c61820bfb821"
 }
