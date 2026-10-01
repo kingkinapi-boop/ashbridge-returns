@@ -13,8 +13,8 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| F00 round 2 check (build reported: 45 tests pass, mutation 74.47, canary 77.78 amber) + W14/D01 specs | 2 cloud runs | cloud | 1 Oct 21:05Z | claude/F00 |
-| Trial day 5 run 5C resume (Eglinton pair, no imports; Zo reconnected Chrome) | Sonnet walker, Chrome | local | 1 Oct 21:20Z | notes in reference/taxprep/2026-10-05-day5/, uncommitted |
+| F00: check PASS, CRLF ok; security review FINDINGS (3 medium, 3 low; reports/F00-security.md); findings review 3 | Opus findings reviewer | local worktree | 1 Oct 22:10Z | claude/F00 |
+| QBO .GFI walker, second try (Zo signs in if needed, Z16-1) | Sonnet walker, Chrome | local | 1 Oct 22:05Z | rewrites reference/qbo/gfi-file.md, uncommitted |
 | design fix round: cpa-review V1 | designer (old session) | local | 1 Oct | claude/design-cpa-review-2 |
 | design fix round: source viewer D03 | designer (old session) | local | 1 Oct | claude/design-source-viewer-2 |
 
@@ -23,7 +23,7 @@ Done and on branches, not yet re-tested: claude/design-queues-record-2, claude/d
 ## Next, in order
 
 1. Queue repair 2 LANDED (ed9435b, A247: vitest RPC timeout noise to fix in the next queue repair; dispatch skill line 40 should name `update <card> spec reopened --worker lead`; add a test that a check on a card with a parked dep still flows).
-2. F00: when the cloud build reports, a check by a different worker (cloud run), then a train in the cloud (`check train full`). F00 landing ends the rehearsal; then a cold sign-off (signoff.md) on the queue repairs and the rehearsal, then widen to 6 runs.
+2. F00: after findings review 3, card updated, spec job (rule tests), build, check, then board the train: write plan/train.json {status: requested}, merge into claude/train, fire a cloud run (it takes the train first, A249). Green: land, cold sign-off on queue repairs + rehearsal, widen to 6 runs.
 3. Re-specs: F03 and S00 (re-carded from the trial). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 done (dep gate).
 4. Phase 2: reviewed and fixed (reports/review-phase2.md, A234 to A246; red 1 settled as amber A245, RT-25 changed, CPA check item 33). Specs wait on S03 (FINDINGS final). Next design: D05 brief with Ready and the clear.
 5. Chrome order (one walker at a time): when 5C resume reports, the .GFI walker (decision 0016 Z16-1: if no Accountant view, open the QBO sign-in page and wait up to 15 min for Zo; 0013 limits), then 5A steps 2 to 5 and 5B with imports by script on (Test) returns (Z16-3), then 5D. Then the "After day 5" helper. Day 6 Sun 4 Oct.
