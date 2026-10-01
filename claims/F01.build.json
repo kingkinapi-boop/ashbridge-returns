@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "ea1e06ef122a9776cd17e5abe1abf9dc211b2525",
  "worker": "cloud-173eff",
- "state": "reported",
- "at": "2026-10-01T23:28:30.171Z",
+ "state": "hold-findings",
+ "at": "2026-10-01T23:59:33.419Z",
  "mode": "turbo",
- "note": "63 of 63 acceptance pass; spec defect: last test constructs PGlite, trips F00 ARC-4 rule test, see reports/F01-build.md"
+ "note": "FAIL: npm test red (spec PGlite rule) plus 7 schema gaps (TRUNCATE, blank sources, versions), see reports/F01-check.md"
 }
