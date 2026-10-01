@@ -4,18 +4,21 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. Start the Lead now (2 minutes).**
-- Claude desktop app: Code, New session, folder `ashbridge-returns`, model **Opus 5.5**. Type `/rename Lead`, then `/remote-control` (so the watcher can see it), then `go`.
-- Turbo is already switched on in the files (decision 0009); `go` starts it. The Lead runs the work in cloud sessions and keeps one local worker at most, so the laptop stays free for your other repo.
-- What comes next: research, screen research and the trial script start in the cloud at once; the job queue gets repaired; then 6 to 12 cloud workers build. You hear from it only here.
+**1. How should the Lead start cloud workers? (question, 1 minute)**
+- What: the Lead cannot open cloud sessions from its own chat. The command only works when a person sits at a terminal, and the background "remote" option quietly ran on this laptop instead. So turbo's 6 to 12 cloud workers cannot start yet.
+- Why it matters: without cloud workers the build runs about one card at a time on the laptop, and it spends your plan usage instead of the cloud credit.
+- Choose one. **A (recommended):** let the Lead fire one-off cloud runs through Claude's "run once" trigger. No schedules; the Lead fires each run and stops it, and nothing runs on a timer. This changes decision 0008's "no routines" for one-off runs only. **B:** you open cloud sessions yourself at claude.ai/code on this repo and type `work` in each (each keeps taking jobs until the queue is empty). Opening 6 now and again each morning would do.
+- Reply `1 A` or `1 B`.
+- Meanwhile: research and screen design run as light helpers on the laptop (no heavy commands), and one build worker runs locally.
 
-**2. Start the watcher, before you leave the desk tonight (10 minutes).**
+**2. Start the watcher, before you leave the desk tonight (10 minutes).** Skip if done.
 - It clears the Lead when its context gets full and starts it again, so nothing stops overnight. Steps: `C:\Users\User\Documents\GitHub\ashbridge-returns\toDelete\lead-watcher-prompt.md`.
-- It is set to your 65%. The Lead runs on a window of about a million tokens, so 40% would cost less usage; change the number at the top of the prompt if you agree.
 
-**3. Retire the planning chat now.** The chat that wrote this (the Critic) has done its job; close it. Next Critic: a new chat on Sat 3 Oct, type `critic`. First Reviewer: a new chat on Fri 2 Oct in the evening, type `review`.
+**3. Create a free Intuit developer account (10 minutes, when you can).**
+- Why: our research could not confirm from Intuit's pages whether QuickBooks reports carry the transaction ids the trace needs; a free test company answers it in minutes. No card, no real clients.
+- Steps: developer.intuit.com, Sign up with a new login (not your firm's QBO login), then Dashboard, Sandbox, Add a sandbox company, region Canada. Reply `3 done`; the Lead then asks for nothing else (no keys in chat).
 
-**What the Lead is doing now:** waiting for your `go` (item 1).
+**What the Lead is doing now:** research on the checks (ties, reconciliations, flags) and QuickBooks; three screen families being designed (CPA review, preparer workbench, queues and the return page) for your first sitting about 3 Oct; the trial day 1 script; repairs to the job queue; the blueprint clauses brought into line with v1.1.
 
 ## 2. Coming up (no action yet)
 
