@@ -17,7 +17,7 @@ Cloud workers start by firing the routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteT
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Taxprep trial day 1 (cell map) | Sonnet walker, Chrome "Ashbridge Test" | local | 1 Oct | reference/taxprep/ |
+| Taxprep trial: Opus read of day 1, writing day 1b and day 2 script | Opus helper | local | 1 Oct | plan/trial/, reference/taxprep/ |
 | queue: F00 check FAIL (flaky PGlite cold start) on hold-findings; F01 spec reported; F03, F04 specs working | cloud runs cse_01UaSXaBy5XRsUopyN1whFtX, cse_01WvokbrF6aSimESpr5gLRNg (third run ended after 1 job) | cloud | 1 Oct | claude/F00, F01, F03, F04 |
 | findings review F00 | findings-reviewer (Opus) | local | 1 Oct | claude/F00-findings |
 | phase 1 cards batch c (the rest of phase 1: E01, B cards, ...) | Opus drafter | local | 1 Oct | claude/cards-phase1c |
@@ -37,7 +37,7 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 
 ## Watch out
 
-- The trial lasts one week: nothing starts on it until the to-do says ready. Real Auto-fill data: structure only, never values (decision 0008, Z8-7).
+- The trial ends about 16 Oct (15 days left on 1 Oct; 100 PDFs left). Release CCH iFirm 2026.20.198267. The trial lasts until then: nothing starts on it until the to-do says ready. Real Auto-fill data: structure only, never values (decision 0008, Z8-7).
 - Chrome: only the "Ashbridge Test" profile. QBO: Intuit developer sandbox companies only, never the firm's real client list.
 - No routines, no schedules (until Zo answers to-do #1). Ask Zo in the to-do for anything only he can do; if he does not answer, keep going on everything else.
 - Findings review before every fix round; cold sign-off for big chunks only.
