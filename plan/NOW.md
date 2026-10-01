@@ -42,7 +42,7 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 - No routines, no schedules (until Zo answers to-do #1). Ask Zo in the to-do for anything only he can do; if he does not answer, keep going on everything else.
 - Findings review before every fix round; cold sign-off for big chunks only.
 - The main checkout stays on main; train work in .claude/worktrees/train. The push guard lets only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ go straight to main.
-- Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B` (that drags old plan files back).
+- Taking a helper branch onto main: check out only the files in `git diff --name-only $(git merge-base main B) B`, never `git diff main B`. For plan/slices.json the branch copy replaces main's, so re-apply any Lead edit made on main after the branch started (F03 parked was lost once).
 - Cloud worker names: the first two runs both called themselves cloud-vm (same hostname); the routine prompt now uses a random id. Watch for the two cloud-vm runs blocking each other.
 - Next in Chrome, one at a time and only with the window visible (to-do #1): the trial walker (day 1b, then day 2), then the QBO walker on the sandbox company Zo opened (decision 0012; its own screens, no keys), then the .GFI from QBO Accountant on "Probe Co. (Test)" (decision 0013, with its limits).
 - Only one helper drives Chrome at a time: two walkers shared the tab group on 1 Oct and one tab was taken over.
