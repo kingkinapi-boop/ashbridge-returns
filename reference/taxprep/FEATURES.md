@@ -19,3 +19,11 @@
 - Top bar bell with badge opens firm release notes (/#/fe/release-view), not return notifications; the return's own bell holds export notifications. Matters: no.
 - Forms popup (Forms button): paged list, 25 per page, 16 pages; each page is an Angular virtual scroll (10 rows in the DOM). Page order: control forms, GIFI forms (S100 and S1599, S2008/2009, S2178/2179, S125 with S8299, S8518, S9367, S9659, S9898, S9998, S140, S141, NOTES, then S101 and the -1 opening-balance copies), federal forms (T2, L996, S1, S130 ... S73, T661 family), authorization and foreign-reporting forms, then Quebec (pages 5 to 9), Alberta (page 10 on), BC, Manitoba; Ontario probably pages 13 to 15. The forms list makes no visible network request. Matters: low (cell dictionary still unfound).
 - The Taxprep app only renders while the Chrome window is visible; in a hidden window scroll and click do nothing visible. Matters: yes for the walker's setup.
+
+## Added 1 Oct 2026 (walker run 2, see 2026-10-02-day2/notes.md)
+- GIFI cells: ids GFBGII[1].GFGIJ.Ttwgij<N> (S8299 revenue), GFGIK.Ttwgik<N> (S8518 cost of sales), GFGIL.Ttwgil<N> (S9367 operating expenses), GFGBA.Ttwgba<N> (S1599 current assets); one amount cell and one prior-year cell per GIFI code, description carries the code. Dictionary: exports/gifi-dict-structure.csv (906 rows).
+- GIFI amount cells take whole dollars only: decimals refused on import ("could not be imported in this cell because it was invalid"); typed decimals export without them.
+- Import: empty string and single space clear a cell ("emptied by the import"); 0 stores 0. Header (name, guid) is not validated. Windows-1252 required (UTF-8 garbles silently). Import replaces existing values. Contact-linked ID cells and calculated cells are skipped silently (no report row).
+- Taxprep calculates net income for income tax, taxable income and Part I tax from the GIFI cells at once (status bar).
+- Custom filters: not in Export's filter list until the page is reloaded.
+- Staging an import file without the file picker: set files on the iframe's input[type=file] with a DataTransfer, dispatch change.
