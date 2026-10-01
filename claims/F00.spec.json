@@ -2,7 +2,8 @@
  "card": "F00",
  "role": "spec",
  "worker": "cloud-vm-b",
- "state": "working",
- "at": "2026-10-01T18:03:21.314Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T18:03:31.164Z",
+ "mode": "turbo",
+ "note": "card says Spec: n/a (checks are commands); queue should mark F00 spec done"
 }
