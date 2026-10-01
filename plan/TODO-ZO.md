@@ -29,7 +29,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 **The Taxprep trial:** the Lead writes "ready" here, likely today or tomorrow, and says when to open the "Ashbridge Test" Chrome profile for the walker. Day 4 is your corporation's Auto-fill; it tells you the day before.
 
-**QuickBooks:** when that track starts, the Lead will ask you here to create a free Intuit developer account (it cannot sign up for you). Made-up companies go only into its free test companies, never your real client list.
+**Tax rules for your CPA check (when you have an hour, any day this week):** `reference\cpa-check.md` lists 32 tax rules the checks will use (shareholder loans, unpaid bonuses, the business limit, instalments, GST/HST line 101 and more), each with its source and a worked example on made-up numbers. Reply `cpa ok`, or the item numbers you disagree with and why. Nothing waits on it until the checks are built (phase 3).
 
 **Design sittings:** about 3, 6 and 8 Oct, 30 to 45 minutes each: the flow, then two or three versions of each key screen, then the final look. Built your way: top to bottom, separate tabs for separate things, a laptop with two monitors. Links will appear here.
 
