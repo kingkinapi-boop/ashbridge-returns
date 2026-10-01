@@ -1,3 +1,4 @@
+// FROZEN since the second round: drafted version 2 or 3 against the first data model; not run any more (their pages stay as built).
 // Version 2: list and detail. Tabs: Brief, Flags, Return, Comments, History. The Return tab is one list of every number in
 // printed order (four sections, each with its own Reviewed mark) on the left; the selected number's trace and its source,
 // stacked, on the right.

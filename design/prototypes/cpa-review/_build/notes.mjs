@@ -1,3 +1,4 @@
+// FROZEN since the second round: drafted version 2 or 3 against the first data model; not run any more (their pages stay as built).
 import { shell, H } from './ui.mjs';
 import { esc } from './model.mjs';
 

@@ -19,12 +19,20 @@ const longDate = (iso) => +iso.slice(8, 10) + ' ' + MON[+iso.slice(5, 7) - 1] + 
 const hash = (s) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
 const r2 = (n) => Math.round(n * 100) / 100;
 
+// RV-1 order (blueprint b9c5003): the brief, then the flags, then the full return in this fixed order.
+// "Reviewed" marks (RV-5) sit on Flags and on each of the ten return sections.
 export const SECTIONS = [
-  { key: 'flags', slug: 'flags', title: 'Flags' },
-  { key: 'bs', slug: 'balance-sheet', title: 'Balance sheet' },
-  { key: 'is', slug: 'income-statement', title: 'Income statement' },
-  { key: 's1', slug: 'schedule-1', title: 'Schedule 1' },
-  { key: 'other', slug: 'other-schedules', title: 'Other schedules' },
+  { key: 'flags', slug: 'flags', title: 'Flags', ref: 'Every flag, red first, then dollar effect (EX-4)' },
+  { key: 'stmt', slug: 'statements', title: 'Statements and GIFI', ref: 'Balance sheet, income statement, retained earnings; Schedules 100, 125 and 141' },
+  { key: 's1', slug: 'schedule-1', title: 'Schedule 1', ref: 'Net income for tax purposes' },
+  { key: 'cap', slug: 'capital', title: 'Capital', ref: 'Schedules 8 and 6' },
+  { key: 'loss', slug: 'losses', title: 'Losses and reserves', ref: 'Schedules 4 and 13' },
+  { key: 'rate', slug: 'rate', title: 'Rate', ref: 'Schedules 7 and 23, the small business deduction, personal services business signs' },
+  { key: 'div', slug: 'dividends', title: 'Dividend accounts', ref: 'GRIP, RDTOH, Part IV, capital dividend account; Schedule 3 sits here' },
+  { key: 'sh', slug: 'shareholders', title: 'Shareholders and related parties', ref: 'Schedules 50, 9 and 11, slips' },
+  { key: 'on', slug: 'ontario', title: 'Ontario', ref: 'Schedule 500 or 5' },
+  { key: 'disc', slug: 'disclosures', title: 'Disclosures', ref: 'T1135, T1134, T106' },
+  { key: 'pay', slug: 'payment', title: 'Payment and filing', ref: 'Tax payable, instalments, balance or refund' },
 ];
 
 export const DOTS = {
@@ -159,7 +167,7 @@ export function buildReturn(which) {
 
   function statementSource(t, amt, acct, label) {
     const ac = acctInfo[t.acct];
-    const near = txs.filter((x) => x.acct === t.acct && Math.abs(x.line - t.line) <= 3).sort((a, b) => a.line - b.line);
+    const near = txs.filter((x) => x.acct === t.acct && Math.abs(x.line - t.line) <= 10).sort((a, b) => a.line - b.line);
     return {
       kind: 'statement', title: ac && ac.role === 'card' ? 'Card statement' : 'Bank statement', inst: INST(ac ? ac.layout : 'Bank (Test)'),
       month: monthYear(t.date), page: Math.max(1, Math.ceil(t.line / 40)), rows: near, hit: t.id, hitAmt: Math.abs(t.amount), coded: amt, acct, label,
@@ -241,29 +249,56 @@ export function buildReturn(which) {
   // -------- other schedules
   const oIds = [];
   t2.schedule3.dividendsPaid.forEach((d, i) => {
-    const l = add({ id: 'o-div' + i, section: 'other', group: 'Schedule 3', label: `Dividend paid ${longDate(d.date)} (${d.designation})`, cy: d.amount, ly: 0, dot: 'green', built: 'Schedule 3, dividends paid.', srcs: [statementSource(txs.find((x) => x.id === d.transaction), d.amount, '3700', 'Dividends declared')] });
+    const l = add({ id: 'o-div' + i, section: 'div', group: 'Schedule 3', label: `Dividend paid ${longDate(d.date)} (${d.designation})`, cy: d.amount, ly: 0, dot: 'green', built: 'Schedule 3, dividends paid.', srcs: [statementSource(txs.find((x) => x.id === d.transaction), d.amount, '3700', 'Dividends declared')] });
     oIds.push(l.id);
   });
   (t2.schedule8.classes || []).forEach((c, i) => c.additions.forEach((ad, j) => {
     const t = ad.transactions && txs.find((x) => x.id === ad.transactions[0]);
-    const l = add({ id: `o-cca${i}${j}`, section: 'other', group: 'Schedule 8', label: `Class ${c.class} addition: ${ad.description}`, cy: ad.capitalCost, ly: 0, dot: t ? 'green' : 'purple', built: 'Schedule 8 capital cost before recoverable HST. ' + (ad.note || ''), srcs: t ? [statementSource(t, ad.capitalCost, '', ad.description)] : [] });
+    const l = add({ id: `o-cca${i}${j}`, section: 'cap', group: 'Schedule 8', label: `Class ${c.class} addition: ${ad.description}`, cy: ad.capitalCost, ly: 0, dot: t ? 'green' : 'purple', built: 'Schedule 8 capital cost before recoverable HST. ' + (ad.note || ''), srcs: t ? [statementSource(t, ad.capitalCost, '', ad.description)] : [] });
     oIds.push(l.id);
   }));
   t2.schedule50.forEach((s, i) => {
-    const l = add({ id: 'o-sh' + i, section: 'other', group: 'Schedule 50', label: `Shareholder ${s.name}: percent of common shares`, cy: s.percentCommonShares, ly: s.percentCommonShares, pct: true, dot: 'purple', built: 'Schedule 50. Social insurance number is held masked and never shown on a review page.', srcs: [{ kind: 'answer', title: 'Client answer', fields: [['Question', 'Who owns the shares'], ['Answer', s.name + ', ' + s.percentCommonShares + '% common'], ['SIN', 'Masked (***-***-' + s.sin.slice(-3).replace(/./g, '*') + ')'], ['From', 'Client app, onboarding']] }] });
+    const l = add({ id: 'o-sh' + i, section: 'sh', group: 'Schedule 50', label: `Shareholder ${s.name}: percent of common shares`, cy: s.percentCommonShares, ly: s.percentCommonShares, pct: true, dot: 'purple', built: 'Schedule 50. SIN on file; no digits are shown on a review page (SEC-4).', srcs: [{ kind: 'answer', title: 'Client answer', fields: [['Question', 'Who owns the shares'], ['Answer', s.name + ', ' + s.percentCommonShares + '% common'], ['SIN', 'SIN on file'], ['From', 'Client app, onboarding']] }] });
     oIds.push(l.id);
   });
   if (t2.shareholderLoan) {
     const sl = t2.shareholderLoan;
     [['Advances in the year', sl.advances], ['Repayments in the year', sl.repaymentsInYear], ['Business items reimbursed', sl.businessItemsReimbursed], ['Due from shareholder at year end', sl.closingDueFromShareholder]].forEach(([lab, v], i) => {
-      const l = add({ id: 'o-loan' + i, section: 'other', group: 'Shareholder loan', label: lab, cy: v, ly: i === 3 ? sl.openingBalance : 0, dot: i === 3 ? 'amber' : 'green', built: 'Shareholder loan schedule. Repayment deadline ' + longDate(sl.repaymentDeadline) + '.', srcs: i === 3 ? byId['n-1300'].srcs : byId['n-1300'].srcs.slice(0, 2) });
+      const l = add({ id: 'o-loan' + i, section: 'sh', group: 'Shareholder loan', label: lab, cy: v, ly: i === 3 ? sl.openingBalance : 0, dot: i === 3 ? 'amber' : 'green', built: 'Shareholder loan schedule. Repayment deadline ' + longDate(sl.repaymentDeadline) + '.', srcs: i === 3 ? byId['n-1300'].srcs : byId['n-1300'].srcs.slice(0, 2) });
       oIds.push(l.id);
     });
   }
 
+  // -------- RV-2's tax lines: the sample clients do not carry them yet, so these are made-up values, labelled (findings (c) 3)
+  const madeUp = (id, section, group, label, cy, ly, built, extra = {}) => add({ id, section, group, label, cy: r2(cy), ly: r2(ly), dot: 'purple', madeUp: true, built: built + ' Made-up value for the design: the sample clients do not carry this line yet.', srcs: [{ kind: 'taxprep', title: 'Taxprep result for ' + label.toLowerCase(), fields: [['Line', label], ['Made-up rule', built], ['Result', money(cy)], ['Status', 'Made up for the design']] }], ...extra });
+  const rateIds = [], payIds = [];
+  const tx = s1Tot;
+  rateIds.push(madeUp('r-taxable', 'rate', 'Taxable income', 'Taxable income', tx.cy, tx.ly, 'Net income for tax purposes from Schedule 1, no other adjustments.').id);
+  rateIds.push(madeUp('r-sbd', 'rate', 'Small business deduction', 'Small business deduction', tx.cy * 0.19, tx.ly * 0.19, '19% of taxable income, within the business limit of $500,000.00.').id);
+  const fed = tx.cy * 0.09, fedLy = tx.ly * 0.09, onT = tx.cy * 0.032, onLy = tx.ly * 0.032;
+  const instal = Math.round((fed + onT) * 0.6 / 100) * 100, instalLy = Math.round((fedLy + onLy) * 0.9 / 100) * 100;
+  payIds.push(madeUp('p-fed', 'pay', 'Tax payable', 'Federal tax', fed, fedLy, '9% of taxable income (federal rate after the small business deduction).').id);
+  payIds.push(madeUp('p-on', 'pay', 'Tax payable', 'Ontario tax', onT, onLy, '3.2% of taxable income (Ontario small business rate).').id);
+  payIds.push(madeUp('p-inst', 'pay', 'Paid', 'Instalments paid', instal, instalLy, 'Instalments paid in the year, from the CRA account capture.').id);
+  payIds.push(madeUp('p-bal', 'pay', 'Result', 'Balance owing', fed + onT - instal, fedLy + onLy - instalLy, 'Federal tax plus Ontario tax less instalments. A refund would show as a negative number.', { kind: 'sub' }).id);
+
   // flags attach to lines
-  const flags = cfg.flags.map((f) => ({ ...f }));
+  const flags = cfg.flags.map((f) => ({ ...f, answered: f.tier !== 'red' }));
   for (const f of flags) { const l = byId[f.where]; if (l) l.flagIds.push(f.id); }
+  // each flag shows the evidence the preparer cited, not the number's own sources (findings (a) CPA 5)
+  for (const f of flags) {
+    const wl = byId[f.where];
+    const ev = [];
+    for (const part of f.cites.split(';').map((x) => x.trim())) {
+      const em = part.match(/(\d\d-AJE-\d\d)/);
+      const entry = em && key.adjustingEntries.find((e) => e.id === em[1]);
+      if (entry) { ev.push(entrySource(entry, wl && wl.acct ? wl.acct : entry.lines[0].account)); continue; }
+      if (/CRA capture/i.test(part)) { ev.push({ kind: 'cra', title: 'CRA capture, HST balance', fields: [['Account', 'GST/HST (made-up business number)'], ['Balance at year end', money(key.hst.balanceAtYearEndPayable)], ['Cited on flag', f.id + ' ' + f.title]] }); continue; }
+      if (/statement/i.test(part) && wl && wl.srcs.some((s) => s.kind === 'statement')) { ev.push(wl.srcs.find((s) => s.kind === 'statement')); continue; }
+      ev.push({ kind: 'answer', title: part, fields: [['Cited as', part], ['On flag', f.id + ' ' + f.title], ['Preparer\'s answer', f.answer]] });
+    }
+    f.evidence = ev;
+  }
   const sortedFlags = [...flags].sort((a, b) => (a.tier === 'red' ? 0 : 1) - (b.tier === 'red' ? 0 : 1) || (b.effect ?? -1) - (a.effect ?? -1));
 
   // changed (RV-8): highlight follows tier, never hides the rest
@@ -272,24 +307,36 @@ export function buildReturn(which) {
     l.changed = l.kind !== 'sub' && !l.pct && Math.abs(d) >= cfg.threshold.min && (l.ly === 0 || Math.abs(d) / Math.abs(l.ly) >= cfg.threshold.pct);
   }
 
-  // section ordering: IS and BS lines in the right order
+  // statements and GIFI hold the balance sheet, then the income statement (part says which)
+  for (const l of lines) if (l.section === 'bs' || l.section === 'is') { l.part = l.section; l.section = 'stmt'; }
+  const pick = (sec) => oIds.filter((i) => byId[i].section === sec).map((i) => byId[i]);
+  const ordered = { stmt: order, s1: s1Ids.map((i) => byId[i]), cap: pick('cap'), loss: [], rate: rateIds.map((i) => byId[i]), div: pick('div'), sh: pick('sh'), on: [], disc: [], pay: payIds.map((i) => byId[i]) };
   const sectionLines = (sec) => lines.filter((l) => l.section === sec);
-  const ordered = { bs: order.filter((l) => l.section === 'bs'), is: order.filter((l) => l.section === 'is'), s1: s1Ids.map((i) => byId[i]), other: oIds.map((i) => byId[i]) };
 
-  // six numbers for the brief
-  const six = which === 'red'
-    ? ['n-4010', 'n-net-income', 's1-total', 'n-total-assets', 'n-1300', 'n-2050']
-    : ['n-4010', 'n-net-income', 's1-total', 'n-total-assets', 'n-6130', 'n-2050'];
+  // schedules not drawn as structured views show the printed return's pages (RV-9); made-up pages
+  const printed = {
+    cap: [{ no: 18, of: 31, title: 'Schedule 8, capital cost allowance', rows: [['Additions in the year', 'Nil'], ['Disposals in the year', 'Nil'], ['Closing undepreciated capital cost', 'Nil']] }, { no: 19, of: 31, title: 'Schedule 6, grants, credits and assistance', rows: [['Government assistance received', 'Nil'], ['Amounts repaid', 'Nil']] }],
+    loss: [{ no: 14, of: 31, title: 'Schedule 4, corporation loss continuity and application', rows: [['Non-capital losses, opening', 'Nil'], ['Non-capital loss for the year', 'Nil'], ['Losses applied in the year', 'Nil'], ['Non-capital losses, closing', 'Nil']] }, { no: 15, of: 31, title: 'Schedule 13, continuity of reserves', rows: [['Reserves, opening', 'Nil'], ['Reserves, closing', 'Nil']] }],
+    on: [{ no: 24, of: 31, title: 'Schedule 500, Ontario corporate tax', rows: [['Taxable income', money(tx.cy)], ['Ontario small business rate', '3.2%'], ['Ontario tax before credits', money(onT)]] }, { no: 25, of: 31, title: 'Ontario credits and surtaxes', rows: [['Ontario credits claimed', 'Nil'], ['Ontario tax payable', money(onT)]] }],
+    disc: [{ no: 28, of: 31, title: 'T1135, foreign income verification statement', rows: [['Foreign property over $100,000.00 at any time', 'No']] }, { no: 29, of: 31, title: 'T1134 and T106, foreign affiliates and non-arm\'s length transactions with non-residents', rows: [['Foreign affiliates', 'None'], ['Reportable transactions with non-residents', 'None']] }],
+  };
+  printed.div = [{ no: 20, of: 31, title: 'Dividend accounts: GRIP, RDTOH, Part IV tax and capital dividend account', rows: [['General rate income pool, closing', 'Nil'], ['Eligible refundable dividend tax on hand, closing', 'Nil'], ['Part IV tax payable', 'Nil'], ['Capital dividend account, closing', 'Nil']] }];
+  if (ordered.cap.length) delete printed.cap;
+  if (ordered.div.length) delete printed.div;
 
-  return { which, cfg, key, lines, byId, ordered, flags: sortedFlags, six, corp: key.name, ye: longDate(key.fiscalYear.end), sectionLines };
+  // six numbers for the brief (RV-2)
+  const six = ['n-net-income', 'r-taxable', 'p-fed', 'p-on', 'p-inst', 'p-bal'];
+
+  return { which, cfg, key, lines, byId, ordered, printed, flags: sortedFlags, six, corp: key.name, ye: longDate(key.fiscalYear.end), sectionLines };
 }
 
 // ---------------------------------------------------------------- scenarios (which state of which return)
+const T = (m) => ['Zo', '10 Mar 2026, ' + m];
 export const SCENARIOS = {
-  'red': { slug: 'red', which: 'red', label: 'Maple Ridge, in progress', marks: { flags: null, bs: ['Zo', '10 Mar 2026, 09:42'], is: null, s1: null, other: null }, kind: 'progress' },
-  'red-rework': { slug: 'red-rework', which: 'red', label: 'Maple Ridge, back from rework', marks: { flags: null, bs: ['Zo', '10 Mar 2026, 09:42'], is: 'off', s1: ['Zo', '10 Mar 2026, 10:20'], other: ['Zo', '10 Mar 2026, 10:31'] }, kind: 'rework' },
-  'green': { slug: 'green', which: 'green', label: 'Queen West, in progress', marks: { flags: ['Zo', '10 Mar 2026, 11:08'], bs: ['Zo', '10 Mar 2026, 11:15'], is: null, s1: null, other: null }, kind: 'progress' },
-  'green-ready': { slug: 'green-ready', which: 'green', label: 'Queen West, every section marked', marks: { flags: ['Zo', '10 Mar 2026, 11:08'], bs: ['Zo', '10 Mar 2026, 11:15'], is: ['Zo', '10 Mar 2026, 11:24'], s1: ['Zo', '10 Mar 2026, 11:29'], other: ['Zo', '10 Mar 2026, 11:33'] }, kind: 'ready' },
+  'red': { slug: 'red', which: 'red', label: 'Maple Ridge, first review', marks: { stmt: T('09:42') }, kind: 'progress' },
+  'red-rework': { slug: 'red-rework', which: 'red', label: 'Maple Ridge, back from rework', marks: { stmt: 'off', s1: T('10:20'), cap: T('10:24'), loss: T('10:26'), rate: T('10:28'), div: T('10:31') }, kind: 'rework' },
+  'green': { slug: 'green', which: 'green', label: 'Queen West, first review', marks: { flags: T('11:08'), stmt: T('11:15') }, kind: 'progress' },
+  'green-ready': { slug: 'green-ready', which: 'green', label: 'Queen West, every section marked', marks: { flags: T('11:08'), stmt: T('11:15'), s1: T('11:20'), cap: T('11:22'), loss: T('11:23'), rate: T('11:25'), div: T('11:26'), sh: T('11:28'), on: T('11:30'), disc: T('11:31'), pay: T('11:33') }, kind: 'ready' },
 };
 
 const cache = {};

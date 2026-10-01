@@ -2,48 +2,28 @@
 <html lang="en" class="govuk-template">
 <head>
 <meta charset="utf-8">
-<title>CPA review prototypes - Ashbridge Tax</title>
+<title>CPA review prototype - Ashbridge Tax</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#355b7d">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.css">
-<link rel="stylesheet" href="./assets/ashbridge.css">
-
+<link rel="stylesheet" href="assets/ashbridge-v1.css">
 </head>
 <body class="govuk-template__body" >
 <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
 <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
-<header class="govuk-header" data-module="govuk-header">
-  <div class="govuk-header__container govuk-header__container--full-width">
-    <div class="govuk-header__logo"><a href="v1-record-tabs/queue.html" class="govuk-header__homepage-link"><span class="app-wordmark">Ashbridge <span>Tax</span></span></a></div>
-  </div>
-</header>
-<section aria-label="Service information" class="govuk-service-navigation" data-module="govuk-service-navigation">
-  <div class="govuk-width-container app-wide"><div class="govuk-service-navigation__container">
-    <span class="govuk-service-navigation__service-name"><a class="govuk-service-navigation__link" href="v1-record-tabs/queue.html">Return review</a></span>
-    <nav aria-label="Menu" class="govuk-service-navigation__wrapper"><ul class="govuk-service-navigation__list">
-      <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="v1-record-tabs/queue.html">Review queue</a></li>
-      <li class="govuk-service-navigation__item"><a class="govuk-service-navigation__link" href="v1-record-tabs/notes.html">Prototype notes</a></li>
-    </ul></nav>
-  </div></div>
-</section>
+<header class="govuk-header" data-module="govuk-header"><div class="govuk-header__container govuk-header__container--full-width"><div class="govuk-header__logo"><a href="v1-record-tabs/queue.html" class="govuk-header__homepage-link"><span class="app-wordmark">Ashbridge <span>Tax</span></span></a></div></div></header>
 
-<div class="govuk-width-container app-wide">
-  <main class="govuk-main-wrapper govuk-!-padding-top-3 govuk-!-padding-bottom-4" id="main-content" role="main">
-<h1 class="govuk-heading-l">CPA review: design prototypes</h1>
-<p class="govuk-body">Three structures for the same job (brief, section walk, source, flags, comments, approve), on made-up sample clients: Maple Ridge (red tier) and Queen West (green tier). Brief: design/briefs/cpa-review.md.</p>
-<ul class="govuk-list govuk-list--bullet">
-<li><a class="govuk-link" href="v1-record-tabs/queue.html">Version 1: record page with tabs, three panes</a> (<a class="govuk-link" href="v1-record-tabs/notes.html">notes</a>)</li>
-<li><a class="govuk-link" href="v2-list-and-detail/queue.html">Version 2: list and detail split</a> (<a class="govuk-link" href="v2-list-and-detail/notes.html">notes</a>)</li>
-<li><a class="govuk-link" href="v3-two-monitors/queue.html">Version 3: two monitors, source in a second window</a> (<a class="govuk-link" href="v3-two-monitors/notes.html">notes</a>, <a class="govuk-link" href="v3-two-monitors/layout.html">layout drawing</a>)</li></ul>
-  </main>
-</div>
-<footer class="govuk-footer"><div class="govuk-width-container app-wide"><p class="govuk-body-s govuk-!-margin-top-3 govuk-!-margin-bottom-0">Prototype for Zo to look at. Made-up data only (sample clients). Prototype date: 10 Mar 2026.</p></div></footer>
+<div class="govuk-width-container app-wide"><main class="govuk-main-wrapper app-main" id="main-content" role="main">
+<h1 class="govuk-heading-l">CPA review: design prototype</h1>
+<p class="govuk-body">One structure, kept after the usability panel and the findings review: the return record page with tabs, a vertical rail of sections, the source beside the work, and a second window opened on demand. Made-up sample clients: Maple Ridge (red tier) and Queen West (green tier). Brief: design/briefs/cpa-review.md, written from blueprint commit b9c5003.</p>
+<ul class="govuk-list govuk-list--bullet"><li><a class="govuk-link" href="v1-record-tabs/queue.html">Start at the review queue</a> (<a class="govuk-link" href="v1-record-tabs/notes.html">notes and parts</a>)</li></ul>
+<p class="govuk-body-s">Two earlier drafts (version 2, list and detail; version 3, two monitors) stay in their folders for the record and are not part of the sitting.</p>
+</main></div>
+
 <div id="app-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
-<script type="module" src="https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.js"></script>
 <script type="module">import { initAll } from 'https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.js'; initAll();</script>
-<script src="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.js"></script>
-<script>if (window.MOJFrontend) { window.MOJFrontend.initAll(); }</script>
-<script src="./assets/review.js"></script>
+<script type="module">import { initAll as mojInit } from 'https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.js'; mojInit();</script>
+
 </body>
 </html>

@@ -157,7 +157,7 @@ export function sourceBody(s) {
   if (s.kind === 'computed') {
     return `<div class="app-card"><h4>${esc(s.title)}</h4><p class="govuk-body-s">Not a document: a sum the system made. Each part is a number you can open.</p><ul class="app-lines">${s.parts.map((p) => `<li>${p.sign < 0 ? 'Less ' : ''}${esc(p.label)}: ${money(p.value)}</li>`).join('')}</ul></div>`;
   }
-  return `<div class="app-card"><h4>${esc(s.title)}</h4><p class="govuk-body-s">Not a document page. ${s.kind === 'cra' ? 'A capture from CRA My Business Account (test).' : s.kind === 'answer' ? 'An answer the client gave in the client app.' : 'A figure carried from a calculation or a prior return.'}</p><dl>${s.fields.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></div>`;
+  return `<div class="app-card"><h4>${esc(s.title)}</h4><p class="govuk-body-s">Not a document page. ${s.kind === 'taxprep' ? 'A Taxprep result. Made-up value for the design.' : s.kind === 'cra' ? 'A capture from CRA My Business Account (test).' : s.kind === 'answer' ? 'An answer the client gave in the client app.' : 'A figure carried from a calculation or a prior return.'}</p><dl>${s.fields.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></div>`;
 }
 
 // the source pane content for one number (every source, one visible); state: normal | loading | failed
@@ -181,7 +181,7 @@ export function sourceButtons(n, extra = '') {
 }
 
 // ---------------------------------------------------------------- trace
-const statusOf = (s) => ({ sheet: ['green', 'Traced'], statement: ['green', 'Traced'], closing: ['green', 'Traced'], cra: ['green', 'Traced'], prior: ['green', 'Traced'], entry: ['purple', 'Entry or judgement'], answer: ['purple', 'Entry or judgement'], computed: ['purple', 'Computed'] }[s.kind]);
+export const statusOf = (s) => ({ sheet: ['green', 'Traced'], statement: ['green', 'Traced'], closing: ['green', 'Traced'], cra: ['green', 'Traced'], prior: ['green', 'Traced'], entry: ['purple', 'Entry or judgement'], answer: ['purple', 'Entry or judgement'], computed: ['purple', 'Computed'], taxprep: ['purple', 'Computed'] }[s.kind]);
 export function traceBody(l, R, scn, { sel, key, srcsOverride }) {
   const srcs = srcsOverride || l.srcs;
   const fl = l.flagIds.map((id) => R.flags.find((f) => f.id === id));

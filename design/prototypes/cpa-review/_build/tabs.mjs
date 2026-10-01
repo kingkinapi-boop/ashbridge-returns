@@ -1,3 +1,4 @@
+// FROZEN since the second round: drafted version 2 or 3 against the first data model; not run any more (their pages stay as built).
 // Versions 1 and 3: a return record page with sub navigation tabs. Version 1 shows return, trace and source side by side
 // (three panes). Version 3 keeps return and trace on the first monitor and the source viewer in a second window.
 import { esc, money, SECTIONS, SCENARIOS, getReturn, reworkView, sectionState, marksLeft } from './model.mjs';
