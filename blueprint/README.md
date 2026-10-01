@@ -20,10 +20,6 @@ Version v1.1, 29 Sep 2026. The plain end state below is what Zo approves; he app
 
 Not in this build: financial statements or CSRS 4200 work (QBO makes the statements), a bookkeeping module, slip preparation (Returns only checks slips), measuring time saved.
 
-## Clauses still to bring into line with v1.1 (the Lead, first job of the new plan)
-
-TB-1 to TB-9 (books come from QBO); RT-1 to RT-23 (one lock export plus one check before transmit; token and gates settled on the Taxprep trial); TB-6 and RV-22 (tax choices in Taxprep, cite button); RV-5 and RV-7 (explicit marks that reset on change; AI-drafted fixes); ARC-6 (the AI adapter is a Claude project on the subscription); CK additions (shareholder-loan continuity, CCA additions, the income tax provision, instalment tests as code, bonus paid by day 179, CRA's last-day due-date rule); END-9 and ARC-8 (the sample clients become the test world); OUT (the "not in this build" list above).
-
 ## Files (agents read only what a card names)
 
 | File | Holds | Clause prefix |
@@ -31,8 +27,8 @@ TB-1 to TB-9 (books come from QBO); RT-1 to RT-23 (one lock export plus one chec
 | `00-end-state.md` | What done looks like; the thirteen return kinds | END |
 | `01-rules.md` | Fixed decisions and design rules | RULE |
 | `02-lifecycle.md` | States, moves, what voids approval, due dates | FLOW |
-| `03-evidence.md` | Documents, facts, origins, dots, the books | EV, TB |
-| `04-roundtrip.md` | Taxprep CSV protocol, exports 0 to 3, trace, gates | RT |
+| `03-evidence.md` | Documents, facts, origins, dots, the books read from QBO | EV, TB |
+| `04-roundtrip.md` | Taxprep CSV protocol, the lock and check exports, trace, the check before transmit | RT |
 | `05-checks.md` | Ties, reconciliations, flags, AI, exceptions, tiers | CK, AI, EX |
 | `06-screens.md` | CPA, preparer, ops and owner screens; the design basis | RV |
 | `07-learning.md` | Versions, causes, ranking, lessons into the build | LL |
@@ -48,10 +44,10 @@ A clause is one testable sentence with an ID (`- **RT-4** ...`). IDs are never r
 - **Return:** one corporation, one tax year.
 - **Fact:** one value with a meaning and a source.
 - **Figure:** one Taxprep input value, built from facts, accounts, adjusting entries or judgment inputs.
-- **Adjusting entry:** a change to the client's books that nets to zero, with a type, a reason and sources.
-- **Judgment input:** a tax choice made in our app (CCA claim, dividend designation, election, business limit share) with a reason.
-- **Export 0 to 3:** Taxprep CSV exports at baseline, receipt, lock and transmit.
-- **Orphan:** a value in Taxprep that we never imported and cannot trace.
+- **Adjusting entry:** a change to the client's books, made in QBO and read from it, that nets to zero, with a type, a reason and sources.
+- **Judgment input:** a tax choice typed in Taxprep (CCA claim, dividend designation, election, business limit share), with a source or reason from the cite button.
+- **Lock export and check export:** the Taxprep CSV exports at lock and just before transmit.
+- **Orphan:** a value in Taxprep that we never imported and that is not rolled forward from last year's return (RT-14).
 - **Tie:** two amounts that must agree to the dollar. **Reconciliation:** two amounts whose difference must be fully explained by typed, sourced items. **Flag:** something a person judges; code never passes or fails it.
 - **Dot:** how strong a number's evidence is (green, grey, amber, purple). An open exception is a separate red flag.
-- **Test world:** thirteen made-up corporations with known right answers, and their documents.
+- **Test world:** the ten sample clients, extended to thirteen made-up return kinds with known right answers, and their documents.

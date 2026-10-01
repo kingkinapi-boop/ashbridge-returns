@@ -22,7 +22,7 @@ Loaded automatically when you touch screens, the component library or designs. E
 3. axe with tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa` finds no violation on any screen, in every state the journeys reach (empty, error, flagged, approved, void).
 4. Every page has one h1, a skip link to `main`, the Generic header with the logo, and a `<title>` naming the page and the return, starting "Error: " when the error summary shows. Every return screen shows the MOJ identity bar with the corporation and year end (RV-50).
 5. Every table has a caption and scoped headers; money sits in numeric cells with tabular figures; one figure prints the same string in the brief, the section, the trace and the viewer caption.
-6. Every list of returns, flags, exceptions or lessons longer than 5 rows is an MOJ sortable table with `aria-sort` and a stated default order (queue: due date first). Return sections keep the printed order and are never sortable (RV-1).
+6. Every list of returns, flags, exceptions or lessons longer than 5 rows is an MOJ sortable table with `aria-sort` and a default order stated by its own clause in its brief (preparer queue by due date, RV-20; CPA queue by tier, RV-8); one measure has one name everywhere and one column has one date format. Return sections keep the printed order and are never sortable (RV-1).
 7. Colour never works alone: every dot, tier, flag, tag and highlight has words (visible or visually hidden) and a non-colour cue. One status has one word and one colour everywhere.
 8. No disabled buttons and no dead controls: an action that cannot run yet is absent, and the page says what is left, with links. (So "Approve" appears only when every section is reviewed, RV-5.)
 9. Every form uses the GOV.UK error pattern (summary focused, links to fields, the same message at the field, says what to do). No radio is preselected. A button that waits on the server shows a loading state at once.
@@ -34,6 +34,12 @@ Loaded automatically when you touch screens, the component library or designs. E
 15. SINs, dates of birth and banking numbers planted in the test world never appear unmasked on any page or page image (SEC-4).
 16. Never ship a placeholder, "coming soon", lorem ipsum, an em dash, a link or button that goes nowhere, or a field without a label; a field a stranger could misread has a hint (RV-50).
 17. Every built screen matches its approved design page within the visual threshold, with baselines made in the cloud container, never on the laptop.
+18. Budgets and the fold are measured at 1366 x 650 and at 1093 x 525 (125% zoom); panes never stack at either size. A page load is a full document navigation; a tab or section change is a client-side route with its own URL (0 loads); opening a source adds no history entry.
+19. Every action on a list or record runs in place (no separate page for a form of 3 fields or fewer), keeps the scroll, moves focus to the result or next row and announces it; bulk bars are sticky; a bulk action never includes a row flagged for a person.
+20. Every source opens through the one source viewer (D03): beside the work, never below a table; full height, the box scrolled into view, focus moved in; plus a second window opened by script (`window.open(url, name)`, no `noopener`) that follows every selection and tab change.
+21. Header search shows a results page when more than one thing matches; every list over 5 rows has search or a filter. Back returns to the list you came from with its filter, sort and scroll; next and previous follow that list.
+22. A single key never unmarks, approves, sends or deletes; such keys only move focus to the control. "Reviewed, next" marks and moves on, never unmarks.
+23. One return record shell (identity bar plus record tabs) for every role and family; a family fills a tab, never adds its own tab set. SINs show no digits ("SIN on file").
 
 ## Carried over from the client app (so both apps look like one firm)
 - Headings in title case and a red asterisk on required fields, as in the client app, although GOV.UK advises otherwise (amber A20).
