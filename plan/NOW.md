@@ -14,7 +14,6 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | F00 round 3 spec (security fixes, reports/F00-findings-3.md; spec reopened) | cloud run | cloud | 1 Oct 22:25Z | claude/F00 |
-| QBO .GFI walker, second try (Zo signs in if needed, Z16-1) | Sonnet walker, Chrome | local | 1 Oct 22:05Z | rewrites reference/qbo/gfi-file.md, uncommitted |
 | design fix round: cpa-review V1 | designer (old session) | local | 1 Oct | claude/design-cpa-review-2 |
 | design fix round: source viewer D03 | designer (old session) | local | 1 Oct | claude/design-source-viewer-2 |
 
@@ -27,7 +26,7 @@ Done and on branches, not yet re-tested: claude/design-queues-record-2, claude/d
 3. Re-specs: F03 and S00 (re-carded from the trial). Specs reported for F01, F04, F05, F08, F09, W00 wait on F00 done (dep gate).
 4. Phase 2: reviewed and fixed (reports/review-phase2.md, A234 to A246; red 1 settled as amber A245, RT-25 changed, CPA check item 33). Specs wait on S03 (FINDINGS final). Next design: D05 brief with Ready and the clear.
 5. Chrome order (one walker at a time): when 5C resume reports, the .GFI walker (decision 0016 Z16-1: if no Accountant view, open the QBO sign-in page and wait up to 15 min for Zo; 0013 limits), then 5A steps 2 to 5 and 5B with imports by script on (Test) returns (Z16-3), then 5D. Then the "After day 5" helper. Day 6 Sun 4 Oct.
-6. .GFI result: write reference/qbo/gfi-file.md, then B01 spec.
+6. .GFI: Accountant view reached (firm "Ashbridge Tax"); path Your books > Workpapers > Books to tax actions > Export GIFI file; header-only file (blank books). To-do #1: made-up accounts in the firm books (red: firm data) or Zo exports one (shape only). Then gfi-file.md and B01 spec.
 7. Designs: when the two fix rounds report, re-test only the changed tasks on the four families (tester panel mode), then the sitting page for Zo (Artifact, private) with the six questions in reports/findings-designs.md (d), about 3 Oct. Then D00 and D01.
 
 ## Watch out
