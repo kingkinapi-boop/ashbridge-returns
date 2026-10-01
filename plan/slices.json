@@ -12,7 +12,7 @@
   "cards": [
     {
       "status": "carded",
-      "spec": "n/a",
+      "spec": null,
       "deps": [],
       "paths": [
         "package.json",
