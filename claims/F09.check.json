@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-01T23:32:56.079Z",
  "worker": "cloud-45ec67",
- "state": "working",
- "at": "2026-10-01T23:52:49.080Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-01T23:56:09.668Z",
+ "mode": "turbo",
+ "note": "FAIL: lint 8 errors in acceptance file (spec defect) and valueInBox holes, see reports/F09-check.md"
 }
