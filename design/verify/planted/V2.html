@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>V2 planted</title>
+<style>body{margin:0}#bar{position:sticky;top:0;background:#1d70b8;color:#fff;height:40px}#pane{position:sticky;top:40px;height:200px;overflow:auto;border:1px solid}#far{margin-top:2500px}</style></head><body>
+<!-- Bad: the action calls scrollIntoView on a node far down the page. Good (?good=1): it only changes text. -->
+<div id="bar" data-identity-bar>Identity bar</div>
+<div id="pane"><button id="go">Mark reviewed</button> <p id="out">Not reviewed</p></div>
+<p id="far">Far below</p>
+<script>
+const good = location.search.includes('good')
+document.getElementById('go').onclick = () => {
+  document.getElementById('out').textContent = 'Reviewed'
+  if (!good) document.getElementById('far').scrollIntoView()
+}
+</script></body></html>
