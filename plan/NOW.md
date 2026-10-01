@@ -17,7 +17,7 @@ All helpers run on the laptop for now: `claude --cloud` needs a person at a term
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| slices re-cut into five phases | Opus drafter | local | 1 Oct | claude/slices-v1-1 |
+| phase 0 cards (F08, F09, W00, S00 to S03, A01, JH0) | Opus drafter | local | 1 Oct | claude/cards-phase0 |
 | design versions cpa-review | designer | local | 1 Oct | claude/design-cpa-review |
 | usability panels queues-record, workbench | tester (panel) x2 | local | 1 Oct | claude/panel-<family> |
 
@@ -26,7 +26,7 @@ Done today: trial day 1 script (Opus read) and draft import CSVs on main; all fo
 ## Next, in order
 
 1. As each research pair lands: put both files on main, run the research checker (Opus), add a line to reference/research/INDEX.md. Ties and flags already show clause errors (CK-15 add-back is 8670 + 8459 + 9791; CK-38 accrued bonuses get no T4; CK-19 percentages not dollars; CK-12 latest assessed figure): fold the reconciled answers into the clauses as ambers and list them for the CPA's check.
-2. Clauses: review the drafter's branch (reports/clauses-v1-1.md), merge blueprint to main, add its amber rows. Then re-cut slices.json into the five phases, one phase ahead, F00 first; then the phase 1 card review by an independent worker.
+2. Slices re-cut (reports/slices-v1-1.md, A75 to A80). When the phase 0 cards land: an independent Opus worker reviews all phase 0 cards against the blueprint, the Lead fixes them, then F00 spec starts (the rehearsal: spec, build, check by three workers, local train). Then write phase 1 cards one phase ahead.
 3. Queue repairs landed. Rehearsal of the loop (spec, build, check, train) on F00 once slices are re-cut.
 4. Designs: usability panel (tester, panel mode) on each family, then the sitting link for Zo about 3 Oct.
 5. Trial: day 1 script read by Opus and on main; to-do #4 says ready. On Zo's "4 started": a Sonnet walker runs day 1 with Chrome. Import CSVs (claude/sample-csv) must be on main before day 2; cell ids from day 1 replace the guesses.
