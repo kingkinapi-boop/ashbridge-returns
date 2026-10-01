@@ -163,6 +163,86 @@ describe('check FAIL holds the build for the findings review', () => {
   })
 })
 
+describe('dependency gate', () => {
+  const mkCards = (depStatus = 'carded', depSpec = 'd1') => [
+    { id: 'D', status: depStatus, spec: depSpec, deps: [], paths: ['src/d/**'] },
+    { id: 'S', status: 'carded', spec: null, deps: ['D'], paths: ['src/s/**'] },
+    { id: 'W', status: 'carded', spec: 'w1', deps: ['D'], paths: ['src/w/**'] },
+  ]
+  const only = (w, role, worker = 'w9') => claim(w, ['next', '--worker', worker, '--roles', role]).out
+
+  test('gate: a spec is not offered while a dep has no reported build', () => {
+    const w = world({ cards: mkCards() })
+    expect(only(w, 'spec')).toBe('NOTHING')
+    claim(w, ['next', '--worker', 'w1', '--roles', 'build']) // D build working, not reported
+    expect(only(w, 'spec')).toBe('NOTHING')
+  })
+
+  test('gate: a spec is offered once every dep has a reported build, but its build waits for merge', () => {
+    const w = world({ cards: mkCards() })
+    claim(w, ['next', '--worker', 'w1', '--roles', 'build'])
+    claim(w, ['update', 'D', 'build', 'reported', '--worker', 'w1'])
+    expect(only(w, 'spec')).toBe('CLAIMED S spec')
+    expect(only(w, 'build')).toBe('NOTHING') // W has a spec but D is not merged
+  })
+
+  test('gate: a build is offered when every dep is done', () => {
+    const w = world({ cards: mkCards('done') })
+    expect(only(w, 'build')).toBe('CLAIMED W build')
+    expect(only(w, 'spec')).toBe('CLAIMED S spec')
+  })
+
+  test('gate: checks are not gated by deps', () => {
+    const w = world({ cards: mkCards() })
+    // W depends on D, which is not merged; its build was reported anyway (written directly)
+    claim(w, ['update', 'W', 'build', 'reported', '--worker', 'w1'])
+    expect(only(w, 'check')).toBe('CLAIMED W check')
+  })
+
+  test('gate: a parked dep blocks the spec and the build', () => {
+    const w = world({ cards: mkCards('parked') })
+    expect(only(w, 'spec')).toBe('NOTHING')
+    expect(only(w, 'build')).toBe('NOTHING')
+  })
+
+  test('gate: next.mjs says which deps a card is waiting on', () => {
+    const w = world({ cards: mkCards() })
+    const r = run(w, 'next.mjs', ['5'])
+    expect(r.out).toMatch(/waiting on deps: .*S \(D\)/)
+    expect(r.out).toMatch(/W \(D\)/)
+    expect(r.out).toMatch(/START D /)
+    expect(r.out).not.toMatch(/START S /)
+  })
+
+  test('gate: next.mjs sees a reported dep build and lets the spec start', () => {
+    const w = world({ cards: mkCards() })
+    claim(w, ['next', '--worker', 'w1', '--roles', 'build'])
+    claim(w, ['update', 'D', 'build', 'reported', '--worker', 'w1'])
+    const r = run(w, 'next.mjs', ['5'])
+    expect(r.out).toMatch(/START S .*NEEDS SPEC FIRST/)
+    expect(r.out).toMatch(/W \(D\)/)
+  })
+})
+
+describe('spec reopen', () => {
+  const cards = [{ id: 'A', status: 'carded', spec: null, deps: [], paths: ['src/a/**'] }]
+  test('reopen: the lead may reopen a spec and it is offered again; a worker is refused', () => {
+    const w = world({ cards })
+    claim(w, ['next', '--worker', 'w1', '--roles', 'spec'])
+    claim(w, ['update', 'A', 'spec', 'reported', '--worker', 'w1', '--commit', 'abc'])
+    expect(claim(w, ['next', '--worker', 'w2', '--roles', 'spec']).out).toBe('NOTHING')
+    expect(claim(w, ['update', 'A', 'spec', 'reopened', '--worker', 'w1']).code).toBe(6)
+    expect(claim(w, ['update', 'A', 'spec', 'reopened', '--worker', 'w2']).code).toBe(6)
+    expect(claim(w, ['update', 'A', 'spec', 'reopened', '--worker', 'lead']).out).toBe('UPDATED A spec reopened')
+    expect(claim(w, ['next', '--worker', 'w2', '--roles', 'spec']).out).toBe('CLAIMED A spec')
+  })
+
+  test('reopen: a role other than build or spec is still refused', () => {
+    const w = world({ cards })
+    expect(claim(w, ['update', 'A', 'check', 'reopened', '--worker', 'lead']).code).toBe(6)
+  })
+})
+
 describe('wind-down', () => {
   const mode = { wind_down_at: at(60) }
   test('wind-down: after the time no new build is handed out, but specs still flow', () => {

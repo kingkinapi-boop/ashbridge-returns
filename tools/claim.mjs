@@ -7,7 +7,9 @@
 // The working tree and HEAD are never touched (git plumbing only).
 //
 // Jobs, in priority order: check (a reported build needs an independent
-// check), build (a card with its spec commit), spec (a card with no spec yet).
+// check), build (a card with its spec commit, every dep done), spec (a card with no spec
+// yet, every dep done or with a reported build). Parked cards and cards with a parked dep
+// are never offered a build or a spec. Checks are not gated by deps.
 // A worker never checks a card it built or spec'd.
 //
 // Usage:
@@ -21,6 +23,8 @@
 //        FAILS a card (`update <card> check failed`) writes the check and puts the
 //        build on `hold-findings` in ONE push; the queue does not reopen the build
 //        until the Lead runs `update <card> build reopened --worker lead` after the
+//        (`update <card> spec reopened --worker lead` likewise reopens a spec once the
+//        findings review has added tests; no other worker or role may reopen)
 //        findings review. After 3 failed builds a card is not handed out again until
 //        the Lead parks or re-cards it.
 //   node tools/claim.mjs beat <card> <role> --worker <name>
@@ -33,7 +37,7 @@ import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { ROOT, pathsOverlap } from './lib.mjs'
+import { ROOT, pathsOverlap, depGate } from './lib.mjs'
 
 const BRANCH = 'claude/claims'
 const REMOTE = process.env.CLAIMS_REMOTE || 'origin'
@@ -178,7 +182,7 @@ function next() {
     if (active.filter((c) => c.state === 'working').length >= cap) return out(`PAUSED ${mode.mode} (cap ${cap} reached)`, 3)
 
     const status = Object.fromEntries(cards.map((c) => [c.id, c.status]))
-    const depsDone = (c) => (c.deps || []).every((d) => status[d] === 'done')
+    const reportedBuilds = new Set(claims.filter((c) => c.role === 'build' && c.state === 'reported').map((c) => c.card))
     const claimFor = (id, role) => claims.find((c) => c.card === id && c.role === role)
     // Paths are held by working specs and by builds until the Lead merges them; a card never blocks itself.
     const holds = (c) => c.role === 'build' || (c.role === 'spec' && c.state === 'working')
@@ -204,20 +208,22 @@ function next() {
         }
         if (role === 'build') {
           const s = claimFor(c.id, 'spec')
-          const specReady = c.spec || (s && s.state === 'reported' && s.commit)
-          if (!specReady || !depsDone(c)) continue
+          const reopened = s && s.state === 'reopened'
+          const specReady = (c.spec && !reopened) || (s && s.state === 'reported' && s.commit)
+          if (!specReady || !depGate(c, 'build', status, reportedBuilds).ok) continue
           const b = claimFor(c.id, 'build')
           if (b && isActive(b)) continue
           if (b && b.state === 'hold-findings') continue // waits for the Lead's findings review
           if (b && b.state === 'failed' && (b.round || 1) >= MAX_ROUNDS) continue
           if (s && s.worker === worker && c.spec !== 'n/a') continue
           if (pathsOverlap(c.paths || [], busyFor(c.id))) continue
-          pick = { card: c.id, role, round: (b?.round || 0) + 1, spec: c.spec || s.commit }
+          pick = { card: c.id, role, round: (b?.round || 0) + 1, spec: (reopened ? s.commit : c.spec) || s.commit }
           break
         }
         if (role === 'spec') {
-          if (c.spec) continue
           const s = claimFor(c.id, 'spec')
+          if (c.spec && !(s && s.state === 'reopened')) continue
+          if (!depGate(c, 'spec', status, reportedBuilds).ok) continue
           if (s && (isActive(s) || s.state === 'reported')) continue
           pick = { card: c.id, role }
           break
@@ -243,7 +249,7 @@ function update() {
   const [, card, role, state] = args
   if (!card || !role || !STATES.includes(state)) return out('usage: update <card> <role> <working|reported|failed|released|reopened> --worker <name>', 2)
   const worker = opt('worker', 'unknown')
-  if (state === 'reopened' && (worker !== 'lead' || role !== 'build')) return out('REFUSED: only --worker lead may reopen a build', 6)
+  if (state === 'reopened' && (worker !== 'lead' || !['build', 'spec'].includes(role))) return out('REFUSED: only --worker lead may reopen a build or a spec', 6)
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     fetchAll()
     const claims = readClaims(claimsTip())
