@@ -605,7 +605,8 @@
         "END-1",
         "ARC-2",
         "FLOW-11",
-        "OUT-6"
+        "OUT-6",
+        "RT-5"
       ],
       "id": "F07",
       "title": "Client-app bridge on made-up data",
@@ -3891,7 +3892,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M10",
       "title": "Mapping and simulator cells: T2 identification and main lines",
@@ -3916,7 +3920,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M11",
       "title": "Mapping and simulator cells: Schedule 100 balance sheet (GIFI)",
@@ -3941,7 +3948,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M12",
       "title": "Mapping and simulator cells: Schedule 125 income statement (GIFI)",
@@ -3966,7 +3976,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M13",
       "title": "Mapping and simulator cells: Schedule 1 net income for tax",
@@ -3986,12 +3999,16 @@
       "paths": [
         "data/taxprep/placeholder/s8.json",
         "data/taxprep/map/s8.json",
-        "src/modules/mapping/schedules/s8.test.ts"
+        "src/modules/mapping/schedules/s8.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M14",
       "title": "Mapping and simulator cells: Schedule 8 CCA",
@@ -4011,12 +4028,16 @@
       "paths": [
         "data/taxprep/placeholder/s50.json",
         "data/taxprep/map/s50.json",
-        "src/modules/mapping/schedules/s50.test.ts"
+        "src/modules/mapping/schedules/s50.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M15",
       "title": "Mapping and simulator cells: Schedule 50 shareholders",
@@ -4036,12 +4057,16 @@
       "paths": [
         "data/taxprep/placeholder/s3.json",
         "data/taxprep/map/s3.json",
-        "src/modules/mapping/schedules/s3.test.ts"
+        "src/modules/mapping/schedules/s3.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M16",
       "title": "Mapping and simulator cells: Schedule 3 dividends",
@@ -4061,12 +4086,16 @@
       "paths": [
         "data/taxprep/placeholder/s9-s23.json",
         "data/taxprep/map/s9-s23.json",
-        "src/modules/mapping/schedules/s9-s23.test.ts"
+        "src/modules/mapping/schedules/s9-s23.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M17",
       "title": "Mapping and simulator cells: Schedules 9 and 23 (related, associated, business limit)",
@@ -4086,12 +4115,16 @@
       "paths": [
         "data/taxprep/placeholder/s7.json",
         "data/taxprep/map/s7.json",
-        "src/modules/mapping/schedules/s7.test.ts"
+        "src/modules/mapping/schedules/s7.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M18",
       "title": "Mapping and simulator cells: Schedule 7 investment income",
@@ -4111,12 +4144,16 @@
       "paths": [
         "data/taxprep/placeholder/s4.json",
         "data/taxprep/map/s4.json",
-        "src/modules/mapping/schedules/s4.test.ts"
+        "src/modules/mapping/schedules/s4.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M19",
       "title": "Mapping and simulator cells: Schedule 4 losses",
@@ -4136,12 +4173,16 @@
       "paths": [
         "data/taxprep/placeholder/s2.json",
         "data/taxprep/map/s2.json",
-        "src/modules/mapping/schedules/s2.test.ts"
+        "src/modules/mapping/schedules/s2.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M20",
       "title": "Mapping and simulator cells: Schedule 2 donations",
@@ -4161,12 +4202,16 @@
       "paths": [
         "data/taxprep/placeholder/s53.json",
         "data/taxprep/map/s53.json",
-        "src/modules/mapping/schedules/s53.test.ts"
+        "src/modules/mapping/schedules/s53.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M21",
       "title": "Mapping and simulator cells: Schedule 53 GRIP",
@@ -4191,7 +4236,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M22",
       "title": "Mapping and simulator cells: Schedule 141 notes checklist",
@@ -4216,7 +4264,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M23",
       "title": "Mapping and simulator cells: Ontario schedules",
@@ -4612,6 +4663,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4659,6 +4711,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4706,6 +4759,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4753,6 +4807,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4800,6 +4855,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4847,6 +4903,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4894,6 +4951,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4941,6 +4999,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4988,6 +5047,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -5035,6 +5095,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -5082,6 +5143,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -5129,6 +5191,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -5176,6 +5239,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
