@@ -2,7 +2,8 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-dd8c04",
- "state": "working",
- "at": "2026-10-01T19:36:50.948Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-01T19:36:56.579Z",
+ "mode": "turbo",
+ "note": "dep F03 not built or merged; queue re-hands it until the dep gate lands (queue-repair-2). Model: sonnet"
 }
