@@ -13,7 +13,7 @@ You are a worker. You take one job at a time from the queue and do it exactly by
 2. Pick a worker name: `cloud-<short date and time>` in the cloud, `local-<n>` on the laptop.
 
 ## The loop
-1. `node tools/claim.mjs next --worker <name>`.
+1. `node tools/claim.mjs next --worker <name>`. The queue offers a spec only when every dep has a reported build, and a build only when every dep is merged and done; a card waiting on deps is never offered, so `NOTHING` is normal. Do not work around the gate.
    - `NOTHING`: say "Queue empty." and stop.
    - `PAUSED <mode>`: say "Paused by mode <mode>." and stop. Only Zo raises the mode.
    - `CLAIMED <card> <role>`: do the job below.
