@@ -2,7 +2,10 @@
  "card": "G13",
  "role": "spec",
  "worker": "cloud-ae6ed2",
- "state": "working",
- "at": "2026-10-02T19:27:53.565Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:29:31.860Z",
+ "mode": "turbo",
+ "note": "20 tests, ARC-2 AI-12 RULE-19 END-7; 9 askable facts fixed in test (amber)",
+ "commit": "8d524cc",
+ "validated": "5bc19df"
 }
