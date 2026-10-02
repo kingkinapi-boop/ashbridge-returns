@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "cfc8d79",
  "worker": "cloud-4a59ee",
- "state": "reported",
- "at": "2026-10-02T01:52:17.131Z",
+ "state": "released",
+ "at": "2026-10-02T04:53:28.696Z",
  "mode": "normal",
- "note": "mutation 93.53 to 100; 5 unit tests; ARC-13 tie right-side check was the one clause survivor"
+ "note": "merged"
 }
