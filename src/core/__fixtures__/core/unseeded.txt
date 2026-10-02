@@ -1,0 +1,18 @@
+// Planted fault for the ARC-16 seed rule: the second property has no fixed seed.
+test('ARC-13 seeded (Test)', () => {
+  fc.assert(
+    fc.property(fc.integer(), (n) => {
+      expect(n).toBe(n)
+    }),
+    { seed: 42, numRuns: 10 },
+  )
+})
+
+test('ARC-13 unseeded (Test)', () => {
+  fc.assert(
+    fc.property(fc.array(fc.integer()), (xs) => {
+      expect(xs.length).toBeGreaterThanOrEqual(0)
+    }),
+    { numRuns: 10 },
+  )
+})

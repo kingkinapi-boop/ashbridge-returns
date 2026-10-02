@@ -1,0 +1,177 @@
+[
+  {
+    "line": 2,
+    "id": "IDENT.Ident120",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "2025-01-01"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "Line 060 - Tax year start date",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 3,
+    "id": "IDENT.Ident311",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "Café Étienne Ltée (Test)"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "Corporation's name",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 4,
+    "id": "IDENT.Ident180",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "Y"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 5,
+    "id": "IDENT.Ident183",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "N"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 6,
+    "id": "GFGBA.Ttwgba64",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "0"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 1002 - Deposits in Canadian banks and institutions - Canadian currency",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 7,
+    "id": "GFGBA.Ttwgba72",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "clear"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 1062 - Trade accounts receivable",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 8,
+    "id": "GFGBA.Ttwgba127",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "1620"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 9,
+    "id": "GFBGII[1].GFGIJ.Ttwgij104",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "48600"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 10,
+    "id": "FDONE.SLIPA[3].TtwoneA2",
+    "copyPath": "FDONE.SLIPA",
+    "copyIndex": 3,
+    "current": {
+      "kind": "value",
+      "text": "-1356"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 11,
+    "id": "CCACat.FD08C[2].FED.Ttw08cA1",
+    "copyPath": "CCACat.FD08C",
+    "copyIndex": 2,
+    "current": {
+      "kind": "value",
+      "text": "8"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 12,
+    "id": "CCACat.FD08C[2].FED.Ttw08cA2",
+    "copyPath": "CCACat.FD08C",
+    "copyIndex": 2,
+    "current": {
+      "kind": "value",
+      "text": "0.2000"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "",
+    "shape": "standard",
+    "apostrophe": false
+  }
+]

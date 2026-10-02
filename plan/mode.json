@@ -1,11 +1,11 @@
 {
   "mode": "turbo",
   "resume_to": null,
-  "set_by": "Zo, 1 Oct 2026: \"turbo should be on until I say off\" (decision 0009)",
-  "set_at": "2026-10-01",
-  "why": "Weekly reset on 1 Oct. Cloud first: the laptop runs the Lead plus at most one local worker. First the queue repairs and a rehearsal at small width; streams that do not need the queue (research, design research, trial preparation) start at once.",
+  "set_by": "Zo, 2 Oct 2026 about 02:10Z: \"turbo on\" (decision 0018), after the Reviewer SLOW of 01:50Z (he answered its A63/A69 item in the same sitting); local_workers 2 (0018). The Reviewer HOLD on money.ts, ids.ts and clock stays (card F00T).",
+  "set_at": "2026-10-02",
+  "why": "Zo raised it. The Lead does the Reviewer fixes first in the queue: F00T (core tests by a spec job, seeded), per-file mutation break on @mutate files (DG), F09 and TH first.",
   "wind_down_at": "2026-10-09T18:00:00-04:00",
   "heavy_slots": 1,
   "max_workers": 12,
-  "local_workers": 1
+  "local_workers": 2
 }

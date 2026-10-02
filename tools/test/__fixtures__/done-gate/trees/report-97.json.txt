@@ -1,0 +1,771 @@
+{
+ "schemaVersion": "2",
+ "thresholds": {
+  "high": 90,
+  "low": 80
+ },
+ "files": {
+  "src/gate/add.ts": {
+   "language": "typescript",
+   "source": "",
+   "mutants": [
+    {
+     "id": "1",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "2",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "3",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "4",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "5",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "6",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "7",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "8",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "9",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "10",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    }
+   ]
+  },
+  "src/gate/sub.ts": {
+   "language": "typescript",
+   "source": "",
+   "mutants": [
+    {
+     "id": "100",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "101",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "102",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "103",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "104",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "105",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "106",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "107",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "108",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "109",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "110",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "111",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "112",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "113",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "114",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "115",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "116",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "117",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "118",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "119",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "120",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "121",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "122",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "123",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "124",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "125",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "126",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "127",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "128",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "129",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "130",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "131",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "132",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "133",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "134",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "135",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "136",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "137",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "138",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "200",
+     "mutatorName": "ConditionalExpression",
+     "status": "Survived",
+     "location": {
+      "start": {
+       "line": 7,
+       "column": 1
+      },
+      "end": {
+       "line": 7,
+       "column": 9
+      }
+     }
+    }
+   ]
+  }
+ }
+}

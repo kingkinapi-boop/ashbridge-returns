@@ -1,0 +1,10 @@
+{
+  "note": "Made up (A05 spec fixture, SEC-11). A company folder whose name lacks the test marker: the Drive stand-in must refuse it. Corporation id here: c02b0000-0000-4000-8000-000000000002.",
+  "files": [
+    {
+      "drive_file_id": "drv-nontest-0001",
+      "path": "Northgate Supplies Inc. (c02b0000)/2025/invoice-0001.pdf",
+      "mime_type": "application/pdf"
+    }
+  ]
+}

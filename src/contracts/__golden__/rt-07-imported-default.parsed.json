@@ -1,0 +1,321 @@
+[
+  {
+    "line": 2,
+    "id": "GFGBA.Ttwgba64",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "7693"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 1002 - Deposits in Canadian banks and institutions - Canadian currency",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 3,
+    "id": "GFGBA.Ttwgba72",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "975"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 1062 - Trade accounts receivable",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 4,
+    "id": "GFGBA.Ttwgba127",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "1620"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 1484 - Prepaid expenses",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 5,
+    "id": "GFBGII[1].GFGIJ.Ttwgij104",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "48600"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 8141 - Amount - Real estate rental revenue",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 6,
+    "id": "GFBGII[1].GFGIL.Ttwgil137",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "22670"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 8670 - Amount - Amortization of tangible assets",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 7,
+    "id": "GFBGII[1].GFGIL.Ttwgil138",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "2160"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 8690 - Amount - Insurance",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 8,
+    "id": "GFBGII[1].GFGIL.Ttwgil144",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "19214"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 8713 - Amount - Interest on mortgages",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 9,
+    "id": "GFBGII[1].GFGIL.Ttwgil146",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "155"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 8715 - Amount - Bank charges",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 10,
+    "id": "GFBGII[1].GFGIL.Ttwgil169",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "1140"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 8862 - Amount - Accounting fees",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 11,
+    "id": "GFBGII[1].GFGIL.Ttwgil196",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "7662"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 8960 - Amount - Repairs and maintenance",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 12,
+    "id": "GFBGII[1].GFGIL.Ttwgil197",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "640"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 8961 - Amount - Repairs and maintenance - buildings",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 13,
+    "id": "GFBGII[1].GFGIL.Ttwgil228",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "8900"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 9180 - Amount - Property taxes",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 14,
+    "id": "GFBGII[1].GFGIL.Ttwgil232",
+    "copyPath": "GFBGII",
+    "copyIndex": 1,
+    "current": {
+      "kind": "value",
+      "text": "1992"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "GIFI code 9220 - Amount - Utilities",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 15,
+    "id": "IDENT.Ident120",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "2025-01-01"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "Line 060 - Tax year start date",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 16,
+    "id": "IDENT.Ident121",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "2025-12-31"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "Line 061 - Tax year-end",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 17,
+    "id": "IDENT.Ident311",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "Riverdale Rentals Inc. (Test)"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "Corporation's name",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 18,
+    "id": "IDENT.Ident230",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "1"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "Line 990 - Indicate your language of correspondence of your choice.|`English|`Français",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 19,
+    "id": "IDENT.Ident451",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "1"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "CCH iFirm - Client code",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 20,
+    "id": "IDENT.Ident492",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "value",
+      "text": "N"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "",
+    "shape": "standard",
+    "apostrophe": false
+  },
+  {
+    "line": 21,
+    "id": "IFirm.ContactPartner",
+    "copyPath": null,
+    "copyIndex": null,
+    "current": {
+      "kind": "clear"
+    },
+    "last": {
+      "kind": "clear"
+    },
+    "description": "Partner",
+    "shape": "standard",
+    "apostrophe": false
+  }
+]
