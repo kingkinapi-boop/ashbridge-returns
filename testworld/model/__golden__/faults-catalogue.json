@@ -452,21 +452,42 @@
   "client": "C10",
   "flagId": "10-F01",
   "planted": "missing month: the chequing export has no May rows",
-  "expected": "flag 10-F01 (missing month: the chequing export has no May rows), must fire: flag for a person; do not decide alone"
+  "expected": "flag 10-F01 (missing month: the chequing export has no May rows), must fire: flag for a person; do not decide alone",
+  "marker": {
+   "field": "missingFromExport",
+   "account": "CHQ",
+   "month": "2025-05",
+   "rows": 56,
+   "totalCents": 1686665
+  }
  },
  {
   "id": "10-F02",
   "client": "C10",
   "flagId": "10-F02",
   "planted": "duplicate lines in March",
-  "expected": "flag 10-F02 (duplicate lines in March), must fire: flag for a person; do not decide alone"
+  "expected": "flag 10-F02 (duplicate lines in March), must fire: flag for a person; do not decide alone",
+  "marker": {
+   "field": "dupOf",
+   "account": "CHQ",
+   "month": "2025-03",
+   "rows": 4,
+   "totalCents": 316494
+  }
  },
  {
   "id": "10-F03",
   "client": "C10",
   "flagId": "10-F03",
   "planted": "last year's statement mixed in",
-  "expected": "flag 10-F03 (last year's statement mixed in), must fire: flag for a person; do not decide alone"
+  "expected": "flag 10-F03 (last year's statement mixed in), must fire: flag for a person; do not decide alone",
+  "marker": {
+   "field": "priorYear",
+   "account": "CHQ",
+   "month": "2024-12",
+   "rows": 8,
+   "totalCents": 569501
+  }
  },
  {
   "id": "10-F04",
@@ -741,7 +762,8 @@
   "expected": "roll exception for CHQ 2025-03, listed so the loader accepts it",
   "roll": {
    "account": "CHQ",
-   "month": "2025-03"
+   "month": "2025-03",
+   "cause": "duplicate"
   }
  },
  {
@@ -751,7 +773,8 @@
   "expected": "roll exception for CHQ 2025-05, listed so the loader accepts it",
   "roll": {
    "account": "CHQ",
-   "month": "2025-05"
+   "month": "2025-05",
+   "cause": "missing"
   }
  }
 ]

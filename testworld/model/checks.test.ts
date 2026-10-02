@@ -185,14 +185,15 @@ describe('model checks', () => {
         issue('fault-catalogue', 'roll-CHQ-2025-09', 'the catalogue waives CHQ 2025-09, which this client does not have'),
       ])
       c.accounts.push(account('EMPTY', 'bank', []))
-      expect(run(c, [waiver('EMPTY', '2025-01')])).toEqual([
+      // W00c fix 4: EMPTY's missing months are named too, so the waiver issue is one of the issues.
+      expect(run(c, [waiver('EMPTY', '2025-01')])).toContainEqual(
         issue('fault-catalogue', 'roll-EMPTY-2025-01', 'the catalogue waives EMPTY 2025-01, which this client does not have'),
-      ])
+      )
     })
     it('an account with transactions but no statement balances is refused', () => {
       const c = clean()
       c.accounts.push(account('EMPTY', 'bank', []))
-      expect(run(c)).toEqual([])
+      // W00c fix 4 retires "an empty account is quiet": the coverage check names its months (acceptance RC3).
       c.transactions.push({ ...first(c), id: 'T2', accountKey: 'EMPTY', postings: [] })
       // W00a spec (S5): the row also falls in no month of its account, so the list holds this issue among others.
       expect(run(c)).toContainEqual(issue('roll', 'EMPTY', 'it has transactions but no statement balances, so there is nothing to roll'))
