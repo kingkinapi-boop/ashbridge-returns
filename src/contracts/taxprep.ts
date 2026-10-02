@@ -186,7 +186,7 @@ function classifyValue(
 ): { ok: true; value: CellValue; apostrophe: boolean } | { ok: false; code: TaxprepFaultCode; reason: string } {
   const shown = JSON.stringify(decode1252(raw))
   if (raw === '' || raw === ' ') return { ok: true, value: { kind: 'clear' }, apostrophe: false }
-  if (raw.includes("'") && /^-?\d+$/.test(raw.replace(/'/g, ''))) {
+  if (raw.startsWith("'") || (raw.includes("'") && /^-?\d+$/.test(raw.replace(/'/g, '')))) {
     if (/^'-[1-9]\d*$/.test(raw)) {
       return {
         ok: true,
@@ -519,7 +519,10 @@ function formatValue(v: WriteValue): string {
     case 'text': {
       if (v.text.trim() === '') throw new Refusal('a blank text value would be read as a clear; use the explicit clear')
       if (v.text.startsWith("'")) throw new Refusal('a text value must not start with an apostrophe')
-      return encode1252(v.text, 'the text value')
+      const written = encode1252(v.text, 'the text value')
+      const reread = classifyValue(written)
+      if (!reread.ok) throw new Refusal(`the text value would be refused on reading: ${reread.reason}`)
+      return written
     }
     case 'date':
       if (!validDate(v.date)) throw new Refusal(`the date ${v.date} is not a real date written YYYY-MM-DD`)
@@ -566,6 +569,7 @@ export function writeTaxprepCsv(
   file.rows.forEach((row, index) => {
     try {
       const identifier = row.id.text
+      if (!parseCellId(identifier).ok) throw new Refusal(`${JSON.stringify(identifier)} is not a valid cell identifier`)
       if (options.purpose === 'import' && ignored.has(identifier)) {
         throw new Refusal(`${identifier} is skipped by Taxprep on import, so no row may be written for it`)
       }
