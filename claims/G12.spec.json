@@ -2,7 +2,8 @@
  "card": "G12",
  "role": "spec",
  "worker": "cloud-6e552e",
- "state": "working",
- "at": "2026-10-02T13:41:24.746Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T13:41:53.592Z",
+ "mode": "turbo",
+ "note": "dep G01 built and checked but not merged: no bank schema on main; re-offer after G01 lands, see reports/G12-spec.md"
 }
