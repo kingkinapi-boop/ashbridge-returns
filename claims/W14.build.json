@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "0751e5e",
  "worker": "cloud-db88d1",
- "state": "reported",
- "at": "2026-10-02T02:43:52.583Z",
+ "state": "released",
+ "at": "2026-10-02T03:42:10.605Z",
  "mode": "turbo",
- "note": "round 3: 25 of 25 prior-year tests, verify 401 pass 0 fail, make-csv 1025; head 6815013"
+ "note": "merged"
 }
