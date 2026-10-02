@@ -36,12 +36,14 @@ export const SENSITIVE_KINDS: readonly string[] = [
 
 /** Splits a key into lower-case word parts: camel, pascal, acronym runs, snake, kebab, spaces. */
 function wordParts(key: string): string[] {
-  return key
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-    .split(/[^A-Za-z0-9]+/)
-    .filter((p) => p !== '')
-    .map((p) => p.toLowerCase())
+  const camel = key.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  // Stryker disable next-line Regex: equivalent. With one capital in place of a run, the space still goes before the last capital of the run ("APIKey" gives "API Key" both ways).
+  const spaced = camel.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+  // Stryker disable next-line Regex: equivalent while the filter below stays. Without the +, a run of separators leaves empty parts and the filter drops them.
+  const split = spaced.split(/[^A-Za-z0-9]+/)
+  // Stryker disable next-line MethodExpression,ConditionalExpression,StringLiteral: equivalent. An empty part at an end of the key cannot change a whole-word match, so the filter only tidies (A329: it stays).
+  const parts = split.filter((p) => p !== '')
+  return parts.map((p) => p.toLowerCase())
 }
 
 const KIND_PARTS: readonly (readonly string[])[] = SENSITIVE_KINDS.map((k) => k.split(' '))
