@@ -4,7 +4,8 @@
  "round": 15,
  "spec": "62f6c18",
  "worker": "cloud-ca47ab",
- "state": "working",
- "at": "2026-10-02T18:12:44.348Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T18:12:59.817Z",
+ "mode": "turbo",
+ "note": "SC paths hold only tests; same 7 failures with owners named in reports/SC-build.md on claude/SC (R12, R15, R18, R23, R41, R43); Lead must fix owners or reopen spec first. Not re-run."
 }
