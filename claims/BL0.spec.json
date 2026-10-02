@@ -1,9 +1,11 @@
 {
  "card": "BL0",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: only the card's own 12 tests fail by name; typecheck and lint green; was validated earlier, now c882d40",
  "worker": "cloud-1d0d85",
- "state": "working",
- "at": "2026-10-02T16:53:15.118Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T16:56:13.154Z",
+ "mode": "turbo",
+ "commit": "428bad0",
+ "validated": "c882d40"
 }
