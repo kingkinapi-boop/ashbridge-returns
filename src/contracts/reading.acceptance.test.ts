@@ -871,3 +871,233 @@ describe('converters refuse non-finite input (round 3, check 18)', () => {
     )
   })
 })
+
+// ---------- Round 4 (mutation survivors classed "clause" in reports/F09-mutants.md) ----------
+//   Each test pins behaviour the clauses (EV-5, EV-6, ARC-10) demand that no earlier test pinned, so
+//   a mutant that changes it is killed. Mutant ids are from the Stryker run on build 94bad03.
+//   Coordinates use binary fractions (1/8, 1/16) so edge cases are exact in floating point.
+
+describe('mutation survivors: engine stamp (round 4)', () => {
+  const stamped = (engine: { name: string; version: string }) => ({
+    documentFingerprint: 'sha256:blank-stamp-test',
+    engine,
+    readAt: '2026-10-01T14:00:00.000Z',
+    pageCount: 1,
+    pages: [{ number: 1, widthPt: 612, heightPt: 792, hasTextLayer: true }],
+    words: [],
+  })
+
+  test('ARC-10 r4 an engine name or version of only spaces is no stamp and is refused', () => {
+    // Mutants 25, 27: the stamp must never be blank, and spaces are blank.
+    expect(ReadingResultSchema.safeParse(stamped({ name: 'pdf-text-layer (Test)', version: '4.2.1' })).success).toBe(true)
+    expect(ReadingResultSchema.safeParse(stamped({ name: '   ', version: '4.2.1' })).success, 'blank name').toBe(false)
+    expect(ReadingResultSchema.safeParse(stamped({ name: 'pdf-text-layer (Test)', version: ' \t ' })).success, 'blank version').toBe(
+      false,
+    )
+  })
+})
+
+describe('mutation survivors: converters (round 4)', () => {
+  test('EV-5 r4 an A4 rect that ends exactly at the top edge converts, even when its points add up past the edge by float noise', () => {
+    // Mutant 73: 0.2 + 841.69 is 841.8900000000001 in floating point; the rect is on the page.
+    const b = pointsToBox(1, { x: 10, y: 0.2, width: 100, height: 841.69 }, 595.28, 841.89)
+    expect(BoxSchema.safeParse(b).success).toBe(true)
+    expect(b.top).toBe(0)
+  })
+
+  test('EV-5 r4 a rect wider or taller than the page is refused with RangeError, never clamped to the page', () => {
+    // Mutants 149, 152: without the edge check the fraction 700/612 would be snapped to 1.
+    expect(() => pointsToBox(1, { x: 0, y: 100, width: 700, height: 10 }, 612, 792)).toThrow(RangeError)
+    expect(() => pixelsToBox(1, { x: 0, y: 100, width: 3000, height: 10 }, 2550, 3300)).toThrow(RangeError)
+    expect(() => pointsToBox(1, { x: 10, y: 0, width: 50, height: 900 }, 612, 792)).toThrow(RangeError)
+    expect(() => pixelsToBox(1, { x: 10, y: 0, width: 50, height: 4000 }, 2550, 3300)).toThrow(RangeError)
+  })
+
+  test('EV-5 r4 a page of zero width or height is refused with RangeError even for a sliver rect, never a box or NaN', () => {
+    // Mutants 98 to 116: a sliver at the origin fits inside the edge tolerance, so only the page-size
+    // check refuses it; without it a zero-height page returns a box and a zero-width page a NaN.
+    const sliver = { x: 0, y: 0, width: 1e-12, height: 1e-12 }
+    expect(() => pointsToBox(1, sliver, 0, 792), 'points, zero width').toThrow(RangeError)
+    expect(() => pointsToBox(1, sliver, 612, 0), 'points, zero height').toThrow(RangeError)
+    expect(() => pixelsToBox(1, sliver, 0, 3300), 'pixels, zero width').toThrow(RangeError)
+    expect(() => pixelsToBox(1, sliver, 2550, 0), 'pixels, zero height').toThrow(RangeError)
+    expect(() => pointsToBox(1, sliver, -612, 792), 'points, negative width').toThrow(RangeError)
+    expect(() => pointsToBox(1, sliver, 612, -792), 'points, negative height').toThrow(RangeError)
+  })
+
+  test('EV-5 r4 the RangeError for a non-finite input names the field (check 18 build: "RangeError naming the field")', () => {
+    // Mutants 86, 89, 91, 94, 96.
+    const valid = { x: 72, y: 100, width: 144, height: 20 }
+    const message = (fn: () => unknown): string => {
+      try {
+        fn()
+      } catch (e) {
+        return e instanceof RangeError ? e.message : `not a RangeError: ${String(e)}`
+      }
+      return 'no error'
+    }
+    for (const [name, convert] of [
+      ['points', pointsToBox],
+      ['pixels', pixelsToBox],
+    ] as const) {
+      for (const field of ['x', 'y', 'width', 'height'] as const) {
+        const got = message(() => convert(1, { ...valid, [field]: Number.NaN }, 612, 792))
+        expect(got, `${name} rect ${field}`).toMatch(new RegExp(`\\b${field}\\b`))
+      }
+      const w = message(() => convert(1, valid, Number.NaN, 792))
+      expect(w, `${name} page width`).toMatch(/\bwidth\b/i)
+      expect(w, `${name} page width`).toMatch(/\b(page|image)\b/i)
+      const h = message(() => convert(1, valid, 612, Number.POSITIVE_INFINITY))
+      expect(h, `${name} page height`).toMatch(/\bheight\b/i)
+      expect(h, `${name} page height`).toMatch(/\b(page|image)\b/i)
+    }
+  })
+})
+
+describe('mutation survivors: words in a box (round 4)', () => {
+  // One word whose centre is (0.375, 0.375).
+  const word: WordInput = { text: 'Edge (Test)', box: box(1, 0.25, 0.25, 0.25, 0.25), order: 1 }
+
+  test('EV-6 r4 a word whose centre lies exactly on an edge of the box is inside it, on all four edges', () => {
+    // Mutants 206, 209, 213, 216 (amber: the edge counts as inside).
+    const result = makeResult([word])
+    const edges = {
+      left: box(1, 0.375, 0.125, 0.25, 0.5),
+      right: box(1, 0.125, 0.125, 0.25, 0.5),
+      top: box(1, 0.125, 0.375, 0.5, 0.25),
+      bottom: box(1, 0.125, 0.125, 0.5, 0.25),
+    }
+    for (const [edge, b] of Object.entries(edges)) {
+      expect(
+        wordsInBox(result, b).map((w) => w.text),
+        `centre on the ${edge} edge`,
+      ).toEqual(['Edge (Test)'])
+    }
+    // Planted control: one sixteenth further out on each side and the word is outside.
+    expect(wordsInBox(result, box(1, 0.4375, 0.125, 0.25, 0.5))).toEqual([])
+    expect(wordsInBox(result, box(1, 0.125, 0.4375, 0.5, 0.25))).toEqual([])
+  })
+})
+
+describe('mutation survivors: amount refusals (round 4)', () => {
+  test('EV-6 r4 an unbalanced bracket is not brackets: "(15.05" and "15.05)" are not amounts, never -15.00 or -5.05', () => {
+    // Mutants 270, 272, 274.
+    for (const text of ['(15.05', '15.05)']) {
+      expect(normaliseAmount(text).ok, text).toBe(false)
+    }
+    const result = makeResult(line(['(15.05', '15.05)']))
+    for (const value of ['-15.00', '-15.0', '-5.05', '-15.05']) {
+      expect(valueInBox(result, amountBox, value), value).toEqual({ ok: false, reason: 'value not found' })
+    }
+  })
+
+  test('EV-6 r4 an amount whose cents pass the safe integer range is refused with a reason, never rounded', () => {
+    // Mutants 335 to 337, 342 to 345. 9,007,199,254,740,991 cents is the largest safe integer.
+    expect(normaliseAmount('90,071,992,547,409.91')).toEqual({ ok: true, cents: Number.MAX_SAFE_INTEGER })
+    for (const text of ['90,071,992,547,409.92', '99,999,999,999,999.99', '1234567890123456.00', '$12,345,678,901,234,567']) {
+      const got = normaliseAmount(text)
+      expect(got.ok, text).toBe(false)
+      expect(got.ok ? '' : got.reason.trim(), `${text} reason`).not.toBe('')
+    }
+  })
+
+  test('EV-6 r4 property: every refusal carries a non-empty reason and every amount is a safe integer of cents', () => {
+    // Mutant 314 and every other reason string: "not a number, with the reason" (checks 2 and 11).
+    const token = fc.constantFrom('$', '-', '(', ')', 'CR', 'DR', ' ', '0', '1', '12', ',234', '.5', '.56', '1.2E3', '1.234,56', '9999999999999999')
+    fc.assert(
+      fc.property(fc.array(token, { maxLength: 6 }), (parts) => {
+        const text = parts.join('')
+        const got = normaliseAmount(text)
+        expect(got.ok ? Number.isSafeInteger(got.cents) : got.reason.trim().length > 0, `"${text}"`).toBe(true)
+      }),
+      { seed: SEED, numRuns: 3000 },
+    )
+    for (const text of ['(-5.00)', '-5.00 CR', '$$5.00', '', '   ', 'abc', '001234']) {
+      const got = normaliseAmount(text)
+      expect(got.ok ? Number.isSafeInteger(got.cents) : got.reason.trim().length > 0, `"${text}"`).toBe(true)
+    }
+  })
+})
+
+describe('mutation survivors: amount groups (round 4)', () => {
+  const found = (texts: string[], value: string) => valueInBox(makeResult(line(texts)), amountBox, value)
+  const OK = { ok: true }
+  const NOT_FOUND = { ok: false, reason: 'value not found' }
+
+  test('EV-6 r4 each word that is a whole amount on its own is matched: "12" and "34" are each found', () => {
+    // Mutants 428, 443, 444: every group counts, not only the last.
+    expect(found(['12', '34'], '12')).toEqual(OK)
+    expect(found(['12', '34'], '34')).toEqual(OK)
+  })
+
+  test('EV-6 r4 a ",ddd" word joins the digits before it: "1" ",234" is 1234 and "1" ",234.56" is 1234.56', () => {
+    // Mutants 387 to 391.
+    expect(found(['1', ',234'], '1234')).toEqual(OK)
+    expect(found(['1', ',234.56'], '1234.56')).toEqual(OK)
+  })
+
+  test('EV-6 r4 a word that is not exactly ".dd", ",ddd" or a three-digit group never joins', () => {
+    // Mutants 382, 385, 386, 392, 393: the amount before it stays whole and matches.
+    expect(found(['1,234', '.567'], '1234')).toEqual(OK)
+    expect(found(['1,234', '5,678'], '1234')).toEqual(OK)
+    expect(found(['12', ',3456'], '12')).toEqual(OK)
+    expect(found(['5', '1234'], '1234')).toEqual(OK)
+    expect(found(['5', '1234'], '5')).toEqual(OK)
+  })
+
+  test('EV-6 r4 a three-digit group joins only a whole-dollar part: "12.50" "100" stays two amounts; "$1" "234.56" is 1234.56', () => {
+    // Mutants 399, 401, 402.
+    expect(found(['12.50', '100'], '100')).toEqual(OK)
+    expect(found(['12.50', '100'], '12.50')).toEqual(OK)
+    expect(found(['$1', '234.56'], '1234.56')).toEqual(OK)
+  })
+
+  test('EV-6 r4 a sign word joins only as a whole word: "100-" and "-5.00" are amounts of their own', () => {
+    // Mutants 379, 380.
+    expect(found(['1,234.56', '100-'], '1234.56')).toEqual(OK)
+    expect(found(['1,234.56', '100-'], '-100')).toEqual(OK)
+    expect(found(['1,234.56', '-5.00'], '1234.56')).toEqual(OK)
+    expect(found(['1,234.56', '-5.00'], '-5.00')).toEqual(OK)
+  })
+
+  test('EV-6 r4 a trailing sign closes the group: "1,234.56" "-" "7" is -1234.56 then 7', () => {
+    // Mutant 375.
+    expect(found(['1,234.56', '-', '7'], '-1234.56')).toEqual(OK)
+    expect(found(['1,234.56', '-', '7'], '7')).toEqual(OK)
+  })
+
+  test('EV-6 r4 "$" "-" "1,234.56" as three words is -1234.56, never 1234.56', () => {
+    // Mutant 377.
+    expect(found(['$', '-', '1,234.56'], '-1234.56')).toEqual(OK)
+    expect(found(['$', '-', '1,234.56'], '1234.56')).toEqual(NOT_FOUND)
+  })
+
+  test('EV-6 r4 a sign word never joins a word that does not end in a digit: "(5.00)" "-" is -5.00 and "Fee" "-" "5.00" is -5.00', () => {
+    // Mutants 417, 418: a "-" in an empty column after a bracketed amount, and a sign after a label.
+    expect(found(['(5.00)', '-'], '-5.00')).toEqual(OK)
+    expect(found(['Fee', '-', '5.00'], '-5.00')).toEqual(OK)
+    expect(found(['Fee', '-', '5.00'], '5.00')).toEqual(NOT_FOUND)
+  })
+
+  test('EV-6 r4 words on different lines never join, whatever the reading order, and lines that only touch are different lines', () => {
+    // Mutants 367, 368, 372 (amber: boxes that only touch do not share a line).
+    const page = box(1, 0, 0, 1, 1)
+    const at2 = (first: Box, second: Box) =>
+      valueInBox(
+        makeResult([
+          { text: '1', box: first, order: 1 },
+          { text: '234.56', box: second, order: 2 },
+        ]),
+        page,
+        '1234.56',
+      )
+    // Reading order runs from the lower line up to the higher one.
+    expect(at2(box(1, 0.25, 0.5, 0.0625, 0.0625), box(1, 0.375, 0.25, 0.125, 0.0625)), 'lower then upper').toEqual(NOT_FOUND)
+    // The first word sits directly below the second, touching it.
+    expect(at2(box(1, 0.25, 0.375, 0.0625, 0.125), box(1, 0.375, 0.25, 0.125, 0.125)), 'touching, first below').toEqual(NOT_FOUND)
+    // The first word sits directly above the second, touching it.
+    expect(at2(box(1, 0.25, 0.25, 0.0625, 0.125), box(1, 0.375, 0.375, 0.125, 0.125)), 'touching, first above').toEqual(NOT_FOUND)
+    // Planted control: the same two words overlapping on one line join into 1234.56.
+    expect(at2(box(1, 0.25, 0.25, 0.0625, 0.125), box(1, 0.375, 0.3125, 0.125, 0.125)), 'one line').toEqual(OK)
+  })
+})
