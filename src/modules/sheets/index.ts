@@ -23,7 +23,7 @@ const COMPOUND = [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]
 const ENCRYPTED_STREAM = Buffer.from('EncryptedPackage', 'utf16le')
 
 const startsWith = (bytes: Uint8Array, magic: number[]): boolean => magic.every((b, i) => bytes[i] === b)
-const extension = (fileName: string): string => /\.([^./\\]+)$/.exec(fileName)?.[1]?.toLowerCase() ?? ''
+const CSV_NAME = /\.(?:csv|tsv|txt)$/i
 
 async function build(bytes: Uint8Array, fileName: string, fingerprint: string): Promise<SheetsOutcome> {
   if (startsWith(bytes, COMPOUND)) {
@@ -37,7 +37,7 @@ async function build(bytes: Uint8Array, fileName: string, fingerprint: string): 
     const engine = { name: XLSX_LIBRARY.name, version: XLSX_LIBRARY.version }
     return { ok: true, result: SheetResultSchema.parse({ ...stamp, engine, sheets: read.sheets }) }
   }
-  if (['csv', 'tsv', 'txt'].includes(extension(fileName))) {
+  if (CSV_NAME.test(fileName)) {
     const read = readCsv(bytes)
     if (!read.ok) return read
     const sheets = [{ name: 'csv', hidden: false, cells: read.cells }]
@@ -53,11 +53,12 @@ export function createSheetsReader(): SheetsReader {
     isLive: false,
     async read(bytes, fileName) {
       const fingerprint = crypto.createHash('sha256').update(bytes).digest('hex')
-      const key = `${fingerprint}:${extension(fileName)}`
+      const key = `${fingerprint}:${String(CSV_NAME.test(fileName))}`
       const cached = cache.get(key)
       if (cached) return cached
       const outcome = await build(bytes, fileName, fingerprint)
-      if (outcome.ok) cache.set(key, outcome)
+      // A refusal is remembered too: the same bytes are refused for the same reason.
+      cache.set(key, outcome)
       return outcome
     },
   }

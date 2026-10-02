@@ -20,18 +20,18 @@ const pad = (n: number, width = 2): string => String(n).padStart(width, '0')
 const isoDate = (d: Date): string => `${pad(d.getUTCFullYear(), 4)}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`
 
 /** A serial day and seconds into the day to ISO text, by the file's date system (the 1900 system counts a 29 Feb 1900 that never was). */
-function serialToIso(day: number, seconds: number, date1904: boolean): string {
+export function serialToIso(day: number, seconds: number, date1904: boolean): string {
   let date: string
   if (date1904) date = isoDate(new Date(Date.UTC(1904, 0, 1 + day)))
   else if (day === 60) date = '1900-02-29'
-  else if (day < 60) date = isoDate(new Date(Date.UTC(1899, 11, 31 + Math.max(day, 1))))
+  else if (day < 60) date = isoDate(new Date(Date.UTC(1899, 11, 31 + day)))
   else date = isoDate(new Date(Date.UTC(1899, 11, 30 + day)))
   if (seconds === 0) return date
   return `${date}T${pad(Math.floor(seconds / 3600))}:${pad(Math.floor((seconds % 3600) / 60))}:${pad(seconds % 60)}`
 }
 
 /** ExcelJS's JS date back to the file's own serial, then to ISO text. */
-function dateText(value: Date, date1904: boolean): string {
+export function dateText(value: Date, date1904: boolean): string {
   const offset = UNIX_EPOCH_SERIAL - (date1904 ? DATE_1904_OFFSET : 0)
   const total = Math.round(value.getTime() / 1000) + offset * SECONDS_PER_DAY
   const day = Math.floor(total / SECONDS_PER_DAY)
@@ -39,18 +39,23 @@ function dateText(value: Date, date1904: boolean): string {
 }
 
 type Parts = { text: string; type: Cell['type'] }
+const EMPTY: Parts = { text: '', type: 'empty' }
 
-function scalar(value: unknown, date1904: boolean): Parts {
-  if (value === null || value === undefined || value === '') return { text: '', type: 'empty' }
-  if (value instanceof Date) return { text: dateText(value, date1904), type: 'date' }
-  if (typeof value === 'number') return { text: String(value), type: 'number' }
-  if (typeof value === 'boolean') return { text: value ? 'TRUE' : 'FALSE', type: 'boolean' }
-  if (typeof value === 'string') return { text: value, type: 'text' }
-  const rich = value as { richText?: { text: string }[]; text?: unknown; error?: string }
-  if (rich.richText) return { text: rich.richText.map((r) => r.text).join(''), type: 'text' }
-  if (rich.error !== undefined) return { text: rich.error, type: 'text' }
-  if (typeof rich.text === 'string') return { text: rich.text, type: 'text' }
-  return { text: JSON.stringify(value), type: 'text' }
+/** What a cell holds, by the type the file gave it. */
+function parts(cell: ExcelJS.Cell, date1904: boolean): Parts {
+  switch (cell.type) {
+    case ExcelJS.ValueType.Null:
+    case ExcelJS.ValueType.Merge:
+      return EMPTY
+    case ExcelJS.ValueType.Date:
+      return { text: dateText(cell.value as Date, date1904), type: 'date' }
+    case ExcelJS.ValueType.Number:
+      return { text: cell.text, type: 'number' }
+    case ExcelJS.ValueType.Boolean:
+      return { text: cell.value ? 'TRUE' : 'FALSE', type: 'boolean' }
+    default:
+      return cell.text === '' ? EMPTY : { text: cell.text, type: 'text' }
+  }
 }
 
 function readCell(cell: ExcelJS.Cell, date1904: boolean, range: string | null, hiddenRow: boolean, hiddenColumn: boolean): Cell {
@@ -61,31 +66,24 @@ function readCell(cell: ExcelJS.Cell, date1904: boolean, range: string | null, h
     hiddenColumn,
     merged: range,
   }
-  const isMergedFollower = cell.type === ExcelJS.ValueType.Merge
-  if (isMergedFollower) return { ...base, text: '', type: 'empty' }
-  if (cell.type === ExcelJS.ValueType.Formula) {
-    const cached = (cell.value as { result?: unknown }).result
-    return { ...base, text: scalar(cached, date1904).text, type: 'formula', formula: cell.formula }
+  if (cell.type !== ExcelJS.ValueType.Formula) return { ...base, ...parts(cell, date1904) }
+  const cached = cell.result
+  const text = cached instanceof Date ? dateText(cached, date1904) : cell.text
+  return { ...base, text, type: 'formula', formula: cell.formula }
+}
+
+/** The merge ranges of a sheet, each cell address to its range ("A1:C1"). */
+function mergedRanges(sheet: ExcelJS.Worksheet): Map<string, string> {
+  const rangeOf = new Map<string, string>()
+  for (const range of sheet.model.merges) {
+    const [from, to] = range.split(':')
+    const first = sheet.getCell(from as string)
+    const last = sheet.getCell(to as string)
+    for (let r = Number(first.row); r <= Number(last.row); r++) {
+      for (let c = Number(first.col); c <= Number(last.col); c++) rangeOf.set(`${columnLetter(c)}${String(r)}`, range)
+    }
   }
-  return { ...base, ...scalar(cell.value, date1904) }
-}
-
-/** The cells a merge range covers, by address. */
-function rangeAddresses(range: string): Set<string> {
-  const [from = '', to = ''] = range.split(':')
-  const a = decodeAddress(from)
-  const b = decodeAddress(to)
-  const out = new Set<string>()
-  for (let r = a.r; r <= b.r; r++) for (let c = a.c; c <= b.c; c++) out.add(`${columnLetter(c)}${String(r)}`)
-  return out
-}
-
-function decodeAddress(address: string): { r: number; c: number } {
-  const m = /^([A-Z]+)(\d+)$/.exec(address)
-  const letters = m?.[1] ?? 'A'
-  let c = 0
-  for (let i = 0; i < letters.length; i++) c = c * 26 + letters.charCodeAt(i) - 64
-  return { r: Number(m?.[2] ?? '1'), c }
+  return rangeOf
 }
 
 export async function readXlsx(bytes: Uint8Array): Promise<XlsxRead> {
@@ -97,9 +95,7 @@ export async function readXlsx(bytes: Uint8Array): Promise<XlsxRead> {
   }
   const date1904 = workbook.properties.date1904
   const sheets: XlsxSheet[] = workbook.worksheets.map((sheet) => {
-    const merges = (sheet.model.merges as string[] | undefined) ?? []
-    const rangeOf = new Map<string, string>()
-    for (const range of merges) for (const address of rangeAddresses(range)) rangeOf.set(address, range)
+    const rangeOf = mergedRanges(sheet)
     const cells: Cell[] = []
     sheet.eachRow({ includeEmpty: true }, (row) => {
       row.eachCell({ includeEmpty: true }, (cell) => {

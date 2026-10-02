@@ -19,17 +19,19 @@ function decode(bytes: Uint8Array): { text: string; encoding: CsvEncoding } {
   }
 }
 
+const SEPARATORS: readonly CsvSeparator[] = [',', ';', '\t']
+
 /** The first line's separator when it names exactly one kind outside quotes; otherwise a comma. */
 function detectSeparator(text: string): CsvSeparator {
-  const found = new Set<CsvSeparator>()
+  const found = new Set<string>()
   let quoted = false
   for (const ch of text) {
     if (ch === '"') quoted = !quoted
     else if (!quoted && (ch === '\n' || ch === '\r')) break
     else if (!quoted && (ch === ',' || ch === ';' || ch === '\t')) found.add(ch)
   }
-  const [only] = found
-  return found.size === 1 && only !== undefined ? only : ','
+  const present = SEPARATORS.filter((s) => found.has(s))
+  return present.length === 1 ? (present[0] as CsvSeparator) : ','
 }
 
 /** RFC 4180 records. A blank line is a record with one empty field; the end of the last line is not a record. */
@@ -38,12 +40,10 @@ export function parseCsv(text: string, separator: CsvSeparator): string[][] | { 
   let record: string[] = []
   let field = ''
   let quoted = false
-  let afterQuote = false
   let pending = false
   const endField = (): void => {
     record.push(field)
     field = ''
-    afterQuote = false
   }
   const endRecord = (): void => {
     endField()
@@ -61,9 +61,8 @@ export function parseCsv(text: string, separator: CsvSeparator): string[][] | { 
         i++
       } else {
         quoted = false
-        afterQuote = true
       }
-    } else if (ch === '"' && field === '' && !afterQuote) quoted = true
+    } else if (ch === '"' && field === '') quoted = true
     else if (ch === separator) endField()
     else if (ch === '\n') endRecord()
     else if (ch === '\r') {

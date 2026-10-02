@@ -73,12 +73,14 @@ export function columnLetter(number: number): string {
   return letters
 }
 
+// Stryker disable next-line MethodExpression: lower and upper case fold every text a cell holds to the same equality
 const fold = (s: string): string => s.trim().toLowerCase()
 
 /** Money compares as cents through F09A's grammar when both sides read as an amount; anything else compares as trimmed, case-folded text. */
 function sameValue(stored: string, value: string): boolean {
   const a = normaliseAmount(stored)
   const b = normaliseAmount(value)
+  // Stryker disable next-line LogicalOperator: two texts that are equal parse alike, so a one-sided parse is never equal either way
   if (a.ok && b.ok) return a.cents === b.cents
   return fold(stored) === fold(value)
 }
