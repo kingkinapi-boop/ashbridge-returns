@@ -19,10 +19,20 @@ const repoUrl = (rel: string): URL => new URL(`../../../../../${rel}`, import.me
 export const goldenUrl = (name: string): URL => new URL(`../__golden__/${name}`, import.meta.url)
 export const goldenBytes = (name: string): Buffer => readFileSync(goldenUrl(name))
 
-/** A committed reference CSV (LF or CRLF in git, by checkout) with the CRLF line ends Taxprep wrote. */
+/**
+ * A committed reference CSV with the CRLF line ends Taxprep wrote: stored CRLF (W00, A347) it is returned as is,
+ * stored LF every LF becomes CR LF; a mix of the two, or a CR that ends no line, is a test-data fault and throws,
+ * naming the file (the rule of W00's shared taxprep-bytes fixture, findings W00 r1 S1, which this harness adopts once
+ * it is on main).
+ */
 export function taxprepBytes(rel: string): Buffer {
-  const raw = readFileSync(repoUrl(rel))
-  return Buffer.from(raw.toString('latin1').replace(/\r?\n/g, '\r\n'), 'latin1')
+  const text = readFileSync(repoUrl(rel)).toString('latin1')
+  const crlf = (text.match(/\r\n/g) ?? []).length
+  const lf = (text.match(/\n/g) ?? []).length - crlf
+  const cr = (text.match(/\r/g) ?? []).length - crlf
+  if (cr > 0) throw new Error(`test fixture ${rel}: a CR that does not end a line`)
+  if (crlf > 0 && lf > 0) throw new Error(`test fixture ${rel}: mixed line ends (${String(crlf)} CRLF, ${String(lf)} LF only)`)
+  return Buffer.from(crlf > 0 ? text : text.replace(/\n/g, '\r\n'), 'latin1')
 }
 
 /**
