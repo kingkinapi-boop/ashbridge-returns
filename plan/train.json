@@ -1,12 +1,14 @@
 {
-  "status": "red-held",
+  "status": "requested",
   "branch": "claude/train",
-  "head": "7bea948",
+  "head": "474512d",
   "cards": [
-    "G01"
+    "FX1",
+    "G01",
+    "D00L",
+    "CQ1"
   ],
-  "requested_at": "2026-10-02T13:54:05Z",
-  "by": "cloud-2a9ed7",
-  "report": "reports/train-20261002-1359.md",
-  "note": "G01 not at fault; re-board with FX1 (A361)"
+  "requested_at": "2026-10-02T15:42:33Z",
+  "by": "lead",
+  "report": ""
 }
