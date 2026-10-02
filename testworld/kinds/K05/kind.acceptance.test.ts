@@ -93,7 +93,8 @@ describe('W05 K05 books balance and retained earnings roll (check 2)', () => {
 
   test('ARC-8 the one adjusting entry is the answers entry: a reason, a source, debits and credits both 28,640.00 in cents', () => {
     expect(world.client.adjustingEntries).toHaveLength(1)
-    const e = world.client.adjustingEntries[0]!
+    const e = world.client.adjustingEntries[0]
+    if (e === undefined) throw new Error('the answers entry is missing')
     expect(e.reason.length).toBeGreaterThan(0)
     expect(e.sources.length).toBeGreaterThan(0)
     expect(tbSum(e.lines, 'debitCents')).toBe(2864000)
