@@ -1,0 +1,4 @@
+jobs:
+  checks:
+    steps:
+      - run: echo nothing here

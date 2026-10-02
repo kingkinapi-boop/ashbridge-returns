@@ -1,6 +1,13 @@
+import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { defineConfig } from 'vitest/config'
+
+const homes = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, 'tools', 'test-homes.json'), 'utf8')) as {
+  unit: { include: string[]; exclude: string[] }
+  db: { include: string[] }
+  evals: { include: string[] }
+}
 
 process.env['TZ'] = 'America/Toronto'
 const isCloud = Boolean(process.env['CI']) || os.cpus().length > 4
@@ -15,8 +22,8 @@ export default defineConfig({
       {
         test: {
           name: 'unit',
-          include: ['src/**/*.test.ts', 'tools/test/**/*.test.mjs'],
-          exclude: ['src/**/*.db.test.ts', 'src/**/*.eval.test.ts', 'node_modules/**'],
+          include: homes.unit.include,
+          exclude: homes.unit.exclude,
           setupFiles: ['src/core/test-no-network.ts'],
           env: { TZ: 'America/Toronto' },
         },
@@ -24,7 +31,7 @@ export default defineConfig({
       {
         test: {
           name: 'db',
-          include: ['src/**/*.db.test.ts'],
+          include: homes.db.include,
           env: { TZ: 'America/Toronto' },
           globalSetup: ['src/core/db/global-setup.ts'],
           setupFiles: ['src/core/test-no-network.ts', 'src/core/db/vitest-setup.ts'],
@@ -40,7 +47,7 @@ export default defineConfig({
       {
         test: {
           name: 'evals',
-          include: ['evals/**/*.test.ts', 'src/**/*.eval.test.ts'],
+          include: homes.evals.include,
           setupFiles: ['src/core/test-no-network.ts'],
           env: { TZ: 'America/Toronto' },
         },
