@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "62f6c18",
  "worker": "cloud-658451",
- "state": "working",
- "at": "2026-10-02T17:42:55.655Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T17:43:58.232Z",
+ "mode": "turbo",
+ "note": "7 failures belong to other cards or spec lists, see reports/SC-build.md"
 }
