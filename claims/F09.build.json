@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "6b127d3",
  "worker": "local-4e140f",
- "state": "working",
- "at": "2026-10-02T02:03:10.966Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T02:54:04.740Z",
+ "mode": "turbo",
+ "note": "58 of 58 reading tests pass; typecheck, lint, deps, scope clean; mutation 76.29"
 }
