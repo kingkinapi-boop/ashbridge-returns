@@ -1,11 +1,10 @@
 {
  "card": "A07C",
  "role": "build",
- "round": 8,
+ "round": 9,
  "spec": "ba50f80",
- "worker": "cloud-ef21b9",
- "state": "released",
- "at": "2026-10-02T20:44:29.018Z",
- "mode": "turbo",
- "note": "Stale offer re-offered at once; the Lead must re-stamp (update A07C build reported) or close it. Stopping to avoid a loop."
+ "worker": "cloud-f765fb",
+ "state": "working",
+ "at": "2026-10-02T20:45:38.242Z",
+ "mode": "turbo"
 }
