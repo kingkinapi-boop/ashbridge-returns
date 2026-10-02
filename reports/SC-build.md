@@ -56,4 +56,6 @@ Permission gaps: none. Model: Sonnet 5.5.
 
 ## Run 2 Oct 21:35Z (cloud-c29b25), main merged, branch at 06b2b99
 No product code written (rules only). Unit 2 of 75 fail, db 19 of 19 pass: R34 (ocr/recorded one-page.pdf and unrecorded.pdf need reasoned BINARY_FIXTURES entries) and R47 (ocr/recorded missing from READERS). Both are test-file edits a builder may not make; the spec that reported green (cloud-186a3b) was validated before A03 landed. Released; needs a spec refit for those two, then re-offer.
+## Run 2 Oct 21:3xZ (cloud-a181cc), main ae7deb6 merged
+No product code written. Unit 2 of 75 fail (same as cloud-0c9d3d): R34 (A03 one-page.pdf and unrecorded.pdf need reasoned BINARY_FIXTURES entries) and R47 (src/modules/ocr/recorded missing from READERS). Both are test-file edits, so a spec refit is needed before re-offering. Released.
 Permission gaps: none. Model: Sonnet 5.5.
