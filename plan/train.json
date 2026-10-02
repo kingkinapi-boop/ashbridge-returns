@@ -1,13 +1,12 @@
 {
-  "status": "landed",
+  "status": "checking",
   "branch": "claude/train",
-  "head": "0a37d63",
+  "head": "fae1588",
   "cards": [
-    "F01D",
-    "G10",
-    "G11"
+    "F06",
+    "F07"
   ],
-  "requested_at": "2026-10-02T17:12:48Z",
-  "by": "cloud-a0486a",
-  "report": "reports/train-20261002-1722.md"
+  "requested_at": "2026-10-02T19:27:09Z",
+  "note": "F07 security review clean for boarding (one LOW moved to G00, A381). Run gitleaks over HEAD as part of the check.",
+  "by": "cloud-de3dc1"
 }
