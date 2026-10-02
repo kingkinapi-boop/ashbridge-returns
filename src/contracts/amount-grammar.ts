@@ -75,12 +75,17 @@ function lex(raw: string): Lexed | null {
 /** The geometry the grouping needs from a word, in page fractions. */
 type Spot = { left: number; width: number; top: number; height: number }
 
-const sameLine = (a: Spot, b: Spot): boolean => a.top < b.top + b.height && b.top < a.top + a.height
+/** Page fractions come from decimals, so a gap that is zero or one height on paper can be off by a rounding error. */
+const GEOMETRY_EPSILON = 1e-9
+
+// Stryker disable next-line EqualityOperator: the epsilon is a rounding allowance; < and <= differ only at exactly 1e-9
+const sameLine = (a: Spot, b: Spot): boolean => a.top < b.top + b.height - GEOMETRY_EPSILON && b.top < a.top + a.height - GEOMETRY_EPSILON
 
 /** Same line, the second word to the right of the first (no overlap, no backwards gap), and a gap no wider than `tolerance` word heights. */
 const adjacent = (a: Spot, b: Spot, tolerance: number): boolean => {
   const gap = b.left - (a.left + a.width)
-  return sameLine(a, b) && gap >= 0 && gap <= a.height * tolerance
+  // Stryker disable next-line EqualityOperator: the epsilon is a rounding allowance; < and <= differ only at exactly 1e-9
+  return sameLine(a, b) && gap >= -GEOMETRY_EPSILON && gap <= a.height * tolerance + GEOMETRY_EPSILON
 }
 
 /** The default join gap: one word height. */
