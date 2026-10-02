@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "ebb2054",
  "worker": "cloud-37afbb",
- "state": "reported",
- "at": "2026-10-02T19:33:51.174Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T19:39:14.749Z",
  "mode": "turbo",
  "beat": "2026-10-02T19:33:25.595Z",
- "note": "13 of 13 acceptance tests pass (7 bank files, 116 tests); full suite not run"
+ "note": "FAIL: builder test payroll-bonuses.test.ts missing, see reports/G14-check.md"
 }
