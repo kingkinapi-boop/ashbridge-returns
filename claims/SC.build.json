@@ -4,7 +4,8 @@
  "round": 18,
  "spec": "62f6c18",
  "worker": "cloud-e72c49",
- "state": "working",
- "at": "2026-10-02T18:24:37.632Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T18:24:44.555Z",
+ "mode": "turbo",
+ "note": "re-offered at once; same 7 owner defects; worker stopped"
 }
