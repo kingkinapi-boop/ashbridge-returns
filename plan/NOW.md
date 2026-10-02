@@ -1,10 +1,10 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:15Z by the Lead (after the Reviewer SLOW). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:30Z by the Lead (turbo on). Times are UTC from `date -u`.
 
 ## State
 
-- **Mode: normal** (Reviewer SLOW 14:40Z, reviews/REVIEW.md). Zo: turbo resumes when FX1 and F01C land (plan/mode.json resume_when). Cap: 40 dispatches a day; 157 used today, so the hook refuses every new cloud run and helper until Zo says `turbo on` or the day turns. Blocked on to-do #1 (Zo). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 14:25Z: 5h 13%, week 39%. Blueprint v1.2 (status.mjs still prints v1.1: CQ1).
+- **Mode: turbo** (Zo, 15:30Z, to-do #1; after the Reviewer SLOW of 14:40Z). First: FX1 and F01C land, then CQ1, cards ahead, W kinds. Wind-down Fri 9 Oct 18:00 Toronto. Blueprint v1.2 (status.mjs prints v1.1 until CQ1).
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). Running now: A07 build round 2 (cloud-575f8d). Laptop: none running (2 allowed, 0018; node_modules now installed in the main checkout).
 - **Landed (21):** F00, F05, F08, DG rounds, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, DG, DG2, D00, F09B (with F09A's work), E03, F04, queue repairs.
 - **Zo's answers today:** decision 0020 (design sitting 1 accepted, viewer B by the Lead A358, his logo, CRA walks off git with data-free copies in reference/cra/).
