@@ -1,9 +1,11 @@
 {
  "card": "F04",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: BoxSchema import fixed; typecheck/lint red only until F09 reading.ts lands on main",
  "worker": "cloud-44dfa6",
- "state": "working",
- "at": "2026-10-02T04:29:03.862Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T04:33:35.852Z",
+ "mode": "turbo",
+ "commit": "ec29150",
+ "validated": "a11d30e"
 }
