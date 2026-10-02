@@ -1,12 +1,10 @@
 {
  "card": "F03",
  "role": "build",
- "round": 5,
- "spec": "34417a5",
- "worker": "cloud-a4e82b",
- "state": "reopened",
- "at": "2026-10-02T02:00:25.252Z",
- "mode": "turbo",
- "beat": "2026-10-02T00:40:50.900Z",
- "note": "FAIL: no @mutate marker on taxprep.ts, scope flags ledger, stryker 75.25 with 167 survivors, see reports/F03-check.md"
+ "round": 6,
+ "spec": "2cdf2f2",
+ "worker": "local-98ddb8",
+ "state": "working",
+ "at": "2026-10-02T02:03:01.580Z",
+ "mode": "turbo"
 }
