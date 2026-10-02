@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T18:11:41.364Z",
  "worker": "cloud-43b472",
- "state": "working",
- "at": "2026-10-02T18:12:40.332Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T18:41:38.759Z",
+ "mode": "turbo",
+ "note": "PASS (Lead: add db/schema/55_bridge_returns.sql to F07 paths in slices.json; scope fails until then)"
 }
