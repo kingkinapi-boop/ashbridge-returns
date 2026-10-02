@@ -1,6 +1,6 @@
 # SC Schema and contract rules
 
-Phase 0. Size M. Deps: F01, F09, F09A, F05M. Where: local or cloud.
+Phase 0. Size M. Deps: F01, F09, F09B (F09A split, A349), F05M. Where: local or cloud.
 Tags: core (permissions and citations: the rules keep every later table and box honest).
 Paths: tools/test/schema-contract-rules.test.mjs, src/contracts/schema-rules.db.test.ts, tools/test/__fixtures__/schema-contract/**
 Clauses: SEC-7, EV-1, ARC-10, EV-5, EV-8, EV-10, FLOW-1, ARC-15
@@ -32,3 +32,17 @@ The faults the F01 and F09 checks found (RC1 to RC5) can come back in every tabl
 
 ## Not in this card
 Fixing any schema or contract file (the owning card does it). Seeding helpers that reach later states through events (W00, JH0). Rules for other kinds of record beyond R12 to R18 and R23 to R28 (R19 to R22 are DG's). Adding the `@money`, `@converter` and `@writes` tags (the owning cards; F03R tags the Taxprep CSV writer first).
+
+## Also (F03R findings, 2 Oct)
+R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden file of refused inputs stays refused unless a retire list names it (plant: delete a parser branch). R30 every `@writes` module exports its read-back check and a test plants a mismatch (extends R24; plant: a check that always returns true). R31 no two exported finding lists share an entry or a finding string, and each list's findings carry that list's anchor (plant: a spread).
+
+## From F03R round 3 check notes (2 Oct)
+- R32 candidate: the B1 apostrophe rule is total over number-like text: `+1'234`, `(1'234)`, ` 1'234`, `1'234 `, `1'234e3`, `--'12`, `1’234` either read as a number per RT-3 or raise a named fault, never pass as plain text silently.
+- R33 candidate: read-back of rates compares exact text against `toFixed(4)`, not `Number()`.
+
+## From findings W00 round 1 (2 Oct, reports/findings-W00-r1.md)
+- R34 SEC-11 repo scan (sample clients, testworld, fixtures, goldens): Luhn-valid nine digits (spaced, hyphenated, RT suffix), e-mails outside reserved domains, phones outside 555-01xx are refused; planted one of each.
+- R35 every exported model or kind check has a planted failing test; a check over an empty collection says "nothing to check" unless declared.
+- R36 money read from text only: no `dollarsToCents(number)`, no `x*100` from JSON numbers.
+- R37 (was TH R5) byte-compared files are `-text` or `binary` and `git ls-files --eol` agrees; planted CRLF CSV under `eol=lf`.
+- R38 (was TH R6) no test builds expected bytes with a non-UTF-8 TextDecoder or TextEncoder; setup fails below Node 24.
