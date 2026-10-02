@@ -1,11 +1,9 @@
 {
  "card": "W15",
  "role": "spec",
- "worker": "cloud-620523",
- "state": "reported",
- "at": "2026-10-01T22:04:01.177Z",
- "mode": "turbo",
- "beat": "2026-10-01T21:56:41.556Z",
- "note": "checks for 13 to 15, verify fails only on missing folders",
- "commit": "435acc2"
+ "note": "toolchain refit",
+ "worker": "cloud-f60439",
+ "state": "working",
+ "at": "2026-10-02T03:15:49.220Z",
+ "mode": "turbo"
 }
