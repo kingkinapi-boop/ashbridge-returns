@@ -1,0 +1,420 @@
+{
+  "file": "cells-r2.xlsx",
+  "sheets": [
+    {
+      "name": "TB",
+      "hidden": false
+    },
+    {
+      "name": "TB ",
+      "hidden": false
+    }
+  ],
+  "hiddenLists": [
+    {
+      "name": "TB",
+      "hiddenRows": [
+        3,
+        9
+      ],
+      "hiddenColumns": [
+        3,
+        8,
+        9
+      ]
+    },
+    {
+      "name": "TB ",
+      "hiddenRows": [],
+      "hiddenColumns": []
+    }
+  ],
+  "cells": [
+    {
+      "sheet": "TB",
+      "row": 1,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Account (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 1,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "Debit",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 1,
+      "column": {
+        "letter": "C",
+        "number": 3
+      },
+      "text": "Credit",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": true,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 2,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Float noise (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 2,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1234.56",
+      "type": "number",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 3,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Sum noise (Test)",
+      "type": "text",
+      "hiddenRow": true,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 3,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "0.3",
+      "type": "formula",
+      "formula": "0.1+0.2",
+      "cached": {
+        "type": "number",
+        "text": "0.3"
+      },
+      "hiddenRow": true,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 4,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Large (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 4,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1000000000000000000000",
+      "type": "number",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 5,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Zero total (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 5,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "0",
+      "type": "formula",
+      "formula": "B2-B2",
+      "cached": {
+        "type": "number",
+        "text": "0"
+      },
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 6,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Flags (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 6,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "TRUE",
+      "type": "formula",
+      "formula": "B5=0",
+      "cached": {
+        "type": "boolean",
+        "text": "TRUE"
+      },
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 6,
+      "column": {
+        "letter": "C",
+        "number": 3
+      },
+      "text": "FALSE",
+      "type": "formula",
+      "formula": "B5<>0",
+      "cached": {
+        "type": "boolean",
+        "text": "FALSE"
+      },
+      "hiddenRow": false,
+      "hiddenColumn": true,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 7,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Blank text (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 7,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "",
+      "type": "formula",
+      "formula": "IF(B5=0,\"\",\"x\")",
+      "cached": {
+        "type": "none",
+        "text": ""
+      },
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 8,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Errors (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 8,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "#DIV/0!",
+      "type": "formula",
+      "formula": "B2/0",
+      "cached": {
+        "type": "error",
+        "text": "#DIV/0!"
+      },
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 8,
+      "column": {
+        "letter": "C",
+        "number": 3
+      },
+      "text": "#N/A",
+      "type": "error",
+      "hiddenRow": false,
+      "hiddenColumn": true,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 10,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "No cached value (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 10,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "",
+      "type": "formula",
+      "formula": "B2*2",
+      "cached": {
+        "type": "none",
+        "text": ""
+      },
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 11,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Not a cent (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 11,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "0.125",
+      "type": "number",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 12,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Negative noise (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB",
+      "row": 12,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "-1234.56",
+      "type": "number",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB ",
+      "row": 1,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "trailing space sheet (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "TB ",
+      "row": 2,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "7",
+      "type": "number",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    }
+  ]
+}

@@ -1,0 +1,487 @@
+{
+  "file": "tb-1900.xlsx",
+  "sheets": [
+    {
+      "name": "Trial Balance (Test)",
+      "hidden": false
+    },
+    {
+      "name": "Workings (Test)",
+      "hidden": true
+    }
+  ],
+  "hiddenLists": [
+    {
+      "name": "Trial Balance (Test)",
+      "hiddenRows": [
+        4
+      ],
+      "hiddenColumns": [
+        4
+      ]
+    },
+    {
+      "name": "Workings (Test)",
+      "hiddenRows": [],
+      "hiddenColumns": []
+    }
+  ],
+  "cells": [
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 1,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Maple Ridge (Test) trial balance",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": "A1:C1"
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 1,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "",
+      "type": "empty",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": "A1:C1"
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 1,
+      "column": {
+        "letter": "C",
+        "number": 3
+      },
+      "text": "",
+      "type": "empty",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": "A1:C1"
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 2,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Account",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 2,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "Debit",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 2,
+      "column": {
+        "letter": "C",
+        "number": 3
+      },
+      "text": "Credit",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 2,
+      "column": {
+        "letter": "D",
+        "number": 4
+      },
+      "text": "Note",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": true,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 3,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "1010 Chequing (CAD)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 3,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1234.56",
+      "type": "number",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 3,
+      "column": {
+        "letter": "D",
+        "number": 4
+      },
+      "text": "internal note (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": true,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 4,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "9999 Suspense (Test)",
+      "type": "text",
+      "hiddenRow": true,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 4,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "10",
+      "type": "number",
+      "hiddenRow": true,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 4,
+      "column": {
+        "letter": "C",
+        "number": 3
+      },
+      "text": "10",
+      "type": "number",
+      "hiddenRow": true,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 5,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "3000 Capital (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 5,
+      "column": {
+        "letter": "C",
+        "number": 3
+      },
+      "text": "1234.56",
+      "type": "number",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 6,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Total",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 6,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1244.56",
+      "type": "formula",
+      "formula": "SUM(B3:B5)",
+      "cached": {
+        "type": "number",
+        "text": "1244.56"
+      },
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 6,
+      "column": {
+        "letter": "C",
+        "number": 3
+      },
+      "text": "1244.56",
+      "type": "formula",
+      "formula": "SUM(C3:C5)",
+      "cached": {
+        "type": "number",
+        "text": "1244.56"
+      },
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 7,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Stale check (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 7,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "5",
+      "type": "formula",
+      "formula": "B6-C6",
+      "cached": {
+        "type": "number",
+        "text": "5"
+      },
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 8,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "As at",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 8,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "2025-12-31",
+      "type": "date",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 9,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Day before the 1900 quirk",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 9,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1900-02-28",
+      "type": "date",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 10,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Day after the 1900 quirk",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 10,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1900-03-01",
+      "type": "date",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 11,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "First day",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 11,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1900-01-01",
+      "type": "date",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 12,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Reconciled",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 12,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "type": "boolean",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 13,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Reference",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Trial Balance (Test)",
+      "row": 13,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "000123",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Workings (Test)",
+      "row": 1,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "hidden workings (Test)",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Workings (Test)",
+      "row": 2,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "42",
+      "type": "number",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    }
+  ]
+}

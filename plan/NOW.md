@@ -1,35 +1,36 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:43Z by the Lead (go after clear). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 21:10Z by the Lead. Critic proposals of 2 Oct evening approved and applied (0024: compaction at 200k with reload hook, CQ2 item 6, layouts before W21; A387). Auto-fill notes in (0023); next fold O8 into FINDINGS.md, CK-12 and RT-14. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 15:30Z, after the Reviewer SLOW of 14:40Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 17:37Z: 5h 3% (new window), week 45%. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`); runs cannot notify, so poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core jobs only; node_modules is installed in the main checkout. None running now.
-- **Landed (28):** F00, F05, F08, DG, DG2, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, D00, D00L, F09B (with F09A), E03, F04, FX1, G01, CQ1, F01D (with F01 and F01C), G10, G11, queue repairs. Last train ebe6680.
+- **Landed (42):** F00, F05, F08, DG, DG2, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, D00, D00L, F09B (with F09A), E03, F04, FX1, G01, CQ1, F01D (with F01 and F01C), G10, G11, queue repairs. E03A, BL0, A01, F02. F06, F07. G12 to G16. A07C (split, A384). A03, G17. Last train 3c3de19 (landed 21:08Z; guard listed design/map/navigation.md, a doc, A388).
 - **Zo today:** decisions 0020 (design sitting 1 accepted, viewer B by the Lead A358, his logo, CRA walks off git with data-free copies in reference/cra/) and 0021 (one gitleaks line for fact names in tests; Zo made the edit himself on claude/E03A, 0462739, because the permission system blocks agents from editing .gitleaks.toml).
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| E03A check (build reported 17:40Z, gitleaks clean) | 1 cloud run | cloud | 2 Oct 17:43Z | claude/E03A |
-| W00a build (long; 663 spec tests) | cloud run | cloud | 2 Oct 15:50Z | claude/W00a |
-| A07C round 2 (check found two defects inside its classes: self-closed shared formula, absolute 1e-9 snap; card Round 2, SC R56): spec reopened | queue | cloud | 2 Oct 17:42Z | claude/A07C |
-| Queue, builds reopened by the Lead at 17:36Z after F01D landed: F02, F06, F07, A06, A01 (round 3), BL0; E03A build (re-run gitleaks over HEAD after Zo's edit, then check) | 8 cloud runs fired 17:40Z to 17:45Z | cloud | 2 Oct 17:42Z | claude/<card> |
+| SC, A04: spec refits running, then builds (SC KNOWN owner FX3; A04 golden regenerated) | queue | cloud | 2 Oct 20:56Z | claude/<card> |
+| A06 round 2 spec (directive at the top of its card) | queue | cloud | 2 Oct 20:45Z | claude/A06 |
+| W00c spec; then A07D, CQ2, FX2 specs as the queue offers | queue | cloud | 2 Oct 20:45Z | claude/<card> |
 
 ## Next, in order
 
 1. Poll claims; board every PASS: scope, GitHub checks green, Opus read for core (when a check's Opus read was refused, run one before boarding). One train at a time (plan/train.json); land by merging main into the train, code guard, push local main first so the ff works.
 2. After a spec reports, reopen the held build (`update <card> build reopened --worker lead`); after a released check, re-stamp the build (`update <card> build reported --worker <builder>`) until the CQ1 follow-up lands.
-3. W00a: when its build reports, push `claude/W00b` from `claude/W00a` (W00b's card), then W00b spec. S00, B04, JH0 wait on W00a; kinds W01 to W13, W20, SK0, I40 on W00a and W00b.
-4. E03A lands, then unpark G12 to G17 (parked so the queue stops offering them).
-5. Write the CQ1 follow-up card (a released check must be re-offered; specs not offered on built-not-merged deps) and the W16 card.
+3. W00c (split from W00a, A379, A380): spec, build, check; after it lands merge it into claude/W00b and re-run W00b's 242 tests, then W00b build. S00, B04, JH0, SK0, W01 to W13, W20, I40 now wait on W00c; SC2 (rules R57 to R61) after W00c.
+4. A06 round 2: spec reopened, then build, then a fresh security review before boarding. New cards: SC3 (security rules R62 to R66, after A06 and FX2), FX2 (A01 and A05 refuse unset engines in production).
+5. CQ2 carded (the CQ1 follow-up, items 1 to 6). Write the W16 card, then T08, Q00, Q01, I01, I30, I40.
 6. Designs: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions, then D02 to D13 copy them into design/screens/ (design lane, A352; claim.mjs now honours `lane: "design"`).
 7. Taxprep: day 4 Zo Sat 3 Oct (Auto-fill); day 6 Sun 4 Oct.
 8. Critic about every two days from Sat 3 Oct; Reviewer daily.
 
 ## Splits today (last rounds)
+
+Evening: W00a to W00c (A379), A07C to A07D (A384; no more rounds, fallbacks are removals); new rule cards SC2 (R57 to R61), SC3 (R62 to R66, security), SC4 (R67 to R70).
 
 F09A to F09B (landed), F01 to F01C to F01D (landed), W00 to W00a and W00b (A364), A07 to A07B to A07C (A366, A368). Each split card has a landing rule: new edge cases outside its named classes go to SC as rule tests (SC now lists rules up to R55).
 

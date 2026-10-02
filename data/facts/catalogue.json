@@ -3172,6 +3172,188 @@
           "ref": "YE1.vehicle"
         }
       ]
+    },
+    {
+      "key": "qa.assets.purchased_not_in_use",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "asset"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Asset bought, not available for use at year end (cost)",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 203",
+          "note": "Related line: Schedule 8 has no line for property not yet available for use"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "assets"
+        }
+      ]
+    },
+    {
+      "key": "qa.assets.purchased_not_in_use_cca_class",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "asset"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "CCA class of the asset bought, not yet in use",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 203",
+          "note": "Related line: Schedule 8 has no line for property not yet available for use"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "assets"
+        }
+      ]
+    },
+    {
+      "key": "qa.assets.disposed",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "asset"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Asset disposal proceeds (0 for a write-off)",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 207"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "assets"
+        }
+      ]
+    },
+    {
+      "key": "qa.assets.disposed_kind",
+      "valueType": "enum",
+      "options": [
+        "sold",
+        "written_off"
+      ],
+      "period": "instant",
+      "repeating": {
+        "rowKey": "asset"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Asset disposal kind: sold or written off",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 207"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "assets"
+        }
+      ]
+    },
+    {
+      "key": "qa.assets.disposed_original_cost",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "asset"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Original cost of the disposed asset",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 207"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "assets"
+        }
+      ]
+    },
+    {
+      "key": "qa.assets.disposed_cca_class",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "asset"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "CCA class of the disposed asset",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 207"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "assets"
+        }
+      ]
+    },
+    {
+      "key": "qa.vehicle.ownership",
+      "valueType": "enum",
+      "options": [
+        "owned",
+        "leased"
+      ],
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Vehicle ownership: owned or leased",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "vehicle"
+        }
+      ]
+    },
+    {
+      "key": "qa.home_office.principal_place",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Home is the principal place of business",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "home_office"
+        }
+      ]
     }
   ]
 }

@@ -1,13 +1,14 @@
 {
   "status": "landed",
   "branch": "claude/train",
-  "head": "0a37d63",
+  "head": "3c3de19",
   "cards": [
-    "F01D",
-    "G10",
-    "G11"
+    "A03",
+    "G17"
   ],
-  "requested_at": "2026-10-02T17:12:48Z",
-  "by": "cloud-a0486a",
-  "report": "reports/train-20261002-1722.md"
+  "requested_at": "2026-10-02T20:55:43Z",
+  "note": "A03 core (Opus read in its check). Run gitleaks over HEAD.",
+  "by": "cloud-0c9d3d",
+  "report": "reports/train-20261002-2105.md",
+  "landed_at": "2026-10-02T21:08:00Z"
 }

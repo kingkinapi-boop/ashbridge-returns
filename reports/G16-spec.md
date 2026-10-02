@@ -1,0 +1,5 @@
+# G16 spec (cloud-d6217c, 2 Oct 2026)
+13 tests in src/modules/gaps/bank/vehicle-home-office.acceptance.test.ts (mirrors G14). Clauses ARC-2, AI-12, RULE-19, END-7. Not core (done on Sonnet). Validated on main 6ac92e8: typecheck and lint clean; with a throwaway stub file (not committed) all pass and npm test is green (1893 and 427); without it only the 8 file-dependent tests fail ("file missing"). 6b sweep: no other test fails; none retired.
+- Amber: G11 (expenses) already holds items for vehicle business use, km, cost and home costs and share, so this topic lists only the two facts nothing resolves: qa.vehicle.ownership (choice, options equal the catalogue's) and qa.home_office.principal_place (yes_no). File data/question-bank/vehicle-home-office.json, ids Q-VHO-<nnn>, no money answers. Reverse: edit the key list in the test.
+- Builder: create the json and src/modules/gaps/bank/vehicle-home-office.test.ts (the card requires it; G14's build missed it) and reports/G16-build.md.
+- Permission gaps: none. Model: Sonnet 5.5.
