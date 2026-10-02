@@ -1,9 +1,11 @@
 {
  "card": "A07",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit only, 0 new tests; validated on main f2e97da; only A07's own tests fail",
  "worker": "cloud-d37b76",
- "state": "working",
- "at": "2026-10-02T12:51:01.748Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T12:52:59.067Z",
+ "mode": "turbo",
+ "commit": "cf84ea2",
+ "validated": "f2e97dab8911a9781bd33ac77032849c2f9e8f43"
 }
