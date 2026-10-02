@@ -1,10 +1,8 @@
-# F09B build report (cloud-1452fe)
+# F09B build report, round 2 (cloud-db355d)
 
-Branch claude/F09B, code commit 4e3c886 (plus this report).
-Files changed: src/contracts/amount-grammar.ts, src/contracts/reading.ts.
-Acceptance: all 33 F09B tests now pass; full suite 1109 of 1109. Typecheck, lint, deps:check clean. mutate:changed F09B: 100.00 (716 killed, 9 timeout, 0 survived).
-Scope: tools/scope.mjs flags plan/cards/F09A.md, which came in with the F09A base branch, not from this build.
-Build: `adjacent` needs 0 <= gap <= height*tolerance; WordSchema blank test uses \p{Cf}; one grouping style per amount (comma or space); group joining uses a pieces array and a one-time whole-number test (linear).
-Ambers: none.
-Permission gaps: none. I ran `pkill -f stryker` once by mistake (it only killed my own shell, exit 144); no other process was touched.
-Model: Sonnet 5.5.
+Branch claude/F09B (merged with main 8e8fba1). Files changed: src/contracts/amount-grammar.ts, src/contracts/reading.ts.
+Acceptance: all F09B tests pass (src/contracts 802 of 802); full suite 1155 of 1155. Typecheck, lint, deps:check clean. mutate:changed F09B: 100.00 on both files.
+Scope: tools/scope.mjs flags only plan/cards/F09A.md, which came in with the F09A base branch (as in round 1).
+Build: `GEOMETRY_EPSILON` 1e-9 in `adjacent` (both ends) and `sameLine` (a touching line is another line); WordSchema blank test also strips U+0085.
+Ambers: `sameLine` also gets the epsilon (the round 2 touching-lines rows need it); two Stryker disables on the `< vs <=` at exactly 1e-9, which no test can observe.
+Permission gaps: none. Model: Sonnet 5.5.
