@@ -10,3 +10,7 @@ None.
 
 ## Model
 Sonnet 5.5 (card is `security`, not `core`, so no Opus subagent).
+
+## Toolchain refit (cloud-80fece, 2 Oct 2026)
+Old validated sha 31ee347, new 2de6057 (merged into claude/A06, 7582141). No assertion changed. Typecheck, lint and `npm test` fail only in the three A06 test files (missing modules `./index`, `./testing`, `./totp`, `AUTH_ENGINE` in env.ts); everything else green (1685 tests pass).
+Permission gaps: none. Model: Sonnet 5.5.
