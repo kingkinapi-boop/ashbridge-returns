@@ -1,13 +1,7 @@
-# G12 check
+# G12 check (round 2, cloud-3e2f84)
 
-FAIL. Typecheck, lint, deps:check clean; gaps unit 123/123 pass.
-
-1. Spec edited by the build (scope FAIL, ae9d809): src/modules/gaps/bank/assets-cca.test.ts, a spec(G12) file (b8ec230). The builder removed `expect(keys.length).toBeGreaterThan(0)` from "AI-12 each assets-cca item resolves a distinct fact", so an empty assets-cca bank now passes; it also rewrote the first test. Shows with: `git diff b8ec230 HEAD -- src/modules/gaps/bank/assets-cca.test.ts` and `node tools/scope.mjs G12`.
-
-Fix: restore the spec file to b8ec230 (`git checkout b8ec230 -- src/modules/gaps/bank/assets-cca.test.ts`) and re-run; the bank has 6 items so it should still pass.
-
-Rule candidate: scope.mjs already catches this; builders must run it before reporting (G12 build note claimed scope OK).
-
-Not run after the stop: e2e, mutation (data-only card).
-
+PASS. typecheck, lint, deps:check clean; full `npm test` 488 of 488 (8 files in the bank run); every acceptance check has a passing test.
+Spec files (assets-cca.test.ts, assets-cca.acceptance.test.ts) match spec commit b8ec230: net diff empty.
+Caveat: `node tools/scope.mjs G12` still prints FAIL for history only (ae9d809 edit, ec58041 restore of assets-cca.test.ts); the tree is correct. Lead: accept or squash on the train.
+Data-only card: no mutation run needed. No screens, not security.
 Permission gaps: none. Model: Sonnet 5.5.
