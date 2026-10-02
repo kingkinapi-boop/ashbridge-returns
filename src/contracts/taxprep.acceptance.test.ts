@@ -894,3 +894,546 @@ describe('F03 check 12: a negative exported with a leading apostrophe (RT-3, RT-
     )
   })
 })
+
+// =====================================================================================================================
+// Spec round 2 (fix round 2, findings review E03-F03 fix 5; reports/F03-mutants.md). One planted fault per refusal
+// path and per regex anchor or class: each variant differs from the good made-up file in one way only. Near-miss text
+// values (they only start or end like a fault) must read as text, because the writer writes them (RT-3 round trip).
+// Assertions pin the stable fault `code`, the line, and the row and character where the card names them; reason
+// wording is not pinned.
+// =====================================================================================================================
+
+const GOOD_FILE = asText(golden(MADE_UP))
+const LINE_8 = 'GFGBA.Ttwgba127,"1620","",""'
+
+/** The good made-up file with one change. */
+function oneChange(from: string, to: string): Buffer {
+  if (!GOOD_FILE.includes(from)) throw new Error(`test fixture: ${JSON.stringify(from)} is not in the good file`)
+  return fromText(GOOD_FILE.replace(from, to))
+}
+
+function faultsOf(bytes: Uint8Array) {
+  const r = parseTaxprepCsv(bytes)
+  if (r.ok) throw new Error('expected the file to be refused, but it parsed')
+  return r.faults
+}
+
+function expectFault(bytes: Uint8Array, code: TaxprepFaultCode, line: number | null) {
+  const faults = faultsOf(bytes)
+  const hit = faults.find((f) => f.code === code && f.line === line)
+  expect(hit, `faults seen: ${JSON.stringify(faults)}`).toBeDefined()
+  expect(must(hit, 'fault').reason.trim().length).toBeGreaterThan(10)
+}
+
+/** The value in row 8 (GFGBA.Ttwgba127, "1620") replaced by `value`. */
+const row8 = (value: string): Buffer => oneChange('"1620"', `"${value}"`)
+/** The text value in row 3 (IDENT.Ident311) replaced by `value`. */
+const row3 = (value: string): Buffer => oneChange('"Café Étienne Ltée (Test)"', `"${value}"`)
+
+const UNDEFINED_1252 = ['\u0081', '\u008d', '\u008f', '\u0090', '\u009d']
+
+describe('F03 round 2: the writer refuses what Windows-1252 cannot hold (RT-9)', () => {
+  const textRow = (text: string): WriteRow => ({
+    id: id('IFirm.ContactPartner'),
+    current: { kind: 'text', text },
+  })
+  const lead: WriteRow = {
+    id: id('GFGBA.Ttwgba64'),
+    current: { kind: 'amount', amount: 7694 },
+  }
+
+  test.each(UNDEFINED_1252.map((ch) => [`U+${ch.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}`, ch]))(
+    'RT-9 a text value holding the Windows-1252 undefined character %s is refused naming the row and the character',
+    (_name, ch) => {
+      const problems = writeRefused(PROBE, [lead, textRow(`Partner ${ch} (Test)`)], 'import')
+      expect(problems).toHaveLength(1)
+      expect(problems[0]).toMatchObject({
+        index: 1,
+        identifier: 'IFirm.ContactPartner',
+        character: ch,
+      })
+      expect(must(problems[0], 'problem').reason).toContain('IFirm.ContactPartner')
+    },
+  )
+
+  test.each(UNDEFINED_1252.map((ch) => [`U+${ch.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}`, ch]))(
+    'RT-9 the export writer refuses the undefined character %s as well (no purpose writes it)',
+    (_name, ch) => {
+      const problems = writeRefused(PROBE, [textRow(`Partner ${ch} (Test)`)], 'export')
+      expect(problems[0]).toMatchObject({
+        index: 0,
+        identifier: 'IFirm.ContactPartner',
+        character: ch,
+      })
+    },
+  )
+
+  test('RT-9 U+0080 (a control character with no Windows-1252 byte; byte 80 is the euro) is refused naming the character', () => {
+    const problems = writeRefused(PROBE, [textRow('Partner \u0080 (Test)')], 'import')
+    expect(problems[0]).toMatchObject({
+      index: 0,
+      identifier: 'IFirm.ContactPartner',
+      character: '\u0080',
+    })
+  })
+
+  test.each([
+    ['a line feed', '\n'],
+    ['a carriage return', '\r'],
+    ['a tab', '\t'],
+    ['a delete', '\u007f'],
+  ])(
+    'RT-9 a text value holding %s (it would break the one-row-per-line file) is refused naming the row and the character',
+    (_what, ch) => {
+      const problems = writeRefused(PROBE, [lead, textRow(`Partner${ch}Two (Test)`)], 'import')
+      expect(problems).toHaveLength(1)
+      expect(problems[0]).toMatchObject({
+        index: 1,
+        identifier: 'IFirm.ContactPartner',
+        character: ch,
+      })
+    },
+  )
+
+  test('RT-9 a description holding a character outside Windows-1252 is refused naming the row and the character', () => {
+    const problems = writeRefused(
+      PROBE,
+      [
+        lead,
+        {
+          id: id('GFGBA.Ttwgba72'),
+          current: { kind: 'amount', amount: 5 },
+          description: 'Line ≥ 100 (Test)',
+        },
+      ],
+      'import',
+    )
+    expect(problems).toHaveLength(1)
+    expect(problems[0]).toMatchObject({
+      index: 1,
+      identifier: 'GFGBA.Ttwgba72',
+      character: '≥',
+    })
+  })
+
+  test('RT-9 the edges of the single-byte ranges are written as one byte each: A0 (no-break space), FF (y-diaeresis), 9F (Y-diaeresis), 80 (euro)', () => {
+    const out = writeOk(PROBE, [textRow('Prix net ÿ Ÿves € (Test)')], 'import')
+    expect(asText(out).slice(HEADER_LINE.length)).toBe(
+      'IFirm.ContactPartner,"Prix\xa0net \xff \x9fves \x80 (Test)","",""\r\n',
+    )
+    expect(must(parseOk(out).rows[0], 'row').current).toEqual({
+      kind: 'value',
+      text: 'Prix net ÿ Ÿves € (Test)',
+    })
+  })
+
+  test('RT-9 byte 9F in a file reads as Y-diaeresis (U+0178), byte 80 as the euro', () => {
+    const row = must(parseOk(row3('\x9fves \x80 (Test)')).rows[1], 'row 3')
+    expect(row.current).toEqual({ kind: 'value', text: 'Ÿves € (Test)' })
+  })
+
+  test('RT-9 a refusal that is not about a character carries no character', () => {
+    const problems = writeRefused(
+      PROBE,
+      [{ id: id('GFGBA.Ttwgba64'), current: { kind: 'amount', amount: 1.5 } }],
+      'import',
+    )
+    expect(must(problems[0], 'problem')).not.toHaveProperty('character')
+  })
+})
+
+describe('F03 round 2: the RT-3 round trip over the whole Windows-1252 alphabet', () => {
+  // Every printable Windows-1252 character: 20 to 7E, the 27 defined in 80 to 9F, A0 to FF. The five undefined
+  // characters (U+0081, U+008D, U+008F, U+0090, U+009D) are left out: the writer refuses them (RT-9).
+  const decoder = new TextDecoder('windows-1252')
+  const ALPHABET: string[] = []
+  for (let b = 0x20; b <= 0xff; b++) {
+    if (b === 0x7f) continue
+    const ch = decoder.decode(Uint8Array.of(b))
+    if (!UNDEFINED_1252.includes(ch)) ALPHABET.push(ch)
+  }
+
+  test('RT-3 RT-9 neither round-trip alphabet holds any of the five undefined characters', () => {
+    expect(ALPHABET).toHaveLength(95 + 27 + 96)
+    for (const ch of UNDEFINED_1252) {
+      expect(ALPHABET).not.toContain(ch)
+      expect(TEXT_CHARS).not.toContain(ch)
+    }
+  })
+
+  test('RT-3 RT-9 property (fixed seed): text of any Windows-1252 characters, spaced so no two high bytes touch, survives write then parse', () => {
+    // Spacing keeps the bytes from forming a UTF-8 sequence, which the parser must refuse (spec amber 6, logged on T02).
+    const spaced = fc
+      .array(fc.constantFrom(...ALPHABET), { minLength: 1, maxLength: 40 })
+      .map((chars) => `A ${chars.join(' ')}`)
+    fc.assert(
+      fc.property(spaced, fc.constantFrom('import' as const, 'export' as const), (text, purpose) => {
+        const out = writeOk(
+          PROBE,
+          [
+            {
+              id: id('IFirm.ContactPartner'),
+              current: { kind: 'text', text },
+            },
+          ],
+          purpose,
+        )
+        expect(must(parseOk(out).rows[0], 'row').current).toEqual({
+          kind: 'value',
+          text,
+        })
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+})
+
+describe('F03 round 2: the identifier grammar is anchored at both ends (RT-21)', () => {
+  test.each([
+    ['text after the copy index', 'A.B[1]x'],
+    ['a second closing bracket', 'A.B[1]]'],
+    ['a hyphen inside a part', 'IDENT.Ident-120'],
+    ['an underscore inside a part', 'IDENT.Ident_120'],
+    ['a copy index in scientific notation', 'A.B[1e3].C'],
+    ['a copy index with letters after the digits', 'A.B[2x].C'],
+    ['an empty copy index', 'A.B[].C'],
+    ['a trailing dot', 'IDENT.Ident120.'],
+  ])('RT-21 an identifier with %s (%j) is refused with a reason', (_what, text) => {
+    const r = parseCellId(text)
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    expect(r.reason).toContain(text)
+  })
+
+  test.each(['A.B[1]x', 'A.B[1]]'])('RT-21 a file row with the identifier %s is refused naming the row', (bad) => {
+    expectFault(oneChange('GFGBA.Ttwgba127,', `${bad},`), 'identifier', 8)
+  })
+
+  test('RT-21 A.B[1] (copy index on the last part) parses with copy path A.B and index 1', () => {
+    const r = parseCellId('A.B[1]')
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect([r.id.copyPath, r.id.copyIndex]).toEqual(['A.B', 1])
+  })
+})
+
+describe('F03 round 2: each fault regex is anchored and class-exact (RT-9)', () => {
+  test.each([
+    // apostrophe
+    ['apostrophe', "'-1356'"],
+    ['apostrophe', "'-12'3"],
+    ['apostrophe', "'-0"],
+    ['apostrophe', "'-00"],
+    // negatives in brackets
+    ['negative-parens', '(-1356)'],
+    ['negative-parens', '( 1356 )'],
+    ['negative-parens', '(1,356.00)'],
+    // thousands
+    ['thousands', '1,234,567'],
+    ['thousands', '1 234 567'],
+    ['thousands', '48,600.50'],
+    ['thousands', '-48,600'],
+    // decimal comma
+    ['decimal-comma', '12,50'],
+    ['decimal-comma', '-0,5'],
+    // scientific
+    ['scientific', '12E3'],
+    ['scientific', '5e3'],
+    ['scientific', '4.86E04'],
+    ['scientific', '-1.5e-3'],
+    // reformatted dates
+    ['date-format', '2026/10/01'],
+    ['date-format', '2026.10.01'],
+    ['date-format', '2026.1.5'],
+    ['date-format', '1.10.2026'],
+    ['date-format', '01-10-2026'],
+    ['date-format', '1/10/26'],
+  ] as const)('RT-9 the value is refused with code %s: %j (row 8, one change from the good file)', (code, value) => {
+    expectFault(row8(value), code, 8)
+  })
+
+  test.each([
+    "O'Neil Unit 12",
+    "12 O'Neil Street",
+    '(12) Rear unit',
+    'Unit (12)',
+    'Lot 1,250',
+    '3,4 Rear',
+    'Lot 3,4',
+    '4.86E+04 units',
+    'Item 4.86E+04',
+    '01/10/2026 onwards',
+    '2026/10/01 onwards',
+    'Ref 2026/10/01',
+  ])('RT-3 RT-9 the text %j only starts or ends like a fault: it is written and read back as that text', (text) => {
+    const r = parseTaxprepCsv(row3(text))
+    expect(r.ok, r.ok ? '' : JSON.stringify(r.faults)).toBe(true)
+    if (!r.ok) return
+    expect(must(r.file.rows[1], 'row 3').current).toEqual({
+      kind: 'value',
+      text,
+    })
+    const out = writeOk(PROBE, [{ id: id('IDENT.Ident311'), current: { kind: 'text', text } }], 'export')
+    expect(must(parseOk(out).rows[0], 'row').current).toEqual({
+      kind: 'value',
+      text,
+    })
+  })
+})
+
+describe('F03 round 2: separators, quotes, line ends, byte-order mark and UTF-8 (RT-9)', () => {
+  test.each([
+    ['a tab', '\t'],
+    ['a semicolon', ';'],
+    ['a space', ' '],
+  ])('RT-9 %s between the values of one row only is refused as a separator fault on that row', (_what, sep) => {
+    expectFault(oneChange(LINE_8, `GFGBA.Ttwgba127,"1620"${sep}""${sep}""`), 'separator', 8)
+  })
+
+  test.each([
+    ['a tab', '\t'],
+    ['a semicolon', ';'],
+    ['a space', ' '],
+  ])('RT-9 %s after the identifier of one row only is refused as a separator fault on that row', (_what, sep) => {
+    expectFault(oneChange(LINE_8, `GFGBA.Ttwgba127${sep}"1620","",""`), 'separator', 8)
+  })
+
+  test.each([
+    ['a tab', '\t'],
+    ['a semicolon', ';'],
+    ['a space', ' '],
+  ])('RT-9 %s after the header brackets only is refused as a separator fault on line 1', (_what, sep) => {
+    expectFault(oneChange('],"Current Year"', `]${sep}"Current Year"`), 'separator', 1)
+  })
+
+  test.each([
+    ['text after a closing quote', 'GFGBA.Ttwgba127,"16"20,"",""'],
+    ['an unquoted last-year value', 'GFGBA.Ttwgba127,"1620",0,""'],
+    ['an unquoted description', 'GFGBA.Ttwgba127,"1620","",Bank'],
+    ['a quote that is never closed', 'GFGBA.Ttwgba127,"1620","","'],
+    ['a trailing comma with no value', 'GFGBA.Ttwgba127,"1620","",'],
+    ['no value after the identifier', 'GFGBA.Ttwgba127'],
+  ])('RT-9 %s is refused as unquoted on that row', (_what, line) => {
+    expectFault(oneChange(LINE_8, line), 'unquoted', 8)
+  })
+
+  test('RT-9 a file with only a byte-order mark wrong is refused for the mark alone (the header after it still reads)', () => {
+    const faults = faultsOf(fromText('\xef\xbb\xbf' + GOOD_FILE))
+    expect(faults.map((f) => f.code)).toEqual(['bom'])
+  })
+
+  test.each([
+    ['a three-byte UTF-8 euro (E2 82 AC)', 'Caf\xe2\x82\xac (Test)'],
+    ['a four-byte UTF-8 emoji (F0 9F 98 80)', 'Caf\xf0\x9f\x98\x80 (Test)'],
+    ['a two-byte UTF-8 e-acute (C3 A9)', 'Caf\xc3\xa9 (Test)'],
+  ])('RT-9 %s in one text value is refused as UTF-8 on that row', (_what, text) => {
+    expectFault(row3(text), 'utf8', 3)
+  })
+
+  test.each([
+    [
+      'e-acute then the euro byte (E9 80): a lead byte with one continuation byte only',
+      'Caf\xe9\x80 (Test)',
+      'Café€ (Test)',
+    ],
+    [
+      'eth then the Y-diaeresis byte (F0 9F): a four-byte lead with one continuation byte only',
+      'Bj\xf0\x9f (Test)',
+      'BjðŸ (Test)',
+    ],
+  ])('RT-9 %s is Windows-1252 text, not UTF-8: it reads as text', (_what, raw, text) => {
+    const r = parseTaxprepCsv(row3(raw))
+    expect(r.ok, r.ok ? '' : JSON.stringify(r.faults)).toBe(true)
+    if (!r.ok) return
+    expect(must(r.file.rows[1], 'row 3').current).toEqual({
+      kind: 'value',
+      text,
+    })
+  })
+
+  test('RT-9 one lone CR (a line ended CR only) is refused as a line-end fault', () => {
+    expectFault(oneChange('IDENT.Ident180,"Y","",""\r\n', 'IDENT.Ident180,"Y","",""\r'), 'line-ends', null)
+  })
+
+  test('RT-9 one LF-only line among CRLF lines is refused as a line-end fault', () => {
+    expectFault(oneChange('IDENT.Ident180,"Y","",""\r\n', 'IDENT.Ident180,"Y","",""\n'), 'line-ends', null)
+  })
+
+  test('RT-9 every fault is reported: a missing last CRLF and a bad identifier on the last row both show', () => {
+    const text = GOOD_FILE.replace('CCACat.FD08C[2].FED.Ttw08cA2', 'CCACat.FD08C[0].FED.Ttw08cA2').slice(0, -2)
+    const faults = faultsOf(fromText(text))
+    expect(faults.some((f) => f.code === 'line-ends')).toBe(true)
+    expect(faults.some((f) => f.code === 'identifier' && f.line === 12)).toBe(true)
+  })
+})
+
+describe('F03 round 2: the header line (RT-3, RT-9)', () => {
+  const GOOD_HEADER = '[Probe Co. (Test)|0|0|5f0c2e9a-1b7d-4c3e-9a21-0d6e8b4f7a10]'
+
+  test('RT-9 an empty file is refused with a header fault on line 1', () => {
+    expectFault(new Uint8Array(0), 'header', 1)
+  })
+
+  test.each([
+    ['text before the opening bracket', (t: string) => t.replace(GOOD_HEADER, `x${GOOD_HEADER}`)],
+    [
+      'the last column name missing',
+      (t: string) => t.replace(',"Current Year","Last Year",""\r\n', ',"Current Year","Last Year"\r\n'),
+    ],
+    [
+      'text between the bracket and the column names',
+      (t: string) => t.replace('],"Current Year"', ']x,"Current Year"'),
+    ],
+    ['text after the column names', (t: string) => t.replace('"Last Year",""\r\n', '"Last Year","",x\r\n')],
+    ['unquoted column names', (t: string) => t.replace(',"Current Year","Last Year",""', ',Current Year,Last Year,')],
+  ])('RT-9 a header with %s is refused with a header fault on line 1', (_what, make) => {
+    const bad = make(GOOD_FILE)
+    expect(bad).not.toBe(GOOD_FILE)
+    expectFault(fromText(bad), 'header', 1)
+  })
+})
+
+describe('F03 round 2: row shapes and the last-year column (RT-3)', () => {
+  test('RT-3 a row with a current and a last-year value but no description reads both values, description null', () => {
+    const row = must(parseOk(oneChange(LINE_8, 'GFGBA.Ttwgba127,"1620","1500"')).rows[6], 'row 8')
+    expect(row.id.text).toBe('GFGBA.Ttwgba127')
+    expect(row.current).toEqual({ kind: 'value', text: '1620' })
+    expect(row.last).toEqual({ kind: 'value', text: '1500' })
+    expect(row.description).toBeNull()
+  })
+
+  test('RT-3 a four-column row reads its last-year value', () => {
+    const row = must(parseOk(oneChange(LINE_8, 'GFGBA.Ttwgba127,"1620","1500",""')).rows[6], 'row 8')
+    expect(row.last).toEqual({ kind: 'value', text: '1500' })
+    expect(row.shape).toBe('standard')
+  })
+
+  test('RT-3 a last-year value given to the writer is written in the third column and read back', () => {
+    const out = writeOk(
+      PROBE,
+      [
+        {
+          id: id('GFGBA.Ttwgba127'),
+          current: { kind: 'amount', amount: 1620 },
+          last: { kind: 'amount', amount: -1500 },
+        },
+      ],
+      'import',
+    )
+    expect(asText(out)).toBe(`${HEADER_LINE}GFGBA.Ttwgba127,"1620","-1500",""\r\n`)
+    expect(must(parseOk(out).rows[0], 'row').last).toEqual({
+      kind: 'value',
+      text: '-1500',
+    })
+  })
+
+  test('RT-25 a last-year amount with cents is refused naming the row', () => {
+    const problems = writeRefused(
+      PROBE,
+      [
+        {
+          id: id('GFGBA.Ttwgba127'),
+          current: { kind: 'amount', amount: 1620 },
+          last: { kind: 'amount', amount: 15.5 },
+        },
+      ],
+      'import',
+    )
+    expect(problems[0]).toMatchObject({
+      index: 0,
+      identifier: 'GFGBA.Ttwgba127',
+    })
+  })
+
+  test('RT-9 a bad last-year value in a file is refused on that row', () => {
+    expectFault(oneChange(LINE_8, 'GFGBA.Ttwgba127,"1620","1,500",""'), 'thousands', 8)
+  })
+})
+
+describe('F03 round 2: the natural-key helper skips what is not a key cell (RT-7)', () => {
+  const exportRows = (rows: readonly (readonly [string, string])[]): ParsedRow[] =>
+    parseOk(fromText(HEADER_LINE + rows.map(([i, v]) => `${i},"${v}","",""\r\n`).join(''))).rows
+
+  test('RT-7 a row whose copy index sits on another part (CCACat[1].FD08C.FED.Ttw08cA1) is not a copy of CCACat.FD08C', () => {
+    const r = copiesByNaturalKey(
+      exportRows([
+        ['CCACat[1].FD08C.FED.Ttw08cA1', '10'],
+        ['CCACat.FD08C[2].FED.Ttw08cA1', '8'],
+      ]),
+      'CCACat.FD08C',
+    )
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect([...r.copies]).toEqual([['8', 2]])
+  })
+
+  test('RT-7 a copy whose key cell is a clear has no natural key and is left out', () => {
+    const r = copiesByNaturalKey(
+      exportRows([
+        ['CCACat.FD08C[1].FED.Ttw08cA1', ''],
+        ['CCACat.FD08C[2].FED.Ttw08cA1', '8'],
+      ]),
+      'CCACat.FD08C',
+    )
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect([...r.copies]).toEqual([['8', 2]])
+  })
+})
+
+describe('F03 round 2: writer refusals for dates, rates and the header (RT-3, RT-9, RT-25)', () => {
+  test.each(['12025-01-01', '2025-01-01x', ' 2025-01-01', '2025-13-01', '2025-00-10', '2025-12-32', '0099-06-15'])(
+    'RT-3 RT-9 the date %j is refused naming the row',
+    (date) => {
+      const problems = writeRefused(PROBE, [{ id: id('IDENT.Ident121'), current: { kind: 'date', date } }], 'export')
+      expect(problems).toHaveLength(1)
+      expect(problems[0]).toMatchObject({
+        index: 0,
+        identifier: 'IDENT.Ident121',
+      })
+    },
+  )
+
+  test.each(['2024-02-29', '2025-12-31', '1990-01-01'])('RT-3 the real date %s is written as given', (date) => {
+    const out = writeOk(PROBE, [{ id: id('IDENT.Ident121'), current: { kind: 'date', date } }], 'export')
+    expect(asText(out)).toBe(`${HEADER_LINE}IDENT.Ident121,"${date}","",""\r\n`)
+  })
+
+  test.each([0.12345, -0.1, Number.NaN, Number.POSITIVE_INFINITY])(
+    'RT-25 the rate %s is refused naming the row',
+    (rate) => {
+      const problems = writeRefused(
+        PROBE,
+        [
+          {
+            id: id('CCACat.FD08C[1].FED.Ttw08cA2'),
+            current: { kind: 'rate', rate },
+          },
+        ],
+        'import',
+      )
+      expect(problems[0]).toMatchObject({
+        index: 0,
+        identifier: 'CCACat.FD08C[1].FED.Ttw08cA2',
+      })
+    },
+  )
+
+  test.each([
+    ['a return name holding a character outside Windows-1252', { returnName: 'Probe ≥ Co. (Test)', guid: ZERO_GUID }],
+    ['a return name holding |', { returnName: 'Probe | Co. (Test)', guid: ZERO_GUID }],
+    ['a return name holding ]', { returnName: 'Probe ] Co. (Test)', guid: ZERO_GUID }],
+    ['a GUID holding |', { returnName: 'Probe Co. (Test)', guid: '0000|0000' }],
+    ['a GUID holding ]', { returnName: 'Probe Co. (Test)', guid: '0000]0000' }],
+    ['a GUID starting with a non-ASCII character', { returnName: 'Probe Co. (Test)', guid: `é${ZERO_GUID}` }],
+    ['a GUID ending with a non-ASCII character', { returnName: 'Probe Co. (Test)', guid: `${ZERO_GUID}é` }],
+  ])('RT-9 a header with %s is refused as the header, not as a row', (_what, header) => {
+    const problems = writeRefused(
+      header,
+      [{ id: id('GFGBA.Ttwgba64'), current: { kind: 'amount', amount: 1 } }],
+      'import',
+    )
+    expect(problems).toHaveLength(1)
+    expect(problems[0]).toMatchObject({ index: -1, identifier: 'header' })
+  })
+})
