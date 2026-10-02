@@ -1,9 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-513b7b",
- "state": "released",
- "at": "2026-10-02T15:21:11.517Z",
- "mode": "turbo",
- "note": "no code base: dep W00a has no reported build (spec still in progress); branch claude/W00b starts from claude/W00a after its build (A364). Re-offer after W00a build."
+ "worker": "cloud-dea37c",
+ "state": "working",
+ "at": "2026-10-02T18:12:54.881Z",
+ "mode": "turbo"
 }
