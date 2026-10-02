@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "ec29150",
  "worker": "cloud-3d81d3",
- "state": "hold-findings",
- "at": "2026-10-02T05:40:38.735Z",
+ "state": "reopened",
+ "at": "2026-10-02T12:47:03.132Z",
  "mode": "turbo",
- "note": "FAIL: box accepts unknown keys, missing finding kinds, see reports/F04-check.md"
+ "note": "round 2 spec reported; build per card wave 2"
 }
