@@ -1,0 +1,560 @@
+{
+  "client": "13",
+  "name": "Sharma Medicine Professional Corporation (Test)",
+  "fiscalYear": {
+    "start": "2025-01-01",
+    "end": "2025-12-31",
+    "days": 365
+  },
+  "generator": {
+    "file": "generate.mjs",
+    "seed": 1113
+  },
+  "idRule": "id = <client>-<TAG>-<YYYY>-<MM>-<seq>. TAG names the account (CHQ chequing, USD US-dollar chequing, BCD business card, PCD personal card, BRK brokerage). YYYY-MM is the month of the row date. seq is the 1-based position of the row among that account and month, in file order (header lines do not count). Rows missing from an export get the next numbers of their month.",
+  "amountConvention": "amount is the cash effect on the company account: money in is positive, money out is negative. On a card a charge is negative and a payment positive (the card CSV shows the opposite sign). post lines list the coded entry: dr and cr in dollars, the last line is the bank or card account itself.",
+  "postingCurrency": "CAD: every post line, adjusting entry and trial balance figure is in Canadian dollars; USD rows are posted at the monthly test rate in fx",
+  "accounts": [
+    {
+      "key": "CHQ",
+      "tag": "CHQ",
+      "layout": "C: Harbourline Credit Union (Test) chequing",
+      "role": "bank",
+      "currency": "CAD",
+      "file": "accounts/harbourline-chequing-6620.csv",
+      "qboFile": "qbo/harbourline-chequing-6620.csv",
+      "glAccount": "1010",
+      "openingBalance": 15584.42,
+      "closingBalance": 257702.5,
+      "balanceMeaning": "cash balance",
+      "rowsInExport": 93,
+      "rowsMissingFromExport": 0
+    },
+    {
+      "key": "BCD",
+      "tag": "BCD",
+      "layout": "Aurora Card (Test)",
+      "role": "card",
+      "currency": "CAD",
+      "file": "accounts/aurora-business-card-7714.csv",
+      "qboFile": "qbo/aurora-business-card-7714.csv",
+      "glAccount": "2010",
+      "openingBalance": 1861.83,
+      "closingBalance": 630.9,
+      "balanceMeaning": "amount owing on the card",
+      "rowsInExport": 73,
+      "rowsMissingFromExport": 0
+    }
+  ],
+  "transactions": [
+    {"id":"13-CHQ-2025-01-0001","acct":"CHQ","date":"2025-01-01","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":1,"qboLine":2,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-01-0002","acct":"CHQ","date":"2025-01-10","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":2,"qboLine":3,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-01-0003","acct":"CHQ","date":"2025-01-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":31240.5,"currency":"CAD","kind":"ohip-deposit","line":3,"qboLine":4,"account":"1100 Accounts receivable","accountNo":"1100","gifi":1062,"gifiStatus":"settled","post":[{"a":"1100","cr":31240.5},{"a":"1010","dr":31240.5}],"notes":["pays 2024 services: reduces the opening OHIP receivable"]},
+    {"id":"13-CHQ-2025-01-0004","acct":"CHQ","date":"2025-01-15","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1423.92,"currency":"CAD","kind":"payroll-remittance","line":4,"qboLine":5,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":651},{"a":"2041","dr":772.92},{"a":"1010","cr":1423.92}],"flags":["13-F06"]},
+    {"id":"13-CHQ-2025-01-0005","acct":"CHQ","date":"2025-01-20","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-1861.83,"currency":"CAD","kind":"card-payment","line":5,"qboLine":6,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":1861.83},{"a":"1010","cr":1861.83}],"pair":"13-BCD-2025-01-0004"},
+    {"id":"13-CHQ-2025-01-0006","acct":"CHQ","date":"2025-01-24","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":6,"qboLine":7,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-01-0007","acct":"CHQ","date":"2025-01-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":7,"qboLine":8,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-01-0008","acct":"CHQ","date":"2025-01-30","description":"PRE-AUTH DEBIT CMPA DUES TEST","amount":-6400,"currency":"CAD","kind":"dues","line":8,"qboLine":9,"account":"6080 Licences, dues and memberships","accountNo":"6080","gifi":8760,"gifiStatus":"settled","post":[{"a":"6080","dr":6400},{"a":"1010","cr":6400}]},
+    {"id":"13-CHQ-2025-02-0001","acct":"CHQ","date":"2025-02-03","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":9,"qboLine":10,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-02-0002","acct":"CHQ","date":"2025-02-07","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":10,"qboLine":11,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-02-0003","acct":"CHQ","date":"2025-02-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":27915.8,"currency":"CAD","kind":"ohip-deposit","line":11,"qboLine":12,"account":"1100 Accounts receivable","accountNo":"1100","gifi":1062,"gifiStatus":"settled","post":[{"a":"1100","cr":27915.8},{"a":"1010","dr":27915.8}],"notes":["pays 2024 services: reduces the opening OHIP receivable"]},
+    {"id":"13-CHQ-2025-02-0004","acct":"CHQ","date":"2025-02-17","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":12,"qboLine":13,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}],"flags":["13-F06"]},
+    {"id":"13-CHQ-2025-02-0005","acct":"CHQ","date":"2025-02-20","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-593.09,"currency":"CAD","kind":"card-payment","line":13,"qboLine":14,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":593.09},{"a":"1010","cr":593.09}],"pair":"13-BCD-2025-02-0006"},
+    {"id":"13-CHQ-2025-02-0006","acct":"CHQ","date":"2025-02-21","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":14,"qboLine":15,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-02-0007","acct":"CHQ","date":"2025-02-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":15,"qboLine":16,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-03-0001","acct":"CHQ","date":"2025-03-03","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":16,"qboLine":17,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-03-0002","acct":"CHQ","date":"2025-03-03","description":"ONLINE BILL PAYMENT ARBOUR BOOKKEEPING TEST","amount":-1500,"currency":"CAD","kind":"expense","line":17,"qboLine":18,"account":"6100 Accounting fees","accountNo":"6100","gifi":8862,"gifiStatus":"settled","post":[{"a":"6100","dr":1500},{"a":"1010","cr":1500}]},
+    {"id":"13-CHQ-2025-03-0003","acct":"CHQ","date":"2025-03-07","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":18,"qboLine":19,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-03-0004","acct":"CHQ","date":"2025-03-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":32410.25,"currency":"CAD","kind":"ohip-deposit","line":19,"qboLine":20,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":32410.25},{"a":"1010","dr":32410.25}]},
+    {"id":"13-CHQ-2025-03-0005","acct":"CHQ","date":"2025-03-17","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":20,"qboLine":21,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}]},
+    {"id":"13-CHQ-2025-03-0006","acct":"CHQ","date":"2025-03-20","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-737.56,"currency":"CAD","kind":"card-payment","line":21,"qboLine":22,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":737.56},{"a":"1010","cr":737.56}],"pair":"13-BCD-2025-03-0006"},
+    {"id":"13-CHQ-2025-03-0007","acct":"CHQ","date":"2025-03-21","description":"EFT DEPOSIT NORTHGATE LIFE INSURANCE TEST","amount":650,"currency":"CAD","kind":"non-ohip-income","line":22,"qboLine":23,"account":"4300 Other revenue","accountNo":"4300","gifi":8230,"gifiStatus":"settled","post":[{"a":"4300","cr":650},{"a":"1010","dr":650}],"flags":["13-F04"]},
+    {"id":"13-CHQ-2025-03-0008","acct":"CHQ","date":"2025-03-21","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":23,"qboLine":24,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-03-0009","acct":"CHQ","date":"2025-03-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":24,"qboLine":25,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-04-0001","acct":"CHQ","date":"2025-04-01","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":25,"qboLine":26,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-04-0002","acct":"CHQ","date":"2025-04-04","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":26,"qboLine":27,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-04-0003","acct":"CHQ","date":"2025-04-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":30880.6,"currency":"CAD","kind":"ohip-deposit","line":27,"qboLine":28,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":30880.6},{"a":"1010","dr":30880.6}]},
+    {"id":"13-CHQ-2025-04-0004","acct":"CHQ","date":"2025-04-15","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":28,"qboLine":29,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}]},
+    {"id":"13-CHQ-2025-04-0005","acct":"CHQ","date":"2025-04-15","description":"ONLINE BILL PAYMENT COLLEGE OF PHYSICIANS FEES TEST","amount":-1750,"currency":"CAD","kind":"dues","line":29,"qboLine":30,"account":"6080 Licences, dues and memberships","accountNo":"6080","gifi":8760,"gifiStatus":"settled","post":[{"a":"6080","dr":1750},{"a":"1010","cr":1750}]},
+    {"id":"13-CHQ-2025-04-0006","acct":"CHQ","date":"2025-04-18","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":30,"qboLine":31,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-04-0007","acct":"CHQ","date":"2025-04-21","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-739.94,"currency":"CAD","kind":"card-payment","line":31,"qboLine":32,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":739.94},{"a":"1010","cr":739.94}],"pair":"13-BCD-2025-04-0006"},
+    {"id":"13-CHQ-2025-04-0008","acct":"CHQ","date":"2025-04-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":32,"qboLine":33,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-05-0001","acct":"CHQ","date":"2025-05-01","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":33,"qboLine":34,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-05-0002","acct":"CHQ","date":"2025-05-02","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":34,"qboLine":35,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-05-0003","acct":"CHQ","date":"2025-05-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":33105.4,"currency":"CAD","kind":"ohip-deposit","line":35,"qboLine":36,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":33105.4},{"a":"1010","dr":33105.4}]},
+    {"id":"13-CHQ-2025-05-0004","acct":"CHQ","date":"2025-05-15","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":36,"qboLine":37,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}]},
+    {"id":"13-CHQ-2025-05-0005","acct":"CHQ","date":"2025-05-16","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":37,"qboLine":38,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-05-0006","acct":"CHQ","date":"2025-05-20","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-795.47,"currency":"CAD","kind":"card-payment","line":38,"qboLine":39,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":795.47},{"a":"1010","cr":795.47}],"pair":"13-BCD-2025-05-0005"},
+    {"id":"13-CHQ-2025-05-0007","acct":"CHQ","date":"2025-05-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":39,"qboLine":40,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-05-0008","acct":"CHQ","date":"2025-05-30","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":40,"qboLine":41,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-06-0001","acct":"CHQ","date":"2025-06-02","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":41,"qboLine":42,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-06-0002","acct":"CHQ","date":"2025-06-11","description":"EFT DEPOSIT BRANTLEY AND COLE LLP TEST","amount":2400,"currency":"CAD","kind":"non-ohip-income","line":42,"qboLine":43,"account":"4300 Other revenue","accountNo":"4300","gifi":8230,"gifiStatus":"settled","post":[{"a":"4300","cr":2400},{"a":"1010","dr":2400}],"flags":["13-F04"]},
+    {"id":"13-CHQ-2025-06-0003","acct":"CHQ","date":"2025-06-13","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":43,"qboLine":44,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-06-0004","acct":"CHQ","date":"2025-06-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":30579.75,"currency":"CAD","kind":"ohip-deposit","line":44,"qboLine":45,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":30579.75},{"a":"1010","dr":30579.75}],"flags":["13-F02"]},
+    {"id":"13-CHQ-2025-06-0005","acct":"CHQ","date":"2025-06-16","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-2132.76,"currency":"CAD","kind":"payroll-remittance","line":45,"qboLine":46,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":973.38},{"a":"2041","dr":1159.38},{"a":"1010","cr":2132.76}]},
+    {"id":"13-CHQ-2025-06-0006","acct":"CHQ","date":"2025-06-20","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-7852.83,"currency":"CAD","kind":"card-payment","line":46,"qboLine":47,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":7852.83},{"a":"1010","cr":7852.83}],"pair":"13-BCD-2025-06-0005"},
+    {"id":"13-CHQ-2025-06-0007","acct":"CHQ","date":"2025-06-27","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":47,"qboLine":48,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-06-0008","acct":"CHQ","date":"2025-06-30","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":48,"qboLine":49,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-07-0001","acct":"CHQ","date":"2025-07-01","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":49,"qboLine":50,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-07-0002","acct":"CHQ","date":"2025-07-11","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":50,"qboLine":51,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-07-0003","acct":"CHQ","date":"2025-07-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":32945.7,"currency":"CAD","kind":"ohip-deposit","line":51,"qboLine":52,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":32945.7},{"a":"1010","dr":32945.7}]},
+    {"id":"13-CHQ-2025-07-0004","acct":"CHQ","date":"2025-07-15","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":52,"qboLine":53,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}]},
+    {"id":"13-CHQ-2025-07-0005","acct":"CHQ","date":"2025-07-21","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-875.43,"currency":"CAD","kind":"card-payment","line":53,"qboLine":54,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":875.43},{"a":"1010","cr":875.43}],"pair":"13-BCD-2025-07-0005"},
+    {"id":"13-CHQ-2025-07-0006","acct":"CHQ","date":"2025-07-25","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":54,"qboLine":55,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-07-0007","acct":"CHQ","date":"2025-07-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":55,"qboLine":56,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-08-0001","acct":"CHQ","date":"2025-08-01","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":56,"qboLine":57,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-08-0002","acct":"CHQ","date":"2025-08-08","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":57,"qboLine":58,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-08-0003","acct":"CHQ","date":"2025-08-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":29830.35,"currency":"CAD","kind":"ohip-deposit","line":58,"qboLine":59,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":29830.35},{"a":"1010","dr":29830.35}]},
+    {"id":"13-CHQ-2025-08-0004","acct":"CHQ","date":"2025-08-15","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":59,"qboLine":60,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}]},
+    {"id":"13-CHQ-2025-08-0005","acct":"CHQ","date":"2025-08-20","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-859.72,"currency":"CAD","kind":"card-payment","line":60,"qboLine":61,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":859.72},{"a":"1010","cr":859.72}],"pair":"13-BCD-2025-08-0007"},
+    {"id":"13-CHQ-2025-08-0006","acct":"CHQ","date":"2025-08-22","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":61,"qboLine":62,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-08-0007","acct":"CHQ","date":"2025-08-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":62,"qboLine":63,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-09-0001","acct":"CHQ","date":"2025-09-01","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":63,"qboLine":64,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-09-0002","acct":"CHQ","date":"2025-09-05","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":64,"qboLine":65,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-09-0003","acct":"CHQ","date":"2025-09-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":28415.9,"currency":"CAD","kind":"ohip-deposit","line":65,"qboLine":66,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":28415.9},{"a":"1010","dr":28415.9}]},
+    {"id":"13-CHQ-2025-09-0004","acct":"CHQ","date":"2025-09-15","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":66,"qboLine":67,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}]},
+    {"id":"13-CHQ-2025-09-0005","acct":"CHQ","date":"2025-09-17","description":"EFT DEPOSIT BRANTLEY AND COLE LLP TEST","amount":1850,"currency":"CAD","kind":"non-ohip-income","line":67,"qboLine":68,"account":"4300 Other revenue","accountNo":"4300","gifi":8230,"gifiStatus":"settled","post":[{"a":"4300","cr":1850},{"a":"1010","dr":1850}],"flags":["13-F04"]},
+    {"id":"13-CHQ-2025-09-0006","acct":"CHQ","date":"2025-09-19","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":68,"qboLine":69,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-09-0007","acct":"CHQ","date":"2025-09-22","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-714.68,"currency":"CAD","kind":"card-payment","line":69,"qboLine":70,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":714.68},{"a":"1010","cr":714.68}],"pair":"13-BCD-2025-09-0006"},
+    {"id":"13-CHQ-2025-09-0008","acct":"CHQ","date":"2025-09-29","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":70,"qboLine":71,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-10-0001","acct":"CHQ","date":"2025-10-01","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":71,"qboLine":72,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-10-0002","acct":"CHQ","date":"2025-10-03","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":72,"qboLine":73,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-10-0003","acct":"CHQ","date":"2025-10-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":30807.85,"currency":"CAD","kind":"ohip-deposit","line":73,"qboLine":74,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":30807.85},{"a":"1010","dr":30807.85}],"flags":["13-F03"]},
+    {"id":"13-CHQ-2025-10-0004","acct":"CHQ","date":"2025-10-15","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":74,"qboLine":75,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}]},
+    {"id":"13-CHQ-2025-10-0005","acct":"CHQ","date":"2025-10-17","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":75,"qboLine":76,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-10-0006","acct":"CHQ","date":"2025-10-20","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-803.76,"currency":"CAD","kind":"card-payment","line":76,"qboLine":77,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":803.76},{"a":"1010","cr":803.76}],"pair":"13-BCD-2025-10-0004"},
+    {"id":"13-CHQ-2025-10-0007","acct":"CHQ","date":"2025-10-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":77,"qboLine":78,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-10-0008","acct":"CHQ","date":"2025-10-31","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":78,"qboLine":79,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-11-0001","acct":"CHQ","date":"2025-11-03","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":79,"qboLine":80,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-11-0002","acct":"CHQ","date":"2025-11-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":32670.8,"currency":"CAD","kind":"ohip-deposit","line":80,"qboLine":81,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":32670.8},{"a":"1010","dr":32670.8}]},
+    {"id":"13-CHQ-2025-11-0003","acct":"CHQ","date":"2025-11-14","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":81,"qboLine":82,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-11-0004","acct":"CHQ","date":"2025-11-17","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-2132.76,"currency":"CAD","kind":"payroll-remittance","line":82,"qboLine":83,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":973.38},{"a":"2041","dr":1159.38},{"a":"1010","cr":2132.76}]},
+    {"id":"13-CHQ-2025-11-0005","acct":"CHQ","date":"2025-11-20","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-706.83,"currency":"CAD","kind":"card-payment","line":83,"qboLine":84,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":706.83},{"a":"1010","cr":706.83}],"pair":"13-BCD-2025-11-0007"},
+    {"id":"13-CHQ-2025-11-0006","acct":"CHQ","date":"2025-11-26","description":"EFT DEPOSIT NORTHGATE LIFE INSURANCE TEST","amount":480,"currency":"CAD","kind":"non-ohip-income","line":84,"qboLine":85,"account":"4300 Other revenue","accountNo":"4300","gifi":8230,"gifiStatus":"settled","post":[{"a":"4300","cr":480},{"a":"1010","dr":480}],"flags":["13-F04"]},
+    {"id":"13-CHQ-2025-11-0007","acct":"CHQ","date":"2025-11-28","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":85,"qboLine":86,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-11-0008","acct":"CHQ","date":"2025-11-28","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":86,"qboLine":87,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-CHQ-2025-12-0001","acct":"CHQ","date":"2025-12-01","description":"PRE-AUTH DEBIT CLINIC RENT SHARE TEST","amount":-4200,"currency":"CAD","kind":"expense","line":87,"qboLine":88,"account":"6110 Rent","accountNo":"6110","gifi":8911,"gifiStatus":"settled","post":[{"a":"6110","dr":4200},{"a":"1010","cr":4200}]},
+    {"id":"13-CHQ-2025-12-0002","acct":"CHQ","date":"2025-12-12","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":88,"qboLine":89,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-12-0003","acct":"CHQ","date":"2025-12-14","description":"EFT DEPOSIT MOH OHIP PAYMENT TEST","amount":33892.8,"currency":"CAD","kind":"ohip-deposit","line":89,"qboLine":90,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":33892.8},{"a":"1010","dr":33892.8}],"flags":["13-F01","13-F03"]},
+    {"id":"13-CHQ-2025-12-0004","acct":"CHQ","date":"2025-12-15","description":"PRE-AUTH DEBIT CRA PAYROLL DEDUCTIONS","amount":-1421.84,"currency":"CAD","kind":"payroll-remittance","line":90,"qboLine":91,"account":"2041 Income tax withheld payable","accountNo":"2041","gifi":2628,"gifiStatus":"confirm","post":[{"a":"2040","dr":648.92},{"a":"2041","dr":772.92},{"a":"1010","cr":1421.84}]},
+    {"id":"13-CHQ-2025-12-0005","acct":"CHQ","date":"2025-12-22","description":"PAYMENT TO CARD AURORA CARD TEST 7714","amount":-907.72,"currency":"CAD","kind":"card-payment","line":91,"qboLine":92,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":907.72},{"a":"1010","cr":907.72}],"pair":"13-BCD-2025-12-0005"},
+    {"id":"13-CHQ-2025-12-0006","acct":"CHQ","date":"2025-12-26","description":"PAYROLL DEPOSIT LEAH FORTIN TEST","amount":-1608.36,"currency":"CAD","kind":"payroll","line":92,"qboLine":93,"account":"6130 Salaries and wages","accountNo":"6130","gifi":9060,"gifiStatus":"settled","post":[{"a":"6130","dr":2150},{"a":"6040","dr":169.28},{"a":"2040","cr":324.46},{"a":"2041","cr":386.46},{"a":"1010","cr":1608.36}],"payroll":{"gross":2150,"cpp":119.92,"ei":35.26,"tax":386.46,"net":1608.36,"employerCpp":119.92,"employerEi":49.36}},
+    {"id":"13-CHQ-2025-12-0007","acct":"CHQ","date":"2025-12-29","description":"MONTHLY ACCOUNT FEE","amount":-12.95,"currency":"CAD","kind":"expense","line":93,"qboLine":94,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":12.95},{"a":"1010","cr":12.95}]},
+    {"id":"13-BCD-2025-01-0001","acct":"BCD","date":"2025-01-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":2,"qboLine":2,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-01-0002","acct":"BCD","date":"2025-01-09","description":"CLINICAL SUPPLY CO TEST","amount":-401.54,"currency":"CAD","kind":"expense","line":3,"qboLine":3,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":401.54},{"a":"2010","cr":401.54}]},
+    {"id":"13-BCD-2025-01-0003","acct":"BCD","date":"2025-01-12","description":"ROGERS","amount":-88.67,"currency":"CAD","kind":"expense","line":4,"qboLine":4,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":88.67},{"a":"2010","cr":88.67}]},
+    {"id":"13-BCD-2025-01-0004","acct":"BCD","date":"2025-01-20","description":"PAYMENT - THANK YOU","amount":1861.83,"currency":"CAD","kind":"card-payment","line":5,"qboLine":5,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-01-0005","postedVia":"13-CHQ-2025-01-0005"},
+    {"id":"13-BCD-2025-01-0005","acct":"BCD","date":"2025-01-25","description":"AMAZON.CA","amount":-63.88,"currency":"CAD","kind":"expense","line":6,"qboLine":6,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":63.88},{"a":"2010","cr":63.88}]},
+    {"id":"13-BCD-2025-02-0001","acct":"BCD","date":"2025-02-04","description":"AMAZON.CA","amount":-17.53,"currency":"CAD","kind":"expense","line":7,"qboLine":7,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":17.53},{"a":"2010","cr":17.53}]},
+    {"id":"13-BCD-2025-02-0002","acct":"BCD","date":"2025-02-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":8,"qboLine":8,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-02-0003","acct":"BCD","date":"2025-02-09","description":"CLINICAL SUPPLY CO TEST","amount":-512.38,"currency":"CAD","kind":"expense","line":9,"qboLine":9,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":512.38},{"a":"2010","cr":512.38}]},
+    {"id":"13-BCD-2025-02-0004","acct":"BCD","date":"2025-02-12","description":"ROGERS","amount":-89.08,"currency":"CAD","kind":"expense","line":10,"qboLine":10,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":89.08},{"a":"2010","cr":89.08}]},
+    {"id":"13-BCD-2025-02-0005","acct":"BCD","date":"2025-02-14","description":"STAPLES #9140 ETOBICOKE ON","amount":-79.57,"currency":"CAD","kind":"expense","line":11,"qboLine":11,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":79.57},{"a":"2010","cr":79.57}]},
+    {"id":"13-BCD-2025-02-0006","acct":"BCD","date":"2025-02-20","description":"PAYMENT - THANK YOU","amount":593.09,"currency":"CAD","kind":"card-payment","line":12,"qboLine":12,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-02-0005","postedVia":"13-CHQ-2025-02-0005"},
+    {"id":"13-BCD-2025-03-0001","acct":"BCD","date":"2025-03-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":13,"qboLine":13,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-03-0002","acct":"BCD","date":"2025-03-09","description":"CLINICAL SUPPLY CO TEST","amount":-515.12,"currency":"CAD","kind":"expense","line":14,"qboLine":14,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":515.12},{"a":"2010","cr":515.12}]},
+    {"id":"13-BCD-2025-03-0003","acct":"BCD","date":"2025-03-12","description":"ROGERS","amount":-88.95,"currency":"CAD","kind":"expense","line":15,"qboLine":15,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":88.95},{"a":"2010","cr":88.95}]},
+    {"id":"13-BCD-2025-03-0004","acct":"BCD","date":"2025-03-17","description":"AMAZON.CA","amount":-34.46,"currency":"CAD","kind":"expense","line":16,"qboLine":16,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":34.46},{"a":"2010","cr":34.46}]},
+    {"id":"13-BCD-2025-03-0005","acct":"BCD","date":"2025-03-18","description":"STAPLES #8375 MISSISSAUGA ON","amount":-62.41,"currency":"CAD","kind":"expense","line":17,"qboLine":17,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":62.41},{"a":"2010","cr":62.41}]},
+    {"id":"13-BCD-2025-03-0006","acct":"BCD","date":"2025-03-20","description":"PAYMENT - THANK YOU","amount":737.56,"currency":"CAD","kind":"card-payment","line":18,"qboLine":18,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-03-0006","postedVia":"13-CHQ-2025-03-0006"},
+    {"id":"13-BCD-2025-04-0001","acct":"BCD","date":"2025-04-05","description":"AMAZON.CA","amount":-65.31,"currency":"CAD","kind":"expense","line":19,"qboLine":19,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":65.31},{"a":"2010","cr":65.31}]},
+    {"id":"13-BCD-2025-04-0002","acct":"BCD","date":"2025-04-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":20,"qboLine":20,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-04-0003","acct":"BCD","date":"2025-04-07","description":"STAPLES #6374 AJAX ON","amount":-77.83,"currency":"CAD","kind":"expense","line":21,"qboLine":21,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":77.83},{"a":"2010","cr":77.83}]},
+    {"id":"13-BCD-2025-04-0004","acct":"BCD","date":"2025-04-09","description":"CLINICAL SUPPLY CO TEST","amount":-527.5,"currency":"CAD","kind":"expense","line":22,"qboLine":22,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":527.5},{"a":"2010","cr":527.5}]},
+    {"id":"13-BCD-2025-04-0005","acct":"BCD","date":"2025-04-12","description":"ROGERS","amount":-85.83,"currency":"CAD","kind":"expense","line":23,"qboLine":23,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":85.83},{"a":"2010","cr":85.83}]},
+    {"id":"13-BCD-2025-04-0006","acct":"BCD","date":"2025-04-21","description":"PAYMENT - THANK YOU","amount":739.94,"currency":"CAD","kind":"card-payment","line":24,"qboLine":24,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-04-0007","postedVia":"13-CHQ-2025-04-0007"},
+    {"id":"13-BCD-2025-05-0001","acct":"BCD","date":"2025-05-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":25,"qboLine":25,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-05-0002","acct":"BCD","date":"2025-05-09","description":"CLINICAL SUPPLY CO TEST","amount":-630.33,"currency":"CAD","kind":"expense","line":26,"qboLine":26,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":630.33},{"a":"2010","cr":630.33}]},
+    {"id":"13-BCD-2025-05-0003","acct":"BCD","date":"2025-05-12","description":"ROGERS","amount":-89.54,"currency":"CAD","kind":"expense","line":27,"qboLine":27,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":89.54},{"a":"2010","cr":89.54}]},
+    {"id":"13-BCD-2025-05-0004","acct":"BCD","date":"2025-05-20","description":"MERIDIAN MEDICAL SUPPLY TEST","amount":-6850,"currency":"CAD","kind":"capital-purchase","line":28,"qboLine":28,"account":"1530 Equipment","accountNo":"1530","gifi":1740,"gifiStatus":"settled","post":[{"a":"1530","dr":6850},{"a":"2010","cr":6850}],"flags":["13-F07"]},
+    {"id":"13-BCD-2025-05-0005","acct":"BCD","date":"2025-05-20","description":"PAYMENT - THANK YOU","amount":795.47,"currency":"CAD","kind":"card-payment","line":29,"qboLine":29,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-05-0006","postedVia":"13-CHQ-2025-05-0006"},
+    {"id":"13-BCD-2025-05-0006","acct":"BCD","date":"2025-05-21","description":"AMAZON.CA","amount":-88.44,"currency":"CAD","kind":"expense","line":30,"qboLine":30,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":88.44},{"a":"2010","cr":88.44}]},
+    {"id":"13-BCD-2025-05-0007","acct":"BCD","date":"2025-05-25","description":"STAPLES #3380 MILTON ON","amount":-71.14,"currency":"CAD","kind":"expense","line":31,"qboLine":31,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":71.14},{"a":"2010","cr":71.14}]},
+    {"id":"13-BCD-2025-05-0008","acct":"BCD","date":"2025-05-25","description":"STAPLES #255 HAMILTON ON","amount":-84.38,"currency":"CAD","kind":"expense","line":32,"qboLine":32,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":84.38},{"a":"2010","cr":84.38}]},
+    {"id":"13-BCD-2025-06-0001","acct":"BCD","date":"2025-06-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":33,"qboLine":33,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-06-0002","acct":"BCD","date":"2025-06-09","description":"CLINICAL SUPPLY CO TEST","amount":-602.22,"currency":"CAD","kind":"expense","line":34,"qboLine":34,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":602.22},{"a":"2010","cr":602.22}]},
+    {"id":"13-BCD-2025-06-0003","acct":"BCD","date":"2025-06-10","description":"STAPLES #8240 OAKVILLE ON","amount":-51.7,"currency":"CAD","kind":"expense","line":35,"qboLine":35,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":51.7},{"a":"2010","cr":51.7}]},
+    {"id":"13-BCD-2025-06-0004","acct":"BCD","date":"2025-06-12","description":"ROGERS","amount":-87.76,"currency":"CAD","kind":"expense","line":36,"qboLine":36,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":87.76},{"a":"2010","cr":87.76}]},
+    {"id":"13-BCD-2025-06-0005","acct":"BCD","date":"2025-06-20","description":"PAYMENT - THANK YOU","amount":7852.83,"currency":"CAD","kind":"card-payment","line":37,"qboLine":37,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-06-0006","postedVia":"13-CHQ-2025-06-0006"},
+    {"id":"13-BCD-2025-06-0006","acct":"BCD","date":"2025-06-24","description":"STAPLES #3773 BRAMPTON ON","amount":-94.75,"currency":"CAD","kind":"expense","line":38,"qboLine":38,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":94.75},{"a":"2010","cr":94.75}]},
+    {"id":"13-BCD-2025-07-0001","acct":"BCD","date":"2025-07-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":39,"qboLine":39,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-07-0002","acct":"BCD","date":"2025-07-07","description":"STAPLES #9284 BURLINGTON ON","amount":-100.72,"currency":"CAD","kind":"expense","line":40,"qboLine":40,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":100.72},{"a":"2010","cr":100.72}]},
+    {"id":"13-BCD-2025-07-0003","acct":"BCD","date":"2025-07-09","description":"CLINICAL SUPPLY CO TEST","amount":-632.34,"currency":"CAD","kind":"expense","line":41,"qboLine":41,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":632.34},{"a":"2010","cr":632.34}]},
+    {"id":"13-BCD-2025-07-0004","acct":"BCD","date":"2025-07-12","description":"ROGERS","amount":-87.66,"currency":"CAD","kind":"expense","line":42,"qboLine":42,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":87.66},{"a":"2010","cr":87.66}]},
+    {"id":"13-BCD-2025-07-0005","acct":"BCD","date":"2025-07-21","description":"PAYMENT - THANK YOU","amount":875.43,"currency":"CAD","kind":"card-payment","line":43,"qboLine":43,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-07-0005","postedVia":"13-CHQ-2025-07-0005"},
+    {"id":"13-BCD-2025-08-0001","acct":"BCD","date":"2025-08-05","description":"AMAZON.CA","amount":-17.99,"currency":"CAD","kind":"expense","line":44,"qboLine":44,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":17.99},{"a":"2010","cr":17.99}]},
+    {"id":"13-BCD-2025-08-0002","acct":"BCD","date":"2025-08-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":45,"qboLine":45,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-08-0003","acct":"BCD","date":"2025-08-09","description":"CLINICAL SUPPLY CO TEST","amount":-410.91,"currency":"CAD","kind":"expense","line":46,"qboLine":46,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":410.91},{"a":"2010","cr":410.91}]},
+    {"id":"13-BCD-2025-08-0004","acct":"BCD","date":"2025-08-11","description":"STAPLES #963 MARKHAM ON","amount":-61.31,"currency":"CAD","kind":"expense","line":47,"qboLine":47,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":61.31},{"a":"2010","cr":61.31}]},
+    {"id":"13-BCD-2025-08-0005","acct":"BCD","date":"2025-08-12","description":"ROGERS","amount":-84.31,"currency":"CAD","kind":"expense","line":48,"qboLine":48,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":84.31},{"a":"2010","cr":84.31}]},
+    {"id":"13-BCD-2025-08-0006","acct":"BCD","date":"2025-08-19","description":"STAPLES #6682 MARKHAM ON","amount":-101.16,"currency":"CAD","kind":"expense","line":49,"qboLine":49,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":101.16},{"a":"2010","cr":101.16}]},
+    {"id":"13-BCD-2025-08-0007","acct":"BCD","date":"2025-08-20","description":"PAYMENT - THANK YOU","amount":859.72,"currency":"CAD","kind":"card-payment","line":50,"qboLine":50,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-08-0005","postedVia":"13-CHQ-2025-08-0005"},
+    {"id":"13-BCD-2025-09-0001","acct":"BCD","date":"2025-09-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":51,"qboLine":51,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-09-0002","acct":"BCD","date":"2025-09-09","description":"CLINICAL SUPPLY CO TEST","amount":-397.11,"currency":"CAD","kind":"expense","line":52,"qboLine":52,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":397.11},{"a":"2010","cr":397.11}]},
+    {"id":"13-BCD-2025-09-0003","acct":"BCD","date":"2025-09-12","description":"ROGERS","amount":-86.85,"currency":"CAD","kind":"expense","line":53,"qboLine":53,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":86.85},{"a":"2010","cr":86.85}]},
+    {"id":"13-BCD-2025-09-0004","acct":"BCD","date":"2025-09-16","description":"STAPLES #4410 ETOBICOKE ON","amount":-107.46,"currency":"CAD","kind":"expense","line":54,"qboLine":54,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":107.46},{"a":"2010","cr":107.46}]},
+    {"id":"13-BCD-2025-09-0005","acct":"BCD","date":"2025-09-19","description":"STAPLES #318 MARKHAM ON","amount":-104.2,"currency":"CAD","kind":"expense","line":55,"qboLine":55,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":104.2},{"a":"2010","cr":104.2}]},
+    {"id":"13-BCD-2025-09-0006","acct":"BCD","date":"2025-09-22","description":"PAYMENT - THANK YOU","amount":714.68,"currency":"CAD","kind":"card-payment","line":56,"qboLine":56,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-09-0007","postedVia":"13-CHQ-2025-09-0007"},
+    {"id":"13-BCD-2025-09-0007","acct":"BCD","date":"2025-09-26","description":"STAPLES #2953 VAUGHAN ON","amount":-69.14,"currency":"CAD","kind":"expense","line":57,"qboLine":57,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":69.14},{"a":"2010","cr":69.14}]},
+    {"id":"13-BCD-2025-10-0001","acct":"BCD","date":"2025-10-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":58,"qboLine":58,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-10-0002","acct":"BCD","date":"2025-10-09","description":"CLINICAL SUPPLY CO TEST","amount":-463.61,"currency":"CAD","kind":"expense","line":59,"qboLine":59,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":463.61},{"a":"2010","cr":463.61}]},
+    {"id":"13-BCD-2025-10-0003","acct":"BCD","date":"2025-10-12","description":"ROGERS","amount":-87.4,"currency":"CAD","kind":"expense","line":60,"qboLine":60,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":87.4},{"a":"2010","cr":87.4}]},
+    {"id":"13-BCD-2025-10-0004","acct":"BCD","date":"2025-10-20","description":"PAYMENT - THANK YOU","amount":803.76,"currency":"CAD","kind":"card-payment","line":61,"qboLine":61,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-10-0006","postedVia":"13-CHQ-2025-10-0006"},
+    {"id":"13-BCD-2025-10-0005","acct":"BCD","date":"2025-10-28","description":"STAPLES #4306 AJAX ON","amount":-116.82,"currency":"CAD","kind":"expense","line":62,"qboLine":62,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":116.82},{"a":"2010","cr":116.82}]},
+    {"id":"13-BCD-2025-11-0001","acct":"BCD","date":"2025-11-03","description":"AMAZON.CA","amount":-104.66,"currency":"CAD","kind":"expense","line":63,"qboLine":63,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":104.66},{"a":"2010","cr":104.66}]},
+    {"id":"13-BCD-2025-11-0002","acct":"BCD","date":"2025-11-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":64,"qboLine":64,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-11-0003","acct":"BCD","date":"2025-11-07","description":"STAPLES #4247 MARKHAM ON","amount":-96.43,"currency":"CAD","kind":"expense","line":65,"qboLine":65,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":96.43},{"a":"2010","cr":96.43}]},
+    {"id":"13-BCD-2025-11-0004","acct":"BCD","date":"2025-11-09","description":"CLINICAL SUPPLY CO TEST","amount":-539.48,"currency":"CAD","kind":"expense","line":66,"qboLine":66,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":539.48},{"a":"2010","cr":539.48}]},
+    {"id":"13-BCD-2025-11-0005","acct":"BCD","date":"2025-11-12","description":"ROGERS","amount":-84.57,"currency":"CAD","kind":"expense","line":67,"qboLine":67,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":84.57},{"a":"2010","cr":84.57}]},
+    {"id":"13-BCD-2025-11-0006","acct":"BCD","date":"2025-11-16","description":"AMAZON.CA","amount":-43.58,"currency":"CAD","kind":"expense","line":68,"qboLine":68,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":43.58},{"a":"2010","cr":43.58}]},
+    {"id":"13-BCD-2025-11-0007","acct":"BCD","date":"2025-11-20","description":"PAYMENT - THANK YOU","amount":706.83,"currency":"CAD","kind":"card-payment","line":69,"qboLine":69,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-11-0005","postedVia":"13-CHQ-2025-11-0005"},
+    {"id":"13-BCD-2025-12-0001","acct":"BCD","date":"2025-12-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":70,"qboLine":70,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":39},{"a":"2010","cr":39}]},
+    {"id":"13-BCD-2025-12-0002","acct":"BCD","date":"2025-12-09","description":"CLINICAL SUPPLY CO TEST","amount":-460.27,"currency":"CAD","kind":"expense","line":71,"qboLine":71,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":460.27},{"a":"2010","cr":460.27}]},
+    {"id":"13-BCD-2025-12-0003","acct":"BCD","date":"2025-12-12","description":"ROGERS","amount":-89.53,"currency":"CAD","kind":"expense","line":72,"qboLine":72,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":89.53},{"a":"2010","cr":89.53}]},
+    {"id":"13-BCD-2025-12-0004","acct":"BCD","date":"2025-12-22","description":"STAPLES #8691 MILTON ON","amount":-42.1,"currency":"CAD","kind":"expense","line":73,"qboLine":73,"account":"6090 Office supplies","accountNo":"6090","gifi":8811,"gifiStatus":"settled","post":[{"a":"6090","dr":42.1},{"a":"2010","cr":42.1}]},
+    {"id":"13-BCD-2025-12-0005","acct":"BCD","date":"2025-12-22","description":"PAYMENT - THANK YOU","amount":907.72,"currency":"CAD","kind":"card-payment","line":74,"qboLine":74,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"13-CHQ-2025-12-0005","postedVia":"13-CHQ-2025-12-0005"}
+  ],
+  "statementBalances": {
+    "CHQ": [
+      {"month":"2025-01","opening":15584.42,"closing":29709.5,"exportActivity":14125.08,"rolls":true},
+      {"month":"2025-02","opening":29709.5,"closing":48180.7,"exportActivity":18471.2,"rolls":true},
+      {"month":"2025-03","opening":48180.7,"closing":70151.88,"exportActivity":21971.18,"rolls":true},
+      {"month":"2025-04","opening":70151.88,"closing":89691.03,"exportActivity":19539.15,"rolls":true},
+      {"month":"2025-05","opening":89691.03,"closing":111541.09,"exportActivity":21850.06,"rolls":true},
+      {"month":"2025-06","opening":111541.09,"closing":127105.58,"exportActivity":15564.49,"rolls":true},
+      {"month":"2025-07","opening":127105.58,"closing":150324.34,"exportActivity":23218.76,"rolls":true},
+      {"month":"2025-08","opening":150324.34,"closing":170443.46,"exportActivity":20119.12,"rolls":true},
+      {"month":"2025-09","opening":170443.46,"closing":191143.17,"exportActivity":20699.71,"rolls":true},
+      {"month":"2025-10","opening":191143.17,"closing":210687.39,"exportActivity":19544.22,"rolls":true},
+      {"month":"2025-11","opening":210687.39,"closing":233568.93,"exportActivity":22881.54,"rolls":true},
+      {"month":"2025-12","opening":233568.93,"closing":257702.5,"exportActivity":24133.57,"rolls":true}
+    ],
+    "BCD": [
+      {"month":"2025-01","opening":1861.83,"closing":593.09,"exportActivity":1268.74,"rolls":true},
+      {"month":"2025-02","opening":593.09,"closing":737.56,"exportActivity":-144.47,"rolls":true},
+      {"month":"2025-03","opening":737.56,"closing":739.94,"exportActivity":-2.38,"rolls":true},
+      {"month":"2025-04","opening":739.94,"closing":795.47,"exportActivity":-55.53,"rolls":true},
+      {"month":"2025-05","opening":795.47,"closing":7852.83,"exportActivity":-7057.36,"rolls":true},
+      {"month":"2025-06","opening":7852.83,"closing":875.43,"exportActivity":6977.4,"rolls":true},
+      {"month":"2025-07","opening":875.43,"closing":859.72,"exportActivity":15.71,"rolls":true},
+      {"month":"2025-08","opening":859.72,"closing":714.68,"exportActivity":145.04,"rolls":true},
+      {"month":"2025-09","opening":714.68,"closing":803.76,"exportActivity":-89.08,"rolls":true},
+      {"month":"2025-10","opening":803.76,"closing":706.83,"exportActivity":96.93,"rolls":true},
+      {"month":"2025-11","opening":706.83,"closing":907.72,"exportActivity":-200.89,"rolls":true},
+      {"month":"2025-12","opening":907.72,"closing":630.9,"exportActivity":276.82,"rolls":true}
+    ]
+  },
+  "adjustingEntries": [
+    {
+      "id": "13-AJE-01",
+      "date": "2025-12-31",
+      "amount": 58645.95,
+      "reason": "OHIP accrual: services for November and December 2025 are paid by the January and February 2026 remittance advice, inside the window (three months of claim submission plus one monthly payment cycle after year end)",
+      "lines": [
+        {"account":"1100","name":"Accounts receivable","gifi":1062,"debit":58645.95,"credit":0},
+        {"account":"4010","name":"Sales","gifi":8000,"debit":0,"credit":58645.95}
+      ],
+      "source": {
+        "transactions": ["13-CHQ-2025-12-0003"],
+        "onboarding": ["ohip_remittance_advice"]
+      }
+    },
+    {
+      "id": "13-AJE-02",
+      "date": "2025-12-31",
+      "amount": 848.27,
+      "reason": "Book amortization on the exam-room equipment (straight-line, 5 years)",
+      "note": "straight-line book amortization: exam-room equipment 848.27 (5 years)",
+      "lines": [
+        {"account":"6050","name":"Amortization of tangible assets","gifi":8670,"debit":848.27,"credit":0},
+        {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"debit":0,"credit":848.27}
+      ],
+      "source": {
+        "transactions": ["13-BCD-2025-05-0004"],
+        "onboarding": []
+      }
+    }
+  ],
+  "trialBalance": {
+    "basis": "debits and credits in dollars; unadjusted = opening balances plus every coded transaction; adjusted = plus the adjusting entries; income tax is not booked (Taxprep computes it)",
+    "opening": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":15584.42,"credit":0},
+        {"account":"1100","name":"Accounts receivable","gifi":1062,"gifiName":"Trade accounts receivable","gifiStatus":"settled","debit":59156.3,"credit":0},
+        {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":1861.83},
+        {"account":"2040","name":"Payroll deductions payable (CPP, EI, employer share)","gifi":2627,"gifiName":"Employee deductions payable","gifiStatus":"settled","debit":0,"credit":651},
+        {"account":"2041","name":"Income tax withheld payable","gifi":2628,"gifiName":"Withholding taxes payable","gifiStatus":"confirm","note":"withholding taxes payable is worded for non-residents too","debit":0,"credit":772.92},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":71354.97}
+      ],
+      "totalDebit": 74740.72,
+      "totalCredit": 74740.72
+    },
+    "unadjusted": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":257702.5,"credit":0},
+        {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":6850,"credit":0},
+        {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":630.9},
+        {"account":"2040","name":"Payroll deductions payable (CPP, EI, employer share)","gifi":2627,"gifiName":"Employee deductions payable","gifiStatus":"settled","debit":0,"credit":648.92},
+        {"account":"2041","name":"Income tax withheld payable","gifi":2628,"gifiName":"Withholding taxes payable","gifiStatus":"confirm","note":"withholding taxes payable is worded for non-residents too","debit":0,"credit":772.92},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":71354.97},
+        {"account":"4010","name":"Sales","gifi":8000,"gifiName":"Trade sales of goods and services","gifiStatus":"settled","debit":0,"credit":315539.4},
+        {"account":"4300","name":"Other revenue","gifi":8230,"gifiName":"Other revenue","gifiStatus":"settled","debit":0,"credit":5380},
+        {"account":"6040","name":"Employer CPP and EI","gifi":8622,"gifiName":"Employer's portion of employee benefits","gifiStatus":"settled","debit":4401.28,"credit":0},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","debit":155.4,"credit":0},
+        {"account":"6080","name":"Licences, dues and memberships","gifi":8760,"gifiName":"Business taxes, licences, and memberships","gifiStatus":"settled","debit":8150,"credit":0},
+        {"account":"6090","name":"Office supplies","gifi":8811,"gifiName":"Office stationery and supplies","gifiStatus":"settled","debit":1756.97,"credit":0},
+        {"account":"6100","name":"Accounting fees","gifi":8862,"gifiName":"Accounting fees","gifiStatus":"settled","debit":1500,"credit":0},
+        {"account":"6110","name":"Rent","gifi":8911,"gifiName":"Real estate rental","gifiStatus":"settled","debit":50400,"credit":0},
+        {"account":"6130","name":"Salaries and wages","gifi":9060,"gifiName":"Salaries and wages","gifiStatus":"settled","debit":55900,"credit":0},
+        {"account":"6150","name":"Supplies","gifi":9130,"gifiName":"Supplies","gifiStatus":"settled","debit":6092.81,"credit":0},
+        {"account":"6155","name":"Software and computer expenses","gifi":9150,"gifiName":"Computer-related expenses","gifiStatus":"settled","debit":468,"credit":0},
+        {"account":"6185","name":"Telephone and telecommunications","gifi":9225,"gifiName":"Telephone and telecommunications","gifiStatus":"settled","debit":1050.15,"credit":0}
+      ],
+      "totalDebit": 394427.11,
+      "totalCredit": 394427.11
+    },
+    "adjusted": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":257702.5,"credit":0},
+        {"account":"1100","name":"Accounts receivable","gifi":1062,"gifiName":"Trade accounts receivable","gifiStatus":"settled","debit":58645.95,"credit":0},
+        {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":6850,"credit":0},
+        {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"gifiName":"Accumulated amortization of machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":0,"credit":848.27},
+        {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":630.9},
+        {"account":"2040","name":"Payroll deductions payable (CPP, EI, employer share)","gifi":2627,"gifiName":"Employee deductions payable","gifiStatus":"settled","debit":0,"credit":648.92},
+        {"account":"2041","name":"Income tax withheld payable","gifi":2628,"gifiName":"Withholding taxes payable","gifiStatus":"confirm","note":"withholding taxes payable is worded for non-residents too","debit":0,"credit":772.92},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":71354.97},
+        {"account":"4010","name":"Sales","gifi":8000,"gifiName":"Trade sales of goods and services","gifiStatus":"settled","debit":0,"credit":374185.35},
+        {"account":"4300","name":"Other revenue","gifi":8230,"gifiName":"Other revenue","gifiStatus":"settled","debit":0,"credit":5380},
+        {"account":"6040","name":"Employer CPP and EI","gifi":8622,"gifiName":"Employer's portion of employee benefits","gifiStatus":"settled","debit":4401.28,"credit":0},
+        {"account":"6050","name":"Amortization of tangible assets","gifi":8670,"gifiName":"Amortization of tangible assets","gifiStatus":"settled","debit":848.27,"credit":0},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","debit":155.4,"credit":0},
+        {"account":"6080","name":"Licences, dues and memberships","gifi":8760,"gifiName":"Business taxes, licences, and memberships","gifiStatus":"settled","debit":8150,"credit":0},
+        {"account":"6090","name":"Office supplies","gifi":8811,"gifiName":"Office stationery and supplies","gifiStatus":"settled","debit":1756.97,"credit":0},
+        {"account":"6100","name":"Accounting fees","gifi":8862,"gifiName":"Accounting fees","gifiStatus":"settled","debit":1500,"credit":0},
+        {"account":"6110","name":"Rent","gifi":8911,"gifiName":"Real estate rental","gifiStatus":"settled","debit":50400,"credit":0},
+        {"account":"6130","name":"Salaries and wages","gifi":9060,"gifiName":"Salaries and wages","gifiStatus":"settled","debit":55900,"credit":0},
+        {"account":"6150","name":"Supplies","gifi":9130,"gifiName":"Supplies","gifiStatus":"settled","debit":6092.81,"credit":0},
+        {"account":"6155","name":"Software and computer expenses","gifi":9150,"gifiName":"Computer-related expenses","gifiStatus":"settled","debit":468,"credit":0},
+        {"account":"6185","name":"Telephone and telecommunications","gifi":9225,"gifiName":"Telephone and telecommunications","gifiStatus":"settled","debit":1050.15,"credit":0}
+      ],
+      "totalDebit": 453921.33,
+      "totalCredit": 453921.33
+    },
+    "netIncomeLossBeforeTax": 248842.47
+  },
+  "t2Inputs": {
+    "netIncomeLossPerBooksBeforeTax": 248842.47,
+    "schedule1": {
+      "addBacks": [
+        {
+          "item": "Book amortization",
+          "amount": 848.27,
+          "reason": "accounting amortization is added back; capital cost allowance is claimed on Schedule 8",
+          "source": {
+            "account": "6050",
+            "adjustingEntries": ["13-AJE-02"]
+          }
+        }
+      ],
+      "deductions": [],
+      "note": "Inputs only. Taxprep computes taxable income and tax."
+    },
+    "schedule8": {
+      "openingUcc": [],
+      "classes": [
+        {
+          "class": "8",
+          "additions": [
+            {
+              "date": "2025-05-20",
+              "description": "Exam-room equipment",
+              "capitalCost": 6850,
+              "transactions": ["13-BCD-2025-05-0004"],
+              "note": "HST included in the cost: the corporation is not registered and claims no input tax credit"
+            }
+          ],
+          "disposals": []
+        }
+      ],
+      "note": "Capital cost is before recoverable HST. Disposals: none unless listed."
+    },
+    "schedule50": [
+      {
+        "name": "Anika Sharma (Test)",
+        "sin": "993042356",
+        "percentCommonShares": 100,
+        "percentPreferredShares": 0
+      }
+    ],
+    "slips": {
+      "T4": [
+        {
+          "year": 2025,
+          "employee": "Leah Fortin (Test)",
+          "sin": "606334719",
+          "box14EmploymentIncome": 55900,
+          "box16CppContributions": 3117.92,
+          "box16ASecondAdditionalCpp": 0,
+          "box18EiPremiums": 916.76,
+          "box22IncomeTaxDeducted": 10047.96,
+          "box24EiInsurableEarnings": 55900,
+          "box26CppPensionableEarnings": 55900,
+          "employerCpp": 3117.92,
+          "employerEi": 1283.36
+        }
+      ],
+      "T4Summary": [
+        {
+          "year": 2025,
+          "slips": 1,
+          "totalEmploymentIncome": 55900,
+          "employeeCpp": 3117.92,
+          "employeeSecondCpp": 0,
+          "employeeEi": 916.76,
+          "taxDeducted": 10047.96,
+          "employerCpp": 3117.92,
+          "employerEi": 1283.36,
+          "remittancesDueForTheYear": 18483.92
+        }
+      ],
+      "T5": [],
+      "note": "One employee; no dividends."
+    },
+    "schedule3": {
+      "dividendsReceived": [],
+      "dividendsPaid": []
+    },
+    "schedule4": {
+      "note": "no loss"
+    },
+    "schedule23": {
+      "required": false,
+      "note": "no associated corporations"
+    }
+  },
+  "ohip": {
+    "note": "OHIP income by service month against the remittance advice; made up. Deposits dated in the year, less the opening receivable, plus the accrued receivable, equal revenue for the year's service months net of the reduction.",
+    "payerDescription": "MOH OHIP PAYMENT TEST",
+    "revenueAccount": "4010",
+    "receivableAccount": "1100",
+    "window": {
+      "lastServiceDay": "2025-12-31",
+      "submissionMonths": 3,
+      "paymentCycles": 1,
+      "closesOn": "2026-04-30"
+    },
+    "raStatements": [
+      {"paymentMonth":"2025-01","paymentDate":"2025-01-14","lines":[{"serviceMonth":"2024-11","amount":31240.5}],"reductions":[],"total":31240.5,"depositTransaction":"13-CHQ-2025-01-0003"},
+      {"paymentMonth":"2025-02","paymentDate":"2025-02-14","lines":[{"serviceMonth":"2024-12","amount":27915.8}],"reductions":[],"total":27915.8,"depositTransaction":"13-CHQ-2025-02-0003"},
+      {"paymentMonth":"2025-03","paymentDate":"2025-03-14","lines":[{"serviceMonth":"2025-01","amount":32410.25}],"reductions":[],"total":32410.25,"depositTransaction":"13-CHQ-2025-03-0004"},
+      {"paymentMonth":"2025-04","paymentDate":"2025-04-14","lines":[{"serviceMonth":"2025-02","amount":30880.6}],"reductions":[],"total":30880.6,"depositTransaction":"13-CHQ-2025-04-0003"},
+      {"paymentMonth":"2025-05","paymentDate":"2025-05-14","lines":[{"serviceMonth":"2025-03","amount":33105.4}],"reductions":[],"total":33105.4,"depositTransaction":"13-CHQ-2025-05-0003"},
+      {"paymentMonth":"2025-06","paymentDate":"2025-06-14","lines":[{"serviceMonth":"2025-04","amount":31760.15}],"reductions":[{"serviceMonth":"2025-03","amount":1180.4,"kind":"recovery","note":"recovery of a prior payment (R18)"}],"total":30579.75,"depositTransaction":"13-CHQ-2025-06-0004"},
+      {"paymentMonth":"2025-07","paymentDate":"2025-07-14","lines":[{"serviceMonth":"2025-05","amount":32945.7}],"reductions":[],"total":32945.7,"depositTransaction":"13-CHQ-2025-07-0003"},
+      {"paymentMonth":"2025-08","paymentDate":"2025-08-14","lines":[{"serviceMonth":"2025-06","amount":29830.35}],"reductions":[],"total":29830.35,"depositTransaction":"13-CHQ-2025-08-0003"},
+      {"paymentMonth":"2025-09","paymentDate":"2025-09-14","lines":[{"serviceMonth":"2025-07","amount":28415.9}],"reductions":[],"total":28415.9,"depositTransaction":"13-CHQ-2025-09-0003"},
+      {"paymentMonth":"2025-10","paymentDate":"2025-10-14","lines":[{"serviceMonth":"2025-08","amount":30807.85}],"reductions":[],"total":30807.85,"depositTransaction":"13-CHQ-2025-10-0003"},
+      {"paymentMonth":"2025-11","paymentDate":"2025-11-14","lines":[{"serviceMonth":"2025-09","amount":32670.8}],"reductions":[],"total":32670.8,"depositTransaction":"13-CHQ-2025-11-0002"},
+      {"paymentMonth":"2025-12","paymentDate":"2025-12-14","lines":[{"serviceMonth":"2025-10","amount":33480.2},{"serviceMonth":"2025-08","amount":412.6,"note":"resubmitted claim, rejected on the October RA"}],"reductions":[],"total":33892.8,"depositTransaction":"13-CHQ-2025-12-0003"},
+      {"paymentMonth":"2026-01","paymentDate":"2026-01-14","lines":[{"serviceMonth":"2025-11","amount":31905.65}],"reductions":[],"total":31905.65,"depositTransaction":null},
+      {"paymentMonth":"2026-02","paymentDate":"2026-02-14","lines":[{"serviceMonth":"2025-12","amount":26740.3}],"reductions":[],"total":26740.3,"depositTransaction":null}
+    ],
+    "openingReceivable": {
+      "serviceMonths": ["2024-11", "2024-12"],
+      "amount": 59156.3
+    },
+    "accruedReceivable": {
+      "serviceMonths": ["2025-11", "2025-12"],
+      "amount": 58645.95,
+      "paidIn": ["2026-01", "2026-02"],
+      "adjustingEntry": "13-AJE-01"
+    },
+    "reduction": {
+      "paymentMonth": "2025-06",
+      "serviceMonth": "2025-03",
+      "amount": 1180.4
+    },
+    "resubmission": {
+      "serviceMonth": "2025-08",
+      "amount": 412.6,
+      "rejectedOn": "2025-10",
+      "paidOn": "2025-12"
+    },
+    "revenueByServiceMonth": [
+      {"serviceMonth":"2025-01","amount":32410.25},
+      {"serviceMonth":"2025-02","amount":30880.6},
+      {"serviceMonth":"2025-03","amount":31925},
+      {"serviceMonth":"2025-04","amount":31760.15},
+      {"serviceMonth":"2025-05","amount":32945.7},
+      {"serviceMonth":"2025-06","amount":29830.35},
+      {"serviceMonth":"2025-07","amount":28415.9},
+      {"serviceMonth":"2025-08","amount":31220.45},
+      {"serviceMonth":"2025-09","amount":32670.8},
+      {"serviceMonth":"2025-10","amount":33480.2},
+      {"serviceMonth":"2025-11","amount":31905.65},
+      {"serviceMonth":"2025-12","amount":26740.3}
+    ]
+  },
+  "nonOhipIncome": {
+    "note": "taxable supplies, not OHIP (R09); the small supplier limit is $30,000 in four consecutive quarters",
+    "items": [
+      {
+        "date": "2025-03-21",
+        "payer": "Northgate Life Insurance (Test)",
+        "amount": 650,
+        "transaction": "13-CHQ-2025-03-0007"
+      },
+      {
+        "date": "2025-06-11",
+        "payer": "Brantley and Cole LLP (Test)",
+        "amount": 2400,
+        "transaction": "13-CHQ-2025-06-0002"
+      },
+      {
+        "date": "2025-09-17",
+        "payer": "Brantley and Cole LLP (Test)",
+        "amount": 1850,
+        "transaction": "13-CHQ-2025-09-0005"
+      },
+      {
+        "date": "2025-11-26",
+        "payer": "Northgate Life Insurance (Test)",
+        "amount": 480,
+        "transaction": "13-CHQ-2025-11-0006"
+      }
+    ],
+    "total": 5380,
+    "smallSupplierLimit": 30000
+  },
+  "hst": {
+    "method": "none",
+    "collectedOnSales": 0,
+    "itcClaimedOnPurchases": 0,
+    "paidToCraNetOfRefunds": 0,
+    "balanceAtYearEndPayable": 0
+  },
+  "flags": [
+    {"id":"13-F01","rule":"OHIP accrual after year end","detail":"Services for November and December 2025 ($58,645.95) are paid on 14 Jan and 14 Feb 2026, after year end and not in the bank file. They are accrued as OHIP receivable in one adjusting entry. The window (three months of claim submission plus one monthly payment cycle) closes 30 Apr 2026. The opening receivable of $59,156.30 for 2024 services was collected by the January and February 2025 deposits. A person confirms the accrual against the 2026 remittance advice.","severity":"must fire","action":"flag for a person; do not decide alone","evidence":{"transactions":["13-CHQ-2025-12-0003"],"onboarding":["ohip_remittance_advice"],"adjustingEntries":["13-AJE-01"]}},
+    {"id":"13-F02","rule":"RA reduction (recovery of a prior payment)","detail":"The June 2025 remittance advice recovers $1,180.40 paid for March 2025 services, so the June deposit is $30,579.75 and March revenue is $31,925.00. A person confirms the recovery is a reduction of revenue for the service month it belongs to.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":["13-CHQ-2025-06-0004"],"onboarding":["ohip_remittance_advice"],"adjustingEntries":[]}},
+    {"id":"13-F03","rule":"rejected and resubmitted claim","detail":"One August 2025 claim of $412.60 was rejected on the October remittance advice and paid on the December one with October services ($33,892.80). The resubmitted claim belongs to August 2025 services ($31,220.45 for the month).","severity":"must fire","action":"flag for a person; do not decide alone","evidence":{"transactions":["13-CHQ-2025-10-0003","13-CHQ-2025-12-0003"],"onboarding":["ohip_remittance_advice"],"adjustingEntries":[]}},
+    {"id":"13-F04","rule":"non-OHIP taxable supplies against the small supplier limit","detail":"Insurance form fees and medical-legal reports ($5,380.00 in four deposits) are taxable supplies, kept apart from the exempt OHIP income. They are well under the $30,000 small supplier limit, so there is no registration and no HST. A person confirms the limit was not passed in this or the four previous quarters.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":["13-CHQ-2025-03-0007","13-CHQ-2025-06-0002","13-CHQ-2025-09-0005","13-CHQ-2025-11-0006"],"onboarding":["hst"],"adjustingEntries":[]}},
+    {"id":"13-F05","rule":"no HST return expected","detail":"Insured medical services are exempt supplies and the small supplier limit is not passed: no HST account, no HST program on the CRA account list and no HST return. The exam-room equipment carries its HST in the cost.","severity":"info","action":"flag for a person; do not decide alone","evidence":{"transactions":[],"onboarding":["hst","cra_program_accounts"],"adjustingEntries":[]}},
+    {"id":"13-F06","rule":"payroll against T4 agrees","detail":"One employee, 26 pays in 2025. The T4 summary in onboarding agrees with the payroll deposits and the twelve CRA remittances in the year (the December 2024 deductions were paid on 15 Jan 2025).","severity":"info","action":"flag for a person; do not decide alone","evidence":{"transactions":["13-CHQ-2025-01-0004","13-CHQ-2025-02-0004"],"onboarding":["payroll"],"adjustingEntries":[]}},
+    {"id":"13-F07","rule":"CCA addition: exam-room equipment in class 8","detail":"Exam-room equipment of $6,850.00 on the business card on 20 May 2025: class 8 on Schedule 8, HST included in the cost because the corporation is not registered. Book amortization is added back on Schedule 1.","severity":"info","action":"flag for a person; do not decide alone","evidence":{"transactions":["13-BCD-2025-05-0004"],"onboarding":[],"adjustingEntries":["13-AJE-02"]}}
+  ],
+  "parties": [
+    {"name":"Anika Sharma (Test)","kind":"person"},
+    {"name":"Leah Fortin (Test)","kind":"person"},
+    {"name":"Harbourline Credit Union (Test)","kind":"company"},
+    {"name":"Aurora Card (Test)","kind":"company"},
+    {"name":"Northgate Life Insurance (Test)","kind":"company"},
+    {"name":"Brantley and Cole LLP (Test)","kind":"company"},
+    {"name":"Meridian Medical Supply (Test)","kind":"company"},
+    {"name":"Clinical Supply Co (Test)","kind":"company"},
+    {"name":"Clinic Rent Share (Test)","kind":"company"},
+    {"name":"Arbour Bookkeeping (Test)","kind":"company"}
+  ],
+  "notes": []
+}

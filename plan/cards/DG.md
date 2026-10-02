@@ -2,7 +2,7 @@
 
 Phase 0. Size S. Deps: F00, F08. Where: local or cloud.
 Tags: none (build tooling; no money, tax, CSV, citations or permissions).
-Paths: tools/scope.mjs, tools/mutate-changed.mjs, .gitattributes, tools/test/done-gate.test.mjs, tools/test/__fixtures__/done-gate/**
+Paths: tools/scope.mjs, tools/mutate-changed.mjs, .gitattributes, tools/test/done-gate.test.mjs, tools/test/__fixtures__/done-gate/**, stryker.config.mjs, vitest.mutate.config.ts, src/core/testing/read-own-source.ts
 Clauses: ARC-12, ARC-15, ARC-19, ARC-9
 Read: `reports/findings-E03-F03.md` (RC1 to RC3, fix 2, rule tests R19 to R21, risks), `tools/scope.mjs`, `tools/mutate-changed.mjs`, `tools/lib.mjs` (`loadIndex`, `globToRegExp`), `.gitattributes`, `.claude/agents/builder.md`, `.claude/agents/checker.md` (step 5, the widened spec diff; step 7, mutation), `.claude/agents/spec-writer.md` (step 7, the `spec(<card>)` commit), `plan/cards/SC.md` (R18 reads core the same way), `tools/test/queue.test.mjs` (the pattern for git fixtures in a temp repo), `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
@@ -39,7 +39,26 @@ The builder's "done" and the checker's "done" are one gate, and neither can pass
 5. On the merged branch: `npm run typecheck`, `npm run lint`, `npm test` and `npm run test:flake` (5 of 5) pass; `node tools/scope.mjs DG` passes on DG's own branch.
 
 ## Not in this card
-Changing `builder.md`, `checker.md`, the merge skill or `package.json` (the Lead, at landing). Adding markers to other cards' files (their own fix rounds: F05M, F01, F03, F04, E03, S00, F09). SC's R18 (it reads the same Tags line). Any change to the Stryker config (the per-file break lives in `mutate-changed.mjs`). Closing other cards' survivors (F00T for money, ids, clock, env and log; each core card in its own fix round). Rewording `.claude/rules/testing.md` (the Lead, at landing).
+Changing `builder.md`, `checker.md`, the merge skill or `package.json` (the Lead, at landing). Adding markers to other cards' files (their own fix rounds: F05M, F01, F03, F04, E03, S00, F09). SC's R18 (it reads the same Tags line). Any change to the Stryker config in rounds 1 and 2 (the per-file break lives in `mutate-changed.mjs`); round 3 may change `stryker.config.mjs` and `vitest.mutate.config.ts` only as its section says. Closing other cards' survivors (F00T for money, ids, clock, env and log; each core card in its own fix round). Rewording `.claude/rules/testing.md` (the Lead, at landing).
 
 ## Impact
 F01, F03, F09 and E03 builds move from 70 overall to 100 per marked file; each card carries one line in its fix round section.
+
+## Also for round 2 (2 Oct)
+
+`tools/mutate-changed.mjs` skips files under `__fixtures__/` and `__golden__/` when it checks for the `// @mutate` marker (they are spec-owned test data, not product code; S00's harness.ts tripped it). Add a planted case to R20.
+
+## Round 3 (findings review wave 2, 2 Oct; widened to the Stryker and vitest-mutate config, fix 1e and 2)
+Inputs: `reports/findings-wave2.md` (RC5). Replaces "Also for round 2" above (that item was never built; main still checks `__fixtures__` at `tools/mutate-changed.mjs:39-41`). Rule numbers: DG keeps R19 to R22; SC's old R19 to R21 are now R26 to R28.
+
+Spec (a new spec worker; adds planted cases to `done-gate.test.mjs`, each failing on main for the right reason, with the step 6b sweep):
+1. ARC-15 (R20, fixtures): a core card whose changed files include an unmarked `src/**/__fixtures__/*.ts` and `src/**/__golden__/*` file passes the marker gate, and those files are never handed to Stryker; an unmarked product file beside them still fails naming it.
+2. ARC-15 (R20, source scans survive Stryker): a planted source-scan test (it reads its own module's text, for example a "first 5 lines carry `// @mutate`" test and a "no network import" scan) passes when the module on disk is a Stryker-instrumented copy (a `// @ts-nocheck` header and code naming `__STRYKER_ACTIVE_MUTANT__`), and still fails on a planted real violation in the original.
+3. ARC-15 (R22, nothing dropped): the mutation canary (`npm run mutate:canary`) still scores 100 with the round 3 config, and the set of test files `vitest.mutate.config.ts` runs equals the `unit` project's set (no mutant-killing test left out).
+
+Build:
+- `tools/mutate-changed.mjs` skips files under `__fixtures__/` and `__golden__/` for the marker check and as Stryker targets.
+- `src/core/testing/read-own-source.ts`: `readOwnSource(path)` returns the file's text as committed. Inside Stryker's sandbox (the working directory lies under `.stryker-tmp/`, `stryker.config.mjs` `tempDirName`), it reads the same relative path under the repo root (the part before `.stryker-tmp/`); elsewhere it reads the path as given. No other behaviour. Source-scan tests use it from their owning card's next spec round (S00 item 15, A01's spec refit, F09A's ARC-15 test if its sweep touches it); DG edits no other card's test.
+- `stryker.config.mjs` and `vitest.mutate.config.ts`: only what checks 1 to 3 need (for example the sandbox path the helper relies on stays fixed); no change to the break, the reporters or the test set.
+
+Check: a checker who did neither; the canary 100; `npm test` and `npm run test:flake` 5 of 5; `node tools/scope.mjs DG` on DG's branch. At landing the Lead updates `.claude/rules/testing.md` (source-scan tests read through `readOwnSource`). Then S00 (build round 3) and A01 (build round 2) may run.

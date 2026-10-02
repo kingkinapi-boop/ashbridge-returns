@@ -1,0 +1,246 @@
+{
+ "schemaVersion": "2",
+ "thresholds": {
+  "high": 90,
+  "low": 80
+ },
+ "files": {
+  "src/gate/add.ts": {
+   "language": "typescript",
+   "source": "",
+   "mutants": [
+    {
+     "id": "1",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "2",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "3",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "4",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "5",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "6",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "7",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "8",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "9",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "10",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    }
+   ]
+  },
+  "src/gate/sub.ts": {
+   "language": "typescript",
+   "source": "",
+   "mutants": [
+    {
+     "id": "100",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "101",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "102",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "103",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    },
+    {
+     "id": "104",
+     "mutatorName": "ArithmeticOperator",
+     "status": "Killed",
+     "location": {
+      "start": {
+       "line": 2,
+       "column": 1
+      },
+      "end": {
+       "line": 2,
+       "column": 9
+      }
+     }
+    }
+   ]
+  }
+ }
+}
