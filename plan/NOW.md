@@ -33,7 +33,7 @@ F05M check PASS but waits on F00T (Reviewer HOLD). F00T queued.
 
 ## Watch out
 
-- Train worktree: `git worktree add -B train .claude/worktrees/train origin/main` BEFORE any `git -C` into it (1 Oct a `git -C` into a plain folder switched the main checkout).
+- Landing a train: MERGE origin/main into the train (never rebase --rebase-merges: it replays card history and stops midway), run the code-diff guard, then ff main. Record done, release claims and delete branches only AFTER the push to main succeeded.
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time, window in front. QBO and iFirm sign out after a while: a walker that meets a sign-in page stops; ask Zo in the to-do. Walkers never type passwords.
 - Taking a helper branch: only the files in `git diff --name-only $(git merge-base main B) B`; plan/slices.json by `git merge-file`.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash` (shared stack).

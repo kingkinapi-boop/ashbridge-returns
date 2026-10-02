@@ -182,7 +182,7 @@
       "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -209,7 +209,8 @@
       "size": "M",
       "hard": true,
       "core": true,
-      "note": "Re-carded 1 Oct from the trial findings (reference/taxprep/FINDINGS.md; amber clause changes to RT-3, RT-7, RT-8, RT-9, RT-12, RT-13, RT-21, RT-25): needs a fresh spec; any earlier spec is void."
+      "note": "Re-carded 1 Oct from the trial findings (reference/taxprep/FINDINGS.md; amber clause changes to RT-3, RT-7, RT-8, RT-9, RT-12, RT-13, RT-21, RT-25): needs a fresh spec; any earlier spec is void.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
