@@ -1,11 +1,10 @@
 {
  "card": "W15",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "435acc2",
- "worker": "cloud-46fb22",
- "state": "released",
- "at": "2026-10-02T03:43:27.529Z",
- "mode": "turbo",
- "note": "same: W15 needs fix-round-1 re-spec by a new spec worker before any build"
+ "worker": "cloud-ce4873",
+ "state": "working",
+ "at": "2026-10-02T03:54:28.620Z",
+ "mode": "turbo"
 }
