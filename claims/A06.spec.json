@@ -2,10 +2,10 @@
  "card": "A06",
  "role": "spec",
  "worker": "cloud-ae6ed2",
- "state": "reported",
- "at": "2026-10-02T19:52:30.521Z",
+ "state": "reopened",
+ "at": "2026-10-02T20:07:48.524Z",
  "mode": "turbo",
- "note": "refit only: merged main e77ffc5, no assertions changed; typecheck, lint, 1925 unit + 535 db green (build already on branch)",
+ "note": "ROUND 2 (not a refit): see the bold paragraph at the top of plan/cards/A06.md",
  "commit": "ba71ad0",
  "validated": "e77ffc5"
 }
