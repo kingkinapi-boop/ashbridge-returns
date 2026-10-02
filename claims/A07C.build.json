@@ -4,7 +4,8 @@
  "round": 4,
  "spec": "ba50f80",
  "worker": "cloud-d8bb50",
- "state": "working",
- "at": "2026-10-02T20:33:04.701Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:33:12.852Z",
+ "mode": "turbo",
+ "note": "re-offered at once after release; not building (lands as-is per A384). Lead: re-stamp build reported"
 }
