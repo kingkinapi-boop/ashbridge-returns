@@ -2,8 +2,11 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-dea37c",
- "state": "working",
- "at": "2026-10-02T18:12:54.881Z",
+ "state": "reported",
+ "at": "2026-10-02T18:57:15.675Z",
  "mode": "turbo",
- "beat": "2026-10-02T18:16:21.013Z"
+ "beat": "2026-10-02T18:16:21.013Z",
+ "note": "242 tests (237 fail by name, 5 pass); samples C07,C09,C14 fail guard, see report",
+ "commit": "b6b2120",
+ "validated": "3df2e9b"
 }
