@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "a8a100e",
  "worker": "cloud-85862e",
- "state": "working",
- "at": "2026-10-02T01:29:01.482Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T01:34:01.592Z",
+ "mode": "turbo",
+ "note": "375 pass, 5 known (W16), 0 fail; round 2 built"
 }
