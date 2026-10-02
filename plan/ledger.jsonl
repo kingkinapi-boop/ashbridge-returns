@@ -154,3 +154,7 @@
 {"ts":"2026-10-02T01:42:50.383Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Audit merged cards F00 F05 F08","allowed":true}
 {"ts":"2026-10-02T01:44:19.340Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"QBO .GFI walker, attempt 4","allowed":true}
 {"ts":"2026-10-02T01:58:57.698Z","day":"2026-10-02","mode":"normal","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"Taxprep day 5 exports retry","allowed":true}
+{"ts":"2026-10-02T02:00:28.551Z","day":"2026-10-02","mode":"normal","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Findings review W14 round 2","allowed":true}
+{"ts":"2026-10-02T02:00:31.290Z","day":"2026-10-02","mode":"normal","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T02:00:31.974Z","day":"2026-10-02","mode":"normal","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T02:00:32.559Z","day":"2026-10-02","mode":"normal","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
