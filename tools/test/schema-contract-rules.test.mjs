@@ -8,12 +8,13 @@
 // matches fails too, so the list only shrinks. A rule that has nothing to check fails ("a pass with zero tests is a
 // failure"): on main before F01 lands, the rules that need records.ts fail by name for that reason.
 import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import fc from 'fast-check'
-import { describe, expect, test } from 'vitest'
+import { afterAll, describe, expect, test } from 'vitest'
 import { luhnValid } from '../../reference/sample-clients/lib/util.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
@@ -883,6 +884,10 @@ const BINARY_FIXTURES = [
     match: /^src\/modules\/sheets\/__fixtures__\/(xlsx\/(tb-1900|tb-1904|cells-r2|protected)\.xlsx|xlsx\/old\.xls|containers\/(letter \(Test\)\.docx|no-workbook \(Test\)\.xlsx|notes \(Test\)\.zip))$/,
     reason: 'A07B and A07C: workbooks, compound files and containers written byte for byte by sheets/__fixtures__/make-fixtures.mjs from fixed made-up content',
   },
+  {
+    match: /^src\/modules\/ocr\/recorded\/__fixtures__\/(one-page|unrecorded)\.pdf$/,
+    reason: "A03: byte-for-byte copies of A01's made-up textlayer PDFs (one-page.pdf and two-pages.pdf), copied by recorded/__fixtures__/make-fixtures.ts",
+  },
 ]
 function testDataFiles() {
   return [
@@ -1060,10 +1065,15 @@ function mutateDeep(v, depth = 0) {
   }
   v.mutatedTest = true
 }
-/** R47: the cache returns a copy, its key covers every input the result depends on, and no reason names the file. */
-async function cacheProblems(label, makeReader, bytes, names, routes) {
+/**
+ * R47: the cache returns a copy, its key covers every input the result depends on, and no reason names the file.
+ * `fpOf` (optional): a reader that finds its result by the document's content fingerprint (A03's recorded engine)
+ * is read with the real sha256 of the bytes, so the rule reaches a result instead of a fingerprint refusal.
+ */
+async function cacheProblems(label, makeReader, bytes, names, routes, fpOf) {
   const problems = []
-  const fp = `r47-${label} (Test)`
+  const fp = fpOf === undefined ? `r47-${label} (Test)` : fpOf(bytes)
+  const routeFp = fpOf === undefined ? `${fp}-route` : fp
   const named = await makeReader()
   const outcomes = []
   for (const name of names) outcomes.push([name, textOf(await outcomeOf(() => named.read({ fingerprint: fp, fileName: name, bytes })))])
@@ -1079,29 +1089,31 @@ async function cacheProblems(label, makeReader, bytes, names, routes) {
   if (textOf(again) !== before) problems.push(`${label}: changing a returned result changed the next read (the cache hands out its own object)`)
   for (const [a, b] of routes) {
     const r = await makeReader()
-    const oa = textOf(await outcomeOf(() => r.read({ fingerprint: `${fp}-route`, fileName: a, bytes })))
-    const ob = textOf(await outcomeOf(() => r.read({ fingerprint: `${fp}-route`, fileName: b, bytes })))
-    const fresh = textOf(await outcomeOf(async () => (await makeReader()).read({ fingerprint: `${fp}-route`, fileName: b, bytes })))
+    const oa = textOf(await outcomeOf(() => r.read({ fingerprint: routeFp, fileName: a, bytes })))
+    const ob = textOf(await outcomeOf(() => r.read({ fingerprint: routeFp, fileName: b, bytes })))
+    const fresh = textOf(await outcomeOf(async () => (await makeReader()).read({ fingerprint: routeFp, fileName: b, bytes })))
     if (ob !== fresh) problems.push(`${label}: read as ${a} then ${b}, the second outcome came from the cache of the first (the key misses the route)`)
     if (oa === ob) problems.push(`${label}: ${a} and ${b} take different routes but gave the same outcome`)
   }
   return problems
 }
 /** R48: an empty instance (a blank page, an empty hidden row or column) is kept, never dropped. */
-async function emptyInstanceProblems(label, makeReader, bytes, keeps) {
+async function emptyInstanceProblems(label, makeReader, bytes, keeps, fpOf) {
   const reader = await makeReader()
-  const o = await outcomeOf(() => reader.read({ fingerprint: `r48-${label} (Test)`, fileName: 'blank (Test).pdf', bytes }))
+  const fingerprint = fpOf === undefined ? `r48-${label} (Test)` : fpOf(bytes)
+  const o = await outcomeOf(() => reader.read({ fingerprint, fileName: 'blank (Test).pdf', bytes }))
   if (o.threw !== undefined) return [`${label}: the empty instance was refused: ${textOf(o)}`]
   const why = keeps(o.value)
   return why === null ? [] : [`${label}: ${why}`]
 }
 /** R54: a wrong-kind container is refused with a reason that carries no library message or URL, and never throws raw. */
 const LIBRARY_TRACE = /https?:|node_modules|\bat \S+ \(|Exception\b|ZodError|TypeError|RangeError|pdf\.js|pdfjs|exceljs|unzip|inflate|\[object /i
-async function wrongKindProblems(label, makeReader, cases, refusalReason) {
+async function wrongKindProblems(label, makeReader, cases, refusalReason, fpOf) {
   const problems = []
   for (const [what, name, bytes] of cases) {
     const reader = await makeReader()
-    const o = await outcomeOf(() => reader.read({ fingerprint: `r54-${label}-${what} (Test)`, fileName: name, bytes }))
+    const fingerprint = fpOf === undefined ? `r54-${label}-${what} (Test)` : fpOf(bytes)
+    const o = await outcomeOf(() => reader.read({ fingerprint, fileName: name, bytes }))
     const reason = refusalReason(o)
     if (reason === null) {
       problems.push(`${label}: ${what} under ${name} was not refused with a reason (${textOf(o).slice(0, 120)})`)
@@ -1147,6 +1159,40 @@ function rawPdf(pages, mediaBox = [0, 0, 612, 792]) {
 }
 /** The A01 reading contract signals a refusal by rejecting with its own "Reading refused: ..." error (amber, SC spec). */
 const a01Refusal = (o) => (o.threw instanceof Error && o.threw.constructor === Error && /^Reading refused: /.test(o.threw.message) ? o.threw.message : null)
+const sha256Hex = (bytes) => createHash('sha256').update(bytes).digest('hex')
+/** A03 refuses a missing or bad recording with its own plain Error naming the fingerprint (amber, SC spec 2 Oct 21:40Z). */
+const a03Refusal = (o) =>
+  o.threw instanceof Error && o.threw.constructor === Error && /^(no recording for [0-9a-f]{64}: re-record$|recording for [0-9a-f]{64} is refused: |recording refused: )/.test(o.threw.message)
+    ? o.threw.message
+    : null
+const A03_BLANK = () => rawPdf(['SALE 10.00 (Test)', null])
+let a03Folder
+/**
+ * A03's engine replays recordings from a folder. The rule's folder is a temporary copy of A03's committed
+ * recordings plus one made here: A01's textlayer engine reading a two-page made-up PDF whose second page is blank,
+ * recorded through A03's own `record` with the clock pinned (R48: the replay keeps the blank page).
+ */
+async function a03Recordings() {
+  if (a03Folder !== undefined) return a03Folder
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sc-a03-recordings-'))
+  const committed = path.join(ROOT, 'src/modules/ocr/recorded/__recordings__')
+  for (const f of fs.readdirSync(committed)) fs.copyFileSync(path.join(committed, f), path.join(dir, f))
+  const clock = await load('src/core/clock.ts')
+  const { record } = await load('src/modules/ocr/recorded/index.ts')
+  const textlayer = (await load('src/modules/ocr/textlayer/index.ts')).createTextLayerEngine()
+  const blank = A03_BLANK()
+  clock.setClock(clock.fixedClock('2026-10-01T12:00:00-04:00'))
+  try {
+    await record({ fingerprint: sha256Hex(blank), fileName: 'blank (Test).pdf', bytes: blank }, textlayer, dir, { testWorld: true })
+  } finally {
+    clock.setClock(clock.systemClock)
+  }
+  a03Folder = dir
+  return dir
+}
+afterAll(() => {
+  if (a03Folder !== undefined) fs.rmSync(a03Folder, { recursive: true, force: true })
+})
 const READERS = {
   A01: {
     dir: 'src/modules/ocr/textlayer',
@@ -1172,6 +1218,29 @@ const READERS = {
       ['a zero-size MediaBox', 'statement (Test).pdf', rawPdf(['SALE (Test)'], [0, 0, 0, 0])],
     ],
     refusal: a01Refusal,
+  },
+  A03: {
+    dir: 'src/modules/ocr/recorded',
+    make: async () => (await load('src/modules/ocr/recorded/index.ts')).createRecordedEngine({ folder: await a03Recordings() }),
+    // The recording is found by the content fingerprint, so each read carries the real sha256 of its bytes.
+    fingerprint: sha256Hex,
+    good: () => fs.readFileSync(path.join(ROOT, 'src/modules/ocr/recorded/__fixtures__/one-page.pdf')),
+    names: ['statement (Test).pdf', 'statement (Test).doc'],
+    routes: [],
+    blank: A03_BLANK,
+    keeps: (r) => READERS.A01.keeps(r),
+    wrongKind: [
+      ['gzip bytes', 'statement (Test).pdf', WRONG_KIND.gzip],
+      ['MZ bytes', 'statement (Test).pdf', WRONG_KIND.mz],
+      ['zip bytes', 'statement (Test).pdf', WRONG_KIND.zip],
+      ['spanned-zip bytes', 'statement (Test).pdf', WRONG_KIND.spannedZip],
+      ['CSV text', 'statement (Test).pdf', WRONG_KIND.csv],
+      ['empty bytes', 'statement (Test).pdf', WRONG_KIND.empty],
+      ['a PDF header and nothing else', 'statement (Test).pdf', WRONG_KIND.pdf],
+      ['a zero-size MediaBox', 'statement (Test).pdf', rawPdf(['SALE (Test)'], [0, 0, 0, 0])],
+      ['an unrecorded made-up PDF', 'statement (Test).pdf', fs.readFileSync(path.join(ROOT, 'src/modules/ocr/recorded/__fixtures__/unrecorded.pdf'))],
+    ],
+    refusal: a03Refusal,
   },
 }
 const READER_DIRS = ['src/modules/ocr/textlayer', 'src/modules/ocr/tesseract', 'src/modules/ocr/recorded', 'src/modules/sheets', 'src/modules/qbo']
@@ -1870,7 +1939,7 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
         continue
       }
       const [label, r] = entry
-      problems.push(...(await cacheProblems(label, r.make, r.good(), r.names, r.routes)))
+      problems.push(...(await cacheProblems(label, r.make, r.good(), r.names, r.routes, r.fingerprint)))
     }
     expect(Object.keys(READERS).length).toBeGreaterThan(0)
     expect(onlyKnown('R47', problems)).toEqual([])
@@ -1887,7 +1956,7 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
         problems.push(`${label}: no empty instance in the SC READERS registry`)
         continue
       }
-      problems.push(...(await emptyInstanceProblems(label, r.make, r.blank(), r.keeps)))
+      problems.push(...(await emptyInstanceProblems(label, r.make, r.blank(), r.keeps, r.fingerprint)))
     }
     for (const dir of READER_DIRS.filter(exists)) {
       const says = productTs([dir]).some((f) => /\bhidden\b|never dropped|without a text layer/i.test(read(f)))
@@ -1914,7 +1983,7 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
   })
   test('ARC-6 EV-14 R54 every reader refuses a wrong-kind container (gzip, MZ, zip, spanned zip, CSV, empty, a bare header, a zero-size page) with a reason and never throws raw', async () => {
     const problems = []
-    for (const [label, r] of Object.entries(READERS)) problems.push(...(await wrongKindProblems(label, r.make, r.wrongKind, r.refusal)))
+    for (const [label, r] of Object.entries(READERS)) problems.push(...(await wrongKindProblems(label, r.make, r.wrongKind, r.refusal, r.fingerprint)))
     for (const dir of ['src/modules/sheets', 'src/modules/documents/intake']) {
       if (exists(dir) && !Object.values(READERS).some((r) => r.dir === dir)) problems.push(`${dir}: a reader with no entry in the SC READERS registry (R54)`)
       else if (!exists(dir)) {
