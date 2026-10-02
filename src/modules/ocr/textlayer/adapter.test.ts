@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { createReadingAdapter, LIVE_OFF_MESSAGE } from './index'
+import { createReadingAdapter, LIVE_OFF_MESSAGE } from '../index'
 
 describe('A01 adapter unit', () => {
   test('END-8 the live message is exact', () => {

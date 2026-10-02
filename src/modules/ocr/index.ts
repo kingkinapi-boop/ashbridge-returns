@@ -17,7 +17,7 @@ export function createReadingAdapter(options: ReadingAdapterOptions = {}): Readi
   const engine = env['OCR_ENGINE'] ?? 'textlayer'
   switch (engine) {
     case 'textlayer':
-      return createTextLayerEngine(options.tempDir === undefined ? {} : { tempDir: options.tempDir })
+      return createTextLayerEngine(options)
     case 'live':
       // The key setting is never read: the slot stays off with or without one.
       throw new Error(LIVE_OFF_MESSAGE)

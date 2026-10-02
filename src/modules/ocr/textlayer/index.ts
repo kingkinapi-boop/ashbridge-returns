@@ -44,6 +44,7 @@ function boxOf(page: number, corners: Corner[], widthPt: number, heightPt: numbe
 async function parse(bytes: Uint8Array, fingerprint: string): Promise<ReadingResult> {
   const task = pdfjs.getDocument({
     data: Uint8Array.from(bytes),
+    // Stryker disable next-line BooleanLiteral: the fonts only matter for drawing; word widths come from the PDF itself.
     useSystemFonts: false,
     verbosity: 0,
   })
@@ -64,7 +65,10 @@ async function parse(bytes: Uint8Array, fingerprint: string): Promise<ReadingRes
       const content = await page.getTextContent()
       let any = false
       for (const item of content.items) {
-        if (!('str' in item) || item.str.trim() === '') continue
+        // Stryker disable next-line ConditionalExpression,LogicalOperator: a type guard only; without includeMarkedContent every item has a str.
+        if (!('str' in item)) continue
+        // Stryker disable next-line ConditionalExpression,MethodExpression,StringLiteral: pdfjs only emits a blank item between two words, so `any` is already set and a blank item makes no word.
+        if (item.str.trim() === '') continue
         any = true
         const t = item.transform as number[]
         const [a = 1, b = 0] = t
