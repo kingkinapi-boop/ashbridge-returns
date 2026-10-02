@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "4ce0d83",
  "worker": "cloud-390404",
- "state": "working",
- "at": "2026-10-02T16:30:22.851Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T17:16:37.331Z",
+ "mode": "turbo",
+ "note": "117 of 117 acceptance pass; mutation 100; scope flags plan/cards/A07B.md (pre-existing on branch); amber: non-literal number reads #NUM!"
 }
