@@ -4,7 +4,8 @@
  "round": 4,
  "spec": "5acfe13",
  "worker": "cloud-e592ae",
- "state": "working",
- "at": "2026-10-02T15:45:09.053Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T15:45:24.225Z",
+ "mode": "turbo",
+ "note": "re-offered after check PASS (CQ1 bug: no re-offer after PASS); nothing to build"
 }
