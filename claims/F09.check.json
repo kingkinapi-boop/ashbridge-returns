@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T02:54:04.740Z",
  "worker": "cloud-ee27ff",
- "state": "working",
- "at": "2026-10-02T02:54:16.852Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T02:57:16.309Z",
+ "mode": "turbo",
+ "note": "FAIL: reading.ts mutation 76.29 (110 survived, 9 no cov), per-file 100 rule; see reports/F09-check.md on claude/F09-check"
 }
