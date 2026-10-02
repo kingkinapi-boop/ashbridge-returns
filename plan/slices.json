@@ -528,6 +528,7 @@
         "RT-23",
         "RT-25",
         "RT-26",
+        "RT-7",
         "RT-2",
         "ARC-14"
       ],
@@ -4658,11 +4659,12 @@
         "AI-7"
       ],
       "id": "T05",
-      "title": "Diagnostics from the printed return",
+      "title": "Diagnostics from the pasted Diagnostics panel list",
       "phase": 2,
       "size": "M",
       "hard": false,
-      "core": true
+      "core": true,
+      "note": " Waits on to-do (2 Oct): the pasted diagnostics list adds a preparer step to end state item 4 (red)."
     },
     {
       "status": "carded",
