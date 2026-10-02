@@ -291,3 +291,14 @@
 {"ts":"2026-10-02T14:39:56.541Z","day":"2026-10-02","mode":"normal","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 3","allowed":false}
 {"ts":"2026-10-02T14:39:58.581Z","day":"2026-10-02","mode":"normal","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 4","allowed":false}
 {"ts":"2026-10-02T14:40:37.416Z","day":"2026-10-02","mode":"normal","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":false}
+{"ts":"2026-10-02T14:58:02.540Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:58:03.090Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:58:03.682Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:58:04.275Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:58:04.876Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:58:05.363Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:58:14.241Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W00 findings review round 2","allowed":true}
+{"ts":"2026-10-02T14:58:16.562Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 3","allowed":true}
+{"ts":"2026-10-02T14:58:18.779Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 4","allowed":true}
+{"ts":"2026-10-02T15:00:30.401Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 5","allowed":true}
+{"ts":"2026-10-02T15:01:01.625Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Draft six cards for queue depth","allowed":true}

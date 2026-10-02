@@ -29,7 +29,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:30Z by the Lea
 
 ## Lead work that needs no dispatch
 
-- CQ1 card: claim.mjs never re-offers a build after a PASS or a landing (F04), skips cards whose deps cannot start (G12 picked 7 times, U00 6, D02 5), and status.mjs reads the blueprint version.
+- At the E03A landing: unpark G12 to G17 (parked so the queue stops offering them). CQ1 card: claim.mjs never re-offers a build after a PASS or a landing (F04), skips cards whose deps cannot start (G12 picked 7 times, U00 6, D02 5), and status.mjs reads the blueprint version.
 - Write cards T08, Q00, Q01, I01, I30, I40 (queue depth; Reviewer).
 - Design lane: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions; D cards then copy them into design/screens/ (A352).
 - Metrics lines carry tokens and minutes, and "rounds" means build rounds (merge skill).
