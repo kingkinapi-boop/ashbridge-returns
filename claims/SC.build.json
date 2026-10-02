@@ -4,8 +4,8 @@
  "round": 44,
  "spec": "ee0255d",
  "worker": "cloud-0c9d3d",
- "state": "released",
- "at": "2026-10-02T21:10:14.152Z",
+ "state": "reopened",
+ "at": "2026-10-02T21:25:25.181Z",
  "mode": "turbo",
- "note": "re-offered unchanged: still needs spec refit for R34 and R47 (see reports/SC-build.md)"
+ "note": "spec reported with KNOWN owner FX3 entries; build to the spec"
 }
