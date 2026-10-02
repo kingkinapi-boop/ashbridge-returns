@@ -59,9 +59,11 @@ describe('EV-6 grammar edges', () => {
     expect(amountGroups(w)).toHaveLength(2)
     expect(amountGroups(w, 10)).toHaveLength(1)
   })
-  test('lower case cr and dr marks read like upper case', () => {
-    expect(normaliseAmount('5.00 dr')).toEqual({ ok: true, cents: -500 })
-    expect(normaliseAmount('5.00cr')).toEqual({ ok: true, cents: 500 })
+  test('upper case CR and DR marks read as the table says (lower case is refused, A348 supersedes the round 2 builder test)', () => {
+    expect(normaliseAmount('5.00 DR')).toEqual({ ok: true, cents: -500 })
+    expect(normaliseAmount('5.00CR')).toEqual({ ok: true, cents: 500 })
+    expect(normaliseAmount('5.00 dr').ok).toBe(false)
+    expect(normaliseAmount('5.00cr').ok).toBe(false)
   })
   test('ARC-8 formatAmount refuses unsafe cents and prints each format', () => {
     expect(() => formatAmount(1.5, AMOUNT_FORMATS['plain'] ?? { dollar: false, thousands: ',', negative: 'leading' })).toThrow(RangeError)
