@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "b8ec2300",
  "worker": "cloud-c7ae52",
- "state": "reported",
- "at": "2026-10-02T19:33:07.664Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T19:38:28.133Z",
  "mode": "turbo",
- "note": "all acceptance tests pass (123 in bank folder)"
+ "note": "FAIL: builder edited spec file assets-cca.test.ts (dropped a non-empty assertion), see reports/G12-check.md"
 }

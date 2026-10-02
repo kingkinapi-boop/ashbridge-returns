@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T19:33:07.664Z",
  "worker": "cloud-d6217c",
- "state": "working",
- "at": "2026-10-02T19:37:45.997Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T19:38:28.133Z",
+ "mode": "turbo",
+ "note": "FAIL: builder edited spec file assets-cca.test.ts (dropped a non-empty assertion), see reports/G12-check.md"
 }
