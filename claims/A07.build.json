@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "b47d477",
  "worker": "cloud-575f8d",
- "state": "working",
- "at": "2026-10-02T14:27:38.783Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T14:49:15.312Z",
+ "mode": "turbo",
+ "note": "round 2: 121 sheets tests pass, mutation 100"
 }
