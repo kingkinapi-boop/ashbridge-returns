@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "b47d477",
  "worker": "cloud-575f8d",
- "state": "reported",
- "at": "2026-10-02T14:49:15.312Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T15:06:06.240Z",
  "mode": "turbo",
- "note": "round 2: 121 sheets tests pass, mutation 100"
+ "note": "FAIL: docx throws TypeError, PK-header csv misrouted, large-total float noise, see reports/A07-check.md"
 }
