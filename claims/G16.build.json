@@ -1,0 +1,10 @@
+{
+ "card": "G16",
+ "role": "build",
+ "round": 1,
+ "spec": "e502f66",
+ "worker": "cloud-de3dc1",
+ "state": "working",
+ "at": "2026-10-02T19:44:37.749Z",
+ "mode": "turbo"
+}
