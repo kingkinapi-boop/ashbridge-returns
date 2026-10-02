@@ -4,7 +4,8 @@
  "round": 7,
  "spec": "5acfe13",
  "worker": "cloud-d34b3d",
- "state": "working",
- "at": "2026-10-02T16:07:42.044Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T16:08:33.425Z",
+ "mode": "turbo",
+ "note": "gitleaks allowlist edit refused by permission classifier; see reports/E03A-build-r4.md"
 }
