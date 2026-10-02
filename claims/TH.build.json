@@ -1,11 +1,10 @@
 {
  "card": "TH",
  "role": "build",
- "round": 6,
- "spec": "f1c8095",
- "worker": "cloud-e1c409",
- "state": "reopened",
- "at": "2026-10-02T02:07:45.915Z",
- "mode": "turbo",
- "note": "re-offered; still needs spec refit (reference in SKIP_DIRS, A287), not a build job"
+ "round": 7,
+ "spec": "0299b2e",
+ "worker": "cloud-0a2392",
+ "state": "working",
+ "at": "2026-10-02T06:09:50.549Z",
+ "mode": "turbo"
 }
