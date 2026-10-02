@@ -181,7 +181,6 @@ export function valueInBox(result: ReadingResult, box: Box, value: string): Valu
   const words = wordsInBox(parsed, box)
   if (words.length === 0) return { ok: false, reason: 'no words in box' }
   const folded = foldText(value)
-  if (folded === '') return { ok: false, reason: 'value not found' }
   const wanted = normaliseAmount(value)
   if (wanted.ok) {
     return amountGroups(words).some((g) => g.cents === wanted.cents) ? { ok: true } : { ok: false, reason: 'value not found' }
