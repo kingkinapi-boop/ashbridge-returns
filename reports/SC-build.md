@@ -13,3 +13,6 @@ Amber: none. Permission gaps: none. Model: Sonnet 5.5.
 
 ## Re-run 2 Oct (cloud-dea37c), main 3df2e9b merged
 Unchanged: unit 4 of 48 fail (R15, R18, R23, R41), same files and owners as above (records.ts, gaps/index.ts, gaps/bank, ai.ts, F01 schema for the db three). Released again; nothing for a builder to do until the owning cards carry the defects.
+
+## Re-run 2 Oct 18:50Z (cloud-c520ec), main 8806c6c..f86ad4d merged
+Unchanged: unit 4 of 48 fail (R15, R18, R23, R41), db 3 of 17 fail (R12, R15, R43), same owners as above. Released; nothing for a builder to do until the owning cards carry the defects or a spec job adds KNOWN entries.
