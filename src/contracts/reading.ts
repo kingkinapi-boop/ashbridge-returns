@@ -2,6 +2,7 @@
 // The reading contract (F09): what any reading engine returns, and the one code check that a value
 // sits inside a box (EV-6), used by extraction and by AI citations (AI-4). Money is integer cents.
 import { z } from 'zod'
+import { amountGroups, normaliseAmount, type AmountResult } from './amount-grammar'
 
 const fraction = z.number().min(0).max(1)
 
@@ -24,7 +25,8 @@ export const BoxSchema = z
 export type Box = z.infer<typeof BoxSchema>
 
 export const WordSchema = z.object({
-  text: z.string(),
+  /** Never blank: a blank word would let a blank value count as found (EV-6, AI-4). */
+  text: z.string().refine((t) => t.trim() !== '', { message: 'word text must not be blank' }),
   box: BoxSchema,
   confidence: fraction,
   /** The engine's reading order. */
@@ -83,7 +85,8 @@ const snap = (n: number): number => Math.min(1, Math.max(0, n))
 
 const RECT_FIELDS = ['x', 'y', 'width', 'height'] as const
 
-function checkRect(rect: PointsRect, width: number, height: number): void {
+function checkRect(page: number, rect: PointsRect, width: number, height: number): void {
+  if (!Number.isInteger(page) || page < 1) throw new RangeError('page must be a whole number from 1')
   for (const f of RECT_FIELDS) {
     if (!Number.isFinite(rect[f])) throw new RangeError(`rect ${f} must be a finite number`)
   }
@@ -103,7 +106,7 @@ function checkRect(rect: PointsRect, width: number, height: number): void {
  * @converter
  */
 export function pointsToBox(page: number, rect: PointsRect, pageWidthPt: number, pageHeightPt: number): Box {
-  checkRect(rect, pageWidthPt, pageHeightPt)
+  checkRect(page, rect, pageWidthPt, pageHeightPt)
   return BoxSchema.parse({
     page,
     left: snap(rect.x / pageWidthPt),
@@ -128,7 +131,7 @@ export function boxToPoints(box: Box, pageWidthPt: number, pageHeightPt: number)
  * @converter
  */
 export function pixelsToBox(page: number, rect: PixelsRect, imageWidthPx: number, imageHeightPx: number): Box {
-  checkRect(rect, imageWidthPx, imageHeightPx)
+  checkRect(page, rect, imageWidthPx, imageHeightPx)
   return BoxSchema.parse({
     page,
     left: snap(rect.x / imageWidthPx),
@@ -154,56 +157,8 @@ export function wordsInBox(result: ReadingResult, box: Box): Word[] {
 
 // ---- amounts ----
 
-export type AmountResult = { ok: true; cents: number } | { ok: false; reason: string }
-
-const GROUPED = /^(0|[1-9]\d{0,2}(?:,\d{3})+|[1-9]\d*)(?:\.(\d{1,2}))?$/
-
-/**
- * Integer cents from bank-statement text, with no floating point on the way.
- * Sign rules: brackets, a leading minus, a trailing minus and DR mean negative; CR (a credit to the
- * account) means positive. More than one sign mark is refused. A "$" may sit either side of a leading
- * sign. Not a number: "1.234,56", "1.2E3", "" and an amount with a leading zero ("001234").
- */
-export function normaliseAmount(text: string): AmountResult {
-  let s = text.replace(/\s/g, '')
-  if (s === '') return { ok: false, reason: 'empty amount' }
-  let negative = 0
-  let credit = false
-  let dollars = 0
-  const tail = s.slice(-2).toUpperCase()
-  if (tail === 'DR') negative += 1
-  if (tail === 'CR') credit = true
-  if (tail === 'DR' || tail === 'CR') s = s.slice(0, -2)
-  if (s.startsWith('$')) {
-    dollars += 1
-    s = s.slice(1)
-  }
-  if (s.startsWith('(') && s.endsWith(')')) {
-    negative += 1
-    s = s.slice(1, -1)
-  }
-  if (s.startsWith('-')) {
-    negative += 1
-    s = s.slice(1)
-  }
-  if (s.endsWith('-')) {
-    negative += 1
-    s = s.slice(0, -1)
-  }
-  if (s.startsWith('$')) {
-    dollars += 1
-    s = s.slice(1)
-  }
-  if (negative > 1 || (negative > 0 && credit)) return { ok: false, reason: 'more than one sign mark' }
-  const m = dollars > 1 ? null : GROUPED.exec(s)
-  if (!m) return { ok: false, reason: `"${text}" is not an amount in dollars and cents` }
-  // Stryker disable next-line StringLiteral: group 1 of GROUPED always matches, the fallback only satisfies noUncheckedIndexedAccess
-  const whole = (m[1] ?? '').replace(/,/g, '')
-  const frac = (m[2] ?? '').padEnd(2, '0')
-  const cents = Number(whole) * 100 + Number(frac)
-  if (!Number.isSafeInteger(cents)) return { ok: false, reason: 'amount is too large' }
-  return { ok: true, cents: negative > 0 && cents !== 0 ? -cents : cents }
-}
+export { normaliseAmount }
+export type { AmountResult }
 
 // ---- the value-in-box check (EV-6) ----
 
@@ -211,41 +166,8 @@ export type ValueInBoxResult =
   | { ok: true }
   | { ok: false; reason: 'no words in box' | 'value not found' | 'box on another page' }
 
-// Stryker disable next-line MethodExpression: both sides are folded alike, so lower or upper case compare the same
+// Stryker disable next-line MethodExpression: toLowerCase and toUpperCase fold both sides alike, so either compares the same; trim and whitespace collapse are tested
 const foldText = (s: string): string => s.trim().replace(/\s+/g, ' ').toLowerCase()
-
-const sameLine = (a: Word, b: Word): boolean =>
-  a.box.top < b.box.top + b.box.height && b.box.top < a.box.top + a.box.height
-
-const SIGN_ONLY = /^[-$(]+$/
-const TRAILING_SIGN = /^(\)|-|CR|DR)$/i
-const DECIMALS = /^\.\d{1,2}$/
-const COMMA_GROUP = /^,\d{3}(\.\d{1,2})?$/
-const SPACE_GROUP = /^\d{3}(\.\d{1,2})?$/
-const WHOLE_TAIL = /(?:^|[^\d.,])\d{1,3}(?:,\d{3})*$/
-const OPENS_AMOUNT = /^[\d$(.-]/
-
-/** What the group text becomes when `next` joins it, or null when `next` starts a new group. */
-function joinWord(group: string, next: string): string | null {
-  if (SIGN_ONLY.test(group)) return OPENS_AMOUNT.test(next) ? group + next : null
-  if (!/\d$/.test(group)) return null
-  if (TRAILING_SIGN.test(next)) return group + next
-  if (DECIMALS.test(next) || COMMA_GROUP.test(next)) return /[.]/.test(group) ? null : group + next
-  if (SPACE_GROUP.test(next)) return WHOLE_TAIL.test(group) ? `${group},${next}` : null
-  return null
-}
-
-/** The words read into maximal amount groups: same line, reading order, joined only by the rules above. */
-function amountGroups(words: Word[]): string[] {
-  const groups: { text: string; last: Word }[] = []
-  for (const w of words) {
-    const g = groups[groups.length - 1]
-    const joined = g && sameLine(g.last, w) ? joinWord(g.text, w.text) : null
-    if (joined === null) groups.push({ text: w.text, last: w })
-    else groups[groups.length - 1] = { text: joined, last: w }
-  }
-  return groups.map((g) => g.text)
-}
 
 /**
  * True only when the value, normalised on both sides, equals a whole amount group among the words in
@@ -256,15 +178,12 @@ export function valueInBox(result: ReadingResult, box: Box, value: string): Valu
   if (box.page < 1 || box.page > result.pageCount) return { ok: false, reason: 'box on another page' }
   const words = wordsInBox(result, box)
   if (words.length === 0) return { ok: false, reason: 'no words in box' }
+  const folded = foldText(value)
+  if (folded === '') return { ok: false, reason: 'value not found' }
   const wanted = normaliseAmount(value)
   if (wanted.ok) {
-    for (const group of amountGroups(words)) {
-      const got = normaliseAmount(group)
-      if (got.ok && got.cents === wanted.cents) return { ok: true }
-    }
-    return { ok: false, reason: 'value not found' }
+    return amountGroups(words).some((g) => g.cents === wanted.cents) ? { ok: true } : { ok: false, reason: 'value not found' }
   }
-  const folded = foldText(value)
   const texts = words.map((w) => w.text)
   const found = texts.some((_, i) => {
     const run: string[] = []
@@ -276,6 +195,9 @@ export function valueInBox(result: ReadingResult, box: Box, value: string): Valu
   if (found) return { ok: true }
   return { ok: false, reason: 'value not found' }
 }
+
+// Note for readers (A01 to A03, I00): valueInBox and the engines do not parse through ReadingResultSchema;
+// a consumer must parse a result before it trusts it.
 
 // ---- the adapter every reading engine implements (ARC-6) ----
 
