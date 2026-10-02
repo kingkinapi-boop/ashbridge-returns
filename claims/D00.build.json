@@ -1,11 +1,10 @@
 {
  "card": "D00",
  "role": "build",
- "round": 5,
+ "round": 6,
  "spec": "82aeffe",
- "worker": "cloud-f135fc",
- "state": "released",
- "at": "2026-10-02T08:46:31.257Z",
- "mode": "turbo",
- "note": "worker job limit reached; premise still wrong (packages and logo missing, see reports/D00-build.md)"
+ "worker": "cloud-3703a0",
+ "state": "working",
+ "at": "2026-10-02T08:50:51.263Z",
+ "mode": "turbo"
 }
