@@ -1,18 +1,16 @@
-# F03R check, round 2 (cloud-e81ab0, 2 Oct 2026)
+# F03R check (round 3), cloud-3703a0, 2 Oct
 
-FAIL on the Opus adversarial read. Steps 1 to 9 pass: typecheck, lint, deps:check clean; npm test 787 of 787; spec files unchanged since af234ce; scope clean; mutation canary ok; mutation 100 on taxprep.ts.
+Branch claude/F03R at ce94026, merged main 7dd2c02. Result: PASS.
 
-## Failures (from the Opus read, probed with npx tsx; no test covers them)
-1. RT-3, RT-9 regression: `1'234`, `12'`, `-12'`, `1'2'3` now parse OK as text with apostrophe=false in both columns; origin/main refused them with an `apostrophe` fault (digits-plus-apostrophe branch). The new `startsWith("'")||startsWith("-'")` test dropped it. The writer also writes `1'234` and reads it back. Expected: an apostrophe fault for a number with an apostrophe inside; `O'Brien` stays allowed.
-2. Card Build line, writer read-back: `formatValue` only checks `classifyValue(written).ok`; it never compares the read-back value with the input. No input differs today (-0 is allowed by check 7), but the required check is missing.
-3. Check 8: ALWAYS_EXPORTED has the right eight cells, but Ident120, 121, 311 and 492 are spread from IGNORED_ON_IMPORT, so they cite "skipped on import", not the export finding (FINDINGS.md line 45, item 9). Each entry must cite the export finding.
+- typecheck, lint, deps:check clean. `npm test`: unit 878 of 878, db 2 of 2 (Node 24).
+- Spec files unchanged since 579659a (diff empty). `scope.mjs F03R` OK (11 files).
+- mutate:canary 100; `mutate:changed -- F03R` 100 on taxprep.ts (787 killed, 5 timeout, 0 survived).
+- Opus adversarial read: B1, B2, B3 match the card; nothing built beyond it; forged ids and control characters refused.
 
-Minor, not counted: rate 123456789012.3456 is refused with the wrong reason ("more than 4 decimals"); NBSP-only text is refused as blank though the parser reads it as text.
+## Notes (not failures)
+1. Windows-1252 property test (taxprep.acceptance.test.ts:1066, ALPHABET line 1047) is Node-version dependent: on Node 22 `TextDecoder('windows-1252')` decodes 0x80 to 0x9F as C1 controls, which the writer rightly refuses; on Node 24 it passes. Cause of the two earlier cloud failures. Spec defect, not a writer defect: ALPHABET should come from a fixed table. The build report does not name this cause. Cloud runs must use Node 24 (package.json engines, engine-strict).
+2. Gap in the card's B1 regex (same as main a89d508, so the ratchet holds): `+1'234`, `(1'234)`, ` 1'234`, `1'234 `, `1'234e3`, `--'12`, `1’234` (byte 92) are accepted as text with no fault. Rule for SC.
+3. readBackMatches rate case uses Number(), so `''`, `' '` match rate 0 and ` 1.5`, `1.5e0` match 1.5. The writer always writes toFixed(4), so no user effect; a weak test seam. Exact compare against toFixed(4) would close it.
+4. W00 spec worker finding: src/contracts/taxprep.acceptance.test.ts:280 helper `taxprepBytes` (line 84) throws on CRLF-stored files; after W00's A347 (taxprep CSVs `-text`, CRLF) it must accept CRLF and still refuse mixed endings. F03R spec fix needed before the W00 build lands.
 
-Rule candidate: when a branch of a parser is replaced, grep the old branch's inputs and keep a test for each (same as F09A's rule candidate).
-
-## Permission gaps
-None.
-
-## Model
-Sonnet 5.5; adversarial read by Opus.
+Permission gaps: none. Model: Sonnet 5.5 checker, Opus subagent for the adversarial read.
