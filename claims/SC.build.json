@@ -4,7 +4,8 @@
  "round": 33,
  "spec": "34e8ac0",
  "worker": "cloud-3e2f84",
- "state": "working",
- "at": "2026-10-02T20:00:17.994Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:00:27.084Z",
+ "mode": "turbo",
+ "note": "re-offered at once after release; nothing for a builder to do until the owner defects are carded or in KNOWN (Lead: hold SC build)"
 }
