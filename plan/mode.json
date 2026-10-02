@@ -1,9 +1,9 @@
 {
-  "mode": "turbo",
+  "mode": "normal",
   "resume_to": null,
-  "set_by": "Zo, 2 Oct 2026 about 02:10Z: \"turbo on\" (decision 0018), after the Reviewer SLOW of 01:50Z (he answered its A63/A69 item in the same sitting); local_workers 2 (0018). The Reviewer HOLD on money.ts, ids.ts and clock stays (card F00T).",
+  "set_by": "Reviewer, 2 Oct 2026 14:40Z: SLOW (reviews/REVIEW.md). Turbo returns only on Zo saying \"turbo on\".",
   "set_at": "2026-10-02",
-  "why": "Zo raised it. The Lead does the Reviewer fixes first in the queue: F00T (core tests by a spec job, seeded), per-file mutation break on @mutate files (DG), F09 and TH first.",
+  "why": "Lowered one step from turbo: 4 of 11 cards reached build round 3, a flaky test on train 20261002-1359, and the queue starving (2 spec'd cards ready). Fixes: FX1, F01C, W01 to W10 specs, claim.mjs skipping cards that must not start.",
   "wind_down_at": "2026-10-09T18:00:00-04:00",
   "heavy_slots": 1,
   "max_workers": 12,
