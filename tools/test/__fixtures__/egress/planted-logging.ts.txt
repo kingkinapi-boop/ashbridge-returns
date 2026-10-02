@@ -1,0 +1,4 @@
+export function run(log: { info(m: string, f?: object): void }, id: string): void {
+  console.log('starting')
+  log.info(`loaded ${id}`)
+}
