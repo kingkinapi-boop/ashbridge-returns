@@ -2,7 +2,10 @@
  "card": "A06",
  "role": "spec",
  "worker": "cloud-c7ae52",
- "state": "working",
- "at": "2026-10-02T19:33:10.489Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:37:30.816Z",
+ "mode": "turbo",
+ "note": "refit: no test change, merged main, 1908 unit + 474 db pass",
+ "commit": "8af6557",
+ "validated": "6ac92e8f"
 }
