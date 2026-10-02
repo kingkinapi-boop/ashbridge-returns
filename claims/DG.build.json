@@ -1,11 +1,10 @@
 {
  "card": "DG",
  "role": "build",
- "round": 7,
- "spec": "8f165c2a9170288b9d68627cb42ad6445f824c5f",
- "worker": "cloud-5d8906",
- "state": "reopened",
- "at": "2026-10-02T08:28:00.428Z",
- "mode": "turbo",
- "note": "spec fix reported; build next (refit first if toolchain moved)"
+ "round": 8,
+ "spec": "71ddd70",
+ "worker": "cloud-d26ada",
+ "state": "working",
+ "at": "2026-10-02T09:01:41.129Z",
+ "mode": "turbo"
 }
