@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "2c9e48ddf0ce44e1dc4fd0a46c19c61820bfb821",
  "worker": "cloud-468247",
- "state": "working",
- "at": "2026-10-02T00:21:13.461Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T00:21:20.524Z",
+ "mode": "turbo",
+ "note": "Re-offered again after release: queue bug, F05 is merged and checked PASS. Stopping."
 }
