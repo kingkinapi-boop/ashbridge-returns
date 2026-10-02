@@ -2,10 +2,10 @@
  "card": "S00",
  "role": "spec",
  "worker": "local-948a53",
- "state": "reported",
- "at": "2026-10-02T04:48:47.807Z",
+ "state": "reopened",
+ "at": "2026-10-02T04:51:38.709Z",
  "mode": "turbo",
- "note": "58 tests (57 pass vs throwaway reference sim, F03 branch merged for validation; Sonnet not Opus)",
+ "note": "round 2 per card (Opus review); core: cloud Opus spec writer",
  "commit": "9ec2e0f550e0a4513b0b0ced1ac4acb40c3eaeb1",
  "validated": "d500408a26e1eeb7190f29e9a4edf63bdd24b3d8"
 }
