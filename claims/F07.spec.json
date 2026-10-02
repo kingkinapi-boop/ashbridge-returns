@@ -2,7 +2,8 @@
  "card": "F07",
  "role": "spec",
  "worker": "cloud-d42547",
- "state": "working",
- "at": "2026-10-02T11:19:31.501Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T11:19:37.096Z",
+ "mode": "turbo",
+ "note": "worker reached its 4-job limit; not started"
 }
