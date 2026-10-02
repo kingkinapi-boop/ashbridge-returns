@@ -1,9 +1,11 @@
 {
  "card": "F04",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: validated on main f2e97da, assertions unchanged, only F04's own acceptance tests fail",
  "worker": "cloud-eb759f",
- "state": "working",
- "at": "2026-10-02T12:47:39.709Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T12:51:24.125Z",
+ "mode": "turbo",
+ "commit": "6c1bbb4",
+ "validated": "f2e97da"
 }
