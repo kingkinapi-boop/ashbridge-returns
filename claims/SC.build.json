@@ -4,7 +4,8 @@
  "round": 22,
  "spec": "62f6c18",
  "worker": "cloud-a03a3e",
- "state": "working",
- "at": "2026-10-02T18:45:09.645Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T18:45:17.976Z",
+ "mode": "turbo",
+ "note": "same 7 failures, queue re-offered it at once; needs Lead (owner cards or KNOWN entries), see reports/SC-build.md"
 }
