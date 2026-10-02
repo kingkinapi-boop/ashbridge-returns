@@ -1,10 +1,8 @@
 {
  "card": "DG",
  "role": "spec",
- "worker": "cloud-85862e",
- "state": "reopened",
- "at": "2026-10-02T02:07:33.350Z",
- "mode": "turbo",
- "note": "add R22 per-file 100 on @mutate files (Reviewer SLOW)",
- "commit": "8a722d5"
+ "worker": "cloud-708ce4",
+ "state": "working",
+ "at": "2026-10-02T02:12:43.199Z",
+ "mode": "turbo"
 }
