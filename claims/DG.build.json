@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "b903b9c",
  "worker": "cloud-ee27ff",
- "state": "working",
- "at": "2026-10-02T02:37:11.110Z",
+ "state": "reported",
+ "at": "2026-10-02T02:42:35.221Z",
  "mode": "turbo",
- "beat": "2026-10-02T02:41:36.656Z"
+ "beat": "2026-10-02T02:41:36.656Z",
+ "note": "round 2: 27 of 27 done-gate tests (R22 4 new pass), full suite 191 pass, flake 5/5, head 647c7e6"
 }
