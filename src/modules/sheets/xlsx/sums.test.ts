@@ -83,8 +83,9 @@ describe('EV-14 a SUM cached as a floating-point total reads as the exact cent t
     const rows = sumRows('SUM(A1:A9)', ['1000000000.005', '0', '0', '0', '0', '0', '0', '0', '0'])
     expect((await run(rows, '1000000000.000001', 'SUM(A1:A9)'))?.cached).toEqual({ type: 'number', text: '1000000000.000001' })
     // Exponent text is no cent amount either.
+    // Read as a cent amount from its tail (-7), the term would pull the total to 999999993.01, which this cache matches.
     const tiny = sumRows('SUM(A1:A9)', ['1E-7', '0', '0', '0', '0', '0', '0', '0', '1000000000.01'])
-    expect((await run(tiny, '1000000000.010005', 'SUM(A1:A9)'))?.cached).toEqual({ type: 'number', text: '1000000000.010005' })
+    expect((await run(tiny, '999999993.010005', 'SUM(A1:A9)'))?.cached).toEqual({ type: 'number', text: '999999993.010005' })
   })
 
   test('EV-14 a total that is not a number is not snapped, and a sum over no terms stays 0', async () => {
