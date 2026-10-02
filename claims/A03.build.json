@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "6504c0db",
  "worker": "cloud-85bb68",
- "state": "working",
- "at": "2026-10-02T19:31:43.686Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:42:59.027Z",
+ "mode": "turbo",
+ "note": "all spec tests pass, mutation 100"
 }
