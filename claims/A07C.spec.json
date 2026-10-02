@@ -2,8 +2,11 @@
  "card": "A07C",
  "role": "spec",
  "worker": "cloud-f96f12",
- "state": "working",
- "at": "2026-10-02T16:11:00.154Z",
+ "state": "reported",
+ "at": "2026-10-02T16:25:45.149Z",
  "mode": "turbo",
- "beat": "2026-10-02T16:13:17.494Z"
+ "beat": "2026-10-02T16:13:17.494Z",
+ "note": "117 tests (58 fail for the right reason); builder must read sheet XML itself (ExcelJS drops hyperlinked formulas)",
+ "commit": "4ce0d83",
+ "validated": "0a45ea9"
 }
