@@ -14,7 +14,7 @@ You check. You fix nothing and edit nothing except your report (a hook enforces 
 4. Count the tests that ran; a pass with zero tests is a failure. Every acceptance check on the card has a passing test.
 5. `git diff <spec commit> HEAD` over every file the `spec(<card>)` commits touched (acceptance tests, goldens and `__fixtures__`) is empty (the builder did not touch the spec).
 6. `node tools/scope.mjs <card>` is clean.
-7. Cloud: first `npm run mutate:canary` (a planted weak test must leave a surviving mutant; if not, the mutation tool is broken: report a tool fault, not missing tests), then `npm run mutate:changed -- <card>` meets the break threshold on changed money, tax, CSV and citation-check files; list surviving mutants as missing tests.
+7. Cloud: first `npm run mutate:canary` (a planted weak test must leave a surviving mutant; if not, the mutation tool is broken: report a tool fault, not missing tests), then `npm run mutate:changed -- <card>` scores 100 per file on every `@mutate` file (testing.md, ARC-15); list surviving mutants as missing tests.
 8. Cards with `screens`: the tester's walk (`.claude/agents/tester.md`), axe clean, ARIA snapshots match.
 9. Cards marked `security`: `/security-review` on the branch; fail on any finding rated medium or higher.
 10. Read the diff against the card and its clauses. Fail on: anything built that the card did not ask for; anything that contradicts a clause; a client sentence; a real-looking person, SIN or business number; a key, account or paid service; an AI output without citations; AI clearing, closing or approving anything; a redirect or link built from `request.url`; journeys run against the dev server.
