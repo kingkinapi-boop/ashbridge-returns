@@ -2,8 +2,7 @@
  "card": "D02",
  "role": "spec",
  "worker": "cloud-055342",
- "state": "released",
- "at": "2026-10-02T09:11:22.209Z",
- "mode": "turbo",
- "note": "same as before, see reports/D02-spec.md; queue re-offers it, Lead to park or reopen"
+ "state": "working",
+ "at": "2026-10-02T09:11:24.890Z",
+ "mode": "turbo"
 }
