@@ -31,3 +31,6 @@ One harness every journey uses: load a test-world client or kind into a fresh da
 
 ## Not in this card
 Any pipeline step (each card registers its own). The kinds (W01 to W13). The walking skeleton (SK0). Screens.
+
+## From the A06 findings (2 Oct)
+Journeys run `next start`, which sets production mode: the harness sets every `*_ENGINE` setting explicitly (R62, reports/A06-findings.md).
