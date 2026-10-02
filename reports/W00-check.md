@@ -1,21 +1,18 @@
-# W00 check (cloud-d26ada)
+# W00 check, round 2 (cloud-b37146, 2 Oct 2026)
 
-FAIL. Checked claude/W00 13013ca (origin/main already merged in), Node 24. Passed: typecheck, lint, deps:check, scope (32 files in paths), spec files unchanged since 59bb5ae, test:flake 5 of 5, no em dashes, no real-looking data found by the read.
+FAIL (Opus adversarial and security read, probed with throwaway tests; round 1 items are fixed).
 
-## Failures (all listed)
-1. `npm test` red: `src/contracts/taxprep.acceptance.test.ts` "RT-3 ARC-14 sample client 01's import.csv ... byte for byte" (F03, landed) throws "import.csv already holds CR bytes: the CRLF restore would double them" (line 84). Cause: A347 stores the taxprep CSVs CRLF (`.gitattributes` `-text` plus regenerated files), but F03's helper `taxprepBytes` adds CR itself and refuses files that have it. The two decisions clash. Needs a Lead call (change F03's helper, a spec job, or keep LF and normalise in W00 check 8). Command: `npx vitest run --project unit src/contracts/taxprep.acceptance.test.ts`.
-2. Mutation (step 7): `npm run mutate:changed -- W00` says "no mutation targets changed": no `testworld` file carries `// @mutate`, although the card is core (money in cents, ARC-13). `testworld/model/money.ts`, `guard.ts`, `checks.ts` should be marked and scored.
-3. Security review (step 9, card is security): `/security-review` not run in this check; the Opus adversarial read below stands in and found medium-or-higher SEC-11 gaps (items 5 to 8).
-4. Opus adversarial read, findings (file:line):
-   - ARC-13 `load.ts:14` with `money.ts:35`: amounts go through `JSON.parse` as floats and then `dollarsToCents(String(x))`; large values lose cents silently and "1.230" is accepted. The converter never sees the source text.
-   - SEC-11 `load.ts:229-251`: `t2Inputs.slips.T4[].sin`, `T5[].sin`, `schedule9.relatedCorporations[].businessNumber` and `.name`, `onboarding.owners[].sin`, `shares.holders[].name`, `spouse.name` never reach the guard.
-   - SEC-11 `load.ts:252-255`: e-mail and phone scan covers only onboarding.json and profile.md, not the answer key or any CSV; payee names in CSVs are not checked for "(Test)" or TEST.
-   - SEC-11 `guard.ts:66`: phone pattern misses "(416)555-1234", "4165551234", "867-5309".
-   - SEC-11 `guard.ts:50`: a non-digit business number ("123 456 782", RT suffix) returns "fails check digit", which the guard treats as made-up; real numbers in that shape pass.
-   - ARC-8 `faults.ts:204-212` with `checks.ts:126`: the "listed fault" requirement is satisfied by the same `rolls:false` bit that waives the check, so any break can be waved through.
-   - ARC-8 vacuous passes: `load.ts:163` (no statementBalances means no roll check), `checks.ts:136-138` (transaction `acct` never checked against declared accounts), `checks.ts:104-110` (an entry with zero lines nets to zero), `load.ts:190-195` (entry type derived from sources, so "has a type" cannot fail), `checks.ts:145` (null GIFI skips the four-digit check).
-   - Note only: `generate.ts:289` runs `make-csv.mjs` without `--check` (correct for a temp-copy compare; card wording differs).
+Passed: typecheck, lint, deps:check, npm test (1773 unit, 2 db), test:flake 5 of 5, spec files unchanged since f6aed41, mutation canary, mutate:changed W00 (100, 0 survivors, 8 marked files). Round 1 items now refused: float money, T4/owner SINs as text, spaced and RT business numbers, names without "(Test)" in every field, e-mail and phones in answer key and CSVs, rolls:false waiver, zero-line and sourceless entries.
+Scope: SCOPE FAIL names only plan/cards/W00.md in the Lead's commit 8d44550 (spec commit line), not a build edit; no code outside the card's paths.
 
-Rule candidate: every guard that scans fields (SEC-11) is driven from the schema's list of string fields, not a hand-picked list, and a planted real-looking value in each field kind must be refused; every "listed fault" check must read the catalogue, not the data's own flag.
+Failures:
+1. SEC-11 medium, testworld/model/guard.ts:41: the walk visits only JSON strings; a SIN, business number or phone stored as a JSON number (sin: 130692544, 4168675309) is accepted.
+2. SEC-11 medium, guard.ts:31: the nine-digit pattern needs one separator throughout and refuses dots; "123-456 782", "046 454-286" (in a CSV), "123.456.782" and "BN.123456782" are accepted.
+3. SEC-11 medium, guard.ts:36 and :54: name checks use a hard-coded key list; real names under grantor (a key the samples use), tenant, payer or full_name are accepted, and so is a "name" whose object also has a "key" field.
+4. SEC-11 medium, testworld/clients/load.ts:278: only .json, .csv and .md are read; a SIN in notes.txt or accounts/x.tsv in a client folder is accepted.
+5. ARC-8 medium, checks.ts:42: the roll check fails only when an account has no months at all. Dropping one month, or all but the first, from statementBalances is accepted, and nothing checks that one month's closing equals the next month's opening.
+6. ARC-8 low, load.ts:192: missingFromExport:true on a transaction removes it from the month's activity, so a fudged closing balance passes (a waiver taken from the data again). Low, checks.ts:25: an adjusting entry whose only source is a non-existent id ("nope") passes.
 
-Not run: e2e (no screens, none on card). Permission gaps: none. Model: Sonnet 5.5 (adversarial read: Opus).
+Rule candidates: the SEC-11 guard walks every value (strings and numbers) of every key and every file in a client folder, and treats any file type it cannot read as a refusal; name checks are driven by the schema's string fields, not a key list. A month sequence must be complete between first and last month and each closing equals the next opening.
+
+Permission gaps: none. Model: Sonnet 5.5 (adversarial and security read: Opus).
