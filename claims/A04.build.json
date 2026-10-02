@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "383857c",
  "worker": "cloud-18d04e",
- "state": "working",
- "at": "2026-10-02T19:57:15.420Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:58:22.498Z",
+ "mode": "turbo",
+ "note": "inbox golden still has 14 stale minLength lines (45 of 46 pass); spec job must regenerate it"
 }
