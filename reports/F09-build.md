@@ -1,7 +1,14 @@
-# F09 build: reported
-Worker cloud-173eff. Branch claude/F09 (merged with main).
-Files: src/contracts/reading.ts, src/contracts/reading.test.ts (3 own tests).
-Acceptance: 29 of 29 in reading.acceptance.test.ts pass; typecheck, deps:check, scope clean.
-SPEC DEFECT (builder may not edit): `npm run lint` reports 8 errors, all inside reading.acceptance.test.ts (non-null assertions at lines 288, 294, 321, 356; a number in a template literal at 288; async read without await at 455; unbound method at 457). Lint on the train will be red until a spec job fixes that file. reading.ts itself is lint clean.
-Ambers: (1) wordsInBox centre test is inclusive on all four edges; (2) amounts: more than one sign mark is refused (for example "(-5.00)"), CR with a minus is refused, one decimal digit reads as tenths, three decimals refused, commas must group in threes; (3) valueInBox joins contiguous in-box words with no separator, amount mode when the wanted value parses as an amount (equal cents), otherwise text mode folded for case and spaces; (4) pointsToBox and pixelsToBox clamp to 0..1 to absorb float noise; (5) ReadingDocument is { fingerprint, fileName?, bytes? } until the engine cards fix it. Reverse: edit reading.ts.
-Permission gaps: none (Node 24 from /opt/nvm). Model: claude-sonnet-5-5.
+# F09 build round 2 (cloud-e1c409)
+
+Branch claude/F09; head: see `git log -1 claude/F09` (this report is in the same push).
+Files changed: src/contracts/reading.ts only (spec file untouched; scope OK).
+Acceptance: 53 of 53 pass in reading.acceptance.test.ts (18 round-2 tests were red before). Typecheck, lint on reading.ts, `npm test` (217), `test:flake` 5 of 5 clean. Stryker on reading.ts: 76.49 (break 70).
+Built: maximal amount groups (same line, joined only across "$", sign words, ".dd", ",ddd", space-separated three-digit group; whole-group match); text joins with one space; leading-zero refusal; "$-", "-$", "$(" signs; BoxSchema overflow refusal; converters throw on off-page or zero-size rect or page (no clamp, float-noise snap only); page list exactly 1..pageCount; "box on another page" for page < 1 or > pageCount; `// @mutate`.
+Ambers: (1) float tolerance 1e-9 in BoxSchema and converters so round-trips at the page edge pass; reverse by setting EPS to 0. (2) Text values compared only when the value is not an amount, so "001234" as a value falls to text compare.
+Not done: re-check (another worker); A02 Tesseract splits may drop (join is lexical) per the findings risks.
+
+## Permission gaps
+None. Needed Node 24 via `nvm install 24` (preinstalled Node 22 fails `npm ci`).
+
+## Model
+Sonnet 5.5, no subagents (F09 core build; adversarial read is the checker's).
