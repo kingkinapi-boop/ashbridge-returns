@@ -1,11 +1,9 @@
 {
  "card": "F02",
  "role": "spec",
- "note": "refit: bb88e2e to 8e8fba1; only package.json changed; typecheck/lint errors only from the 2 missing lifecycle modules; unit 981 others green",
- "worker": "cloud-d42547",
- "state": "reported",
- "at": "2026-10-02T11:19:26.804Z",
- "mode": "turbo",
- "commit": "40bebf3",
- "validated": "8e8fba1"
+ "note": "toolchain refit",
+ "worker": "cloud-575f8d",
+ "state": "working",
+ "at": "2026-10-02T14:51:52.600Z",
+ "mode": "normal"
 }
