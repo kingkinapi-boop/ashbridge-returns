@@ -2,7 +2,10 @@
  "card": "SC",
  "role": "spec",
  "worker": "cloud-b37146",
- "state": "working",
- "at": "2026-10-02T13:28:44.892Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T14:12:48.991Z",
+ "mode": "turbo",
+ "note": "65 rule tests; R35 and R45 cite half not covered; 10 fail by name until F01 lands; see card ambers",
+ "commit": "0cc0b2b",
+ "validated": "bc97984"
 }
