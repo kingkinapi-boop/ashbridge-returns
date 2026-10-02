@@ -33,9 +33,70 @@ import { initAll as mojInit } from '../../vendor/moj-frontend.min.js';
     try { localStorage.setItem('ash.src', JSON.stringify(msg)); } catch (e) {}
     if (win && !win.closed) { try { win.postMessage(msg, '*'); } catch (e) {} }
   }
-  function renderViewer(pane, key, label) {
+  /* ---------- pane layout (round 2): head, then the source (evidence first), then the rest, with the decision pinned at the foot ---------- */
+  function layoutItem(it) {
+    if (it.getAttribute('data-laid')) { return; }
+    it.setAttribute('data-laid', '1');
+    var kids = Array.prototype.slice.call(it.children);
+    var pager = kids.filter(function (k) { return k.classList.contains('app-pager'); })[0];
+    var hasActs = kids.some(function (k) { return k.classList.contains('app-actions'); });
+    var footEls = kids.filter(function (k) { return (k.matches('form[data-form]') && !hasActs) || k.classList.contains('app-actions') || (k.tagName === 'P' && k.children.length === 1 && k.firstElementChild.matches('a') && k.textContent.trim() === k.firstElementChild.textContent.trim()); });
+    var scroll = d.createElement('div'); scroll.className = 'app-item__scroll';
+    var head = d.createElement('div'); head.className = 'app-item__head';
+    var rest = d.createElement('div'); rest.className = 'app-item__rest'; rest.setAttribute('role', 'region'); rest.setAttribute('aria-label', 'More detail, scrollable');
+    var inHead = true;
+    kids.forEach(function (k) {
+      if (k === pager || footEls.indexOf(k) >= 0) { return; }
+      if (inHead && head.children.length < 3 && (k.tagName === 'H2' || (k.tagName === 'P' && (head.children.length < 2 || k.textContent.trim().length <= 70)))) { head.appendChild(k); } else { inHead = false; rest.appendChild(k); }
+    });
+    scroll.appendChild(head); scroll.appendChild(rest);
+    scroll.setAttribute('role', 'region'); scroll.setAttribute('aria-label', 'Detail and source, scrollable');
+    it.appendChild(scroll);
+    var pos = pager ? $('[data-pos]', pager) : null;
+    var stateP = $('[data-state-slot]', head) ? $('[data-state-slot]', head).parentNode : null;
+    if (footEls.length) {
+      var foot = d.createElement('div'); foot.className = 'app-item__foot';
+      footEls.forEach(function (k) { foot.appendChild(k); });
+      var prim = $('button[type="submit"]', foot) || $('.govuk-button:not(.govuk-button--secondary):not(.govuk-button--warning)', foot) || $('a', foot);
+      if (prim) { prim.setAttribute('data-primary', ''); }
+      var acts = $$('.app-actions', foot).pop();
+      if (pager && acts) {
+        $$('button', pager).forEach(function (b) { if (b.getAttribute('data-nav') === 'prev') { b.textContent = 'Prev'; b.setAttribute('aria-label', 'Previous row'); } else { b.setAttribute('aria-label', 'Next row'); } acts.appendChild(b); });
+        if (pos) { var hh = $('h2', head); if (hh && hh.nextSibling) { head.insertBefore(pos, hh.nextSibling); } else { head.appendChild(pos); } }
+        pager.remove();
+      } else if (pager) { head.appendChild(pager); }
+      it.appendChild(foot);
+    } else if (pager) { head.appendChild(pager); }
+  }
+  function placeViewer(pane, item) {
+    var v = $('[data-viewer]', pane);
+    if (!v || !item) { return; }
+    var head = $('.app-item__head', item);
+    if (head && v.previousElementSibling !== head) { head.parentNode.insertBefore(v, head.nextSibling); }
+  }
+  function fitPane() {
+    var host = $('.app-ws') || $('.app-split');
+    var pane = $('.app-pane');
+    if (!host || !pane) { return; }
+    if (window.innerWidth < 720) { pane.style.removeProperty('--app-pane-h'); return; }
+    var top = host.getBoundingClientRect().top + window.scrollY;
+    pane.style.setProperty('--app-pane-h', Math.max(240, window.innerHeight - top - 8) + 'px');
+    scrollFocusable();
+  }
+  function scrollFocusable() {
+    $$('.app-item__scroll, .app-item__rest, .app-pane').forEach(function (el) {
+      if (!el.getClientRects().length) { return; }
+      var over = el.scrollHeight > el.clientHeight + 1;
+      if (el.classList.contains('app-pane')) { el.tabIndex = over ? 0 : -1; if (!over) { el.removeAttribute('tabindex'); } }
+      else { if (over) { el.tabIndex = 0; } else { el.removeAttribute('tabindex'); } }
+    });
+  }
+  window.addEventListener("resize", fitPane);
+  window.addEventListener("load", fitPane);
+  function renderViewer(pane, key, label, item) {
     var v = $('[data-viewer]', pane);
     if (!v) { return; }
+    if (item) { placeViewer(pane, item); }
     var s = window.ASH_SOURCES && window.ASH_SOURCES[key];
     if (!s) { v.hidden = true; return; }
     v.hidden = false;
@@ -177,10 +238,11 @@ import { initAll as mojInit } from '../../vendor/moj-frontend.min.js';
     var cannotNow = !!(st && /Cannot start yet/.test(st.textContent));
     $$('[data-can]', found).forEach(function (x) { x.hidden = cannotNow; });
     $$('[data-cannot]', found).forEach(function (x) { x.hidden = !cannotNow; });
-    renderViewer(pane, found.getAttribute('data-src'), found.getAttribute('data-label') || id);
+    renderViewer(pane, found.getAttribute('data-src'), found.getAttribute('data-label') || id, found);
+    fitPane();
     if (found.getAttribute('data-src')) { post(found.getAttribute('data-src'), $('h2', found) ? $('h2', found).textContent : id); }
     if (opts.focus) { var h = $('h2', found); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); } }
-    if (opts.nearest) { tr.scrollIntoView({ block: 'nearest' }); }
+    if (opts.nearest) { tr.scrollIntoView({ block: 'nearest' }); var rb3 = $('[data-row]', tr); if (rb3) { rb3.focus({ preventScroll: true }); } }
   }
   function next(delta, opts) {
     var view = activeView();
@@ -235,6 +297,7 @@ import { initAll as mojInit } from '../../vendor/moj-frontend.min.js';
     if (src && !first) { post(src, want.getAttribute('data-title')); if (pane) { renderViewer(pane, src, ''); } }
     if (!keep && h1 && !route.first) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: false }); say(want.getAttribute('data-title')); }
     route.first = false;
+    fitPane();
   }
   route.first = true;
   window.addEventListener('hashchange', function () { route(false); });
@@ -426,6 +489,7 @@ import { initAll as mojInit } from '../../vendor/moj-frontend.min.js';
     var pane = $('.app-paneset[data-view="gaps"]');
     pane.insertAdjacentHTML('afterbegin', $('template[data-tpl="gap-item"]').innerHTML.replace(/__ID__/g, id).replace(/__N__/g, n).replace(/__TEXT__/g, text));
     recount();
+    layoutItem($('[data-item="' + id + '"]', pane));
     select(id, { focus: true });
     say('Question ' + n + ' added from the bank. It is open for review.');
   });
@@ -447,6 +511,7 @@ import { initAll as mojInit } from '../../vendor/moj-frontend.min.js';
     }
   });
 
+  $$('.app-item').forEach(layoutItem);
   applyStage();
   applyHold();
   if ($('.app-ws[data-return]')) { route(true); }

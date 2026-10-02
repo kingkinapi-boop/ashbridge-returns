@@ -191,3 +191,107 @@ tr.app-row-flag.app-row-selected > * { background: #e4ecf4; }
 .govuk-footer__meta { margin-bottom: 0; }
 .app-steps .govuk-details { margin-top: 12px; }
 .app-steps .app-keys .govuk-table { font-size: 0.875rem; }
+
+/* round 2, compact chrome: the header stack leaves the work its height at 1093 x 525 (rule 18, rule 20) */
+.govuk-header { padding-top: 0; border-bottom-width: 3px; }
+.govuk-header__container { padding-bottom: 0; }
+.govuk-header__logo { padding-top: 2px; margin-bottom: 0; height: 36px; display: flex; align-items: center; }
+.govuk-header .app-logo { line-height: 1; }
+.app-topbar__inner { padding-top: 3px; padding-bottom: 3px; }
+.app-return-bar .moj-identity-bar__container { align-items: center; }
+.app-return-bar .moj-identity-bar__title { margin: 0; line-height: 1.2; }
+.app-return-bar .moj-identity-bar { padding: 0; }
+.app-tabs .moj-sub-navigation__link { padding: 4px 12px; line-height: 1.3; }
+.govuk-header__logo { padding: 0; height: 30px; }
+.app-return-bar .moj-identity-bar__details { padding: 0; margin: 0; }
+.app-return-bar .moj-identity-bar__menu { margin: 0; padding: 0; }
+.app-return-bar .govuk-tag { margin: 0; }
+.app-return-bar .moj-identity-bar__container { min-height: 0; padding: 3px 0; }
+
+/* round 2, the pinned pane (W1): the pane's height is the screen below the header, so it never runs off the bottom; the source comes first,
+   the decision is pinned at the foot, and only the middle scrolls (rule 20). Layout classes are listed in ../PARTS.md. */
+.app-pane { display: flex; flex-direction: column; padding: 0; align-self: start; top: 8px; height: var(--app-pane-h, calc(100vh - 86px)); max-height: calc(100vh - 16px); }
+.app-pane > .app-paneset:not([hidden]) { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; padding: 8px 12px; }
+.app-paneset > .app-item:not([hidden]) { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.app-item__scroll { flex: 1 1 auto; min-height: 0; overflow: auto; display: flex; flex-direction: column; }
+.app-item__scroll:focus { outline: 3px solid var(--govuk-focus-colour); outline-offset: 0; }
+.app-item__head { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; }
+.app-item__head > h2 { margin: 0; flex: 1 1 9em; }
+.app-item__head > p { flex: 1 1 100%; margin: 0 0 2px; }
+.app-item__head > .app-pager { margin: 0; flex: none; }
+.app-item__rest { flex: none; padding-top: 4px; }
+.app-item__foot { flex: none; border-top: 3px solid #2b4d6e; margin-top: 6px; padding-top: 6px; background: #fff; max-height: 62%; overflow: auto; }
+.app-item__foot .govuk-form-group, .app-item__foot .govuk-body { margin-bottom: 4px; }
+.app-item__foot .govuk-button { margin-bottom: 4px; }
+.app-pager .govuk-button { padding: 2px 8px; min-height: 28px; font-size: 1rem; }
+.app-viewer { flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; margin-top: 4px; padding-top: 4px; }
+.app-viewer[hidden] { display: none !important; }
+.app-viewer__head { flex: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.app-viewer__head h3 { margin: 0; }
+.app-viewer__head .govuk-button { margin: 0; padding: 2px 8px; min-height: 28px; }
+.app-viewer__box { flex: 0 1 240px; min-height: 56px; max-height: none; }
+.app-viewer__cap { flex: none; margin: 2px 0 0; }
+.app-viewer__status { flex: none; margin: 2px 0 0; }
+.app-viewer__status:empty { display: none; }
+@media (max-width: 719px) {
+  .app-pane { height: auto; max-height: none; }
+  .app-item__scroll { overflow: visible; }
+  .app-item__foot { max-height: none; }
+  .app-viewer__box { flex-basis: auto; max-height: 240px; }
+}
+
+/* round 2, one header row: logo, service name, menu, user and search share the Generic header's row (the pane needs the height, rule 18) */
+.govuk-header__container { display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; }
+.govuk-header__logo { flex: none; float: none; width: auto; height: auto; margin: 0; padding: 0; }
+.govuk-header .app-topbar { flex: 1 1 auto; background: transparent; border: 0; }
+.govuk-header .app-topbar__inner { padding-top: 3px; padding-bottom: 3px; }
+.govuk-header .app-topbar__name, .govuk-header .app-topbar .govuk-body-s, .govuk-header .app-topbar .govuk-label, .govuk-header .app-topbar .govuk-link:link, .govuk-header .app-topbar .govuk-link:visited { color: #fff; }
+.govuk-header .app-topbar .govuk-link:hover { color: #fff; text-decoration-thickness: 3px; }
+.govuk-header .app-topbar .govuk-link:focus { color: var(--govuk-focus-text-colour); }
+.govuk-header .app-topbar .govuk-button { background: #fff; color: #15283b; box-shadow: 0 2px 0 #15283b; }
+.govuk-header .app-topbar .govuk-button:hover { background: #e4e9ee; }
+.govuk-header .app-topbar .govuk-input { height: 32px; min-height: 0; }
+.govuk-header .app-topbar .govuk-button { min-height: 32px; padding-top: 2px; padding-bottom: 2px; }
+.app-return-bar .moj-identity-bar__container { padding: 1px 0; }
+.app-tabs .moj-sub-navigation__link { padding: 3px 12px; }
+
+/* round 2, pane type: 16 px text in the pane so the source, the decision and the button fit one screen (rule 18 allows 16 px) */
+.app-pane .govuk-body, .app-pane .govuk-label, .app-pane .govuk-radios__label, .app-pane .govuk-fieldset__legend, .app-pane .govuk-textarea, .app-pane .govuk-hint, .app-pane .govuk-error-message, .app-pane .govuk-input, .app-pane .govuk-summary-list { font-size: 1rem; line-height: 1.3; }
+.app-pane .govuk-heading-s { font-size: 1.125rem; line-height: 1.25; }
+.app-pane .govuk-radios--small .govuk-radios__label { padding-top: 3px; padding-bottom: 3px; }
+.app-pane .govuk-radios--small .govuk-radios__item { margin-bottom: 0; }
+.app-item__head > p:first-of-type { flex: 0 1 auto; }
+.app-item__head > h2 { flex: 1 1 8em; }
+.app-viewer__head h3 { font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.app-viewer__head .govuk-button { flex: none; white-space: nowrap; }
+.app-item__foot .govuk-button { padding: 3px 10px; min-height: 32px; }
+.app-item__foot .app-actions { gap: 6px; }
+.app-pane .govuk-radios--small .govuk-radios__input { height: 28px; }
+.app-pane .govuk-radios--small .govuk-radios__label::before { top: 2px; }
+.app-pane .govuk-radios--small .govuk-radios__label::after { top: 8px; }
+.app-viewer__cap { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-viewer { min-height: 112px; }
+.app-item__foot a { display: inline-block; min-height: 24px; padding-top: 2px; }
+.app-item__foot .govuk-label { margin-bottom: 2px; }
+.app-item__foot .govuk-hint { margin-bottom: 2px; }
+.app-item__foot .govuk-textarea { min-height: 0; padding: 4px 8px; }
+.app-return-bar .moj-identity-bar__container::before, .app-return-bar .moj-identity-bar__container::after { display: none; }
+.app-return-bar .moj-identity-bar__container { padding: 1px 0; }
+.app-tabs .moj-sub-navigation__link { font-size: 1rem; line-height: 1.5; padding: 2px 12px; }
+.app-item__rest:empty { display: none; }
+.app-viewer { margin-top: 2px; padding-top: 2px; }
+.app-item__foot { margin-top: 4px; padding-top: 4px; }
+.app-pane > .app-paneset:not([hidden]) { padding: 6px 12px 8px; }
+.app-item__head > [data-pos] { flex: none; margin: 0; }
+.app-pane .govuk-tag { font-size: 1rem; line-height: 1.25; padding: 1px 6px; white-space: normal; }
+.app-viewer__head .govuk-button { min-height: 26px; padding-top: 1px; padding-bottom: 1px; }
+.app-viewer__head h3 { line-height: 1.2; }
+.app-viewer { min-height: 104px; }
+.app-viewer__box { min-height: 48px; }
+/* the "rest" (what the comment says, the flags, slot values) scrolls by itself, so it never squeezes the source */
+.app-viewer { flex: 0 0.15 auto; }
+.app-item__rest { flex: 0 1 auto; min-height: 56px; overflow: auto; }
+.app-item__rest:focus { outline: 3px solid var(--govuk-focus-colour); outline-offset: 0; }
+@media (max-width: 719px) { .app-item__rest { overflow: visible; } }
+.app-viewer { flex: 0 1 auto; }
+.app-item__rest { flex: 0 10 auto; }

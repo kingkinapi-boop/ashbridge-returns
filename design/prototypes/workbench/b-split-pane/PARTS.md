@@ -1,4 +1,4 @@
-# Version B (round 2): steps on the left, a list in the middle, the detail and the shared source viewer on the right
+# Version B (round 2, fix round 2): steps on the left, a list in the middle, the detail and the shared source viewer on the right
 
 Written from blueprint commit b9c5003 (v1.1) and the brief `design/briefs/workbench.md` v1.1. Open `queue.html`; every page and state is linked from `states.html`. Main return: Maple Ridge Consulting Inc. (Test). Made-up data only.
 
@@ -26,13 +26,15 @@ Identity bar, sub navigation (the record tabs), notification badge (counts on st
 ## Composed outside GOV.UK and MOJ (`app-` classes in `assets/b.css`) and why
 - `app-logo`: text mark standing in for the Ashbridge Tax logo file; the Generic header takes a logo image in the build.
 - `app-wide`: 1480 px container; GOV.UK's 960 px is too narrow for dense tables on a laptop with two monitors.
-- `app-topbar`, `app-topbar__inner`, `app-topbar__name`: service name, menu and search on one row; the Generic header has no search slot and search must be on every screen (RV-50). Keeps the fold usable at 650 px high.
+- `app-topbar`, `app-topbar__inner`, `app-topbar__name`: service name, menu and search on the one row of the Generic header (fix round 2: they used to be a second bar; the pane needs the height). The Generic header has no search slot and search must be on every screen (RV-50). The search label is visually hidden (the button says Search).
 - `app-return-bar`, `app-hold`: the MOJ identity bar as one quiet line, with the hold text. The identity bar is "to be reviewed" in MOJ and wraps badly with seven facts.
 - `app-tabs`: wrapper that tightens the MOJ sub navigation used as the record tabs.
 - `app-ws`, `app-split`, `app-main`, `app-main-title`: the list-and-detail grid (steps, list, pane). Neither design system has a master-detail layout. `app-split` is the two-column version on the queue.
 - `app-steps`, `app-steps__here`: the numbered step list with counts and a current marker; MOJ side navigation scrolls sideways on narrow screens and cannot carry a count and a current marker together.
-- `app-pane`, `app-paneset`, `app-item`, `app-pager`: the non-modal right pane, one item per row, with Previous and Next that follow the list (rule 21). No pattern exists.
-- `app-viewer`, `app-viewer__box`, `app-viewer__box--tall`, `app-viewer__bar`, `app-hl`: the shared source viewer (D03): excerpt with the source line highlighted and scrolled into the box, caption, and the second-window control. The highlight has a thick outline, bold text and a hidden "highlighted" label, so it never relies on colour.
+- `app-pane`, `app-paneset`, `app-item`, `app-pager`: the non-modal right pane, one item per row, with Prev and Next that follow the list (rule 21). No pattern exists.
+- `app-item__head`, `app-item__scroll`, `app-item__rest`, `app-item__foot` (fix round 2, W1): the pane is pinned to the screen below the header and does not scroll as a whole. Inside an item: the heading and one line of context, then the source (evidence first), then the rest, which is the only part that scrolls; the decision and its button are pinned at the foot, with Prev and Next on the same row. Added by script (`layoutItem`) so every pane in every step has the same shape. No GOV.UK or MOJ pattern pins a decision beside a source.
+- `app-cor`, `app-cor__row`, `app-cor__reason`: the shared cite-or-reason part, `design/parts/cite-or-reason/` (see its README): source radios, then "A written reason" with its box on the same line; typing in the box selects the radio. GOV.UK conditional reveal was not used because it hides the box until the radio is chosen.
+- `app-viewer`, `app-viewer__head`, `app-viewer__box`, `app-viewer__box--tall`, `app-viewer__bar`, `app-viewer__cap`, `app-viewer__status`, `app-hl`: the shared source viewer (D03): excerpt with the source line highlighted and scrolled into the box, caption, and the second-window control (title and button on one row, caption clamped to two lines). The highlight has a thick outline, bold text and a hidden "highlighted" label, so it never relies on colour.
 - `app-dense`, `app-numeric`, `app-tabular`, `app-scroll`: dense tables at repeat-work height, tabular figures, and a focusable labelled scroll region for tables (WCAG 1.4.10).
 - `app-linkbtn`: a real button drawn as a link, for choosing a row without leaving the page or adding history. A link would change the URL.
 - `app-row-selected`, `app-row-flag`: selected row; flagged row (thick left edge and the words "Flagged for a person" in its status cell).
@@ -55,3 +57,9 @@ Identity bar, sub navigation (the record tabs), notification badge (counts on st
 
 ## Keyboard
 `/` search, `?` list, `n` next row, `p` previous row, `Esc` back to the selected row. Gap review: `K` keep, `E` save slot values, `M` merge, `D` moves focus to Drop (a key never deletes). Every key repeats a visible button, carries `aria-keyshortcuts`, does nothing in a text field, and can be turned off.
+
+## Hooks for the shared checks (`design/verify/`, fix round 2)
+`data-identity-bar` is on the MOJ identity bar. `data-evidence` is on the source box in the pane. `data-primary` is on the one button (or link) that decides on that source; `layoutItem` in `assets/b.js` sets it on the first submit or primary button in the pane foot. `data-count` with `data-scope` is on every visible count, and the scope words ("open", "to verify", "not answered", "flagged for a person") are in its text. `build/verify.mjs` runs V1 to V8 at both sizes with these.
+
+## Prototype behaviour added in fix round 2 (not the build)
+The pane's height is set by script from where the pane starts (`--app-pane-h`), so its foot is always on screen; the build does the same with a layout rule. The two page-level checks that cannot be written in CSS (the pane stays put when the page scrolls; the source box is inside the pane's visible part) are in `build/verify.mjs`.
