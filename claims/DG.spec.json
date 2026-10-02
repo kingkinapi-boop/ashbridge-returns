@@ -2,9 +2,9 @@
  "card": "DG",
  "role": "spec",
  "worker": "cloud-85862e",
- "state": "reported",
- "at": "2026-10-02T01:38:16.293Z",
+ "state": "reopened",
+ "at": "2026-10-02T02:07:33.350Z",
  "mode": "turbo",
- "note": "21 tests (17 fail by name, 4 guards); validated on main cfc8d79",
+ "note": "add R22 per-file 100 on @mutate files (Reviewer SLOW)",
  "commit": "8a722d5"
 }
