@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "f245308",
  "worker": "cloud-1d0d85",
- "state": "reported",
- "at": "2026-10-02T16:53:10.620Z",
+ "state": "released",
+ "at": "2026-10-02T17:35:05.292Z",
  "mode": "turbo",
- "note": "56 of 56 acceptance pass; full suite 1996; mutation 100"
+ "note": "merged"
 }
