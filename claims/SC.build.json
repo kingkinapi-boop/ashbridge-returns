@@ -4,9 +4,8 @@
  "round": 40,
  "spec": "34e8ac0",
  "worker": "cloud-2cbd52",
- "state": "released",
- "at": "2026-10-02T20:31:28.606Z",
+ "state": "reopened",
+ "at": "2026-10-02T20:54:04.174Z",
  "mode": "turbo",
- "note": "wait: SC spec adds KNOWN entries (owner FX3) first",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"F01D\",\"F05M\",\"F09\",\"F09B\"],\"depStatus\":[\"done\",\"done\",\"done\",\"done\"]}"
+ "note": "KNOWN entries added; build"
 }
