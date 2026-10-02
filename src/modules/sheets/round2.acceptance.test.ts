@@ -323,15 +323,16 @@ describe('A07 round 2 S6: the number text rule (EV-14)', () => {
     return view.getFloat64(0) - a
   }
   /**
-   * The texts the rule allows for a stored double (A07B item 1 supersedes the fixed 1e-9 band of round 2): the cent amount
-   * within 4 ulps or 1e-9, the shortest round-trip text beyond 64 ulps and 1e-9. A thin band either side accepts either
-   * text, so floating point in the bound itself never decides; past 1e12 (4 ulps of 0.001 or more) either text is allowed.
+   * The texts the rule allows for a stored double (A07B item 1 supersedes the fixed 1e-9 band of round 2, and A07C round 2
+   * R2-2 removes the absolute 1e-9 floor: the snap is relative to magnitude only): the cent amount within 4 ulps, the
+   * shortest round-trip text beyond 64 ulps. Between the two either text is allowed, so floating point in the bound itself
+   * never decides; past 1e12 (4 ulps of 0.001 or more) either text is allowed.
    */
   function allowed(x: number): string[] {
     const c = nearestCent(x)
     const distance = Math.abs(x - c)
-    const lower = Math.max(0.9e-9, 4 * ulp(x))
-    const upper = Math.max(1.1e-9, 64 * ulp(x))
+    const lower = 4 * ulp(x)
+    const upper = 64 * ulp(x)
     if (lower < 0.001 && distance <= lower) return [plain(c)]
     if (upper < 0.005 && distance > upper) return [String(x)]
     return [plain(c), String(x)]

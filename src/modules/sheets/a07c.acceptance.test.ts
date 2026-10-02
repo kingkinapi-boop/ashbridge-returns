@@ -407,3 +407,202 @@ describe('A07C item 5: the two A07B survivors (EV-14, ARC-10)', () => {
     for (const name of ['a.xlsx', 'a.zip', 'a']) expect(await reader.read(fixture('containers/notes (Test).zip'), name), name).toEqual(notBook)
   })
 })
+
+// ------------------------------------------------------------------------------------------------------- round 2 (card)
+//
+// Round 2 spec choices (amber, see the A07C round 2 report; reports/A07C-check.md defects 1 to 3):
+//   R2-1. A hyperlinked cell whose formula is a self-closed shared formula (`<f t="shared" si="0"/>`, with or without a
+//         space before "/>") reads exactly as the same cell without the link: type formula, the shared formula
+//         translated to the cell (as the unlinked cell reads it: master `C1*2` at B1 reads `C2*2` at B2), and its cached
+//         value. A hyperlinked shared master (`<f t="shared" ref=.. si=..>..</f>`) keeps its formula too.
+//   R2-2. The snap to a whole cent is relative to the value's magnitude (units in the last place), never an absolute
+//         floor: a stored double that is a cent amount plus a gap far wider than float noise (more than 64 ulps of the
+//         value) reads as its own shortest text even when the gap is under 1e-9 (1e-10, 5e-10, 12.3400000001,
+//         1.0000000005), and never matches the cent amount. Float noise (A07B, within 4 ulps) still snaps.
+//   R2-3. A formula whose cached value is empty (`<v></v>` or `<v/>`) has no cached value: cached type none, text '',
+//         and a citation of it says "formula cell: no cached value" (round 2 amber: an empty cache reads as no cache).
+
+/** One unit in the last place of x (the gap to the next double away from zero). */
+function ulpOf(x: number): number {
+  const view = new DataView(new ArrayBuffer(8))
+  view.setFloat64(0, Math.abs(x))
+  view.setBigInt64(0, view.getBigInt64(0) + 1n)
+  return view.getFloat64(0) - Math.abs(x)
+}
+
+/**
+ * Two shared-formula groups, each three rows deep: column A `ROW()*5` (no references), column B `C1*2` (relative), with
+ * the terms in column C. Rows 2 and 3 are the self-closed children: row 2 as `<f .../>`, row 3 as `<f ... />`.
+ */
+function sharedRows(): string[] {
+  return [
+    '<c r="A1"><f t="shared" ref="A1:A3" si="0">ROW()*5</f><v>5</v></c><c r="B1"><f t="shared" ref="B1:B3" si="1">C1*2</f><v>2</v></c><c r="C1"><v>1</v></c>',
+    '<c r="A2"><f t="shared" si="0"/><v>10</v></c><c r="B2"><f t="shared" si="1"/><v>4</v></c><c r="C2"><v>2</v></c>',
+    '<c r="A3"><f t="shared" si="0" /><v>15</v></c><c r="B3"><f t="shared" si="1" /><v>6</v></c><c r="C3"><v>3</v></c>',
+  ]
+}
+const SHARED_EXPECTED: [string, number, Expected][] = [
+  ['A', 1, { type: 'formula', text: '5', formula: 'ROW()*5', cached: { type: 'number', text: '5' } }],
+  ['A', 2, { type: 'formula', text: '10', formula: 'ROW()*5', cached: { type: 'number', text: '10' } }],
+  ['A', 3, { type: 'formula', text: '15', formula: 'ROW()*5', cached: { type: 'number', text: '15' } }],
+  ['B', 1, { type: 'formula', text: '2', formula: 'C1*2', cached: { type: 'number', text: '2' } }],
+  ['B', 2, { type: 'formula', text: '4', formula: 'C2*2', cached: { type: 'number', text: '4' } }],
+  ['B', 3, { type: 'formula', text: '6', formula: 'C3*2', cached: { type: 'number', text: '6' } }],
+]
+const linkEvery = (cells: string[]): [string, string][] => cells.map((a, i): [string, string] => [a, `https://example.invalid/shared-${String(i)}`])
+
+describe('A07C round 2, R2-1: a hyperlinked cell using a self-closed shared formula keeps its formula and cached value (EV-14, EV-6)', () => {
+  test('EV-14 without links, every cell of both shared groups reads its formula and cached value (the baseline the links must not change)', async () => {
+    const r = await readBytes(shapesXlsx({ rows: sharedRows() }), 'shared.xlsx')
+    for (const [col, row, expected] of SHARED_EXPECTED) expect(shapeOf(cellAt(r, SHEET, row, col)), `${col}${String(row)}`).toEqual(expected)
+  })
+
+  test('EV-14 the check\'s planted case: A2 `<f t="shared" si="0"/><v>10</v>` with a hyperlink reads formula ROW()*5, cached number 10', async () => {
+    const r = await readBytes(shapesXlsx({ rows: sharedRows(), links: [['A2', 'https://example.invalid/a2']] }), 'shared.xlsx')
+    expect(shapeOf(cellAt(r, SHEET, 2, 'A'))).toEqual({ type: 'formula', text: '10', formula: 'ROW()*5', cached: { type: 'number', text: '10' } })
+    expect(JSON.stringify(r)).not.toContain('example.invalid')
+  })
+
+  test.each(SHARED_EXPECTED)('EV-14 column %s row %i wrapped in a hyperlink reads as it does without the link', async (col, row, expected) => {
+    const address = `${col}${String(row)}`
+    const plain = await readBytes(shapesXlsx({ rows: sharedRows() }), 'shared.xlsx')
+    const linked = await readBytes(shapesXlsx({ rows: sharedRows(), links: [[address, 'https://example.invalid/one']] }), 'shared.xlsx')
+    expect(shapeOf(cellAt(linked, SHEET, row, col)), address).toEqual(expected)
+    expect(cellAt(linked, SHEET, row, col), address).toEqual(cellAt(plain, SHEET, row, col))
+  })
+
+  test('EV-14 every cell of both groups hyperlinked at once (masters and self-closed children) reads exactly as the unlinked workbook', async () => {
+    const plain = await readBytes(shapesXlsx({ rows: sharedRows() }), 'shared.xlsx')
+    const linked = await readBytes(shapesXlsx({ rows: sharedRows(), links: linkEvery(['A1', 'A2', 'A3', 'B1', 'B2', 'B3']) }), 'shared.xlsx')
+    for (const [col, row, expected] of SHARED_EXPECTED) {
+      const at = `${col}${String(row)}`
+      expect(shapeOf(cellAt(linked, SHEET, row, col)), at).toEqual(expected)
+      expect(cellAt(linked, SHEET, row, col), at).toEqual(cellAt(plain, SHEET, row, col))
+    }
+  })
+
+  test('EV-6 a citation of a hyperlinked shared-formula child matches its cached value and says "cached value differs" otherwise', async () => {
+    const r = await readBytes(shapesXlsx({ rows: sharedRows(), links: linkEvery(['A2', 'B3']) }), 'shared.xlsx')
+    expect(cellValueMatches(r, ptr(r, SHEET, 2, 'A'), '10')).toEqual({ ok: true })
+    expect(cellValueMatches(r, ptr(r, SHEET, 2, 'A'), '$10.00')).toEqual({ ok: true })
+    expect(cellValueMatches(r, ptr(r, SHEET, 2, 'A'), '5')).toEqual({ ok: false, reason: 'formula cell: cached value differs' })
+    expect(cellValueMatches(r, ptr(r, SHEET, 3, 'B'), '6')).toEqual({ ok: true })
+    expect(cellValueMatches(r, ptr(r, SHEET, 3, 'B'), '4')).toEqual({ ok: false, reason: 'formula cell: cached value differs' })
+  })
+})
+
+/** The check's planted values: within 1e-9 of a whole cent, yet far wider than float noise at their magnitude. */
+const NOT_NOISE: [string, number, string][] = [
+  ['1E-10', 1e-10, '1e-10'],
+  ['5E-10', 5e-10, '5e-10'],
+  ['12.3400000001', 12.3400000001, '12.3400000001'],
+  ['1.0000000005', 1.0000000005, '1.0000000005'],
+  ['-5E-10', -5e-10, '-5e-10'],
+  ['-12.3400000001', -12.3400000001, '-12.3400000001'],
+  ['1234.5600000004', 1234.5600000004, '1234.5600000004'],
+]
+
+describe('A07C round 2, R2-2: the cent snap is relative to magnitude, never an absolute 1e-9 (EV-14, EV-6)', () => {
+  test('EV-14 the planted values are what they say: under 1e-9 from a whole cent, and more than 64 ulps from it', () => {
+    for (const [, x] of NOT_NOISE) {
+      const cent = Math.round(x * 100) / 100
+      expect(Math.abs(x - cent), String(x)).toBeLessThan(1e-9)
+      expect(Math.abs(x - cent), String(x)).toBeGreaterThan(64 * ulpOf(x))
+    }
+  })
+
+  test.each(NOT_NOISE)('EV-14 a number cell stored as <v>%s</v> reads back unchanged, never as the cent amount', async (raw, _x, text) => {
+    const r = await readBytes(numbersXlsx([raw]), 'n.xlsx')
+    expect(cellAt(r, 'Numbers (Test)', 1, 'A')).toMatchObject({ type: 'number', text })
+  })
+
+  test('EV-6 planted fault: 5e-10 never matches "0", 12.3400000001 never matches "12.34", 1.0000000005 never matches "1"', async () => {
+    const r = await readBytes(numbersXlsx(['5E-10', '12.3400000001', '1.0000000005', '1E-10']), 'n.xlsx')
+    const at = (row: number): CellPointer => ptr(r, 'Numbers (Test)', row, 'A')
+    expect(cellValueMatches(r, at(1), '0')).toEqual({ ok: false, reason: 'value differs' })
+    expect(cellValueMatches(r, at(1), '0.00')).toEqual({ ok: false, reason: 'value differs' })
+    expect(cellValueMatches(r, at(2), '12.34')).toEqual({ ok: false, reason: 'value differs' })
+    expect(cellValueMatches(r, at(2), '$12.34')).toEqual({ ok: false, reason: 'value differs' })
+    expect(cellValueMatches(r, at(3), '1')).toEqual({ ok: false, reason: 'value differs' })
+    expect(cellValueMatches(r, at(3), '1.00')).toEqual({ ok: false, reason: 'value differs' })
+    expect(cellValueMatches(r, at(4), '0')).toEqual({ ok: false, reason: 'value differs' })
+  })
+
+  test('EV-14 the same values as a formula\'s cached number (not a SUM) and inside a hyperlink read back unchanged too', async () => {
+    const rows = NOT_NOISE.map(([raw], i) => `<c r="A${String(i + 1)}"><f>B${String(i + 1)}</f><v>${raw}</v></c><c r="B${String(i + 1)}"><v>${raw}</v></c>`)
+    const links = NOT_NOISE.map((_, i): [string, string] => [`B${String(i + 1)}`, `https://example.invalid/n${String(i)}`])
+    const r = await readBytes(shapesXlsx({ rows, links }), 'f.xlsx')
+    NOT_NOISE.forEach(([raw, , text], i) => {
+      expect(cellAt(r, SHEET, i + 1, 'A'), raw).toMatchObject({ type: 'formula', text, cached: { type: 'number', text } })
+      expect(cellAt(r, SHEET, i + 1, 'B'), raw).toMatchObject({ type: 'number', text })
+    })
+  })
+
+  test('EV-14 no false keep: float noise next to the planted values still snaps (12.34 plus or minus 4 ulps, 1 plus 1 ulp, 0.1 + 0.2)', async () => {
+    const step = (x: number, k: number): number => x + k * ulpOf(x)
+    const values = [step(12.34, 4), step(12.34, -4), step(1, 1), 0.1 + 0.2, step(1234.56, 3)]
+    const r = await readBytes(numbersXlsx(values.map(stored)), 'noise.xlsx')
+    expect(values.map((_, i) => cellAt(r, 'Numbers (Test)', i + 1, 'A')?.text)).toEqual(['12.34', '12.34', '1', '0.3', '1234.56'])
+  })
+
+  test('EV-14 property (seed 20261008): a cent amount up to 1000 plus a gap of 1e-11 to 9.9e-10 (far past 64 ulps) reads as its own text', async () => {
+    const cents = fc.integer({ min: -100_000, max: 100_000 })
+    const gap = fc.tuple(fc.integer({ min: 10, max: 990 }), fc.boolean()).map(([k, up]) => (up ? k : -k) * 1e-12)
+    await fc.assert(
+      fc.asyncProperty(fc.array(fc.tuple(cents, gap), { minLength: 1, maxLength: 20 }), async (pairs) => {
+        const values = pairs.map(([n, d]) => n / 100 + d)
+        const r = await readBytes(numbersXlsx(values.map(stored)), 'gap.xlsx')
+        values.forEach((x, i) => {
+          const n = pairs[i]?.[0] ?? 0
+          const at = `cents ${String(n)} stored as ${stored(x)}`
+          // The generated gap is real at this magnitude: more than 64 ulps from the cent, and under 1e-9.
+          expect(Math.abs(x - n / 100), at).toBeGreaterThan(64 * ulpOf(x))
+          expect(cellAt(r, 'Numbers (Test)', i + 1, 'A'), at).toMatchObject({ type: 'number', text: String(x) })
+          expect(cellValueMatches(r, ptr(r, 'Numbers (Test)', i + 1, 'A'), centsText(BigInt(n))), at).toEqual({ ok: false, reason: 'value differs' })
+        })
+      }),
+      { seed: 20261008, numRuns: 100 },
+    )
+  })
+})
+
+/** Formulas whose cached value is empty, as Excel and other writers store one. */
+const EMPTY_CACHES: [string, string, string][] = [
+  ['A', 'a number formula with <v></v>', '<c r="A1"><f>C1*2</f><v></v></c>'],
+  ['B', 'a number formula with <v/>', '<c r="B1"><f>C1*2</f><v/></c>'],
+  ['D', 'a text formula (t="str") with <v></v>', '<c r="D1" t="str"><f>C1&amp;"x"</f><v></v></c>'],
+  ['E', 'a self-closed shared child with <v></v>', '<c r="E1"><f t="shared" ref="E1:E1" si="5">C1*3</f><v></v></c>'],
+]
+
+describe('A07C round 2, R2-3: a formula with an empty cached value reads cached type none (EV-14, EV-6)', () => {
+  const book = (): Uint8Array => shapesXlsx({ rows: [`${EMPTY_CACHES.map(([, , c]) => c).join('')}<c r="C1"><v>1</v></c>`] })
+
+  test.each(EMPTY_CACHES)('EV-14 column %s (%s) is a formula with cached type none and text "", never an error', async (col) => {
+    const r = await readBytes(book(), 'empty.xlsx')
+    const cell = cellAt(r, SHEET, 1, col)
+    expect(cell?.type).toBe('formula')
+    expect(cell?.cached).toEqual({ type: 'none', text: '' })
+    expect(cell?.text).toBe('')
+  })
+
+  test('EV-14 the check\'s planted case: `<f>A1*2</f><v></v>` keeps its formula and reads cached none, not "#NUM!"', async () => {
+    const r = await readBytes(shapesXlsx({ rows: ['<c r="A1"><v>3</v></c>', '<c r="A2"><f>A1*2</f><v></v></c>'] }), 'empty.xlsx')
+    expect(shapeOf(cellAt(r, SHEET, 2, 'A'))).toEqual({ type: 'formula', text: '', formula: 'A1*2', cached: { type: 'none', text: '' } })
+    expect(JSON.stringify(r)).not.toContain('#NUM!')
+  })
+
+  test('EV-14 the same empty cache wrapped in a hyperlink reads the same', async () => {
+    const rows = ['<c r="A1"><v>3</v></c>', '<c r="A2"><f>A1*2</f><v></v></c><c r="B2"><f>A1*2</f><v></v></c>']
+    const r = await readBytes(shapesXlsx({ rows, links: [['B2', 'https://example.invalid/e']] }), 'empty.xlsx')
+    expect(shapeOf(cellAt(r, SHEET, 2, 'B'))).toEqual({ type: 'formula', text: '', formula: 'A1*2', cached: { type: 'none', text: '' } })
+  })
+
+  test('EV-6 a citation of a formula with an empty cache says "formula cell: no cached value", for any value', async () => {
+    const r = await readBytes(book(), 'empty.xlsx')
+    for (const [col] of EMPTY_CACHES) {
+      for (const value of ['0', '', '#NUM!', '2']) {
+        expect(cellValueMatches(r, ptr(r, SHEET, 1, col), value), `${col} cited as ${JSON.stringify(value)}`).toEqual({ ok: false, reason: 'formula cell: no cached value' })
+      }
+    }
+  })
+})

@@ -28,9 +28,9 @@ describe('EV-14 numberText band', () => {
     expect(numberText(1e14 + 0.25)).toBe('100000000000000.25')
   })
 
-  test('EV-14 a gap of exactly 1e-9 is its own text, just under snaps', () => {
+  // A07C round 2 R2-2 retired "just under 1e-9 snaps" (0.5e-9 read '0'): the snap has no absolute floor (a07c.acceptance.test.ts).
+  test('EV-14 a gap of exactly 1e-9 is its own text', () => {
     expect(numberText(1e-9)).toBe('1e-9')
-    expect(numberText(0.5e-9)).toBe('0')
   })
 })
 

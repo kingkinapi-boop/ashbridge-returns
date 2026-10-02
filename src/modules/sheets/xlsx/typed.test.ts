@@ -17,12 +17,12 @@ const at = (sheet: Awaited<ReturnType<typeof read>>, row: number, letter: string
   sheet.cells.find((c) => c.row === row && c.column.letter === letter)
 
 describe('EV-14 numberText', () => {
-  test('EV-14 whole numbers, cents, noise within 1e-9 of a cent, and values that are not cents', () => {
+  test('EV-14 whole numbers, cents, noise within 4 ulps of a cent, and values that are not cents', () => {
     expect(numberText(5)).toBe('5')
     expect(numberText(-0)).toBe('0')
     expect(numberText(1234.56)).toBe('1234.56')
     expect(numberText(0.1 + 0.2)).toBe('0.3')
-    expect(numberText(1234.56 + 4e-10)).toBe('1234.56')
+    // A07C round 2 R2-2 retired 1234.56 + 4e-10 reading '1234.56': no absolute 1e-9 floor (a07c.acceptance.test.ts).
     expect(numberText(1234.56 + 2e-9)).toBe(String(1234.56 + 2e-9))
     expect(numberText(0.125)).toBe('0.125')
     expect(numberText(1e21)).toBe('1000000000000000000000')
