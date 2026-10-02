@@ -137,3 +137,12 @@
 {"ts":"2026-10-02T00:21:39.769Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card side of F01/F09 findings","allowed":true}
 {"ts":"2026-10-02T00:26:28.583Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"F09 spec round 2","allowed":true}
 {"ts":"2026-10-02T00:35:44.314Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"builder","model":null,"where":"local","desc":"F03 build","allowed":true}
+{"ts":"2026-10-02T00:25:19.878Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T00:25:20.547Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T00:51:49.267Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Design fix round 2: source viewer","allowed":true}
+{"ts":"2026-10-02T00:56:50.007Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Findings review E03 and F03","allowed":true}
+{"ts":"2026-10-02T00:57:03.665Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T00:57:03.675Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T01:01:31.276Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card side of E03/F03 findings","allowed":true}
+{"ts":"2026-10-02T01:05:51.183Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T01:07:54.163Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"checker","model":"sonnet","where":"worktree","desc":"Check queue repair 3","allowed":true}
