@@ -14,7 +14,7 @@ const fitsPage = (b: { left: number; width: number; top: number; height: number 
   b.left + b.width <= 1 + EPS && b.top + b.height <= 1 + EPS
 
 export const BoxSchema = z
-  .object({
+  .strictObject({
     page: z.number().int().min(1),
     left: fraction,
     top: fraction,
@@ -24,7 +24,7 @@ export const BoxSchema = z
   .refine(fitsPage, { message: 'box runs off the page' })
 export type Box = z.infer<typeof BoxSchema>
 
-export const WordSchema = z.object({
+export const WordSchema = z.strictObject({
   /** Never blank: a blank word would let a blank value count as found (EV-6, AI-4). */
   text: z.string().refine((t) => t.trim() !== '', { message: 'word text must not be blank' }),
   box: BoxSchema,
@@ -34,7 +34,7 @@ export const WordSchema = z.object({
 })
 export type Word = z.infer<typeof WordSchema>
 
-export const PageSchema = z.object({
+export const PageSchema = z.strictObject({
   number: z.number().int().min(1),
   /** Size in points, rotation already applied. */
   widthPt: z.number().positive(),
@@ -43,13 +43,13 @@ export const PageSchema = z.object({
 })
 
 /** ARC-10: the engine name and version are stamped on every result and never blank. */
-export const EngineStampSchema = z.object({
+export const EngineStampSchema = z.strictObject({
   name: z.string().trim().min(1),
   version: z.string().trim().min(1),
 })
 
 export const ReadingResultSchema = z
-  .object({
+  .strictObject({
     documentFingerprint: z.string().min(1),
     engine: EngineStampSchema,
     /** From the injected clock (src/core/clock.ts). */
@@ -166,8 +166,9 @@ export type ValueInBoxResult =
   | { ok: true }
   | { ok: false; reason: 'no words in box' | 'value not found' | 'box on another page' }
 
-// Stryker disable next-line MethodExpression: toLowerCase and toUpperCase fold both sides alike, so either compares the same; trim and whitespace collapse are tested
-const foldText = (s: string): string => s.trim().replace(/\s+/g, ' ').toLowerCase()
+const collapse = (s: string): string => s.trim().replace(/\s+/g, ' ')
+// Stryker disable next-line MethodExpression: toLowerCase and toUpperCase fold both sides alike, so either compares the same
+const foldText = (s: string): string => collapse(s).toLowerCase()
 
 /**
  * True only when the value, normalised on both sides, equals a whole amount group among the words in
@@ -175,8 +176,9 @@ const foldText = (s: string): string => s.trim().replace(/\s+/g, ' ').toLowerCas
  * a contiguous run of words joined by one space, trimmed, case folded.
  */
 export function valueInBox(result: ReadingResult, box: Box, value: string): ValueInBoxResult {
-  if (box.page < 1 || box.page > result.pageCount) return { ok: false, reason: 'box on another page' }
-  const words = wordsInBox(result, box)
+  const parsed = ReadingResultSchema.parse(result)
+  if (box.page < 1 || box.page > parsed.pageCount) return { ok: false, reason: 'box on another page' }
+  const words = wordsInBox(parsed, box)
   if (words.length === 0) return { ok: false, reason: 'no words in box' }
   const folded = foldText(value)
   if (folded === '') return { ok: false, reason: 'value not found' }
@@ -196,8 +198,8 @@ export function valueInBox(result: ReadingResult, box: Box, value: string): Valu
   return { ok: false, reason: 'value not found' }
 }
 
-// Note for readers (A01 to A03, I00): valueInBox and the engines do not parse through ReadingResultSchema;
-// a consumer must parse a result before it trusts it.
+// valueInBox parses its result through ReadingResultSchema (it throws on a refused result); `read` is an
+// interface only, so each engine (A01 to A03) parses its own output.
 
 // ---- the adapter every reading engine implements (ARC-6) ----
 
