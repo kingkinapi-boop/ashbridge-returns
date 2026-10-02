@@ -62,3 +62,11 @@ R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden fi
 - R47 every ARC-11 cache key covers every input its result depends on and the cache returns a copy; run on each reader adapter (A01, A02, A03, A07, B04): same bytes under two names or options, then mutate a returned result and read again.
 - R48 every reader whose contract says "hidden" or "never dropped" is tested with an empty instance (empty hidden row or column, blank page).
 - R49 no `z.string().trim()` transform in src/contracts (joins R41).
+
+## From findings W00 round 2 (2 Oct, reports/findings-W00-r2.md)
+- R34 widened: the repo scan calls W00b's `guardFolder` (one definition) over sample-clients, testworld, every `__fixtures__` and `__golden__`; binary fixtures only on a reasoned list (A01 PDFs); planted a SIN as a JSON number, a mixed-separator SIN, a .txt file.
+- R50 one Luhn: none outside guard.ts and reference/sample-clients/lib/util.mjs, and a property test proves the two agree on every nine-digit shape.
+- R51 every loader is guarded: every module in testworld/** and e2e/_harness that reads data files goes through `guardFolder` or `guardValue`.
+- R52 markers: every fault-marker field in any answer key or kind has a catalogue entry and the arithmetic proof holds.
+- R53 sequences (joins R44): every month or version sequence is complete and each closing links to the next opening.
+- R54 (A07 round 2 check): every reader refuses a wrong-kind container with a reason and never throws (A01, A07, E00 intake); no reason carries a library message or URL; number-to-text rules are tested with large-magnitude noise.
