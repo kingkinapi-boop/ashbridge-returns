@@ -4,7 +4,8 @@
  "round": 4,
  "spec": "8f165c2a9170288b9d68627cb42ad6445f824c5f",
  "worker": "cloud-32295d",
- "state": "working",
- "at": "2026-10-02T06:44:00.182Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T06:44:08.002Z",
+ "mode": "turbo",
+ "note": "blocked on spec defects, see reports/DG-build.md; needs spec fix first"
 }
