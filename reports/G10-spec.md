@@ -1,0 +1,6 @@
+# G10 spec (cloud-47e70d, 2 Oct 2026)
+Branch claude/G10 = claude/G01 (G01 build reported, not yet on main) plus main f2e97da. Validated on main f2e97da: with a throwaway stub `revenue.json` (not committed) all 15 tests pass, full suite 1416 green, typecheck and lint clean; without it the 9 file-dependent tests fail for "file missing" and 6 pass. 6b sweep: no other test fails; none retired.
+- 15 tests in src/modules/gaps/bank/revenue.acceptance.test.ts. Clauses ARC-2, AI-12, RULE-19, END-7. Card is not core (Sonnet).
+- Amber: the revenue topic's client-askable facts are fixed in the test as qa.revenue.annual_sales, onboarding.sales_channels.list, onboarding.fx.has_foreign_currency (document-supplied revenue facts are never asked of a client); "every test-world gap" is read as each of those keys having a live item (G00 does not exist yet). File `data/question-bank/revenue.json`, topic `revenue`, ids `Q-REV-<nnn>`, only the format's 8 keys per item; sales is an ASK with a required money_cents slot and a money answer, foreign currency a yes_no answer, channels not yes_no, money, date or number. A label may not open with a question or instruction word. Reverse: edit the test.
+- Builder: create data/question-bank/revenue.json and src/modules/gaps/bank/revenue.test.ts; needs G01 on main first.
+- Permission gaps: none. Model: Sonnet 5.5.
