@@ -1,10 +1,8 @@
 {
  "card": "F03",
  "role": "spec",
- "worker": "cloud-839492",
- "state": "reopened",
- "at": "2026-10-02T01:05:26.719Z",
- "mode": "turbo",
- "note": "98 acceptance tests fail pre-build (no ./taxprep); validated on main 2cb2159; finding: .gitattributes LF on reference CSVs, consider -text",
- "commit": "34417a5"
+ "worker": "cloud-4a59ee",
+ "state": "working",
+ "at": "2026-10-02T01:29:09.778Z",
+ "mode": "turbo"
 }
