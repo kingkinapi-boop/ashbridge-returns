@@ -555,3 +555,15 @@ describe('F03R unit: writer refusals say why', () => {
     expect(problemOf(w)[0]?.reason).toMatch(/is not a valid cell identifier/)
   })
 })
+
+describe('F03R unit: only a leading apostrophe is refused', () => {
+  test.each(["A-'12", "-'12x", "x-'12"])('RT-3 text %s with an apostrophe inside is accepted', (t) => {
+    const r = parseTaxprepCsv(bytes(head + `IFirm.ContactPartner,"${t}","",""\r\n`))
+    expect(r.ok).toBe(true)
+  })
+  test("RT-3 -'12 is refused as an apostrophe fault", () => {
+    const r = parseTaxprepCsv(bytes(head + `IFirm.ContactPartner,"-'12","",""\r\n`))
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.faults.map((f) => f.code)).toContain('apostrophe')
+  })
+})
