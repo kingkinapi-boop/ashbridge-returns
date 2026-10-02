@@ -33,6 +33,7 @@ if (diff.status !== 0) {
 const changed = diff.stdout
   .split('\n')
   .filter((f) => /^src\/.*\.ts$/.test(f) && !/\.(test|acceptance)\.ts$|\.db\.test\.ts$|\.eval\.test\.ts$/.test(f))
+  .filter((f) => !/(^|\/)(__fixtures__|__golden__)\//.test(f)) // spec-owned test data, not product code
   .filter((f) => fs.existsSync(f))
 const marked = (f) => fs.readFileSync(f, 'utf8').split('\n').slice(0, 5).some((l) => l.includes('// @mutate'))
 

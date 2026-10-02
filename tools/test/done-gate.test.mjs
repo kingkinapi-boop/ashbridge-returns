@@ -334,11 +334,101 @@ describe('R22 mutate-changed: every marked file scores 100, whatever the aggrega
   })
 })
 
+describe('R20 round 3 mutate-changed: spec-owned fixtures and goldens are not product code', () => {
+  const FIXTURE_FILES = {
+    'src/gate/add.ts': tree('impl-marked.ts.txt'),
+    'src/gate/__fixtures__/table.ts': tree('impl-unmarked.ts.txt'),
+    'src/gate/__golden__/expected.ts': tree('impl-unmarked.ts.txt'),
+  }
+
+  test('R20 ARC-15: unmarked __fixtures__ and __golden__ files beside a marked core file pass the marker gate', () => {
+    const w = world('DGC')
+    w.commit('build DGC', FIXTURE_FILES)
+    const r = mutate(w, 'DGC', 'main')
+    expect(r.code).toBe(0)
+    expect(r.out).not.toContain('core file without @mutate')
+    expect(strykerArgs(w)).toContain('src/gate/add.ts')
+  })
+
+  test('R20 ARC-15: a __fixtures__ or __golden__ file is never a Stryker target, even when it carries the marker', () => {
+    const w = world('DGC')
+    w.commit('build DGC', {
+      'src/gate/add.ts': tree('impl-marked.ts.txt'),
+      'src/gate/__fixtures__/marked.ts': tree('impl-marked.ts.txt'),
+      'src/gate/__golden__/marked.ts': tree('impl-marked.ts.txt'),
+    })
+    const r = mutate(w, 'DGC', 'main')
+    expect(r.code).toBe(0)
+    const args = strykerArgs(w)
+    expect(args).toContain('src/gate/add.ts')
+    expect(args).not.toContain('__fixtures__')
+    expect(args).not.toContain('__golden__')
+  })
+
+  test('R20 ARC-15: a card that changed only fixtures and goldens has no mutation targets and exits 0', () => {
+    const w = world('DGC')
+    w.commit('spec DGC data', { 'src/gate/__fixtures__/table.ts': tree('impl-unmarked.ts.txt'), 'src/gate/__golden__/expected.ts': tree('impl-unmarked.ts.txt') })
+    const r = mutate(w, 'DGC', 'main')
+    expect(r.code).toBe(0)
+    expect(r.out).not.toContain('core file without @mutate')
+    expect(strykerArgs(w)).toBeNull()
+  })
+
+  test('R20 ARC-15: an unmarked product file beside the fixtures still fails naming only the product file', () => {
+    const w = world('DGC')
+    w.commit('build DGC', { ...FIXTURE_FILES, 'src/gate/sub.ts': tree('impl-unmarked.ts.txt') })
+    const r = mutate(w, 'DGC', 'main')
+    expect(r.code).toBe(1)
+    expect(r.out).toContain('core file without @mutate')
+    expect(r.out).toContain('src/gate/sub.ts')
+    expect(r.out).not.toContain('__fixtures__')
+    expect(r.out).not.toContain('__golden__')
+    expect(strykerArgs(w)).toBeNull()
+  })
+})
+
+describe('R22 round 3 mutation config: nothing dropped from the unit tests that kill mutants', () => {
+  // Stryker's vitest run (vitest.mutate.config.ts) must run every unit-project test file under src/ with the same
+  // setup and environment. The tools/test rule tests exercise tools/, not src/, so they are not part of the mutant run.
+  const resolveSrcTests = (inc, exc) => {
+    const rx = (g) => new RegExp(`^${g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*\//g, '(?:.*/)?').replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*')}$`)
+    const files = []
+    const walk = (d) => {
+      for (const e of fs.readdirSync(path.join(REPO_ROOT, d), { withFileTypes: true })) {
+        const rel = `${d}/${e.name}`
+        if (e.isDirectory()) walk(rel)
+        else files.push(rel)
+      }
+    }
+    walk('src')
+    return files.filter((f) => inc.some((g) => rx(g).test(f)) && !exc.some((g) => rx(g).test(f))).sort()
+  }
+
+  test('R22 ARC-15: vitest.mutate.config.ts runs the same src test files, setup files and env as the unit project', async () => {
+    const mutate = (await import(path.join(REPO_ROOT, 'vitest.mutate.config.ts'))).default.test
+    const main = (await import(path.join(REPO_ROOT, 'vitest.config.ts'))).default.test.projects.find((p) => p.test.name === 'unit').test
+    const srcOnly = (inc) => inc.filter((g) => g.startsWith('src/'))
+    const mutateFiles = resolveSrcTests(srcOnly(mutate.include), mutate.exclude)
+    const unitFiles = resolveSrcTests(srcOnly(main.include), main.exclude)
+    expect(unitFiles.length).toBeGreaterThan(0)
+    expect(mutateFiles).toEqual(unitFiles)
+    expect(mutate.setupFiles).toEqual(main.setupFiles)
+    expect(mutate.env).toEqual(main.env)
+  })
+
+  test('R22 ARC-15: Stryker keeps the sandbox directory the readOwnSource helper relies on', () => {
+    const cfg = fs.readFileSync(path.join(REPO_ROOT, 'stryker.config.mjs'), 'utf8')
+    expect(cfg).toMatch(/tempDirName:\s*'\.stryker-tmp'/)
+    const helper = fs.readFileSync(path.join(REPO_ROOT, 'src/core/testing/read-own-source.ts'), 'utf8')
+    expect(helper).toContain('.stryker-tmp')
+  })
+})
+
 describe('ARC-9 the gate tests name their rule and .gitattributes keeps the ledger merge rule', () => {
   test('R19 ARC-9: every test in this file names its rule (R19 to R22) and a clause', () => {
     const src = fs.readFileSync(fileURLToPath(import.meta.url), 'utf8')
     const titles = [...src.matchAll(/^\s*test\('((?:[^'\\]|\\.)*)'/gm)].map((m) => m[1]).concat([...src.matchAll(/^\s*test\("((?:[^"\\]|\\.)*)"/gm)].map((m) => m[1]))
-    expect(titles.length).toBeGreaterThanOrEqual(24)
+    expect(titles.length).toBeGreaterThanOrEqual(30)
     const unnamed = titles.filter((t) => !/^R(19|20|21|22) ARC-\d+/.test(t))
     expect(unnamed).toEqual([])
   })

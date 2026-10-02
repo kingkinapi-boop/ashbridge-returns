@@ -41,3 +41,4 @@ paths:
 
 ## A test is only good if it would fail without the feature
 Assert outcomes (a value, a state, a refusal with its reason), never just "does not throw". Do not mock our own modules in acceptance tests. A pass with zero tests is a failure.
+- Source-scan tests (a test that reads its own module's text, for example a marker or a "no network import" scan) read the file through `readOwnSource` (`src/core/testing/read-own-source.ts`), so they still hold inside Stryker's sandbox (DG, ARC-15).
