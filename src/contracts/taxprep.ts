@@ -1,3 +1,4 @@
+// @mutate
 // The Taxprep CSV contract (F03): the one parser and the one writer for Taxprep's CSV files.
 // Follows reference/taxprep/FINDINGS.md (release CCH iFirm 2026.20.198267), not CCH's help page.
 // Amounts are whole-dollar integers (RT-25): no float arithmetic is done on them, only integer checks and String().
