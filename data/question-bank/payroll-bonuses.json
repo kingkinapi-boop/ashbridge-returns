@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "id": "Q-PAY-001",
+      "type": "ASK",
+      "resolves": "onboarding.payroll.has_payroll",
+      "slots": [],
+      "answer": { "shape": "yes_no" },
+      "label": "Business runs payroll",
+      "topic": "payroll-bonuses",
+      "retired": false
+    },
+    {
+      "id": "Q-PAY-002",
+      "type": "ASK",
+      "resolves": "onboarding.owner_bonus.paid",
+      "slots": [],
+      "answer": { "shape": "yes_no" },
+      "label": "Owner bonus paid in the year",
+      "topic": "payroll-bonuses",
+      "retired": false
+    }
+  ]
+}

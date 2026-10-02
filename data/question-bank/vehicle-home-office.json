@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "id": "Q-VHO-001",
+      "type": "ASK",
+      "resolves": "qa.vehicle.ownership",
+      "slots": [
+        {
+          "name": "ownership",
+          "type": "choice",
+          "required": true,
+          "options": ["owned", "leased"]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": ["owned", "leased"]
+      },
+      "label": "Vehicle owned or leased",
+      "topic": "vehicle-home-office",
+      "retired": false
+    },
+    {
+      "id": "Q-VHO-002",
+      "type": "CONFIRM",
+      "resolves": "qa.home_office.principal_place",
+      "slots": [],
+      "answer": {
+        "shape": "yes_no"
+      },
+      "label": "Home office is the principal place of business",
+      "topic": "vehicle-home-office",
+      "retired": false
+    }
+  ]
+}
