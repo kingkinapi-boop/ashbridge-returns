@@ -4,19 +4,15 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. The scanner line you approved needs your hands (about 2 minutes).** Claude Code's permission system blocks every agent from editing the secret scanner's settings, cloud workers and me alike, even with your yes (decision 0021). On GitHub, open the file `.gitleaks.toml` on the branch `claude/E03A` (https://github.com/kingkinapi-boop/ashbridge-returns/blob/claude/E03A/.gitleaks.toml), press the pencil (edit), and after the line that ends `rouge-valley-landscaping[a-z0-9-]*''',` add this line:
+Nothing. Your scanner edit is in (thank you), and today's answers are recorded: all seven design recommendations accepted (for the source viewer, which had no recommendation, I picked B, cite or write a reason; say "viewer A" or "viewer C" to change it), your logo is in use, and turbo is on.
 
-    '''\.key\s*===\s*'[a-z0-9_]+(\.[a-z0-9_]+)+'''',
-
-Commit straight to `claude/E03A`, then type "done" here. Meanwhile only E03A (the asset facts for the question bank) waits; everything else keeps building.
-
-Your answers of this morning are in: all seven design recommendations accepted (for the source viewer, which had no recommendation, I picked B, cite or write a reason; say "viewer A" or "viewer C" to change it), and your logo is in use.
+**When you are ready:** clear the Lead and type `go`; it picks up from `plan\NOW.md`.
 
 **Your CRA walks:** thank you. They name one real corporation and one real person, with their numbers and amounts, so the originals stay on the laptop only (the `Assets` folder is kept out of the repo, decision 0003). Copies with every name, number and amount taken out go to `reference\cra\` for the build to use. Nothing needed from you.
 
 **Sat 3 Oct (about 30 minutes):** day 4 of the Taxprep trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". Any other day suits too; nothing waits on it.
 
-**What the Lead is doing now (2 Oct, 15:30 UTC):** turbo again; first landing FX1 (a flaky-test fix) and F01C (the records schema), then the Reviewer's queue fixes. 21 of 299 cards are on main. In flight: the records schema (its last round), the test world generator, the PDF reader, the AI output contract, the spreadsheet reader and two check cards. Next: your approved screen designs go into the design cards, and your logo goes onto the design basis. Plan use this week: 37%.
+**What the Lead is doing now (2 Oct, 17:40 UTC):** handing over. 28 cards are on main; today added the records schema (the base most other cards build on), the design basis with your logo, the amount rules, the fact list, the AI output rules, the queue fixes the Reviewer asked for, and the first two question-bank topics. Four cards that kept failing narrowly were split so their good work could land; the rest of their edge cases became rule tests. In flight: the test world, the spreadsheet reader, and six cards the records schema just unblocked. Plan use this week: 45%.
 
 **Reviewer, 2 Oct 14:40 UTC:** mode lowered from turbo to normal (too much rework, one flaky test, too few cards ready). Details in `reviews\REVIEW.md`. Your answer: turbo comes back by itself when FX1 and F01C land; nothing needed from you.
 
@@ -42,7 +38,7 @@ Your answers of this morning are in: all seven design recommendations accepted (
 
 | Phase | What gets built | The gate you can see | Status and next step |
 |---|---|---|---|
-| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the sample clients; repairs to the build system | An export matches the import cell for cell | Round trip proven on a test company (13 of 13 cells identical); trial days 3 to 7 left (ends about 16 Oct); 20 build cards on main; the records schema, the test world, the PDF reader and the AI output contract are in their final rounds. |
+| 0 Prove reality | The Taxprep trial (round trip, cell map, six open questions, Auto-fill shape, diagnostics); QuickBooks test companies with the sample clients; repairs to the build system | An export matches the import cell for cell | Round trip proven on a test company (13 of 13 cells identical); trial days 3 to 7 left (ends about 16 Oct); 28 build cards on main, including the records schema; the test world, the PDF and spreadsheet readers are in their final rounds. |
 | 1 Evidence and the source viewer | Documents and QuickBooks read into facts with their sources; the source viewer; an early slice of the CPA review | 10 test files fully traced to source | Cards written; your first design sitting is answered (decision 0020), so the approved screens now go into the design cards. |
 | 2 Return build, lock and trace | The Taxprep import file; the lock export; the trace (orphans, overrides, the cite button); every version saved | A simple T2 built with few hand-typed cells | After phase 1. |
 | 3 Checks and the CPA review screen | Ties, reconciliations, flags; the AI checklist and red team through the Claude project; the brief; the full review with marks | You review 20 test files end to end in the screen | After phase 2. |
