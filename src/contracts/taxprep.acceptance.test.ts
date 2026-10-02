@@ -1437,3 +1437,231 @@ describe('F03 round 2: writer refusals for dates, rates and the header (RT-3, RT
     expect(problems[0]).toMatchObject({ index: -1, identifier: 'header' })
   })
 })
+// =====================================================================================================================
+// F03R: apostrophe and writer repairs (plan/cards/F03R.md; the Opus adversarial read of 2 Oct, A331, A333).
+// RT-3 reads "the reader strips exactly one [apostrophe] before a negative number (and refuses an apostrophe anywhere
+// else)"; the card reads it as "a LEADING apostrophe is refused unless the value is '-<integer>", and an apostrophe
+// inside text (O'Brien) stays accepted, as the writer writes it. Assertions pin the fault code, the line, and the row
+// identifier in the reason; reason wording is not pinned.
+// =====================================================================================================================
+
+/** A forged CellId that never went through parseCellId (what a cast or a careless caller can hand the writer). */
+function forgedId(text: string): CellId {
+  return { text, copyPath: null, copyIndex: null } as unknown as CellId
+}
+
+/** The probe header, a clean row 2, then row 3 holding `value` in the given column. */
+function apostropheFile(value: string, column: 'current' | 'last'): Buffer {
+  const row3 = column === 'current' ? `FDONE.Ttwone66,"${value}","",""` : `FDONE.Ttwone66,"7693","${value}",""`
+  return fromText(`${HEADER_LINE}GFGBA.Ttwgba64,"7693","",""\r\n${row3}\r\n`)
+}
+
+describe('F03R check 1: a leading apostrophe is refused unless the value is a negative integer (RT-3, RT-9)', () => {
+  const COLUMNS = ['current', 'last'] as const
+
+  for (const column of COLUMNS) {
+    test.each(["'-12.50", "'1356.5", "'abc", "'", "'-1,356"])(
+      `RT-3 planted fault: %j in the ${column} column is refused with an apostrophe fault naming row 3`,
+      (value) => {
+        const faults = faultsOf(apostropheFile(value, column))
+        // a value with a comma may instead be reported as the thousands fault it also is (card F03R check 1)
+        const codes: readonly TaxprepFaultCode[] = value.includes(',') ? ['apostrophe', 'thousands'] : ['apostrophe']
+        const hit = faults.find((f) => f.line === 3 && codes.includes(f.code))
+        expect(hit, `faults seen: ${JSON.stringify(faults)}`).toBeDefined()
+        expect(must(hit, 'fault').reason).toContain('FDONE.Ttwone66')
+      },
+    )
+
+    test(`RT-3 RT-9 planted fault: '-5,000 in the ${column} column is refused as a thousands or apostrophe fault on row 3`, () => {
+      const faults = faultsOf(apostropheFile("'-5,000", column))
+      const hit = faults.find((f) => f.line === 3 && (f.code === 'thousands' || f.code === 'apostrophe'))
+      expect(hit, `faults seen: ${JSON.stringify(faults)}`).toBeDefined()
+      expect(must(hit, 'fault').reason).toContain('FDONE.Ttwone66')
+    })
+
+    test(`RT-3 '-1299 in the ${column} column is still read as -1299 with apostrophe true (no false alarm)`, () => {
+      const row = must(parseOk(apostropheFile("'-1299", column)).rows[1], 'row 3')
+      expect(column === 'current' ? row.current : row.last).toEqual({ kind: 'value', text: '-1299' })
+      expect(row.apostrophe).toBe(true)
+    })
+  }
+
+  test.each(["O'Brien Holdings (Test)", "Corporation's name (Test)", "Lot 12 O'Neil (Test)"])(
+    'RT-3 an apostrophe inside text (%j) is not leading: it is still read, and written back, as that text',
+    (text) => {
+      const r = parseTaxprepCsv(fromText(`${HEADER_LINE}IFirm.ContactPartner,"${text}","",""\r\n`))
+      expect(r.ok, r.ok ? '' : JSON.stringify(r.faults)).toBe(true)
+      if (!r.ok) return
+      const row = must(r.file.rows[0], 'row')
+      expect(row.current).toEqual({ kind: 'value', text })
+      expect(row.apostrophe).toBe(false)
+      const out = writeOk(PROBE, [{ id: id('IFirm.ContactPartner'), current: { kind: 'text', text } }], 'import')
+      expect(must(parseOk(out).rows[0], 'row').current).toEqual({ kind: 'value', text })
+    },
+  )
+
+  test('RT-3 property (fixed seed): any leading-apostrophe value other than a negative integer is refused on its row', () => {
+    const tail = fc
+      .array(fc.constantFrom(...'0123456789-.,abcXE '.split('')), { maxLength: 8 })
+      .map((cs) => cs.join(''))
+      .filter((t) => !/^-[1-9]\d*$/.test(t))
+    fc.assert(
+      fc.property(tail, fc.constantFrom(...COLUMNS), (t, column) => {
+        const r = parseTaxprepCsv(apostropheFile(`'${t}`, column))
+        expect(r.ok).toBe(false)
+        if (r.ok) return
+        expect(r.faults.some((f) => f.line === 3 && (f.code === 'apostrophe' || f.code === 'thousands'))).toBe(true)
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+})
+
+describe('F03R check 2: the day 5 input-cell row with the export apostrophe (RT-3; trial day 5)', () => {
+  const CELL = 'GFBGII[1].GFGIJ.Ttwgij121'
+
+  test('RT-3 GFBGII[1].GFGIJ.Ttwgij121,"\'-1299","","" parses as -1299 with apostrophe true', () => {
+    const row = must(parseOk(golden('day5-input-cell-current-in.csv')).rows[0], 'row')
+    expect(row.id.text).toBe(CELL)
+    expect(row.id.copyPath).toBe('GFBGII')
+    expect(row.id.copyIndex).toBe(1)
+    expect(row.current).toEqual({ kind: 'value', text: '-1299' })
+    expect(row.last).toEqual({ kind: 'clear' })
+    expect(row.apostrophe).toBe(true)
+  })
+
+  test('RT-3 written back it is "-1299" with no apostrophe (golden)', () => {
+    const file = parseOk(golden('day5-input-cell-current-in.csv'))
+    const out = writeOk(file.header, toWriteRows(file.rows, {}), 'import')
+    expect(asText(out)).toBe(asText(golden('day5-input-cell-current-out.csv')))
+  })
+
+  test('RT-3 the same value in the Last Year column parses as last -1299 with apostrophe true', () => {
+    const row = must(parseOk(golden('day5-input-cell-last-in.csv')).rows[0], 'row')
+    expect(row.id.text).toBe(CELL)
+    expect(row.current).toEqual({ kind: 'clear' })
+    expect(row.last).toEqual({ kind: 'value', text: '-1299' })
+    expect(row.apostrophe).toBe(true)
+  })
+
+  test('RT-3 the Last Year value is written back as "-1299" with no apostrophe (golden)', () => {
+    const file = parseOk(golden('day5-input-cell-last-in.csv'))
+    const row = must(file.rows[0], 'row')
+    const out = writeOk(
+      file.header,
+      [
+        {
+          id: row.id,
+          current: toWriteValue(row.current, 'amount'),
+          last: toWriteValue(must(row.last, 'last'), 'amount'),
+        },
+      ],
+      'import',
+    )
+    expect(asText(out)).toBe(asText(golden('day5-input-cell-last-out.csv')))
+    expect(must(parseOk(out).rows[0], 'row').apostrophe).toBe(false)
+  })
+})
+
+describe('F03R check 3: no file the writer makes fails its own parser (RT-3, RT-9)', () => {
+  const CELL = 'IFirm.ContactPartner'
+
+  /** Writes `text` as a text value in one column: the writer refuses it naming the row, or it reads back unchanged. */
+  function agrees(text: string, column: 'current' | 'last', purpose: 'import' | 'export'): 'refused' | 'round-trip' {
+    const row: WriteRow =
+      column === 'current'
+        ? { id: id(CELL), current: { kind: 'text', text } }
+        : { id: id(CELL), current: { kind: 'clear' }, last: { kind: 'text', text } }
+    const w = writeTaxprepCsv({ header: PROBE, rows: [row] }, { purpose })
+    if (!w.ok) {
+      expect(w.problems).toHaveLength(1)
+      expect(w.problems[0]).toMatchObject({ index: 0, identifier: CELL })
+      return 'refused'
+    }
+    const r = parseTaxprepCsv(w.bytes)
+    const why = r.ok
+      ? ''
+      : `the writer wrote ${JSON.stringify(asText(w.bytes))}; its parser refused it: ${JSON.stringify(r.faults)}`
+    expect(r.ok, why).toBe(true)
+    if (!r.ok) return 'refused'
+    const back = must(r.file.rows[0], 'row')
+    expect(column === 'current' ? back.current : back.last).toEqual({ kind: 'value', text })
+    return 'round-trip'
+  }
+
+  for (const column of ['current', 'last'] as const) {
+    test.each(['1,234', '(123)', '01/01/2025', '1.2E3', '-48,600', '12,50', '2026/10/01', '1 234'])(
+      `RT-9 planted fault: the fault-set pattern %j written as text in the ${column} column is refused by the writer or read back unchanged`,
+      (text) => {
+        agrees(text, column, 'import')
+        agrees(text, column, 'export')
+      },
+    )
+  }
+
+  test('RT-3 RT-9 property (fixed seed): every text the writer accepts reads back unchanged, either column, import or export', () => {
+    const chars = '0123456789,.()-/ Ee+\'"Ax'.split('')
+    const text = fc.array(fc.constantFrom(...chars), { minLength: 1, maxLength: 12 }).map((cs) => cs.join(''))
+    const column = fc.constantFrom('current' as const, 'last' as const)
+    const purpose = fc.constantFrom('import' as const, 'export' as const)
+    let written = 0
+    fc.assert(
+      fc.property(text, column, purpose, (t, c, p) => {
+        if (agrees(t, c, p) === 'round-trip') written += 1
+      }),
+      { seed: SEED, numRuns: 500 },
+    )
+    expect(written).toBeGreaterThan(0)
+  })
+})
+
+describe('F03R check 4: the writer re-validates every row identifier (RT-21, RT-13)', () => {
+  const GOOD: WriteRow = { id: id('GFGBA.Ttwgba64'), current: { kind: 'amount', amount: 7693 } }
+
+  test.each([
+    ['a quote and CRLF that forge a second row', 'GFGBA.Ttwgba64,"1","",""\r\nFDONE.Ttwone5'],
+    ['a quote inside a part', 'GFGBA."Ttwgba64'],
+    ['a lower-case first letter', 'gfgba.ttwgba64'],
+    ['one part only', 'GFGBA'],
+    ['an empty text', ''],
+    ['a trailing space', 'GFGBA.Ttwgba64 '],
+    ['a copy index of 0', 'GFBGII[0].GFGIJ.Ttwgij121'],
+  ])(
+    'RT-21 planted fault: a cast-forged identifier with %s is refused naming the row, and no file is written',
+    (_what, text) => {
+      for (const purpose of ['import', 'export'] as const) {
+        const rows: WriteRow[] = [GOOD, { id: forgedId(text), current: { kind: 'amount', amount: 1 } }]
+        const w = writeTaxprepCsv({ header: PROBE, rows }, { purpose })
+        expect(w.ok, w.ok ? `${purpose}: it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+        if (w.ok) continue
+        expect(w.problems).toHaveLength(1)
+        expect(w.problems[0]).toMatchObject({ index: 1 })
+      }
+    },
+  )
+
+  test('RT-13 RT-21 planted fault: a forged identifier that would inject the ignored year-start cell into an import is refused, no row written', () => {
+    const forged = forgedId('GFGBA.Ttwgba127,"1","",""\r\nIDENT.Ident120')
+    const rows: WriteRow[] = [GOOD, { id: forged, current: { kind: 'date', date: '2025-01-01' } }]
+    const w = writeTaxprepCsv({ header: PROBE, rows }, { purpose: 'import' })
+    expect(w.ok, w.ok ? `it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+    if (w.ok) return
+    expect(w.problems).toHaveLength(1)
+    expect(w.problems[0]).toMatchObject({ index: 1 })
+  })
+
+  test('RT-13 planted fault: the ignored year-start cell forged with a trailing space does not slip past the import refusal', () => {
+    const rows: WriteRow[] = [{ id: forgedId('IDENT.Ident120 '), current: { kind: 'date', date: '2025-01-01' } }]
+    const w = writeTaxprepCsv({ header: PROBE, rows }, { purpose: 'import' })
+    expect(w.ok, w.ok ? `it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+    if (w.ok) return
+    expect(w.problems[0]).toMatchObject({ index: 0 })
+  })
+
+  test('RT-21 an identifier made by parseCellId, copy index included, is still written (no false alarm)', () => {
+    const rows: WriteRow[] = [GOOD, { id: id('GFBGII[1].GFGIJ.Ttwgij121'), current: { kind: 'amount', amount: -1299 } }]
+    expect(asText(writeOk(PROBE, rows, 'import'))).toBe(
+      `${HEADER_LINE}GFGBA.Ttwgba64,"7693","",""\r\nGFBGII[1].GFGIJ.Ttwgij121,"-1299","",""\r\n`,
+    )
+  })
+})
