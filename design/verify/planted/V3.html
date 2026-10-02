@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>V3 planted</title>
+<style>body{margin:0}#ex{height:1000px;background:#eee}.pane{height:300px;overflow:hidden;background:#eee}</style></head><body>
+<!-- Bad: the form sits below a 1000 px excerpt. Good (?good=1): excerpt and form share a pane in view. -->
+<div data-identity-bar>Identity bar</div>
+<div id="root"></div>
+<script>
+const good = location.search.includes('good')
+const ex = '<div data-evidence style="height:' + (good ? 200 : 1000) + 'px;background:#eee">Excerpt of the slip</div>'
+const form = '<button data-primary>Cite this</button>'
+document.getElementById('root').innerHTML = good ? '<div style="height:300px">' + ex + '</div>' + form : ex + form
+</script></body></html>

@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>V6 planted</title></head><body>
+<!-- Bad: the label names year end but only names are indexed. Good (?good=1): year end is indexed too. -->
+<div data-identity-bar>Identity bar</div>
+<label for="q" id="lab">Search by name or year end</label>
+<input id="q" type="search">
+<ul id="out"></ul>
+<script>
+const good = location.search.includes('good')
+const rows = [{ name: 'Probe Co. (Test)', ye: '2025-12-31' }, { name: 'Maple Dental (Test)', ye: '2025-06-30' }]
+document.getElementById('q').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return
+  const v = e.target.value.toLowerCase(), out = document.getElementById('out')
+  out.innerHTML = rows.filter((r) => r.name.toLowerCase().includes(v) || (good && r.ye === v)).map((r) => '<li data-result>' + r.name + '</li>').join('')
+})
+</script></body></html>
