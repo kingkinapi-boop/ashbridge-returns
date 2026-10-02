@@ -11,3 +11,6 @@ Ambers: none. Permission gaps: none. Model: Sonnet 5.5.
 
 ## Re-check (cloud-80fece, 2 Oct, main 2de6057)
 Re-ran both SC files after merging main: the same 7 fail (R12, R15 x2, R18, R23, R41, R43), same owners as above. Nothing in SC's paths to change. Released again; the queue re-offers it before the owners' fixes land.
+
+## Re-check (cloud-bb208a, 2 Oct, main ccca7ec)
+Unit file re-run after merging main: 4 fail (R15 file side, R18, R23, R41), 44 pass. The ones named above remain; SC's paths hold only tests, so nothing to build. F02 and F01D have since landed or reported without touching these. Released again. Permission gaps: none. Model: Sonnet 5.5.
