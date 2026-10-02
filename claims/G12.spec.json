@@ -1,9 +1,8 @@
 {
  "card": "G12",
  "role": "spec",
- "worker": "cloud-6e552e",
- "state": "released",
- "at": "2026-10-02T13:42:04.311Z",
- "mode": "turbo",
- "note": "dep G01 not merged; re-offered at once by the queue after release, so the gate offers specs on built-not-merged deps (Lead: check). See reports/G12-spec.md"
+ "worker": "cloud-76f46b",
+ "state": "working",
+ "at": "2026-10-02T13:56:04.900Z",
+ "mode": "turbo"
 }
