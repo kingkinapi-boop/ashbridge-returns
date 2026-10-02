@@ -2,10 +2,10 @@
  "card": "F03R",
  "role": "spec",
  "worker": "cloud-f684f9",
- "state": "reported",
- "at": "2026-10-02T06:21:24.144Z",
+ "state": "reopened",
+ "at": "2026-10-02T07:15:18.521Z",
  "mode": "turbo",
- "note": "17 tests",
+ "note": "round 3 per card (last)",
  "commit": "af234ce",
  "validated": "30986dd"
 }
