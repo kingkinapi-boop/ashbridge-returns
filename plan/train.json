@@ -1,12 +1,11 @@
 {
-  "status": "green",
+  "status": "checking",
   "branch": "claude/train",
-  "head": "1971113",
+  "head": "44e4fbc",
   "cards": [
-    "F03R",
-    "D01"
+    "DG"
   ],
-  "requested_at": "2026-10-02T09:01:40Z",
-  "by": "cloud-6ae04a",
-  "report": "reports/train-20261002-0907.md"
+  "requested_at": "2026-10-02T09:35:26Z",
+  "by": "cloud-08ac79",
+  "report": ""
 }

@@ -69,6 +69,8 @@ import {
   type WriteRow,
   type WriteValue,
 } from './taxprep'
+// F03R check 8 reads ALWAYS_EXPORTED through the module object, so the spec typechecks before the build adds it.
+import * as taxprepModule from './taxprep'
 
 const SEED = 20261002
 
@@ -1435,5 +1437,752 @@ describe('F03 round 2: writer refusals for dates, rates and the header (RT-3, RT
     )
     expect(problems).toHaveLength(1)
     expect(problems[0]).toMatchObject({ index: -1, identifier: 'header' })
+  })
+})
+// =====================================================================================================================
+// F03R: apostrophe and writer repairs (plan/cards/F03R.md; the Opus adversarial read of 2 Oct, A331, A333).
+// RT-3 reads "the reader strips exactly one [apostrophe] before a negative number (and refuses an apostrophe anywhere
+// else)"; the card reads it as "a LEADING apostrophe is refused unless the value is '-<integer>", and an apostrophe
+// inside text (O'Brien) stays accepted, as the writer writes it. Assertions pin the fault code, the line, and the row
+// identifier in the reason; reason wording is not pinned.
+// Round 3 (A346) supersedes that reading: an apostrophe anywhere in a number is refused too (see "F03R round 3" below);
+// every assertion of check 1 still holds under it.
+// =====================================================================================================================
+
+/** A forged CellId that never went through parseCellId (what a cast or a careless caller can hand the writer). */
+function forgedId(text: string): CellId {
+  return { text, copyPath: null, copyIndex: null } as unknown as CellId
+}
+
+/** The probe header, a clean row 2, then row 3 holding `value` in the given column. */
+function apostropheFile(value: string, column: 'current' | 'last'): Buffer {
+  const row3 = column === 'current' ? `FDONE.Ttwone66,"${value}","",""` : `FDONE.Ttwone66,"7693","${value}",""`
+  return fromText(`${HEADER_LINE}GFGBA.Ttwgba64,"7693","",""\r\n${row3}\r\n`)
+}
+
+describe('F03R check 1: a leading apostrophe is refused unless the value is a negative integer (RT-3, RT-9)', () => {
+  const COLUMNS = ['current', 'last'] as const
+
+  for (const column of COLUMNS) {
+    test.each(["'-12.50", "'1356.5", "'abc", "'", "'-1,356"])(
+      `RT-3 planted fault: %j in the ${column} column is refused with an apostrophe fault naming row 3`,
+      (value) => {
+        const faults = faultsOf(apostropheFile(value, column))
+        // a value with a comma may instead be reported as the thousands fault it also is (card F03R check 1)
+        const codes: readonly TaxprepFaultCode[] = value.includes(',') ? ['apostrophe', 'thousands'] : ['apostrophe']
+        const hit = faults.find((f) => f.line === 3 && codes.includes(f.code))
+        expect(hit, `faults seen: ${JSON.stringify(faults)}`).toBeDefined()
+        expect(must(hit, 'fault').reason).toContain('FDONE.Ttwone66')
+      },
+    )
+
+    test(`RT-3 RT-9 planted fault: '-5,000 in the ${column} column is refused as a thousands or apostrophe fault on row 3`, () => {
+      const faults = faultsOf(apostropheFile("'-5,000", column))
+      const hit = faults.find((f) => f.line === 3 && (f.code === 'thousands' || f.code === 'apostrophe'))
+      expect(hit, `faults seen: ${JSON.stringify(faults)}`).toBeDefined()
+      expect(must(hit, 'fault').reason).toContain('FDONE.Ttwone66')
+    })
+
+    test(`RT-3 '-1299 in the ${column} column is still read as -1299 with apostrophe true (no false alarm)`, () => {
+      const row = must(parseOk(apostropheFile("'-1299", column)).rows[1], 'row 3')
+      expect(column === 'current' ? row.current : row.last).toEqual({ kind: 'value', text: '-1299' })
+      expect(row.apostrophe).toBe(true)
+    })
+  }
+
+  test.each(["O'Brien Holdings (Test)", "Corporation's name (Test)", "Lot 12 O'Neil (Test)"])(
+    'RT-3 an apostrophe inside text (%j) is not leading: it is still read, and written back, as that text',
+    (text) => {
+      const r = parseTaxprepCsv(fromText(`${HEADER_LINE}IFirm.ContactPartner,"${text}","",""\r\n`))
+      expect(r.ok, r.ok ? '' : JSON.stringify(r.faults)).toBe(true)
+      if (!r.ok) return
+      const row = must(r.file.rows[0], 'row')
+      expect(row.current).toEqual({ kind: 'value', text })
+      expect(row.apostrophe).toBe(false)
+      const out = writeOk(PROBE, [{ id: id('IFirm.ContactPartner'), current: { kind: 'text', text } }], 'import')
+      expect(must(parseOk(out).rows[0], 'row').current).toEqual({ kind: 'value', text })
+    },
+  )
+
+  test('RT-3 property (fixed seed): any leading-apostrophe value other than a negative integer is refused on its row', () => {
+    const tail = fc
+      .array(fc.constantFrom(...'0123456789-.,abcXE '.split('')), { maxLength: 8 })
+      .map((cs) => cs.join(''))
+      .filter((t) => !/^-[1-9]\d*$/.test(t))
+    fc.assert(
+      fc.property(tail, fc.constantFrom(...COLUMNS), (t, column) => {
+        const r = parseTaxprepCsv(apostropheFile(`'${t}`, column))
+        expect(r.ok).toBe(false)
+        if (r.ok) return
+        expect(r.faults.some((f) => f.line === 3 && (f.code === 'apostrophe' || f.code === 'thousands'))).toBe(true)
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+})
+
+describe('F03R check 2: the day 5 input-cell row with the export apostrophe (RT-3; trial day 5)', () => {
+  const CELL = 'GFBGII[1].GFGIJ.Ttwgij121'
+
+  test('RT-3 GFBGII[1].GFGIJ.Ttwgij121,"\'-1299","","" parses as -1299 with apostrophe true', () => {
+    const row = must(parseOk(golden('day5-input-cell-current-in.csv')).rows[0], 'row')
+    expect(row.id.text).toBe(CELL)
+    expect(row.id.copyPath).toBe('GFBGII')
+    expect(row.id.copyIndex).toBe(1)
+    expect(row.current).toEqual({ kind: 'value', text: '-1299' })
+    expect(row.last).toEqual({ kind: 'clear' })
+    expect(row.apostrophe).toBe(true)
+  })
+
+  test('RT-3 written back it is "-1299" with no apostrophe (golden)', () => {
+    const file = parseOk(golden('day5-input-cell-current-in.csv'))
+    const out = writeOk(file.header, toWriteRows(file.rows, {}), 'import')
+    expect(asText(out)).toBe(asText(golden('day5-input-cell-current-out.csv')))
+  })
+
+  test('RT-3 the same value in the Last Year column parses as last -1299 with apostrophe true', () => {
+    const row = must(parseOk(golden('day5-input-cell-last-in.csv')).rows[0], 'row')
+    expect(row.id.text).toBe(CELL)
+    expect(row.current).toEqual({ kind: 'clear' })
+    expect(row.last).toEqual({ kind: 'value', text: '-1299' })
+    expect(row.apostrophe).toBe(true)
+  })
+
+  test('RT-3 the Last Year value is written back as "-1299" with no apostrophe (golden)', () => {
+    const file = parseOk(golden('day5-input-cell-last-in.csv'))
+    const row = must(file.rows[0], 'row')
+    const out = writeOk(
+      file.header,
+      [
+        {
+          id: row.id,
+          current: toWriteValue(row.current, 'amount'),
+          last: toWriteValue(must(row.last, 'last'), 'amount'),
+        },
+      ],
+      'import',
+    )
+    expect(asText(out)).toBe(asText(golden('day5-input-cell-last-out.csv')))
+    expect(must(parseOk(out).rows[0], 'row').apostrophe).toBe(false)
+  })
+})
+
+describe('F03R check 3: no file the writer makes fails its own parser (RT-3, RT-9)', () => {
+  const CELL = 'IFirm.ContactPartner'
+
+  /** Writes `text` as a text value in one column: the writer refuses it naming the row, or it reads back unchanged. */
+  function agrees(text: string, column: 'current' | 'last', purpose: 'import' | 'export'): 'refused' | 'round-trip' {
+    const row: WriteRow =
+      column === 'current'
+        ? { id: id(CELL), current: { kind: 'text', text } }
+        : { id: id(CELL), current: { kind: 'clear' }, last: { kind: 'text', text } }
+    const w = writeTaxprepCsv({ header: PROBE, rows: [row] }, { purpose })
+    if (!w.ok) {
+      expect(w.problems).toHaveLength(1)
+      expect(w.problems[0]).toMatchObject({ index: 0, identifier: CELL })
+      return 'refused'
+    }
+    const r = parseTaxprepCsv(w.bytes)
+    const why = r.ok
+      ? ''
+      : `the writer wrote ${JSON.stringify(asText(w.bytes))}; its parser refused it: ${JSON.stringify(r.faults)}`
+    expect(r.ok, why).toBe(true)
+    if (!r.ok) return 'refused'
+    const back = must(r.file.rows[0], 'row')
+    expect(column === 'current' ? back.current : back.last).toEqual({ kind: 'value', text })
+    return 'round-trip'
+  }
+
+  for (const column of ['current', 'last'] as const) {
+    test.each(['1,234', '(123)', '01/01/2025', '1.2E3', '-48,600', '12,50', '2026/10/01', '1 234'])(
+      `RT-9 planted fault: the fault-set pattern %j written as text in the ${column} column is refused by the writer or read back unchanged`,
+      (text) => {
+        agrees(text, column, 'import')
+        agrees(text, column, 'export')
+      },
+    )
+  }
+
+  test('RT-3 RT-9 property (fixed seed): every text the writer accepts reads back unchanged, either column, import or export', () => {
+    const chars = '0123456789,.()-/ Ee+\'"Ax'.split('')
+    const text = fc.array(fc.constantFrom(...chars), { minLength: 1, maxLength: 12 }).map((cs) => cs.join(''))
+    const column = fc.constantFrom('current' as const, 'last' as const)
+    const purpose = fc.constantFrom('import' as const, 'export' as const)
+    let written = 0
+    fc.assert(
+      fc.property(text, column, purpose, (t, c, p) => {
+        if (agrees(t, c, p) === 'round-trip') written += 1
+      }),
+      { seed: SEED, numRuns: 500 },
+    )
+    expect(written).toBeGreaterThan(0)
+  })
+})
+
+describe('F03R check 4: the writer re-validates every row identifier (RT-21, RT-13)', () => {
+  const GOOD: WriteRow = { id: id('GFGBA.Ttwgba64'), current: { kind: 'amount', amount: 7693 } }
+
+  test.each([
+    ['a quote and CRLF that forge a second row', 'GFGBA.Ttwgba64,"1","",""\r\nFDONE.Ttwone5'],
+    ['a quote inside a part', 'GFGBA."Ttwgba64'],
+    ['a lower-case first letter', 'gfgba.ttwgba64'],
+    ['one part only', 'GFGBA'],
+    ['an empty text', ''],
+    ['a trailing space', 'GFGBA.Ttwgba64 '],
+    ['a copy index of 0', 'GFBGII[0].GFGIJ.Ttwgij121'],
+  ])(
+    'RT-21 planted fault: a cast-forged identifier with %s is refused naming the row, and no file is written',
+    (_what, text) => {
+      for (const purpose of ['import', 'export'] as const) {
+        const rows: WriteRow[] = [GOOD, { id: forgedId(text), current: { kind: 'amount', amount: 1 } }]
+        const w = writeTaxprepCsv({ header: PROBE, rows }, { purpose })
+        expect(w.ok, w.ok ? `${purpose}: it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+        if (w.ok) continue
+        expect(w.problems).toHaveLength(1)
+        expect(w.problems[0]).toMatchObject({ index: 1 })
+      }
+    },
+  )
+
+  test('RT-13 RT-21 planted fault: a forged identifier that would inject the ignored year-start cell into an import is refused, no row written', () => {
+    const forged = forgedId('GFGBA.Ttwgba127,"1","",""\r\nIDENT.Ident120')
+    const rows: WriteRow[] = [GOOD, { id: forged, current: { kind: 'date', date: '2025-01-01' } }]
+    const w = writeTaxprepCsv({ header: PROBE, rows }, { purpose: 'import' })
+    expect(w.ok, w.ok ? `it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+    if (w.ok) return
+    expect(w.problems).toHaveLength(1)
+    expect(w.problems[0]).toMatchObject({ index: 1 })
+  })
+
+  test('RT-13 planted fault: the ignored year-start cell forged with a trailing space does not slip past the import refusal', () => {
+    const rows: WriteRow[] = [{ id: forgedId('IDENT.Ident120 '), current: { kind: 'date', date: '2025-01-01' } }]
+    const w = writeTaxprepCsv({ header: PROBE, rows }, { purpose: 'import' })
+    expect(w.ok, w.ok ? `it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+    if (w.ok) return
+    expect(w.problems[0]).toMatchObject({ index: 0 })
+  })
+
+  test('RT-21 an identifier made by parseCellId, copy index included, is still written (no false alarm)', () => {
+    const rows: WriteRow[] = [GOOD, { id: id('GFBGII[1].GFGIJ.Ttwgij121'), current: { kind: 'amount', amount: -1299 } }]
+    expect(asText(writeOk(PROBE, rows, 'import'))).toBe(
+      `${HEADER_LINE}GFGBA.Ttwgba64,"7693","",""\r\nGFBGII[1].GFGIJ.Ttwgij121,"-1299","",""\r\n`,
+    )
+  })
+})
+
+// =====================================================================================================================
+// F03R spec round 2 (findings review wave 2, reports/findings-wave2.md RC3, fix 1d and 4; RC4 for check 8).
+// The writer re-reads every value it writes through its own parser; extremes are generated, not assumed away.
+// =====================================================================================================================
+
+/** One row holding `value` in the given column (the other column a clear). */
+function oneValueRow(cell: string, value: WriteValue, column: 'current' | 'last'): WriteRow {
+  return column === 'current'
+    ? { id: id(cell), current: value }
+    : { id: id(cell), current: { kind: 'clear' }, last: value }
+}
+
+describe('F03R check 5: a rate too large to write in full is refused, never written (RT-3)', () => {
+  const CELL = 'CCACat.FD08C[1].FED.Ttw08cA2'
+
+  for (const column of ['current', 'last'] as const) {
+    test.each([1e21, 1e300])(
+      `RT-3 planted fault: the rate %s in the ${column} column is refused by the writer with a reason naming the row`,
+      (rate) => {
+        for (const purpose of ['import', 'export'] as const) {
+          const rows = [oneValueRow(CELL, { kind: 'rate', rate }, column)]
+          const w = writeTaxprepCsv({ header: PROBE, rows }, { purpose })
+          expect(w.ok, w.ok ? `${purpose}: it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+          if (w.ok) continue
+          expect(w.problems).toHaveLength(1)
+          const p = must(w.problems[0], 'problem')
+          expect(p).toMatchObject({ index: 0, identifier: CELL })
+          expect(p.reason).toContain(CELL)
+          expect(p.reason.replace(CELL, '').trim().length).toBeGreaterThan(10)
+        }
+      },
+    )
+  }
+})
+
+describe("F03R check 6: a minus then an apostrophe is refused like -'12 (RT-3, RT-9)", () => {
+  for (const column of ['current', 'last'] as const) {
+    test.each(["-'1.5", "-'1,234", "-'", "-'12"])(
+      `RT-3 planted fault: %j in the ${column} column is refused with an apostrophe fault naming row 3`,
+      (value) => {
+        const faults = faultsOf(apostropheFile(value, column))
+        const hit = faults.find((f) => f.line === 3 && f.code === 'apostrophe')
+        expect(hit, `faults seen: ${JSON.stringify(faults)}`).toBeDefined()
+        expect(must(hit, 'fault').reason).toContain('FDONE.Ttwone66')
+      },
+    )
+  }
+
+  test("RT-3 property (fixed seed): any value starting with -' is refused with an apostrophe fault on its row", () => {
+    const tail = fc
+      .array(fc.constantFrom(..."0123456789-.,'abcXE ".split('')), { maxLength: 8 })
+      .map((cs) => cs.join(''))
+    fc.assert(
+      fc.property(tail, fc.constantFrom('current' as const, 'last' as const), (t, column) => {
+        const r = parseTaxprepCsv(apostropheFile(`-'${t}`, column))
+        expect(r.ok, r.ok ? `-'${t} was read: ${JSON.stringify(r.file.rows[1])}` : '').toBe(false)
+        if (r.ok) return
+        expect(r.faults.some((f) => f.line === 3 && f.code === 'apostrophe')).toBe(true)
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+})
+
+describe('F03R check 7: every kind survives write then parse, extremes included (RT-3, ARC-14)', () => {
+  const CELL = 'GFGBA.Ttwgba64'
+
+  /** `must`: the writer has to write it; otherwise it may refuse (naming the row), never write what reads back different. */
+  type Probe = { value: WriteValue; must: boolean }
+  const yes = (value: WriteValue): Probe => ({ value, must: true })
+  const either = (value: WriteValue): Probe => ({ value, must: false })
+  const amount = (n: number): WriteValue => ({ kind: 'amount', amount: n })
+  const rate = (r: number): WriteValue => ({ kind: 'rate', rate: r })
+
+  const textWithApostrophe = fc
+    .tuple(fc.constantFrom(...UPPER), fc.array(fc.constantFrom(...TEXT_CHARS, "'"), { maxLength: 30 }))
+    .map(([first, rest]) => first + rest.join(''))
+
+  const probeArb: fc.Arbitrary<Probe> = fc.oneof(
+    // amounts: every safe whole number must be written; -0 is written and read as 0
+    fc.constantFrom(Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER, 0, -0, 1, -1).map((n) => yes(amount(n))),
+    fc.integer({ min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER }).map((n) => yes(amount(n))),
+    fc.constantFrom(1e21, -1e21, 2 ** 53, 1e300, Number.MAX_VALUE).map((n) => either(amount(n))),
+    fc.double({ noNaN: true, noDefaultInfinity: true }).map((n) => either(amount(n))),
+    // rates: every 4-decimal rate from 0 to 100 must be written; 1e21, 1e300 and any other double may be refused
+    fc.constantFrom(0, -0, 0.0001, 1, 99.9999).map((r) => yes(rate(r))),
+    fc.integer({ min: 0, max: 1_000_000 }).map((n) => yes(rate(n / 10_000))),
+    fc.constantFrom(1e20, 1e21, 1e300, Number.MAX_VALUE, 2 ** 53 + 0.5).map((r) => either(rate(r))),
+    fc.double({ min: 0, noNaN: true, noDefaultInfinity: true }).map((r) => either(rate(r))),
+    // text with an apostrophe inside (never leading), dates, yes or no, and the clear
+    textWithApostrophe.map((t) => yes({ kind: 'text', text: t })),
+    fc
+      .constantFrom("O'Brien Holdings (Test)", "Lot 12 O'Neil (Test)", "A'", "Z '-12")
+      .map((t) => yes({ kind: 'text', text: t })),
+    dateArb.map((d) => yes({ kind: 'date', date: d })),
+    fc.boolean().map((b) => yes({ kind: 'yesNo', yes: b })),
+    fc.constant(yes({ kind: 'clear' })),
+  )
+
+  /** JSON drops the sign of -0; show it. */
+  const describeValue = (v: WriteValue): string =>
+    JSON.stringify(v, (_k, x: unknown) => (typeof x === 'number' && Object.is(x, -0) ? '-0' : x))
+
+  /** The parser must hand back the value given (an amount or rate of -0 as 0). */
+  function expectReadBack(given: WriteValue, back: CellValue): void {
+    if (given.kind === 'clear') {
+      expect(back).toEqual({ kind: 'clear' })
+      return
+    }
+    expect(back.kind, `a ${given.kind} value was read back as a clear`).toBe('value')
+    if (back.kind !== 'value') return
+    switch (given.kind) {
+      case 'amount':
+        expect(back.text).toBe(String(given.amount)) // String(-0) is '0'
+        expect(Number(back.text)).toBe(given.amount === 0 ? 0 : given.amount)
+        return
+      case 'rate':
+        expect(back.text).toMatch(/^\d+\.\d{4}$/)
+        expect(Number(back.text)).toBe(given.rate === 0 ? 0 : given.rate)
+        return
+      case 'text':
+        expect(back.text).toBe(given.text)
+        return
+      case 'date':
+        expect(back.text).toBe(given.date)
+        return
+      case 'yesNo':
+        expect(back.text).toBe(given.yes ? 'Y' : 'N')
+        return
+    }
+  }
+
+  function check(probe: Probe, column: 'current' | 'last', purpose: 'import' | 'export'): void {
+    const shown = `${describeValue(probe.value)} in ${column}, ${purpose}`
+    const w = writeTaxprepCsv({ header: PROBE, rows: [oneValueRow(CELL, probe.value, column)] }, { purpose })
+    if (!w.ok) {
+      expect(probe.must, `the writer refused ${shown}: ${JSON.stringify(w.problems)}`).toBe(false)
+      expect(w.problems).toHaveLength(1)
+      expect(w.problems[0]).toMatchObject({ index: 0, identifier: CELL })
+      return
+    }
+    const r = parseTaxprepCsv(w.bytes)
+    const why = r.ok
+      ? ''
+      : `the writer wrote ${JSON.stringify(asText(w.bytes))} for ${shown}; its parser refused it: ${JSON.stringify(r.faults)}`
+    expect(r.ok, why).toBe(true)
+    if (!r.ok) return
+    const back = must(r.file.rows[0], 'row')
+    expect(back.apostrophe).toBe(false)
+    expectReadBack(probe.value, must(column === 'current' ? back.current : back.last, 'read-back value'))
+  }
+
+  test('RT-3 ARC-14 property (fixed seed): for every kind, write then parse returns the value given, or the writer refuses it naming the row', () => {
+    fc.assert(
+      fc.property(
+        probeArb,
+        fc.constantFrom('current' as const, 'last' as const),
+        fc.constantFrom('import' as const, 'export' as const),
+        (probe, column, purpose) => {
+          check(probe, column, purpose)
+        },
+      ),
+      { seed: SEED, numRuns: 1000 },
+    )
+  })
+
+  test.each([
+    ['the amount Number.MAX_SAFE_INTEGER', amount(Number.MAX_SAFE_INTEGER), '9007199254740991'],
+    ['the amount Number.MIN_SAFE_INTEGER', amount(Number.MIN_SAFE_INTEGER), '-9007199254740991'],
+    ['the amount -0', amount(-0), '0'],
+    ['the rate -0', rate(-0), '0.0000'],
+    ['the rate 0.0001', rate(0.0001), '0.0001'],
+    ['the rate 99.9999', rate(99.9999), '99.9999'],
+    ["the text O'Brien Holdings (Test)", { kind: 'text', text: "O'Brien Holdings (Test)" } as const, "O'Brien Holdings (Test)"],
+  ])('RT-3 ARC-14 extreme: %s is written as %j and read back unchanged, either column', (_what, value, text) => {
+    for (const column of ['current', 'last'] as const) {
+      const out = writeOk(PROBE, [oneValueRow(CELL, value, column)], 'import')
+      const back = must(parseOk(out).rows[0], 'row')
+      expect(column === 'current' ? back.current : back.last).toEqual({ kind: 'value', text })
+    }
+  })
+
+  test.each([
+    ['the rate 1e21', rate(1e21)],
+    ['the rate 1e300', rate(1e300)],
+    ['the rate Number.MAX_VALUE', rate(Number.MAX_VALUE)],
+    ['the amount 1e21', amount(1e21)],
+  ])('RT-3 planted fault: %s is refused by the writer naming the row, never written', (_what, value) => {
+    for (const column of ['current', 'last'] as const) {
+      const problems = writeRefused(PROBE, [oneValueRow(CELL, value, column)], 'export')
+      expect(problems).toHaveLength(1)
+      expect(problems[0]).toMatchObject({ index: 0, identifier: CELL })
+    }
+  })
+})
+
+describe('F03R check 8: the cells the "entered" export lists even when empty are one constant (RT-23, RT-13)', () => {
+  const EIGHT = [
+    'IDENT.Ident120',
+    'IDENT.Ident121',
+    'IDENT.Ident311',
+    'IDENT.Ident230',
+    'IDENT.Ident451',
+    'IDENT.Ident492',
+    'IFirm.ContactPartner',
+    'IFirm.ContactID',
+  ]
+  type Entry = { identifier?: unknown; finding?: unknown }
+  /** ALWAYS_EXPORTED, read through the module object (it does not exist before the build). */
+  function alwaysExported(): Entry[] {
+    const list = (taxprepModule as Record<string, unknown>)['ALWAYS_EXPORTED']
+    expect(Array.isArray(list), 'ALWAYS_EXPORTED is not exported from taxprep.ts as a list').toBe(true)
+    return Array.isArray(list) ? (list as Entry[]) : []
+  }
+
+  test('RT-23 taxprep.ts exports ALWAYS_EXPORTED: exactly the eight creation and contact cells of FINDINGS.md', () => {
+    const identifiers = alwaysExported().map((e) => e.identifier)
+    expect([...identifiers].sort()).toEqual([...EIGHT].sort())
+    expect(new Set(identifiers).size).toBe(identifiers.length)
+  })
+
+  test('RT-23 each entry carries the finding it rests on, like IGNORED_ON_IMPORT, and an identifier the grammar accepts', () => {
+    const list = alwaysExported()
+    expect(list.length).toBeGreaterThan(0)
+    for (const e of list) {
+      expect(typeof e.identifier).toBe('string')
+      expect(typeof e.finding, `${String(e.identifier)} has no finding`).toBe('string')
+      expect(String(e.finding)).toContain('FINDINGS.md')
+      expect(String(e.finding).trim().length).toBeGreaterThan(20)
+      expect(parseCellId(String(e.identifier)).ok).toBe(true)
+    }
+  })
+
+  test('RT-23 RT-13 every cell skipped on import is one the "entered" export lists (the year dates, the name, Ident492)', () => {
+    const identifiers = new Set(alwaysExported().map((e) => e.identifier))
+    for (const e of IGNORED_ON_IMPORT) expect(identifiers.has(e.identifier), e.identifier).toBe(true)
+  })
+})
+
+// =====================================================================================================================
+// F03R spec round 3 (findings review F03R round 2, reports/findings-F03R-r2.md; A346, last round). RT-3 now reads:
+// the writer never writes an apostrophe in a number; the reader strips one leading apostrophe before a negative whole
+// number and refuses an apostrophe in any other number; text may hold one (O'Brien). This supersedes A333's "a leading
+// apostrophe" reading of check 1 above. "A number" is the card's B1 shape: once its apostrophes are taken out, the
+// value is an optional leading minus, then digits, points and commas with at least one digit. No other fault pattern
+// can match a value holding an apostrophe, so the refusal code is pinned to 'apostrophe'.
+// =====================================================================================================================
+
+const KEEP_RULE = /^'-[1-9]\d*$/
+const NUMBER_SHAPE = /^-?[\d.,]*\d[\d.,]*$/
+
+/** True when RT-3 (round 3) refuses `value`: an apostrophe in a number, other than the one leading '-<whole number>. */
+function rt3Refuses(value: string): boolean {
+  if (!value.includes("'") || KEEP_RULE.test(value)) return false
+  return value.startsWith("'") || value.startsWith("-'") || NUMBER_SHAPE.test(value.replace(/'/g, ''))
+}
+
+function expectApostropheFault(value: string, column: 'current' | 'last'): void {
+  const r = parseTaxprepCsv(apostropheFile(value, column))
+  expect(r.ok, r.ok ? `${JSON.stringify(value)} in ${column} was read: ${JSON.stringify(r.file.rows[1])}` : '').toBe(false)
+  if (r.ok) return
+  const hit = r.faults.find((f) => f.line === 3 && f.code === 'apostrophe')
+  expect(hit, `${JSON.stringify(value)} in ${column}, faults seen: ${JSON.stringify(r.faults)}`).toBeDefined()
+  expect(must(hit, 'fault').reason).toContain('FDONE.Ttwone66')
+}
+
+describe('F03R round 3 S1: an apostrophe inside a number is refused; text may hold one (RT-3, RT-9)', () => {
+  const IN_NUMBERS = ["1'234", "12'", "-12'", "1'2'3", "1'234.5", "-1'234"]
+  const TEXTS = ["O'Brien Holdings (Test)", "A'", "Z '-12"]
+  const CELL = 'IFirm.ContactPartner'
+
+  for (const column of ['current', 'last'] as const) {
+    test.each(IN_NUMBERS)(
+      `RT-3 planted fault: %j in the ${column} column is refused with an apostrophe fault naming row 3`,
+      (value) => {
+        expectApostropheFault(value, column)
+      },
+    )
+
+    test.each(IN_NUMBERS)(
+      `RT-3 planted fault: the writer refuses the text %j in the ${column} column naming the row (it never writes an apostrophe in a number)`,
+      (text) => {
+        for (const purpose of ['import', 'export'] as const) {
+          const w = writeTaxprepCsv(
+            { header: PROBE, rows: [oneValueRow(CELL, { kind: 'text', text }, column)] },
+            { purpose },
+          )
+          expect(w.ok, w.ok ? `${purpose}: it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+          if (w.ok) continue
+          expect(w.problems).toHaveLength(1)
+          const p = must(w.problems[0], 'problem')
+          expect(p).toMatchObject({ index: 0, identifier: CELL })
+          expect(p.reason).toContain(CELL)
+        }
+      },
+    )
+
+    test.each(TEXTS)(
+      `RT-3 %j in the ${column} column is text: it is read as that text with no apostrophe mark, and written back unchanged`,
+      (text) => {
+        const r = parseTaxprepCsv(apostropheFile(text, column))
+        expect(r.ok, r.ok ? '' : JSON.stringify(r.faults)).toBe(true)
+        if (!r.ok) return
+        const row = must(r.file.rows[1], 'row 3')
+        expect(column === 'current' ? row.current : row.last).toEqual({ kind: 'value', text })
+        expect(row.apostrophe).toBe(false)
+        for (const purpose of ['import', 'export'] as const) {
+          const out = writeOk(PROBE, [oneValueRow(CELL, { kind: 'text', text }, column)], purpose)
+          const back = must(parseOk(out).rows[0], 'row')
+          expect(column === 'current' ? back.current : back.last).toEqual({ kind: 'value', text })
+          expect(back.apostrophe).toBe(false)
+        }
+      },
+    )
+  }
+
+  test("RT-3 '-1299 (the one leading apostrophe before a negative whole number) is still read as -1299 in both columns (no false alarm)", () => {
+    for (const column of ['current', 'last'] as const) {
+      const row = must(parseOk(apostropheFile("'-1299", column)).rows[1], 'row 3')
+      expect(column === 'current' ? row.current : row.last).toEqual({ kind: 'value', text: '-1299' })
+      expect(row.apostrophe).toBe(true)
+    }
+  })
+})
+
+describe('F03R round 3 S2: every apostrophe in a number is refused, and nothing F03 refused is let in (RT-3, RT-9)', () => {
+  const ALPHABET = "0123456789'-,.".split('')
+  const COLUMN = fc.constantFrom('current' as const, 'last' as const)
+
+  /** A number shape (optional minus, digits, points, commas, one digit at least) with one to three apostrophes put in. */
+  const numberWithApostrophes: fc.Arbitrary<string> = fc
+    .tuple(
+      fc.boolean(),
+      fc.array(fc.constantFrom(...'0123456789.,'.split('')), { minLength: 1, maxLength: 7 }),
+      fc.constantFrom(...'0123456789'.split('')),
+      fc.nat(),
+      fc.array(fc.nat(), { minLength: 1, maxLength: 3 }),
+    )
+    .map(([minus, body, digit, at, cuts]) => {
+      const chars = [...body]
+      chars.splice(at % (chars.length + 1), 0, digit)
+      let s = (minus ? '-' : '') + chars.join('')
+      for (const c of cuts) {
+        const i = c % (s.length + 1)
+        s = `${s.slice(0, i)}'${s.slice(i)}`
+      }
+      return s
+    })
+  /** Any string over the card's alphabet holding an apostrophe. */
+  const anyWithApostrophe: fc.Arbitrary<string> = fc
+    .array(fc.constantFrom(...ALPHABET), { minLength: 1, maxLength: 8 })
+    .map((cs) => cs.join(''))
+    .filter((s) => s.includes("'"))
+
+  test("RT-3 property (fixed seed): over [0-9 ' - , .], any value with an apostrophe in a number other than exactly '-<whole number> is refused with an apostrophe fault on its row", () => {
+    let refusedCases = 0
+    fc.assert(
+      fc.property(fc.oneof(numberWithApostrophes, anyWithApostrophe), COLUMN, (value, column) => {
+        if (!rt3Refuses(value)) return
+        refusedCases += 1
+        expectApostropheFault(value, column)
+      }),
+      { seed: SEED, numRuns: 1000 },
+    )
+    expect(refusedCases).toBeGreaterThan(500)
+  })
+
+  test("RT-3 property (fixed seed): the only value over [0-9 ' - , .] with a leading apostrophe that is read is '-<whole number>, as that negative with apostrophe true", () => {
+    const whole = fc.integer({ min: 1, max: Number.MAX_SAFE_INTEGER })
+    fc.assert(
+      fc.property(whole, COLUMN, (n, column) => {
+        const row = must(parseOk(apostropheFile(`'-${String(n)}`, column)).rows[1], 'row 3')
+        expect(column === 'current' ? row.current : row.last).toEqual({ kind: 'value', text: `-${String(n)}` })
+        expect(row.apostrophe).toBe(true)
+      }),
+      { seed: SEED, numRuns: 200 },
+    )
+  })
+
+  type Ratchet = { source: string; refused: string[] }
+  const ratchet = JSON.parse(golden('rt-03-refused-at-a89d508.json').toString('utf8')) as Ratchet
+
+  test('RT-3 RT-9 ratchet: the list of values main refused at a89d508 holds the apostrophe-in-number cases the round 2 build let in', () => {
+    expect(ratchet.refused.length).toBeGreaterThan(600)
+    for (const v of ["1'234", "12'", "-12'", "1'2'3", "-1'234", "''-1356", "'0", "1,22"]) {
+      expect(ratchet.refused, v).toContain(v)
+    }
+  })
+
+  test('RT-3 RT-9 ratchet: every value main refused at a89d508 is still refused on its row, in either column', () => {
+    const letIn: string[] = []
+    for (const value of ratchet.refused) {
+      for (const column of ['current', 'last'] as const) {
+        const r = parseTaxprepCsv(apostropheFile(value, column))
+        if (r.ok || !r.faults.some((f) => f.line === 3)) letIn.push(`${JSON.stringify(value)} (${column})`)
+      }
+    }
+    expect(letIn, `now read, though a89d508 refused them: ${letIn.slice(0, 20).join(', ')}`).toEqual([])
+  })
+})
+
+// readBackMatches is read through the module object, so the spec typechecks before the build adds it (as check 8).
+type ClassifyOkSeen = { ok: true; value: CellValue; apostrophe: boolean }
+type ReadBackMatches = (v: WriteValue, back: ClassifyOkSeen) => boolean
+
+describe("F03R round 3 S3: readBackMatches, the writer's read-back check, catches a planted mismatch of every kind (RT-3, ARC-14)", () => {
+  function readBackMatches(): ReadBackMatches {
+    const fn = (taxprepModule as Record<string, unknown>)['readBackMatches']
+    expect(typeof fn, 'readBackMatches is not exported from taxprep.ts as a function').toBe('function')
+    return typeof fn === 'function' ? (fn as ReadBackMatches) : () => false
+  }
+  const read = (text: string | null, apostrophe = false): ClassifyOkSeen => ({
+    ok: true,
+    value: text === null ? { kind: 'clear' } : { kind: 'value', text },
+    apostrophe,
+  })
+  const show = (v: WriteValue): string =>
+    JSON.stringify(v, (_k, x: unknown) => (typeof x === 'number' && Object.is(x, -0) ? '-0' : x))
+
+  const MATCHES: readonly [string, WriteValue, ClassifyOkSeen][] = [
+    ['an amount and its digits', { kind: 'amount', amount: 7693 }, read('7693')],
+    ['a negative amount and its digits', { kind: 'amount', amount: -1299 }, read('-1299')],
+    ['the amount 0 and "0"', { kind: 'amount', amount: 0 }, read('0')],
+    ['the amount -0 and "0"', { kind: 'amount', amount: -0 }, read('0')],
+    ['a rate and its 4 decimals', { kind: 'rate', rate: 0.2 }, read('0.2000')],
+    ['a rate and the same number written shorter (rates compare as numbers)', { kind: 'rate', rate: 0.2 }, read('0.2')],
+    ['the rate -0 and "0.0000"', { kind: 'rate', rate: -0 }, read('0.0000')],
+    ['the rate 0.1 + 0.2 (float noise the writer rounds away) and "0.3000"', { kind: 'rate', rate: 0.1 + 0.2 }, read('0.3000')],
+    ['the rate 99.9999', { kind: 'rate', rate: 99.9999 }, read('99.9999')],
+    ['a date', { kind: 'date', date: '2025-12-31' }, read('2025-12-31')],
+    ['yes and Y', { kind: 'yesNo', yes: true }, read('Y')],
+    ['no and N', { kind: 'yesNo', yes: false }, read('N')],
+    ['text with an apostrophe inside', { kind: 'text', text: "O'Brien Holdings (Test)" }, read("O'Brien Holdings (Test)")],
+    ['a clear and a clear', { kind: 'clear' }, read(null)],
+  ]
+
+  test.each(MATCHES)('RT-3 ARC-14 %s match (no false alarm)', (_what, given, back) => {
+    expect(readBackMatches()(given, back), `${show(given)} vs ${JSON.stringify(back)}`).toBe(true)
+  })
+
+  const MISMATCHES: readonly [string, WriteValue, ClassifyOkSeen][] = [
+    ['amount: another number', { kind: 'amount', amount: 7693 }, read('7694')],
+    ['amount: the sign lost', { kind: 'amount', amount: -1299 }, read('1299')],
+    ['amount: read back as a clear', { kind: 'amount', amount: 0 }, read(null)],
+    ['amount: the right digits marked apostrophe', { kind: 'amount', amount: -1299 }, read('-1299', true)],
+    ['rate: another number', { kind: 'rate', rate: 0.2 }, read('0.2001')],
+    ['rate: read back as a clear', { kind: 'rate', rate: 0 }, read(null)],
+    ['rate: not a number', { kind: 'rate', rate: 0.2 }, read('abc')],
+    ['date: another day', { kind: 'date', date: '2025-12-31' }, read('2025-12-30')],
+    ['date: read back as a clear', { kind: 'date', date: '2025-12-31' }, read(null)],
+    ['yes or no: yes read as N', { kind: 'yesNo', yes: true }, read('N')],
+    ['yes or no: no read as Y', { kind: 'yesNo', yes: false }, read('Y')],
+    ['yes or no: read back as a clear', { kind: 'yesNo', yes: false }, read(null)],
+    ['text: one character changed', { kind: 'text', text: 'Maple Ridge (Test)' }, read('Maple Ridgé (Test)')],
+    ['text: a trailing space added', { kind: 'text', text: 'Maple Ridge (Test)' }, read('Maple Ridge (Test) ')],
+    ['text: read back as a clear', { kind: 'text', text: 'Maple Ridge (Test)' }, read(null)],
+    ['text: the right text marked apostrophe', { kind: 'text', text: '-12' }, read('-12', true)],
+    ['clear vs value: a clear read back as "0"', { kind: 'clear' }, read('0')],
+    ['clear vs value: a clear read back as text', { kind: 'clear' }, read('x')],
+    ['clear: a clear marked apostrophe', { kind: 'clear' }, read(null, true)],
+  ]
+
+  test.each(MISMATCHES)('RT-3 ARC-14 planted mismatch, %s: readBackMatches returns false', (_what, given, back) => {
+    expect(readBackMatches()(given, back), `${show(given)} vs ${JSON.stringify(back)}`).toBe(false)
+  })
+
+  test('RT-3 ARC-14 property (fixed seed): a whole-dollar amount matches its own digits and no other amount', () => {
+    const safe = fc.integer({ min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER })
+    fc.assert(
+      fc.property(safe, safe, (a, b) => {
+        const check = readBackMatches()
+        expect(check({ kind: 'amount', amount: a }, read(String(a)))).toBe(true)
+        expect(check({ kind: 'amount', amount: a }, read(String(a), true))).toBe(false)
+        if (a !== b) expect(check({ kind: 'amount', amount: a }, read(String(b)))).toBe(false)
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+})
+
+describe('F03R round 3 S4: each ALWAYS_EXPORTED entry cites the export finding, not the import one (RT-23, RT-13)', () => {
+  type Entry = { identifier?: unknown; finding?: unknown }
+  function alwaysExported(): Entry[] {
+    const list = (taxprepModule as Record<string, unknown>)['ALWAYS_EXPORTED']
+    expect(Array.isArray(list), 'ALWAYS_EXPORTED is not exported from taxprep.ts as a list').toBe(true)
+    return Array.isArray(list) ? (list as Entry[]) : []
+  }
+
+  test('RT-23 every ALWAYS_EXPORTED finding cites the "entered" export finding (FINDINGS.md section 4, item 9)', () => {
+    const list = alwaysExported()
+    expect(list).toHaveLength(8)
+    for (const e of list) {
+      const finding = String(e.finding)
+      expect(finding, String(e.identifier)).toContain('FINDINGS.md')
+      expect(finding, String(e.identifier)).toMatch(/\bentered\b/)
+      expect(finding, String(e.identifier)).toMatch(/\bitem 9\b/)
+    }
+  })
+
+  test('RT-23 RT-13 planted fault: no finding string is shared by ALWAYS_EXPORTED and IGNORED_ON_IMPORT (two lists, two findings)', () => {
+    const importFindings = new Set(IGNORED_ON_IMPORT.map((e) => e.finding))
+    const shared = alwaysExported()
+      .filter((e) => importFindings.has(String(e.finding)))
+      .map((e) => String(e.identifier))
+    expect(shared, `entries citing the import finding: ${shared.join(', ')}`).toEqual([])
+  })
+
+  test('RT-23 RT-13 the four cells on both lists (Ident120, Ident121, Ident311, Ident492) carry a different finding on each', () => {
+    const exported = new Map(alwaysExported().map((e) => [String(e.identifier), String(e.finding)]))
+    for (const e of IGNORED_ON_IMPORT) {
+      const f = exported.get(e.identifier)
+      expect(f, `${e.identifier} is not in ALWAYS_EXPORTED`).toBeDefined()
+      expect(f, e.identifier).not.toBe(e.finding)
+    }
   })
 })

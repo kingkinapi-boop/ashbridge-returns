@@ -43,6 +43,51 @@ export const IGNORED_ON_IMPORT: readonly {
   },
 ]
 
+/** The creation and contact cells Taxprep's "entered" export lists even when empty (RT-23), each with its finding. */
+export const ALWAYS_EXPORTED: readonly {
+  readonly identifier: string
+  readonly finding: string
+}[] = [
+  {
+    identifier: 'IDENT.Ident120',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the year-start cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident121',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the year-end cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident311',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the contact-synchronised name cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident492',
+    finding: 'FINDINGS.md, filters ("entered", item 9): the cell is listed in the "entered" export even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident230',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the language cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident451',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the client code cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IFirm.ContactPartner',
+    finding: 'FINDINGS.md, filters ("entered", item 9): the contact partner cell is listed even when empty',
+  },
+  {
+    identifier: 'IFirm.ContactID',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9; day 5): IFirm.ContactID is in every "entered" export since day 5',
+  },
+]
+
 /** The six cell classes of RT-14. */
 export const CELL_CLASSES = ['traced', 'overridden', 'dropped', 'rolled-forward', 'orphan', 'calculated'] as const
 export type CellClass = (typeof CELL_CLASSES)[number]
@@ -181,12 +226,16 @@ export type TaxprepFault = {
 
 const WRONG_SEPARATORS = new Set(['\t', ';', ' '])
 
-function classifyValue(
-  raw: string,
-): { ok: true; value: CellValue; apostrophe: boolean } | { ok: false; code: TaxprepFaultCode; reason: string } {
+type ClassifyOk = { ok: true; value: CellValue; apostrophe: boolean }
+
+function classifyValue(raw: string): ClassifyOk | { ok: false; code: TaxprepFaultCode; reason: string } {
   const shown = JSON.stringify(decode1252(raw))
   if (raw === '' || raw === ' ') return { ok: true, value: { kind: 'clear' }, apostrophe: false }
-  if (raw.includes("'") && /^-?\d+$/.test(raw.replace(/'/g, ''))) {
+  if (
+    raw.startsWith("'") ||
+    raw.startsWith("-'") ||
+    (raw.includes("'") && /^-?[\d.,]*\d[\d.,]*$/.test(raw.replace(/'/g, '')))
+  ) {
     if (/^'-[1-9]\d*$/.test(raw)) {
       return {
         ok: true,
@@ -504,8 +553,38 @@ function validDate(s: string): boolean {
   return !Number.isNaN(t.getTime()) && t.toISOString().slice(0, 10) === s
 }
 
-/** A value to its cell text (as a latin1 string), or a Refusal. */
+/** A value to its cell text (as a latin1 string), or a Refusal. Every text is re-read through the parser's classifyValue. */
 function formatValue(v: WriteValue): string {
+  const written = formatKind(v)
+  const back = classifyValue(written)
+  if (!back.ok) throw new Refusal(`the value would be refused on reading: ${back.reason}`)
+  // Stryker disable next-line ConditionalExpression: defence in depth; formatKind's own output always reads back equal, so no input reaches it
+  if (!readBackMatches(v, back))
+    // Stryker disable next-line StringLiteral,CallExpression,ObjectLiteral: same unreachable refusal
+    throw new Refusal('the value would be read back as something other than what was given')
+  return written
+}
+
+/** @internal Whether what the parser read back is what the writer was given (-0 matches 0; rates compare as numbers). */
+export function readBackMatches(v: WriteValue, back: ClassifyOk): boolean {
+  if (back.apostrophe) return false
+  if (v.kind === 'clear') return back.value.kind === 'clear'
+  const { text } = back.value as { text?: string }
+  switch (v.kind) {
+    case 'amount':
+      return text === String(v.amount)
+    case 'rate':
+      return Number(text) === Number(v.rate.toFixed(4))
+    case 'date':
+      return text === v.date
+    case 'yesNo':
+      return text === (v.yes ? 'Y' : 'N')
+    case 'text':
+      return text === v.text
+  }
+}
+
+function formatKind(v: WriteValue): string {
   switch (v.kind) {
     case 'clear':
       return ''
@@ -540,7 +619,7 @@ function formatValue(v: WriteValue): string {
 const quote = (s: string): string => `"${s.replace(/"/g, '""')}"`
 
 /**
- * The bytes of a Taxprep file. 'import' refuses the cells Taxprep ignores on import (RT-13); 'export' writes the shape
+ * The bytes of a Taxprep file. @writes parseTaxprepCsv. 'import' refuses the cells Taxprep ignores on import (RT-13); 'export' writes the shape
  * Taxprep's export writes (for the simulator) and allows them. A clear is written only from an explicit `clear` value.
  */
 export function writeTaxprepCsv(
@@ -566,6 +645,7 @@ export function writeTaxprepCsv(
   file.rows.forEach((row, index) => {
     try {
       const identifier = row.id.text
+      if (!parseCellId(identifier).ok) throw new Refusal(`${JSON.stringify(identifier)} is not a valid cell identifier`)
       if (options.purpose === 'import' && ignored.has(identifier)) {
         throw new Refusal(`${identifier} is skipped by Taxprep on import, so no row may be written for it`)
       }
