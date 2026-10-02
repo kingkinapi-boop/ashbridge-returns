@@ -1,11 +1,10 @@
 {
  "card": "TH",
  "role": "build",
- "round": 3,
+ "round": 4,
  "spec": "f1c8095",
  "worker": "cloud-9d2580",
- "state": "released",
- "at": "2026-10-02T00:58:54.315Z",
- "mode": "turbo",
- "note": "26 of 27 pass; remaining fail needs spec: add reference to R1 SKIP_DIRS per A287 (builder cannot edit test). See reports/TH-build.md"
+ "state": "working",
+ "at": "2026-10-02T00:59:00.427Z",
+ "mode": "turbo"
 }
