@@ -2,7 +2,10 @@
  "card": "DG2",
  "role": "spec",
  "worker": "cloud-1452fe",
- "state": "working",
- "at": "2026-10-02T09:45:37.539Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T09:48:14.108Z",
+ "mode": "turbo",
+ "note": "7 failing tests, 1 retired (R20 core no-targets case moved to non-core DGP)",
+ "commit": "e480b619108c26e341d15d1c942dfdd2473cccfc",
+ "validated": "6d1efdf"
 }
