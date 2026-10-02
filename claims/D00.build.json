@@ -4,8 +4,8 @@
  "round": 7,
  "spec": "82aeffe",
  "worker": "cloud-055342",
- "state": "reported",
- "at": "2026-10-02T09:10:24.790Z",
+ "state": "reopened",
+ "at": "2026-10-02T10:06:48.396Z",
  "mode": "turbo",
- "note": "15 of 15 acceptance tests pass"
+ "note": "deps landed (DG, F03R); spec current"
 }
