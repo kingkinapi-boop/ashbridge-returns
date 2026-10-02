@@ -1,12 +1,9 @@
 {
  "card": "BL0",
  "role": "spec",
- "worker": "cloud-76f46b",
- "state": "reported",
- "at": "2026-10-02T13:39:10.613Z",
- "mode": "turbo",
- "beat": "2026-10-02T13:29:38.680Z",
- "note": "18 tests (12 fail by name); stub run green; based on F04+F01",
- "commit": "428bad0",
- "validated": "1c1da376afb6c94edb7e389241b2cf79edca2541"
+ "note": "toolchain refit",
+ "worker": "cloud-1d0d85",
+ "state": "working",
+ "at": "2026-10-02T16:53:15.118Z",
+ "mode": "turbo"
 }
