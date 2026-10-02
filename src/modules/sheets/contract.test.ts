@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { CellPointerSchema, SheetResultSchema, cellValueMatches, columnLetter, type SheetResult } from './sheets'
+import { CellPointerSchema, SheetResultSchema, cellValueMatches, columnLetter, type SheetResult } from '../../contracts/sheets'
 
 const FP = 'a'.repeat(64)
 const cell = (row: number, letter: string, text: string, type: 'text' | 'empty' | 'formula' = 'text') => ({
