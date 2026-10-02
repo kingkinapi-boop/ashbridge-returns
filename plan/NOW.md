@@ -13,11 +13,10 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| A06 round 2 spec (reopened again 19:50Z: the first taker did a refit) | queue | cloud | 2 Oct 19:50Z | claude/A06 |
-| G12 build round 2 (restore edited spec test), G14 build round 2 (missing builder test) | queue | cloud | 2 Oct 19:50Z | claude/<card> |
-| A07C build, G15 build, G16 build, SC spec (refit) | cloud runs | cloud | 2 Oct 19:30Z | claude/<card> |
-| Ready to board (check PASS): G13; A03 build reported (check next; its spec said R46 to R48 not covered) | Lead | | | |
-| W00c spec | queue | cloud | 2 Oct 19:20Z | claude/W00c |
+| Train 001b94c: G12, G13, G14, G15, G16 | train check, 1 cloud run | cloud | 2 Oct 20:15Z | claude/train |
+| A06 round 2 spec (directive now at the top of its card; the queue drops reopen notes, CQ2 item 5) | queue | cloud | 2 Oct 20:12Z | claude/A06 |
+| A07C findings review (round 2 check FAIL, family's repeated failure: split or park) | Opus helper, local | laptop | 2 Oct 20:12Z | reports/A07C-findings.md |
+| A03 check; G17 build; W00c spec | queue | cloud | 2 Oct 20:15Z | claude/<card> |
 
 ## Next, in order
 
