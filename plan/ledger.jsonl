@@ -138,3 +138,4 @@
 {"ts":"2026-10-02T00:25:19.878Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T00:25:20.547Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T00:51:49.267Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Design fix round 2: source viewer","allowed":true}
+{"ts":"2026-10-02T00:56:50.007Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Findings review E03 and F03","allowed":true}
