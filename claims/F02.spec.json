@@ -2,8 +2,11 @@
  "card": "F02",
  "role": "spec",
  "worker": "cloud-d42547",
- "state": "working",
- "at": "2026-10-02T11:00:13.039Z",
+ "state": "reported",
+ "at": "2026-10-02T11:17:15.057Z",
  "mode": "turbo",
- "beat": "2026-10-02T11:02:25.900Z"
+ "beat": "2026-10-02T11:02:25.900Z",
+ "note": "92 tests (25 unit, 67 db); balance-due amber, see reports/F02-spec.md",
+ "commit": "40bebf3",
+ "validated": "bb88e2e"
 }
