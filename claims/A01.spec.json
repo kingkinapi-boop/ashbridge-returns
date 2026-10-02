@@ -1,9 +1,11 @@
 {
  "card": "A01",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: main merged, typecheck, lint, 1383 tests green; no assertion changed; was e91389f, now f2e97da",
  "worker": "cloud-47e70d",
- "state": "working",
- "at": "2026-10-02T12:47:45.297Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T12:51:30.743Z",
+ "mode": "turbo",
+ "commit": "dce0009",
+ "validated": "f2e97da"
 }
