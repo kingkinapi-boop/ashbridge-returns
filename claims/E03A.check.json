@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T14:39:25.305Z",
  "worker": "cloud-575f8d",
- "state": "working",
- "at": "2026-10-02T14:49:21.368Z",
- "mode": "normal"
+ "state": "reported",
+ "at": "2026-10-02T14:51:49.688Z",
+ "mode": "normal",
+ "note": "PASS (Opus read refused by budget hook; Sonnet read)"
 }
