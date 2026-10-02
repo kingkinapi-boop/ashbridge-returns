@@ -48,7 +48,25 @@ export const ALWAYS_EXPORTED: readonly {
   readonly identifier: string
   readonly finding: string
 }[] = [
-  ...IGNORED_ON_IMPORT,
+  {
+    identifier: 'IDENT.Ident120',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the year-start cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident121',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the year-end cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident311',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the contact-synchronised name cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident492',
+    finding: 'FINDINGS.md, filters ("entered", item 9): the cell is listed in the "entered" export even when empty',
+  },
   {
     identifier: 'IDENT.Ident230',
     finding:
@@ -208,12 +226,16 @@ export type TaxprepFault = {
 
 const WRONG_SEPARATORS = new Set(['\t', ';', ' '])
 
-function classifyValue(
-  raw: string,
-): { ok: true; value: CellValue; apostrophe: boolean } | { ok: false; code: TaxprepFaultCode; reason: string } {
+type ClassifyOk = { ok: true; value: CellValue; apostrophe: boolean }
+
+function classifyValue(raw: string): ClassifyOk | { ok: false; code: TaxprepFaultCode; reason: string } {
   const shown = JSON.stringify(decode1252(raw))
   if (raw === '' || raw === ' ') return { ok: true, value: { kind: 'clear' }, apostrophe: false }
-  if (raw.startsWith("'") || raw.startsWith("-'")) {
+  if (
+    raw.startsWith("'") ||
+    raw.startsWith("-'") ||
+    (raw.includes("'") && /^-?[\d.,]*\d[\d.,]*$/.test(raw.replace(/'/g, '')))
+  ) {
     if (/^'-[1-9]\d*$/.test(raw)) {
       return {
         ok: true,
@@ -536,7 +558,30 @@ function formatValue(v: WriteValue): string {
   const written = formatKind(v)
   const back = classifyValue(written)
   if (!back.ok) throw new Refusal(`the value would be refused on reading: ${back.reason}`)
+  // Stryker disable next-line ConditionalExpression: defence in depth; formatKind's own output always reads back equal, so no input reaches it
+  if (!readBackMatches(v, back))
+    // Stryker disable next-line StringLiteral,CallExpression,ObjectLiteral: same unreachable refusal
+    throw new Refusal('the value would be read back as something other than what was given')
   return written
+}
+
+/** @internal Whether what the parser read back is what the writer was given (-0 matches 0; rates compare as numbers). */
+export function readBackMatches(v: WriteValue, back: ClassifyOk): boolean {
+  if (back.apostrophe) return false
+  if (v.kind === 'clear') return back.value.kind === 'clear'
+  const { text } = back.value as { text?: string }
+  switch (v.kind) {
+    case 'amount':
+      return text === String(v.amount)
+    case 'rate':
+      return Number(text) === Number(v.rate.toFixed(4))
+    case 'date':
+      return text === v.date
+    case 'yesNo':
+      return text === (v.yes ? 'Y' : 'N')
+    case 'text':
+      return text === v.text
+  }
 }
 
 function formatKind(v: WriteValue): string {
