@@ -1,11 +1,10 @@
 {
  "card": "TH",
  "role": "build",
- "round": 5,
+ "round": 6,
  "spec": "f1c8095",
  "worker": "cloud-e1c409",
- "state": "released",
- "at": "2026-10-02T01:03:14.991Z",
- "mode": "turbo",
- "note": "build done; waits on spec refit: add reference to SKIP_DIRS (A287)"
+ "state": "working",
+ "at": "2026-10-02T01:03:17.422Z",
+ "mode": "turbo"
 }
