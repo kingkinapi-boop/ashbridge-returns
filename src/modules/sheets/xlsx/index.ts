@@ -45,16 +45,36 @@ type Cached = NonNullable<Cell['cached']>
 /** The cent amount in plain digits: String below 1e21, every digit from there up, never exponent form. */
 const plain = (n: number): string => (Math.abs(n) < 1e21 ? String(n) : BigInt(n).toString())
 
-/** A stored double as text: a value within 1e-9 of a whole cent is that cent amount, anything else its shortest round-trip text. */
+const FLOAT_VIEW = new DataView(new ArrayBuffer(8))
+
+/** One unit in the last place of x (the gap to the next double of larger magnitude). */
+export function ulp(x: number): number {
+  const a = Math.abs(x)
+  FLOAT_VIEW.setFloat64(0, a)
+  FLOAT_VIEW.setBigInt64(0, FLOAT_VIEW.getBigInt64(0) + 1n)
+  return FLOAT_VIEW.getFloat64(0) - a
+}
+
+/** The snap band never reaches half a cent. */
+const MAX_BAND = 0.0025
+const ULPS_IN_BAND = 4
+const FLOOR_BAND = 1e-9
+
+/** A stored double as text: a value within 4 ulps (at least 1e-9, under half a cent) of a whole cent is that cent amount, anything else its shortest round-trip text. */
 export function numberText(x: number): string {
   const cents = Number.isInteger(x) ? x : Math.round(x * 100) / 100
-  return Math.abs(x - cents) < 1e-9 ? plain(cents) : String(x)
+  const gap = Math.abs(x - cents)
+  const ulpBand = Math.min(MAX_BAND, ULPS_IN_BAND * ulp(Math.max(Math.abs(x), Math.abs(cents))))
+  return gap < FLOOR_BAND || gap <= ulpBand ? plain(cents) : String(x)
 }
+
+/** The error text for a number cell that is not a finite number (the library drops the stored text, so one code stands for all). */
+const NOT_A_NUMBER = '#NUM!'
 
 /** One typed switch from a library value to text (never the library's own display text). */
 export function typed(value: unknown, date1904: boolean): (Cached & { type: Exclude<Cached['type'], 'none'> }) | undefined {
   if (value === null || value === undefined) return undefined
-  if (typeof value === 'number') return { type: 'number', text: numberText(value) }
+  if (typeof value === 'number') return Number.isFinite(value) ? { type: 'number', text: numberText(value) } : { type: 'error', text: NOT_A_NUMBER }
   if (typeof value === 'boolean') return { type: 'boolean', text: value ? 'TRUE' : 'FALSE' }
   if (typeof value === 'string') return { type: 'text', text: value }
   if (value instanceof Date) return { type: 'date', text: dateText(value, date1904) }
@@ -62,6 +82,9 @@ export function typed(value: unknown, date1904: boolean): (Cached & { type: Excl
   if (typeof rich.error === 'string') return { type: 'error', text: rich.error }
   if (Array.isArray(rich.richText)) return { type: 'text', text: rich.richText.map((r) => r.text).join('') }
   if (typeof rich.text === 'string') return { type: 'text', text: rich.text }
+  // A hyperlink's text may itself be rich text.
+  const inner = rich.text as { richText?: { text: string }[] } | undefined
+  if (Array.isArray(inner?.richText)) return { type: 'text', text: inner.richText.map((r) => r.text).join('') }
   return undefined
 }
 
@@ -122,13 +145,20 @@ function mergedRanges(sheet: ExcelJS.Worksheet): Map<string, string> {
   return rangeOf
 }
 
+/** The one refusal for a container that is not a workbook: never a library message, a file name or a link. */
+export const NOT_A_WORKBOOK = 'not a workbook (not a readable .xlsx file)'
+
 export async function readXlsx(bytes: Uint8Array): Promise<XlsxRead> {
   const workbook = new ExcelJS.Workbook()
+  // A zip that fails to load, or loads but holds no sheet (a .docx, a plain zip), is not a workbook; every real workbook has at least one.
+  let isWorkbook = false
   try {
     await workbook.xlsx.load(Buffer.from(bytes) as unknown as ExcelJS.Buffer)
-  } catch (error) {
-    return { ok: false, reason: `not a readable .xlsx file: ${(error as Error).message}` }
+    isWorkbook = workbook.worksheets.length > 0
+  } catch {
+    // Stays false: the reason below carries no library message.
   }
+  if (!isWorkbook) return { ok: false, reason: NOT_A_WORKBOOK }
   const date1904 = workbook.properties.date1904
   const sheets: XlsxSheet[] = workbook.worksheets.map((sheet) => {
     const rangeOf = mergedRanges(sheet)
