@@ -4,9 +4,9 @@
  "round": 5,
  "spec": "34417a5",
  "worker": "cloud-a4e82b",
- "state": "reported",
- "at": "2026-10-02T00:41:05.484Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T00:48:07.637Z",
  "mode": "turbo",
  "beat": "2026-10-02T00:40:50.900Z",
- "note": "98 of 98 acceptance tests pass"
+ "note": "FAIL: no @mutate marker on taxprep.ts, scope flags ledger, stryker 75.25 with 167 survivors, see reports/F03-check.md"
 }

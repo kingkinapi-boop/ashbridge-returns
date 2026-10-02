@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T00:41:05.484Z",
  "worker": "cloud-4ab7b4",
- "state": "working",
- "at": "2026-10-02T00:43:39.205Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T00:48:07.637Z",
+ "mode": "turbo",
+ "note": "FAIL: no @mutate marker on taxprep.ts, scope flags ledger, stryker 75.25 with 167 survivors, see reports/F03-check.md"
 }
