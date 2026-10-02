@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "d082015",
  "worker": "cloud-a33104",
- "state": "hold-findings",
- "at": "2026-10-01T23:26:08.481Z",
+ "state": "reopened",
+ "at": "2026-10-02T06:40:38.795Z",
  "mode": "turbo",
  "note": "FAIL: design/map tests not in vitest include or lint project, see reports/D01-check.md"
 }
