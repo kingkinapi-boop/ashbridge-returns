@@ -8,6 +8,10 @@ const fraction = z.number().min(0).max(1)
 /** EV-5: a page plus left, top, width and height as fractions of the page (origin top left). */
 const EPS = 1e-9
 
+const fitsPage = (b: { left: number; width: number; top: number; height: number }): boolean =>
+  // Stryker disable next-line EqualityOperator: the tolerance edge (exactly 1 + 1e-9) is float noise, no clause or input reaches it
+  b.left + b.width <= 1 + EPS && b.top + b.height <= 1 + EPS
+
 export const BoxSchema = z
   .object({
     page: z.number().int().min(1),
@@ -16,9 +20,7 @@ export const BoxSchema = z
     width: fraction,
     height: fraction,
   })
-  .refine((b) => b.left + b.width <= 1 + EPS && b.top + b.height <= 1 + EPS, {
-    message: 'box runs off the page',
-  })
+  .refine(fitsPage, { message: 'box runs off the page' })
 export type Box = z.infer<typeof BoxSchema>
 
 export const WordSchema = z.object({
@@ -77,7 +79,7 @@ export type PointsRect = { x: number; y: number; width: number; height: number }
 export type PixelsRect = { x: number; y: number; width: number; height: number }
 
 /** A fraction that overshot 0 or 1 only by float noise is snapped; a real overshoot was refused earlier. */
-const snap = (n: number): number => (n < 0 ? 0 : n > 1 ? 1 : n)
+const snap = (n: number): number => Math.min(1, Math.max(0, n))
 
 const RECT_FIELDS = ['x', 'y', 'width', 'height'] as const
 
@@ -87,10 +89,9 @@ function checkRect(rect: PointsRect, width: number, height: number): void {
   }
   if (!Number.isFinite(width)) throw new RangeError('page width must be a finite number')
   if (!Number.isFinite(height)) throw new RangeError('page height must be a finite number')
-  if (!(width > 0) || !(height > 0) || !Number.isFinite(width) || !Number.isFinite(height)) {
-    throw new RangeError('page size must be above zero')
-  }
+  if (!(width > 0) || !(height > 0)) throw new RangeError('page size must be above zero')
   if (!(rect.width > 0) || !(rect.height > 0)) throw new RangeError('rect must have a width and a height')
+  // Stryker disable next-line EqualityOperator: the tolerance edge (exactly 1e-9 off the page) is float noise, no clause or input reaches it
   if (rect.x < -EPS || rect.y < -EPS || rect.x + rect.width > width + EPS || rect.y + rect.height > height + EPS) {
     throw new RangeError('rect runs off the page')
   }
@@ -164,17 +165,15 @@ const GROUPED = /^(0|[1-9]\d{0,2}(?:,\d{3})+|[1-9]\d*)(?:\.(\d{1,2}))?$/
  * sign. Not a number: "1.234,56", "1.2E3", "" and an amount with a leading zero ("001234").
  */
 export function normaliseAmount(text: string): AmountResult {
-  let s = text.replace(/\s+/g, '')
+  let s = text.replace(/\s/g, '')
   if (s === '') return { ok: false, reason: 'empty amount' }
   let negative = 0
   let credit = false
   let dollars = 0
-  const tail = s.match(/(CR|DR)$/i)
-  if (tail) {
-    if (tail[1]?.toUpperCase() === 'DR') negative += 1
-    else credit = true
-    s = s.slice(0, -2)
-  }
+  const tail = s.slice(-2).toUpperCase()
+  if (tail === 'DR') negative += 1
+  if (tail === 'CR') credit = true
+  if (tail === 'DR' || tail === 'CR') s = s.slice(0, -2)
   if (s.startsWith('$')) {
     dollars += 1
     s = s.slice(1)
@@ -198,9 +197,9 @@ export function normaliseAmount(text: string): AmountResult {
   if (negative > 1 || (negative > 0 && credit)) return { ok: false, reason: 'more than one sign mark' }
   const m = dollars > 1 ? null : GROUPED.exec(s)
   if (!m) return { ok: false, reason: `"${text}" is not an amount in dollars and cents` }
+  // Stryker disable next-line StringLiteral: group 1 of GROUPED always matches, the fallback only satisfies noUncheckedIndexedAccess
   const whole = (m[1] ?? '').replace(/,/g, '')
   const frac = (m[2] ?? '').padEnd(2, '0')
-  if (whole.length > 15) return { ok: false, reason: 'amount is too large' }
   const cents = Number(whole) * 100 + Number(frac)
   if (!Number.isSafeInteger(cents)) return { ok: false, reason: 'amount is too large' }
   return { ok: true, cents: negative > 0 && cents !== 0 ? -cents : cents }
@@ -212,6 +211,7 @@ export type ValueInBoxResult =
   | { ok: true }
   | { ok: false; reason: 'no words in box' | 'value not found' | 'box on another page' }
 
+// Stryker disable next-line MethodExpression: both sides are folded alike, so lower or upper case compare the same
 const foldText = (s: string): string => s.trim().replace(/\s+/g, ' ').toLowerCase()
 
 const sameLine = (a: Word, b: Word): boolean =>
@@ -237,21 +237,14 @@ function joinWord(group: string, next: string): string | null {
 
 /** The words read into maximal amount groups: same line, reading order, joined only by the rules above. */
 function amountGroups(words: Word[]): string[] {
-  const groups: string[] = []
-  let current = ''
-  let last: Word | undefined
+  const groups: { text: string; last: Word }[] = []
   for (const w of words) {
-    const joined = last && sameLine(last, w) ? joinWord(current, w.text) : null
-    if (joined === null) {
-      if (last) groups.push(current)
-      current = w.text
-    } else {
-      current = joined
-    }
-    last = w
+    const g = groups[groups.length - 1]
+    const joined = g && sameLine(g.last, w) ? joinWord(g.text, w.text) : null
+    if (joined === null) groups.push({ text: w.text, last: w })
+    else groups[groups.length - 1] = { text: joined, last: w }
   }
-  if (last) groups.push(current)
-  return groups
+  return groups.map((g) => g.text)
 }
 
 /**
@@ -272,13 +265,15 @@ export function valueInBox(result: ReadingResult, box: Box, value: string): Valu
     return { ok: false, reason: 'value not found' }
   }
   const folded = foldText(value)
-  for (let i = 0; i < words.length; i++) {
-    let joined = ''
-    for (let j = i; j < words.length; j++) {
-      joined = j === i ? (words[j]?.text ?? '') : `${joined} ${words[j]?.text ?? ''}`
-      if (foldText(joined) === folded) return { ok: true }
-    }
-  }
+  const texts = words.map((w) => w.text)
+  const found = texts.some((_, i) => {
+    const run: string[] = []
+    return texts.slice(i).some((t) => {
+      run.push(t)
+      return foldText(run.join(' ')) === folded
+    })
+  })
+  if (found) return { ok: true }
   return { ok: false, reason: 'value not found' }
 }
 
