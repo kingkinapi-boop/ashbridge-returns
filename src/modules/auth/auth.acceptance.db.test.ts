@@ -24,12 +24,19 @@
 // - A one-time code is valid for its own 30-second step and one step either side; each step's code is accepted once per user.
 import crypto from 'node:crypto'
 import type { PGlite } from '@electric-sql/pglite'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import type { Clock } from '../../core/clock'
 import { cloneTestDb } from '../../core/db'
 import { createAuth } from './index'
 import { listTestUsers, testCredentials } from './testing'
 import { totp } from './totp'
+
+// Round 2: count calls to node:crypto's scryptSync (a library, not our module) for the equal-work test.
+const scryptCalls = vi.hoisted(() => ({ n: 0 }))
+vi.mock('node:crypto', async (orig) => {
+  const actual = await orig<typeof import('node:crypto')>()
+  return { ...actual, scryptSync: ((...a: Parameters<typeof actual.scryptSync>) => { scryptCalls.n += 1; return actual.scryptSync(...a) }) as typeof actual.scryptSync }
+})
 
 const START = new Date('2026-10-02T10:00:05-04:00').getTime()
 const STEP = 30_000
@@ -581,5 +588,149 @@ describe('A06 events are append-only and the tables are closed (SEC-6, SEC-7)', 
         await w.db.exec('reset role')
       }
     }
+  })
+})
+
+// ---- Round 2 (reports/A06-findings.md): races assert an invariant that holds in every interleaving; clock pinned. ----
+
+const countOf = async (db: PGlite, sql: string, args: unknown[] = []): Promise<number> =>
+  Number((await db.query<{ n: number }>(`select count(*)::int as n from ${sql}`, args)).rows[0]?.n)
+const wrongCodeFor = (id: string, at: number): string => (testCredentials(id).codeAt(new Date(at)) === '000000' ? '000001' : '000000')
+
+describe('A06 round 2: the stand-in is never chosen by silence in production (ARC-6, SEC-11, END-8)', () => {
+  test('ARC-6 in production an unset or blank AUTH_ENGINE is refused naming AUTH_ENGINE, and staff_users stays empty', async () => {
+    for (const env of [{ NODE_ENV: 'production' }, { NODE_ENV: 'production', AUTH_ENGINE: '' }]) {
+      const db = await cloneTestDb()
+      const r = await refusalOf(createAuth({ db, env }))
+      expect(r?.message, JSON.stringify(env)).toMatch(/AUTH_ENGINE/)
+      expect(await countOf(db, 'returns.staff_users'), JSON.stringify(env)).toBe(0)
+    }
+  })
+
+  test('ARC-6 in production AUTH_ENGINE=testusers set by name works, and outside production unset still means testusers', async () => {
+    const w = await world({ NODE_ENV: 'production', AUTH_ENGINE: 'testusers' })
+    expect(w.auth.isLive).toBe(false)
+    expect((await signIn(w, userWith('preparer'))).ok).toBe(true)
+    for (const nodeEnv of ['development', 'test', undefined]) {
+      const x = await world({ NODE_ENV: nodeEnv })
+      expect((await signIn(x, userWith('ops'))).ok, String(nodeEnv)).toBe(true)
+    }
+  })
+
+  test('SEC-11 production with AUTH_ENGINE=live is still refused with "live sign-in is off until go-live"', async () => {
+    const db = await cloneTestDb()
+    expect((await refusalOf(createAuth({ db, env: { NODE_ENV: 'production', AUTH_ENGINE: 'live' } })))?.message).toMatch(/live sign-in is off until go-live/)
+  })
+
+  test('SEC-11 the testusers engine refuses to start, and inserts no row, on a database holding a real (is_test = false) staff user', async () => {
+    const db = await cloneTestDb()
+    await db.query(`insert into returns.staff_users (id, display_name, roles, is_test) values ('real-person', 'Jordan Real', '{owner}', false)`)
+    const r = await refusalOf(createAuth({ db, env: {} }))
+    expect(r?.message).toBeDefined()
+    expect(r?.message).not.toContain('Jordan Real')
+    expect(await countOf(db, 'returns.staff_users')).toBe(1)
+  })
+})
+
+describe('A06 round 2: lock-out and one-time codes hold under parallel calls (SEC-1)', () => {
+  const FIVE = 5
+
+  test('SEC-1 8 parallel wrong passwords for one user: at most 5 say "wrong password", the rest "locked", and the right sign-in waits 15 minutes', async () => {
+    const w = await world()
+    const id = userWith('preparer')
+    const results = await Promise.all(Array.from({ length: 8 }, (_, i) => w.auth.startSignIn(id, `PLANTED-wrong-${String(i)}`)))
+    expect(results.every((r) => JSON.stringify(r) === JSON.stringify(FAILED))).toBe(true)
+    const mine = (await refusals(w.db)).filter((e) => e['user_id'] === id)
+    expect(mine).toHaveLength(8)
+    const wrong = mine.filter((e) => e['reason'] === 'wrong password').length
+    expect(wrong).toBeLessThanOrEqual(FIVE)
+    expect(mine.filter((e) => e['reason'] === 'locked')).toHaveLength(8 - wrong)
+    expect(wrong).toBeGreaterThanOrEqual(1)
+    const lockedAt = w.now()
+    w.at(lockedAt + 15 * MIN - 1000)
+    expect(await signIn(w, id)).toEqual(FAILED)
+    w.at(lockedAt + 15 * MIN + 1000)
+    expect((await signIn(w, id)).ok).toBe(true)
+  })
+
+  test('SEC-1 8 parallel wrong codes on 8 challenges: at most 5 say "wrong code", the rest "locked", and the right sign-in waits 15 minutes', async () => {
+    const w = await world()
+    const id = userWith('ops')
+    const c = testCredentials(id)
+    const starts = await Promise.all(Array.from({ length: 8 }, () => w.auth.startSignIn(id, c.password)))
+    const challenges = starts.map((s) => { if (!s.ok) throw new Error('sign-in failed'); return s.challenge })
+    const bad = wrongCodeFor(id, w.now())
+    const results = await Promise.all(challenges.map((ch) => w.auth.finishSignIn(ch, bad)))
+    expect(results.every((r) => JSON.stringify(r) === JSON.stringify(FAILED))).toBe(true)
+    const mine = (await refusals(w.db)).filter((e) => e['user_id'] === id)
+    const wrong = mine.filter((e) => e['reason'] === 'wrong code').length
+    expect(wrong).toBeLessThanOrEqual(FIVE)
+    expect(wrong).toBeGreaterThanOrEqual(1)
+    expect(mine.filter((e) => e['reason'] === 'locked')).toHaveLength(8 - wrong)
+    const lockedAt = w.now()
+    w.at(lockedAt + 15 * MIN - 1000)
+    expect(await signIn(w, id)).toEqual(FAILED)
+    w.at(lockedAt + 15 * MIN + 1000)
+    expect((await signIn(w, id)).ok).toBe(true)
+  })
+
+  test('SEC-1 the same code on two challenges at once: exactly one session, one "signed in", one "code reused"; a second success for the step is refused by the database', async () => {
+    const w = await world()
+    const id = userWith('cpa')
+    const c = testCredentials(id)
+    const [a, b] = await Promise.all([w.auth.startSignIn(id, c.password), w.auth.startSignIn(id, c.password)])
+    if (!a.ok || !b.ok) throw new Error('sign-in failed')
+    const code = c.codeAt(new Date(w.now()))
+    const [x, y] = await Promise.all([w.auth.finishSignIn(a.challenge, code), w.auth.finishSignIn(b.challenge, code)])
+    expect([x.ok, y.ok].filter(Boolean)).toHaveLength(1)
+    expect(await rows(w.db, 'staff_sessions')).toHaveLength(1)
+    const ev = (await events(w.db)).filter((e) => e['user_id'] === id)
+    expect(ev.filter((e) => e['reason'] === 'signed in')).toHaveLength(1)
+    expect(ev.filter((e) => e['reason'] === 'code reused')).toHaveLength(1)
+    const step = ev.find((e) => e['reason'] === 'signed in')?.['code_step']
+    const dup = await refusalOf(
+      w.db.query(`insert into returns.sign_in_events (id, user_id, outcome, reason, code_step) values ('dup-success', $1, 'success', 'signed in', $2)`, [id, step]),
+    )
+    expect(dup?.code).toBe('23505')
+  })
+})
+
+describe('A06 round 2: every refusal costs the same work, and typed text is never kept (SEC-1, SEC-10)', () => {
+  test('SEC-1 an unknown user, a locked user, a non-test user and a wrong password each cost exactly one scrypt call', async () => {
+    const w = await world()
+    await w.db.query(`insert into returns.staff_users (id, display_name, roles) values ('real-person', 'Jordan Real', '{preparer}')`)
+    const locked = userWith('ops')
+    for (let i = 0; i < 5; i++) await w.auth.startSignIn(locked, `PLANTED-wrong-${String(i)}`)
+    const cases: Array<[string, string, string]> = [
+      ['unknown user', 'nobody-here', 'x'],
+      ['locked user', locked, testCredentials(locked).password],
+      ['non-test user', 'real-person', 'x'],
+      ['wrong password', userWith('preparer'), 'PLANTED-wrong-0'],
+    ]
+    for (const [, id, pw] of cases) await w.auth.startSignIn(id, pw) // warm any per-user cache
+    for (const [name, id, pw] of cases) {
+      scryptCalls.n = 0
+      expect(await w.auth.startSignIn(id, pw), name).toEqual(FAILED)
+      expect(scryptCalls.n, name).toBe(1)
+    }
+  })
+
+  test('SEC-10 text typed into the user box is in no log line and no column of any auth table; the unknown-user event has a null user_id', async () => {
+    const w = await world()
+    const planted = 'PLANTED-pw-in-id-box'
+    expect(await w.auth.startSignIn(planted, 'x')).toEqual(FAILED)
+    const blob = [w.lines.join('\n'), ...(await Promise.all(['staff_users', 'staff_sessions', 'sign_in_events'].map(async (t) => JSON.stringify(await rows(w.db, t)))))].join('\n')
+    expect(blob).not.toContain(planted)
+    const ev = await refusals(w.db)
+    expect(ev).toHaveLength(1)
+    expect(ev[0]?.['user_id']).toBeNull()
+  })
+
+  test('SEC-10 the database refuses a sign-in event for a user id that is not a staff user (foreign key)', async () => {
+    const w = await world()
+    const r = await refusalOf(
+      w.db.query(`insert into returns.sign_in_events (id, user_id, outcome, reason) values ('ghost', 'PLANTED-not-a-user', 'refused', 'unknown user')`),
+    )
+    expect(r?.code).toBe('23503')
   })
 })
