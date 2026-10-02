@@ -130,3 +130,5 @@
 {"ts":"2026-10-01T23:44:34.764Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T23:44:35.486Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T23:49:30.650Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card changes from W14/D01 findings","allowed":true}
+{"ts":"2026-10-01T23:48:57.987Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Adversarial read of F05 diff","allowed":true}
+{"ts":"2026-10-01T23:55:11.012Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Adversarial read of F09 diff","allowed":true}
