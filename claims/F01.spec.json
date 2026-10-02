@@ -1,10 +1,12 @@
 {
  "card": "F01",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit 2, nothing flagged; typecheck, lint, unit 981, db 168 green",
  "worker": "cloud-b4ebfa",
- "state": "working",
- "at": "2026-10-02T11:11:51.679Z",
+ "state": "reported",
+ "at": "2026-10-02T11:17:44.182Z",
  "mode": "turbo",
- "beat": "2026-10-02T11:13:48.048Z"
+ "beat": "2026-10-02T11:13:48.048Z",
+ "commit": "559610587f3a723270f90a98f532b4e1fdab375a",
+ "validated": "8e8fba1c6253c09a67ca3d4a857d650cb352a660"
 }
