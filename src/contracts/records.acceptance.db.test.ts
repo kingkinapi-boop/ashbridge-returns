@@ -28,7 +28,24 @@
 // - returns.state is one of blueprint 02's states; changing it needs a state_events row for that
 //   return with from_state = old state and to_state = new state (FLOW-1).
 // - Append-only (trigger, message contains "append-only"): events, state_events, versions,
-//   version_cells, approvals, entry_lines.
+//   version_cells, approvals, entry_lines, judgment_inputs; TRUNCATE is refused on each too.
+//
+// Round 2 (checks 13 to 19, findings review F01-F09; amber choices are named in reports/F01-spec-r2.md):
+// - facts pointer columns: a document pointer is source_document_id with exactly one of
+//   (source_page and source_box) or (source_sheet, source_row integer, source_column); a QBO pointer
+//   is source_qbo_snapshot_id with source_qbo_account_id (source_qbo_txn_id where there is one).
+//   Page, box, sheet, row and column only with a document; QBO account and transaction only with
+//   a snapshot. source_box is F09's Box without the page: { left, top, width, height }, fractions
+//   0 to 1, left + width and top + height at most 1 (SQL check and the zod schema alike).
+// - state_events.seq bigint generated always as identity orders events; returns.current_state_event_id
+//   names the event that licensed the latest move (set by the move, moveTo below sets only state).
+//   A return is inserted at intake only; later states are reached through events.
+// - actor, reason (events, state_events, judgment_inputs) and author (judgment_inputs) are non-blank.
+// - a version stamp is a non-empty object whose values are non-blank strings or numbers.
+// - adjusting_entries and judgment_inputs carry version_no integer not null (default 1); a new
+//   version of an entry is a new row with the same return, snapshot and transaction.
+// - facts and adjusting_entries refuse in-place UPDATE of value columns (status and explained may
+//   change) and DELETE.
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -61,6 +78,8 @@ import type {
   VersionRecord,
 } from './records'
 import type * as Ids from './ids'
+import { CheckResultRecordSchema, FactRecordSchema, FigureRecordSchema, VersionStampSchema } from './records'
+import { BoxSchema } from './reading'
 
 // ids.ts must exist and name the id kinds; this line fails typecheck until it does.
 export type IdKindsExist = [Ids.ReturnId, Ids.FactId, Ids.FigureId, Ids.DocumentId]
@@ -131,6 +150,8 @@ const AT = '2026-03-15T14:00:00-04:00'
 
 const STAMP = { reader: 'qbo-reader (Test)', reader_version: '0.0.1', mapping_release: 'M-2026.1' }
 const FINGERPRINT = 'sha256:' + 'a'.repeat(64)
+// F09's Box without the page: fractions of the page, origin top left.
+const BOX = { left: 0.62, top: 0.71, width: 0.11, height: 0.02 }
 
 type Row = Record<string, unknown>
 
@@ -201,7 +222,7 @@ function makeWorld(): World {
 
   const returnRow: Partial<ReturnRecord> = {
     id: returnId,
-    entity_name: 'Maple Grove Dental Professional Corporation (Test)',
+    entity_name: 'Quillfeather Sample Widgets Inc. (Test)',
     year_end: '2025-12-31' as unknown as ReturnRecord['year_end'],
     state: 'intake',
   }
@@ -232,7 +253,7 @@ function makeWorld(): World {
     value: '12500.00',
     source_document_id: documentId,
     source_page: 1,
-    source_box: { x0: 400, y0: 610, x1: 470, y1: 622 } as unknown as FactRecord['source_box'],
+    source_box: { ...BOX } as unknown as FactRecord['source_box'],
     origin: 'third_party',
     method: 'ocr',
     status: 'proposed',
@@ -778,6 +799,21 @@ const STATES = [
 function moveTo(db: PGlite, returnId: string, to: string): Promise<unknown> {
   return db.query('update returns.returns set state = $1 where id = $2', [to, returnId])
 }
+// A complete state event (who, when, from, to, why); extra columns override.
+async function stateEvent(db: PGlite, returnId: string, from: string, to: string, over: Row = {}): Promise<string> {
+  const id = typeof over['id'] === 'string' ? over['id'] : tid()
+  await insert(db, 'state_events', {
+    id,
+    return_id: returnId,
+    from_state: from,
+    to_state: to,
+    actor: 'Preparer (Test)',
+    occurred_at: AT,
+    reason: `Moved ${from} to ${to} (Test)`,
+    ...over,
+  })
+  return id
+}
 
 describe('FLOW-1 a return has exactly one state and every change is an event', () => {
   test('FLOW-1 a return with no state is refused', async () => {
@@ -795,9 +831,19 @@ describe('FLOW-1 a return has exactly one state and every change is an event', (
     expect(r.rows[0]?.ty).not.toBe('ARRAY')
   })
 
+  // Round 2 (check 16): a return is inserted at intake only, so every listed state is now accepted
+  // by reaching it through its events, in blueprint 02's order.
   test('FLOW-1 a state outside blueprint 02 is refused; every listed state is accepted', async () => {
     const { db, w } = await freshWorld()
-    for (const s of STATES) await expectAccepted(insert(db, 'returns', { ...w.rows.returns, id: tid(), entity_name: 'Return ' + s + ' (Test)', state: s }))
+    const r = tid()
+    await expectAccepted(insert(db, 'returns', { ...w.rows.returns, id: r, entity_name: 'Return walk (Test)', state: 'intake' }))
+    for (let i = 1; i < STATES.length; i++) {
+      const from = STATES[i - 1] ?? ''
+      const to = STATES[i] ?? ''
+      await expectAccepted(stateEvent(db, r, from, to))
+      await expectAccepted(moveTo(db, r, to))
+      expect(await count(db, 'returns', 'id = $1 and state = $2', [r, to]), to).toBe(1)
+    }
     await expectRefused(insert(db, 'returns', { ...w.rows.returns, id: tid(), entity_name: 'Waiting (Test)', state: 'waiting_on_client' }))
   })
 
@@ -885,4 +931,476 @@ beforeAll(async () => {
 afterAll(async () => {
   await f01Template?.close()
   if (f01Dir) fs.rmSync(f01Dir, { recursive: true, force: true })
+})
+
+// ======================= Round 2: checks 13 to 19 (findings review F01-F09) =======================
+
+const APPEND_ONLY_ALL: readonly Table[] = [...APPEND_ONLY, 'judgment_inputs']
+
+// ---------- 13. SEC-7, EV-1 TRUNCATE ----------
+
+describe('SEC-7 EV-1 TRUNCATE is refused on every append-only table', () => {
+  for (const t of APPEND_ONLY_ALL) {
+    test(`SEC-7 EV-1 a TRUNCATE of ${t} is refused and its row stays`, async () => {
+      const { db, w } = await freshWorld()
+      // cascade, so a foreign key from another table cannot be the reason for the refusal
+      await expectRefused(db.query(`truncate returns.${t} cascade`), /append-only/i)
+      expect(await count(db, t, 'id = $1', [w.ids[t]])).toBe(1)
+    })
+  }
+})
+
+// ---------- 14. TB-2 sources member by member, and real lines ----------
+
+describe('TB-2 explained needs real sources and at least two lines', () => {
+  const blankSources: readonly (readonly [string, unknown[]])[] = [
+    ['[null]', [null]],
+    ['[""]', ['']],
+    ['["  "]', ['  ']],
+    ['[{}]', [{}]],
+    ['a good source and a null', [{ document_id: 'doc-1', page: 1 }, null]],
+  ]
+  for (const [label, sources] of blankSources) {
+    test(`TB-2 an entry whose sources hold ${label} cannot be marked explained`, async () => {
+      const { db, w } = await freshWorld()
+      const e = await newEntry(db, w, { sources })
+      await addLines(db, e, [100, -100])
+      await expectRefused(markExplained(db, e))
+      expect(await count(db, 'adjusting_entries', 'id = $1 and explained', [e])).toBe(0)
+    })
+  }
+
+  test('TB-2 a source that is a non-blank note is enough (control for the refusals above)', async () => {
+    const { db, w } = await freshWorld()
+    const e = await newEntry(db, w, { sources: ['Landlord invoice 1042 (Test)'] })
+    await addLines(db, e, [100, -100])
+    await expectAccepted(markExplained(db, e))
+  })
+
+  test('TB-2 an entry with a single 0-cent line cannot be marked explained', async () => {
+    const { db, w } = await freshWorld()
+    const e = await newEntry(db, w)
+    await addLines(db, e, [0])
+    await expectRefused(markExplained(db, e))
+    expect(await count(db, 'adjusting_entries', 'id = $1 and explained', [e])).toBe(0)
+  })
+
+  test('TB-2 an entry with fewer than two lines cannot be marked explained', async () => {
+    const { db, w } = await freshWorld()
+    const none = await newEntry(db, w)
+    await expectRefused(markExplained(db, none))
+    const one = await newEntry(db, w)
+    await addLines(db, one, [0])
+    await expectRefused(markExplained(db, one))
+    await expectRefused(newEntry(db, w, { explained: true }))
+  })
+})
+
+// ---------- 15. EV-5, EV-14 the whole source pointer ----------
+
+describe('EV-5 EV-14 a source pointer is whole and of one kind', () => {
+  const REASON: Row = { ...NO_SOURCE, origin: 'judgment', source_reason: 'Half of the phone bill is personal (Test)' }
+  function sheet(w: World): Row {
+    return { ...NO_SOURCE, source_document_id: w.ids.documents, source_sheet: 'Trial balance (Test)', source_row: 12, source_column: 'D' }
+  }
+  const QBO: Row = { ...NO_SOURCE, source_qbo_snapshot_id: 'snap-0001', source_qbo_account_id: '35' }
+
+  test('EV-14 a document pointer by sheet, row and column is accepted', async () => {
+    const { db, w } = await freshWorld()
+    await expectAccepted(insert(db, 'facts', factWith(w, sheet(w))))
+  })
+
+  test('EV-5 a document pointer with neither page and box nor sheet, row and column is refused', async () => {
+    const { db, w } = await freshWorld()
+    await expectRefused(insert(db, 'facts', factWith(w, { source_page: null, source_box: null })))
+  })
+
+  test('EV-5 a document pointer with a page but no box, or a box but no page, is refused', async () => {
+    const { db, w } = await freshWorld()
+    await expectRefused(insert(db, 'facts', factWith(w, { source_box: null })))
+    await expectRefused(insert(db, 'facts', factWith(w, { source_page: null })))
+  })
+
+  test('EV-14 a sheet pointer missing its row or column is refused', async () => {
+    const { db, w } = await freshWorld()
+    await expectRefused(insert(db, 'facts', factWith(w, { ...sheet(w), source_row: null })))
+    await expectRefused(insert(db, 'facts', factWith(w, { ...sheet(w), source_column: null })))
+    await expectRefused(insert(db, 'facts', factWith(w, { ...sheet(w), source_sheet: null })))
+  })
+
+  test('EV-5 EV-14 a document pointer with both page and box and sheet, row and column is refused', async () => {
+    const { db, w } = await freshWorld()
+    await expectRefused(
+      insert(db, 'facts', factWith(w, { ...sheet(w), source_page: 1, source_box: BOX })),
+    )
+  })
+
+  test('EV-5 page, box, sheet, row or column with a pointer that is not a document is refused', async () => {
+    const { db, w } = await freshWorld()
+    await expectRefused(insert(db, 'facts', factWith(w, { ...REASON, source_page: 1, source_box: BOX })))
+    await expectRefused(insert(db, 'facts', factWith(w, { ...REASON, source_page: 1 })))
+    await expectRefused(insert(db, 'facts', factWith(w, { ...REASON, source_box: BOX })))
+    await expectRefused(
+      insert(db, 'facts', factWith(w, { ...QBO, source_sheet: 'Trial balance (Test)', source_row: 12, source_column: 'D' })),
+    )
+  })
+
+  test('EV-5 a QBO pointer with the snapshot and the account, with or without the transaction, is accepted', async () => {
+    const { db, w } = await freshWorld()
+    await expectAccepted(insert(db, 'facts', factWith(w, QBO)))
+    await expectAccepted(insert(db, 'facts', factWith(w, { ...QBO, source_qbo_txn_id: 'JE-0001' })))
+  })
+
+  test('EV-5 a QBO pointer without the account is refused, and so is an account without a snapshot', async () => {
+    const { db, w } = await freshWorld()
+    await expectRefused(insert(db, 'facts', factWith(w, { ...QBO, source_qbo_account_id: null })))
+    await expectRefused(
+      insert(db, 'facts', factWith(w, { ...QBO, source_qbo_account_id: null, source_qbo_txn_id: 'JE-0001' })),
+    )
+    await expectRefused(insert(db, 'facts', factWith(w, { ...REASON, source_qbo_account_id: '35' })))
+    await expectRefused(insert(db, 'facts', factWith(w, { source_qbo_account_id: '35', source_qbo_txn_id: 'JE-0001' })))
+  })
+
+  const badBoxes: readonly (readonly [string, unknown])[] = [
+    ['the old {x0,y0,x1,y1} shape', { x0: 400, y0: 610, x1: 470, y1: 622 }],
+    ['a box wider than the page from its left edge', { left: 0.5, top: 0.1, width: 0.6, height: 0.1 }],
+    ['a box taller than the page from its top edge', { left: 0.1, top: 0.95, width: 0.1, height: 0.1 }],
+    ['a negative left', { left: -0.1, top: 0.1, width: 0.2, height: 0.1 }],
+    ['a width above 1', { left: 0, top: 0, width: 1.5, height: 0.1 }],
+    ['a missing height', { left: 0.1, top: 0.1, width: 0.2 }],
+    ['points instead of fractions', { left: 400, top: 610, width: 70, height: 12 }],
+    ['a number given as text', { left: '0.1', top: 0.1, width: 0.2, height: 0.1 }],
+  ]
+  for (const [label, box] of badBoxes) {
+    test(`EV-5 a source box with ${label} is refused by the table and by records.ts`, async () => {
+      const { db, w } = await freshWorld()
+      await expectRefused(insert(db, 'facts', factWith(w, { source_box: box })))
+      expect(FactRecordSchema.shape.source_box.safeParse(box).success).toBe(false)
+    })
+  }
+
+  test('EV-5 the fixture box and the whole page are accepted by the table and by records.ts', async () => {
+    const { db, w } = await freshWorld()
+    const whole = { left: 0, top: 0, width: 1, height: 1 }
+    await expectAccepted(insert(db, 'facts', factWith(w, { source_box: whole })))
+    expect(FactRecordSchema.shape.source_box.safeParse(BOX).success).toBe(true)
+    expect(FactRecordSchema.shape.source_box.safeParse(whole).success).toBe(true)
+  })
+
+  test('EV-5 property: the table, records.ts and F09 BoxSchema (with a page) accept exactly the same boxes', async () => {
+    const db = await cloneTestDb()
+    const w = await insertWorld(db)
+    // eighths are exact in binary, so no case sits on a rounding edge
+    const frac = fc.integer({ min: -2, max: 10 }).map((n) => n / 8)
+    await fc.assert(
+      fc.asyncProperty(fc.record({ left: frac, top: frac, width: frac, height: frac }), async (box) => {
+        const f09 = BoxSchema.safeParse({ page: 1, ...box }).success
+        expect(FactRecordSchema.shape.source_box.safeParse(box).success, JSON.stringify(box)).toBe(f09)
+        const r = await refusalOf(insert(db, 'facts', factWith(w, { source_box: box })))
+        if (f09) expect(r, `${JSON.stringify(box)} is a good box`).toBeUndefined()
+        else expect(r?.code ?? 'accepted', `${JSON.stringify(box)} is a bad box`).toMatch(/^(23|P0001)/)
+      }),
+      { seed: 20261002, numRuns: 40 },
+    )
+  })
+})
+
+// ---------- 16. FLOW-1 ordering and licences ----------
+
+describe('FLOW-1 the latest state event is decided by an identity sequence', () => {
+  test('FLOW-1 state_events.seq is an identity column and returns carries current_state_event_id', async () => {
+    const db = await cloneTestDb()
+    const r = await db.query<{ t: string; c: string; ident: string; gen: string | null }>(
+      `select table_name as t, column_name as c, is_identity as ident, identity_generation as gen
+       from information_schema.columns
+       where table_schema = 'returns'
+         and ((table_name = 'state_events' and column_name = 'seq')
+           or (table_name = 'returns' and column_name = 'current_state_event_id'))
+       order by 1`,
+    )
+    expect(r.rows.map((x) => `${x.t}.${x.c}`)).toEqual(['returns.current_state_event_id', 'state_events.seq'])
+    const seqCol = r.rows.find((x) => x.c === 'seq')
+    expect(seqCol?.ident).toBe('YES')
+    expect(seqCol?.gen).toBe('ALWAYS')
+  })
+
+  test("FLOW-1 two state events in one transaction, ids 'se-2' then 'se-10', move the return in order", async () => {
+    const { db, w } = await freshWorld()
+    const r = w.ids.returns
+    const run = async (): Promise<void> => {
+      await db.exec('begin')
+      try {
+        await moveTo(db, r, 'evidence')
+        await stateEvent(db, r, 'evidence', 'gaps', { id: 'se-2' })
+        await moveTo(db, r, 'gaps')
+        await stateEvent(db, r, 'gaps', 'qa', { id: 'se-10' })
+        await moveTo(db, r, 'qa')
+        await db.exec('commit')
+      } catch (e) {
+        await db.exec('rollback')
+        throw e
+      }
+    }
+    await expectAccepted(run())
+    expect(await count(db, 'returns', "id = $1 and state = 'qa'", [r])).toBe(1)
+    expect(await count(db, 'returns', "id = $1 and current_state_event_id = 'se-10'", [r])).toBe(1)
+  })
+
+  test("FLOW-1 ids 'se-2' and 'se-10' with the same created_at resolve by insertion order", async () => {
+    const { db, w } = await freshWorld()
+    const r = w.ids.returns
+    const same = '2030-01-01T00:00:00Z'
+    await expectAccepted(moveTo(db, r, 'evidence'))
+    await stateEvent(db, r, 'evidence', 'gaps', { id: 'se-2', created_at: same })
+    await expectAccepted(moveTo(db, r, 'gaps'))
+    await stateEvent(db, r, 'gaps', 'qa', { id: 'se-10', created_at: same })
+    await expectAccepted(moveTo(db, r, 'qa'))
+    expect(await count(db, 'returns', "id = $1 and state = 'qa'", [r])).toBe(1)
+  })
+
+  test('FLOW-1 a back-dated state event still licenses the next move', async () => {
+    const { db, w } = await freshWorld()
+    const r = w.ids.returns
+    await expectAccepted(moveTo(db, r, 'evidence'))
+    const back = await stateEvent(db, r, 'evidence', 'gaps', {
+      created_at: '2020-01-01T00:00:00Z',
+      occurred_at: '2020-01-01T00:00:00Z',
+    })
+    await expectAccepted(moveTo(db, r, 'gaps'))
+    expect(await count(db, 'returns', "id = $1 and state = 'gaps' and current_state_event_id = $2", [r, back])).toBe(1)
+  })
+
+  test('FLOW-1 a future-dated old event does not license a later move', async () => {
+    const { db, w } = await freshWorld()
+    const r = tid()
+    await insert(db, 'returns', { ...w.rows.returns, id: r, entity_name: 'Future dated (Test)' })
+    await stateEvent(db, r, 'intake', 'evidence', { created_at: '2099-01-01T00:00:00Z' })
+    await expectAccepted(moveTo(db, r, 'evidence'))
+    await stateEvent(db, r, 'evidence', 'gaps')
+    await expectAccepted(moveTo(db, r, 'gaps'))
+    expect(await count(db, 'returns', "id = $1 and state = 'gaps'", [r])).toBe(1)
+  })
+
+  test('FLOW-1 one event licenses one move only, and current_state_event_id changes on every move', async () => {
+    const { db, w } = await freshWorld()
+    const r = w.ids.returns
+    const first = w.ids.state_events
+    await expectAccepted(moveTo(db, r, 'evidence'))
+    expect(await count(db, 'returns', 'id = $1 and current_state_event_id = $2', [r, first])).toBe(1)
+    const back = await stateEvent(db, r, 'evidence', 'intake')
+    await expectAccepted(moveTo(db, r, 'intake'))
+    expect(await count(db, 'returns', 'id = $1 and current_state_event_id = $2', [r, back])).toBe(1)
+    // the first event (intake -> evidence) was used; it cannot move the return again
+    await expectRefused(moveTo(db, r, 'evidence'))
+    await expectRefused(
+      db.query('update returns.returns set state = $1, current_state_event_id = $2 where id = $3', ['evidence', first, r]),
+    )
+    expect(await count(db, 'returns', "id = $1 and state = 'intake'", [r])).toBe(1)
+  })
+
+  test('FLOW-1 a state event with a from or to state outside the 16 is refused', async () => {
+    const { db, w } = await freshWorld()
+    const r = w.ids.returns
+    await expectRefused(stateEvent(db, r, 'waiting_on_client', 'evidence'))
+    await expectRefused(stateEvent(db, r, 'intake', 'waiting_on_client'))
+    await expectRefused(stateEvent(db, r, 'Intake', 'evidence'))
+    await expectAccepted(stateEvent(db, r, 'intake', 'evidence'))
+  })
+
+  for (const s of STATES.filter((x) => x !== 'intake')) {
+    test(`FLOW-1 a return inserted in state ${s} is refused (later states are reached through events)`, async () => {
+      const { db, w } = await freshWorld()
+      const id = tid()
+      await expectRefused(insert(db, 'returns', { ...w.rows.returns, id, entity_name: 'Inserted late (Test)', state: s }))
+      expect(await count(db, 'returns', 'id = $1', [id])).toBe(0)
+    })
+  }
+})
+
+// ---------- 17. EV-1, FLOW-1 non-blank actor, reason, author ----------
+
+describe('EV-1 FLOW-1 who and why are never blank', () => {
+  const blanks = ['', '   ']
+  const cases: readonly (readonly [Table, string])[] = [
+    ['events', 'actor'],
+    ['events', 'reason'],
+    ['state_events', 'actor'],
+    ['state_events', 'reason'],
+    ['judgment_inputs', 'author'],
+    ['judgment_inputs', 'reason'],
+  ]
+  for (const [t, col] of cases) {
+    test(`EV-1 FLOW-1 a blank or all-space ${col} on ${t} is refused`, async () => {
+      const { db, w } = await freshWorld()
+      for (const b of blanks) {
+        await expectRefused(insert(db, t, { ...w.rows[t], id: tid(), [col]: b }))
+      }
+      expect(await count(db, t)).toBe(1)
+      // control: the same row with a real name is accepted (a judgment input on another cell)
+      const other: Row = t === 'judgment_inputs' ? { cell_id: 'T2S8.CCA.CLASS8' } : {}
+      await expectAccepted(insert(db, t, { ...w.rows[t], id: tid(), ...other, [col]: 'Someone (Test)' }))
+    })
+  }
+})
+
+// ---------- 18. ARC-10 stamps are non-blank scalars ----------
+
+type StampValue = string | number | null | Record<string, never> | never[]
+// The rule, written out: a non-empty object whose every value is a non-blank string or a number.
+function isGoodStamp(v: Record<string, StampValue>): boolean {
+  const vals = Object.values(v)
+  return vals.length > 0 && vals.every((x) => (typeof x === 'string' && x.trim() !== '') || typeof x === 'number')
+}
+
+describe('ARC-10 a version stamp holds non-blank scalars, in SQL and zod alike', () => {
+  const stamped = ['facts', 'figures', 'check_results'] as const
+  const keyCol: Record<(typeof stamped)[number], string> = { facts: 'fact_key', figures: 'figure_key', check_results: 'check_id' }
+  const zodOf = {
+    facts: FactRecordSchema.shape.version_stamp,
+    figures: FigureRecordSchema.shape.version_stamp,
+    check_results: CheckResultRecordSchema.shape.version_stamp,
+  }
+  const bad: readonly (readonly [string, unknown])[] = [
+    ['{}', {}],
+    ['{"x":null}', { x: null }],
+    ['{"x":""}', { x: '' }],
+    ['{"x":"  "}', { x: '  ' }],
+    ['{"x":{}}', { x: {} }],
+    ['{"x":[]}', { x: [] }],
+    ['a good key and a null', { reader: 'qbo-reader (Test)', x: null }],
+  ]
+  for (const t of stamped) {
+    for (const [label, stamp] of bad) {
+      test(`ARC-10 ${t} refuses the version stamp ${label}, and so does records.ts`, async () => {
+        const { db, w } = await freshWorld()
+        const id = tid()
+        await expectRefused(insert(db, t, { ...w.rows[t], id, [keyCol[t]]: 'key-' + id, version_stamp: stamp }))
+        expect(zodOf[t].safeParse(stamp).success).toBe(false)
+        expect(VersionStampSchema.safeParse(stamp).success).toBe(false)
+      })
+    }
+    test(`ARC-10 ${t} accepts a stamp of non-blank strings and numbers, and so does records.ts`, async () => {
+      const { db, w } = await freshWorld()
+      const stamp = { reader: 'qbo-reader (Test)', rule_version: 3 }
+      const id = tid()
+      await expectAccepted(insert(db, t, { ...w.rows[t], id, [keyCol[t]]: 'key-' + id, version_stamp: stamp }))
+      expect(zodOf[t].safeParse(stamp).success).toBe(true)
+    })
+  }
+
+  test('ARC-10 property: the table and records.ts accept exactly the stamps of non-blank scalars', async () => {
+    const db = await cloneTestDb()
+    const w = await insertWorld(db)
+    const value = fc.oneof(
+      fc.constantFrom<StampValue>('', '  ', null, {}, [], '1', 'v2 (Test)'),
+      fc.integer({ min: 0, max: 99 }),
+    )
+    const stampArb = fc.dictionary(fc.constantFrom('reader', 'rule_version', 'model', 'x'), value, { maxKeys: 3, noNullPrototype: true })
+    await fc.assert(
+      fc.asyncProperty(stampArb, async (stamp) => {
+        const good = isGoodStamp(stamp)
+        expect(VersionStampSchema.safeParse(stamp).success, JSON.stringify(stamp)).toBe(good)
+        const id = tid()
+        const r = await refusalOf(insert(db, 'figures', { ...w.rows.figures, id, figure_key: 'key-' + id, version_stamp: stamp }))
+        if (good) expect(r, `${JSON.stringify(stamp)} is a good stamp`).toBeUndefined()
+        else expect(r?.code ?? 'accepted', `${JSON.stringify(stamp)} is a bad stamp`).toMatch(/^(23|P0001)/)
+      }),
+      { seed: 20261002, numRuns: 40 },
+    )
+  })
+})
+
+// ---------- 19. FLOW-4, EV-1 versions, not edits ----------
+
+describe('FLOW-4 EV-1 facts, entries and judgment inputs change by a new version row', () => {
+  test('FLOW-4 adjusting_entries and judgment_inputs carry version_no integer not null', async () => {
+    const db = await cloneTestDb()
+    const r = await db.query<{ t: string; ty: string; nullable: string }>(
+      `select table_name as t, data_type as ty, is_nullable as nullable from information_schema.columns
+       where table_schema = 'returns' and column_name = 'version_no'
+         and table_name in ('adjusting_entries', 'judgment_inputs') order by 1`,
+    )
+    expect(r.rows).toEqual([
+      { t: 'adjusting_entries', ty: 'integer', nullable: 'NO' },
+      { t: 'judgment_inputs', ty: 'integer', nullable: 'NO' },
+    ])
+  })
+
+  test('FLOW-4 a new version of an entry or a judgment input is a new row; the same version twice is refused', async () => {
+    const { db, w } = await freshWorld()
+    await expectAccepted(insert(db, 'adjusting_entries', { ...w.rows.adjusting_entries, id: tid(), version_no: 2, reason: 'Accrual corrected (Test)' }))
+    await expectRefused(insert(db, 'adjusting_entries', { ...w.rows.adjusting_entries, id: tid(), version_no: 2 }))
+    await expectAccepted(insert(db, 'judgment_inputs', { ...w.rows.judgment_inputs, id: tid(), version_no: 2, value: '4300' }))
+    expect(await count(db, 'judgment_inputs', 'return_id = $1', [w.ids.returns])).toBe(2)
+  })
+
+  const factEdits: readonly (readonly [string, unknown])[] = [
+    ['value', '99999.99'],
+    ['fact_key', 'bank.chequing.opening_balance'],
+    ['origin', 'client_said'],
+    ['version_stamp', { reader: 'qbo-reader (Test)', reader_version: '0.0.2' }],
+    ['version_no', 2],
+  ]
+  for (const [col, v] of factEdits) {
+    test(`EV-1 FLOW-4 an in-place UPDATE of facts.${col} is refused and the fact is unchanged`, async () => {
+      const { db, w } = await freshWorld()
+      const val = v !== null && typeof v === 'object' ? JSON.stringify(v) : v
+      await expectRefused(db.query(`update returns.facts set ${col} = $1 where id = $2`, [val, w.ids.facts]))
+      expect(await count(db, 'facts', "id = $1 and value = '12500.00' and version_no = 1 and origin = 'third_party'", [w.ids.facts])).toBe(1)
+    })
+  }
+
+  test('EV-1 FLOW-4 the status of a fact may still change in place', async () => {
+    const { db, w } = await freshWorld()
+    await expectAccepted(db.query(`update returns.facts set status = 'preparer_verified' where id = $1`, [w.ids.facts]))
+    expect(await count(db, 'facts', "id = $1 and status = 'preparer_verified'", [w.ids.facts])).toBe(1)
+  })
+
+  const entryEdits: readonly (readonly [string, unknown])[] = [
+    ['reason', 'A different reason (Test)'],
+    ['entry_type', 'reclass'],
+    ['sources', ['Another note (Test)']],
+    ['author', 'Someone else (Test)'],
+    ['version_no', 2],
+  ]
+  for (const [col, v] of entryEdits) {
+    test(`EV-1 FLOW-4 an in-place UPDATE of adjusting_entries.${col} is refused and the entry is unchanged`, async () => {
+      const { db, w } = await freshWorld()
+      const val = v !== null && typeof v === 'object' ? JSON.stringify(v) : v
+      await expectRefused(db.query(`update returns.adjusting_entries set ${col} = $1 where id = $2`, [val, w.ids.adjusting_entries]))
+      expect(
+        await count(db, 'adjusting_entries', "id = $1 and entry_type = 'accrual' and author = 'Preparer (Test)' and version_no = 1", [w.ids.adjusting_entries]),
+      ).toBe(1)
+    })
+  }
+
+  test('EV-1 FLOW-4 explained may still change on a balanced, complete entry', async () => {
+    const { db, w } = await freshWorld()
+    const e = await newEntry(db, w)
+    await addLines(db, e, [250, -250])
+    await expectAccepted(markExplained(db, e))
+    expect(await count(db, 'adjusting_entries', 'id = $1 and explained', [e])).toBe(1)
+  })
+
+  test('EV-1 a DELETE of a fact is refused and the fact stays', async () => {
+    const { db, w } = await freshWorld()
+    await expectRefused(db.query('delete from returns.facts where id = $1', [w.ids.facts]))
+    expect(await count(db, 'facts', 'id = $1', [w.ids.facts])).toBe(1)
+  })
+
+  test('EV-1 a DELETE of an adjusting entry (one with no lines) is refused and the entry stays', async () => {
+    const { db, w } = await freshWorld()
+    const e = await newEntry(db, w)
+    await expectRefused(db.query('delete from returns.adjusting_entries where id = $1', [e]))
+    expect(await count(db, 'adjusting_entries', 'id = $1', [e])).toBe(1)
+  })
+
+  test('EV-1 SEC-7 judgment inputs are append-only: UPDATE and DELETE are refused', async () => {
+    const { db, w } = await freshWorld()
+    const id = w.ids.judgment_inputs
+    await expectRefused(db.query(`update returns.judgment_inputs set value = '1' where id = $1`, [id]), /append-only/i)
+    await expectRefused(db.query(`update returns.judgment_inputs set is_test = false where id = $1`, [id]), /append-only/i)
+    await expectRefused(db.query('delete from returns.judgment_inputs where id = $1', [id]), /append-only/i)
+    expect(await count(db, 'judgment_inputs', "id = $1 and value = '4200' and is_test", [id])).toBe(1)
+  })
 })
