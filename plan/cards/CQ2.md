@@ -5,7 +5,7 @@ Tags: none (build tooling).
 Paths: tools/claim.mjs, tools/next.mjs, tools/status.mjs, tools/scope.mjs, tools/test/claim.test.mjs, tools/test/scope.test.mjs, tools/test/__fixtures__/claims/**
 Clauses: ARC-15
 Read: `plan/cards/CQ1.md` (Follow-up), `.claude/skills/dispatch/SKILL.md`, `.claude/skills/merge/SKILL.md` (Board the train), `plan/NOW.md` (Next, step 2).
-Spec commit: (spec-writer fills)
+Spec commit: 1ad7722 (validated on main 042c2dd)
 
 ## Goal
 The Lead still re-stamps builds by hand so their checks can be offered again, and the tools tell the Lead things that are not true: `next.mjs` printed "in flight 0" with nine jobs working and offered START on cards whose builds had already reported; `scope.mjs <card>` run from main printed "0 file(s) changed" for cards with 6 to 38 changed files. Each costs a Lead step or a wrong board decision.
