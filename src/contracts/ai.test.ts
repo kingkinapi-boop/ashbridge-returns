@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { validateAiOutput } from './ai'
+import { citationSchema, validateAiOutput, versionStampSchema } from './ai'
 
 const stamp = {
   modelId: 'm',
@@ -47,6 +47,10 @@ describe('F04 unit', () => {
       ok: false,
       problems: ['The model output must be a JSON object.'],
     })
+    expect(validateAiOutput('finding', null, stamp)).toEqual({
+      ok: false,
+      problems: ['The model output must be a JSON object.'],
+    })
     expect(validateAiOutput('finding', [], stamp)).toEqual({
       ok: false,
       problems: ['The model output must be a JSON object.'],
@@ -91,5 +95,85 @@ describe('F04 unit', () => {
 
   test('AI-6 an "I can\'t tell" with no reason is refused', () => {
     expect(validateAiOutput('finding', { outcome: 'cannot_tell', reason: ' ', citations: [] }, stamp).ok).toBe(false)
+  })
+
+  const box = { page: 1, left: 0.1, top: 0.1, width: 0.2, height: 0.1 }
+  const ledger = { source: 'ledger', recordKind: 'txn', recordId: 'r1' }
+  const docCite = { source: 'document', documentId: 'd1', box, quote: 'q' }
+  const pageCite = { source: 'page', documentId: 'd1', page: 2 }
+  const missing = (citations: unknown[]) => ({ outcome: 'answer', findingType: 'missing', summary: 'S', citations })
+
+  test('AI-1 each citation kind is accepted whole, and a stray key or blank text fails it', () => {
+    for (const c of [ledger, docCite, cell, pageCite]) {
+      expect(citationSchema.safeParse(c).success).toBe(true)
+      expect(citationSchema.safeParse({ ...c, extra: 1 }).success).toBe(false)
+    }
+    expect(citationSchema.safeParse({ ...ledger, recordKind: ' ' }).success).toBe(false)
+    expect(citationSchema.safeParse({ ...ledger, recordId: ' ' }).success).toBe(false)
+    expect(citationSchema.safeParse({ ...docCite, documentId: ' ' }).success).toBe(false)
+    expect(citationSchema.safeParse({ ...docCite, quote: ' ' }).success).toBe(false)
+    expect(citationSchema.safeParse({ ...docCite, box: { ...box, extra: 1 } }).success).toBe(false)
+    expect(citationSchema.safeParse({ ...cell, figureKey: ' ' }).success).toBe(false)
+    expect(citationSchema.safeParse({ ...pageCite, documentId: ' ' }).success).toBe(false)
+    expect(citationSchema.safeParse({ source: 'other' }).success).toBe(false)
+  })
+
+  test('AI-4 a page citation carries a whole page number from 1 and no quote or box', () => {
+    for (const page of [0, -1, 1.5, '2']) expect(citationSchema.safeParse({ ...pageCite, page }).success).toBe(false)
+    expect(citationSchema.safeParse({ ...pageCite, page: 1 }).success).toBe(true)
+    expect(citationSchema.safeParse({ ...pageCite, quote: 'q' }).success).toBe(false)
+    expect(citationSchema.safeParse({ ...pageCite, box }).success).toBe(false)
+  })
+
+  test('AI-5 a "missing" finding may cite a page, a document box or a return cell, never a ledger record', () => {
+    for (const c of [pageCite, docCite, cell]) expect(validateAiOutput('finding', missing([c]), stamp).ok).toBe(true)
+    expect(validateAiOutput('finding', missing([pageCite, docCite, cell]), stamp).ok).toBe(true)
+    const msg =
+      'A "missing" finding must cite where the item should be (a document box, a page or a return cell), not a ledger record.'
+    expect(validateAiOutput('finding', missing([ledger]), stamp)).toEqual({
+      ok: false,
+      problems: [`The field "citations.0" is missing or not valid: ${msg}.`],
+    })
+    const mixed = validateAiOutput('finding', missing([cell, ledger]), stamp)
+    expect(mixed).toEqual({ ok: false, problems: [`The field "citations.1" is missing or not valid: ${msg}.`] })
+  })
+
+  test('AI-5 only a "missing" finding may cite a page; no other step may', () => {
+    const msg = 'Only a "missing" finding may cite a page; cite a document box, a ledger record or a return cell.'
+    expect(validateAiOutput('finding', { ...finding, citations: [pageCite] }, stamp)).toEqual({
+      ok: false,
+      problems: [`The field "citations.0" is missing or not valid: ${msg}.`],
+    })
+    expect(validateAiOutput('finding', { ...finding, citations: [ledger, docCite, cell] }, stamp).ok).toBe(true)
+    expect(validateAiOutput('finding', { ...finding, citations: [cell, pageCite] }, stamp)).toEqual({
+      ok: false,
+      problems: [`The field "citations.1" is missing or not valid: ${msg}.`],
+    })
+    expect(validateAiOutput('cause_tag', { outcome: 'answer', tag: 't', citations: [pageCite] }, stamp).ok).toBe(false)
+  })
+
+  test('AI-1 a stray key fails at every depth of a finding, "I can\'t tell", a step and the stamp', () => {
+    expect(validateAiOutput('finding', { ...finding, extra: 1 }, stamp).ok).toBe(false)
+    expect(validateAiOutput('finding', { outcome: 'cannot_tell', reason: 'r', citations: [], extra: 1 }, stamp).ok).toBe(false)
+    expect(validateAiOutput('finding', { outcome: 'cannot_tell', reason: 'r', citations: [] }, stamp).ok).toBe(true)
+    expect(validateAiOutput('finding', { ...finding, citations: [{ ...cell, extra: 1 }] }, stamp).ok).toBe(false)
+    expect(validateAiOutput('finding', finding, { ...stamp, extra: 1 }).ok).toBe(false)
+    expect(versionStampSchema.safeParse(stamp).success).toBe(true)
+    expect(validateAiOutput('cause_tag', { outcome: 'answer', tag: 't', citations: [cell], extra: 1 }, stamp).ok).toBe(false)
+  })
+
+  test('AI-1 a problem at the top of the output is named "The output"', () => {
+    expect(validateAiOutput('finding', { ...finding, extra: 1 }, stamp)).toEqual({
+      ok: false,
+      problems: ['The output is missing or not valid: Unrecognized key: "extra".'],
+    })
+  })
+
+  test('AI-6 "I can\'t tell" goes to a person and an answer does not', () => {
+    const t = validateAiOutput('finding', { outcome: 'cannot_tell', reason: 'r', citations: [] }, stamp)
+    expect(t.ok && t.toPerson).toBe(true)
+    const a = validateAiOutput('finding', finding, stamp)
+    expect(a.ok && a.toPerson).toBe(false)
+    expect(a.ok && a.data.version).toEqual(stamp)
   })
 })

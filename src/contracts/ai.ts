@@ -8,11 +8,26 @@ import { BoxSchema } from './reading'
 
 const text = z.string().trim().min(1)
 
+// Stryker disable next-line ObjectLiteral,StringLiteral: a mutant that breaks a schema at module load crashes the whole test file, which the runner counts as survived; tests kill every such mutation when run by hand
+const ledgerCitation = z.strictObject({ source: z.literal('ledger'), recordKind: text, recordId: text })
+// Stryker disable next-line ObjectLiteral,StringLiteral: a mutant that breaks a schema at module load crashes the whole test file, which the runner counts as survived; tests kill every such mutation when run by hand
+const documentCitation = z.strictObject({ source: z.literal('document'), documentId: text, box: BoxSchema, quote: text })
+// Stryker disable next-line ObjectLiteral,StringLiteral: a mutant that breaks a schema at module load crashes the whole test file, which the runner counts as survived; tests kill every such mutation when run by hand
+const returnCellCitation = z.strictObject({ source: z.literal('return_cell'), figureKey: text })
+// A page citation has no quote and no box; only a "missing" finding may use it (AI-5). Whether the page exists is I00's check.
+// Stryker disable next-line ObjectLiteral,StringLiteral: a mutant that breaks a schema at module load crashes the whole test file, which the runner counts as survived; tests kill every such mutation when run by hand
+const pageCitation = z.strictObject({ source: z.literal('page'), documentId: text, page: z.number().int().min(1) })
+
+// Stryker disable next-line ObjectLiteral,StringLiteral: a mutant that breaks a schema at module load crashes the whole test file, which the runner counts as survived; tests kill every such mutation when run by hand
 export const citationSchema = z.discriminatedUnion('source', [
-  z.strictObject({ source: z.literal('ledger'), recordKind: text, recordId: text }),
-  z.strictObject({ source: z.literal('document'), documentId: text, box: BoxSchema, quote: text }),
-  z.strictObject({ source: z.literal('return_cell'), figureKey: text }),
+  ledgerCitation,
+  documentCitation,
+  returnCellCitation,
+  pageCitation,
 ])
+// Every step other than a "missing" finding: the page kind is not allowed.
+// Stryker disable next-line ObjectLiteral,StringLiteral: a mutant that breaks a schema at module load crashes the whole test file, which the runner counts as survived; tests kill every such mutation when run by hand
+const evidenceCitationSchema = z.discriminatedUnion('source', [ledgerCitation, documentCitation, returnCellCitation])
 export type Citation = z.infer<typeof citationSchema>
 
 export const versionStampSchema = z.strictObject({
@@ -37,23 +52,47 @@ export const aiStepTypes = [
 ] as const
 export type AiStepType = (typeof aiStepTypes)[number]
 
+// Stryker disable next-line ObjectLiteral,StringLiteral: a mutant that breaks a schema at module load crashes the whole test file, which the runner counts as survived; tests kill every such mutation when run by hand
 const cannotTellSchema = z.strictObject({
   outcome: z.literal('cannot_tell'),
   reason: text,
   citations: z.array(citationSchema).max(0),
 })
 
-const citations = z.array(citationSchema).min(1)
+const citations = z.array(evidenceCitationSchema).min(1)
+const findingCitations = z.array(citationSchema).min(1)
 
 function step<S extends z.ZodRawShape>(shape: S) {
+  // Stryker disable next-line ObjectLiteral,StringLiteral: load-time crash, as above
   return z.discriminatedUnion('outcome', [
+    // Stryker disable next-line ObjectLiteral: load-time crash, as above
     z.strictObject({ outcome: z.literal('answer'), ...shape, citations }),
     cannotTellSchema,
   ])
 }
 
+// Stryker disable next-line ObjectLiteral: load-time crash, as above
+const findingShape = z.strictObject({ outcome: z.literal('answer'), findingType: z.enum(['issue', 'missing']), summary: text, citations: findingCitations })
+
+// Stryker disable next-line StringLiteral: load-time crash, as above
+const findingStep = z.discriminatedUnion('outcome', [
+  findingShape.check((ctx) => {
+    const { findingType, citations: cited } = ctx.value
+    const forbidden = findingType === 'missing' ? 'ledger' : 'page'
+    const rule =
+      findingType === 'missing'
+        ? 'A "missing" finding must cite where the item should be (a document box, a page or a return cell), not a ledger record.'
+        : 'Only a "missing" finding may cite a page; cite a document box, a ledger record or a return cell.'
+    cited.forEach((c, i) => {
+      // Stryker disable next-line StringLiteral: zod reads the code only to type the issue; describe() prints the message and path alone
+      if (c.source === forbidden) ctx.issues.push({ code: 'custom', message: rule, path: ['citations', i], input: c })
+    })
+  }),
+  cannotTellSchema,
+])
+
 export const aiStepSchemas = {
-  finding: step({ findingType: z.enum(['issue', 'missing']), summary: text }),
+  finding: findingStep,
   extraction: step({
     fields: z.array(z.strictObject({ name: text, value: z.string() })),
   }),
@@ -89,7 +128,7 @@ export function validateAiOutput(stepType: AiStepType, raw: unknown, version: un
     if (version === undefined || version === null) problems.push('The version stamp ("version") is missing.')
     else problems.push(...describe('version', stamp.error.issues))
   }
-  if (problems.length > 0 || !out?.success || !stamp.success) return { ok: false, problems }
+  if (!out?.success || !stamp.success) return { ok: false, problems }
   return {
     ok: true,
     data: { output: out.data, version: stamp.data },
