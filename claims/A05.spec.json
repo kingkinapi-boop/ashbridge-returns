@@ -1,9 +1,11 @@
 {
  "card": "A05",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: no change needed, typecheck, lint, 248 unit green on main eae6b11",
  "worker": "cloud-7c7b81",
- "state": "working",
- "at": "2026-10-02T03:16:56.138Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T03:18:14.058Z",
+ "mode": "turbo",
+ "commit": "c52b2f4",
+ "validated": "eae6b118f84ef8d3781bca0b2ff7ce971473bf55"
 }
