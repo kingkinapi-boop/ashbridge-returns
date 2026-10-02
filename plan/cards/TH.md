@@ -2,7 +2,7 @@
 
 Phase 0. Size S. Deps: F00. Where: local or cloud.
 Tags: none (test configuration; no money, tax, CSV, citations or permissions).
-Paths: vitest.config.ts, vitest.mutate.config.ts, tsconfig.json, tools/test-homes.json, tools/test/toolchain-rules.test.mjs, tools/test/__fixtures__/**
+Paths: vitest.config.ts, vitest.mutate.config.ts, tsconfig.json, tools/test-homes.json, tools/test/toolchain-rules.test.mjs, tools/test/__fixtures__/**, src/core/egress-rules.acceptance.test.ts
 Clauses: ARC-17, ARC-9, ARC-4
 Read: `reports/findings-W14-D01.md` (RC2, fix 2, rules R1 to R4, risks), blueprint 09 (ARC-4, ARC-9, ARC-17), `.claude/rules/testing.md`, `vitest.config.ts`, `vitest.mutate.config.ts`, `tsconfig.json`, `eslint.config.mjs` (read only), `tools/test/toolchain-rules.test.mjs`, `tools/test/db-rules.test.mjs`.
 Spec commit: (spec-writer fills)
@@ -39,3 +39,8 @@ gitleaks: `.github/workflows/checks.yml` scans only the branch's own history (`-
 ## Lead's choice (2 Oct, amber A287)
 
 R1 covers the product and build tree only: `reference/**` is out of scope (its helper tests, such as `reference/taxprep/tools/strip-values.test.mjs`, are trial tools run with `node --test`, never product). R1's walk skips `reference/`, `node_modules`, `.stryker-tmp`, `__fixtures__`. No spec change is needed if the spec's planted examples sit outside `reference/`; if a spec test asserts on `reference/`, the builder notes it and the check decides.
+
+## Fix for the spec (Reviewer SLOW 2 Oct, finding 6)
+Two tests in `src/core/egress-rules.acceptance.test.ts` pass with the feature deleted; the TH spec job rewrites both (Paths gain the file), each first shown failing on a planted bad example under `tools/test/__fixtures__/egress/`:
+- line 292, "SEC-5 ESLint refuses console and interpolated logger messages": reads config strings and lints nothing. Rewrite: run ESLint (`lintText` with a `src/` file path) on a planted file holding a `console.log` and an interpolated logger message, and assert both errors by rule id; a clean file gives none.
+- line 216, "SEC-10 every checkout sets persist-credentials: false": passes when there is no checkout step. Rewrite: assert at least one `actions/checkout` step is found in `checks.yml`, and a planted workflow whose checkout lacks the setting fails.

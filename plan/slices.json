@@ -265,7 +265,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F05"
+        "F05",
+        "F00T"
       ],
       "paths": [
         "src/contracts/checks.ts",
@@ -312,7 +313,43 @@
       "title": "Done gate: scope and mutation agree with how jobs make files",
       "phase": 0,
       "size": "S",
-      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead)."
+      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00"
+      ],
+      "paths": [
+        "src/core/money.ts",
+        "src/core/ids.ts",
+        "src/core/clock.ts",
+        "src/core/env.ts",
+        "src/core/log.ts",
+        "src/core/core.test.ts",
+        "src/core/money.test.ts",
+        "src/core/ids.test.ts",
+        "src/core/clock.test.ts",
+        "src/core/env.test.ts",
+        "src/core/log.test.ts",
+        "src/core/__fixtures__/core/**"
+      ],
+      "clauses": [
+        "ARC-1",
+        "ARC-7",
+        "ARC-13",
+        "ARC-15",
+        "ARC-16",
+        "ARC-17",
+        "ARC-18",
+        "ARC-21"
+      ],
+      "id": "F00T",
+      "title": "Core tests by a spec job",
+      "phase": 0,
+      "size": "S",
+      "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it)."
     },
     {
       "status": "done",
@@ -432,7 +469,8 @@
         "tools/test/toolchain-rules.test.mjs",
         "tools/test/__fixtures__/**",
         ".github/workflows/checks.yml",
-        ".gitleaks.toml"
+        ".gitleaks.toml",
+        "src/core/egress-rules.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-17",
@@ -490,6 +528,7 @@
         "RT-23",
         "RT-25",
         "RT-26",
+        "RT-7",
         "RT-2",
         "ARC-14"
       ],
@@ -608,7 +647,8 @@
       "spec": null,
       "deps": [
         "W00",
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "e2e/_harness/**",
@@ -690,7 +730,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "src/modules/jobs/**",
@@ -1072,7 +1113,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -1084,7 +1125,9 @@
         "reference/sample-clients/make-csv.mjs",
         "reference/sample-clients/verify.mjs",
         "reference/sample-clients/contract-ids.json",
-        "reference/sample-clients/README.md"
+        "reference/sample-clients/README.md",
+        "reference/sample-clients/lib/prior-year.mjs",
+        "tools/test/sample-prior-year.test.mjs"
       ],
       "clauses": [
         "ARC-8",
@@ -1099,7 +1142,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -1628,7 +1672,7 @@
       "security": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -1647,14 +1691,16 @@
       "title": "File storage and Drive stand-ins",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
         "F00",
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "src/modules/auth/**",
@@ -2535,7 +2581,8 @@
       "deps": [
         "F01",
         "W00",
-        "A05"
+        "A05",
+        "F00T"
       ],
       "paths": [
         "src/modules/qbo/**",
@@ -2570,7 +2617,8 @@
         "L00",
         "SK0",
         "F10",
-        "F07"
+        "F07",
+        "F00T"
       ],
       "paths": [
         "src/modules/books/read/**",
@@ -3039,7 +3087,8 @@
         "F02",
         "D01",
         "E03",
-        "JH0"
+        "JH0",
+        "F00T"
       ],
       "paths": [
         "src/ui/behaviour/**",
@@ -3069,7 +3118,8 @@
         "A06",
         "F02",
         "D01",
-        "D13"
+        "D13",
+        "F00T"
       ],
       "paths": [
         "src/app/(staff)/layout.tsx",
@@ -4004,7 +4054,8 @@
         "S02",
         "S03",
         "F10",
-        "B01"
+        "B01",
+        "F00T"
       ],
       "paths": [
         "src/modules/mapping/core/**",
@@ -4610,11 +4661,12 @@
         "AI-7"
       ],
       "id": "T05",
-      "title": "Diagnostics from the printed return",
+      "title": "Diagnostics from the pasted Diagnostics panel list",
       "phase": 2,
       "size": "M",
       "hard": false,
-      "core": true
+      "core": true,
+      "note": " Paste approved (decision 0019, blueprint v1.2)."
     },
     {
       "status": "carded",
