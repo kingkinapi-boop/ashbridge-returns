@@ -2,10 +2,10 @@
  "card": "F09A",
  "role": "spec",
  "worker": "cloud-df251e",
- "state": "reported",
- "at": "2026-10-02T06:20:26.738Z",
+ "state": "reopened",
+ "at": "2026-10-02T07:54:49.184Z",
  "mode": "turbo",
- "note": "24 new + 1 rewritten tests (spec round 2)",
+ "note": "round 3: dash look-ahead, iterative, CR/DR case, zero-width blank (card Round 3)",
  "commit": "41d00d7",
  "validated": "30986dd"
 }
