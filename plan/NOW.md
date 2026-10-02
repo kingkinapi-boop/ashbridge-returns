@@ -14,7 +14,6 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 09:45Z by the Lea
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | Train: DG | train check | cloud | 2 Oct 09:45Z | claude/train |
-| W00 findings review (Opus, local helper; returns text, Lead records reports/findings-W00-r1.md) | helper | laptop | 2 Oct 09:45Z | - |
 | Queue: D00 spec fix (axe tests out of unit, A351), F09B build, E03 build, F01 build, S00 build (after DG lands) | cloud runs | cloud | 2 Oct 09:45Z | claude/<card> |
 
 Design cards D02 to D13 parked out of the queue (A352); they run through the design flow after Zo's sitting.
@@ -22,7 +21,7 @@ Design cards D02 to D13 parked out of the queue (A352); they run through the des
 ## Next, in order
 
 1. Poll claims; board every PASS (scope, GitHub checks, Opus read for core): DG, W00, D00, F09B, E03, F01. After a spec fix reports, reopen the held build (`update <card> build reopened --worker lead`) or the queue stays empty. One train at a time via plan/train.json; land by MERGING main into the train, code-diff guard, ff main; record only after the push.
-2. After the W00 findings review: card fix list, spec reopen, then build reopen. Zo has an open question in chat on the logo copied to reference/brand (A350); keep it unless he says remove.
+2. W00 round 2 (A353): spec reopened; reopen the build after its spec reports AND DG2 lands (DG2 is new, after DG). Zo has an open question in chat on the logo copied to reference/brand (A350); keep it unless he says remove.
 3. After F09B lands (F09A parked, A349): F04 build, A01 build round 2; then I00, E01, A07, W20, SK0.
 4. W00 check 8 CRLF: decided A347 (W00 build owns .gitattributes line and the taxprep CSVs).
 5. Taxprep: day 6 Sun 4 Oct (changes after lock, check export, roll forward, copy one full diagnostics panel); day 4 Zo Sat 3 Oct.
