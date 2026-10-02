@@ -84,6 +84,12 @@ const waiver = (account: string, m: string, over: Partial<FaultEntry> = {}): Fau
   ...over,
 })
 
+function first<T extends { transactions: unknown[] }>(c: T): T['transactions'][number] {
+  const t = c.transactions[0]
+  if (t === undefined) throw new Error('fixture has no transaction')
+  return t
+}
+
 describe('model checks', () => {
   it('a clean client has no issues', () => {
     expect(run(clean())).toEqual([])
@@ -233,7 +239,7 @@ describe('model checks', () => {
       const c = clean()
       c.accounts.push(account('EMPTY', 'bank', []))
       expect(run(c)).toEqual([])
-      c.transactions.push({ ...c.transactions[0]!, id: 'T2', accountKey: 'EMPTY', postings: [] })
+      c.transactions.push({ ...first(c), id: 'T2', accountKey: 'EMPTY', postings: [] })
       expect(run(c)).toEqual([
         issue('roll', 'EMPTY', 'it has transactions but no statement balances, so there is nothing to roll'),
       ])
@@ -243,12 +249,12 @@ describe('model checks', () => {
   describe('transactions', () => {
     it('a transaction with a blank account name is refused', () => {
       const c = clean()
-      c.transactions[0]!.account = '  '
+      first(c).account = '  '
       expect(run(c)).toEqual([issue('transaction-account', 'T1', 'it has no account')])
     })
     it('a transaction on an undeclared account is refused', () => {
       const c = clean()
-      c.transactions[0]!.accountKey = 'NOPE'
+      first(c).accountKey = 'NOPE'
       expect(run(c)).toEqual([issue('transaction-account', 'T1', 'its account "NOPE" is not one the client declares')])
     })
   })

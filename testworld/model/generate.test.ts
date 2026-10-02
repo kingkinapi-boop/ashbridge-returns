@@ -14,9 +14,9 @@ const fake = vi.hoisted(() => {
   return { base: fs.mkdtempSync(path.join(os.tmpdir(), 'gen-test-')) }
 })
 
-vi.mock('./clients/load', () => ({ SAMPLE_ROOT: fake.base + '/sample' }))
+vi.mock('../clients/load', () => ({ SAMPLE_ROOT: fake.base + '/sample' }))
 
-import { checkRegeneration } from './generate'
+import { checkRegeneration } from '../generate'
 
 const SAMPLE = join(fake.base, 'sample')
 const TMP = join(fake.base, 'tmp')
