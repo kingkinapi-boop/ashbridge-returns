@@ -1,9 +1,11 @@
 {
  "card": "TH",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "finding 6: SEC-5 and SEC-10 egress tests rewritten, fail without the feature; 225 unit green",
  "worker": "cloud-7c7b81",
- "state": "working",
- "at": "2026-10-02T03:14:01.447Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T03:16:53.032Z",
+ "mode": "turbo",
+ "commit": "0299b2e",
+ "validated": "3b28533269a7f999ce144a6ab8fee0d697589fb1"
 }
