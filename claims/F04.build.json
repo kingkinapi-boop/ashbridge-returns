@@ -4,7 +4,8 @@
  "round": 4,
  "spec": "6c1bbb4",
  "worker": "cloud-9ebba5",
- "state": "working",
- "at": "2026-10-02T13:53:21.150Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T13:53:29.568Z",
+ "mode": "turbo",
+ "note": "Queue anomaly: F04 already built, check PASS, on train green; spec refit makes the queue re-offer the build. Lead: mark F04 build reported by hand; I did not rebuild"
 }
