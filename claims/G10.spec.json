@@ -2,7 +2,10 @@
  "card": "G10",
  "role": "spec",
  "worker": "cloud-47e70d",
- "state": "working",
- "at": "2026-10-02T13:03:38.105Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T13:06:22.826Z",
+ "mode": "turbo",
+ "note": "15 tests; stub run green; based on claude/G01",
+ "commit": "c5eab52",
+ "validated": "f2e97da"
 }
