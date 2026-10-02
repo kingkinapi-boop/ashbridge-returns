@@ -1,10 +1,13 @@
-# E03A build report (local-cc7d7a, 2 Oct)
+# E03A build report, round 2 (cloud-c5a0ac, 2 Oct)
 
-Branch claude/E03A. Data only: four entries added to `data/facts/catalogue.json` (166 to 170); no code change.
-Acceptance: 22 of 22 in `src/contracts/facts-askable.acceptance.test.ts` pass (10 failed before); all of `src/contracts` passes (14 files, 1089 tests). Typecheck, lint, deps:check green; scope OK. No `// @mutate` file touched, so no mutation run.
-
-New keys: `qa.assets.purchased_not_in_use` (R27), `qa.assets.disposed` (R28), `qa.vehicle.ownership` (enum owned, leased), `qa.home_office.principal_place` (boolean), all suppliedBy qa, sensitive none.
+Branch claude/E03A. Data only: `data/facts/catalogue.json`; no code change.
+Round 2: the two year-total asset keys became six per-asset keys (rowKey `asset`): `qa.assets.purchased_not_in_use` (+ `_cca_class`, R27, cite line 203 with the "no line" note) and `qa.assets.disposed` (+ `_kind` enum sold/written_off, `_original_cost`, `_cca_class`, R28, cite line 207). The two vehicle/home-office keys from round 1 are kept.
+Acceptance: all of `src/contracts/facts-askable.acceptance.test.ts` passes; full suite 43 files, 1458 tests pass. Typecheck, lint, deps:check clean; scope OK. No `// @mutate` file touched.
 
 Amber:
-1. Schedule 8 line numbers (203 acquisitions, 207 proceeds of dispositions) were chosen from memory of the T2 form; the tests check only the pattern. A CPA read (the Opus read in the check) should confirm them; reverse by editing the two `cra_form` refs.
-2. answer_key cites point at the sample-client fields `assets`, `vehicle`, `home_office` (they exist), the nearest field each key corresponds to.
+1. Labels for the new keys are staff-side wording, not client sentences. Reverse: edit the labels.
+2. Cost key `qa.assets.purchased_not_in_use` is `instant` money (cost at year end); disposed proceeds is `duration` as the spec requires.
+3. Schedule 8 lines 203 and 207 still come from memory of the form; the check's Opus read must confirm.
+
+Permission gaps: `nvm install 24` printed nothing and left Node 22; I fetched Node 24 from nodejs.org into the scratchpad instead.
+Model: Sonnet 5.5.
