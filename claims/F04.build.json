@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "6c1bbb4",
  "worker": "cloud-9ebba5",
- "state": "working",
- "at": "2026-10-02T13:53:06.407Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T13:53:16.008Z",
+ "mode": "turbo",
+ "note": "F04 build already reported, check PASS and train green (14731e); the spec refit re-offered the build. Lead: confirm the queue state, nothing to rebuild"
 }
