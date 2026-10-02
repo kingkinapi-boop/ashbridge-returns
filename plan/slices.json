@@ -241,7 +241,7 @@
       "deps": [
         "F00",
         "F09",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "src/contracts/ai.ts",
@@ -432,7 +432,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F09"
@@ -454,7 +454,32 @@
       "phase": 0,
       "size": "M",
       "core": true,
-      "note": "Split from F09 (A297): owns normaliseAmount, amountGroups, AMOUNT_FORMATS and checks 14 to 16, 19, 20; the grammar table and dash rule (A296); F09 findings 1 to 3 stay on main with no consumer until this lands."
+      "note": "Split from F09 (A297): owns normaliseAmount, amountGroups, AMOUNT_FORMATS and checks 14 to 16, 19, 20; the grammar table and dash rule (A296); F09 findings 1 to 3 stay on main with no consumer until this lands. Parked 2 Oct after its third failed check (A349): split into F09B, which lands its work."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F09"
+      ],
+      "paths": [
+        "src/contracts/amount-grammar.ts",
+        "src/contracts/amount-grammar.test.ts",
+        "src/contracts/amount-grammar.acceptance.test.ts",
+        "src/contracts/reading.ts"
+      ],
+      "clauses": [
+        "EV-6",
+        "EV-5",
+        "ARC-8",
+        "ARC-15"
+      ],
+      "id": "F09B",
+      "title": "Amount grammar: geometry and edge repairs (F09A split)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/F09B starts from claude/F09A fc17ad4; lands F09A work plus the round 3 fixes (A349)."
     },
     {
       "status": "carded",
@@ -462,7 +487,7 @@
       "deps": [
         "F01",
         "F09",
-        "F09A",
+        "F09B",
         "F05M"
       ],
       "paths": [
@@ -527,7 +552,8 @@
         "testworld/generate.ts",
         "testworld/clients/**",
         "reference/sample-clients/**/taxprep/*.csv",
-        ".gitattributes"
+        ".gitattributes",
+        "src/contracts/taxprep.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -659,7 +685,7 @@
       "deps": [
         "F00",
         "F09",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
@@ -718,7 +744,7 @@
         "A01",
         "JH0",
         "F09",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "e2e/skeleton/**",
@@ -1222,7 +1248,7 @@
       "deps": [
         "W00",
         "F09",
-        "F09A",
+        "F09B",
         "A01"
       ],
       "paths": [
@@ -1766,7 +1792,7 @@
       "deps": [
         "F00",
         "F09",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "src/modules/sheets/**",
@@ -1831,7 +1857,9 @@
         "TH"
       ],
       "paths": [
-        "design/basis/**"
+        "design/basis/**",
+        "package.json",
+        "package-lock.json"
       ],
       "clauses": [
         "RV-52",
@@ -2174,7 +2202,7 @@
         "A04",
         "A07",
         "F10",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "src/modules/extraction/_core/**",
@@ -3068,7 +3096,7 @@
         "E01",
         "E03",
         "L00",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "src/modules/ai/grounding/**",
