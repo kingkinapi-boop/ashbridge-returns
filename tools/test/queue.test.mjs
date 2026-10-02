@@ -284,6 +284,30 @@ describe('dependency gate', () => {
     expect(r.out).not.toMatch(/NEEDS SPEC FIRST/)
   })
 
+  test('gate: a reported spec is judged as a build: next.mjs waits on an unmerged dep, and next and claim offer the build once the dep is done', async () => {
+    const mk2 = (depStatus) => [
+      { id: 'D', status: depStatus, spec: 'd1', deps: [], paths: ['src/d/**'] },
+      { id: 'S', status: 'carded', spec: null, deps: ['D'], paths: ['src/s/**'] },
+    ]
+    const reportSpec = async (w) => {
+      await claim(w, ['next', '--worker', 'w1', '--roles', 'spec'])
+      await claim(w, ['update', 'S', 'spec', 'reported', '--worker', 'w1', '--commit', 'abc1234', '--validated', await git(w.work, 'rev-parse', 'HEAD')])
+    }
+    // dep carded with a reported build but not merged: a spec job would be offered, a build is not
+    const open = await world({ cards: mk2('carded') })
+    await claim(open, ['update', 'D', 'build', 'reported', '--worker', 'w0'])
+    await claim(open, ['update', 'S', 'spec', 'reported', '--worker', 'w1', '--commit', 'abc1234', '--validated', await git(open.work, 'rev-parse', 'HEAD')])
+    const waiting = (await run(open, 'next.mjs', ['5'])).out
+    expect(waiting).not.toMatch(/START S /)
+    expect(waiting).toMatch(/waiting on deps: .*S \(D\)/)
+    expect((await claim(open, ['next', '--worker', 'w2', '--roles', 'build'])).out).not.toMatch(/CLAIMED S/)
+    // dep merged: both offer the build
+    const done = await world({ cards: mk2('done') })
+    await reportSpec(done)
+    expect((await run(done, 'next.mjs', ['5'])).out).toMatch(/START S .*spec reported/)
+    expect((await claim(done, ['next', '--worker', 'w2', '--roles', 'build'])).out).toBe('CLAIMED S build')
+  })
+
   test('gate: next.mjs still says NEEDS SPEC FIRST for a reopened spec', async () => {
     const cards = [{ id: 'S', status: 'carded', spec: null, deps: [], paths: ['src/s/**'] }]
     const w = await world({ cards })
