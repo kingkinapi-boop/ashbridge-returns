@@ -1,6 +1,5 @@
-# DG build (worker cloud-4a59ee, 2 Oct 2026)
-Branch claude/DG. Files: `tools/scope.mjs` (spec files by `spec(<card>):` commit, "spec file edited by the build", ledger listed and failing with `--board`), `tools/mutate-changed.mjs` (card id first, usage exit 2, core marker gate before Stryker). `.gitattributes` already holds `plan/ledger.jsonl merge=union`; untouched.
-Acceptance: 21 of 21 done-gate tests pass (spec untouched: `git diff 8a722d5 HEAD -- tools/test` empty). `npm test` 185 pass, `test:flake` 5 of 5, typecheck, lint, deps:check clean, `scope.mjs DG` OK.
-For the Lead at landing: change `package.json` `mutate:changed` and `builder.md`, `checker.md` to the new arguments (`npm run mutate:changed -- <card> [base]`); until then the npm script without a card id exits 2. I ran `node tools/mutate-changed.mjs` by hand for F05M before this change.
-Amber: scope uses `git log --no-merges base..HEAD`, so merged-in main commits never count; mutate-changed with no marked file among changed src prints "no marked mutation targets among the changed src files" and exits 0 on a non-core card; I kept the `shell:false` spelling because the F00 egress rule reads it.
-Permission gaps: none. Model: Sonnet 5.5.
+# DG build round 3 re-run (cloud-d26ada, Sonnet 5.5)
+
+Branch claude/DG. The round 3 build (mutate-changed skips `__fixtures__`/`__golden__`; `src/core/testing/read-own-source.ts`) stands; the spec fix 85a2e83 (import without `.ts`, marker test) is on the branch, so no code change was needed. Merged origin/main again.
+Numbers on Node 24: typecheck, lint, deps:check clean; `npm test` unit 735 of 735, db project green; done-gate.test.mjs and read-own-source acceptance 38 of 38; `npm run test:flake` 5 of 5; `node tools/scope.mjs DG` clean (6 files); `npm run mutate:canary` 100.
+Ambers: none. Permission gaps: none. Model: Sonnet 5.5.

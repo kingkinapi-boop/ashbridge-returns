@@ -13,3 +13,6 @@
 {"card":"W15","closed":"2026-10-02","mode":"turbo","rounds":6,"check_fails":0,"train_fails":0,"jobs":13,"amber":0,"red":0,"accepted":true,"tokens":"unknown","minutes":"unknown"}
 {"card":"DG","closed":"2026-10-02","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":10,"amber":0,"red":0,"accepted":true,"tokens":"unknown","minutes":"unknown"}
 {"card":"TH","closed":"2026-10-02","mode":"turbo","rounds":8,"check_fails":0,"train_fails":0,"jobs":13,"amber":0,"red":0,"accepted":true}
+{"card":"F03R","closed":"2026-10-02","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":11,"amber":0,"red":0,"accepted":true}
+{"card":"D01","closed":"2026-10-02","mode":"turbo","rounds":2,"check_fails":0,"train_fails":0,"jobs":7,"amber":0,"red":0,"accepted":true}
+{"card":"DG","closed":"2026-10-02","mode":"turbo","rounds":10,"check_fails":1,"train_fails":0,"jobs":21,"amber":0,"red":0,"accepted":true}
