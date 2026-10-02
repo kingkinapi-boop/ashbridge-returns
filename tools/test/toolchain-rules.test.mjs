@@ -148,6 +148,8 @@ function literalHomeProblems(configSrc) {
 
 const homesFile = () => JSON.parse(read(ROOT, 'tools', 'test-homes.json'))
 const repoFiles = () => walkRel(SKIP_DIRS)
+// A287: R1 covers the product and build tree; reference/ holds node:test trial tools, never product.
+const r1Files = () => walkRel([...SKIP_DIRS, 'reference'])
 
 describe('TH test homes (ARC-17, ARC-9, ARC-4)', () => {
   test('ARC-17 R1 rule: a design test with no home and a testworld db test matched by unit are caught', () => {
@@ -158,7 +160,7 @@ describe('TH test homes (ARC-17, ARC-9, ARC-4)', () => {
     expect(testHomeProblems(JSON.parse(read(HOMES_FIX, 'homes.json')), ['design/x/x.acceptance.test.ts', 'testworld/a.db.test.ts', 'testworld/a.test.ts'])).toEqual([])
   })
   test('ARC-17 R1 every test file is matched by exactly one Vitest project and every *.db.test.ts only by db', () => {
-    expect(testHomeProblems(homesFile(), repoFiles())).toEqual([])
+    expect(testHomeProblems(homesFile(), r1Files())).toEqual([])
   })
   test('ARC-17 R1 the data file gives design and testworld tests a unit home and testworld db tests a db home', () => {
     const h = homesFile()

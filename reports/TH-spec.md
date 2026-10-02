@@ -8,3 +8,6 @@
 None. 
 ## Model
 Sonnet 5.5 (card not core).
+
+## Refit (cloud-d1020a, 2 Oct, A287)
+R1 now walks without `reference/` (new `r1Files`; R2 to R4 unchanged). 27 of 27 rule tests pass; typecheck, lint and full `npm test` green with the build in place. Old validated sha 2cb2159, new validated on main 1a7c0a4. Model: Sonnet 5.5 (not core). Permission gaps: none.
