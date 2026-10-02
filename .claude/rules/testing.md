@@ -28,6 +28,7 @@ paths:
 - Random data uses a fixed seed. Test data comes from `testworld/` or typed fixtures with fixed defaults; made-up names end in "(Test)".
 - No network in tests. AI steps use recorded answers keyed by model id, prompt hash and input hash; a changed key fails with "re-record", never passes silently.
 - A flaky test is a failure: Playwright `failOnFlakyTests` and `forbidOnly`; cloud runs use one retry only to detect flakiness. A flaky test gets a fix card the same day and is never skipped without one.
+- A test that starts a cold tool (ESLint, tsc, Stryker, a browser, a child process) sets its own timeout of 30 s or more, so load on a full run cannot fail it (Review 2 Oct; FX1 adds the rule test).
 
 ## What must be tested, and how
 - Money and tax arithmetic: fast-check property tests as well as examples (entries net to zero; allocations and prorations sum exactly; cents stay safe integers; rounded statements still tie or carry a recorded rounding item). A counterexample found once becomes a fixed example.

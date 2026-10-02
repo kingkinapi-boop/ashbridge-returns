@@ -36,6 +36,7 @@ git pull -q --ff-only && git merge -q --ff-only train && git push -q origin main
 
 Metrics line (never leave a field empty; 0 is a value):
 `{"card":"F03","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":3,"tokens":0,"minutes":0,"amber":1,"red":0,"accepted":true}`
+`rounds` is build rounds (builds reported in the claims history), not jobs; `minutes` runs from the first claim to the landing push; `jobs` counts every claim including refits and releases (Review 2 Oct).
 
 ## Phase gate
 A phase is done when all its cards are merged, its gate (`plan/TODO-ZO.md` section 3) is met, its journeys pass on main, and a cold sign-off (`.claude/agents/signoff.md`, fresh Opus, no history) says SIGNED OFF.
