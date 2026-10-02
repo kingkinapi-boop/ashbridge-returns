@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 11:50Z by the Lea
 |---|---|---|---|---|
 | Train: F09B (lands F09A work) | train check | cloud | 2 Oct 11:50Z | claude/train |
 | W00 build round 2 | cloud run | cloud | 2 Oct 11:21Z | claude/W00 |
-| F01 findings review round 2 (Opus, local helper; Lead records reports/findings-F01-r2.md) | helper | laptop | 2 Oct 11:50Z | - |
+| F01 spec round 3, the last (A356) | queue | cloud | 2 Oct 12:05Z | claude/F01 |
 | Queue: E03 build round 3, F04, F06, F02, A07 builds and A01 build round 2 (after F09B or F01 land), F07 spec | cloud runs | cloud | 2 Oct 11:50Z | claude/<card> |
 
 S00 build waits on W00 (A354); U00 and D02 to D13 parked until Zo's sitting.

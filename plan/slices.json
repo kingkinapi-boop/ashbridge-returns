@@ -153,7 +153,9 @@
         "src/contracts/ids.ts",
         "src/contracts/index.ts",
         "src/contracts/records.test.ts",
-        "src/contracts/records.acceptance.db.test.ts"
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts"
       ],
       "clauses": [
         "EV-1",
