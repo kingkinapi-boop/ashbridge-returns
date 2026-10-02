@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 35,
+ "round": 36,
  "spec": "34e8ac0",
  "worker": "cloud-52c322",
- "state": "released",
- "at": "2026-10-02T20:09:45.288Z",
- "mode": "turbo",
- "note": "No code changed on main since e77ffc5; same owner defects (F01 schema, records.ts, gaps, ai.ts, F06, F07) not on their cards or in KNOWN. Not re-run."
+ "state": "working",
+ "at": "2026-10-02T20:09:47.645Z",
+ "mode": "turbo"
 }
