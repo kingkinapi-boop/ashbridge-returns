@@ -187,3 +187,10 @@ test('ARC-10 a version stamp key is never blank', () => {
   expect(VersionStampSchema.safeParse({ ' ': 'v1' }).success).toBe(false)
   expect(VersionStampSchema.safeParse({ reader: 'a', '\t': 'v1' }).success).toBe(false)
 })
+
+test('TB-2 a source member value that is not a string or a finite number is refused', () => {
+  for (const v of [true, null, [1], { x: 1 }, Infinity, -Infinity, NaN, '', ' ']) {
+    expect(records.sourcesAreReal([{ a: v }]), JSON.stringify(v)).toBe(false)
+  }
+  expect(records.sourcesAreReal([{ a: 'x', b: 2 }])).toBe(true)
+})

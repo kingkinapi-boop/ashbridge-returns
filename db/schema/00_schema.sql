@@ -18,16 +18,22 @@ language sql immutable as $$
   select s ~ '^[\u0001-\u0020\u007f-\u00a0\u00ad\u034f\u0600-\u0605\u061c\u06dd\u070f\u0890-\u0891\u08e2\u115f-\u1160\u1680\u17b4-\u17b5\u180b-\u180f\u2000-\u200f\u2028-\u202f\u205f-\u206f\u2800\u3000\u3164\ufe00-\ufe0f\ufeff\uffa0\ufff0-\ufffb\U000110bd\U000110cd\U00013430-\U0001343f\U0001bca0-\U0001bca3\U0001d173-\U0001d17a\U000e0000-\U000e0fff]*$'
 $$;
 
+-- ARC-10, TB-2: a JSON number a double can hold (zod refuses 1e400 as non-finite; SQL says the same).
+create function returns.is_finite_number(v jsonb) returns boolean
+language sql immutable as $$
+  select jsonb_typeof(v) = 'number' and abs((v #>> '{}')::numeric) <= 1.7976931348623157e308::numeric
+$$;
+
 -- ARC-10: a version stamp is a non-empty JSON object whose keys are non-blank and whose values are
--- non-blank strings or numbers.
+-- non-blank strings or finite numbers; the key __proto__ is refused.
 create function returns.is_version_stamp(v jsonb) returns boolean
 language sql immutable as $$
   select v is not null and jsonb_typeof(v) = 'object' and v <> '{}'::jsonb
     and not exists (
       select 1 from jsonb_each(v) e
-      where returns.is_blank(e.key) or not (
+      where returns.is_blank(e.key) or e.key = '__proto__' or not (
         (jsonb_typeof(e.value) = 'string' and not returns.is_blank(e.value #>> '{}'))
-        or jsonb_typeof(e.value) = 'number'
+        or returns.is_finite_number(e.value)
       )
     )
 $$;
@@ -80,20 +86,20 @@ begin
 end
 $$;
 
--- FLOW-4, TB-3: a version row never changes in place in its version or key columns. Arguments: the
--- column names that are refused (the version column and the key columns). A table with its own
--- column guard (facts, adjusting_entries) or append-only trigger already refuses more.
-create function returns.version_update_guard() returns trigger
+-- FLOW-4, EV-1, TB-3, SEC-7: the one guard of every version table. A row is never deleted and a table
+-- never truncated; an UPDATE may change only the columns named in the arguments (none for most
+-- tables, status for facts, explained for adjusting_entries), never the primary key.
+create function returns.version_table_guard() returns trigger
 language plpgsql as $$
-declare
-  c text;
 begin
-  foreach c in array tg_argv loop
-    if to_jsonb(new) -> c is distinct from to_jsonb(old) -> c then
-      raise exception 'append-only: % on returns.% cannot change in place (write a new version row)', c, tg_table_name
-        using errcode = '23514';
-    end if;
-  end loop;
+  if tg_op <> 'UPDATE' then
+    raise exception 'append-only: % on returns.% is refused (write a new version row)', tg_op, tg_table_name
+      using errcode = '23514';
+  end if;
+  if (to_jsonb(new) - coalesce(tg_argv, '{}'::text[])) is distinct from (to_jsonb(old) - coalesce(tg_argv, '{}'::text[])) then
+    raise exception 'append-only: UPDATE on returns.% can change only [%] in place (write a new version row)',
+      tg_table_name, coalesce(array_to_string(tg_argv, ', '), 'nothing') using errcode = '23514';
+  end if;
   return new;
 end
 $$;
