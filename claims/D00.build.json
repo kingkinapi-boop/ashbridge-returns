@@ -4,8 +4,8 @@
  "round": 8,
  "spec": "f127cdd",
  "worker": "cloud-e6b5e3",
- "state": "reported",
- "at": "2026-10-02T10:10:38.823Z",
+ "state": "released",
+ "at": "2026-10-02T11:10:36.939Z",
  "mode": "turbo",
- "note": "15 of 15 acceptance tests pass (13 unit, 2 axe e2e)"
+ "note": "merged"
 }
