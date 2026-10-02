@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (0022). Zo committed the notes by hand (eb7fbb7, 0023); test return and contact deleted. Next: fold O8 into FINDINGS.md, CK-12 and RT-14. RT-25 confirmed (0023). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:02Z by the Lead. Auto-fill test done with Zo (0022). Zo committed the notes by hand (eb7fbb7, 0023); test return and contact deleted. Next: fold O8 into FINDINGS.md, CK-12 and RT-14. RT-25 confirmed (0023). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,9 +13,11 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| W00a check (F06 PASS), F07 check, W00b spec | cloud runs | cloud | 2 Oct 18:15Z | claude/<card> |
-| A07C build (round 2), A06 check (Paths fixed) | 2 cloud runs | cloud | 2 Oct 18:40Z | claude/<card> |
-| Train 3ccdd3a: E03A, BL0, A01, F02 (all PASS; A370 gitleaks note) | train check, 1 cloud run | cloud | 2 Oct 18:30Z | claude/train |
+| Train 3ccdd3a: E03A, BL0, A01, F02 | train check | cloud-c520ec | 2 Oct 18:30Z | claude/train |
+| A06 check, A04 spec | cloud runs | cloud | 2 Oct 18:40Z | claude/<card> |
+| W00a findings review (check FAIL: scope, six classes) | Opus helper, local | laptop | 2 Oct 19:02Z | reports/W00a-findings.md |
+| Waiting to board the next train: F06, F07 (both PASS, scope OK) | Lead | | | |
+| Waiting for a worker: A07C build (round 2, reopened); W00b build waits on W00a's fixes | queue | | | |
 
 ## Next, in order
 
