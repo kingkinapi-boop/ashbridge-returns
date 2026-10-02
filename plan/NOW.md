@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:12Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:50Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,12 +13,11 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:12Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| FX1 spec; F02, F07, A06 specs; CQ1 spec (local) | cloud and laptop | | 2 Oct 14:58Z | claude/<card> |
-| Queue: F01C check (core), W00a spec (A364), A07B spec (A366), F06 build | 3 cloud runs | cloud | 2 Oct 15:12Z | claude/<card> |
-| E03A Opus read for boarding (its check's Opus read was refused by the budget hook) | helper | laptop | 2 Oct 15:12Z | - |
-| Train: red-held (G01 flake, A361); re-board G01, D00L with FX1, then F01C, E03A | train | - | 2 Oct 14:30Z | claude/train |
+| Train: FX1, G01, D00L, CQ1 (head 474512d) | train check | cloud | 2 Oct 15:50Z | claude/train |
+| F01C check (core); A07B build | cloud runs | cloud | 2 Oct 15:35Z | claude/F01C, claude/A07B |
+| Queue: E03A build (gitleaks hit on its branch), W00a build (spec reported, 663 tests), F02, F07, A06 builds wait on F01C | cloud runs | cloud | 2 Oct 15:50Z | claude/<card> |
 
-Splits today (third failures or last rounds): F09A to F09B (landed), F01 to F01C, W00 to W00a and W00b, A07 to A07B. G12 to G17 parked until E03A lands.
+Splits today: F09A to F09B (landed), F01 to F01C, W00 to W00a and W00b, A07 to A07B. G12 to G17 parked until E03A lands. W00b branches from claude/W00a after W00a's build.
 
 ## Ready for the next runs (in this order once dispatch is allowed)
 
