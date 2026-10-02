@@ -136,7 +136,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "F09"
       ],
       "paths": [
         "db/schema/00_schema.sql",
@@ -151,13 +152,16 @@
         "src/contracts/records.ts",
         "src/contracts/ids.ts",
         "src/contracts/index.ts",
-        "src/contracts/records.test.ts"
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts"
       ],
       "clauses": [
         "EV-1",
         "EV-5",
         "EV-8",
         "EV-10",
+        "EV-14",
+        "FLOW-4",
         "TB-1",
         "TB-2",
         "TB-3",
@@ -174,7 +178,8 @@
       "size": "L",
       "hard": true,
       "security": true,
-      "core": true
+      "core": true,
+      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first."
     },
     {
       "status": "carded",
@@ -294,6 +299,7 @@
       "clauses": [
         "ARC-6",
         "ARC-10",
+        "ARC-15",
         "EV-5",
         "EV-6"
       ],
@@ -301,6 +307,35 @@
       "title": "Reading contract: normalised words and boxes for every engine",
       "phase": 0,
       "size": "S",
+      "core": true,
+      "note": "Fix round 2 from reports/findings-F01-F09.md: spec (a) to (f), then build round 2; the re-check waits for both; lands before F01."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F01",
+        "F09"
+      ],
+      "paths": [
+        "tools/test/schema-contract-rules.test.mjs",
+        "src/contracts/schema-rules.db.test.ts",
+        "tools/test/__fixtures__/schema-contract/**"
+      ],
+      "clauses": [
+        "SEC-7",
+        "EV-1",
+        "ARC-10",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "FLOW-1",
+        "ARC-15"
+      ],
+      "id": "SC",
+      "title": "Schema and contract rules",
+      "phase": 0,
+      "size": "M",
       "core": true
     },
     {
