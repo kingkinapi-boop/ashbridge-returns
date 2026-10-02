@@ -4,7 +4,8 @@
  "round": 5,
  "spec": "f1c8095",
  "worker": "cloud-e1c409",
- "state": "working",
- "at": "2026-10-02T01:02:28.066Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T01:03:14.991Z",
+ "mode": "turbo",
+ "note": "build done; waits on spec refit: add reference to SKIP_DIRS (A287)"
 }
