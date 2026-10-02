@@ -1,0 +1,357 @@
+{
+  "inputHash": "f0f1f591a8add1d64537ebf1ce27c7d29e2257579d88a4055415714bdcaa8abc",
+  "inputs": {
+    "documents": [
+      {
+        "documentId": "doc-c01-bcd-statement",
+        "page": 1,
+        "text": "Aurora Card (Test) statement, meals total 1,850.00"
+      }
+    ],
+    "entity": "Maple Ridge Consulting Inc. (Test)",
+    "ledger": [
+      {
+        "account": "Meals and entertainment",
+        "amountCents": 185000,
+        "recordId": "txn-c01-bcd-0042",
+        "recordKind": "transaction"
+      }
+    ],
+    "returnId": "ret-c01-2025",
+    "yearEnd": "2025-12-31"
+  },
+  "isTest": true,
+  "jobId": "job-c01-finding-test",
+  "mappingRelease": "mapping-2026.10-test",
+  "modelId": "claude-opus-5-5",
+  "ocrEngine": "ocr-stand-in",
+  "ocrEngineVersion": "0.0.0-test",
+  "promptHash": "4fbd8431088416d839f5acee084edd16b0ade1ee7276e79ae53cf0994de22c79",
+  "promptVersion": "finding-v1",
+  "redaction": {
+    "redactedBy": "redactor stand-in (Test)",
+    "redactorVersion": "0.0.0-test"
+  },
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "oneOf": [
+      {
+        "additionalProperties": false,
+        "properties": {
+          "citations": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "recordId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "recordKind": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "source": {
+                      "const": "ledger",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "recordKind",
+                    "recordId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "box": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "height": {
+                          "maximum": 1,
+                          "minimum": 0,
+                          "type": "number"
+                        },
+                        "left": {
+                          "maximum": 1,
+                          "minimum": 0,
+                          "type": "number"
+                        },
+                        "page": {
+                          "maximum": 9007199254740991,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "top": {
+                          "maximum": 1,
+                          "minimum": 0,
+                          "type": "number"
+                        },
+                        "width": {
+                          "maximum": 1,
+                          "minimum": 0,
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "left",
+                        "top",
+                        "width",
+                        "height"
+                      ],
+                      "type": "object"
+                    },
+                    "documentId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quote": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "source": {
+                      "const": "document",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "documentId",
+                    "box",
+                    "quote"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "figureKey": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "source": {
+                      "const": "return_cell",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "figureKey"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "documentId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "page": {
+                      "maximum": 9007199254740991,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "source": {
+                      "const": "page",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "documentId",
+                    "page"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "findingType": {
+            "enum": [
+              "issue",
+              "missing"
+            ],
+            "type": "string"
+          },
+          "outcome": {
+            "const": "answer",
+            "type": "string"
+          },
+          "summary": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "outcome",
+          "findingType",
+          "summary",
+          "citations"
+        ],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "citations": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "recordId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "recordKind": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "source": {
+                      "const": "ledger",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "recordKind",
+                    "recordId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "box": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "height": {
+                          "maximum": 1,
+                          "minimum": 0,
+                          "type": "number"
+                        },
+                        "left": {
+                          "maximum": 1,
+                          "minimum": 0,
+                          "type": "number"
+                        },
+                        "page": {
+                          "maximum": 9007199254740991,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "top": {
+                          "maximum": 1,
+                          "minimum": 0,
+                          "type": "number"
+                        },
+                        "width": {
+                          "maximum": 1,
+                          "minimum": 0,
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "left",
+                        "top",
+                        "width",
+                        "height"
+                      ],
+                      "type": "object"
+                    },
+                    "documentId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quote": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "source": {
+                      "const": "document",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "documentId",
+                    "box",
+                    "quote"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "figureKey": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "source": {
+                      "const": "return_cell",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "figureKey"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "documentId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "page": {
+                      "maximum": 9007199254740991,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "source": {
+                      "const": "page",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "documentId",
+                    "page"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 0,
+            "type": "array"
+          },
+          "outcome": {
+            "const": "cannot_tell",
+            "type": "string"
+          },
+          "reason": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "outcome",
+          "reason",
+          "citations"
+        ],
+        "type": "object"
+      }
+    ]
+  },
+  "stepType": "finding"
+}
