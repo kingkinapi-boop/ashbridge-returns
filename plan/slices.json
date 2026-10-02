@@ -3031,6 +3031,27 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/next.mjs",
+        "tools/status.mjs",
+        "tools/test/claim.test.mjs",
+        "tools/test/__fixtures__/claims/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ1",
+      "title": "Queue: no wasted offers",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the Reviewer SLOW of 2 Oct 14:40Z."
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "F00",
         "E03"
