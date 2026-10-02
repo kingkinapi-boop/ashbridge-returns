@@ -1,11 +1,10 @@
 {
  "card": "W14",
  "role": "build",
- "round": 1,
- "spec": "0e448ae858ab4d982c947277e010602fa9dd0ec3",
- "worker": "cloud-620523",
- "state": "reopened",
- "at": "2026-10-02T00:56:22.502Z",
- "mode": "turbo",
- "note": "FAIL: wording, contract ids, prior-year ties, see reports/W14-check.md"
+ "round": 2,
+ "spec": "a8a100e",
+ "worker": "cloud-85862e",
+ "state": "working",
+ "at": "2026-10-02T01:29:01.482Z",
+ "mode": "turbo"
 }
