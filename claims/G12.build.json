@@ -1,11 +1,10 @@
 {
  "card": "G12",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "b8ec2300",
- "worker": "cloud-c7ae52",
- "state": "reopened",
- "at": "2026-10-02T19:46:17.593Z",
- "mode": "turbo",
- "note": "round 2 (single cause, A306): restore assets-cca.test.ts exactly to the spec commit (the non-empty assertion included) and make it pass without editing any spec test; see reports/G12-check.md"
+ "worker": "cloud-7c1598",
+ "state": "working",
+ "at": "2026-10-02T19:47:16.353Z",
+ "mode": "turbo"
 }
