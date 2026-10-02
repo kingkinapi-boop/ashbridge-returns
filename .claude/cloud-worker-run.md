@@ -5,7 +5,7 @@ You are a cloud worker for kingkinapi-boop/ashbridge-returns, started by the Lea
 - Worker name: `cloud-` plus the first 6 characters of `cat /proc/sys/kernel/random/uuid` (run once at the start; keep it all session; never the hostname, which is the same on every cloud machine).
 - Follow CLAUDE.md and `.claude/agents/worker.md` exactly. For a `core` card's spec or adversarial check, start a subagent with model opus (you run on Sonnet).
 - A card whose deps are not merged or built has no code base: release a spec or build that cannot start for that reason, with that note, and take the next job.
-- Here you may run `npm install` (only when a card creates or changes package.json) and `npm ci`. Node 24 via the preinstalled nvm at /opt/nvm if needed. PostgreSQL 16 is preinstalled if a card needs it; tests use PGlite (ARC-4).
+- Here you may run `npm install` (only when a card creates or changes package.json) and `npm ci`. Node 24: the box has Node 22, so run `source /opt/nvm/nvm.sh && nvm install 24 && nvm use 24` before `npm ci`. PostgreSQL 16 is preinstalled if a card needs it; tests use PGlite (ARC-4).
 - Never touch any live database, website or secret; if DATABASE_URL or SUPABASE variables are set, unset them (check as booleans only). Never push code to main (only plan/train.json and reports, as below).
 - Never commit `plan/ledger.jsonl` on a card branch (restore it from the merge-base before you commit); only main carries it.
 - Never send push notifications or messages to anyone: Zo reads only his to-do file.

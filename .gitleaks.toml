@@ -8,4 +8,6 @@ regexes = [
   '''"key":\s*"[a-z0-9_]+(\.[a-z0-9_]+)+"''',
   '''PLANTED-[A-Za-z0-9_-]+''',
   '''k-test-[A-Za-z0-9_-]+''',
+  # made-up sample-client folder names in report prose (reports/W15-build.md line 3) read as a generic-api-key
+  '''\d\d-rouge-valley-landscaping[a-z0-9-]*''',
 ]
