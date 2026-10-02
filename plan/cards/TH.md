@@ -35,3 +35,7 @@ Fixing the tests or files the wider net flags on other branches (their spec refi
 ## Also (A05 security review, 2 Oct)
 
 gitleaks: `.github/workflows/checks.yml` scans only the branch's own history (`--log-opts="HEAD"`), and a root `.gitleaks.toml` (`[extend] useDefault = true`) allowlists the fact catalogue's `"key": "<dotted name>"` lines by regex and planted test values starting `PLANTED-` or `k-test-`, never whole folders. Paths gain `.github/workflows/checks.yml` and `.gitleaks.toml`. Check: a branch with a planted secret-shaped string outside the allowlist still fails.
+
+## Lead's choice (2 Oct, amber A287)
+
+R1 covers the product and build tree only: `reference/**` is out of scope (its helper tests, such as `reference/taxprep/tools/strip-values.test.mjs`, are trial tools run with `node --test`, never product). R1's walk skips `reference/`, `node_modules`, `.stryker-tmp`, `__fixtures__`. No spec change is needed if the spec's planted examples sit outside `reference/`; if a spec test asserts on `reference/`, the builder notes it and the check decides.
