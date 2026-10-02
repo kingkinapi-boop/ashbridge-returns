@@ -2,7 +2,9 @@
  "card": "TH",
  "role": "spec",
  "worker": "cloud-4ab7b4",
- "state": "working",
- "at": "2026-10-02T00:25:43.081Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T00:28:47.945Z",
+ "mode": "turbo",
+ "note": "27 tests, 9 fail by design",
+ "commit": "f1c8095"
 }
