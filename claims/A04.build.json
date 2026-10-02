@@ -1,11 +1,10 @@
 {
  "card": "A04",
  "role": "build",
- "round": 5,
- "spec": "383857c",
- "worker": "cloud-1fe112",
- "state": "reopened",
- "at": "2026-10-02T20:54:09.415Z",
- "mode": "turbo",
- "note": "golden regenerated"
+ "round": 6,
+ "spec": "ea5d29d",
+ "worker": "cloud-186a3b",
+ "state": "working",
+ "at": "2026-10-02T21:14:51.871Z",
+ "mode": "turbo"
 }
