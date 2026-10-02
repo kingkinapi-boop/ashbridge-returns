@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "15bceab",
  "worker": "cloud-f10790",
- "state": "working",
- "at": "2026-10-02T17:46:04.047Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T17:54:20.650Z",
+ "mode": "turbo",
+ "note": "47 of 47 acceptance tests pass; scope: db/schema/55_bridge_returns.sql needs adding to card Paths (spec requires it)"
 }
