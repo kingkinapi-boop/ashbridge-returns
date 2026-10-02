@@ -1,9 +1,8 @@
 {
  "card": "SC4",
  "role": "spec",
- "worker": "cloud-4aa373",
- "state": "released",
- "at": "2026-10-02T22:03:46.552Z",
- "mode": "turbo",
- "note": "worker session long; take with a fresh worker, nothing done"
+ "worker": "cloud-ad4518",
+ "state": "working",
+ "at": "2026-10-02T22:12:04.795Z",
+ "mode": "turbo"
 }
