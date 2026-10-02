@@ -4,7 +4,8 @@
  "round": 40,
  "spec": "34e8ac0",
  "worker": "cloud-2cbd52",
- "state": "working",
- "at": "2026-10-02T20:16:40.601Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:16:48.988Z",
+ "mode": "turbo",
+ "note": "re-offered at once; same owner defects, see reports/SC-build.md. Lead: add them to owning cards or KNOWN, or park SC build"
 }
