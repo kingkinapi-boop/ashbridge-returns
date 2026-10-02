@@ -4,7 +4,8 @@
  "round": 44,
  "spec": "ee0255d",
  "worker": "cloud-0c9d3d",
- "state": "working",
- "at": "2026-10-02T21:10:08.700Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T21:10:14.152Z",
+ "mode": "turbo",
+ "note": "re-offered unchanged: still needs spec refit for R34 and R47 (see reports/SC-build.md)"
 }
