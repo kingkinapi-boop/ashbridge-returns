@@ -23,8 +23,8 @@ const isoDate = (d: Date): string => `${pad(d.getUTCFullYear(), 4)}-${pad(d.getU
 export function serialToIso(day: number, seconds: number, date1904: boolean): string {
   let date: string
   if (date1904) date = isoDate(new Date(Date.UTC(1904, 0, 1 + day)))
-  else if (day === 60) date = '1900-02-29'
   else if (day < 60) date = isoDate(new Date(Date.UTC(1899, 11, 31 + day)))
+  else if (day === 60) date = '1900-02-29'
   else date = isoDate(new Date(Date.UTC(1899, 11, 30 + day)))
   if (seconds === 0) return date
   return `${date}T${pad(Math.floor(seconds / 3600))}:${pad(Math.floor((seconds % 3600) / 60))}:${pad(seconds % 60)}`
@@ -91,7 +91,7 @@ export async function readXlsx(bytes: Uint8Array): Promise<XlsxRead> {
   try {
     await workbook.xlsx.load(Buffer.from(bytes) as unknown as ExcelJS.Buffer)
   } catch (error) {
-    return { ok: false, reason: `not a readable .xlsx file: ${error instanceof Error ? error.message : 'unknown error'}` }
+    return { ok: false, reason: `not a readable .xlsx file: ${(error as Error).message}` }
   }
   const date1904 = workbook.properties.date1904
   const sheets: XlsxSheet[] = workbook.worksheets.map((sheet) => {
