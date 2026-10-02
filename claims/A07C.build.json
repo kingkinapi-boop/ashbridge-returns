@@ -4,7 +4,8 @@
  "round": 11,
  "spec": "ba50f80",
  "worker": "cloud-197c89",
- "state": "working",
- "at": "2026-10-02T20:48:21.904Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:48:43.612Z",
+ "mode": "turbo",
+ "note": "A07C is on train 727cd06 (green, A384 split: D1 to D3 go to A07D); no build needed, queue row looks stale"
 }
