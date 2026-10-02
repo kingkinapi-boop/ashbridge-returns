@@ -1,10 +1,9 @@
 {
  "card": "TH",
  "role": "spec",
- "worker": "cloud-d1020a",
- "state": "reported",
- "at": "2026-10-02T02:05:49.539Z",
- "mode": "turbo",
- "note": "refit A287: R1 skips reference; 27 rule tests pass with build; validated on main 1a7c0a4",
- "commit": "277dd7e"
+ "note": "toolchain refit",
+ "worker": "cloud-7c7b81",
+ "state": "working",
+ "at": "2026-10-02T03:14:01.447Z",
+ "mode": "turbo"
 }
