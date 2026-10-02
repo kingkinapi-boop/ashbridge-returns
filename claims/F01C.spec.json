@@ -2,8 +2,11 @@
  "card": "F01C",
  "role": "spec",
  "worker": "cloud-ec71a6",
- "state": "working",
- "at": "2026-10-02T13:55:15.317Z",
+ "state": "reported",
+ "at": "2026-10-02T14:13:43.036Z",
  "mode": "turbo",
- "beat": "2026-10-02T13:57:38.844Z"
+ "beat": "2026-10-02T13:57:38.844Z",
+ "note": "62 tests (42 fail by name on F01 head)",
+ "commit": "3c54b09",
+ "validated": "fe5adfe"
 }
