@@ -1,10 +1,8 @@
 {
  "card": "W14",
  "role": "spec",
- "worker": "cloud-4ab7b4",
- "state": "reopened",
- "at": "2026-10-02T02:04:25.056Z",
- "mode": "turbo",
- "note": "fix round 3: prior-year engine",
- "commit": "a8a100e"
+ "worker": "cloud-d1020a",
+ "state": "working",
+ "at": "2026-10-02T02:05:51.925Z",
+ "mode": "turbo"
 }
