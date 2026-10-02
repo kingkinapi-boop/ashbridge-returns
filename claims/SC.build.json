@@ -4,7 +4,11 @@
  "round": 47,
  "spec": "ee0255d",
  "worker": "cloud-2f8ae4",
- "state": "working",
- "at": "2026-10-02T21:30:50.503Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T21:31:17.142Z",
+ "mode": "turbo",
+ "note": "no change: KNOWN entries (owner FX3) not yet in the spec; needs spec reopen, see reports/SC-build.md",
+ "lastRelease": {
+  "tip": "aafa1ad23c193b6d9e7989d13315f531209f9c38"
+ }
 }
