@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "11df325",
  "worker": "cloud-2f8ae4",
- "state": "working",
- "at": "2026-10-02T21:26:27.059Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T21:30:48.090Z",
+ "mode": "turbo",
+ "note": "223 of 223 tools tests pass; scope gap: new test file and merge SKILL outside Paths, see report"
 }
