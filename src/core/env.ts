@@ -1,3 +1,4 @@
+// @mutate
 // Settings are read by name through zod and never printed (SEC-10).
 import { z } from 'zod'
 

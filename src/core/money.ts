@@ -8,9 +8,13 @@ export function cents(n: number): Cents {
 }
 
 export function addCents(...parts: Cents[]): Cents {
-  let total = 0
-  for (const p of parts) total += cents(p)
-  return cents(total)
+  // Summed exactly (BigInt): a float running total can pass the safe range and hide an overflow.
+  let total = 0n
+  for (const p of parts) total += BigInt(cents(p))
+  if (total > BigInt(Number.MAX_SAFE_INTEGER) || total < BigInt(Number.MIN_SAFE_INTEGER)) {
+    throw new RangeError('cents must be a safe integer')
+  }
+  return Number(total)
 }
 
 // The one written rounding rule: halves round away from zero.
@@ -19,7 +23,7 @@ export function roundCentsToDollars(c: Cents): number {
   cents(c)
   const abs = Math.abs(c)
   const dollars = Math.floor(abs / 100) + (abs % 100 >= 50 ? 1 : 0)
-  return c < 0 && dollars !== 0 ? -dollars : dollars
+  return dollars === 0 ? 0 : c < 0 ? -dollars : dollars
 }
 
 export function formatCents(c: Cents): string {
