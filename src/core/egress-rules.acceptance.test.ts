@@ -10,6 +10,7 @@ import { describe, expect, test } from 'vitest'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const FIX = path.join(ROOT, 'tools', 'test', '__fixtures__')
+const FIX_EGRESS = path.join(FIX, 'egress')
 const THIS_FILE = fileURLToPath(import.meta.url)
 const read = (...p: string[]): string => fs.readFileSync(path.join(...p), 'utf8')
 
@@ -44,9 +45,11 @@ function usesProblems(yml: string): string[] {
 }
 
 /** Every actions/checkout step sets persist-credentials: false. */
+const checkoutCount = (yml: string): number => yml.split('\n').filter((l) => /uses:\s*actions\/checkout@/.test(l)).length
 function checkoutProblems(yml: string): string[] {
   const lines = yml.split('\n')
   const problems: string[] = []
+  if (checkoutCount(yml) === 0) problems.push('no actions/checkout step found')
   lines.forEach((line, i) => {
     if (!/uses:\s*actions\/checkout@/.test(line)) return
     const dash = line.trimStart().startsWith('-') ? indentOf(line) : indentOf(line) - 2
@@ -189,13 +192,6 @@ function srcFiles(): string[] {
 
 // ---------- ESLint ----------
 
-function severity(v: unknown): number {
-  const s: unknown = Array.isArray(v) ? (v as unknown[])[0] : v
-  if (s === 'error' || s === 2) return 2
-  if (s === 'warn' || s === 1) return 1
-  return 0
-}
-
 describe('F00 egress and shell-out rules (SEC-10, ARC-15)', () => {
   test('SEC-10 rule: a planted workflow with @v4, kept credentials, curl | tar and telemetry on is caught', () => {
     const yml = read(FIX, 'planted-workflow.yml.txt')
@@ -213,8 +209,14 @@ describe('F00 egress and shell-out rules (SEC-10, ARC-15)', () => {
     expect(files.length).toBeGreaterThan(0)
     expect(files.flatMap((f) => usesProblems(fs.readFileSync(f, 'utf8')))).toEqual([])
   })
-  test('SEC-10 every checkout sets persist-credentials: false', () => {
-    expect(workflowFiles().flatMap((f) => checkoutProblems(fs.readFileSync(f, 'utf8')))).toEqual([])
+  test('SEC-10 rule: a planted checkout without persist-credentials: false is caught, and a workflow with no checkout step is caught', () => {
+    expect(checkoutProblems(read(FIX_EGRESS, 'planted-checkout-no-setting.yml.txt'))).toHaveLength(1)
+    expect(checkoutProblems(read(FIX_EGRESS, 'planted-no-checkout.yml.txt'))).toContain('no actions/checkout step found')
+  })
+  test('SEC-10 every checkout sets persist-credentials: false, and checks.yml has at least one checkout', () => {
+    const checks = read(ROOT, '.github', 'workflows', 'checks.yml')
+    expect(checkoutCount(checks), 'checks.yml has an actions/checkout step').toBeGreaterThan(0)
+    expect(workflowFiles().flatMap((f) => checkoutProblems(fs.readFileSync(f, 'utf8')).filter((p) => !p.startsWith('no actions/checkout')))).toEqual([])
   })
   test('SEC-10 every curl or wget writes a file that sha256sum -c checks before use', () => {
     expect(workflowFiles().flatMap((f) => downloadProblems(fs.readFileSync(f, 'utf8')))).toEqual([])
@@ -291,14 +293,15 @@ describe('F00 egress and shell-out rules (SEC-10, ARC-15)', () => {
   })
   test('SEC-5 ESLint refuses console and interpolated logger messages in src, except the db global setup', async () => {
     const eslint = new ESLint({ cwd: ROOT })
-    const cfg = (await eslint.calculateConfigForFile(path.join(ROOT, 'src', 'core', 'log.ts'))) as { rules?: Record<string, unknown> }
-    const rules = cfg.rules ?? {}
-    expect(severity(rules['no-console']), 'no-console is an error in src').toBe(2)
-    expect(severity(rules['no-restricted-syntax']), 'no-restricted-syntax is an error in src').toBe(2)
-    const selectors = JSON.stringify(rules['no-restricted-syntax'])
-    expect(selectors).toMatch(/TemplateLiteral/)
-    expect(selectors).toMatch(/BinaryExpression/)
-    const setup = (await eslint.calculateConfigForFile(path.join(ROOT, 'src', 'core', 'db', 'global-setup.ts'))) as { rules?: Record<string, unknown> }
-    expect(severity(setup.rules?.['no-console'])).toBe(0)
+    // lintText takes the text from the fixture but the path of a real src file, so the type-aware parser finds it.
+    const lint = async (file: string, fixture: string): Promise<string[]> => {
+      const [r] = await eslint.lintText(read(FIX_EGRESS, fixture), { filePath: path.join(ROOT, 'src', 'core', file) })
+      return (r?.messages ?? []).map((m) => m.ruleId ?? '')
+    }
+    const planted = await lint('log.ts', 'planted-logging.ts.txt')
+    expect(planted, 'console.log is refused').toContain('no-console')
+    expect(planted, 'an interpolated logger message is refused').toContain('no-restricted-syntax')
+    expect(await lint('log.ts', 'clean-logging.ts.txt')).toEqual([])
+    expect((await lint('db/global-setup.ts', 'planted-logging.ts.txt')).filter((r) => r === 'no-console')).toEqual([])
   })
 })
