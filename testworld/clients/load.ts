@@ -1,3 +1,4 @@
+// @mutate
 // Loads one sample client from reference/sample-clients/ in place (never copied or rewritten) into the model (ARC-8).
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { basename, dirname, join, relative, resolve, sep } from 'node:path'

@@ -1,3 +1,4 @@
+// @mutate
 // Byte-identical regeneration of the sample clients (ARC-16): re-runs their generators in a temp folder and compares.
 import { execFile } from 'node:child_process'
 import { cpSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs'

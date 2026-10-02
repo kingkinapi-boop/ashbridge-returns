@@ -1,3 +1,4 @@
+// @mutate
 // The typed model of a test-world client (END-9, ARC-8). Money is integer cents everywhere (ARC-13).
 import { z } from 'zod'
 

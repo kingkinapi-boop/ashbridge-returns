@@ -37,7 +37,9 @@ type Walk = (path: string, key: string, value: string, holder: Record<string, un
 
 function walkStrings(v: unknown, path: string, key: string, holder: Record<string, unknown>, visit: Walk): void {
   if (typeof v === 'string') visit(path, key, v, holder)
-  else if (Array.isArray(v)) v.forEach((x, i) => walkStrings(x, `${path}.${String(i)}`, String(i), holder, visit))
+  else if (Array.isArray(v)) {
+    for (const [i, x] of v.entries()) walkStrings(x, `${path}.${String(i)}`, String(i), holder, visit)
+  }
   else if (v !== null && typeof v === 'object') {
     const o = v as Record<string, unknown>
     for (const [k, x] of Object.entries(o)) walkStrings(x, path === '' ? k : `${path}.${k}`, k, o, visit)

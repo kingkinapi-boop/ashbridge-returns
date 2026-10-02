@@ -1,3 +1,4 @@
+// @mutate
 // The register of the thirteen return kinds (END-9, blueprint 00): which sample client each starts from, and whether it is built.
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
