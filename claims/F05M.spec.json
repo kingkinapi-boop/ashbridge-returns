@@ -2,7 +2,8 @@
  "card": "F05M",
  "role": "spec",
  "worker": "cloud-b1776c",
- "state": "working",
- "at": "2026-10-02T01:31:09.512Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T01:31:31.916Z",
+ "mode": "turbo",
+ "note": "card needs no spec; Lead to mark spec reported, see reports/F05M-spec.md"
 }
