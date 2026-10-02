@@ -2,7 +2,10 @@
  "card": "A06",
  "role": "spec",
  "worker": "cloud-7f8978",
- "state": "working",
- "at": "2026-10-02T14:58:38.362Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T15:11:27.310Z",
+ "mode": "turbo",
+ "note": "73 tests in 3 files; stub run green; see reports/A06-spec.md",
+ "commit": "8af6557",
+ "validated": "31ee347"
 }
