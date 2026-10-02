@@ -2,7 +2,10 @@
  "card": "F03R",
  "role": "spec",
  "worker": "cloud-34faae",
- "state": "working",
- "at": "2026-10-02T07:21:12.824Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T07:29:08.802Z",
+ "mode": "turbo",
+ "note": "round 3: 61 new acceptance tests + golden; 63 fail pre-build; ambers: S2 property asserts refusal only where B1 reads a number; rates compare as numbers with tolerance; amounts by String() so -0 matches 0",
+ "commit": "579659a",
+ "validated": "ba4505f"
 }
