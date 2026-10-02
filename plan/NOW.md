@@ -15,6 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 |---|---|---|---|---|
 | A06, F07 security reviews (both PASS checks; then board with F06) | 2 Opus helpers, local worktrees | laptop | 2 Oct 19:28Z | reports/<card>-security.md |
 | W00c spec, A07C build (round 2), S02 spec | cloud runs | cloud | 2 Oct 19:20Z | claude/<card> |
+| 4 queue runs (G12 to G17 specs and the next offers) | cloud runs | cloud | 2 Oct 19:32Z | claude/<card> |
 | Waiting: A04 build (needs F06 merged); W00b build waits on W00c; G12 to G17 unparked (E03A landed) | queue | | | |
 
 ## Next, in order
