@@ -117,7 +117,17 @@ describe('ARC-13 money fields read as cents from their text', () => {
     const text = `  "decoys": [${decoys.map((d) => JSON.stringify(d).replace(/1000/g, '1e3')).join(', ')}],\n`
     editText(root, 'C10', 'answer-key.json', (t) => t.replace('{\n', `{\n${text}`))
     expect(readFileSync(join(clientDir(root, 'C10'), 'answer-key.json'), 'utf8')).toContain('"amount":1e3')
-    expect(loadClient('C10', { root }).id).toBe('C10')
+    // W00b spec (findings W00 r2 S1): "decoys" is not a path of the closed field table, so the made-up data guard may
+    // refuse it as unclassified; the money reader must still leave every decoy alone (no money issue).
+    let issues: LoadIssue[] = []
+    try {
+      expect(loadClient('C10', { root }).id).toBe('C10')
+    } catch (e) {
+      expect(e).toBeInstanceOf(TestWorldLoadError)
+      issues = (e as TestWorldLoadError).issues
+    }
+    expect(issues.filter((i) => i.check === 'money')).toEqual([])
+    expect(issues.filter((i) => !(i.check === 'made-up-data' && i.record.includes('decoys')))).toEqual([])
   })
 
   it('ARC-13 text in a money field is a schema refusal, not a money issue', () => {

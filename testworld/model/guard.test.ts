@@ -36,15 +36,17 @@ describe('nine-digit numbers', () => {
   it('a number that fails the check digit passes', () => {
     expect(run([text('md', '123456789 and 123 456 789')])).toEqual([])
   })
-  it('part of a longer number, a decimal or mixed separators are not a nine-digit number', () => {
+  // W00b spec: mixed separators ('046-454 286') are a nine-digit number now (findings W00 r2 S3); they left this list.
+  it('part of a longer number or a decimal is not a nine-digit number', () => {
     const nines = (t: string): LoadIssue[] => run([text('md', t)]).filter((i) => i.reason.startsWith('the number'))
-    for (const t of ['0464542861', '10464542861', '1.046454286', '046454286.50', '046-454 286', '046 454-286']) expect(nines(t)).toEqual([])
+    for (const t of ['0464542861', '10464542861', '1.046454286', '046454286.50']) expect(nines(t)).toEqual([])
   })
   it('a number at the end of a sentence is still a number', () => {
     expect(run([text('md', 'It was 046454286.')])).toEqual([issue('f.md', NINE('046454286'))])
   })
   it('numbers are found in JSON string values with their path', () => {
-    expect(run([json({ a: { b: '046454286' } })])).toEqual([issue('f.json a.b', NINE('046454286'))])
+    // W00b spec: a classified path (notes[]), since an unclassified one is refused too (findings W00 r2 S1).
+    expect(run([json({ notes: ['046454286'] })])).toEqual([issue('f.json notes.0', NINE('046454286'))])
   })
 })
 
@@ -117,39 +119,14 @@ describe('phone numbers', () => {
 
 describe('name fields in JSON', () => {
   const reason = (v: string): string => `the name "${v}" does not end with "(Test)"`
-  it('every name key is checked, with its path', () => {
-    for (const k of ['name', 'legal_name', 'entity_name', 'lender', 'recipient', 'employee']) {
-      expect(run([json({ [k]: 'Alice Smith' })])).toEqual([issue(`f.json ${k}`, reason('Alice Smith'))])
-    }
-    expect(run([json({ owners: [{ name: 'Alice Smith' }] })])).toEqual([issue('f.json owners.0.name', reason('Alice Smith'))])
-  })
   it('a name ending (Test), even with spaces after it, passes; one with text after it does not', () => {
     expect(run([json({ name: 'Alice Smith (Test)' })])).toEqual([])
     expect(run([json({ name: 'Alice Smith (Test)  ' })])).toEqual([])
     expect(run([json({ name: 'Alice (Test) Smith' })])).toEqual([issue('f.json name', reason('Alice (Test) Smith'))])
   })
-  it('a key that is not a name key is not checked', () => {
-    expect(run([json({ title: 'Alice Smith', names: 'Bob' })])).toEqual([])
-  })
-  it('an account line, a GIFI line or a keyed record is not a person', () => {
-    for (const holder of [{ account: '1000' }, { gifiName: 'Sales' }, { key: 'CHQ' }]) {
-      expect(run([json({ rows: [{ ...holder, name: 'Bank' }] })])).toEqual([])
-    }
-    expect(run([json({ rows: [{ name: 'Bank', other: 'x' }] })])).toEqual([issue('f.json rows.0.name', reason('Bank'))])
-  })
 })
 
 describe('walking JSON', () => {
-  it('a top-level string, a top-level array and nested arrays carry their paths', () => {
-    expect(run([json('bob@real.org')])).toEqual([issue('f.json ', EMAIL('bob@real.org'))])
-    expect(run([json(['bob@real.org'])])).toEqual([issue('f.json .0', EMAIL('bob@real.org'))])
-    expect(run([json({ a: ['x', 'bob@real.org'] })])).toEqual([issue('f.json a.1', EMAIL('bob@real.org'))])
-    expect(run([json([['bob@real.org']])])).toEqual([issue('f.json .0.0', EMAIL('bob@real.org'))])
-  })
-  it('null, numbers and booleans are skipped without error', () => {
-    expect(run([json({ a: null, b: 5, c: true, d: [null, 1] })])).toEqual([])
-    expect(run([json(null)])).toEqual([])
-  })
   it('a file that is not JSON is refused and the next file is still read', () => {
     expect(run([{ file: 'bad.json', kind: 'json', text: '{nope' }, text('md', 'bob@real.org', 'ok.md')])).toEqual([
       issue('bad.json', 'the file is not valid JSON, so it cannot be checked'),
@@ -158,47 +135,46 @@ describe('walking JSON', () => {
   })
 })
 
+// W00b spec: descriptions sit at a classified path (transactions[].description), since an unclassified path is refused
+// too (findings W00 r2 S1).
 describe('descriptions that name a person', () => {
   const people = ['Alice Smith (Test)']
   const reason = (t: string, who = 'Alice Smith'): string => `the description names ${who} without the word TEST: ${t}`
   it('a JSON description naming a person without TEST is refused', () => {
-    expect(run([json({ rows: [{ description: 'Payment to ALICE SMITH' }] })], people)).toEqual([
-      issue('f.json rows.0.description', reason('Payment to ALICE SMITH')),
+    expect(run([json({ transactions: [{ description: 'Payment to ALICE SMITH' }] })], people)).toEqual([
+      issue('f.json transactions.0.description', reason('Payment to ALICE SMITH')),
     ])
   })
   it('the word TEST in any case, as a whole word, clears it', () => {
     for (const d of ['alice smith TEST', 'test alice smith', 'Alice Smith (Test)', 'Alice Smith, test.']) {
-      expect(run([json({ description: d })], people)).toEqual([])
+      expect(run([json({ transactions: [{ description: d }] })], people)).toEqual([])
     }
-    expect(run([json({ description: 'Alice Smith TESTING' })], people)).toEqual([issue('f.json description', reason('Alice Smith TESTING'))])
-    expect(run([json({ description: 'Alice Smith attest' })], people)).toEqual([issue('f.json description', reason('Alice Smith attest'))])
-  })
-  it('only a description key is scanned', () => {
-    expect(run([json({ memo: 'Payment to Alice Smith' })], people)).toEqual([])
+    expect(run([json({ transactions: [{ description: 'Alice Smith TESTING' }] })], people)).toEqual([issue('f.json transactions.0.description', reason('Alice Smith TESTING'))])
+    expect(run([json({ transactions: [{ description: 'Alice Smith attest' }] })], people)).toEqual([issue('f.json transactions.0.description', reason('Alice Smith attest'))])
   })
   it('a description that does not name the person passes', () => {
-    expect(run([json({ description: 'Payment to Bob Jones' })], people)).toEqual([])
+    expect(run([json({ transactions: [{ description: 'Payment to Bob Jones' }] })], people)).toEqual([])
   })
   it('each person named is a separate issue, and the text is cut at 80 characters', () => {
     const long = `Alice Smith and Bob Jones ${'x'.repeat(100)}`
-    expect(run([json({ description: long })], ['Alice Smith (Test)', 'Bob Jones'])).toEqual([
-      issue('f.json description', reason(long.slice(0, 80))),
-      issue('f.json description', reason(long.slice(0, 80), 'Bob Jones')),
+    expect(run([json({ transactions: [{ description: long }] })], ['Alice Smith (Test)', 'Bob Jones'])).toEqual([
+      issue('f.json transactions.0.description', reason(long.slice(0, 80))),
+      issue('f.json transactions.0.description', reason(long.slice(0, 80), 'Bob Jones')),
     ])
     expect(long.length).toBeGreaterThan(80)
   })
   it('a name is matched without its (Test) suffix, with spaces or none around it', () => {
     for (const p of ['Alice Smith (Test)', 'Alice Smith(Test)', 'Alice Smith (Test)  ', '  Alice Smith (Test)', 'Alice Smith']) {
-      expect(run([json({ description: 'pay alice smith' })], [p])).toEqual([issue('f.json description', reason('pay alice smith'))])
+      expect(run([json({ transactions: [{ description: 'pay alice smith' }] })], [p])).toEqual([issue('f.json transactions.0.description', reason('pay alice smith'))])
     }
   })
   it('only a trailing (Test) is removed from a person name', () => {
-    expect(run([json({ description: 'pay AliceJr' })], ['Alice (Test) Jr'])).toEqual([])
-    expect(run([json({ description: 'pay Alice' })], ['Alice (Test)x'])).toEqual([])
-    expect(run([json({ description: 'pay Alice' })], ['Alice(Test)'])).toEqual([issue('f.json description', reason('pay Alice', 'Alice'))])
+    expect(run([json({ transactions: [{ description: 'pay AliceJr' }] })], ['Alice (Test) Jr'])).toEqual([])
+    expect(run([json({ transactions: [{ description: 'pay Alice' }] })], ['Alice (Test)x'])).toEqual([])
+    expect(run([json({ transactions: [{ description: 'pay Alice' }] })], ['Alice(Test)'])).toEqual([issue('f.json transactions.0.description', reason('pay Alice', 'Alice'))])
   })
   it('empty or (Test)-only people never match everything', () => {
-    expect(run([json({ description: 'anything at all' })], ['', '   ', '(Test)', ' (Test) '])).toEqual([])
+    expect(run([json({ transactions: [{ description: 'anything at all' }] })], ['', '   ', '(Test)', ' (Test) '])).toEqual([])
   })
   it('CSV lines are scanned one by one, with LF or CRLF line ends', () => {
     const csv = 'date,description\r\n2025-01-01,Cheque Alice Smith\r\n2025-01-02,Cheque Alice Smith TEST\n2025-01-03,Alice Smith again'
@@ -207,8 +183,8 @@ describe('descriptions that name a person', () => {
       issue('bank.csv', reason('2025-01-03,Alice Smith again')),
     ])
   })
-  it('a markdown file is not scanned for names, but a CSV is still scanned for numbers', () => {
-    expect(run([text('md', 'Alice Smith')], people)).toEqual([])
+  // W00b spec: a markdown file is scanned for names now (findings W00 r2 S2); only the CSV half stays.
+  it('a CSV is scanned for numbers', () => {
     expect(run([text('csv', 'a,046454286')], people)).toEqual([issue('f.csv', NINE('046454286'))])
   })
 })

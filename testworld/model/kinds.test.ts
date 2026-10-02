@@ -16,6 +16,10 @@ vi.mock('node:fs', async (importOriginal) => {
       }
       return real.existsSync(p)
     },
+    // W00b spec (findings W00 r2 S8): loadKind now runs guardFolder on the kind folder, so a faked built folder is
+    // also an empty one when read; the assertions below are unchanged.
+    readdirSync: (p: string, ...rest: unknown[]): unknown =>
+      p.includes('kinds') && [...built].some((b) => p.startsWith(b)) ? [] : (real.readdirSync as (...a: unknown[]) => unknown)(p, ...rest),
   }
 })
 
