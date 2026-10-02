@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "id": "Q-DIV-001",
+      "type": "ASK",
+      "resolves": "onboarding.dividend.amount",
+      "slots": [
+        {
+          "name": "amount",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Dividend amount?",
+      "topic": "dividends",
+      "retired": false
+    }
+  ]
+}

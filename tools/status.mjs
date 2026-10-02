@@ -2,7 +2,7 @@
 // Usage: node tools/status.mjs
 import { loadIndex, read, IN_FLIGHT, todayUtc } from './lib.mjs'
 
-const { cards, blueprint } = loadIndex()
+const { cards } = loadIndex()
 const tryRead = (p, fallback) => {
   try {
     return read(p)
@@ -10,6 +10,9 @@ const tryRead = (p, fallback) => {
     return fallback
   }
 }
+
+// CQ1 rule 4: the blueprint version is read from blueprint/README.md ("Version v1.2, ..."), never from slices.json.
+const blueprint = /^Version (v\d+(?:\.\d+)*)/m.exec(tryRead('blueprint/README.md', ''))?.[1] ?? '?'
 
 let mode = '?'
 try {
