@@ -1,9 +1,11 @@
 {
  "card": "F09A",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: round 3 spec, typecheck+lint green, 18 round-3 tests fail for the right reason",
  "worker": "cloud-550660",
- "state": "working",
- "at": "2026-10-02T08:29:18.489Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T08:32:37.523Z",
+ "mode": "turbo",
+ "commit": "df991b4",
+ "validated": "7dd2c02a511607dfd78053eae5e40a510f95b03b"
 }
