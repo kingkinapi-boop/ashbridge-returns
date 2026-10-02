@@ -1,0 +1,3 @@
+// planted: reads the shared schema folder and asserts an exact table list
+const dir = path.join(root, 'db/schema')
+expect(tables).toEqual(['clients', 'returns'])
