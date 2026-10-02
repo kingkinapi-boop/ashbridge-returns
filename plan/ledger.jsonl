@@ -149,3 +149,4 @@
 {"ts":"2026-10-02T01:28:42.833Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T01:28:42.849Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T01:28:42.862Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T01:31:59.344Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card side of F09 split","allowed":true}
