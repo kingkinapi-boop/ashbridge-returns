@@ -2,7 +2,8 @@
  "card": "G12",
  "role": "spec",
  "worker": "cloud-2a9ed7",
- "state": "working",
- "at": "2026-10-02T13:59:38.525Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T13:59:46.461Z",
+ "mode": "turbo",
+ "note": "G01 not on main; re-offered at once, Lead: hold G12 spec until G01 lands"
 }
