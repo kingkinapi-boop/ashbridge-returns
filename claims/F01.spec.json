@@ -1,10 +1,10 @@
 {
  "card": "F01",
  "role": "spec",
- "note": "toolchain refit 2, nothing flagged; typecheck, lint, unit 981, db 168 green",
+ "note": "round 3 last (card, findings-F01-r2)",
  "worker": "cloud-b4ebfa",
- "state": "reported",
- "at": "2026-10-02T11:17:44.182Z",
+ "state": "reopened",
+ "at": "2026-10-02T11:48:20.606Z",
  "mode": "turbo",
  "beat": "2026-10-02T11:13:48.048Z",
  "commit": "559610587f3a723270f90a98f532b4e1fdab375a",
