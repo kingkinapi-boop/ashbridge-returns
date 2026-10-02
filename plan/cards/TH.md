@@ -31,3 +31,7 @@ Tests outside `src/` and `tools/test/` have no home today: D01's 19 tests never 
 
 ## Not in this card
 Fixing the tests or files the wider net flags on other branches (their spec refits). Any change to `eslint.config.mjs`, `package.json` or the `db` project's timeouts. Lint or type rules beyond the include lists.
+
+## Also (A05 security review, 2 Oct)
+
+gitleaks: `.github/workflows/checks.yml` scans only the branch's own history (`--log-opts="HEAD"`), and a root `.gitleaks.toml` (`[extend] useDefault = true`) allowlists the fact catalogue's `"key": "<dotted name>"` lines by regex and planted test values starting `PLANTED-` or `k-test-`, never whole folders. Paths gain `.github/workflows/checks.yml` and `.gitleaks.toml`. Check: a branch with a planted secret-shaped string outside the allowlist still fails.
