@@ -1,0 +1,8 @@
+# G01 spec (cloud-c1cb2b, 2 Oct)
+
+Branch claude/G01 = origin/main plus claude/E03 (G01 needs E03's catalogue and facts.ts, not yet on main). Spec commit b575ce1, validated on main 0f31dc5 (stub run: 59 tests pass, lint, typecheck, deps:check clean; stub removed, tests fail for "Cannot find module ../index"). Only other failures in `npm test`: E03's 10 stale acceptance tests (see reports/E03-build.md).
+- 59 tests in src/modules/gaps/bank/bank.acceptance.test.ts; fixtures in `__fixtures__/` (valid bank and seven bad copies), golden `__golden__/to-hand-off.json`. Clauses ARC-2, END-7, RULE-19, AI-12. Property tests pinned seeds 20261002 and 20261003.
+- 6b sweep: no other test fails with the stub; none retired.
+- Ambers (what the card left open): `loadBank(dir, catalogue)` takes the loaded E03 catalogue; file shape `{ "items": [...] }`, `_schema.json` skipped; result `{ok, bank:{version,items}}` or `{ok:false, problems:[{file,item,reason}]}`; slot types money_cents, date, count, percent, document_ref, account_ref, fact_ref, choice(options), the first four must match the fact's value type, the rest fit any fact; answer shapes money, date, yes_no, choice, file, number; `toHandOff(bank, {returnId, questions:[{id, slots:{name:value}}]})` returns `{bankVersion, returnId, questions:[{id, slots:[{name,value}]}]}` and throws on an unknown question or slot. The lint reads every string in a file ("you"/"your" as whole words, final . ? !, label over 60). Reverse: edit the tests.
+- Builder must also create `data/question-bank/_schema.json` and `src/modules/gaps/bank/index.ts`, `src/modules/gaps/index.ts`.
+- Permission gaps: none. Model: Sonnet 5.5 (card is not core).

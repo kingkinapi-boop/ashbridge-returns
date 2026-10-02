@@ -274,3 +274,40 @@ describe('E03 round 3 sample-count rule (EV-5, A355)', () => {
     expect(sampleCountProblems(repoFiles())).toEqual([])
   })
 })
+
+// FX1: a test that starts a cold tool needs a load-proof timeout (SEC-5, ARC-15; the G01 train flake, A361).
+// A real import decides, so a test that only names a tool in text is not caught.
+const importsChildProcess = (src) => /^import[^\n]*child_process/m.test(src)
+const startsColdTool = (src) =>
+  (/^import[^\n]*\bESLint\b[^\n]*['"]eslint['"]/m.test(src) && /new ESLint\(/.test(src)) ||
+  /\.launch\(/.test(src) ||
+  (importsChildProcess(src) && /\b(?:execFileSync|execFile|execSync|spawnSync|spawn)\(/.test(src)) ||
+  /(?:[n]ew Stryker|stryker[ ]run|run[S]tryker)/.test(src)
+const timeoutValues = (src) => {
+  const found = []
+  for (const m of src.matchAll(/(?:testTimeout|timeout)\s*:\s*([\d_]+)/g)) found.push(Number(m[1].replace(/_/g, '')))
+  for (const m of src.matchAll(/,\s*([\d_]{5,})\s*\)/g)) found.push(Number(m[1].replace(/_/g, '')))
+  return found
+}
+function coldToolTimeoutProblems(files) {
+  const problems = []
+  for (const f of files) {
+    const src = read(ROOT, f)
+    if (!startsColdTool(src)) continue
+    if (!timeoutValues(src).some((n) => n >= 30000)) problems.push(`${f} starts a cold tool and sets no timeout of at least 30 s`)
+  }
+  return problems
+}
+const coldToolScope = (f) => /\.test\.(?:ts|tsx|mjs)$/.test(f) && /^(?:src|tools\/test|design|testworld|e2e)\//.test(f) && !f.includes('__fixtures__')
+
+describe('FX1 cold-tool timeout rule (SEC-5, ARC-15)', () => {
+  test('ARC-15 rule: a planted test that builds ESLint with no timeout is caught', () => {
+    expect(coldToolTimeoutProblems(['tools/test/__fixtures__/planted-cold-eslint.test.ts.txt'])).toHaveLength(1)
+  })
+  test('ARC-15 every test that builds ESLint, launches a browser, spawns node or npx or runs Stryker sets a timeout of at least 30 s', () => {
+    expect(coldToolTimeoutProblems(repoFiles().filter(coldToolScope))).toEqual([])
+  })
+  test('SEC-5 the ESLint test in egress-rules.acceptance.test.ts sets a 60 s timeout', () => {
+    expect(timeoutValues(read(ROOT, 'src/core/egress-rules.acceptance.test.ts'))).toContain(60000)
+  })
+})

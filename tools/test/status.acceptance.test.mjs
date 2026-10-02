@@ -10,7 +10,8 @@ describe('ARC-19 status.mjs', () => {
   test('ARC-19 prints the counts per status from the fixture and exits 0', () => {
     const w = makeWorld({
       slices: { blueprint: 'v9', cards: [card('A', 'done'), card('B', 'done'), card('C', 'building'), card('D', 'carded'), card('E', 'todo'), card('F', 'parked')] },
-      files: { 'plan/mode.json': JSON.stringify({ mode: 'normal' }) },
+      // CQ1 rule 4: the version is read from blueprint/README.md, not slices.json
+      files: { 'plan/mode.json': JSON.stringify({ mode: 'normal' }), 'blueprint/README.md': '# Blueprint\n\nVersion v9, 1 Oct 2026.\n' },
     })
     const r = runTool(w, 'status.mjs')
     expect(r.code).toBe(0)

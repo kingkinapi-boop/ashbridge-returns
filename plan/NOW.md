@@ -1,47 +1,46 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:30Z by the Lead (turbo on). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:40Z by the Lead at handover (Zo's `handover`). Times are UTC from `date -u`.
 
 ## State
 
-- **Mode: turbo** (Zo, 15:30Z, to-do #1; after the Reviewer SLOW of 14:40Z). First: FX1 and F01C land, then CQ1, cards ahead, W kinds. Wind-down Fri 9 Oct 18:00 Toronto. Blueprint v1.2 (status.mjs prints v1.1 until CQ1).
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). Running now: A07 build round 2 (cloud-575f8d). Laptop: none running (2 allowed, 0018; node_modules now installed in the main checkout).
-- **Landed (21):** F00, F05, F08, DG rounds, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, DG, DG2, D00, F09B (with F09A's work), E03, F04, queue repairs.
-- **Zo's answers today:** decision 0020 (design sitting 1 accepted, viewer B by the Lead A358, his logo, CRA walks off git with data-free copies in reference/cra/).
+- **Mode: turbo** (Zo, 15:30Z, after the Reviewer SLOW of 14:40Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 17:37Z: 5h 3% (new window), week 45%. Blueprint v1.2.
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`); runs cannot notify, so poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core jobs only; node_modules is installed in the main checkout. None running now.
+- **Landed (28):** F00, F05, F08, DG, DG2, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, D00, D00L, F09B (with F09A), E03, F04, FX1, G01, CQ1, F01D (with F01 and F01C), G10, G11, queue repairs. Last train ebe6680.
+- **Zo today:** decisions 0020 (design sitting 1 accepted, viewer B by the Lead A358, his logo, CRA walks off git with data-free copies in reference/cra/) and 0021 (one gitleaks line for fact names in tests; Zo made the edit himself on claude/E03A, 0462739, because the permission system blocks agents from editing .gitleaks.toml).
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Queue: F01C check (core), FX1 spec, A07 check (round 2), E03A check (core), CQ1 spec | 6 cloud runs | cloud | 2 Oct 15:35Z | claude/<card> |
-| 2 local workers (non-core jobs) | worker | laptop worktrees | 2 Oct 15:35Z | claude/<card> |
-| W00 findings review round 2 (Opus, local helper; Lead records reports/findings-W00-r2.md) | helper | laptop | 2 Oct 15:35Z | - |
-| Train: red-held (G01 flake, A361); re-board G01 and D00L with FX1 | train | - | 2 Oct 14:30Z | claude/train |
+| W00a build (long; 663 spec tests) | cloud run | cloud | 2 Oct 15:50Z | claude/W00a |
+| A07C check (core, Opus read) | cloud run | cloud | 2 Oct 17:32Z | claude/A07C |
+| Queue, builds reopened by the Lead at 17:36Z after F01D landed: F02, F06, F07, A06, A01 (round 3), BL0; E03A build (re-run gitleaks over HEAD after Zo's edit, then check) | 4 cloud runs fired at handover | cloud | 2 Oct 17:42Z | claude/<card> |
 
-## Ready for the next runs (in this order once dispatch is allowed)
+## Next, in order
 
-1. FX1 spec, build, check (cold-tool timeouts; every train can flake until it lands).
-2. F01C check (core, Opus read; build reported, 1 unrelated fail = the Node-22 Windows-1252 test W00 owns).
-3. Train: FX1, G01, D00L, then F01C; land; set mode turbo (Zo's rule) and write the decision.
-4. W00 round 3: check failed again (SEC-11 guard holes, roll check gaps, reports/W00-check.md on claude/W00). Findings review first (Opus); a third failure parks or splits. S00, W01 to W13, JH0 wait on W00.
-5. E03A check (core; Schedule 8 line refs 203 and 207 from memory: Opus confirms). W02 to W05 builds wait on W00.
-6. A01 build round 3 and BL0 build wait on F01C. A03, G10, G11 builds.
+1. Poll claims; board every PASS: scope, GitHub checks green, Opus read for core (when a check's Opus read was refused, run one before boarding). One train at a time (plan/train.json); land by merging main into the train, code guard, push local main first so the ff works.
+2. After a spec reports, reopen the held build (`update <card> build reopened --worker lead`); after a released check, re-stamp the build (`update <card> build reported --worker <builder>`) until the CQ1 follow-up lands.
+3. W00a: when its build reports, push `claude/W00b` from `claude/W00a` (W00b's card), then W00b spec. S00, B04, JH0 wait on W00a; kinds W01 to W13, W20, SK0, I40 on W00a and W00b.
+4. E03A lands, then unpark G12 to G17 (parked so the queue stops offering them).
+5. Write the CQ1 follow-up card (a released check must be re-offered; specs not offered on built-not-merged deps) and the W16 card.
+6. Designs: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions, then D02 to D13 copy them into design/screens/ (design lane, A352; claim.mjs now honours `lane: "design"`).
+7. Taxprep: day 4 Zo Sat 3 Oct (Auto-fill); day 6 Sun 4 Oct.
+8. Critic about every two days from Sat 3 Oct; Reviewer daily.
 
-## Lead work that needs no dispatch
+## Splits today (last rounds)
 
-- CQ1 card: claim.mjs never re-offers a build after a PASS or a landing (F04), skips cards whose deps cannot start (G12 picked 7 times, U00 6, D02 5), and status.mjs reads the blueprint version.
-- Write cards T08, Q00, Q01, I01, I30, I40 (queue depth; Reviewer).
-- Design lane: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions; D cards then copy them into design/screens/ (A352).
-- Metrics lines carry tokens and minutes, and "rounds" means build rounds (merge skill).
-- scope.mjs DG flags e480b61, a DG2 commit that reached claude/DG through main: a false alarm.
+F09A to F09B (landed), F01 to F01C to F01D (landed), W00 to W00a and W00b (A364), A07 to A07B to A07C (A366, A368). Each split card has a landing rule: new edge cases outside its named classes go to SC as rule tests (SC now lists rules up to R55).
 
 ## Watch out
 
-- Landing: never `rebase --rebase-merges` a train; merge main in; push local main first so the ff works. Pushing a train straight to main is refused.
-- After a spec fix reports, reopen the held build (`update <card> build reopened --worker lead`) or the queue stays empty.
-- Findings reports: record helpers' text under reports/ yourself. Findings review before every fix round; a single-cause gap may go straight back (A306); a third failure parks or splits (F09A to F09B, F01 to F01C).
-- Never weaken redaction, permissions or security checks to pass a test (A329).
+- The permission system refuses edits to `.gitleaks.toml` for every agent; any change there goes to Zo by hand (0021).
 - No real client data: Assets/ (Zo's CRA walks) is excluded from git (.git/info/exclude); never commit it.
+- Cloud boxes need Node 24.21 or later (24.11 has a windows-1252 bug); see .claude/cloud-worker-run.md.
+- Network to GitHub drops now and then: retry a push up to three times.
+- Landing: never `rebase --rebase-merges` a train; merge main in; never force-push; delete a held red train branch before pushing a new one.
+- Findings review before every fix round; a single-cause gap may go straight back (A306); a third failure parks or splits.
+- Never weaken redaction, permissions or security checks to pass a test (A329); never route a refused edit through another worker.
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time, window visible.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`. Critic and Reviewer sessions commit to main too.
 - Push guard: only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md, .claude/ straight to main.
