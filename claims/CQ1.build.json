@@ -1,0 +1,10 @@
+{
+ "card": "CQ1",
+ "role": "build",
+ "round": 1,
+ "spec": "69eefb4",
+ "worker": "cloud-7f8978",
+ "state": "working",
+ "at": "2026-10-02T15:11:30.509Z",
+ "mode": "turbo"
+}
