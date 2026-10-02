@@ -2,7 +2,8 @@
  "card": "SC4",
  "role": "spec",
  "worker": "cloud-ad4518",
- "state": "working",
- "at": "2026-10-02T22:12:19.568Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T22:12:26.002Z",
+ "mode": "turbo",
+ "note": "Re-offered after release (queue bug). Waits on A07D landing: R67 to R70 run on code A07D rewrites."
 }
