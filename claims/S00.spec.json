@@ -2,7 +2,8 @@
  "card": "S00",
  "role": "spec",
  "worker": "local-ed6f16",
- "state": "working",
- "at": "2026-10-02T04:55:19.816Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T04:55:27.534Z",
+ "mode": "turbo",
+ "note": "core: needs an Opus subagent (cloud)"
 }
