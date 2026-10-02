@@ -1,11 +1,10 @@
 {
  "card": "A04",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "383857c",
- "worker": "cloud-3e2f84",
- "state": "released",
- "at": "2026-10-02T19:52:34.691Z",
- "mode": "turbo",
- "note": "golden inbox-finding-c01.json is stale (minLength:1 lines the current NonBlankSchema does not emit); 50 of 51 pass; spec refit needed, see reports/A04-build.md"
+ "worker": "cloud-eea9f9",
+ "state": "working",
+ "at": "2026-10-02T19:54:58.754Z",
+ "mode": "turbo"
 }
