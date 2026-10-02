@@ -4,6 +4,27 @@ import { money, dol as D, ymd, bizInMonth } from '../lib/util.mjs';
 import { hstQuarterly, amortAje, t4Out, payrollMonths } from '../lib/kit.mjs';
 import { payRuns, postPayroll, t4Data } from '../lib/payroll.mjs';
 
+// ---------------------------------------------------------------- last year as typed inputs (client 11)
+// One set of typed inputs; every figure of the prior year is derived from it (card W14, "last year is ours").
+const PY = {
+  year: { start: '2024-01-01', end: '2024-12-31' },
+  retainedEarnings2023: 1425000, // closing 2023, cents
+  netIncomeBeforeTax: 11842000, federalTax: 1065780, ontarioTax: 378944, instalmentsPaid: 1200000, dividends: 0,
+  assets: [{ description: 'Computer equipment', glAccount: '1540', accumAccount: '1541', class: '50', cost: 450000, availableForUse: '2023-06-01', life: 3 }],
+};
+const RATE50 = 0.55;
+const monthsIncl = (a, b) => (Number(b.slice(0, 4)) - Number(a.slice(0, 4))) * 12 + Number(b.slice(5, 7)) - Number(a.slice(5, 7)) + 1;
+// accumulated book amortization at 31 Dec 2024: straight-line by whole months in service, from cost
+const bookAccum = (a) => Math.round((a.cost * monthsIncl(a.availableForUse, PY.year.end)) / (a.life * 12));
+// UCC at 31 Dec 2024: class 50 at 55%, the accelerated first-year rule (1.5 times the cost before 2024), a full-year claim each year
+const uccAt2024 = (a) => {
+  let ucc = a.cost - Math.round(RATE50 * 1.5 * a.cost); // 2023 (the asset came into use in 2023)
+  ucc -= Math.round(RATE50 * ucc); // 2024
+  return ucc;
+};
+const priorTax = PY.federalTax + PY.ontarioTax;
+const priorOwing = priorTax - PY.instalmentsPaid; // paid in 2025
+
 // ---------------------------------------------------------------- 11 Humber Bay Software (K01: returning, clean books)
 export function build11() {
   const c = new Client({ num: '11', slug: 'humber-bay-software', name: 'Humber Bay Software Ltd. (Test)', fyStart: '2025-01-01', fyEnd: '2025-12-31', seed: 1111, hstMethod: 'regular' });
@@ -45,13 +66,24 @@ export function build11() {
   c.routine('BCD', { gl: '6090', merch: ['AMAZON.CA', 'STAPLES #'], n: [2, 4], amt: [9, 110] });
   c.routine('BCD', { gl: '6170', merch: ['GREEN P PARKING', 'IMPARK', 'UBER *TRIP'], n: [2, 4], amt: [8, 40] });
 
-  // brought forward from last year (the answer key's prior_year block holds the whole return)
-  c.opening['1540'] = 450000; c.opening['1541'] = -260000; c.opening['2050'] = -438000; c.opening['3010'] = -10000;
+  // brought forward from last year: every opening figure comes from PY; retained earnings is the engine's plug and the bank balance is solved to it
+  const [asset] = PY.assets, accum = bookAccum(asset), ucc = uccAt2024(asset);
+  c.opening['1540'] = asset.cost; c.opening['1541'] = -accum; c.opening['2050'] = -438000; c.opening['3010'] = -10000; c.opening['2085'] = -priorOwing;
+  const nia = PY.netIncomeBeforeTax - priorTax, reClose = PY.retainedEarnings2023 + nia - PY.dividends;
+  const others = Object.values(c.opening).reduce((x, v) => x + v, 0) - c.accts.BCD.opening; // all but the bank and retained earnings; the card is a liability
+  c.accts.CHQ.opening = reClose - others;
   hstQuarterly(c, 'CHQ', 438000, { d2: 'CRA GST/HST PAYMENT' });
   c.cardPayments('BCD', 'CHQ', 20);
+  // last year's balance owing is paid on 31 Mar; the 2025 instalments are a quarter of 2024's tax each (the prior-year option)
+  const balPay = c.bs('CHQ', '2025-03-31', 'CRA', 'CORP TAX BALANCE DUE 2024', -priorOwing, '2085', { kind: 'tax-balance' });
+  const instalments = ['2025-03-31', '2025-06-30', '2025-09-30', '2025-12-31'].map((d) => c.bs('CHQ', d, 'CRA', 'CORP TAX INSTALMENT', -priorTax / 4, '1250', { kind: 'tax-instalment' }));
   const am = amortAje(c, { date: c.fyEnd, tx: [laptop], reason: 'Book amortization for the year (straight-line, 3 years)', items: [
-    { label: 'computer equipment brought forward', cost: 450000, acc: '1541', life: 3, inService: '2023-06-01', prior: 260000 },
+    { label: 'computer equipment brought forward', cost: asset.cost, acc: '1541', life: asset.life, inService: asset.availableForUse, prior: accum },
     { label: 'laptop', cost: 289900, acc: '1541', life: 3, inService: '2025-03-18' }] });
+  c.assets = [
+    { description: asset.description, glAccount: asset.glAccount, accumAccount: asset.accumAccount, class: asset.class, cost: D(asset.cost), availableForUse: asset.availableForUse, book: { method: 'straight-line', years: asset.life, convention: 'monthly' }, cca: { firstYear: 'aii' } },
+    { description: 'Laptop', glAccount: '1540', accumAccount: '1541', class: '50', cost: 2899, availableForUse: '2025-03-18', book: { method: 'straight-line', years: 3, convention: 'monthly' }, cca: { firstYear: 'aii' } },
+  ];
 
   c.flag({ rule: 'CCA addition: laptop in class 50', severity: 'info', tx: [laptop], aje: [am.id],
     detail: 'One laptop, $2,899.00 before HST ($3,275.87 with it) on the business card on 18 Mar 2025: class 50 on Schedule 8. HST is claimed. Book amortization is added back on Schedule 1.' });
@@ -61,18 +93,23 @@ export function build11() {
     detail: "Last year's return was filed by the firm, CPA-final and assessed as filed. The answer key's prior_year block holds it; the opening balances equal its balance sheet line for line." });
   c.flag({ rule: 'HST regular, quarterly', severity: 'info', onb: ['hst'],
     detail: 'Four payments on 31 Jan, 30 Apr, 31 Jul and 31 Oct 2025 (the first is last year\'s Q4). The Q4 2025 return is paid in January 2026, so HST is payable at year end.' });
+  c.flag({ rule: 'corporate tax instalments follow last year (prior-year option)', severity: 'info', tx: [balPay, ...instalments],
+    detail: 'Last year\'s tax was $14,447.24 (over $3,000), so four quarterly instalments of $3,611.81 are paid on 31 Mar, 30 Jun, 30 Sep and 31 Dec 2025 and booked to the instalments account. Last year\'s balance owing of $2,447.24 was paid on 31 Mar 2025.' });
 
   c.priorYear = (fin) => ({
-    note: "last year's return as the firm filed it, made up",
-    fiscalYear: { start: '2024-01-01', end: '2024-12-31' },
+    note: "last year's return as the firm filed it, made up; derived from one set of typed inputs in the generator (the 2023 retained earnings, 2024 income, tax and dividends, each asset's cost, date and method)",
+    fiscalYear: PY.year,
     cpaFinal: true, assessed: true, filedByUs: true,
     balanceSheet: fin.tb.opening.rows.map((r) => ({ gifi: r.gifi, gifiName: r.gifiName, debit: r.debit, credit: r.credit })),
+    incomeStatement: { netIncomeBeforeTax: D(PY.netIncomeBeforeTax), incomeTax: D(priorTax), netIncomeAfterTax: D(nia) },
+    retainedEarnings: { opening: D(PY.retainedEarnings2023), dividends: D(PY.dividends), closing: D(reClose) },
     retainedEarnings3849: D(-fin.open['3600']),
+    balanceOwing: { amount: D(priorOwing), account: '2085', paidBy: [balPay] },
     ucc: c.t2.openingUcc.map((u) => ({ class: u.class, ucc: u.ucc })),
     losses: { nonCapital: [], capital: [] },
     dividendAccounts: { grip: 0, lrip: 0, cda: 0, eRdtoh: 0, nerdtoh: 0 },
     noticeOfAssessment: { date: '2025-05-27', assessedAsFiled: true, note: 'made-up date' },
-    rv2: { net_income: 118420.0, taxable_income: 118420.0, federal_tax: 10657.8, ontario_tax: 3789.44, instalments: 12000.0, balance_or_refund: 2447.24 },
+    rv2: { net_income: D(PY.netIncomeBeforeTax), taxable_income: D(PY.netIncomeBeforeTax), federal_tax: D(PY.federalTax), ontario_tax: D(PY.ontarioTax), instalments: D(PY.instalmentsPaid), balance_or_refund: D(priorOwing) },
   });
 
   c.who = 'Elliot Barrow (Test) owns Humber Bay Software Ltd. (Test), a small software consultancy with one employee and three steady customers. He takes no salary, draws or dividends. The firm filed last year\'s return. This is the control client: nothing in the books needs a judgement.';
@@ -93,7 +130,7 @@ export function build11() {
     payroll: { note: 'Simulated figures; runs from December 2024 give the opening payroll liability.', by_month: payrollMonths(pay.months), t4_summaries: t4o.summary },
     client_notes: ['Nothing unusual this year. One new laptop in March.', 'I take no salary or dividends; the company keeps its cash.'],
   };
-  c.t2.openingUcc = [{ class: '50', ucc: 1480.0, note: 'brought forward from last year, made-up figure' }];
+  c.t2.openingUcc = [{ class: '50', ucc: D(uccAt2024(PY.assets[0])), note: 'brought forward from last year: recomputed from cost, date, class rate and the first-year rule' }];
   c.t2.slips = { T4: t4o.slips, T4Summary: t4o.summary, T5: [], note: 'One employee; no dividends.' };
   c.t2.schedule3 = { dividendsReceived: [], dividendsPaid: [] };
   c.t2.schedule4 = { note: 'no loss' };
@@ -102,56 +139,65 @@ export function build11() {
 }
 
 // ---------------------------------------------------------------- 12 Kensington Market Crafts (K05: onboarding answers only)
+// Client 12's answers, ids only (RULE-19: no wording here; contract-ids.json is the list). A screen answer (channel 'screen') resolves
+// a fact its contract row lists; a fact with no screen id arrives as a conversation answer keyed by its fact id (contract line 83).
+// The six expense groups and the bank, loan and share balances have no screen id, so each is keyed by a fact row from the contract's
+// section 2 (the GIFI income statement and balance sheet rows); which row is which group is W05's to map to the live fact list.
 const ANSWERS = [
-  // id, label, answer, what it resolves, channel
-  ['BQ2.earn', 'What the business sold in the year', '28,640.00', 'Revenue for the year (FL:106)', 'screen'],
-  ['YE2.materials', 'Materials for what you make', '11,480.00', 'Cost of materials (FL:107)', 'screen'],
-  ['YE2.booths', 'Market and booth fees', '4,350.00', 'Main expense groups (FL:107)', 'screen'],
-  ['YE2.ads', 'Advertising and promotion', '960.00', 'Main expense groups (FL:107)', 'screen'],
-  ['YE2.packing', 'Packaging and shipping', '2,214.20', 'Main expense groups (FL:107)', 'screen'],
-  ['YE2.phone', 'Phone and internet', '1,140.00', 'Main expense groups (FL:107)', 'screen'],
-  ['YE2.fees', 'Bank and payment fees', '980.00', 'Main expense groups (FL:107)', 'screen'],
-  ['YE1.vehicle', 'Vehicle costs for the year', '3,900.00', 'Vehicle costs (FL:91)', 'screen'],
-  ['ARB.bal', 'Business bank balance on the last day of the year', '6,215.80', 'Year-end cash (FL:96)', 'screen'],
-  ['BQ7.loan', 'Money you lent the company that it still owes you', '2,500.00', 'Shareholder loan (FL:104)', 'screen'],
-  ['INC3.shares', 'Amount paid in for the shares', '100.00', 'Share capital (FL:98)', 'screen'],
-  ['YE1.pcost', 'Home costs you pay personally for the year', '16,800.00', 'Home office costs (FL:93)', 'screen'],
-  ['YE1.puse', 'Share of your home used for the business, in percent', '10', 'Home office share (FL:93)', 'screen'],
-  ['YE1.vkm', 'Kilometres driven in the year', '12,400', 'Vehicle kilometres (FL:95)', 'screen'],
-  ['YE1.vbkm', 'Kilometres driven for the business', '4,100', 'Vehicle business kilometres (FL:95)', 'screen'],
+  // question_asked, answer, what_it_resolves, channel
+  ['BQ2.earn', '28,640.00', 'FL:106', 'screen'], // sales
+  ['FL:107', '11,480.00', 'FL:107', 'conversation'], // materials for what she makes
+  ['FL:205', '4,350.00', 'FL:205', 'conversation'], // market and booth fees
+  ['FL:206', '960.00', 'FL:206', 'conversation'], // advertising and promotion
+  ['FL:209', '2,214.20', 'FL:209', 'conversation'], // packaging and shipping
+  ['FL:213', '1,140.00', 'FL:213', 'conversation'], // phone and internet
+  ['FL:214', '980.00', 'FL:214', 'conversation'], // bank and payment fees
+  ['YE1.vehicle', '3,900.00', 'FL:91', 'screen'], // vehicle costs
+  ['FL:96', '6,215.80', 'FL:96', 'conversation'], // business bank balance at 31 Dec 2025
+  ['FL:97', '2,600.00', 'FL:97', 'conversation'], // business bank balance at 31 Dec 2024 (all prior years were filed by another firm)
+  ['FL:104', '2,500.00', 'FL:104', 'conversation'], // money she lent the company, still owed: at both year ends
+  ['FL:98', '100.00', 'FL:98', 'conversation'], // amount paid in for the shares: at both year ends
+  ['YE1.pcost', '16,800.00', 'FL:92', 'screen'], // home costs she pays personally
+  ['YE1.puse', '10', 'FL:93', 'screen'], // share of the home used for the business, percent
+  ['YE1.vkm', '12,400', 'FL:95', 'screen'], // kilometres driven
+  ['YE1.vbkm', '4,100', 'FL:95', 'screen'], // kilometres driven for the business
 ];
 export function build12() {
   const c = new Client({ num: '12', slug: 'kensington-market-crafts', name: 'Kensington Market Crafts Inc. (Test)', fyStart: '2025-01-01', fyEnd: '2025-12-31', seed: 1112, hstMethod: 'none' });
   c.owner('Tamsin Reyes (Test)', 100);
-  const ans = Object.fromEntries(ANSWERS.map((a) => [a[0], a[2]]));
+  const ans = Object.fromEntries(ANSWERS.map((a) => [a[0], a[1]]));
   const cents = (id) => Math.round(parseFloat(ans[id].replace(/,/g, '')) * 100);
   const src = (id) => ({ kind: 'client answer', answer: id });
-  // account, answer, side
-  const rows = [['1010', 'ARB.bal', 'dr'], ['5020', 'YE2.materials', 'dr'], ['6220', 'YE2.booths', 'dr'], ['6010', 'YE2.ads', 'dr'], ['6195', 'YE2.packing', 'dr'], ['6185', 'YE2.phone', 'dr'], ['6075', 'YE2.fees', 'dr'], ['6190', 'YE1.vehicle', 'dr'],
-    ['4010', 'BQ2.earn', 'cr'], ['2080', 'BQ7.loan', 'cr'], ['3010', 'INC3.shares', 'cr']];
+  // account, answer, side (the year's entry; the opening balances come from the 31 Dec 2024 answers below)
+  const rows = [['1010', 'FL:96', 'dr'], ['5020', 'FL:107', 'dr'], ['6220', 'FL:205', 'dr'], ['6010', 'FL:206', 'dr'], ['6195', 'FL:209', 'dr'], ['6185', 'FL:213', 'dr'], ['6075', 'FL:214', 'dr'], ['6190', 'YE1.vehicle', 'dr'],
+    ['4010', 'BQ2.earn', 'cr'], ['2080', 'FL:104', 'cr'], ['3010', 'FL:98', 'cr']];
   c.glSource = Object.fromEntries(rows.map(([gl, id]) => [gl, src(id)]));
+  // 31 Dec 2024, as the client gave it: bank, the owner's loan and the share capital; retained earnings is the balancing figure (0.00 here)
+  c.opening['1010'] = cents('FL:97'); c.opening['2080'] = -cents('FL:104'); c.opening['3010'] = -cents('FL:98');
+  c.openSource = { 1010: src('FL:97'), 2080: src('FL:104'), 3010: src('FL:98'), 3600: { kind: 'client answer', balancing: true, answers: ['FL:97', 'FL:104', 'FL:98'] } };
+  // the year moves the bank by the year's profit; the loan and the shares do not move, so they are not in the entry
   const aje = c.aje({ date: c.fyEnd, onb: rows.map((r) => r[1]), reason: 'Books built from the client\'s onboarding answers only: no account files, no QuickBooks, no documents. Every line is one answer.',
     note: 'summarized entry; each line names the answer it comes from in the trial balance',
-    lines: rows.map(([gl, id, side]) => ({ gl, [side]: cents(id) })) });
+    lines: rows.filter(([gl]) => !['2080', '3010'].includes(gl)).map(([gl, id, side]) => ({ gl, [side]: gl === '1010' ? cents(id) - cents('FL:97') : cents(id) })) });
 
   c.flag({ rule: 'no third-party evidence for revenue', judgement: true, blocking: false, onb: ['BQ2.earn'], aje: [aje],
     detail: 'Sales of $28,640.00 come from the client\'s answer. There is no bank statement, no sales report and no invoice behind it. A person decides whether to ask for evidence or proceed on the answer.' });
-  c.flag({ rule: 'bank balance has no statement', judgement: true, blocking: false, onb: ['ARB.bal'], aje: [aje],
-    detail: 'The year-end bank balance of $6,215.80 is the client\'s answer. No statement or account file was given, so nothing can be tied to it.' });
+  c.flag({ rule: 'bank balance has no statement', judgement: true, blocking: false, onb: ['FL:96', 'FL:97'], aje: [aje],
+    detail: 'The year-end bank balance of $6,215.80 (and $2,600.00 a year earlier) is the client\'s answer. No statement or account file was given, so nothing can be tied to it.' });
   c.flag({ rule: 'home office rests on the client\'s word', judgement: true, blocking: false, onb: ['YE1.pcost', 'YE1.puse'],
     detail: 'Home costs of $16,800.00 paid personally and a business share of 10 percent. No rent or utility proof. A person decides what to claim.' });
   c.flag({ rule: 'vehicle use rests on the client\'s word', judgement: true, blocking: false, onb: ['YE1.vehicle', 'YE1.vkm', 'YE1.vbkm'],
     detail: 'Vehicle costs of $3,900.00 and 4,100 business kilometres of 12,400 driven. No logbook. A person decides the business share.' });
-  c.flag({ rule: 'shareholder loan rests on the client\'s word', judgement: true, blocking: false, onb: ['BQ7.loan'],
+  c.flag({ rule: 'shareholder loan rests on the client\'s word', judgement: true, blocking: false, onb: ['FL:104'],
     detail: 'The owner says she lent the company $2,500.00 and is still owed it. No terms and no transfer to show. A person confirms.' });
 
   c.who = 'Tamsin Reyes (Test) owns Kensington Market Crafts Inc. (Test), a one-person craft business that sells at markets. She is not registered for HST (sales under $30,000, a small supplier). She gave only her onboarding answers: no bank statements, no QuickBooks, no documents.';
   c.planted = [
     'No account files, no QBO files and no documents: the figures are onboarding answers only, stored as the client app stores them (money as text with commas and two decimals).',
     'Sales 28,640.00; materials 11,480.00; market and booth fees 4,350.00; advertising 960.00; packaging and shipping 2,214.20; phone and internet 1,140.00; bank and payment fees 980.00; vehicle costs 3,900.00.',
-    'Bank balance at 31 Dec 2025 6,215.80; money the owner lent the company and is still owed 2,500.00; shares issued 100.00.',
+    'Bank balance at 31 Dec 2025 6,215.80 (2,600.00 at 31 Dec 2024); money the owner lent the company and is still owed 2,500.00; shares issued 100.00. All prior years were filed by another firm: the 31 Dec 2024 balances are the client\'s answers and retained earnings is the balancing figure (0.00).',
     'Home costs she pays personally 16,800.00 with a home office share of 10 (percent); the vehicle drove 12,400 km in the year, 4,100 for the business.',
-    'Debits (bank and the seven expense groups) and credits (sales, the owner\'s loan and the shares) both come to 31,240.00.',
+    'The year\'s entry has debits (the bank\'s rise of 3,615.80 and the seven expense groups) and credits (sales) that both come to 28,640.00.',
   ];
   c.onb = {
     corporation: { incorporation_date: '2023-08-14', client_type: 'ccpc', claims_small_business_deduction: 'yes', hst_filing_frequency: null, hst_basis: null, books_kept_by: 'owner, no software' },
@@ -159,7 +205,7 @@ export function build12() {
     related_entities: [],
     staff: { employees: 0, note: 'The owner works alone.' },
     hst: { registered: false, note: 'Sales under $30,000: a small supplier.' },
-    answers: ANSWERS.map(([id, label, verbatim, resolves, channel]) => ({ question_asked: `${id}: ${label}`, answer_verbatim: verbatim, what_it_resolves: resolves, channel })),
+    answers: ANSWERS.map(([id, verbatim, resolves, channel]) => ({ question_asked: id, answer_verbatim: verbatim, what_it_resolves: resolves, channel })),
     client_notes: ['I sell at markets and online. I do not have bank statements for the company; the balance is what the app showed on 31 December.', 'I lent the company $2,500 when I started.'],
   };
   c.t2.lines = [

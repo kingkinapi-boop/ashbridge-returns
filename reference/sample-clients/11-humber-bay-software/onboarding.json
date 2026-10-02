@@ -105,21 +105,22 @@
   "prior_year_closing_balances": {
     "as_of": "2024-12-31",
     "accounts": [
-      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":8394.42,"credit":0},
+      {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":125717.11,"credit":0},
       {"account":"1540","name":"Computer equipment","gifi":1774,"gifiName":"Computer equipment/software","gifiStatus":"settled","debit":4500,"credit":0},
-      {"account":"1541","name":"Accumulated amortization, computer equipment","gifi":1775,"gifiName":"Accumulated amortization of computer equipment/software","gifiStatus":"settled","debit":0,"credit":2600},
+      {"account":"1541","name":"Accumulated amortization, computer equipment","gifi":1775,"gifiName":"Accumulated amortization of computer equipment/software","gifiStatus":"settled","debit":0,"credit":2375},
       {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":1121.79},
       {"account":"2040","name":"Payroll deductions payable (CPP, EI, employer share)","gifi":2627,"gifiName":"Employee deductions payable","gifiStatus":"settled","debit":0,"credit":698.62},
       {"account":"2041","name":"Income tax withheld payable","gifi":2628,"gifiName":"Withholding taxes payable","gifiStatus":"confirm","note":"withholding taxes payable is worded for non-residents too","debit":0,"credit":871.7},
       {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":4380},
+      {"account":"2085","name":"Income tax payable","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":2447.24},
       {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
-      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":3122.31}
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":118222.76}
     ],
     "ucc": [
       {
         "class": "50",
-        "ucc": 1480,
-        "note": "brought forward from last year, made-up figure"
+        "ucc": 354.37,
+        "note": "brought forward from last year: recomputed from cost, date, class rate and the first-year rule"
       }
     ]
   }

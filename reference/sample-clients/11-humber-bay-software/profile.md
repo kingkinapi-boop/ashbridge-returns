@@ -12,7 +12,7 @@ Elliot Barrow (Test) owns Humber Bay Software Ltd. (Test), a small software cons
 
 | Key | Institution and layout | Currency | File (accounts and qbo) | Rows | Opening | Closing |
 | --- | --- | --- | --- | --- | --- | --- |
-| CHQ | A: Lakeview Bank (Test) chequing | CAD | lakeview-chequing-3306.csv | 209 | 8394.42 | 68800.37 |
+| CHQ | A: Lakeview Bank (Test) chequing | CAD | lakeview-chequing-3306.csv | 214 | 125717.11 | 169228.58 |
 | BCD | Aurora Card (Test) | CAD | aurora-business-card-5528.csv | 133 | 1121.79 | 566.27 |
 
 Opening and closing are what the statements show (for a card, the amount owing). Layout B files start with two header lines (account type, masked account number) and then the column line. Card and brokerage dates are YYYY-MM-DD. The QBO files carry the same rows in the same order.
@@ -31,23 +31,24 @@ Opening and closing are what the statements show (for a card, the amount owing).
 - **payroll against T4 agrees** (11-F02): One employee, 26 pays in 2025. The T4 summary in onboarding agrees with the payroll deposits and the twelve CRA remittances in the year (the December 2024 deductions were paid on 15 Jan 2025).
 - **last year's return is ours** (11-F03): Last year's return was filed by the firm, CPA-final and assessed as filed. The answer key's prior_year block holds it; the opening balances equal its balance sheet line for line.
 - **HST regular, quarterly** (11-F04): Four payments on 31 Jan, 30 Apr, 31 Jul and 31 Oct 2025 (the first is last year's Q4). The Q4 2025 return is paid in January 2026, so HST is payable at year end.
+- **corporate tax instalments follow last year (prior-year option)** (11-F05): Last year's tax was $14,447.24 (over $3,000), so four quarterly instalments of $3,611.81 are paid on 31 Mar, 30 Jun, 30 Sep and 31 Dec 2025 and booked to the instalments account. Last year's balance owing of $2,447.24 was paid on 31 Mar 2025.
 
 ## Statement balances by month (from the statements, not from the export)
 
 | Account | Month | Opening | Closing | Export activity | Rolls |
 | --- | --- | --- | --- | --- | --- |
-| CHQ | 2025-01 | 8394.42 | 10701.10 | 2306.68 | yes |
-| CHQ | 2025-02 | 10701.10 | 17818.78 | 7117.68 | yes |
-| CHQ | 2025-03 | 17818.78 | 24937.72 | 7118.94 | yes |
-| CHQ | 2025-04 | 24937.72 | 24910.10 | -27.62 | yes |
-| CHQ | 2025-05 | 24910.10 | 30368.75 | 5458.65 | yes |
-| CHQ | 2025-06 | 30368.75 | 36636.54 | 6267.79 | yes |
-| CHQ | 2025-07 | 36636.54 | 39551.46 | 2914.92 | yes |
-| CHQ | 2025-08 | 39551.46 | 46661.34 | 7109.88 | yes |
-| CHQ | 2025-09 | 46661.34 | 53715.52 | 7054.18 | yes |
-| CHQ | 2025-10 | 53715.52 | 55103.01 | 1387.49 | yes |
-| CHQ | 2025-11 | 55103.01 | 61511.66 | 6408.65 | yes |
-| CHQ | 2025-12 | 61511.66 | 68800.37 | 7288.71 | yes |
+| CHQ | 2025-01 | 125717.11 | 128023.79 | 2306.68 | yes |
+| CHQ | 2025-02 | 128023.79 | 135141.47 | 7117.68 | yes |
+| CHQ | 2025-03 | 135141.47 | 136201.36 | 1059.89 | yes |
+| CHQ | 2025-04 | 136201.36 | 136173.74 | -27.62 | yes |
+| CHQ | 2025-05 | 136173.74 | 141632.39 | 5458.65 | yes |
+| CHQ | 2025-06 | 141632.39 | 144288.37 | 2655.98 | yes |
+| CHQ | 2025-07 | 144288.37 | 147203.29 | 2914.92 | yes |
+| CHQ | 2025-08 | 147203.29 | 154313.17 | 7109.88 | yes |
+| CHQ | 2025-09 | 154313.17 | 157755.54 | 3442.37 | yes |
+| CHQ | 2025-10 | 157755.54 | 159143.03 | 1387.49 | yes |
+| CHQ | 2025-11 | 159143.03 | 165551.68 | 6408.65 | yes |
+| CHQ | 2025-12 | 165551.68 | 169228.58 | 3676.90 | yes |
 | BCD | 2025-01 | 1121.79 | 643.52 | 478.27 | yes |
 | BCD | 2025-02 | 643.52 | 699.38 | -55.86 | yes |
 | BCD | 2025-03 | 699.38 | 3980.08 | -3280.70 | yes |

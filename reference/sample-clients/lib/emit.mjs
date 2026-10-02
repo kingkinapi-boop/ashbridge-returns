@@ -77,16 +77,16 @@ export function finalize(c) {
   for (const t of c.txs) for (const l of t.post) bump(unadj, l.gl, l.dr - l.cr);
   const adj = { ...unadj };
   for (const j of c.ajes) for (const l of j.lines) bump(adj, l.gl, (l.dr ?? 0) - (l.cr ?? 0));
-  const tbRows = (m) => {
+  const tbRows = (m, srcMap = c.glSource) => {
     const rows = Object.keys(m).filter((k) => m[k] !== 0).sort().map((gl) => {
       const g = GL[gl]; const net = m[gl]; const code = gifiFor(gl, net);
-      return { account: gl, name: g.name, gifi: code ?? null, gifiName: code ? GIFI[code] : null, gifiStatus: code ? g.st : 'confirm', ...(g.st === 'confirm' && g.note ? { note: g.note } : {}), ...(c.glSource?.[gl] ? { source: c.glSource[gl] } : {}), debit: net > 0 ? D(net) : 0, credit: net < 0 ? D(-net) : 0 };
+      return { account: gl, name: g.name, gifi: code ?? null, gifiName: code ? GIFI[code] : null, gifiStatus: code ? g.st : 'confirm', ...(g.st === 'confirm' && g.note ? { note: g.note } : {}), ...(srcMap?.[gl] ? { source: srcMap[gl] } : {}), debit: net > 0 ? D(net) : 0, credit: net < 0 ? D(-net) : 0 };
     });
     const dr = sum(Object.values(m).filter((v) => v > 0)), cr = -sum(Object.values(m).filter((v) => v < 0));
     if (dr !== cr) throw new Error(`${c.num}: trial balance does not balance: dr ${dr} cr ${cr}`);
     return { rows, totalDebit: D(dr), totalCredit: D(cr) };
   };
-  const fin = { open, unadj, adj, tb: { opening: tbRows(open), unadjusted: tbRows(unadj), adjusted: tbRows(adj) } };
+  const fin = { open, unadj, adj, tb: { opening: tbRows(open, c.openSource ?? c.glSource), unadjusted: tbRows(unadj, c.openSource ?? c.glSource), adjusted: tbRows(adj) } };
   fin.netIncome = -sum(Object.keys(adj).filter(isPL), (g) => adj[g]);
   // 5. HST summary
   let coll = 0, itc = 0, remit = 0;
@@ -209,6 +209,7 @@ export function buildKey(c, fin) {
     statementBalances: Object.fromEntries(Object.values(c.accts).map((a) => [a.key, a.statements.map((s) => ({ month: s.month, opening: D(s.opening), closing: D(s.closing), exportActivity: D(s.exportActivity), rolls: s.rolls, note: c.stmtNotes?.[`${a.key}:${s.month}`] ?? undefined }))])),
     adjustingEntries: ajes,
     trialBalance: { basis: 'debits and credits in dollars; unadjusted = opening balances plus every coded transaction; adjusted = plus the adjusting entries; income tax is not booked (Taxprep computes it)', ...fin.tb, netIncomeLossBeforeTax: D(fin.netIncome) },
+    ...(c.assets ? { assets: res(c.assets, fin, c) } : {}),
     t2Inputs: res(t2, fin, c),
     ...(c.priorYear ? { prior_year: res(c.priorYear, fin, c) } : {}),
     hst: { ...fin.hst, ...(c.hstNote ? { note: res(c.hstNote, fin, c) } : {}) },

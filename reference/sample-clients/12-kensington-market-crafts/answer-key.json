@@ -20,11 +20,11 @@
     {
       "id": "12-AJE-01",
       "date": "2025-12-31",
-      "amount": 31240,
+      "amount": 28640,
       "reason": "Books built from the client's onboarding answers only: no account files, no QuickBooks, no documents. Every line is one answer.",
       "note": "summarized entry; each line names the answer it comes from in the trial balance",
       "lines": [
-        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"debit":6215.8,"credit":0},
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"debit":3615.8,"credit":0},
         {"account":"5020","name":"Purchases / cost of materials","gifi":8320,"debit":11480,"credit":0},
         {"account":"6220","name":"Other expenses","gifi":9270,"debit":4350,"credit":0},
         {"account":"6010","name":"Advertising and promotion","gifi":8520,"debit":960,"credit":0},
@@ -32,41 +32,121 @@
         {"account":"6185","name":"Telephone and telecommunications","gifi":9225,"debit":1140,"credit":0},
         {"account":"6075","name":"Bank charges","gifi":8715,"debit":980,"credit":0},
         {"account":"6190","name":"Vehicle expenses","gifi":9281,"debit":3900,"credit":0},
-        {"account":"4010","name":"Sales","gifi":8000,"debit":0,"credit":28640},
-        {"account":"2080","name":"Due to shareholders (loans)","gifi":2781,"debit":0,"credit":2500},
-        {"account":"3010","name":"Common shares","gifi":3500,"debit":0,"credit":100}
+        {"account":"4010","name":"Sales","gifi":8000,"debit":0,"credit":28640}
       ],
       "source": {
         "transactions": [],
-        "onboarding": ["ARB.bal", "YE2.materials", "YE2.booths", "YE2.ads", "YE2.packing", "YE2.phone", "YE2.fees", "YE1.vehicle", "BQ2.earn", "BQ7.loan", "INC3.shares"]
+        "onboarding": ["FL:96", "FL:107", "FL:205", "FL:206", "FL:209", "FL:213", "FL:214", "YE1.vehicle", "BQ2.earn", "FL:104", "FL:98"]
       }
     }
   ],
   "trialBalance": {
     "basis": "debits and credits in dollars; unadjusted = opening balances plus every coded transaction; adjusted = plus the adjusting entries; income tax is not booked (Taxprep computes it)",
     "opening": {
-      "rows": [],
-      "totalDebit": 0,
-      "totalCredit": 0
+      "rows": [
+        {
+          "account": "1010",
+          "name": "Chequing (CAD)",
+          "gifi": 1002,
+          "gifiName": "Deposits in Canadian banks and institutions - Canadian currency",
+          "gifiStatus": "settled",
+          "source": {
+            "kind": "client answer",
+            "answer": "FL:97"
+          },
+          "debit": 2600,
+          "credit": 0
+        },
+        {
+          "account": "2080",
+          "name": "Due to shareholders (loans)",
+          "gifi": 2781,
+          "gifiName": "Due to individual shareholder(s)",
+          "gifiStatus": "confirm",
+          "note": "current (2781) or long-term (3261) depends on terms",
+          "source": {
+            "kind": "client answer",
+            "answer": "FL:104"
+          },
+          "debit": 0,
+          "credit": 2500
+        },
+        {
+          "account": "3010",
+          "name": "Common shares",
+          "gifi": 3500,
+          "gifiName": "Common shares",
+          "gifiStatus": "settled",
+          "source": {
+            "kind": "client answer",
+            "answer": "FL:98"
+          },
+          "debit": 0,
+          "credit": 100
+        }
+      ],
+      "totalDebit": 2600,
+      "totalCredit": 2600
     },
     "unadjusted": {
-      "rows": [],
-      "totalDebit": 0,
-      "totalCredit": 0
+      "rows": [
+        {
+          "account": "1010",
+          "name": "Chequing (CAD)",
+          "gifi": 1002,
+          "gifiName": "Deposits in Canadian banks and institutions - Canadian currency",
+          "gifiStatus": "settled",
+          "source": {
+            "kind": "client answer",
+            "answer": "FL:97"
+          },
+          "debit": 2600,
+          "credit": 0
+        },
+        {
+          "account": "2080",
+          "name": "Due to shareholders (loans)",
+          "gifi": 2781,
+          "gifiName": "Due to individual shareholder(s)",
+          "gifiStatus": "confirm",
+          "note": "current (2781) or long-term (3261) depends on terms",
+          "source": {
+            "kind": "client answer",
+            "answer": "FL:104"
+          },
+          "debit": 0,
+          "credit": 2500
+        },
+        {
+          "account": "3010",
+          "name": "Common shares",
+          "gifi": 3500,
+          "gifiName": "Common shares",
+          "gifiStatus": "settled",
+          "source": {
+            "kind": "client answer",
+            "answer": "FL:98"
+          },
+          "debit": 0,
+          "credit": 100
+        }
+      ],
+      "totalDebit": 2600,
+      "totalCredit": 2600
     },
     "adjusted": {
       "rows": [
-        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","source":{"kind":"client answer","answer":"ARB.bal"},"debit":6215.8,"credit":0},
-        {"account":"2080","name":"Due to shareholders (loans)","gifi":2781,"gifiName":"Due to individual shareholder(s)","gifiStatus":"confirm","note":"current (2781) or long-term (3261) depends on terms","source":{"kind":"client answer","answer":"BQ7.loan"},"debit":0,"credit":2500},
-        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","source":{"kind":"client answer","answer":"INC3.shares"},"debit":0,"credit":100},
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","source":{"kind":"client answer","answer":"FL:96"},"debit":6215.8,"credit":0},
+        {"account":"2080","name":"Due to shareholders (loans)","gifi":2781,"gifiName":"Due to individual shareholder(s)","gifiStatus":"confirm","note":"current (2781) or long-term (3261) depends on terms","source":{"kind":"client answer","answer":"FL:104"},"debit":0,"credit":2500},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","source":{"kind":"client answer","answer":"FL:98"},"debit":0,"credit":100},
         {"account":"4010","name":"Sales","gifi":8000,"gifiName":"Trade sales of goods and services","gifiStatus":"settled","source":{"kind":"client answer","answer":"BQ2.earn"},"debit":0,"credit":28640},
-        {"account":"5020","name":"Purchases / cost of materials","gifi":8320,"gifiName":"Purchases/cost of materials","gifiStatus":"settled","source":{"kind":"client answer","answer":"YE2.materials"},"debit":11480,"credit":0},
-        {"account":"6010","name":"Advertising and promotion","gifi":8520,"gifiName":"Advertising and promotion","gifiStatus":"settled","source":{"kind":"client answer","answer":"YE2.ads"},"debit":960,"credit":0},
-        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","source":{"kind":"client answer","answer":"YE2.fees"},"debit":980,"credit":0},
-        {"account":"6185","name":"Telephone and telecommunications","gifi":9225,"gifiName":"Telephone and telecommunications","gifiStatus":"settled","source":{"kind":"client answer","answer":"YE2.phone"},"debit":1140,"credit":0},
+        {"account":"5020","name":"Purchases / cost of materials","gifi":8320,"gifiName":"Purchases/cost of materials","gifiStatus":"settled","source":{"kind":"client answer","answer":"FL:107"},"debit":11480,"credit":0},
+        {"account":"6010","name":"Advertising and promotion","gifi":8520,"gifiName":"Advertising and promotion","gifiStatus":"settled","source":{"kind":"client answer","answer":"FL:206"},"debit":960,"credit":0},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","source":{"kind":"client answer","answer":"FL:214"},"debit":980,"credit":0},
+        {"account":"6185","name":"Telephone and telecommunications","gifi":9225,"gifiName":"Telephone and telecommunications","gifiStatus":"settled","source":{"kind":"client answer","answer":"FL:213"},"debit":1140,"credit":0},
         {"account":"6190","name":"Vehicle expenses","gifi":9281,"gifiName":"Vehicle expenses","gifiStatus":"settled","source":{"kind":"client answer","answer":"YE1.vehicle"},"debit":3900,"credit":0},
-        {"account":"6195","name":"Delivery, freight and express","gifi":9275,"gifiName":"Delivery, freight and express","gifiStatus":"settled","source":{"kind":"client answer","answer":"YE2.packing"},"debit":2214.2,"credit":0},
-        {"account":"6220","name":"Other expenses","gifi":9270,"gifiName":"Other expenses","gifiStatus":"settled","source":{"kind":"client answer","answer":"YE2.booths"},"debit":4350,"credit":0}
+        {"account":"6195","name":"Delivery, freight and express","gifi":9275,"gifiName":"Delivery, freight and express","gifiStatus":"settled","source":{"kind":"client answer","answer":"FL:209"},"debit":2214.2,"credit":0},
+        {"account":"6220","name":"Other expenses","gifi":9270,"gifiName":"Other expenses","gifiStatus":"settled","source":{"kind":"client answer","answer":"FL:205"},"debit":4350,"credit":0}
       ],
       "totalDebit": 31240,
       "totalCredit": 31240
@@ -143,14 +223,14 @@
     {
       "id": "12-F02",
       "rule": "bank balance has no statement",
-      "detail": "The year-end bank balance of $6,215.80 is the client's answer. No statement or account file was given, so nothing can be tied to it.",
+      "detail": "The year-end bank balance of $6,215.80 (and $2,600.00 a year earlier) is the client's answer. No statement or account file was given, so nothing can be tied to it.",
       "severity": "must fire",
       "action": "flag for a person; do not decide alone",
       "judgement": true,
       "blocking": false,
       "evidence": {
         "transactions": [],
-        "onboarding": ["ARB.bal"],
+        "onboarding": ["FL:96", "FL:97"],
         "adjustingEntries": ["12-AJE-01"]
       }
     },
@@ -192,7 +272,7 @@
       "blocking": false,
       "evidence": {
         "transactions": [],
-        "onboarding": ["BQ7.loan"],
+        "onboarding": ["FL:104"],
         "adjustingEntries": []
       }
     }
