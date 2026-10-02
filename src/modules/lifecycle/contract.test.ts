@@ -1,6 +1,6 @@
 // F02 builder unit tests: the lifecycle contract schemas.
 import { describe, expect, test } from 'vitest'
-import { ApprovalFingerprintSchema, ChangedItemSchema } from './lifecycle'
+import { ApprovalFingerprintSchema, ChangedItemSchema } from '../../contracts/lifecycle'
 
 describe('F02 contracts', () => {
   test('FLOW-4 the fingerprint takes null and empty cell values, whole versions from 1, and refuses extra shapes', () => {
