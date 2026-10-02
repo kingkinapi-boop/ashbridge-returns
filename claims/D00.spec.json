@@ -1,9 +1,8 @@
 {
  "card": "D00",
  "role": "spec",
- "note": "refit blocked: TH not on main, unit project does not include design/**; deleting vitest.d00.config.ts would leave tests with no home. Retry after TH lands",
  "worker": "cloud-f684f9",
- "state": "released",
- "at": "2026-10-02T06:22:11.519Z",
+ "state": "working",
+ "at": "2026-10-02T06:22:13.975Z",
  "mode": "turbo"
 }
