@@ -4,7 +4,8 @@
  "round": 6,
  "spec": "5acfe13",
  "worker": "cloud-2f60ce",
- "state": "working",
- "at": "2026-10-02T15:58:49.348Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T15:58:56.275Z",
+ "mode": "turbo",
+ "note": "re-offered after my release; same gitleaks blocker, needs .gitleaks.toml allowlist (reports/E03A-build-r3.md)"
 }
