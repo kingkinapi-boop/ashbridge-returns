@@ -12,8 +12,9 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 **Coming soon from you, Sat 3 Oct (about 30 minutes):** day 4 of the trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". No walker runs that day. Any other day suits too; days 5 and 6 do not wait for it. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
 
-**What the Lead is doing now:** handing over. Done overnight: 12 cards are on main (the empty app, the checks contract, the build-tool tests, the file store, sample clients 11 to 15, the Taxprep CSV contract, the core tests, the reading contract); the .GFI format is captured; Taxprep day 5 is finished; the Reviewer's fixes are in. Next: the test-homes and amount-grammar cards land, then the records and AI cards build. Clear the Lead and type `go` when convenient; it resumes from `planNOW.md`.
-The Reviewer slowed the build to normal (reviews/REVIEW.md): the Lead first fixes the first card's core tests, the mutation gate and the two cards that block the queue; then type `turbo on`.
+**2. The Ashbridge Tax logo (one word: "keep" or "remove").** The design basis needs the logo, so I copied it from the client app (read only, nothing changed there) into `referencerandshbridge-tax-logo.png`. Claude Code's safety check then blocked two of my actions, probably because of that copy. If you say keep, I carry on; if you say remove, I delete it and use a plain stand-in until you decide. Meanwhile everything else keeps going.
+
+**What the Lead is doing now (2 Oct, 13:00 UTC):** turbo, building in the cloud. 20 of 296 cards are on main; today added the test homes, the Taxprep CSV repairs, the screen map, the done gate and its widening to the test world, the design basis (GOV.UK look in the Ashbridge brand), the amount grammar and the fact catalogue. In flight: the records schema (its last round), the test world generator, the PDF reader, the AI output contract and three smaller cards. Two cards that failed three times were split or given a last round, as the rules say. Plan use: 2% of the 5-hour window, 36% of the week.
 
 ## 2. Coming up (no action yet)
 
