@@ -1,11 +1,10 @@
 {
  "card": "E03A",
  "role": "build",
- "round": 6,
+ "round": 7,
  "spec": "5acfe13",
- "worker": "cloud-2f60ce",
- "state": "reopened",
- "at": "2026-10-02T16:06:49.470Z",
- "mode": "turbo",
- "note": "round 3: .gitleaks.toml now in paths (card)"
+ "worker": "cloud-d34b3d",
+ "state": "working",
+ "at": "2026-10-02T16:07:42.044Z",
+ "mode": "turbo"
 }
