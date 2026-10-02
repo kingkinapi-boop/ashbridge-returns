@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 36,
+ "round": 37,
  "spec": "34e8ac0",
- "worker": "cloud-52c322",
- "state": "released",
- "at": "2026-10-02T20:09:53.808Z",
- "mode": "turbo",
- "note": "Re-offered at once; same blockers, Lead must add owner defects before re-offering."
+ "worker": "cloud-1fe112",
+ "state": "working",
+ "at": "2026-10-02T20:10:32.142Z",
+ "mode": "turbo"
 }
