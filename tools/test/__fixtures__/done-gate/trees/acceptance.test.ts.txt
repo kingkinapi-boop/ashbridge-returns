@@ -1,0 +1,2 @@
+import { expect, test } from 'vitest'
+test('ARC-12 a made-up acceptance test', () => { expect(1).toBe(1) })

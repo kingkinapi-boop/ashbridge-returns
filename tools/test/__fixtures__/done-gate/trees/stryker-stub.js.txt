@@ -1,0 +1,4 @@
+// Stands in for node_modules/@stryker-mutator/core/bin/stryker.js: records its arguments and succeeds.
+const fs = require('node:fs')
+fs.writeFileSync('stryker-called.txt', process.argv.slice(2).join(' '))
+console.log('STRYKER STUB RAN')
