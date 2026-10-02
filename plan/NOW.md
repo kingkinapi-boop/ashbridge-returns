@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 13:25Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 14:00Z by the Lead (Zo's answers). Times are UTC from `date -u`.
 
 ## State
 
@@ -17,7 +17,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 13:25Z by the Lea
 | W00 build round 2; F01 build round 3 (last) | cloud runs | cloud | 2 Oct 12:19Z, 13:09Z | claude/W00, claude/F01 |
 | Queue: G01 check, A07 check, A03 build, G10 build, A01 spec round 3 (waits F01, A357) | cloud runs | cloud | 2 Oct 13:25Z | claude/<card> |
 
-S00 build waits on W00 (A354); BL0 (one blank rule) waits on F01 and F04; U00 and D02 to D13 parked until Zo's sitting. Zo: to-do #2 (logo keep or remove).
+S00 build waits on W00 (A354); BL0 (one blank rule) waits on F01 and F04; U00 and D02 to D13 parked until Zo's sitting. CRA walks: originals in Assets/ stay out of git (excluded, 0003); a helper writes data-free copies to reference/cra/.
 
 ## Next, in order
 
@@ -26,7 +26,7 @@ S00 build waits on W00 (A354); BL0 (one blank rule) waits on F01 and F04; U00 an
 3. F09B landed: F04, A01 round 2, A07 builds now; then I00, E01, A07, W20, SK0.
 4. W00 check 8 CRLF: decided A347 (W00 build owns .gitattributes line and the taxprep CSVs).
 5. Taxprep: day 6 Sun 4 Oct (changes after lock, check export, roll forward, copy one full diagnostics panel); day 4 Zo Sat 3 Oct.
-6. Designs: Zo's sitting answers (Q1 to Q7) into decisions and fix cards; then D00, D01, D05.
+6. Designs: sitting 1 answered (decision 0020, A358 viewer B). Next: fix cards from the retest findings (reports/design-retest-2026-10-01.md Q1 to Q8) into the approved versions, then the D cards copy the approved versions into design/screens/ (design lane, A352). D00L puts Zo's logo on the basis.
 7. B01 spec (reference/qbo/gfi-file.md, A305). W16 card to write (W14 KNOWN R8 fails on 03, 04, 07, 08, 10). SC grows: R23 to R31 (reports/findings-wave2.md, findings-F03R-r2.md).
 
 ## Watch out
