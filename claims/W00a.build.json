@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "bd30c58",
  "worker": "cloud-f2e775",
- "state": "working",
- "at": "2026-10-02T15:43:43.406Z",
+ "state": "reported",
+ "at": "2026-10-02T17:50:31.348Z",
  "mode": "turbo",
- "beat": "2026-10-02T16:40:35.517Z"
+ "beat": "2026-10-02T16:40:35.517Z",
+ "note": "663 of 663 acceptance pass; npm test 2563 pass; mutation 100 on all marked files; see reports/W00a-build.md"
 }
