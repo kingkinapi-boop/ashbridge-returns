@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "435acc2",
  "worker": "cloud-46fb22",
- "state": "working",
- "at": "2026-10-02T03:43:21.967Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T03:43:27.529Z",
+ "mode": "turbo",
+ "note": "same: W15 needs fix-round-1 re-spec by a new spec worker before any build"
 }
