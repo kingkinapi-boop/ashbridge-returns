@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T09:05:02.934Z",
  "worker": "cloud-8a9d55",
- "state": "working",
- "at": "2026-10-02T09:05:39.599Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T09:08:35.333Z",
+ "mode": "turbo",
+ "note": "PASS"
 }
