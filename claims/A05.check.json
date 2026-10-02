@@ -3,8 +3,8 @@
  "role": "check",
  "for": "2026-10-02T00:01:09.676Z",
  "worker": "cloud-839492",
- "state": "reported",
- "at": "2026-10-02T00:14:30.444Z",
+ "state": "released",
+ "at": "2026-10-02T02:36:44.856Z",
  "mode": "turbo",
- "note": "PASS"
+ "note": "round 2 build needs a fresh check"
 }
