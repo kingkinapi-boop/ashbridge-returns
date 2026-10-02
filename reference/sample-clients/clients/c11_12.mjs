@@ -3,27 +3,25 @@ import { bankName, CH, locate } from '../lib/names.mjs';
 import { money, dol as D, ymd, bizInMonth } from '../lib/util.mjs';
 import { hstQuarterly, amortAje, t4Out, payrollMonths } from '../lib/kit.mjs';
 import { payRuns, postPayroll, t4Data } from '../lib/payroll.mjs';
+import { priorYear, gifiStatement } from '../lib/prior-year.mjs';
 
 // ---------------------------------------------------------------- last year as typed inputs (client 11)
-// One set of typed inputs; every figure of the prior year is derived from it (card W14, "last year is ours").
-const PY = {
-  year: { start: '2024-01-01', end: '2024-12-31' },
-  retainedEarnings2023: 1425000, // closing 2023, cents
-  netIncomeBeforeTax: 11842000, federalTax: 1065780, ontarioTax: 378944, instalmentsPaid: 1200000, dividends: 0,
-  assets: [{ description: 'Computer equipment', glAccount: '1540', accumAccount: '1541', class: '50', cost: 450000, availableForUse: '2023-06-01', life: 3 }],
-};
-const RATE50 = 0.55;
-const monthsIncl = (a, b) => (Number(b.slice(0, 4)) - Number(a.slice(0, 4))) * 12 + Number(b.slice(5, 7)) - Number(a.slice(5, 7)) + 1;
-// accumulated book amortization at 31 Dec 2024: straight-line by whole months in service, from cost
-const bookAccum = (a) => Math.round((a.cost * monthsIncl(a.availableForUse, PY.year.end)) / (a.life * 12));
-// UCC at 31 Dec 2024: class 50 at 55%, the accelerated first-year rule (1.5 times the cost before 2024), a full-year claim each year
-const uccAt2024 = (a) => {
-  let ucc = a.cost - Math.round(RATE50 * 1.5 * a.cost); // 2023 (the asset came into use in 2023)
-  ucc -= Math.round(RATE50 * ucc); // 2024
-  return ucc;
-};
-const priorTax = PY.federalTax + PY.ontarioTax;
-const priorOwing = priorTax - PY.instalmentsPaid; // paid in 2025
+// The typed inputs are the 2023 retained earnings, the 2024 book income before tax, dividends, instalments paid, the asset register and
+// the small-business rates (2024: federal 9%, Ontario 3.2%, Dept. of Finance rate tables). Tax, taxable income, balance owing, retained
+// earnings and the next year's instalments are outputs of lib/prior-year.mjs (card W14 fix round 3, amber A307).
+const PY_YEAR = { start: '2024-01-01', end: '2024-12-31' };
+const PY_ASSET = { description: 'Computer equipment', glAccount: '1540', accumAccount: '1541', class: '50', cost: 450000, availableForUse: '2023-06-01', life: 3 };
+const PY = priorYear({
+  fiscalYear: PY_YEAR,
+  retainedEarningsOpening: 1425000, // closing 2023, cents
+  netIncomeBeforeTax: 11842000, dividends: 0, instalmentsPaid: 1200000,
+  rates: { federal: 0.09, ontario: 0.032 },
+  assets: [{ description: PY_ASSET.description, class: PY_ASSET.class, cost: PY_ASSET.cost, availableForUse: PY_ASSET.availableForUse, book: { method: 'straight-line', years: PY_ASSET.life, convention: 'monthly' }, cca: { firstYear: 'aii' } }],
+});
+const PY_NIB = 11842000;
+const priorTax = PY.incomeTax;
+const priorOwing = PY.balanceOwing; // paid in 2025
+const money2 = (cents) => (cents / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 // ---------------------------------------------------------------- 11 Humber Bay Software (K01: returning, clean books)
 export function build11() {
@@ -67,16 +65,16 @@ export function build11() {
   c.routine('BCD', { gl: '6170', merch: ['GREEN P PARKING', 'IMPARK', 'UBER *TRIP'], n: [2, 4], amt: [8, 40] });
 
   // brought forward from last year: every opening figure comes from PY; retained earnings is the engine's plug and the bank balance is solved to it
-  const [asset] = PY.assets, accum = bookAccum(asset), ucc = uccAt2024(asset);
+  const asset = PY_ASSET, accum = PY.assets[0].accumulated, ucc = PY.ucc[0].closing;
   c.opening['1540'] = asset.cost; c.opening['1541'] = -accum; c.opening['2050'] = -438000; c.opening['3010'] = -10000; c.opening['2085'] = -priorOwing;
-  const nia = PY.netIncomeBeforeTax - priorTax, reClose = PY.retainedEarnings2023 + nia - PY.dividends;
+  const nia = PY.netIncomeAfterTax, reClose = PY.retainedEarnings.closing;
   const others = Object.values(c.opening).reduce((x, v) => x + v, 0) - c.accts.BCD.opening; // all but the bank and retained earnings; the card is a liability
   c.accts.CHQ.opening = reClose - others;
   hstQuarterly(c, 'CHQ', 438000, { d2: 'CRA GST/HST PAYMENT' });
   c.cardPayments('BCD', 'CHQ', 20);
   // last year's balance owing is paid on 31 Mar; the 2025 instalments are a quarter of 2024's tax each (the prior-year option)
   const balPay = c.bs('CHQ', '2025-03-31', 'CRA', 'CORP TAX BALANCE DUE 2024', -priorOwing, '2085', { kind: 'tax-balance' });
-  const instalments = ['2025-03-31', '2025-06-30', '2025-09-30', '2025-12-31'].map((d) => c.bs('CHQ', d, 'CRA', 'CORP TAX INSTALMENT', -priorTax / 4, '1250', { kind: 'tax-instalment' }));
+  const instalments = ['2025-03-31', '2025-06-30', '2025-09-30', '2025-12-31'].map((d, i) => c.bs('CHQ', d, 'CRA', 'CORP TAX INSTALMENT', -PY.nextYearInstalments[i], '1250', { kind: 'tax-instalment' }));
   const am = amortAje(c, { date: c.fyEnd, tx: [laptop], reason: 'Book amortization for the year (straight-line, 3 years)', items: [
     { label: 'computer equipment brought forward', cost: asset.cost, acc: '1541', life: asset.life, inService: asset.availableForUse, prior: accum },
     { label: 'laptop', cost: 289900, acc: '1541', life: 3, inService: '2025-03-18' }] });
@@ -94,22 +92,23 @@ export function build11() {
   c.flag({ rule: 'HST regular, quarterly', severity: 'info', onb: ['hst'],
     detail: 'Four payments on 31 Jan, 30 Apr, 31 Jul and 31 Oct 2025 (the first is last year\'s Q4). The Q4 2025 return is paid in January 2026, so HST is payable at year end.' });
   c.flag({ rule: 'corporate tax instalments follow last year (prior-year option)', severity: 'info', tx: [balPay, ...instalments],
-    detail: 'Last year\'s tax was $14,447.24 (over $3,000), so four quarterly instalments of $3,611.81 are paid on 31 Mar, 30 Jun, 30 Sep and 31 Dec 2025 and booked to the instalments account. Last year\'s balance owing of $2,447.24 was paid on 31 Mar 2025.' });
+    detail: `Last year's tax was $${money2(priorTax)} (over $3,000), so four quarterly instalments of $${money2(PY.nextYearInstalments[0])} are paid on 31 Mar, 30 Jun, 30 Sep and 31 Dec 2025 and booked to the instalments account. Last year's balance owing of $${money2(priorOwing)} was paid on 31 Mar 2025.` });
 
   c.priorYear = (fin) => ({
-    note: "last year's return as the firm filed it, made up; derived from one set of typed inputs in the generator (the 2023 retained earnings, 2024 income, tax and dividends, each asset's cost, date and method)",
-    fiscalYear: PY.year,
+    note: "last year's return as the firm filed it, made up; derived by lib/prior-year.mjs from typed inputs in the generator (the 2023 retained earnings, 2024 book income, dividends and instalments, the asset register, the small-business rates); tax is an output",
+    fiscalYear: PY_YEAR,
     cpaFinal: true, assessed: true, filedByUs: true,
-    balanceSheet: fin.tb.opening.rows.map((r) => ({ gifi: r.gifi, gifiName: r.gifiName, debit: r.debit, credit: r.credit })),
-    incomeStatement: { netIncomeBeforeTax: D(PY.netIncomeBeforeTax), incomeTax: D(priorTax), netIncomeAfterTax: D(nia) },
-    retainedEarnings: { opening: D(PY.retainedEarnings2023), dividends: D(PY.dividends), closing: D(reClose) },
+    balanceSheet: gifiStatement(fin.tb.opening.rows),
+    schedule1: { amortization: D(PY.schedule1.amortization), otherAddBacks: D(PY.schedule1.otherAddBacks), cca: D(PY.schedule1.cca) },
+    incomeStatement: { netIncomeBeforeTax: D(PY_NIB), incomeTax: D(priorTax), netIncomeAfterTax: D(nia) },
+    retainedEarnings: { opening: D(PY.retainedEarnings.opening), dividends: D(PY.retainedEarnings.dividends), closing: D(reClose) },
     retainedEarnings3849: D(-fin.open['3600']),
     balanceOwing: { amount: D(priorOwing), account: '2085', paidBy: [balPay] },
     ucc: c.t2.openingUcc.map((u) => ({ class: u.class, ucc: u.ucc })),
-    losses: { nonCapital: [], capital: [] },
+    losses: { nonCapital: PY.nonCapitalLoss ? [{ amount: D(PY.nonCapitalLoss) }] : [], capital: [] },
     dividendAccounts: { grip: 0, lrip: 0, cda: 0, eRdtoh: 0, nerdtoh: 0 },
     noticeOfAssessment: { date: '2025-05-27', assessedAsFiled: true, note: 'made-up date' },
-    rv2: { net_income: D(PY.netIncomeBeforeTax), taxable_income: D(PY.netIncomeBeforeTax), federal_tax: D(PY.federalTax), ontario_tax: D(PY.ontarioTax), instalments: D(PY.instalmentsPaid), balance_or_refund: D(priorOwing) },
+    rv2: { net_income: D(PY_NIB), taxable_income: D(PY.taxableIncome), federal_tax: D(PY.federalTax), ontario_tax: D(PY.ontarioTax), instalments: D(PY.instalmentsPaid), balance_or_refund: D(priorOwing) },
   });
 
   c.who = 'Elliot Barrow (Test) owns Humber Bay Software Ltd. (Test), a small software consultancy with one employee and three steady customers. He takes no salary, draws or dividends. The firm filed last year\'s return. This is the control client: nothing in the books needs a judgement.';
@@ -130,7 +129,7 @@ export function build11() {
     payroll: { note: 'Simulated figures; runs from December 2024 give the opening payroll liability.', by_month: payrollMonths(pay.months), t4_summaries: t4o.summary },
     client_notes: ['Nothing unusual this year. One new laptop in March.', 'I take no salary or dividends; the company keeps its cash.'],
   };
-  c.t2.openingUcc = [{ class: '50', ucc: D(uccAt2024(PY.assets[0])), note: 'brought forward from last year: recomputed from cost, date, class rate and the first-year rule' }];
+  c.t2.openingUcc = [{ class: '50', ucc: D(PY.ucc[0].closing), note: 'brought forward from last year: recomputed from cost, date, class rate and the first-year rule' }];
   c.t2.slips = { T4: t4o.slips, T4Summary: t4o.summary, T5: [], note: 'One employee; no dividends.' };
   c.t2.schedule3 = { dividendsReceived: [], dividendsPaid: [] };
   c.t2.schedule4 = { note: 'no loss' };

@@ -112,9 +112,9 @@
       {"account":"2040","name":"Payroll deductions payable (CPP, EI, employer share)","gifi":2627,"gifiName":"Employee deductions payable","gifiStatus":"settled","debit":0,"credit":698.62},
       {"account":"2041","name":"Income tax withheld payable","gifi":2628,"gifiName":"Withholding taxes payable","gifiStatus":"confirm","note":"withholding taxes payable is worded for non-residents too","debit":0,"credit":871.7},
       {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":4380},
-      {"account":"2085","name":"Income tax payable","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":2447.24},
+      {"account":"2085","name":"Income tax payable","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":2577.4},
       {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
-      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":118222.76}
+      {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":0,"credit":118092.6}
     ],
     "ucc": [
       {
