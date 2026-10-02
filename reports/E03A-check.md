@@ -1,8 +1,8 @@
-# E03A check (cloud-575f8d, 2 Oct 2026): PASS
-Branch claude/E03A head 9e635eb. typecheck, lint, deps:check clean; full unit suite 1446 passed (43 files), facts tests 200 passed; scope OK (4 files); spec files unchanged since ab2a22d (diff empty). No `// @mutate` file touched, so no mutation run; data-only card.
-Read of the four new keys (qa.assets.purchased_not_in_use R27, qa.assets.disposed R28, qa.vehicle.ownership, qa.home_office.principal_place) against blueprint 05 and catalogue conventions: value types, periods, suppliedBy qa, sensitivity none and cite kinds are consistent with neighbouring qa keys; no duplicate of an existing fact (onboarding.vehicle.business_use, qa.vehicle.* and onboarding.home_office.claimed are different facts); labels are staff labels, no client sentence; answer_key refs (assets, vehicle, home_office) exist in the sample answer keys.
-Notes for a CPA read (not failures): Schedule 8 line 203 (acquisitions) and 207 (proceeds of dispositions) match the T2 Schedule 8 column numbers as I know them but could not be checked offline; an asset not yet available for use sits in area A, not in line 203, so the cite for R27 is approximate. Reverse: edit the two cra_form refs.
+# E03A check round 2 (cloud-62e50a, 2 Oct 2026): PASS
+Branch claude/E03A head c15ca66. typecheck, lint, deps:check clean; `npm test` unit 1456 passed (42 files), db 2 passed; spec files (acceptance test, fixtures, facts.test.ts) unchanged since spec commit 5acfe13 (diff empty); scope OK (5 files). Data-only card, no `// @mutate` file, so no mutation run.
+Opus read of the 8 new keys against blueprint 05 and E03 rules: PASS. Value types, sensitivity (none, correct), cite patterns, one-fact rule, G11 vehicle split, staff-only labels all hold. Schedule 8 lines 203 (acquisitions) and 207 (proceeds) confirmed from the Opus reader's knowledge (not from the repo; no Schedule 8 PDF in reference/).
+Notes (amber at most, not failures): (1) the two `*_cca_class` keys would cite better as line 200; (2) `qa.assets.disposed_kind` period `instant` vs `disposed` `duration`; (3) cite `note` is not in the loader's cite type. Older defect on main from E03: `prior_t2.schedule_8.cca_closing_undepreciated` cites line 225, closing UCC is line 220 (for M00 or a fix card).
 ## Permission gaps
-The Opus adversarial subagent was refused by the budget hook (mode normal, 40 dispatches a day, 157 used). The read was done by this Sonnet worker instead; the Lead may want an Opus read of the four keys.
+none
 ## Model
-Sonnet 5.5 (no Opus read).
+Sonnet 5.5 plus one Opus 5.5 subagent for the adversarial read.
