@@ -4,8 +4,8 @@
  "round": 6,
  "spec": "82aeffe",
  "worker": "cloud-3703a0",
- "state": "released",
- "at": "2026-10-02T08:51:11.994Z",
+ "state": "reopened",
+ "at": "2026-10-02T09:00:27.301Z",
  "mode": "turbo",
- "note": "premise still wrong on main 7dd2c02: govuk-frontend, @ministryofjustice/frontend, sass, nunjucks, axe-core, moment not in package.json; logo PNG not in repo. See reports/D00-build.md (cloud-550660). Lead: add packages and logo to main first."
+ "note": "premise fixed: owns package.json, logo in reference/brand (A350)"
 }
