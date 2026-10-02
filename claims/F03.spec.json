@@ -1,11 +1,9 @@
 {
  "card": "F03",
  "role": "spec",
- "worker": "cloud-4a59ee",
- "state": "reported",
- "at": "2026-10-02T01:44:36.387Z",
- "mode": "turbo",
- "beat": "2026-10-02T01:32:49.752Z",
- "note": "64 round-2 tests, mutation 87.44 with --force, validated on main cfc8d79",
- "commit": "2cdf2f2"
+ "note": "toolchain refit",
+ "worker": "cloud-f60439",
+ "state": "working",
+ "at": "2026-10-02T03:10:56.734Z",
+ "mode": "turbo"
 }
