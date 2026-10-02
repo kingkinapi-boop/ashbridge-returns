@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "82aeffe",
  "worker": "cloud-550660",
- "state": "working",
- "at": "2026-10-02T08:34:31.419Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T08:35:03.447Z",
+ "mode": "turbo",
+ "note": "package.json lacks govuk-frontend, MOJ, sass, nunjucks, axe-core; logo not in repo; see reports/D00-build.md"
 }
