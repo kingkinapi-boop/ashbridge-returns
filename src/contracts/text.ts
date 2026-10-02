@@ -17,14 +17,13 @@ export const BLANK_RANGES: readonly (readonly [number, number])[] = Object.freez
   [0x1d173, 0x1d17a], [0xe0000, 0xe0fff],
 ] as const)
 
-const inBlankRange = (cp: number): boolean => BLANK_RANGES.some(([lo, hi]) => cp >= lo && cp <= hi)
+const hex = (cp: number): string => `\\u{${cp.toString(16)}}`
+// One compiled pattern: the check runs over every code point in the tests, so it must be fast.
+const BLANK_PATTERN = new RegExp(`^[${BLANK_RANGES.map(([lo, hi]) => `${hex(lo)}-${hex(hi)}`).join('')}]*$`, 'u')
 
 /** True when s holds no visible character. A lone surrogate is not blank. */
 export function isBlank(s: string): boolean {
-  for (const ch of s) {
-    if (!inBlankRange(ch.codePointAt(0) as number)) return false
-  }
-  return true
+  return BLANK_PATTERN.test(s)
 }
 
 /** A string with at least one visible character; kept exactly as given (no trimming). */
