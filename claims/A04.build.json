@@ -4,8 +4,8 @@
  "round": 6,
  "spec": "ea5d29d",
  "worker": "cloud-186a3b",
- "state": "reported",
- "at": "2026-10-02T21:16:16.106Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T21:32:49.967Z",
  "mode": "turbo",
- "note": "46 of 46 acceptance tests pass; scope OK; mutate:changed not run"
+ "note": "FAIL: mutation per-file score below 100 (engines 67.8, runner 80.4, schemas 92.6), runner reads process.env not core/env, see reports/A04-check.md"
 }
