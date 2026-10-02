@@ -186,7 +186,7 @@ function classifyValue(
 ): { ok: true; value: CellValue; apostrophe: boolean } | { ok: false; code: TaxprepFaultCode; reason: string } {
   const shown = JSON.stringify(decode1252(raw))
   if (raw === '' || raw === ' ') return { ok: true, value: { kind: 'clear' }, apostrophe: false }
-  if (raw.startsWith("'")) {
+  if (raw.startsWith("'") || /^-'\d+$/.test(raw)) {
     if (/^'-[1-9]\d*$/.test(raw)) {
       return {
         ok: true,
