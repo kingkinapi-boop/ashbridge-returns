@@ -1,23 +1,19 @@
-# F09A check (round 2), cloud-34faae
+# F09A check (round 3), cloud-3703a0, 2 Oct
 
-FAIL: 1 medium contradiction of the dash rule (A296), 3 low notes.
+Branch claude/F09A at fc17ad4 (main 7dd2c02 merged). Result: FAIL (one defect).
 
-Passed: typecheck, lint, deps:check; npm test (843 unit + 2 db); test:flake 5 of 5; scope OK (9 files); acceptance tests unchanged since spec commit 41d00d7; mutate:canary; mutate:changed 100 on amount-grammar.ts and reading.ts (0 survivors). Not run: e2e (no screens; contracts only).
+Clean: typecheck, lint, deps:check; `npm test` unit 883 of 883, db 2 of 2; `test:flake` 5 of 5; scope OK (9 files); acceptance file `amount-grammar.acceptance.test.ts` identical to spec commit 650985c (amount-grammar.test.ts differs only by the spec round 3 retirement ab38223, A348); mutate:canary 100; `mutate:changed -- F09A` 100 (amount-grammar.ts 430 killed, 6 timeout; reading.ts 262 killed).
 
 ## Failures
-1. MEDIUM, src/contracts/amount-grammar.ts:148. The marks-only "-" test calls `groupAt(spots, lexed, end + 1, ...)` (does a group start at the word after the dash). The rule says leading binds first only if "-" plus that word make a valid group, so it should test `groupAt(end)`. When the next amount cannot take a leading "-", the dash is dropped, not made the trailing sign of the amount on its left.
-   - "100.00" "-" "-50.00": expected -10000 and -5000; got 10000 and -5000
-   - "100.00" "-" "(50.00)": expected -10000 and -5000; got 10000 and -5000
-   - "100.00" "-" "50.00CR": expected -10000 and 5000; got 10000 and 5000
-   - Reproduce: `npx tsx /tmp/f09a/p.ts` style call of `amountGroups` over those words (same line, small gaps). No acceptance row covers these.
-2. LOW, amount-grammar.ts:148 and :180. `groupAt` recurses along a same-line run of alternating "1" "-": quadratic (2000 words 1.2 s), and 20000 words throws RangeError (stack) out of amountGroups and valueInBox.
-3. LOW, amount-grammar.ts:55-56. `trailOf` upper-cases, so "5 cr" reads 500; the table lists only CR and DR. Decide (amber) or tighten.
-4. LOW, reading.ts:29. WordSchema non-blank uses trim(), so a word of only U+200B passes (valueInBox still finds no blank value).
+1. src/contracts/amount-grammar.ts:81-82 `adjacent` checks only `b.left - (a.left + a.width) <= height * tolerance`. A word left of, or overlapping, the previous word gives a negative gap and always joins. Words "1" at left 0.80 and "234.56" at left 0.05, same line, consecutive in reading order, return one group of 123456 cents. This reopens the "columns join" fault the gap rule closes (a right-column word listed before a left-column word on one line). No test covers a backwards or overlapping gap. Command: scratch call `amountGroups` on those two words. Fix: require gap >= 0 (or a stated small overlap) and <= tolerance.
 
-Rule candidate: every "leading binds first" look-ahead tests the same candidate group it would form (the sign plus the next word), and every look-ahead is iterative or memoised. Add rows for 1 to the EV-6 table (checks 14, 15 generator should include a sign word before an amount that already carries its own sign mark).
+## Notes (not failures)
+- reading.ts:29 blank-word refine strips only U+200B-U+200D and U+FEFF; a word of only U+2060, U+00AD, U+180E or U+200E counts as non-blank. Matches the card's literal list, not its "zero-width or format characters" intent.
+- Joining GRP3 words is quadratic (`WHOLE_SO_FAR.test(whole)` on a growing string): 50000 "000" words take 4.3 s, 20000 about 0.5 s. Check 2's 20000-word run takes 77 ms.
+- Table gap: `"1,234" "567"` mixes comma and space groups and reads 123456700 cents.
 
-## Permission gaps
-None.
+Rule candidate: any geometry predicate on word positions needs a backwards and an overlapping case in the table tests (W20 splits, E01 rejection counts).
 
-## Model
-Sonnet 5.5 checker; adversarial read by an Opus subagent.
+Held by real runs: every table row, the dash rule both ways, brackets, U+2212, en and em dashes, CR/DR, no -0, safe-integer edge, 30000-word normalise, formatAmount round trip over all 8 formats (about 20k values, 0 mismatches), strict schemas at 5 depths.
+
+Permission gaps: none. Model: Sonnet 5.5 checker, Opus subagent adversarial read.
