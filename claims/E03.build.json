@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "0786eca",
  "worker": "cloud-c1cb2b",
- "state": "hold-findings",
- "at": "2026-10-02T10:53:18.462Z",
+ "state": "reopened",
+ "at": "2026-10-02T11:42:26.250Z",
  "mode": "turbo",
- "note": "FAIL: 10 acceptance tests (sample clients grew 10 to 15; 9 answer-key fields uncited), see reports/E03-check.md"
+ "note": "round 3 spec reported"
 }
