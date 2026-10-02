@@ -1,10 +1,8 @@
 {
  "card": "W14",
  "role": "spec",
- "worker": "cloud-3f94c2",
- "state": "reopened",
- "at": "2026-10-01T23:55:58.342Z",
- "mode": "turbo",
- "note": "24 checks; 5 fail pre-build (folders 11, 12 missing); amber: .gitattributes for LF import.csv, field names",
- "commit": "0e448ae858ab4d982c947277e010602fa9dd0ec3"
+ "worker": "cloud-4ab7b4",
+ "state": "working",
+ "at": "2026-10-02T00:28:50.333Z",
+ "mode": "turbo"
 }
