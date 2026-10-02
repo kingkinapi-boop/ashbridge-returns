@@ -1,5 +1,5 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "001b94c",
   "cards": [
@@ -10,5 +10,6 @@
     "G16"
   ],
   "requested_at": "2026-10-02T20:08:43Z",
-  "note": "Question-bank topics; not core. Run gitleaks over HEAD as part of the check."
+  "note": "Question-bank topics; not core. Run gitleaks over HEAD as part of the check.",
+  "by": "cloud-2cbd52"
 }
