@@ -4,9 +4,9 @@
  "round": 3,
  "spec": "95a3b63",
  "worker": "cloud-eb759f",
- "state": "reported",
- "at": "2026-10-02T13:23:27.516Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T13:41:18.611Z",
  "mode": "turbo",
  "beat": "2026-10-02T13:09:22.655Z",
- "note": "round 3: 1402 unit + 249 db pass, flake 5/5, mutation 100 text.ts and records.ts"
+ "note": "FAIL: gifi_mappings has no update guard; blank JSON keys in stamps and sources accepted, see reports/F01-check.md"
 }

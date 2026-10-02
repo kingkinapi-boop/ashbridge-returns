@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T13:23:27.516Z",
  "worker": "cloud-6e552e",
- "state": "working",
- "at": "2026-10-02T13:24:44.868Z",
+ "state": "failed",
+ "at": "2026-10-02T13:41:18.611Z",
  "mode": "turbo",
- "beat": "2026-10-02T13:39:17.729Z"
+ "beat": "2026-10-02T13:39:17.729Z",
+ "note": "FAIL: gifi_mappings has no update guard; blank JSON keys in stamps and sources accepted, see reports/F01-check.md"
 }
