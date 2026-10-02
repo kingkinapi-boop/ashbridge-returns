@@ -66,7 +66,7 @@
       if (!sid) return null
       var foot = h('div', { class: 'app-viewer__foot' })
       var marked = isMarked(it.id, sid)
-      foot.appendChild(h('button', { type: 'button', class: 'govuk-button app-button-compact', 'aria-keyshortcuts': 'm', onclick: markAndNext },
+      foot.appendChild(h('button', { type: 'button', class: 'govuk-button app-button-compact', 'aria-keyshortcuts': 'm', 'data-primary': '', onclick: markAndNext },
         marked ? 'Already marked, next source ' : 'Supports this figure, next source ', h('span', { class: 'app-key', 'aria-hidden': 'true', text: 'm' })))
       if (marked) {
         foot.appendChild(h('span', { class: 'govuk-body-s', text: 'Marked by Dev Malhotra (Test), 1 Oct 2026.' }))

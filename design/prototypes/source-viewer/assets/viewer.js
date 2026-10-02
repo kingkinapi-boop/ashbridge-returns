@@ -117,7 +117,7 @@
     }
 
     if (!n) {
-      section.appendChild(h('div', { class: 'app-viewer__stage', tabindex: '0', role: 'region', 'aria-label': 'Source for ' + it.name },
+      section.appendChild(h('div', { class: 'app-viewer__stage', 'data-evidence': '', tabindex: '0', role: 'region', 'aria-label': 'Source for ' + it.name },
         h('div', { class: 'app-viewer__card', tabindex: '-1', id: 'sv-card-' + this.role },
           h('div', { class: 'govuk-warning-text' }, h('span', { class: 'govuk-warning-text__icon', 'aria-hidden': 'true', text: '!' }),
             h('strong', { class: 'govuk-warning-text__text' }, h('span', { class: 'govuk-visually-hidden', text: 'Warning' }), 'Not checked: no evidence')),
@@ -152,7 +152,7 @@
     section.appendChild(who)
 
     var body = h('div', { class: 'app-viewer__body' })
-    var stage = h('div', { class: 'app-viewer__stage', tabindex: '0', role: 'region', 'aria-label': 'Source ' + (this.idx + 1) + ' of ' + n + ': ' + kind[0] })
+    var stage = h('div', { class: 'app-viewer__stage', 'data-evidence': '', tabindex: '0', role: 'region', 'aria-label': 'Source ' + (this.idx + 1) + ' of ' + n + ': ' + kind[0] })
     stage.appendChild(card)
     body.appendChild(stage)
     section.appendChild(body)

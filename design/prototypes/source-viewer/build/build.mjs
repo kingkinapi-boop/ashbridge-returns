@@ -23,7 +23,7 @@ const IDENT = `${client.name}, year end ${client.ye}`
 const LOGO = `<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="6" fill="#ffffff"/><path d="M6 25 L16 6 L26 25 M10.5 19 H21.5" fill="none" stroke="#355b7d" stroke-width="3" stroke-linejoin="round"/></svg>`
 
 // One shell for every page: header, the return (identity bar, record tabs), main. A work page puts the source pane beside main.
-function shell({ file, title, tabs, work, pane = false, scripts, win = false, recordTabs = true }) {
+function shell({ file, title, tabs, work, pane = false, scripts, win = false, recordTabs = true, parts = null }) {
   const up = '../'
   const tabHtml = tabs.map((t) => `<li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="${t.href}"${t.route ? ` data-route="${t.route}"` : ''}${t.href === file ? ' aria-current="page"' : ''}>${esc(t.text)}</a></li>`).join('\n        ')
   const head = `  <header>
@@ -36,7 +36,7 @@ function shell({ file, title, tabs, work, pane = false, scripts, win = false, re
     </div>
   </header>
   <div role="region" aria-label="Return" class="app-return">
-    <div class="moj-identity-bar app-wide">
+    <div class="moj-identity-bar app-wide" data-identity-bar>
       <div class="moj-identity-bar__container">
         <div class="moj-identity-bar__details"><span class="moj-identity-bar__title">${esc(IDENT)}</span></div>
         <div class="moj-identity-bar__actions"><a class="govuk-link govuk-link--no-visited-state app-bar-link" id="sv-signout" href="${up}signed-out.html">Sign out</a></div>
@@ -69,7 +69,7 @@ ${main}`
   <title>${esc(title)}, ${esc(IDENT)} - Ashbridge Tax</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${up}assets/govuk-moj.css">
-  <link rel="stylesheet" href="${up}assets/app.css">
+  <link rel="stylesheet" href="${up}assets/app.css">${parts ? `\n  <link rel="stylesheet" href="${parts}cite-or-reason.css">` : ''}
 </head>
 <body class="govuk-template__body app-shell${win ? ' app-shell--stack' : ''}" data-signed-out="${up}signed-out.html">
   <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
@@ -78,7 +78,7 @@ ${main}`
 ${body}
   <script src="${up}assets/signout.js"></script>
   <script src="${up}assets/data.js"></script>
-  <script src="${up}assets/viewer.js"></script>
+  <script src="${up}assets/viewer.js"></script>${parts ? `\n  <script src="${parts}cite-or-reason.js"></script>` : ''}
 ${scripts.map((s) => `  <script src="${up}assets/${s}"></script>`).join('\n')}
 </body>
 </html>
@@ -113,10 +113,10 @@ const winStrip = `<div class="app-summary-strip">
         <button type="button" class="govuk-button govuk-button--secondary app-button-compact" data-fig-nav="1" aria-keyshortcuts="j">Next<span class="govuk-visually-hidden"> figure</span> <span class="app-key" aria-hidden="true">j</span></button>
         <button type="button" id="sv-open-window" class="govuk-button govuk-button--secondary app-button-compact" aria-keyshortcuts="o">Open in second window <span class="app-key" aria-hidden="true">o</span></button>
       </div>`
-const filterHtml = (n, what) => `<div class="app-filter">
+const filterHtml = (n, what, tag) => `<div class="app-filter">
         <label class="govuk-label" for="sv-filter">Filter ${what}</label>
         <input class="govuk-input" id="sv-filter" type="search" autocomplete="off" spellcheck="false">
-        <p class="govuk-hint" id="sv-filter-count">Showing ${n} of ${n}</p>
+        <p class="govuk-hint" id="sv-filter-count" data-count="shown-${tag}" data-scope="of">Showing ${n} of ${n}</p>
       </div>`
 const noMatch = (cols) => `<tr class="govuk-table__row" id="sv-filter-none" hidden><td class="govuk-table__cell" colspan="${cols}">Nothing matches that filter. Clear the filter to see every row.</td></tr>`
 const openBtn = (item, n, what = 'sources') => `<button type="button" class="govuk-button govuk-button--secondary app-button-compact" data-open aria-controls="source-pane">Show ${what} (${n})<span class="govuk-visually-hidden"> for ${esc(item.name)}</span></button>`
@@ -141,10 +141,10 @@ const tableOpen = (label, caption) => `<div class="app-scroll" role="region" ari
   }).join('\n')
   const work = `    <section class="app-split__work" aria-label="Figures to check" tabindex="0">
       <div class="app-worktop"><h1 class="govuk-heading-m">Review figures</h1>
-      <p class="govuk-body"><span id="sv-checked">0</span> of ${L.length} figures checked. ${flagged} flagged for a person. ${empty} with no evidence.</p></div>
+      <p class="govuk-body" data-count="figures-checked" data-scope="figures"><span id="sv-checked">0</span> of ${L.length} figures checked. ${flagged} flagged for a person. ${empty} with no evidence.</p></div>
       <p class="govuk-body app-done" id="sv-done" tabindex="-1" hidden>Every figure that has a source is checked. Figures with no evidence stay unchecked.</p>
       ${winStrip}
-      ${filterHtml(L.length, 'figures')}
+      ${filterHtml(L.length, 'figures', 'cpa')}
       ${tableOpen('Figures table', 'Figures in return order. Each is checked against its sources.')}
           <thead class="govuk-table__head"><tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Line</th><th scope="col" class="govuk-table__header">Figure</th><th scope="col" class="govuk-table__header govuk-table__header--numeric">Amount ($)</th><th scope="col" class="govuk-table__header">Status</th><th scope="col" class="govuk-table__header">Sources</th>
@@ -192,10 +192,10 @@ ${rows}
       <div class="app-worktop"><h1 class="govuk-heading-m" id="sv-h1">Cite figures</h1></div>
       ${winStrip}
       <div data-panel="cite">
-      <p class="govuk-body app-counts"><span id="sv-left-cite">${left}</span> of ${L.length} figures need a source or a reason.</p>
-      <p class="govuk-body" id="sv-recorded" role="status" hidden></p>
+      <p class="govuk-body app-counts" data-count="figures-to-cite" data-scope="figures"><span id="sv-left-cite">${left}</span> of ${L.length} figures need a source or a reason.</p>
+      <p class="govuk-body" id="sv-recorded" role="status" tabindex="-1" hidden></p>
       <p class="app-counts"><button type="button" id="sv-next-orphan" class="govuk-button govuk-button--secondary app-button-compact" hidden>Go to the next one to cite</button></p>
-      ${filterHtml(L.length, 'figures')}
+      ${filterHtml(L.length, 'figures', 'prep')}
       ${tableOpen('Figures table', 'Figures in return order. Orphans and tax choices need a citation.')}
           <thead class="govuk-table__head"><tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Line</th><th scope="col" class="govuk-table__header">Figure</th><th scope="col" class="govuk-table__header govuk-table__header--numeric">Amount ($)</th><th scope="col" class="govuk-table__header">Status</th><th scope="col" class="govuk-table__header">Sources</th>
@@ -208,7 +208,7 @@ ${rows}
       </div>
       </div>
       <div data-panel="verify" hidden>
-      <p class="govuk-body app-counts"><span id="sv-left-verify">${V.length}</span> of ${V.length} values not checked. Page 2 of the December statement.</p>
+      <p class="govuk-body app-counts" data-count="values-open" data-scope="values"><span id="sv-left-verify">${V.length}</span> of ${V.length} values not checked. Page 2 of the December statement.</p>
       <p class="govuk-body app-done" id="sv-done" tabindex="-1" hidden>Every value on this page is checked. Rejected values go back for extraction again.</p>
       ${tableOpen('Values table', 'Values read from the page. Compare each with the words inside its box.')}
           <thead class="govuk-table__head"><tr class="govuk-table__row">
@@ -223,7 +223,7 @@ ${vrows}
       ${keysTable(KEYS_STD)}
     </section>`
   const tabs = [{ href: 'index.html', text: 'Cite figures', route: 'cite' }, { href: 'index.html?tab=verify', text: 'Verify values', route: 'verify' }]
-  w('b-tabs-and-decision/index.html', shell({ file: 'index.html', title: 'Cite figures', tabs, work, pane: true, scripts: ['work.js', 'v2.js'] }))
+  w('b-tabs-and-decision/index.html', shell({ file: 'index.html', title: 'Cite figures', tabs, work, pane: true, scripts: ['work.js', 'v2.js'], parts: '../../../parts/cite-or-reason/' }))
   try { fs.unlinkSync(path.join(out, 'b-tabs-and-decision/verify.html')) } catch { /* already gone */ }
 }
 
@@ -241,11 +241,11 @@ ${vrows}
   }).join('\n')
   const work = `    <section class="app-split__work" aria-label="Items to check" tabindex="0">
       <div class="app-worktop"><h1 class="govuk-heading-m">Check items</h1>
-      <p class="govuk-body"><span id="sv-left">${L.length}</span> of ${L.length} items still to check.</p></div>
+      <p class="govuk-body" data-count="items-left" data-scope="items"><span id="sv-left">${L.length}</span> of ${L.length} items still to check.</p></div>
       <p class="govuk-body app-done" id="sv-done" tabindex="-1" hidden>All items checked. Every item has a decision.</p>
       ${winStrip}
       <section class="app-summary-strip app-summary-strip--window" id="sv-summary" aria-label="The source now open"></section>
-      ${filterHtml(L.length, 'items')}
+      ${filterHtml(L.length, 'items', 'ops')}
       ${tableOpen('Items table', 'Documents and CRA captures for this return')}
           <thead class="govuk-table__head"><tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Item</th><th scope="col" class="govuk-table__header">Status</th><th scope="col" class="govuk-table__header">Sources and decision</th>

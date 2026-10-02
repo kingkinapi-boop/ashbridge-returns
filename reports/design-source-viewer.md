@@ -2,7 +2,40 @@
 
 Branch `claude/design-source-viewer-2` (from `origin/claude/findings-source-viewer`, then `origin/main` for the extended rules 3, 18 to 23 and design check 8 over http), 1 Oct 2026. Brief and fix list: `design/briefs/source-viewer.md`, section "Fix round 1 (findings review, 1 Oct)". Panel report read: `reports/panel-source-viewer.md` (13 faults, branch `claude/panel-source-viewer`). Prototypes: `design/prototypes/source-viewer/` (start at `index.html`). Data: `reference/sample-clients/01-maple-ridge` (Maple Ridge Consulting Inc. (Test)).
 
-## The three versions after the fix round
+## Fix round 2 (1 Oct 2026, findings review 2, "Source viewer" fixes 1 to 3; fix 4 waits for D01)
+
+Branch `claude/design-source-viewer-2` again, with `origin/main`, `origin/claude/design-verify` (shared `design/verify/rules.mjs`, V1 to V8) and the shared part `design/parts/cite-or-reason/` from `origin/claude/design-workbench-2`.
+
+| Fix | What changed | Where |
+|---|---|---|
+| 1 (D2) | B calls the shared `advance` after Cite and after Record: the next figure that still needs a source or a reason opens with focus in its box; with none left the "recorded" notice takes focus. The "Go to ..." button stays as a second route | `assets/v2.js` (`recorded`) |
+| 2 (D4) | B uses the shared cite-or-reason part (its css and js are linked from `../../../parts/cite-or-reason/`). No closed fold: the "candidate shown" radio, the "A written reason" radio with its always-visible box and one Record button sit in one row under the evidence. Typing a reason checks the reason radio (never a "choose" error); the source path is radio plus Record (2 clicks after opening), the reason path box plus Record (2 clicks) | `assets/v2.js` (`citeForm`), `build/build.mjs`, `assets/app.css` |
+| 3 (D3) | C: a decided row shows its tag (Complete or Chasing the client) and an Undo; no live Complete or Chase button remains on that row or in its decision slot. Undo opens one reason box in place (GOV.UK error pattern, summary at the top of that form, page scroll kept); a reason clears the decision, keeps the reason in session storage and puts focus on the row's Complete | `assets/v3.js` |
+| Hooks | `data-identity-bar` on the MOJ identity bar of every page; `data-evidence` on the viewer stage; `data-primary` on Supports this figure (A), Record (B cite), Accept (B verify), Complete (C; Chase when there is no file); `data-count` and `data-scope` on every count (figures, values, items, rows shown per list) | `build/build.mjs`, `assets/viewer.js`, `assets/v1.js` to `v3.js` |
+
+Two things found by V7 while checking, fixed in `assets/work.js`: a second click on "Show sources" of the row already shown redrew the same pane and changed nothing. It now moves focus into the box at once; with the pane hidden because the second window follows, it brings that window forward and says so.
+
+### Round 2 numbers (`build/verify.mjs`, 282 checks, 0 failed; was 154)
+
+Run through `node tools/heavy.mjs --`, pages over http from `design/` (so the shared parts folder is served), Playwright through `PW_NM`, 1366 x 650 and 1093 x 525. Full run about 40 minutes (V7 reloads the page between controls).
+
+- **Re-walks:** B cite and reason 5 checks per size, C Complete and Undo 6 per size, all pass. The B cite flow checks: 2 clicks after opening for both paths, typing checks the reason radio, focus lands in the next box, the "choose" error shows only when nothing is chosen and nothing is typed, a short reason shows its own error with the summary focused and the title starting "Error: ".
+- **Shared rules V1 to V8** (104 checks across 8 pages or states at both sizes: A f1, A f4 flagged, B p1, B p2, B verify, C o1, C o5, C o4 empty): V1 32 checks, V2 10, V3 16, V4 4, V5 24, V6 6, V7 10, V8 2. All pass. V2 covers A mark, B Cite, B cite error, B Accept, C Complete; V4 covers focus after each, a done row in C and the shortcuts `]`, `[`, `j`, `k`; V6 searches by the figure's name for A, B and C; V7 clicks up to 45 controls on A, B cite, B verify, C, and every control of a done row in C.
+- **axe over http** (wcag2a to wcag22aa plus `region` and `landmark-unique`): 102 page-states at both sizes, 0 violations, 0 incomplete (B's cite error state is now the "choose a source" error).
+- **Keyboard walk:** A 32 stops, B 27 (was 26), B verify 33, C 36, window 5, at both sizes: 0 problems. From the box 1 Tab reaches the decision in A, B cite (the radio group), B verify and C.
+- **320 px:** 9 views, none scrolls sideways (the hidden legend of the cite form first did; fixed).
+- **Budgets:** page area as in round 1 (A 62%, B verify 62%, C 62% at 1093 x 525; 69% to 71% at 1366 x 650). One new figure: B with the cite form under the evidence, orphan p1, page area **63.6% at 1366 x 650 and 55.0% at 1093 x 525**.
+- **Lint (checks 6, 7, 9):** 0 findings; the new `app-` classes (`app-cor`, `app-cor__row`, `app-cor__reason`, `app-req`, `app-viewer__foot--cite`, `app-cite__sum`, `app-cite__go`, `app-undo`, `app-undo-sum`) have CSS and are listed with their reasons in the version's `notes.md`.
+
+### For the Lead (amber candidates)
+
+- **B cite state is 55.0% page area at 1093 x 525, below rule 18's 60%.** Rule 20 puts the evidence and the decision in view together, and the decision now sits under the page. The stacked radios plus the box cost about 48 px more than the old button row. Options: leave it (V3 passes: evidence and decision fully in view), or cut the identity bar and chrome rows (D01's one shell). I left it; my own threshold in the check is 55%, set after measuring, so treat it as a known miss.
+- Undo is offered on a "Chasing the client" row too (same form), so no decided row keeps a live Complete or Chase. Reverse: show Undo only after Complete.
+- V7 is told to skip the skip link (Playwright cannot click it off-screen) and the current-page tab link (`aria-current="page"`, it is the page you are on).
+- `design/prototypes/source-viewer/build/verify.mjs` now takes `PW_NM` (falls back to `SV_NM`) and serves `design/`, so URLs gain `/prototypes/source-viewer/`.
+- Fix 4 (D1, one shell for the record tabs) is not done: it waits for D01.
+
+## The three versions after fix round 1
 
 A (docked strip) is the one base component; B and C are the embed variants the panel named. All three run the same `assets/viewer.js`, `work.js` and `window.js`; they differ only in the source navigation, the decision slot (`extra`) and the family's list.
 

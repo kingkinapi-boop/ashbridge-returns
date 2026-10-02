@@ -324,12 +324,12 @@
   {
    "name": "B cite @1366x650: from the box 1 Tab reaches the decision",
    "ok": true,
-   "detail": "Cite the source shown (candidate 1 of 2)"
+   "detail": "The candidate shown (1 of 2)"
   },
   {
    "name": "B cite @1093x525: from the box 1 Tab reaches the decision",
    "ok": true,
-   "detail": "Cite the source shown (candidate 1 of 2)"
+   "detail": "The candidate shown (1 of 2)"
   },
   {
    "name": "C @1366x650: from the box 1 Tab reaches the decision",
@@ -389,12 +389,12 @@
   {
    "name": "A: after a work page reload both show open and following within 2 s (acceptance 6)",
    "ok": true,
-   "detail": "57 ms | Second window: open, following. The list uses the full width. | Following the work page."
+   "detail": "61 ms | Second window: open, following. The list uses the full width. | Following the work page."
   },
   {
    "name": "A: after a window reload both show open and following, and the window shows the selection (acceptance 6)",
    "ok": true,
-   "detail": "61 ms | Due from shareholder, 13,211.58"
+   "detail": "70 ms | Due from shareholder, 13,211.58"
   },
   {
    "name": "A: Follow off brings the pane back and says so",
@@ -414,7 +414,7 @@
   {
    "name": "A: a closed window shows \"Window closed, open again\" and the pane returns",
    "ok": true,
-   "detail": "13 ms"
+   "detail": "22 ms"
   },
   {
    "name": "A: o opens the window again",
@@ -444,12 +444,12 @@
   {
    "name": "B: after a work page reload both show open and following within 2 s (acceptance 6)",
    "ok": true,
-   "detail": "29 ms | Second window: open, following. The list uses the full width. | Following the work page."
+   "detail": "88 ms | Second window: open, following. The list uses the full width. | Following the work page."
   },
   {
    "name": "B: after a window reload both show open and following, and the window shows the selection (acceptance 6)",
    "ok": true,
-   "detail": "51 ms | Due from shareholder, 13,211.58"
+   "detail": "71 ms | Due from shareholder, 13,211.58"
   },
   {
    "name": "B: Follow off brings the pane back and says so",
@@ -499,7 +499,7 @@
   {
    "name": "C: after a work page reload both show open and following within 2 s (acceptance 6)",
    "ok": true,
-   "detail": "49 ms | Second window: open, following. The list uses the full width. | Following the work page."
+   "detail": "56 ms | Second window: open, following. The list uses the full width. | Following the work page."
   },
   {
    "name": "C: after a window reload both show open and following, and the window shows the selection (acceptance 6)",
@@ -524,7 +524,7 @@
   {
    "name": "C: a closed window shows \"Window closed, open again\" and the pane returns",
    "ok": true,
-   "detail": "13 ms"
+   "detail": "21 ms"
   },
   {
    "name": "C: o opens the window again",
@@ -539,7 +539,7 @@
   {
    "name": "A: sign-out in the window signs out the work page and every other page (acceptance 7, SEC)",
    "ok": true,
-   "detail": "114 ms, signed-out.html, signed-out.html"
+   "detail": "134 ms, signed-out.html, signed-out.html"
   },
   {
    "name": "A: sign-out on the work page ends the window",
@@ -549,7 +549,7 @@
   {
    "name": "B: sign-out in the window signs out the work page and every other page (acceptance 7, SEC)",
    "ok": true,
-   "detail": "119 ms, signed-out.html, signed-out.html"
+   "detail": "135 ms, signed-out.html, signed-out.html"
   },
   {
    "name": "B: sign-out on the work page ends the window",
@@ -559,7 +559,7 @@
   {
    "name": "C: sign-out in the window signs out the work page and every other page (acceptance 7, SEC)",
    "ok": true,
-   "detail": "130 ms, signed-out.html, signed-out.html"
+   "detail": "140 ms, signed-out.html, signed-out.html"
   },
   {
    "name": "C: sign-out on the work page ends the window",
@@ -589,7 +589,7 @@
   {
    "name": "the filter is in the URL too",
    "ok": true,
-   "detail": "http://127.0.0.1:55490/a-docked-strip/index.html?item=f1&src=3&q=due"
+   "detail": "http://127.0.0.1:50314/prototypes/source-viewer/a-docked-strip/index.html?item=f1&src=3&q=due"
   },
   {
    "name": "reload returns to the same figure, source and filter (acceptance 8)",
@@ -614,7 +614,7 @@
   {
    "name": "a tab change makes 0 loads and has its own URL (acceptance 9, rules 18, 20)",
    "ok": true,
-   "detail": "{\"marker\":7,\"navs\":1,\"h1\":\"Verify extracted values\",\"title\":\"Verify extracted values, Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025 - Ashbridge Tax\",\"cur\":\"Verify values\",\"hist\":3,\"rows\":4} http://127.0.0.1:55490/b-tabs-and-decision/index.html?tab=verify"
+   "detail": "{\"marker\":7,\"navs\":1,\"h1\":\"Verify extracted values\",\"title\":\"Verify extracted values, Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025 - Ashbridge Tax\",\"cur\":\"Verify values\",\"hist\":3,\"rows\":4} http://127.0.0.1:50314/prototypes/source-viewer/b-tabs-and-decision/index.html?tab=verify"
   },
   {
    "name": "the window follows the tab change and shows the new list (acceptance 9)",
@@ -624,7 +624,7 @@
   {
    "name": "Back after a tab change returns to the first tab with 0 loads",
    "ok": true,
-   "detail": "{\"marker\":7,\"h1\":\"Cite figures\",\"url\":\"\",\"state\":{\"tab\":\"cite\"},\"entries\":[\"/b-tabs-and-decision/index.html *\",\"/b-tabs-and-decision/index.html?tab=verify&item=v2&src=1\"]}"
+   "detail": "{\"marker\":7,\"h1\":\"Cite figures\",\"url\":\"\",\"state\":{\"tab\":\"cite\"},\"entries\":[\"/prototypes/source-viewer/b-tabs-and-decision/index.html *\",\"/prototypes/source-viewer/b-tabs-and-decision/index.html?tab=verify&item=v2&src=1\"]}"
   },
   {
    "name": "Forward returns to the second tab",
@@ -637,14 +637,14 @@
    "detail": "Cited"
   },
   {
-   "name": "B T3: cite an orphan in 2 clicks, then a button goes to the next orphan",
+   "name": "B T3: cite an orphan in 2 clicks after opening it (radio, Record), then a button goes to the next orphan",
    "ok": true,
    "detail": "2 clicks, Go to Home office, 15% of rent"
   },
   {
-   "name": "B: an empty reason shows the error summary focused, the title starts \"Error: \" and the message sits at the field",
+   "name": "B: a reason that is too short shows the error summary focused, the title starts \"Error: \" and the message sits at the field (and never a choose error)",
    "ok": true,
-   "detail": "{\"f\":\"sv-cite-sum\",\"t\":\"Error: \",\"m\":true}"
+   "detail": "{\"f\":\"sv-cite-sum\",\"t\":\"Error: \",\"m\":true,\"noChoose\":true}"
   },
   {
    "name": "the failed page image shows an error summary with Try again, and recovers with the box in view",
@@ -667,12 +667,12 @@
    "detail": ""
   },
   {
-   "name": "keyboard walk B @1366x650: 26 stops, focus visible, in view, targets 24 px",
+   "name": "keyboard walk B @1366x650: 27 stops, focus visible, in view, targets 24 px",
    "ok": true,
    "detail": ""
   },
   {
-   "name": "keyboard walk B @1093x525: 26 stops, focus visible, in view, targets 24 px",
+   "name": "keyboard walk B @1093x525: 27 stops, focus visible, in view, targets 24 px",
    "ok": true,
    "detail": ""
   },
@@ -760,6 +760,646 @@
    "name": "320 px: the viewer replaces the list, Esc goes back with focus on the figure button",
    "ok": true,
    "detail": "{\"list\":true,\"f\":\"Showing source\"}"
+  },
+  {
+   "name": "B @1366x650: after Cite focus lands in the next figure's box (V4)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1366x650: Cite records p1 and the viewer shows the next one to cite (D2)",
+   "ok": true,
+   "detail": "{\"title\":\"Home office, 15% of rent, 5,040.00\",\"status\":\"Cited\",\"note\":\"Source cited for Accounting fees recorded as source 1 of 1. Next to cite: Home office, 15% of rent.\"}"
+  },
+  {
+   "name": "B @1366x650: a reason takes 2 clicks after opening (box, Record), typing checks \"A written reason\", focus lands in the next box",
+   "ok": true,
+   "detail": "{\"clicks\":2,\"radioOn\":true,\"a\":true,\"st\":\"Cited\"}"
+  },
+  {
+   "name": "B @1366x650: evidence and the decision in view, no closed fold (V3)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1366x650: no details in the viewer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1366x650: page area at least 55% of the height with the cite form under it",
+   "ok": true,
+   "detail": "0.636"
+  },
+  {
+   "name": "B @1093x525: after Cite focus lands in the next figure's box (V4)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1093x525: Cite records p1 and the viewer shows the next one to cite (D2)",
+   "ok": true,
+   "detail": "{\"title\":\"Home office, 15% of rent, 5,040.00\",\"status\":\"Cited\",\"note\":\"Source cited for Accounting fees recorded as source 1 of 1. Next to cite: Home office, 15% of rent.\"}"
+  },
+  {
+   "name": "B @1093x525: a reason takes 2 clicks after opening (box, Record), typing checks \"A written reason\", focus lands in the next box",
+   "ok": true,
+   "detail": "{\"clicks\":2,\"radioOn\":true,\"a\":true,\"st\":\"Cited\"}"
+  },
+  {
+   "name": "B @1093x525: evidence and the decision in view, no closed fold (V3)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1093x525: no details in the viewer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1093x525: page area at least 55% of the height with the cite form under it",
+   "ok": true,
+   "detail": "0.55"
+  },
+  {
+   "name": "C @1366x650: a done row shows the Complete tag and Undo, with no live Complete or Chase button (D3, rule 8)",
+   "ok": true,
+   "detail": "{\"tag\":\"Complete\",\"done\":[\"Show sources (2) for Lakeview chequing statement, December 2025\",\"Undo the decision on Lakeview chequing statement, December 2025\"]}"
+  },
+  {
+   "name": "C @1366x650: Undo opens a reason box in place and focuses it",
+   "ok": true,
+   "detail": "undo-row-o1-why"
+  },
+  {
+   "name": "C @1366x650: Undo with no reason shows the error at the top of its own form, focused, scroll kept",
+   "ok": true,
+   "detail": "{\"f\":\"govuk-error-summary app-undo-sum\",\"t\":\"Error: \",\"m\":true,\"y\":0,\"still\":true}"
+  },
+  {
+   "name": "C @1366x650: Undo with a reason puts the row back to Not checked, Complete is live again and has focus",
+   "ok": true,
+   "detail": "{\"tag\":\"Not checked\",\"f\":\"done\",\"title\":\"Check i\"}"
+  },
+  {
+   "name": "C @1366x650: a done item's decision slot shows the Complete tag and Undo, no Complete button",
+   "ok": true,
+   "detail": "{\"foot\":\"CompleteUndo the decision on Lakeview chequing statement, December 2025Reason for undoing this decision * (required)Undo the decision on Lakeview chequing statement, December 2025Cancel undo\",\"complete\":0}"
+  },
+  {
+   "name": "C @1366x650: Undo from the slot returns the item to Not checked with Complete live in the slot",
+   "ok": true,
+   "detail": "{\"tag\":\"Not checked\",\"has\":true}"
+  },
+  {
+   "name": "C @1093x525: a done row shows the Complete tag and Undo, with no live Complete or Chase button (D3, rule 8)",
+   "ok": true,
+   "detail": "{\"tag\":\"Complete\",\"done\":[\"Show sources (2) for Lakeview chequing statement, December 2025\",\"Undo the decision on Lakeview chequing statement, December 2025\"]}"
+  },
+  {
+   "name": "C @1093x525: Undo opens a reason box in place and focuses it",
+   "ok": true,
+   "detail": "undo-row-o1-why"
+  },
+  {
+   "name": "C @1093x525: Undo with no reason shows the error at the top of its own form, focused, scroll kept",
+   "ok": true,
+   "detail": "{\"f\":\"govuk-error-summary app-undo-sum\",\"t\":\"Error: \",\"m\":true,\"y\":0,\"still\":true}"
+  },
+  {
+   "name": "C @1093x525: Undo with a reason puts the row back to Not checked, Complete is live again and has focus",
+   "ok": true,
+   "detail": "{\"tag\":\"Not checked\",\"f\":\"done\",\"title\":\"Check i\"}"
+  },
+  {
+   "name": "C @1093x525: a done item's decision slot shows the Complete tag and Undo, no Complete button",
+   "ok": true,
+   "detail": "{\"foot\":\"CompleteUndo the decision on Lakeview chequing statement, December 2025Reason for undoing this decision * (required)Undo the decision on Lakeview chequing statement, December 2025Cancel undo\",\"complete\":0}"
+  },
+  {
+   "name": "C @1093x525: Undo from the slot returns the item to Not checked with Complete live in the slot",
+   "ok": true,
+   "detail": "{\"tag\":\"Not checked\",\"has\":true}"
+  },
+  {
+   "name": "A f1 @1366x650: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1366x650: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1366x650: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1366x650: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f4 flagged @1366x650: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f4 flagged @1366x650: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f4 flagged @1366x650: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f4 flagged @1366x650: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 orphan @1366x650: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 orphan @1366x650: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 orphan @1366x650: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 orphan @1366x650: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p2 choice @1366x650: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p2 choice @1366x650: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p2 choice @1366x650: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p2 choice @1366x650: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1366x650: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1366x650: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1366x650: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1366x650: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1366x650: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1366x650: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1366x650: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1366x650: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o5 @1366x650: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o5 @1366x650: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o5 @1366x650: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o5 @1366x650: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o4 empty @1366x650: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o4 empty @1366x650: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o4 empty @1366x650: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o4 empty @1366x650: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "@1366x650: V5 same name and scope, same number on every page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1366x650: V2 mark and next keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1366x650: V4 mark and next lands focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1366x650: V2 Cite keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1366x650: V2 an error in the cite form keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify @1366x650: V2 Accept keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C @1366x650: V2 Complete keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C @1366x650: V4 Complete in the row lands focus on the next row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1366x650: V5 the filter caption follows the filter",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1366x650: V6 a figure name copied as shown finds its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1366x650: V5 the filter caption follows the filter",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1366x650: V6 a figure name copied as shown finds its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C @1366x650: V5 the filter caption follows the filter",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C @1366x650: V6 a figure name copied as shown finds its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1366x650: V8 typing a reason never gives a choose error and selects the reason",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1366x650: V7 every control does something",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 @1366x650: V7 every control does something",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1366x650: V7 every control does something",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1366x650: V7 every control does something",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C done row @1366x650: V7 no dead control (no second Complete)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1093x525: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1093x525: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1093x525: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1093x525: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f4 flagged @1093x525: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f4 flagged @1093x525: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f4 flagged @1093x525: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f4 flagged @1093x525: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 orphan @1093x525: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 orphan @1093x525: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 orphan @1093x525: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 orphan @1093x525: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p2 choice @1093x525: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p2 choice @1093x525: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p2 choice @1093x525: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p2 choice @1093x525: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1093x525: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1093x525: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1093x525: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1093x525: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1093x525: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1093x525: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1093x525: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1093x525: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o5 @1093x525: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o5 @1093x525: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o5 @1093x525: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o5 @1093x525: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o4 empty @1093x525: V5 counts carry their scope",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o4 empty @1093x525: V1 no early error on load and after input",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o4 empty @1093x525: V3 evidence and decision in view",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o4 empty @1093x525: V1 after opening",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "@1093x525: V5 same name and scope, same number on every page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1093x525: V2 mark and next keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1093x525: V4 mark and next lands focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1093x525: V2 Cite keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1093x525: V2 an error in the cite form keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify @1093x525: V2 Accept keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C @1093x525: V2 Complete keeps the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C @1093x525: V4 Complete in the row lands focus on the next row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1093x525: V5 the filter caption follows the filter",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A @1093x525: V6 a figure name copied as shown finds its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1093x525: V5 the filter caption follows the filter",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1093x525: V6 a figure name copied as shown finds its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C @1093x525: V5 the filter caption follows the filter",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C @1093x525: V6 a figure name copied as shown finds its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B @1093x525: V8 typing a reason never gives a choose error and selects the reason",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "A f1 @1093x525: V7 every control does something",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B p1 @1093x525: V7 every control does something",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "B verify v1 @1093x525: V7 every control does something",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C o1 @1093x525: V7 every control does something",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C done row @1093x525: V7 no dead control (no second Complete)",
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "retired-term, dash, filler and SIN lint (check 6)",
@@ -1393,7 +2033,7 @@
    "version": "A",
    "size": "1366x650",
    "clicksToOpen": 1,
-   "msToBoxVisible": 154,
+   "msToBoxVisible": 165,
    "pageLoads": 0,
    "historyAdded": 0,
    "overflowPx": 0,
@@ -1439,7 +2079,7 @@
    "version": "C",
    "size": "1366x650",
    "clicksToOpen": 1,
-   "msToBoxVisible": 151,
+   "msToBoxVisible": 143,
    "pageLoads": 0,
    "historyAdded": 0,
    "overflowPx": 0,
@@ -1462,7 +2102,7 @@
    "version": "A",
    "size": "1093x525",
    "clicksToOpen": 1,
-   "msToBoxVisible": 180,
+   "msToBoxVisible": 129,
    "pageLoads": 0,
    "historyAdded": 0,
    "overflowPx": 0,
@@ -1485,7 +2125,7 @@
    "version": "B",
    "size": "1093x525",
    "clicksToOpen": 1,
-   "msToBoxVisible": 144,
+   "msToBoxVisible": 152,
    "pageLoads": 0,
    "historyAdded": 0,
    "overflowPx": 0,
@@ -1508,7 +2148,7 @@
    "version": "C",
    "size": "1093x525",
    "clicksToOpen": 1,
-   "msToBoxVisible": 146,
+   "msToBoxVisible": 161,
    "pageLoads": 0,
    "historyAdded": 0,
    "overflowPx": 0,
@@ -1806,13 +2446,13 @@
   {
    "page": "B",
    "size": "1366x650",
-   "stops": 26,
+   "stops": 27,
    "problems": []
   },
   {
    "page": "B",
    "size": "1093x525",
-   "stops": 26,
+   "stops": 27,
    "problems": []
   },
   {
@@ -1928,6 +2568,11 @@
    "app-brand",
    "app-button-compact",
    "app-cell-boxed",
+   "app-cite__go",
+   "app-cite__sum",
+   "app-cor",
+   "app-cor__reason",
+   "app-cor__row",
    "app-counts",
    "app-done",
    "app-filter",
@@ -1940,6 +2585,7 @@
    "app-only-narrow",
    "app-page",
    "app-pane-w",
+   "app-req",
    "app-reset-button",
    "app-return",
    "app-row--selected",
@@ -1962,6 +2608,8 @@
    "app-summary-strip--window",
    "app-summary-strip--window-top",
    "app-table-dense",
+   "app-undo",
+   "app-undo-sum",
    "app-viewer",
    "app-viewer--window",
    "app-viewer-root",
@@ -1969,7 +2617,7 @@
    "app-viewer__card",
    "app-viewer__empty",
    "app-viewer__foot",
-   "app-viewer__foot--block",
+   "app-viewer__foot--cite",
    "app-viewer__head",
    "app-viewer__meta",
    "app-viewer__stage",
@@ -1987,7 +2635,7 @@
   "countDisagreements": []
  },
  "summary": {
-  "checks": 154,
+  "checks": 282,
   "failed": 0,
   "axeStates": 102
  }

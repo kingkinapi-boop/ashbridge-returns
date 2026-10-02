@@ -1,5 +1,7 @@
 # Version B: source tabs and the decision slot (preparer), an embed variant of A's viewer
 
+Round 2 (fix list 1 and 2, findings-designs-2): the cite form is the shared cite-or-reason part (linked css and js from `design/parts/cite-or-reason/`), no closed fold, and Cite or Record calls the shared `advance` (next figure that needs a source or a reason, focus in its box; with none left the notice takes focus).
+
 Pages: `index.html` (cite figures, and the second record tab verify values, EV-6, at `index.html?tab=verify`), `window.html` (second window). Made-up data: Maple Ridge Consulting Inc. (Test). Same viewer script as A; B changes only the source navigation (MOJ sub navigation tabs) and what sits in the decision slot (`extra`).
 
 ## Structure
@@ -19,4 +21,6 @@ GOV.UK Frontend: generic header, skip link, table, tag, button (primary, seconda
 ## Composed outside GOV.UK or MOJ
 Those of A (same CSS file, same listed parts), plus:
 - `app-reset-button`: the source tabs are buttons wearing `moj-sub-navigation__link`, because choosing a source must not change the page or add a history entry (a link would). MOJ sub navigation is links only.
-- `app-viewer__foot--block`: the decision form needs block layout under the card.
+- `app-viewer__foot--cite`, `app-cite__sum`, `app-cite__go`: the cite form is one row under the evidence (the radios and the reason box at the left, the Record button at the right, the error summary on its own full-width row above them), so the page area stays above 55% of the height at 1093 x 525.
+- `app-cor`, `app-cor__row`, `app-cor__reason`: from the shared part `design/parts/cite-or-reason` (fix round 2), see its README: the reason radio and its box share a line, the box is always visible so typing in it is the choice. GOV.UK conditional reveal hides the box until the radio is chosen, which is the "choose a source" error the findings (W2, D4) found.
+- `app-req`: the red asterisk on a required field, as in the client app (amber A20).

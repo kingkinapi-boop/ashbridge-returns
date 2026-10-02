@@ -47,6 +47,8 @@
   }
 
   var api
+  /* fix round 2 (D2): after Cite or Record the shared advance moves on to the next figure that still needs a source or a
+     reason and puts focus in its box; with none left the notice itself takes focus. */
   function recorded(it, v, sid, what) {
     cited[it.id] = (cited[it.id] || []).concat([sid])
     SV.sstore('sv-cited', JSON.stringify(cited))
@@ -55,8 +57,6 @@
     refresh()
     var nxt = api.nextUnhandled(it.id, citedDone)
     var msg = what + ' for ' + it.name + ' recorded as source ' + nowN + ' of ' + nowN + '. ' + (nxt ? 'Next to cite: ' + nxt.querySelector('th').textContent.replace(/\s*\(tax choice\)/, '') + '.' : 'Nothing is left to cite.')
-    v.show(it.id, nowN - 1, { focusIn: true, silent: false })
-    v.announce(msg)
     var note = document.getElementById('sv-recorded')
     if (note) { note.textContent = msg; note.hidden = false }
     var b = document.getElementById('sv-next-orphan')
@@ -64,53 +64,66 @@
       if (nxt) { b.textContent = 'Go to ' + nxt.querySelector('th').textContent.replace(/\s*\(tax choice\)/, ''); b.hidden = false; b.setAttribute('data-go', nxt.getAttribute('data-item')) }
       else b.hidden = true
     }
+    if (!api.advance(it.id, citedDone, { focusViewer: true })) {
+      v.show(it.id, nowN - 1, { silent: true })
+      if (note) note.focus({ preventScroll: true })
+    }
+    v.announce(msg)
   }
 
+  /* The cite form is the shared cite-or-reason part (design/parts/cite-or-reason): typing a reason checks "A written reason",
+     so there is never a "choose" error while a reason is typed (V8); nothing is preselected and no error shows before a submit. */
   function citeForm(it, sid, v) {
     if (isCited(it) || !it.cand) return null
-    var form = h('form', { class: 'app-viewer__foot app-viewer__foot--block', novalidate: 'novalidate', id: 'sv-cite' })
+    var form = h('form', { class: 'app-viewer__foot app-viewer__foot--cite', novalidate: 'novalidate', id: 'sv-cite', 'data-cor': '' })
     form.setAttribute('aria-label', 'Cite ' + it.name)
-    var errBox = h('div', { id: 'sv-cite-err' })
+    var errBox = h('div', { id: 'sv-cite-err', class: 'app-cite__sum' })
     form.appendChild(errBox)
-    var row = h('div', { class: 'app-actions' })
-    row.appendChild(h('button', { type: 'submit', class: 'govuk-button app-button-compact', name: 'cite', value: 'source' }, 'Cite the source shown (candidate ' + (v.idx + 1) + ' of ' + it.cand.length + ')'))
-    row.appendChild(h('span', { class: 'govuk-body-s', text: 'Look at each candidate in the tabs first.' }))
-    form.appendChild(row)
-    var det = h('details', { class: 'govuk-details govuk-!-margin-top-2 govuk-!-margin-bottom-0', id: 'sv-reason-details' },
-      h('summary', { class: 'govuk-details__summary' }, h('span', { class: 'govuk-details__summary-text', text: 'Write a reason instead' })),
-      h('div', { class: 'govuk-details__text' },
-        h('div', { class: 'govuk-form-group', id: 'sv-reason-group' },
-          h('label', { class: 'govuk-label', for: 'sv-reason' }, 'Reason (required)'),
-          h('div', { class: 'govuk-hint', id: 'sv-reason-hint', text: 'Say what supports this figure and who decided. It is shown in the viewer as "Reason written by ' + WHO + '".' }),
-          h('textarea', { class: 'govuk-textarea', id: 'sv-reason', name: 'reason', rows: '3', 'aria-describedby': 'sv-reason-hint' })),
-        h('button', { type: 'submit', class: 'govuk-button govuk-button--secondary app-button-compact', name: 'cite', value: 'reason' }, 'Record the reason')))
-    form.appendChild(det)
-    var kind = null
-    form.addEventListener('click', function (e) { var b = e.target.closest('button[name="cite"]'); if (b) kind = b.value })
+    var group = h('div', { class: 'govuk-form-group app-cor' })
+    var fs = h('fieldset', { class: 'govuk-fieldset' },
+      h('legend', { class: 'govuk-fieldset__legend' }, h('span', { class: 'govuk-visually-hidden', text: 'Source or reason for ' + it.name + ' (required)' })))
+    var radios = h('div', { class: 'govuk-radios govuk-radios--small' })
+    radios.appendChild(h('div', { class: 'govuk-radios__item' },
+      h('input', { class: 'govuk-radios__input', id: 'sv-src-0', name: 'sv-src', type: 'radio', value: 'source', 'data-req': '', 'data-msg': 'Choose a source or write a reason' }),
+      h('label', { class: 'govuk-label govuk-radios__label', for: 'sv-src-0' }, 'The candidate shown (' + (v.idx + 1) + ' of ' + it.cand.length + ')')))
+    radios.appendChild(h('div', { class: 'govuk-radios__item app-cor__row' },
+      h('input', { class: 'govuk-radios__input', id: 'sv-src-reason', name: 'sv-src', type: 'radio', value: 'reason', 'data-cor-reason-radio': '' }),
+      h('label', { class: 'govuk-label govuk-radios__label', for: 'sv-src-reason' }, 'A written reason'),
+      h('div', { class: 'govuk-form-group app-cor__reason', id: 'sv-reason-group' },
+        h('label', { class: 'govuk-label govuk-visually-hidden', for: 'sv-reason' }, 'Reason for the CPA (required if you chose a written reason)'),
+        h('textarea', { class: 'govuk-textarea', id: 'sv-reason', name: 'reason', rows: '1', 'data-cor-reason': '', 'data-req': '', 'data-msg': 'Write the reason in a sentence: what supports ' + it.name + ' and who decided', 'data-req-if': 'sv-src-reason' }))))
+    fs.appendChild(radios)
+    group.appendChild(fs)
+    form.appendChild(group)
+    form.appendChild(h('button', { type: 'submit', class: 'govuk-button app-button-compact app-cite__go', 'data-primary': '' }, 'Record', h('span', { class: 'govuk-visually-hidden', text: ' the source or reason for ' + it.name })))
+    function fail(msg, field, linkTo) {
+      var sum = h('div', { class: 'govuk-error-summary', role: 'alert', tabindex: '-1', id: 'sv-cite-sum' },
+        h('div', { class: 'govuk-error-summary__body' }, h('h3', { class: 'govuk-error-summary__title', text: 'There is a problem' }),
+          h('ul', { class: 'govuk-list govuk-error-summary__list' }, h('li', {}, h('a', { href: '#' + linkTo, onclick: function (ev) { ev.preventDefault(); form.querySelector('#' + linkTo).focus({ preventScroll: true }) } }, msg)))))
+      errBox.appendChild(sum)
+      var grp = field === 'reason' ? form.querySelector('#sv-reason-group') : group
+      grp.classList.add('govuk-form-group--error')
+      var ta = form.querySelector('#sv-reason')
+      if (field === 'reason') {
+        grp.insertBefore(h('p', { class: 'govuk-error-message', id: 'sv-reason-err' }, h('span', { class: 'govuk-visually-hidden', text: 'Error: ' }), msg), ta)
+        ta.classList.add('govuk-textarea--error')
+        ta.setAttribute('aria-describedby', 'sv-reason-err')
+      } else {
+        fs.insertBefore(h('p', { class: 'govuk-error-message', id: 'sv-src-error' }, h('span', { class: 'govuk-visually-hidden', text: 'Error: ' }), msg), radios)
+        fs.setAttribute('aria-describedby', 'sv-src-error')
+      }
+      if (!/^Error: /.test(document.title)) document.title = 'Error: ' + document.title
+      sum.focus({ preventScroll: true })
+    }
     form.addEventListener('submit', function (e) {
       e.preventDefault()
-      var which = kind || 'source'
-      kind = null
       errBox.textContent = ''
-      if (which === 'reason') {
+      var old = form.querySelectorAll('.govuk-error-message'); Array.prototype.forEach.call(old, function (m) { m.remove() })
+      var picked = form.querySelector('input[name="sv-src"]:checked')
+      if (!picked) { fail('Choose a source or write a reason', 'source', 'sv-src-0'); return }
+      if (picked.value === 'reason') {
         var t = form.querySelector('#sv-reason').value.trim()
-        if (t.length < 15) {
-          var msg = 'Write the reason in a sentence: what supports ' + it.name + ' and who decided'
-          var sum = h('div', { class: 'govuk-error-summary', role: 'alert', tabindex: '-1', id: 'sv-cite-sum' },
-            h('div', { class: 'govuk-error-summary__body' }, h('h3', { class: 'govuk-error-summary__title', text: 'There is a problem' }),
-              h('ul', { class: 'govuk-list govuk-error-summary__list' }, h('li', {}, h('a', { href: '#sv-reason', onclick: function (ev) { ev.preventDefault(); form.querySelector('#sv-reason').focus() } }, msg)))))
-          errBox.appendChild(sum)
-          var grp = form.querySelector('#sv-reason-group')
-          grp.classList.add('govuk-form-group--error')
-          var old = grp.querySelector('.govuk-error-message'); if (old) old.remove()
-          grp.insertBefore(h('p', { class: 'govuk-error-message', id: 'sv-reason-err' }, h('span', { class: 'govuk-visually-hidden', text: 'Error: ' }), msg), grp.querySelector('textarea'))
-          form.querySelector('#sv-reason').classList.add('govuk-textarea--error')
-          form.querySelector('#sv-reason').setAttribute('aria-describedby', 'sv-reason-hint sv-reason-err')
-          document.getElementById('sv-reason-details').open = true
-          document.title = 'Error: ' + document.title.replace(/^Error: /, '')
-          sum.focus()
-          return
-        }
+        if (t.length < 15) { fail('Write the reason in a sentence: what supports ' + it.name + ' and who decided', 'reason', 'sv-reason'); return }
         var id = 'rs-new-' + it.id
         dynSave(id, { kind: 'reason', title: 'Reason for ' + it.name, reason: t, who: 'Reason written by ' + WHO, when: TODAY })
         document.title = document.title.replace(/^Error: /, '')
@@ -139,7 +152,7 @@
   function verifySlot(it, sid, v) {
     if (v.list !== 'verify' || !sid) return null
     var foot = h('div', { class: 'app-viewer__foot' })
-    foot.appendChild(h('button', { type: 'button', class: 'govuk-button app-button-compact', onclick: function () { decide(it.id, 'ok') } }, 'Accept', h('span', { class: 'govuk-visually-hidden', text: ' ' + it.name })))
+    foot.appendChild(h('button', { type: 'button', class: 'govuk-button app-button-compact', 'data-primary': '', onclick: function () { decide(it.id, 'ok') } }, 'Accept', h('span', { class: 'govuk-visually-hidden', text: ' ' + it.name })))
     foot.appendChild(h('button', { type: 'button', class: 'govuk-button govuk-button--warning app-button-compact', onclick: function () { decide(it.id, 'no') } }, 'Reject', h('span', { class: 'govuk-visually-hidden', text: ' ' + it.name })))
     return foot
   }

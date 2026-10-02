@@ -85,8 +85,6 @@ html.govuk-template { height: 100%; background: #fff; }
 .app-viewer__empty { padding: 16px 12px; }
 .app-viewer__foot { padding: 6px 8px; background: #fff; border-top: 1px solid var(--app-line); display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
 .app-viewer__foot p, .app-viewer__foot .govuk-body-s { margin: 0; }
-.app-viewer__foot--block { display: block; }
-.app-viewer__foot--block .govuk-details { margin-top: 6px; }
 .app-viewer__card { background: #fff; border: 1px solid var(--app-line); padding: 8px; }
 .app-viewer__card:focus { outline: 3px solid var(--app-focus); }
 .app-viewer__card .govuk-summary-list { margin-bottom: 0; }
@@ -175,3 +173,19 @@ html.govuk-template { height: 100%; background: #fff; }
 .app-table-dense .govuk-tag, .app-viewer .govuk-tag, .app-summary-strip .govuk-tag { font-size: 0.875rem; line-height: 1.2; padding: 2px 6px; max-width: none; }
 .app-split__work:focus, .app-scroll:focus, .app-sheet-wrap:focus { outline: 3px solid var(--app-focus); outline-offset: -3px; box-shadow: inset 0 0 0 6px var(--app-ink); }
 .app-prototype-note { margin-top: 24px; }
+/* undo with a reason (version C, fix round 2): one field and two buttons, in place, in the row or the decision slot */
+.app-undo { flex: 1 1 100%; width: 100%; margin: 4px 0 0; }
+.app-undo .govuk-form-group { margin-bottom: 6px; }
+.app-undo .govuk-textarea { min-height: 0; padding: 3px 8px; }
+.app-undo-sum, .app-undo .govuk-error-summary { padding: 8px; margin-bottom: 8px; border-width: 4px; }
+.app-undo .govuk-error-summary__title { font-size: 1.0625rem; margin-bottom: 4px; }
+.app-undo .govuk-list { margin-bottom: 0; }
+.app-req { color: #b3413a; font-weight: 700; }
+/* B's cite form (the cite-or-reason part beside a Record button): the radios and the box on the left, the button at the right */
+.app-viewer__foot--cite { align-items: flex-end; flex-wrap: wrap; }
+.app-viewer__foot--cite .app-cor { flex: 1 1 16em; min-width: 0; margin: 0; }
+.app-cite__sum { flex: 1 1 100%; }
+.app-cite__sum .govuk-error-summary { padding: 8px; margin-bottom: 4px; border-width: 4px; }
+.app-cite__sum .govuk-error-summary__title { font-size: 1.0625rem; margin-bottom: 4px; }
+.app-cite__sum .govuk-list { margin-bottom: 0; }
+.app-viewer__foot--cite .app-cite__go { margin: 0; }

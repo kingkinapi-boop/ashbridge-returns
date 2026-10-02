@@ -8,10 +8,12 @@ import http from 'node:http'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import * as R from '../../../verify/rules.mjs' // shared checks V1 to V8 (design/verify)
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(here, '..')
-const NM = process.env.SV_NM || 'C:/Users/User/AppData/Local/Temp/claude/C--Users-User-Documents-GitHub-ashbridge-returns/308b0a14-ed6c-4f0f-87db-5f8b4fff98fc/scratchpad/tool/node_modules'
+const droot = path.resolve(here, '../../..')
+const NM = process.env.PW_NM || process.env.SV_NM || 'C:/Users/User/AppData/Local/Temp/claude/C--Users-User-Documents-GitHub-ashbridge-returns/308b0a14-ed6c-4f0f-87db-5f8b4fff98fc/scratchpad/tool/node_modules'
 const req = createRequire(NM.replace(/node_modules\/?$/, '') + 'x.js')
 const { chromium } = req('playwright')
 const AxeBuilder = req('@axe-core/playwright').default || req('@axe-core/playwright')
@@ -20,11 +22,11 @@ const ONLY = process.env.SV_ONLY ? process.env.SV_ONLY.split(',') : null
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.md': 'text/plain' }
 const srv = http.createServer((q, r) => {
   let p = decodeURIComponent(q.url.split('?')[0]); if (p.endsWith('/')) p += 'index.html'
-  const f = path.join(root, p)
+  const f = path.join(droot, p) // the server root is design/, so the shared parts folder is reachable
   fs.readFile(f, (e, d) => { if (e) { r.statusCode = 404; r.end('not found'); return } r.setHeader('content-type', mime[path.extname(f)] || 'text/plain'); r.end(d) })
 })
 await new Promise((r) => srv.listen(0, '127.0.0.1', r))
-const BASE = `http://127.0.0.1:${srv.address().port}/`
+const BASE = `http://127.0.0.1:${srv.address().port}/prototypes/source-viewer/`
 const U = (p) => BASE + p
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 const SIZES = [[1366, 650], [1093, 525]]
@@ -120,9 +122,9 @@ await section('axe', async () => {
       await c.close() }
     { const [c, page] = await newPage(w, h)
       await page.goto(U('b-tabs-and-decision/index.html?item=p1')); await sleep(400)
-      await page.click('summary:has-text("Write a reason instead")'); await page.click('button:has-text("Record the reason")'); await sleep(250)
+      await page.click('button[data-primary]'); await sleep(250)
       await axeRun(page, `B cite error @${w}x${h}`)
-      await page.fill('#sv-reason', 'Supported by the monthly BRIGHTPATH debits; Anita Rao decided.'); await page.click('button:has-text("Record the reason")'); await sleep(350)
+      await page.fill('#sv-reason', 'Supported by the monthly BRIGHTPATH debits; Anita Rao decided.'); await page.click('button[data-primary]'); await sleep(350)
       await axeRun(page, `B reason recorded @${w}x${h}`)
       await page.click('a[data-route="verify"]'); await sleep(300); await axeRun(page, `B after tab route to Verify @${w}x${h}`)
       await c.close() }
@@ -242,7 +244,6 @@ await section('zoom', async () => {
   // a key typed in a text field fires nothing (rule 10)
   const [c2, p2] = await newPage(1366, 650)
   await p2.goto(U('b-tabs-and-decision/index.html?item=p1')); await sleep(400)
-  await p2.click('summary:has-text("Write a reason instead")')
   await p2.focus('#sv-reason'); const before = await p2.evaluate(() => document.querySelector('[aria-current="page"][class*="moj-sub-navigation__link"]') && [...document.querySelectorAll('.app-viewer__steps [aria-current]')].map((e) => e.textContent).join())
   await p2.keyboard.type('m ] [ + - 0 j k o')
   const after = await p2.evaluate(() => [...document.querySelectorAll('.app-viewer__steps [aria-current]')].map((e) => e.textContent).join())
@@ -283,13 +284,13 @@ await section('mark', async () => {
   ck('"Remove mark" is a button only (no key)', (await page.locator('button:has-text("Remove mark")').count()) === 1 && (await page.locator('button:has-text("Remove mark")').first().getAttribute('aria-keyshortcuts')) === null, '')
   await c.close()
   // from the box, 1 Tab reaches the decision (A, B cite, B verify, C)
-  for (const [label, url, row, expect] of [['A', 'a-docked-strip/index.html', 'f1', /Supports this figure/], ['B verify', 'b-tabs-and-decision/index.html?tab=verify', 'v1', /Accept/], ['B cite', 'b-tabs-and-decision/index.html', 'p1', /Cite the source shown/], ['C', 'c-window-first/index.html', 'o1', /Complete/]]) {
+  for (const [label, url, row, expect] of [['A', 'a-docked-strip/index.html', 'f1', /Supports this figure/], ['B verify', 'b-tabs-and-decision/index.html?tab=verify', 'v1', /Accept/], ['B cite', 'b-tabs-and-decision/index.html', 'p1', /The candidate shown/], ['C', 'c-window-first/index.html', 'o1', /Complete/]]) {
     for (const [w, h] of SIZES) {
       const [c3, p3] = await newPage(w, h)
       await p3.goto(U(url)); await sleep(350)
       await p3.click(`[data-item="${row}"] [data-open]`); await ready(p3); await sleep(250)
       await p3.keyboard.press('Tab')
-      const txt = await p3.evaluate(() => (document.activeElement.textContent || '').trim())
+      const txt = await p3.evaluate(() => ((document.activeElement.textContent || '') + ' ' + ((document.activeElement.labels && document.activeElement.labels[0] && document.activeElement.labels[0].textContent) || '')).trim())
       ck(`${label} @${w}x${h}: from the box 1 Tab reaches the decision`, expect.test(txt), txt.slice(0, 40))
       await c3.close()
     }
@@ -493,7 +494,7 @@ await section('url', async () => {
   // a cite survives a reload (session storage), reload keeps the cite
   await pop.close(); await sleep(1500)
   await b.goto(U('b-tabs-and-decision/index.html?item=p1')); await sleep(500)
-  await b.click('button:has-text("Cite the source shown")'); await sleep(400)
+  await b.click('#sv-src-0'); await b.click('button[data-primary]'); await sleep(400)
   await b.reload(); await sleep(600)
   const st = await b.locator('[data-item="p1"] [data-status]').innerText()
   ck('a cited source survives a reload (prototype keeps it in session storage)', /Cited/.test(st), st)
@@ -505,15 +506,15 @@ await section('flows', async () => {
   const [c, page] = await newPage(1366, 650)
   let clicks = 0; await page.exposeFunction('__click', () => { clicks++ }); await page.addInitScript(() => document.addEventListener('click', () => window.__click(), true))
   await page.goto(U('b-tabs-and-decision/index.html')); await sleep(400)
-  clicks = 0
   await page.click('[data-item="p1"] [data-open]'); await ready(page)
-  await page.click('button:has-text("Cite the source shown")'); await sleep(300)
+  clicks = 0
+  await page.click('#sv-src-0'); await page.click('button[data-primary]'); await sleep(300)
   const go = await page.locator('#sv-next-orphan').innerText()
-  ck('B T3: cite an orphan in 2 clicks, then a button goes to the next orphan', clicks === 2 && /Go to/.test(go), `${clicks} clicks, ${go}`)
+  ck('B T3: cite an orphan in 2 clicks after opening it (radio, Record), then a button goes to the next orphan', clicks === 2 && /Go to/.test(go), `${clicks} clicks, ${go}`)
   await page.click('#sv-next-orphan'); await sleep(400)
-  await page.click('summary:has-text("Write a reason instead")'); await page.click('button:has-text("Record the reason")'); await sleep(250)
-  const err = await page.evaluate(() => ({ f: document.activeElement.id, t: document.title.slice(0, 7), m: !!document.getElementById('sv-reason-err') }))
-  ck('B: an empty reason shows the error summary focused, the title starts "Error: " and the message sits at the field', err.f === 'sv-cite-sum' && err.t === 'Error: ' && err.m, JSON.stringify(err))
+  await page.fill('#sv-reason', 'short'); await page.click('button[data-primary]'); await sleep(250)
+  const err = await page.evaluate(() => ({ f: document.activeElement.id, t: document.title.slice(0, 7), m: !!document.getElementById('sv-reason-err'), noChoose: !document.getElementById('sv-src-error') }))
+  ck('B: a reason that is too short shows the error summary focused, the title starts "Error: " and the message sits at the field (and never a choose error)', err.f === 'sv-cite-sum' && err.t === 'Error: ' && err.m && err.noChoose, JSON.stringify(err))
   await c.close()
   const [c2, p2] = await newPage(1366, 650)
   await p2.goto(U('a-docked-strip/index.html?item=f8')); await sleep(600)
@@ -540,7 +541,7 @@ await section('keyboard', async () => {
         const r = await page.evaluate(() => {
           const e = document.activeElement; if (!e || e === document.body) return null
           const cs = getComputedStyle(e), b = e.getBoundingClientRect()
-          const vis = (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || cs.boxShadow !== 'none' || e.classList.contains('govuk-checkboxes__input')
+          const vis = (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || cs.boxShadow !== 'none' || e.classList.contains('govuk-checkboxes__input') || e.classList.contains('govuk-radios__input')
           const inView = b.top >= -1 && b.bottom <= innerHeight + 1 && b.right <= innerWidth + 1 && b.left >= -1
           return { id: e.id || e.tagName + ':' + (e.textContent || '').trim().slice(0, 24), vis, inView, topInView: b.top >= -1 && b.top < innerHeight - 24, w: Math.round(b.width), h: Math.round(b.height) }
         })
@@ -594,6 +595,152 @@ await section('reflow', async () => {
   await c.close()
 })
 
+// ---------------------------------------------------------------- round 2: re-walks (B cite and reason, C Complete) and the shared rules V1 to V8
+const BOXES = '.app-box, .app-viewer__card, .app-viewer__stage'
+async function openItem(page, url, id) { await page.goto(U(url)); await sleep(350); if (id) { await openRow(page, id); await sleep(150) } }
+function rk(name, r) { ck(name, r.ok, r.failures.join('; ')) }
+
+await section('b-cite', async () => {
+  for (const [w, h] of SIZES) {
+    // D2: after Cite, the shared advance moves to the next figure that still needs one, focus in its box
+    let [c, page] = await newPage(w, h)
+    await openItem(page, 'b-tabs-and-decision/index.html', 'p1')
+    let r = await R.V4(page, { name: 'B Cite then advance', run: async (p) => { await p.click('#sv-src-0'); await p.click('button[data-primary]') }, wait: 450, expect: BOXES })
+    rk(`B @${w}x${h}: after Cite focus lands in the next figure's box (V4)`, r)
+    const nx = await page.evaluate(() => ({ title: (document.getElementById('sv-title-pane') || {}).textContent, status: document.querySelector('[data-item="p1"] [data-status]').textContent.trim(), note: document.getElementById('sv-recorded').textContent }))
+    ck(`B @${w}x${h}: Cite records p1 and the viewer shows the next one to cite (D2)`, /Cited/.test(nx.status) && /Home office/.test(nx.title || '') && /recorded/.test(nx.note), JSON.stringify(nx))
+    await c.close()
+    // Record a reason: the box is typed in, nothing else is chosen; the same advance
+    ;[c, page] = await newPage(w, h)
+    let clicks = 0
+    await page.exposeFunction('__click', () => { clicks++ })
+    await page.addInitScript(() => document.addEventListener('click', () => window.__click(), true))
+    await openItem(page, 'b-tabs-and-decision/index.html', 'p1'); clicks = 0
+    await page.click('#sv-reason'); await page.fill('#sv-reason', 'Supported by the monthly BRIGHTPATH debits; Anita Rao decided.')
+    const radioOn = await page.evaluate(() => document.getElementById('sv-src-reason').checked)
+    await page.click('button[data-primary]'); await sleep(450)
+    const f = await page.evaluate(() => ({ a: document.activeElement.matches('.app-box, .app-viewer__card, .app-viewer__stage'), st: document.querySelector('[data-item="p1"] [data-status]').textContent.trim() }))
+    ck(`B @${w}x${h}: a reason takes 2 clicks after opening (box, Record), typing checks "A written reason", focus lands in the next box`, clicks === 2 && radioOn && f.a && /Cited/.test(f.st), JSON.stringify({ clicks, radioOn, ...f }))
+    await c.close()
+    // D4: no closed fold; the evidence and the decision are both in view at once
+    ;[c, page] = await newPage(w, h)
+    await openItem(page, 'b-tabs-and-decision/index.html', 'p1')
+    rk(`B @${w}x${h}: evidence and the decision in view, no closed fold (V3)`, await R.V3(page))
+    ck(`B @${w}x${h}: no details in the viewer`, (await page.locator('.app-viewer details').count()) === 0, '')
+    const ar = await page.evaluate(() => { const s = document.querySelector('.app-viewer__stage').getBoundingClientRect(); return +(s.height / innerHeight).toFixed(3) })
+    ck(`B @${w}x${h}: page area at least 55% of the height with the cite form under it`, ar >= 0.55, String(ar))
+    await c.close()
+  }
+})
+
+await section('c-undo', async () => {
+  for (const [w, h] of SIZES) {
+    let [c, page] = await newPage(w, h)
+    await openItem(page, 'c-window-first/index.html')
+    await page.click('[data-item="o1"] [data-act="done"]'); await sleep(250)
+    const row = await page.evaluate(() => { const r = document.querySelector('[data-item="o1"]'); const vis = (e) => e.getClientRects().length > 0; return { tag: r.querySelector('[data-status]').textContent.trim(), done: [...r.querySelectorAll('button')].filter(vis).map((b) => b.textContent.trim().replace(/\s+/g, ' ')) } })
+    ck(`C @${w}x${h}: a done row shows the Complete tag and Undo, with no live Complete or Chase button (D3, rule 8)`, row.tag === 'Complete' && row.done.some((t) => /^Undo/.test(t)) && !row.done.some((t) => /^(Complete|Chase)/.test(t)), JSON.stringify(row))
+    const y0 = await page.evaluate(() => scrollY)
+    await page.click('[data-item="o1"] [data-undo]'); await sleep(150)
+    const foc = await page.evaluate(() => document.activeElement.id)
+    ck(`C @${w}x${h}: Undo opens a reason box in place and focuses it`, /^undo-row-o1-why$/.test(foc), foc)
+    await page.click('#undo-row-o1 button[type=submit]'); await sleep(200)
+    const e = await page.evaluate(() => ({ f: document.activeElement.className, t: document.title.slice(0, 7), m: !!document.getElementById('undo-row-o1-err'), y: scrollY, still: !!document.querySelector('[data-item="o1"] [data-undo]') }))
+    ck(`C @${w}x${h}: Undo with no reason shows the error at the top of its own form, focused, scroll kept`, /app-undo-sum/.test(e.f) && e.t === 'Error: ' && e.m && Math.abs(e.y - y0) <= 8 && e.still, JSON.stringify(e))
+    await page.fill('#undo-row-o1-why', 'Wrong statement month, checked again.'); await page.click('#undo-row-o1 button[type=submit]'); await sleep(250)
+    const u = await page.evaluate(() => ({ tag: document.querySelector('[data-item="o1"] [data-status]').textContent.trim(), f: document.activeElement.getAttribute('data-act') || document.activeElement.textContent.trim().slice(0, 20), title: document.title.slice(0, 7) }))
+    ck(`C @${w}x${h}: Undo with a reason puts the row back to Not checked, Complete is live again and has focus`, /Not checked/.test(u.tag) && u.f === 'done' && u.title !== 'Error: ', JSON.stringify(u))
+    await c.close()
+    // from the viewer's decision slot
+    ;[c, page] = await newPage(w, h)
+    await openItem(page, 'c-window-first/index.html', 'o1')
+    await page.getByRole('button', { name: /^Complete/ }).last().click(); await sleep(250)
+    await openRow(page, 'o1'); await sleep(200)
+    const sl = await page.evaluate(() => ({ foot: document.querySelector('.app-viewer__foot').textContent.trim().replace(/\s+/g, ' '), complete: [...document.querySelectorAll('.app-viewer__foot button')].filter((b) => /^Complete/.test(b.textContent.trim())).length }))
+    ck(`C @${w}x${h}: a done item's decision slot shows the Complete tag and Undo, no Complete button`, /^Complete/.test(sl.foot) && /Undo/.test(sl.foot) && sl.complete === 0, JSON.stringify(sl))
+    await page.click('.app-viewer__foot [data-undo]'); await page.fill('.app-viewer__foot textarea', 'Sent to the wrong item.'); await page.click('.app-viewer__foot button[type=submit]'); await sleep(250)
+    const sl2 = await page.evaluate(() => ({ tag: document.querySelector('[data-item="o1"] [data-status]').textContent.trim(), has: [...document.querySelectorAll('.app-viewer__foot button')].some((b) => /^Complete/.test(b.textContent.trim())) }))
+    ck(`C @${w}x${h}: Undo from the slot returns the item to Not checked with Complete live in the slot`, /Not checked/.test(sl2.tag) && sl2.has, JSON.stringify(sl2))
+    await c.close()
+  }
+})
+
+await section('rules', async () => {
+  const pages = [
+    ['A f1', 'a-docked-strip/index.html', 'f1'], ['A f4 flagged', 'a-docked-strip/index.html', 'f4'], ['B p1 orphan', 'b-tabs-and-decision/index.html', 'p1'], ['B p2 choice', 'b-tabs-and-decision/index.html', 'p2'],
+    ['B verify v1', 'b-tabs-and-decision/index.html?tab=verify', 'v1'], ['C o1', 'c-window-first/index.html', 'o1'], ['C o5', 'c-window-first/index.html', 'o5'], ['C o4 empty', 'c-window-first/index.html', 'o4'],
+  ]
+  for (const [w, h] of SIZES) {
+    const counts = []
+    for (const [label, url, id] of pages) {
+      const [c, page] = await newPage(w, h)
+      await page.goto(U(url)); await sleep(350)
+      counts.push(await R.V5(page)); rk(`${label} @${w}x${h}: V5 counts carry their scope`, counts[counts.length - 1])
+      rk(`${label} @${w}x${h}: V1 no early error on load and after input`, await R.V1(page))
+      await page.goto(U(url)); await sleep(300) // the filter box was filled by V1
+      await openRow(page, id); await sleep(200)
+      rk(`${label} @${w}x${h}: V3 evidence and decision in view`, await R.V3(page))
+      rk(`${label} @${w}x${h}: V1 after opening`, await R.V1(page))
+      await c.close()
+    }
+    rk(`@${w}x${h}: V5 same name and scope, same number on every page`, R.V5same(counts))
+    // V2 and V4: in-place actions keep the page and the focus lands
+    let [c, p] = await newPage(w, h)
+    await openItem(p, 'a-docked-strip/index.html', 'f1')
+    rk(`A @${w}x${h}: V2 mark and next keeps the page`, await R.V2(p, { name: 'm', press: 'm' }))
+    rk(`A @${w}x${h}: V4 mark and next lands focus`, await R.V4(p, { name: 'm', press: 'm', expect: BOXES }, { shortcuts: [{ key: ']', selector: BOXES }, { key: '[', selector: BOXES }, { key: 'j', selector: BOXES }, { key: 'k', selector: BOXES }] }))
+    await c.close()
+    ;[c, p] = await newPage(w, h)
+    await openItem(p, 'b-tabs-and-decision/index.html', 'p1')
+    rk(`B @${w}x${h}: V2 Cite keeps the page`, await R.V2(p, { name: 'Cite', run: async (q) => { await q.click('#sv-src-0'); await q.click('button[data-primary]') }, wait: 450 }))
+    await c.close()
+    ;[c, p] = await newPage(w, h)
+    await openItem(p, 'b-tabs-and-decision/index.html', 'p1')
+    rk(`B @${w}x${h}: V2 an error in the cite form keeps the page`, await R.V2(p, { name: 'Record with nothing chosen', click: 'button[data-primary]' }))
+    await c.close()
+    ;[c, p] = await newPage(w, h)
+    await openItem(p, 'b-tabs-and-decision/index.html?tab=verify', 'v1')
+    rk(`B verify @${w}x${h}: V2 Accept keeps the page`, await R.V2(p, { name: 'Accept', run: async (q) => { await q.getByRole('button', { name: /^Accept/ }).last().click() }, wait: 300 }))
+    await c.close()
+    ;[c, p] = await newPage(w, h)
+    await openItem(p, 'c-window-first/index.html', 'o1')
+    rk(`C @${w}x${h}: V2 Complete keeps the page`, await R.V2(p, { name: 'Complete', run: async (q) => { await q.getByRole('button', { name: /^Complete/ }).last().click() } }))
+    await c.close()
+    ;[c, p] = await newPage(w, h)
+    await p.goto(U('c-window-first/index.html')); await sleep(300)
+    rk(`C @${w}x${h}: V4 Complete in the row lands focus on the next row`, await R.V4(p, { name: 'Complete o1', click: '[data-item="o1"] [data-act="done"]', expect: '[data-item] [data-open]' }))
+    await c.close()
+    // V5 caption follows the filter, V6 search keeps its promise
+    for (const [label, url] of [['A', 'a-docked-strip/index.html'], ['B', 'b-tabs-and-decision/index.html'], ['C', 'c-window-first/index.html']]) {
+      ;[c, p] = await newPage(w, h)
+      await p.goto(U(url)); await sleep(300)
+      rk(`${label} @${w}x${h}: V5 the filter caption follows the filter`, await R.V5caption(p, { name: 'filter', run: async (q) => { await q.fill('#sv-filter', 'zzz-nothing') } }, { caption: '#sv-filter-count' }))
+      await p.fill('#sv-filter', '')
+      const name = (await p.locator('[data-item] th').first().textContent()).replace(/\s*\(tax choice\)/, '').trim()
+      rk(`${label} @${w}x${h}: V6 a figure name copied as shown finds its row`, await R.V6(p, { input: '#sv-filter', result: '[data-item]:not([hidden])', label: 'label[for="sv-filter"]', kinds: [{ kind: label === 'C' ? 'items' : 'figures', value: name }] }))
+      await c.close()
+    }
+    // V8 One choice, one action (B)
+    ;[c, p] = await newPage(w, h)
+    await openItem(p, 'b-tabs-and-decision/index.html', 'p1')
+    rk(`B @${w}x${h}: V8 typing a reason never gives a choose error and selects the reason`, await R.V8(p, { field: '#sv-reason', radio: '#sv-src-reason', submit: 'button[data-primary]' }))
+    await c.close()
+    // V7 every click does something: A, B cite, B verify, C
+    for (const [label, url, id] of [['A f1', 'a-docked-strip/index.html', 'f1'], ['B p1', 'b-tabs-and-decision/index.html', 'p1'], ['B verify v1', 'b-tabs-and-decision/index.html?tab=verify', 'v1'], ['C o1', 'c-window-first/index.html', 'o1']]) {
+      ;[c, p] = await newPage(w, h)
+      await openItem(p, url, id)
+      rk(`${label} @${w}x${h}: V7 every control does something`, await R.V7(p, { skip: '[disabled], [aria-disabled=true], [data-noop-ok], .govuk-skip-link, [aria-current="page"]', reset: async (q) => { await q.evaluate(() => sessionStorage.clear()); await openItem(q, url, id); await sleep(600); await q.evaluate(() => document.activeElement && document.activeElement.blur()) }, limit: 45 }))
+      await c.close()
+    }
+    // V7 on a done row in C
+    ;[c, p] = await newPage(w, h)
+    await p.goto(U('c-window-first/index.html')); await sleep(300)
+    await p.click('[data-item="o1"] [data-act="done"]'); await sleep(250)
+    rk(`C done row @${w}x${h}: V7 no dead control (no second Complete)`, await R.V7(p, { selector: '[data-item="o1"] button', reset: async (q) => { await q.goto(U('c-window-first/index.html')); await sleep(300) } }))
+    await c.close()
+  }
+})
+
 // ---------------------------------------------------------------- lint (checks 6, 7, 9)
 await section('lint', async () => {
   const lint = []
@@ -629,7 +776,7 @@ await section('lint', async () => {
     if (!/<a href="#main" class="govuk-skip-link"/.test(t)) lint.push(`no skip link in ${path.basename(f)}`)
     if (!/govuk-generic-header/.test(t)) lint.push(`no Generic header in ${path.basename(f)}`)
   }
-  const appCss = fs.readFileSync(path.join(root, 'assets/app.css'), 'utf8')
+  const appCss = fs.readFileSync(path.join(root, 'assets/app.css'), 'utf8') + fs.readFileSync(path.resolve(root, '../../parts/cite-or-reason/cite-or-reason.css'), 'utf8')
   const defined = new Set([...appCss.matchAll(/\.(app-[a-z0-9_-]+)/g)].map((m) => m[1]))
   const used = new Set()
   for (const f of files.filter((f) => /assets[\\/][a-z0-9-]+\.js$/.test(f) && !/data\.js$/.test(f))) { const t = fs.readFileSync(f, 'utf8'); for (const m of t.matchAll(/\b(app-[a-z0-9_-]+)/g)) used.add(m[1]) }

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../assets/govuk-moj.css">
   <link rel="stylesheet" href="../assets/app.css">
+  <link rel="stylesheet" href="../../../parts/cite-or-reason/cite-or-reason.css">
 </head>
 <body class="govuk-template__body app-shell" data-signed-out="../signed-out.html">
   <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
@@ -23,7 +24,7 @@
     </div>
   </header>
   <div role="region" aria-label="Return" class="app-return">
-    <div class="moj-identity-bar app-wide">
+    <div class="moj-identity-bar app-wide" data-identity-bar>
       <div class="moj-identity-bar__container">
         <div class="moj-identity-bar__details"><span class="moj-identity-bar__title">Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025</span></div>
         <div class="moj-identity-bar__actions"><a class="govuk-link govuk-link--no-visited-state app-bar-link" id="sv-signout" href="../signed-out.html">Sign out</a></div>
@@ -46,13 +47,13 @@
         <button type="button" id="sv-open-window" class="govuk-button govuk-button--secondary app-button-compact" aria-keyshortcuts="o">Open in second window <span class="app-key" aria-hidden="true">o</span></button>
       </div>
       <div data-panel="cite">
-      <p class="govuk-body app-counts"><span id="sv-left-cite">2</span> of 6 figures need a source or a reason.</p>
-      <p class="govuk-body" id="sv-recorded" role="status" hidden></p>
+      <p class="govuk-body app-counts" data-count="figures-to-cite" data-scope="figures"><span id="sv-left-cite">2</span> of 6 figures need a source or a reason.</p>
+      <p class="govuk-body" id="sv-recorded" role="status" tabindex="-1" hidden></p>
       <p class="app-counts"><button type="button" id="sv-next-orphan" class="govuk-button govuk-button--secondary app-button-compact" hidden>Go to the next one to cite</button></p>
       <div class="app-filter">
         <label class="govuk-label" for="sv-filter">Filter figures</label>
         <input class="govuk-input" id="sv-filter" type="search" autocomplete="off" spellcheck="false">
-        <p class="govuk-hint" id="sv-filter-count">Showing 6 of 6</p>
+        <p class="govuk-hint" id="sv-filter-count" data-count="shown-prep" data-scope="of">Showing 6 of 6</p>
       </div>
       <div class="app-scroll" role="region" aria-label="Figures table, scrolls sideways on a small screen" tabindex="0">
         <table class="govuk-table app-table-dense">
@@ -109,7 +110,7 @@
       </div>
       </div>
       <div data-panel="verify" hidden>
-      <p class="govuk-body app-counts"><span id="sv-left-verify">4</span> of 4 values not checked. Page 2 of the December statement.</p>
+      <p class="govuk-body app-counts" data-count="values-open" data-scope="values"><span id="sv-left-verify">4</span> of 4 values not checked. Page 2 of the December statement.</p>
       <p class="govuk-body app-done" id="sv-done" tabindex="-1" hidden>Every value on this page is checked. Rejected values go back for extraction again.</p>
       <div class="app-scroll" role="region" aria-label="Values table, scrolls sideways on a small screen" tabindex="0">
         <table class="govuk-table app-table-dense">
@@ -199,6 +200,7 @@
   <script src="../assets/signout.js"></script>
   <script src="../assets/data.js"></script>
   <script src="../assets/viewer.js"></script>
+  <script src="../../../parts/cite-or-reason/cite-or-reason.js"></script>
   <script src="../assets/work.js"></script>
   <script src="../assets/v2.js"></script>
 </body>

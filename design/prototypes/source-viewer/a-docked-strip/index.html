@@ -23,7 +23,7 @@
     </div>
   </header>
   <div role="region" aria-label="Return" class="app-return">
-    <div class="moj-identity-bar app-wide">
+    <div class="moj-identity-bar app-wide" data-identity-bar>
       <div class="moj-identity-bar__container">
         <div class="moj-identity-bar__details"><span class="moj-identity-bar__title">Maple Ridge Consulting Inc. (Test), year end 31 Dec 2025</span></div>
         <div class="moj-identity-bar__actions"><a class="govuk-link govuk-link--no-visited-state app-bar-link" id="sv-signout" href="../signed-out.html">Sign out</a></div>
@@ -38,7 +38,7 @@
   <main id="main" tabindex="-1" class="">
     <section class="app-split__work" aria-label="Figures to check" tabindex="0">
       <div class="app-worktop"><h1 class="govuk-heading-m">Review figures</h1>
-      <p class="govuk-body"><span id="sv-checked">0</span> of 8 figures checked. 2 flagged for a person. 1 with no evidence.</p></div>
+      <p class="govuk-body" data-count="figures-checked" data-scope="figures"><span id="sv-checked">0</span> of 8 figures checked. 2 flagged for a person. 1 with no evidence.</p></div>
       <p class="govuk-body app-done" id="sv-done" tabindex="-1" hidden>Every figure that has a source is checked. Figures with no evidence stay unchecked.</p>
       <div class="app-summary-strip">
         <p id="sv-win-status" role="status"></p>
@@ -49,7 +49,7 @@
       <div class="app-filter">
         <label class="govuk-label" for="sv-filter">Filter figures</label>
         <input class="govuk-input" id="sv-filter" type="search" autocomplete="off" spellcheck="false">
-        <p class="govuk-hint" id="sv-filter-count">Showing 8 of 8</p>
+        <p class="govuk-hint" id="sv-filter-count" data-count="shown-cpa" data-scope="of">Showing 8 of 8</p>
       </div>
       <div class="app-scroll" role="region" aria-label="Figures table, scrolls sideways on a small screen" tabindex="0">
         <table class="govuk-table app-table-dense">

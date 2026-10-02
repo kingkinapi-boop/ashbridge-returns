@@ -143,7 +143,17 @@
     document.querySelectorAll('[data-item]').forEach(function (r) {
       var b = r.querySelector('[data-open]')
       if (!b) return
-      b.addEventListener('click', function () { origin = b; select(r.getAttribute('data-item'), { focusIn: true }) })
+      b.addEventListener('click', function () {
+        origin = b
+        var id = r.getAttribute('data-item')
+        // the source of this row is already shown: go straight to it (no redraw, so the click always has a visible effect)
+        var shown = viewer.itemId === id && !paneHidden() && (document.getElementById('sv-box-pane') || document.getElementById('sv-card-pane'))
+        var nm = r.querySelector('th') ? r.querySelector('th').textContent.replace(/\s*\(tax choice\)/, '').trim() : 'this row'
+        // the window follows and already shows it: bring the second window to the front, and say so
+        if (viewer.itemId === id && paneHidden() && win) { win.open(); announce('Second window brought forward, showing the source of ' + nm + '.'); return }
+        if (shown) { shown.focus({ preventScroll: true }); announce('The source of ' + (r.querySelector('th') ? r.querySelector('th').textContent.replace(/\s*\(tax choice\)/, '').trim() : 'this row') + ' is in view'); return }
+        select(id, { focusIn: true })
+      })
     })
     Array.prototype.forEach.call(document.querySelectorAll('[data-fig-nav]'), function (b) { b.addEventListener('click', function () { moveItem(parseInt(b.getAttribute('data-fig-nav'), 10), true) }) })
 
