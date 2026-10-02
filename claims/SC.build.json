@@ -5,7 +5,8 @@
  "spec": "34e8ac0",
  "worker": "cloud-2cbd52",
  "state": "released",
- "at": "2026-10-02T20:16:48.988Z",
+ "at": "2026-10-02T20:31:28.606Z",
  "mode": "turbo",
- "note": "re-offered at once; same owner defects, see reports/SC-build.md. Lead: add them to owning cards or KNOWN, or park SC build"
+ "note": "wait: SC spec adds KNOWN entries (owner FX3) first",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"F01D\",\"F05M\",\"F09\",\"F09B\"],\"depStatus\":[\"done\",\"done\",\"done\",\"done\"]}"
 }
