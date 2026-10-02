@@ -1,5 +1,4 @@
 import { expect, test } from 'vitest'
-import type { Cents } from '../core/money'
 import { reconcile, tie, validateCheckRecord, validateReconcilingItem } from './checks'
 
 test('CK-3 one cent under a dollar ties, a dollar does not', () => {
@@ -50,6 +49,12 @@ test('CK-4 an item type off the fixed list is refused with its reason', () => {
 })
 
 test('ARC-13 a tie refuses a right-hand side that is not whole cents', () => {
-  expect(() => tie(0, 1.5 as Cents)).toThrow()
-  expect(() => tie(1.5 as Cents, 0)).toThrow()
+  expect(() => tie(0, 1.5)).toThrow()
+  expect(() => tie(1.5, 0)).toThrow()
+})
+
+test('CK-1 a refusal inside a list names the position with a dot', () => {
+  const r = validateCheckRecord({ ...goodRecord, inputs: ['a', 1] })
+  expect(r.ok).toBe(false)
+  if (!r.ok) expect(r.reason.startsWith('inputs.1: ')).toBe(true)
 })
