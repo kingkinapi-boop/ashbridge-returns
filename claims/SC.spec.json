@@ -1,9 +1,8 @@
 {
  "card": "SC",
  "role": "spec",
- "worker": "cloud-db355d",
- "state": "released",
- "at": "2026-10-02T11:23:49.878Z",
- "mode": "turbo",
- "note": "deps F01 and F09B built, not merged: no db/schema or records.ts on main; re-offer after they land"
+ "worker": "cloud-b37146",
+ "state": "working",
+ "at": "2026-10-02T13:28:44.892Z",
+ "mode": "turbo"
 }
