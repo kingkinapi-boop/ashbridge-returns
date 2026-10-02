@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "24f60a74eedde34dc7515076440479dca6c5e4a5",
  "worker": "cloud-45ec67",
- "state": "working",
- "at": "2026-10-01T23:56:12.250Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T00:01:09.676Z",
+ "mode": "turbo",
+ "note": "27 of 27 acceptance tests pass"
 }
