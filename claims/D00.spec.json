@@ -2,7 +2,10 @@
  "card": "D00",
  "role": "spec",
  "worker": "cloud-2a2f0f",
- "state": "working",
- "at": "2026-10-02T09:36:11.390Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T09:39:33.904Z",
+ "mode": "turbo",
+ "note": "A351: 2 axe tests moved to e2e/design-basis-axe.spec.ts, assertions kept; unit 910 green, e2e 3 green; validated on main 7f28093",
+ "commit": "f127cdd",
+ "validated": "7f28093e626961194cf41bcbfb7b1f5ba4a35782"
 }
