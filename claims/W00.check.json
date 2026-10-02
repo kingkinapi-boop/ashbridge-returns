@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T08:46:21.798Z",
  "worker": "cloud-d26ada",
- "state": "working",
- "at": "2026-10-02T08:49:42.096Z",
+ "state": "failed",
+ "at": "2026-10-02T09:01:38.400Z",
  "mode": "turbo",
- "beat": "2026-10-02T08:51:47.432Z"
+ "beat": "2026-10-02T08:51:47.432Z",
+ "note": "FAIL: F03 taxprep CRLF test red (A347 clash), no @mutate on core files, SEC-11 guard gaps, see reports/W00-check.md"
 }

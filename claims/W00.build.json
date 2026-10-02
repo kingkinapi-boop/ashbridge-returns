@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "87b5390",
  "worker": "cloud-f135fc",
- "state": "reported",
- "at": "2026-10-02T08:46:21.798Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T09:01:38.400Z",
  "mode": "turbo",
- "note": "223 of 223 acceptance pass; scope OK; one non-W00 fail: F03 taxprepBytes helper vs CRLF CSV (F03R spec), see reports/W00-build.md"
+ "note": "FAIL: F03 taxprep CRLF test red (A347 clash), no @mutate on core files, SEC-11 guard gaps, see reports/W00-check.md"
 }
