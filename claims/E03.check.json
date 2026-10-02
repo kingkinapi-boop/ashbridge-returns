@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T00:00:47.724Z",
  "worker": "cloud-468247",
- "state": "working",
- "at": "2026-10-02T00:19:17.616Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T00:20:50.330Z",
+ "mode": "turbo",
+ "note": "FAIL: 3 lint errors in facts.ts, scope fixture outside paths, see reports/E03-check.md on claude/E03-check"
 }

@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "046f8d4",
  "worker": "cloud-839492",
- "state": "reported",
- "at": "2026-10-02T00:00:47.724Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T00:20:50.330Z",
  "mode": "turbo",
- "note": "109 of 109 acceptance tests pass; full suite 203 pass; scope flags spec fixture file only"
+ "note": "FAIL: 3 lint errors in facts.ts, scope fixture outside paths, see reports/E03-check.md on claude/E03-check"
 }
