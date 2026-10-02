@@ -342,3 +342,5 @@
 {"ts":"2026-10-02T19:00:35.189Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W00a findings review","allowed":true}
 {"ts":"2026-10-02T19:08:54.256Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T19:08:54.766Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T19:23:25.289Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Security review A06","allowed":true}
+{"ts":"2026-10-02T19:23:30.539Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Security review F07","allowed":true}
