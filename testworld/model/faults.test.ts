@@ -8,15 +8,25 @@ import { faults, type FaultEntry } from './faults'
 const golden = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '__golden__', 'faults-catalogue.json'), 'utf8')) as FaultEntry[]
 
 describe('ARC-8 the fault catalogue', () => {
+  // W00a spec (card B4, findings W00 r2 card decisions): roll entries gain a cause and C10's flag entries gain a
+  // marker; those two fields are pinned by testworld/model/fault-markers.acceptance.test.ts, so the golden compare
+  // leaves them out and still pins every other field word for word.
+  const withoutRollCauseAndMarker = (fs: FaultEntry[]): unknown[] =>
+    fs.map((f) => {
+      const { roll, ...rest } = f as FaultEntry & { marker?: unknown }
+      delete rest.marker
+      return roll === undefined ? rest : { ...rest, roll: { account: roll.account, month: roll.month } }
+    })
+
   it('ARC-8 equals the reviewed golden, entry by entry and word for word', () => {
-    expect(faults()).toEqual(golden)
+    expect(withoutRollCauseAndMarker(faults())).toEqual(withoutRollCauseAndMarker(golden))
   })
 
   it('ARC-8 holds 105 flag entries and the two roll waivers of C10', () => {
     const all = faults()
     expect(all).toHaveLength(107)
     expect(all.filter((f) => f.roll === undefined)).toHaveLength(105)
-    expect(all.filter((f) => f.roll !== undefined).map((f) => [f.id, f.client, f.roll])).toEqual([
+    expect(all.filter((f) => f.roll !== undefined).map((f) => [f.id, f.client, { account: f.roll?.account, month: f.roll?.month }])).toEqual([
       ['C10-roll-CHQ-2025-03', 'C10', { account: 'CHQ', month: '2025-03' }],
       ['C10-roll-CHQ-2025-05', 'C10', { account: 'CHQ', month: '2025-05' }],
     ])
