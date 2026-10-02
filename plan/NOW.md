@@ -1,24 +1,22 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 12:20Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 12:50Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, decision 0018). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 07:15Z: 5h 1% (new window), week 31%.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`), up to 6 runs. Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup ~30 min). Laptop: up to 2 local workers (0018); they have no subagent tool, so core specs and checks go to the cloud (A331). None running now.
 - **Zo:** to-do #1 design sitting at http://localhost:8765/ (python http.server from the session scratchpad `sitting` folder; if it is down after a reboot, the bundle must be rebuilt: designer helper from the four `claude/design-*-2` branches, see reports/findings-designs-2.md "For Zo"). Day 4 (Auto-fill, Zo) Sat 3 Oct. Decisions 0016 to 0019 today; blueprint v1.2 (0019: preparer pastes the diagnostics list).
-- **Landed (19 done):** F09B (with F09A's work), DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
+- **Landed (20 done):** E03, F09B (with F09A's work), DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Train: E03 | train check | cloud | 2 Oct 12:20Z | claude/train |
-| W00 build round 2 | cloud run | cloud | 2 Oct 11:21Z | claude/W00 |
-| F01 spec round 3, the last (A356) | cloud run | cloud | 2 Oct 11:52Z | claude/F01 |
-| Queue: A01 build round 2, F04 build, A07 build (F09B landed) | cloud runs | cloud | 2 Oct 12:20Z | claude/<card> |
+| W00 build round 2 | cloud run | cloud | 2 Oct 12:19Z | claude/W00 |
+| Queue: A01 check, F01 build round 3 (last), F04 build round 2, refits then A07 and G01 builds, A03 build (after A01) | cloud runs | cloud | 2 Oct 12:50Z | claude/<card> |
 
-S00 build waits on W00 (A354); G01 build waits on E03; U00 and D02 to D13 parked until Zo's sitting.
+No train open (E03 landed 9f5ec33). S00 build waits on W00 (A354); U00 and D02 to D13 parked until Zo's sitting.
 
 ## Next, in order
 
