@@ -1,0 +1,6 @@
+      - name: tool (Test)
+        run: |
+          curl -sSfL https://example.invalid/tool-test.tar.gz -o tool-test.tar.gz
+          tar -xzf tool-test.tar.gz tool
+          echo "0000000000000000000000000000000000000000000000000000000000000000  tool-test.tar.gz" | sha256sum -c -
+          ./tool
