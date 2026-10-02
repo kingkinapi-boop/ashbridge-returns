@@ -1,10 +1,9 @@
 {
  "card": "DG",
  "role": "check",
- "for": "2026-10-02T02:42:35.221Z",
- "worker": "cloud-8c63c8",
- "state": "reported",
- "at": "2026-10-02T03:13:40.943Z",
- "mode": "turbo",
- "note": "PASS"
+ "for": "2026-10-02T09:05:02.934Z",
+ "worker": "cloud-8a9d55",
+ "state": "working",
+ "at": "2026-10-02T09:05:39.599Z",
+ "mode": "turbo"
 }
