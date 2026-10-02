@@ -1,11 +1,9 @@
-# G14 check
+# G14 check (round 2)
 
-FAIL (one gap). Typecheck, lint, deps:check clean; scope OK; gaps unit 116/116 (13 G14 acceptance); no sentence text, no real-looking data; spec file untouched.
-
-1. Missing deliverable: the family card and the G14 spec report require `src/modules/gaps/bank/payroll-bonuses.test.ts` (the builder test, as G11 expenses.test.ts, G12, G13 have). It does not exist on claude/G14 (`ls src/modules/gaps/bank | grep payroll`). Also no reports/G14-build.md.
-
-Fix: add the test (mirror expenses.test.ts) and the build report; nothing else.
-
-Not run: e2e, mutation (data-only card, no screens).
-
+PASS. Checker cloud-7c1598 (not the spec or build worker).
+- typecheck, lint, deps:check clean; full `npm test` 488/488 (8 files).
+- Spec files (payroll-bonuses.acceptance.test.ts) unchanged since ebb2054; scope OK (6 files).
+- Builder test payroll-bonuses.test.ts present, clause-named. 2 items, no wording, facts resolve.
+- Not run: e2e, mutation (data-only, not core, no screens).
+Minor: builder test has no non-empty assertion; acceptance tests cover it.
 Permission gaps: none. Model: Sonnet 5.5.
