@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "bd30c58",
  "worker": "cloud-f2e775",
- "state": "reported",
- "at": "2026-10-02T17:50:31.348Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T18:38:25.894Z",
  "mode": "turbo",
  "beat": "2026-10-02T16:40:35.517Z",
- "note": "663 of 663 acceptance pass; npm test 2563 pass; mutation 100 on all marked files; see reports/W00a-build.md"
+ "note": "FAIL: scope (9 W00 files) and six classes from the Opus read, see reports/W00a-check.md"
 }
