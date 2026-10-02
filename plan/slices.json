@@ -133,7 +133,7 @@
       "closed": "2026-10-01"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -181,7 +181,56 @@
       "hard": true,
       "security": true,
       "core": true,
-      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first."
+      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first. Parked 2 Oct after round 3 (A359): split into F01C, which lands its work."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09"
+      ],
+      "paths": [
+        "db/schema/00_schema.sql",
+        "db/schema/10_documents.sql",
+        "db/schema/20_ledger.sql",
+        "db/schema/30_books.sql",
+        "db/schema/40_figures.sql",
+        "db/schema/50_returns.sql",
+        "db/schema/60_versions.sql",
+        "db/schema/70_checks.sql",
+        "db/schema/90_learning.sql",
+        "src/contracts/records.ts",
+        "src/contracts/ids.ts",
+        "src/contracts/index.ts",
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "EV-14",
+        "FLOW-4",
+        "TB-1",
+        "TB-2",
+        "TB-3",
+        "FLOW-1",
+        "SEC-6",
+        "SEC-7",
+        "ARC-2",
+        "ARC-3",
+        "ARC-10"
+      ],
+      "id": "F01C",
+      "title": "Records and schema: the last narrow repairs (F01 split)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/F01C from claude/F01 round 3 head; lands F01 work (A359)."
     },
     {
       "status": "done",
@@ -239,7 +288,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -261,7 +310,34 @@
       "title": "AI output contract (schemas and citations)",
       "phase": 0,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F01C",
+        "F04",
+        "F05M"
+      ],
+      "paths": [
+        "src/contracts/ai.ts",
+        "src/contracts/ai.test.ts",
+        "src/contracts/checks.ts",
+        "src/contracts/checks.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts"
+      ],
+      "clauses": [
+        "AI-5",
+        "ARC-8"
+      ],
+      "id": "BL0",
+      "title": "One blank rule everywhere",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From F01 r2 findings and the F04, A01 checks (A357)."
     },
     {
       "status": "done",
@@ -514,7 +590,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F09",
         "F09B",
         "F05M"
@@ -569,7 +645,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -600,7 +676,69 @@
       "size": "L",
       "hard": true,
       "security": true,
-      "core": true
+      "core": true,
+      "note": " Parked 2 Oct before its last round (A364): split into W00a (model, loader, rolls) and W00b (guard)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "DG2"
+      ],
+      "paths": [
+        "testworld/model/checks.ts",
+        "testworld/model/load.ts",
+        "testworld/model/faults.ts",
+        "testworld/model/money.ts",
+        "testworld/model/schema.ts",
+        "testworld/model/__fixtures__/**",
+        "testworld/index.ts",
+        "testworld/generate.ts",
+        "testworld/clients/**",
+        "reference/sample-clients/**/taxprep/*.csv",
+        ".gitattributes",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/core/money.ts",
+        "src/contracts/__fixtures__/taxprep-bytes.ts"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16",
+        "END-9",
+        "TB-3"
+      ],
+      "id": "W00a",
+      "title": "Test world: model, loader and rolls (W00 split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Branch claude/W00a from claude/W00 round 2 head (A364)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00a"
+      ],
+      "paths": [
+        "testworld/model/guard.ts",
+        "testworld/model/guard-fields.ts",
+        "testworld/model/made-up-data.acceptance.test.ts",
+        "testworld/model/kinds.ts",
+        "testworld/model/__fixtures__/guard/**"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-8"
+      ],
+      "id": "W00b",
+      "title": "Test world: the personal-data guard, closed-world (W00 split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "security": true,
+      "note": "Branch claude/W00b from claude/W00a after its build (A364)."
     },
     {
       "status": "carded",
@@ -608,7 +746,7 @@
       "deps": [
         "F03",
         "F03R",
-        "W00"
+        "W00a"
       ],
       "paths": [
         "src/modules/taxprep-sim/core/**",
@@ -718,13 +856,15 @@
       "deps": [
         "F00",
         "F09",
-        "F09B"
+        "F09B",
+        "F01C"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
         "src/modules/ocr/index.ts",
         "package.json",
-        "package-lock.json"
+        "package-lock.json",
+        "src/contracts/reading.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -741,9 +881,9 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "F01",
-        "F00T"
+        "F01C",
+        "F00T",
+        "W00a"
       ],
       "paths": [
         "e2e/_harness/**",
@@ -768,16 +908,17 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F03",
         "F04",
         "F05",
-        "W00",
         "S00",
         "A01",
         "JH0",
         "F09",
-        "F09B"
+        "F09B",
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "e2e/skeleton/**",
@@ -799,7 +940,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01"
+        "F01C"
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
@@ -825,7 +966,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F00T"
       ],
       "paths": [
@@ -876,7 +1017,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "P01"
       ],
       "paths": [
@@ -901,8 +1042,9 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "W14"
+        "W14",
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K01/**"
@@ -924,7 +1066,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K02/**"
@@ -946,7 +1089,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K03/**"
@@ -969,7 +1113,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K04/**"
@@ -991,8 +1136,9 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "W14"
+        "W14",
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K05/**"
@@ -1015,8 +1161,9 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "W15"
+        "W15",
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K06/**"
@@ -1038,7 +1185,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K07/**"
@@ -1062,7 +1210,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K08/**"
@@ -1087,7 +1236,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K09/**"
@@ -1112,7 +1262,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K10/**"
@@ -1136,7 +1287,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K11/**"
@@ -1160,7 +1312,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K12/**"
@@ -1186,8 +1339,9 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "W15"
+        "W15",
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K13/**"
@@ -1279,10 +1433,11 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
         "F09",
         "F09B",
-        "A01"
+        "A01",
+        "W00a",
+        "W00b"
       ],
       "paths": [
         "testworld/render/_core/**",
@@ -1795,7 +1950,7 @@
       "spec": null,
       "deps": [
         "F00",
-        "F01",
+        "F01C",
         "F00T"
       ],
       "paths": [
@@ -1820,7 +1975,7 @@
       "security": true
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -1844,7 +1999,36 @@
       "title": "Spreadsheet and CSV reader",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "note": " Parked 2 Oct after round 2 (A366): split into A07B, which lands its work."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09",
+        "F09B"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts",
+        "package.json",
+        "package-lock.json"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "A07B",
+      "title": "Spreadsheet reader: the last narrow repairs (A07 split)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/A07B from claude/A07 93ab657 (A366)."
     },
     {
       "status": "carded",
@@ -1904,6 +2088,25 @@
       "phase": 1,
       "size": "M",
       "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": "n/a",
+      "deps": [
+        "D00"
+      ],
+      "paths": [
+        "design/basis/**"
+      ],
+      "clauses": [
+        "RV-55"
+      ],
+      "id": "D00L",
+      "title": "Design basis uses Zo's logo",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Decision 0020 Z20-8."
     },
     {
       "status": "done",
@@ -2085,7 +2288,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F02",
         "F04",
         "SK0"
@@ -2143,14 +2346,14 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F06",
         "F09",
         "F10",
         "A01",
         "A02",
         "A05",
-        "A07",
+        "A07B",
         "SK0"
       ],
       "paths": [
@@ -2237,12 +2440,38 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "E03"
+      ],
+      "paths": [
+        "data/facts/catalogue.json",
+        "src/contracts/facts.test.ts",
+        "src/contracts/__fixtures__/fact-catalogue.ts",
+        "src/contracts/facts-askable.acceptance.test.ts"
+      ],
+      "clauses": [
+        "AI-12",
+        "ARC-2",
+        "END-7",
+        "R27",
+        "R28"
+      ],
+      "id": "E03A",
+      "title": "Fact catalogue: the client-askable facts the question bank needs",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From the G12 spec release (A362)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "E00",
         "E02",
         "E03",
         "L00",
         "A04",
-        "A07",
+        "A07B",
         "F10",
         "F09B"
       ],
@@ -2373,7 +2602,7 @@
       "deps": [
         "E01",
         "W25",
-        "A07"
+        "A07B"
       ],
       "paths": [
         "src/modules/extraction/tb-sheet/**"
@@ -2686,10 +2915,10 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
-        "W00",
+        "F01C",
         "A05",
-        "F00T"
+        "F00T",
+        "W00a"
       ],
       "paths": [
         "src/modules/qbo/**",
@@ -2757,7 +2986,7 @@
       "deps": [
         "B05",
         "A05",
-        "A07"
+        "A07B"
       ],
       "paths": [
         "src/modules/books/gifi/**",
@@ -2889,6 +3118,46 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "src/core/egress-rules.acceptance.test.ts",
+        "tools/test/toolchain-rules.test.mjs"
+      ],
+      "clauses": [
+        "SEC-5",
+        "ARC-15"
+      ],
+      "id": "FX1",
+      "title": "Cold-tool tests get a load-proof timeout",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the red G01 train (A361)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/next.mjs",
+        "tools/status.mjs",
+        "tools/test/claim.test.mjs",
+        "tools/test/__fixtures__/claims/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ1",
+      "title": "Queue: no wasted offers",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the Reviewer SLOW of 2 Oct 14:40Z."
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "F00",
         "E03"
@@ -2986,10 +3255,11 @@
       }
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/assets-cca.json",
@@ -3007,13 +3277,15 @@
       "family": "question",
       "params": {
         "topic": "assets-cca"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/shareholders-dividends.json",
@@ -3031,13 +3303,15 @@
       "family": "question",
       "params": {
         "topic": "shareholders-dividends"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/payroll-bonuses.json",
@@ -3055,13 +3329,15 @@
       "family": "question",
       "params": {
         "topic": "payroll-bonuses"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/shareholder-loans.json",
@@ -3079,13 +3355,15 @@
       "family": "question",
       "params": {
         "topic": "shareholder-loans"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/vehicle-home-office.json",
@@ -3103,13 +3381,15 @@
       "family": "question",
       "params": {
         "topic": "vehicle-home-office"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/cra-hst-instalments.json",
@@ -3127,7 +3407,8 @@
       "family": "question",
       "params": {
         "topic": "cra-hst-instalments"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
       "status": "carded",
@@ -4961,7 +5242,7 @@
         "T04",
         "T01",
         "L00",
-        "F01"
+        "F01C"
       ],
       "paths": [
         "src/modules/learning/versions/**",
@@ -5642,7 +5923,8 @@
       "deps": [
         "T04",
         "T07",
-        "F02"
+        "F02",
+        "N00"
       ],
       "paths": [
         "src/modules/approval/**",
@@ -6478,7 +6760,10 @@
         "src/modules/ai/checklist/_core/**"
       ],
       "clauses": [
-        "AI-2"
+        "AI-2",
+        "CK-42",
+        "AI-6",
+        "AI-7"
       ],
       "id": "I01",
       "title": "AI tax checklist framework",
@@ -6787,7 +7072,11 @@
         "src/modules/ai/redteam/**"
       ],
       "clauses": [
-        "AI-3"
+        "AI-3",
+        "AI-1",
+        "AI-4",
+        "AI-5",
+        "AI-8"
       ],
       "id": "I30",
       "title": "Red team (a different model, raw documents)",
@@ -6799,15 +7088,20 @@
       "spec": null,
       "deps": [
         "A04",
-        "W00",
-        "A08"
+        "A08",
+        "W00a",
+        "W00b"
       ],
       "paths": [
-        "src/modules/ai/evals/**"
+        "src/modules/ai/evals/**",
+        "data/ai/evals/**",
+        "data/ai/approved.json"
       ],
       "clauses": [
         "AI-11",
-        "LL-9"
+        "LL-9",
+        "AI-4",
+        "AI-10"
       ],
       "id": "I40",
       "title": "AI evaluation harness on the test world",
