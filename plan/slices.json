@@ -240,7 +240,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "src/contracts/ai.ts",
@@ -326,7 +327,10 @@
         "tools/mutate-changed.mjs",
         ".gitattributes",
         "tools/test/done-gate.test.mjs",
-        "tools/test/__fixtures__/done-gate/**"
+        "tools/test/__fixtures__/done-gate/**",
+        "stryker.config.mjs",
+        "vitest.mutate.config.ts",
+        "src/core/testing/read-own-source.ts"
       ],
       "clauses": [
         "ARC-12",
@@ -541,7 +545,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F03"
+        "F03",
+        "F03R"
       ],
       "paths": [
         "src/modules/taxprep-sim/core/**",
@@ -650,7 +655,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
