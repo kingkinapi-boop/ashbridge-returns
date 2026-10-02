@@ -1,0 +1,33 @@
+{
+  "bankVersion": "<bank version>",
+  "returnId": "RET-0001",
+  "questions": [
+    {
+      "id": "Q-DIV-001",
+      "slots": [
+        {
+          "name": "amount",
+          "value": 1250000
+        }
+      ]
+    },
+    {
+      "id": "Q-DIV-002",
+      "slots": [
+        {
+          "name": "declared_on",
+          "value": "2025-12-15"
+        }
+      ]
+    },
+    {
+      "id": "Q-CRA-001",
+      "slots": [
+        {
+          "name": "program",
+          "value": "hst"
+        }
+      ]
+    }
+  ]
+}

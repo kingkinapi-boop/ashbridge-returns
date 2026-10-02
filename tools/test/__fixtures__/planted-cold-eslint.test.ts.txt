@@ -1,0 +1,7 @@
+import { ESLint } from 'eslint'
+import { expect, test } from 'vitest'
+
+test('SEC-5 planted: a cold ESLint with no timeout', async () => {
+  const eslint = new ESLint({ cwd: process.cwd() })
+  expect(await eslint.lintText('const a = 1')).toBeDefined()
+})
