@@ -1490,6 +1490,35 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "reference/sample-clients/clients/c03_04.mjs",
+        "reference/sample-clients/clients/c07_08.mjs",
+        "reference/sample-clients/clients/c09_10.mjs",
+        "reference/sample-clients/03-*/**",
+        "reference/sample-clients/04-*/**",
+        "reference/sample-clients/07-*/**",
+        "reference/sample-clients/08-*/**",
+        "reference/sample-clients/10-*/**",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md"
+      ],
+      "clauses": [
+        "END-2",
+        "ARC-8",
+        "ARC-16",
+        "SEC-11"
+      ],
+      "id": "W16",
+      "title": "Sample clients 03, 04, 07, 08, 10: asset registers so opening amortization and UCC recompute",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "F09",
         "F09B",
