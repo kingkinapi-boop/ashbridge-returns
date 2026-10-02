@@ -1,9 +1,11 @@
 {
  "card": "W15",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit only: typecheck, lint, npm test green (206 unit + 2 db); fix-round-1 re-spec (answerId, 14-to-15 tie, W14 rules 7-13) NOT done, needs a new spec worker after W14 lands",
  "worker": "cloud-f60439",
- "state": "working",
- "at": "2026-10-02T03:15:49.220Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T03:17:18.082Z",
+ "mode": "turbo",
+ "commit": "435acc2",
+ "validated": "eae6b118f84ef8d3781bca0b2ff7ce971473bf55"
 }
