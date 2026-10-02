@@ -1,12 +1,8 @@
 {
  "card": "S00",
  "role": "spec",
- "worker": "cloud-3620d3",
- "state": "reopened",
- "at": "2026-10-02T06:09:22.182Z",
- "mode": "turbo",
- "beat": "2026-10-02T05:01:07.139Z",
- "note": "round per card (reports/findings-wave2.md)",
- "commit": "5f74392",
- "validated": "35dadb2"
+ "worker": "cloud-5d8906",
+ "state": "working",
+ "at": "2026-10-02T06:53:39.134Z",
+ "mode": "turbo"
 }
