@@ -4,7 +4,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. Critic proposals of 2 Oct:** both approved by you on 2 Oct (1: sessions compact at 200k tokens; 2: no waits over 4.5 minutes, no reviving big helpers). The Lead applies them and records your yes as a decision; nothing needed from you. Details in `reviewsCRITIC.md`.
+**1. Critic proposals of 2 Oct:** both approved by you on 2 Oct (1: sessions compact at 200k tokens; 2: no waits over 4.5 minutes, no reviving big helpers). On your question, compaction is switched on only with two guards: instructions on what every summary must keep, and an automatic reload of NOW.md, the jobs list and recent commits right after each compaction. The Lead applies them and records your yes as a decision; nothing needed from you. Details in `reviewsCRITIC.md`.
 
 **Before you sleep (no answer needed):** leave the laptop on and plugged in, with sleep off, and leave the "Ashbridge Test" Chrome full size and in front, not covered or minimised. The walkers use it overnight for the .GFI and the day 5 Taxprep exports. If it drops, they stop and pick up again in the morning; nothing breaks.
 
