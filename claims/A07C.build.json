@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "ba50f80",
  "worker": "cloud-ae6ed2",
- "state": "hold-findings",
- "at": "2026-10-02T20:02:20.871Z",
+ "state": "released",
+ "at": "2026-10-02T20:17:14.532Z",
  "mode": "turbo",
- "note": "FAIL: 3 defects inside the classes (shared-formula slide, 1e21+ number text, nested SUM order), see reports/A07C-check-r3.md"
+ "note": "wait: lands at b80c251 per reports/A07C-findings.md; D1 to D3 to A07D",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"F00\",\"F09\",\"F09B\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
 }
