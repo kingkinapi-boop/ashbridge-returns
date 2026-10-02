@@ -4,7 +4,8 @@
  "round": 6,
  "spec": "8f165c2a9170288b9d68627cb42ad6445f824c5f",
  "worker": "cloud-5d8906",
- "state": "working",
- "at": "2026-10-02T06:50:04.693Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T06:50:18.422Z",
+ "mode": "turbo",
+ "note": "duplicate of another worker's round 3 build on claude/DG (43bddd8); two spec defects in read-own-source.acceptance.test.ts need a spec fix, see reports/DG-build.md"
 }
