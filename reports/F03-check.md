@@ -1,13 +1,11 @@
-# F03 check (full, cloud-4ab7b4)
+# F03 check (round 2, local-4e012b, laptop)
 
-Result: FAIL (minor: scope and mutation marker)
+Result: PASS
 
-Passed: typecheck, lint, deps:check; npm test (unit 276 tests in 16 files, db 2 tests); e2e 1 passed (production build); spec files and goldens unchanged since the spec commit (checks.acceptance.test.ts shows only because it came in by the main merge, spec(F05)); mutate:canary 100 (strong test kills all 10); acceptance checks 1 to 12 each have tests in taxprep.acceptance.test.ts; no client sentence, no real-looking person/SIN, no key or service.
+Ran on 2a6db9c: typecheck, lint, deps:check clean; vitest 494 passed (19 files; src/contracts 327 in 4 files); mutate:canary 100; `mutate:changed -- F03` taxprep.ts 100.00 (699 killed, 6 timeout, 0 survived, 0 no coverage), no Stryker disable comments; `// @mutate` on line 1; scope OK (14 files); spec files (acceptance test, goldens) unchanged since spec(F03) round 2 (2cdf2f2); diff read: no client sentence, no real-looking data, no key or service, apostrophe handled for any negative cell (classifyValue is cell-agnostic).
 
-Failures:
-1. `node tools/scope.mjs F03`: SCOPE FAIL, plan/ledger.jsonl outside the card's paths (dispatch rows from the hook, not builder work; scope tool should ignore ledger rows).
-2. src/contracts/taxprep.ts has no `// @mutate` marker in its first 5 lines, so `npm run mutate:changed` says "no mutation targets changed" and checks nothing on a CSV file. Run by hand (`stryker run --mutate src/contracts/taxprep.ts`): score 75.25 (597 killed, 8 timeout, 167 survived, 32 no coverage), above the 70 break but with many survivors. Examples: taxprep.ts:609 (`i <= out.length` in the byte writer), :66 and :69 (CP1252 undefined-byte set), :105 (identifier part regex end anchor `$` removed). These are missing tests (an identifier part with trailing junk such as `A[1]x`; bytes 0x81/0x8d/0x8f/0x90/0x9d refused).
-Rule candidate: money, tax and CSV files must carry `// @mutate`; a lint/tool test fails a card whose Tags include core and whose src files lack it.
+Amber (spec gap, not a build defect): the card's day 5 note asked the spec for the input-cell case `GFBGII[1].GFGIJ.Ttwgij121,"'-1299","",""`; no test holds it (grep finds none). The parser does not look at the identifier for the apostrophe, so behaviour is right; add the test at the next F03 spec touch.
+Not done: no Opus adversarial subagent available to this worker (no subagent tool); the adversarial read was by this Sonnet worker. Lead may add one. e2e not run (laptop).
 
-Permission gaps: none met.
+Permission gaps: none met (one compound git command refused by the worktree guard; split it).
 Model: Sonnet 5.5 (claude-sonnet-5-5).
