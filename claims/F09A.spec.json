@@ -2,7 +2,10 @@
  "card": "F09A",
  "role": "spec",
  "worker": "cloud-44dfa6",
- "state": "working",
- "at": "2026-10-02T04:33:40.337Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T04:46:55.265Z",
+ "mode": "turbo",
+ "note": "90 tests; replaces F09 r4 dash test (A296)",
+ "commit": "9e3dbb4",
+ "validated": "42b3650"
 }
