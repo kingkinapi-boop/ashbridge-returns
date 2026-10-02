@@ -1,11 +1,10 @@
 {
  "card": "E03",
  "role": "build",
- "round": 2,
- "spec": "0786eca",
- "worker": "cloud-c1cb2b",
- "state": "reopened",
- "at": "2026-10-02T11:42:26.250Z",
- "mode": "turbo",
- "note": "round 3 spec reported"
+ "round": 3,
+ "spec": "b009cc79dc0c54367b4d4e0237e3bf7b691da37f",
+ "worker": "cloud-87fd26",
+ "state": "working",
+ "at": "2026-10-02T11:43:44.445Z",
+ "mode": "turbo"
 }
