@@ -1,9 +1,11 @@
 {
  "card": "A01",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "readOwnSource refit (40b4f1e) + main merged; package-lock merged by hand (pdfjs-dist + design pkgs); typecheck, lint, unit 969, db 2 green; A01 textlayer 32 pass",
  "worker": "cloud-b4ebfa",
- "state": "working",
- "at": "2026-10-02T11:28:50.392Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T11:33:21.875Z",
+ "mode": "turbo",
+ "commit": "f4144b9cdfe350f846a90a257426cedcd8d8e2ed",
+ "validated": "8e8fba1c6253c09a67ca3d4a857d650cb352a660"
 }
