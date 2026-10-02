@@ -1,9 +1,11 @@
 {
  "card": "F05M",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit, 0 tests (card adds none)",
  "worker": "local-4e012b",
- "state": "working",
- "at": "2026-10-02T04:04:04.449Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T04:26:44.437Z",
+ "mode": "turbo",
+ "commit": "6b79d67",
+ "validated": "eda0bda09dd6e1a6fa645944be5f0d15ee8060a6"
 }
