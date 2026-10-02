@@ -1,26 +1,26 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 09:45Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 11:15Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, decision 0018). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 07:15Z: 5h 1% (new window), week 31%.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`), up to 6 runs. Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup ~30 min). Laptop: up to 2 local workers (0018); they have no subagent tool, so core specs and checks go to the cloud (A331). None running now.
 - **Zo:** to-do #1 design sitting at http://localhost:8765/ (python http.server from the session scratchpad `sitting` folder; if it is down after a reboot, the bundle must be rebuilt: designer helper from the four `claude/design-*-2` branches, see reports/findings-designs-2.md "For Zo"). Day 4 (Auto-fill, Zo) Sat 3 Oct. Decisions 0016 to 0019 today; blueprint v1.2 (0019: preparer pastes the diagnostics list).
-- **Landed (15 done):** F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
+- **Landed (18 done):** DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Train: DG | train check | cloud | 2 Oct 09:45Z | claude/train |
-| Queue: D00 spec fix (axe tests out of unit, A351), F09B build, E03 build, F01 build, S00 build (after DG lands) | cloud runs | cloud | 2 Oct 09:45Z | claude/<card> |
+| F02 spec | cloud run | cloud | 2 Oct 11:02Z | claude/F02 |
+| Queue: F01 check (core, Opus read), W00 build round 2, F09B build round 2, E03 spec round 3 (A355) | cloud runs | cloud | 2 Oct 11:15Z | claude/<card> |
 
-Design cards D02 to D13 parked out of the queue (A352); they run through the design flow after Zo's sitting.
+No train open (DG2, D00 landed c93b43f). S00 build waits on W00 (A354); U00 and D02 to D13 parked until Zo's sitting.
 
 ## Next, in order
 
-1. Poll claims; board every PASS (scope, GitHub checks, Opus read for core): DG, W00, D00, F09B, E03, F01. After a spec fix reports, reopen the held build (`update <card> build reopened --worker lead`) or the queue stays empty. One train at a time via plan/train.json; land by MERGING main into the train, code-diff guard, ff main; record only after the push.
+1. Poll claims; board every PASS (scope, GitHub checks, Opus read for core): F09B, DG2, D00, E03, F01; then W00 round 2, A01, S00. After a spec fix reports, reopen the held build (`update <card> build reopened --worker lead`) or the queue stays empty. One train at a time via plan/train.json; land by MERGING main into the train, code-diff guard, ff main; record only after the push.
 2. W00 round 2 (A353): spec reopened; reopen the build after its spec reports AND DG2 lands (DG2 is new, after DG). Zo has an open question in chat on the logo copied to reference/brand (A350); keep it unless he says remove.
 3. After F09B lands (F09A parked, A349): F04 build, A01 build round 2; then I00, E01, A07, W20, SK0.
 4. W00 check 8 CRLF: decided A347 (W00 build owns .gitattributes line and the taxprep CSVs).
