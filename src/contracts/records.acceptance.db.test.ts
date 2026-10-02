@@ -30,12 +30,13 @@
 // - Append-only (trigger, message contains "append-only"): events, state_events, versions,
 //   version_cells, approvals, entry_lines.
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import fc from 'fast-check'
-import { PGlite } from '@electric-sql/pglite'
+import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { fixedClock, setClock, systemClock } from '../core/clock'
-import { cloneTestDb } from '../core/db'
+import { DEFAULT_SCHEMA_DIR, cloneTestDb, createTemplate, type DbTemplate } from '../core/db'
 import type {
   AccountRecord,
   AdjustingEntryRecord,
@@ -854,16 +855,34 @@ describe('records.ts and the tables agree', () => {
   })
 
   test('ARC-3 the F01 schema files alone create exactly the F01 tables', async () => {
-    const dir = path.resolve(process.cwd(), 'db/schema')
-    const db = new PGlite()
-    for (const f of F01_FILES) {
-      const file = path.join(dir, f)
-      expect(fs.existsSync(file), `db/schema/${f} exists`).toBe(true)
-      await db.exec(fs.readFileSync(file, 'utf8'))
+    expect(missingF01Files, 'every F01 schema file exists').toEqual([])
+    expect(f01Template, 'the F01 schema files alone boot a template').toBeDefined()
+    if (!f01Template) return
+    const db = await f01Template.clone()
+    try {
+      expect(await tablesIn(db, 'returns')).toEqual([...F01_TABLES].sort())
+      await insertWorld(db)
+    } finally {
+      await db.close()
     }
-    expect(await tablesIn(db, 'returns')).toEqual([...F01_TABLES].sort())
-    await insertWorld(db)
-    await db.close()
   })
+})
 
+// F01's nine files only, copied into a temp folder: later cards adding schema files cannot
+// change this table set. The boot is a hook (30 s hookTimeout), not a test body (6 s).
+let f01Dir: string | undefined
+let f01Template: DbTemplate | undefined
+let missingF01Files: string[] = []
+
+beforeAll(async () => {
+  f01Dir = fs.mkdtempSync(path.join(os.tmpdir(), 'f01-schema-'))
+  missingF01Files = F01_FILES.filter((f) => !fs.existsSync(path.join(DEFAULT_SCHEMA_DIR, f)))
+  if (missingF01Files.length > 0) return
+  for (const f of F01_FILES) fs.copyFileSync(path.join(DEFAULT_SCHEMA_DIR, f), path.join(f01Dir, f))
+  f01Template = await createTemplate(f01Dir)
+})
+
+afterAll(async () => {
+  await f01Template?.close()
+  if (f01Dir) fs.rmSync(f01Dir, { recursive: true, force: true })
 })
