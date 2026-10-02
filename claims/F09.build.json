@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "87d39e1",
  "worker": "cloud-173eff",
- "state": "hold-findings",
- "at": "2026-10-01T23:56:09.668Z",
+ "state": "reopened",
+ "at": "2026-10-02T00:56:14.403Z",
  "mode": "turbo",
  "note": "FAIL: lint 8 errors in acceptance file (spec defect) and valueInBox holes, see reports/F09-check.md"
 }
