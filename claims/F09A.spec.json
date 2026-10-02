@@ -2,7 +2,10 @@
  "card": "F09A",
  "role": "spec",
  "worker": "cloud-2bd5d1",
- "state": "working",
- "at": "2026-10-02T07:55:36.716Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T08:00:08.214Z",
+ "mode": "turbo",
+ "note": "round 3: 18 tests fail by name (17 new rows/props + 1 rewritten builder test under A348); stub sweep: only that builder test retired; validated on main 567463c",
+ "commit": "ab38223",
+ "validated": "567463c"
 }
