@@ -1,15 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 48,
+ "round": 49,
  "spec": "ee0255d",
- "worker": "cloud-2f8ae4",
- "state": "released",
- "at": "2026-10-02T21:31:28.057Z",
- "mode": "turbo",
- "lastRelease": {
-  "tip": "aafa1ad23c193b6d9e7989d13315f531209f9c38"
- },
- "note": "no change: needs the Lead to reopen the spec with KNOWN entries (owner FX3); re-offered at once because CQ2 rule 6 is not on main yet",
- "needsLead": true
+ "worker": "cloud-c29b25",
+ "state": "working",
+ "at": "2026-10-02T21:33:18.698Z",
+ "mode": "turbo"
 }
