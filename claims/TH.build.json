@@ -1,11 +1,10 @@
 {
  "card": "TH",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "f1c8095",
- "worker": "cloud-a4e82b",
- "state": "reopened",
- "at": "2026-10-02T00:56:46.263Z",
- "mode": "turbo",
- "note": "Same blocker, no change: R1 needs the Lead's choice on reference/taxprep/tools/strip-values.test.mjs (node:test, no home); see reports/TH-build.md"
+ "worker": "cloud-9d2580",
+ "state": "working",
+ "at": "2026-10-02T00:57:25.738Z",
+ "mode": "turbo"
 }
