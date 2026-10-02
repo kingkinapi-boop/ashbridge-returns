@@ -1,10 +1,10 @@
 {
  "card": "A07",
  "role": "spec",
- "note": "refit only, 0 new tests; validated on main f2e97da; only A07's own tests fail",
+ "note": "round 2 (card, findings-A07-r1)",
  "worker": "cloud-d37b76",
- "state": "reported",
- "at": "2026-10-02T12:52:59.067Z",
+ "state": "reopened",
+ "at": "2026-10-02T13:57:02.763Z",
  "mode": "turbo",
  "commit": "cf84ea2",
  "validated": "f2e97dab8911a9781bd33ac77032849c2f9e8f43"
