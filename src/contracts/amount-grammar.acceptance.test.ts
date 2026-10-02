@@ -614,3 +614,261 @@ describe('check 20: mutation and money markers', () => {
     })
   }
 })
+
+// ---------- F09B: gap geometry, blank words, one grouping style, linear joining ----------
+//
+// Readings this round takes where the card leaves room (ambers, see the spec report):
+//   - The gap between two consecutive words is the second's left edge minus the first's right edge; a
+//     group joins only when 0 <= gap <= word height x tolerance. Both words in these fixtures have the
+//     same height, so which word's height is used does not matter here.
+//   - The fixtures use binary fractions (powers of two) so the gap at exactly 0 and at exactly the
+//     tolerance is exact in floating point; "just past" is 2^-10 of the page beyond the tolerance.
+//   - The geometry predicates of amount-grammar.ts are found by their signature: a function or arrow
+//     whose first two parameters are typed with the same position type (Spot, Box or Word). A new
+//     predicate needs rows here (a spec round), so the rule cannot be dodged by adding one.
+//   - Mixed grouping: the style of the first join (or of the first word's own commas) wins; the group
+//     ends where the style changes and the next word starts afresh.
+//   - The 50000-group run is too large for a safe integer, so it makes no group and normaliseAmount
+//     refuses it; the test pins that and the time.
+
+const GH = 0.03125 // word height, 2^-5
+const GTOP = 0.25
+const HAIR = 0.0009765625 // 2^-10
+
+type Placed = readonly [text: string, left: number, width: number, top?: number]
+
+function place(items: readonly Placed[]): Word[] {
+  return items.map(([text, left, width, top], i) => ({
+    text,
+    box: { page: 1, left, top: top ?? GTOP, width, height: GH },
+    confidence: 0.99,
+    order: i + 1,
+  }))
+}
+
+type GeometryRow = {
+  rule: string
+  /** The geometry predicate in amount-grammar.ts the row proves. */
+  predicate: string
+  gap: 'backwards' | 'overlapping' | 'edge'
+  words: readonly Placed[]
+  tolerance?: number
+  groups: readonly GroupView[]
+  notFound?: readonly string[]
+}
+
+const GEOMETRY_ROWS: readonly GeometryRow[] = [
+  // adjacent: backwards (the second word sits left of the first, consecutive in reading order)
+  { rule: 'F09B "1" at left 0.80 then "234.56" at left 0.05 on one line are two groups, never 123456 cents', predicate: 'adjacent', gap: 'backwards', words: [['1', 0.8, 0.0625], ['234.56', 0.05, 0.125]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B a comma group to the left of the previous word does not join', predicate: 'adjacent', gap: 'backwards', words: [['1', 0.75, 0.0625], [',234.56', 0.0625, 0.125]], groups: [[100, ['1']]], notFound: ['1234.56'] },
+  { rule: 'F09B a decimals word to the left of the previous word does not join', predicate: 'adjacent', gap: 'backwards', words: [['1,234', 0.75, 0.125], ['.56', 0.0625, 0.0625]], groups: [[123400, ['1,234']]], notFound: ['1234.56', '0.56'] },
+  { rule: 'F09B a "-" to the left of the amount before it is no trailing sign', predicate: 'adjacent', gap: 'backwards', words: [['5.00', 0.75, 0.125], ['-', 0.0625, 0.0625]], groups: [[500, ['5.00']]], notFound: ['-5.00'] },
+  { rule: 'F09B a "-" whose next amount sits to its left is no leading sign', predicate: 'adjacent', gap: 'backwards', words: [['-', 0.75, 0.0625], ['5.00', 0.0625, 0.125]], groups: [[500, ['5.00']]], notFound: ['-5.00'] },
+  { rule: 'F09B a "(" and ")" around an amount to their left make no brackets', predicate: 'adjacent', gap: 'backwards', words: [['(', 0.75, 0.0625], ['5.00', 0.5, 0.125], [')', 0.25, 0.0625]], groups: [[500, ['5.00']]], notFound: ['-5.00'] },
+  // adjacent: overlapping (the second word starts inside the first)
+  { rule: 'F09B "234.56" starting inside "1" does not join it', predicate: 'adjacent', gap: 'overlapping', words: [['1', 0.125, 0.0625], ['234.56', 0.15625, 0.125]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B an overlap of a hair (2^-10 of the page) does not join', predicate: 'adjacent', gap: 'overlapping', words: [['1', 0.125, 0.0625], ['234.56', 0.1875 - HAIR, 0.125]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B two words at the same left edge do not join', predicate: 'adjacent', gap: 'overlapping', words: [['1', 0.125, 0.0625], ['234.56', 0.125, 0.125]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B a "-" overlapping the amount after it is no leading sign', predicate: 'adjacent', gap: 'overlapping', words: [['-', 0.125, 0.0625], ['5.00', 0.15625, 0.125]], groups: [[500, ['5.00']]], notFound: ['-5.00'] },
+  // adjacent: the edges of the allowed gap
+  { rule: 'F09B a gap of exactly 0 joins', predicate: 'adjacent', gap: 'edge', words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125]], groups: [[123456, ['1', '234.56']]], notFound: ['234.56'] },
+  { rule: 'F09B a gap of exactly one word height (the default tolerance) joins', predicate: 'adjacent', gap: 'edge', words: [['1', 0.125, 0.0625], ['234.56', 0.1875 + GH, 0.125]], groups: [[123456, ['1', '234.56']]], notFound: ['234.56'] },
+  { rule: 'F09B a gap just past one word height does not join', predicate: 'adjacent', gap: 'edge', words: [['1', 0.125, 0.0625], ['234.56', 0.1875 + GH + HAIR, 0.125]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B with tolerance 2 a gap of exactly two word heights joins', predicate: 'adjacent', gap: 'edge', tolerance: 2, words: [['1', 0.125, 0.0625], ['234.56', 0.1875 + 2 * GH, 0.125]], groups: [[123456, ['1', '234.56']]] },
+  { rule: 'F09B with tolerance 2 a gap just past two word heights does not join', predicate: 'adjacent', gap: 'edge', tolerance: 2, words: [['1', 0.125, 0.0625], ['234.56', 0.1875 + 2 * GH + HAIR, 0.125]], groups: [[100, ['1']], [23456, ['234.56']]] },
+  { rule: 'F09B with tolerance 2 a backwards word still does not join', predicate: 'adjacent', gap: 'backwards', tolerance: 2, words: [['1', 0.5, 0.0625], ['234.56', 0.5 - 0.125, 0.125]], groups: [[100, ['1']], [23456, ['234.56']]] },
+  // sameLine: vertical geometry
+  { rule: 'F09B a word wholly above the previous one (next in reading order) is another line', predicate: 'sameLine', gap: 'backwards', words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125, GTOP - 2 * GH]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B a word offset down by a quarter of its height overlaps the line and joins', predicate: 'sameLine', gap: 'overlapping', words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125, GTOP + GH / 4]], groups: [[123456, ['1', '234.56']]] },
+  { rule: 'F09B a word offset up by a quarter of its height overlaps the line and joins', predicate: 'sameLine', gap: 'overlapping', words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125, GTOP - GH / 4]], groups: [[123456, ['1', '234.56']]] },
+  { rule: 'F09B a word that only touches the line below is another line', predicate: 'sameLine', gap: 'edge', words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125, GTOP + GH]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+]
+
+describe('F09B check 1: gap geometry (amountGroups)', () => {
+  for (const row of GEOMETRY_ROWS) {
+    test(`EV-6 geometry row: ${row.rule}`, () => {
+      const words = place(row.words)
+      const got = (row.tolerance === undefined ? amountGroups(words) : amountGroups(words, row.tolerance)).map(
+        (g) => [g.cents, g.words.map((w) => w.text)] as const,
+      )
+      expect(got).toEqual(row.groups)
+      if (row.tolerance !== undefined) return
+      // valueInBox compares the same whole groups (it uses the default tolerance).
+      const result = resultOf(words)
+      for (const [cents] of row.groups) {
+        expect(valueInBox(result, WHOLE_PAGE_BAND, centsText(cents)), `${row.rule}: ${centsText(cents)}`).toEqual({ ok: true })
+      }
+      for (const decoy of row.notFound ?? []) {
+        expect(valueInBox(result, WHOLE_PAGE_BAND, decoy), `${row.rule}: decoy ${decoy}`).toEqual(NOT_FOUND)
+      }
+    })
+  }
+
+  test('EV-6 planted fault: the same two words laid left to right with a tight gap do join (the backwards row is about position only)', () => {
+    expect(view(place([['1', 0.05, 0.0625], ['234.56', 0.05 + 0.0625 + HAIR, 0.125]]))).toEqual([[123456, ['1', '234.56']]])
+  })
+})
+
+describe('F09B check 2: rule, every geometry predicate has a backwards and an overlapping row', () => {
+  const source = (): string => readFileSync(new URL('./amount-grammar.ts', import.meta.url), 'utf8')
+  /** Functions or arrows whose first two parameters share one position type (Spot, Box or Word). */
+  const predicates = (src: string): string[] => {
+    const names = new Set<string>()
+    const pair = String.raw`\(\s*\w+\s*:\s*(Spot|Box|Word)\b\s*,\s*\w+\s*:\s*\2\b`
+    for (const m of src.matchAll(new RegExp(String.raw`\bfunction\s+(\w+)\s*` + pair, 'g'))) names.add(m[1] as string)
+    for (const m of src.matchAll(new RegExp(String.raw`\b(?:const|let)\s+(\w+)\s*(?::[^=]+)?=\s*` + pair, 'g'))) names.add(m[1] as string)
+    return [...names].sort()
+  }
+
+  test('EV-6 rule: amount-grammar.ts has geometry predicates, and each has a backwards row and an overlapping row in the geometry table', () => {
+    const found = predicates(source())
+    expect(found.length, 'no geometry predicate found by signature').toBeGreaterThan(0)
+    for (const name of found) {
+      const rows = GEOMETRY_ROWS.filter((r) => r.predicate === name)
+      expect(rows.some((r) => r.gap === 'backwards'), `${name}: no backwards row`).toBe(true)
+      expect(rows.some((r) => r.gap === 'overlapping'), `${name}: no overlapping row`).toBe(true)
+    }
+  })
+
+  test('EV-6 rule planted fault: the finder sees a new predicate, and a predicate with no rows fails the rule', () => {
+    const planted = `${source()}\nconst nearBy = (a: Spot, b: Spot): boolean => a.left < b.left\nfunction overlapsBox(x: Box, y: Box): boolean { return x.left < y.left }\n`
+    const found = predicates(planted)
+    expect(found).toContain('nearBy')
+    expect(found).toContain('overlapsBox')
+    expect(GEOMETRY_ROWS.some((r) => r.predicate === 'nearBy')).toBe(false)
+  })
+})
+
+// Every code point of Unicode category Cf (format characters), computed once.
+const FORMAT_CHARS: readonly string[] = (() => {
+  const out: string[] = []
+  for (let cp = 0; cp <= 0x10ffff; cp++) {
+    if (cp >= 0xd800 && cp <= 0xdfff) continue
+    const ch = String.fromCodePoint(cp)
+    if (/^\p{Cf}$/u.test(ch)) out.push(ch)
+  }
+  return out
+})()
+const BLANK_SPACES = [' ', '\t', ' ', ' ', '　'] as const
+const VISIBLE = ['5', 'A', '$', '-', '(', 'é', 'Fee'] as const
+
+const wordWith = (text: string): unknown => ({ text, box: { page: 1, left: 0.1, top: 0.1, width: 0.1, height: 0.02 }, confidence: 0.9, order: 1 })
+
+describe('F09B check 3: a word of format characters only is blank', () => {
+  for (const [name, text] of [
+    ['U+2060 (word joiner)', '⁠'],
+    ['U+200E (left-to-right mark)', '‎'],
+    ['U+00AD (soft hyphen)', '­'],
+    ['U+180E (Mongolian vowel separator)', '᠎'],
+    ['U+202E (right-to-left override)', '‮'],
+    ['U+2066 (left-to-right isolate)', '⁦'],
+    ['U+E0001 (language tag, outside the BMP)', '\u{E0001}'],
+    ['U+2060 and U+00AD around a space', '⁠ ­'],
+    ['U+200B, U+2060 and U+FEFF together', '​⁠﻿'],
+  ] as const) {
+    test(`EV-5 F09B WordSchema refuses a word that is only ${name}`, () => {
+      expect(WordSchema.safeParse(wordWith(text)).success).toBe(false)
+    })
+  }
+
+  for (const [name, text] of [
+    ['"A" after U+2060', '⁠A'],
+    ['"5" between U+00AD and U+200E', '­5‎'],
+    ['"$" after U+180E and a space', '᠎ $'],
+  ] as const) {
+    test(`EV-5 F09B WordSchema keeps a word with one visible character among format characters: ${name}`, () => {
+      expect(WordSchema.safeParse(wordWith(text)).success).toBe(true)
+    })
+  }
+
+  test('EV-5 F09B the format-character list is the whole of category Cf (sanity of the fixture)', () => {
+    for (const ch of ['­', '᠎', '​', '‎', '⁠', '﻿', '\u{E0001}']) expect(FORMAT_CHARS).toContain(ch)
+    expect(FORMAT_CHARS).not.toContain('A')
+  })
+
+  test('EV-5 F09B property: any word made only of format characters and spaces is refused; one visible character makes it a word', () => {
+    const blankArb = fc.array(fc.constantFrom(...FORMAT_CHARS, ...BLANK_SPACES), { minLength: 1, maxLength: 6 })
+    fc.assert(
+      fc.property(blankArb, fc.constantFrom(...VISIBLE), fc.nat(6), (chars, visible, at) => {
+        const blank = chars.join('')
+        expect(WordSchema.safeParse(wordWith(blank)).success, `blank ${JSON.stringify(blank)}`).toBe(false)
+        const k = Math.min(at, chars.length)
+        const real = [...chars.slice(0, k), visible, ...chars.slice(k)].join('')
+        expect(WordSchema.safeParse(wordWith(real)).success, `real ${JSON.stringify(real)}`).toBe(true)
+      }),
+      { seed: SEED, numRuns: 500 },
+    )
+  })
+})
+
+const MIXED_ROWS: readonly Row[] = [
+  { rule: 'F09B mixed grouping: "1,234" "567" (comma groups then a space group) is two amounts, the comma style wins', words: ['1,234', '567'], groups: [[123400, ['1,234']], [56700, ['567']]], notFound: ['1234567', '12345.67'] },
+  { rule: 'F09B mixed grouping: "1,234" "567.89" is two amounts', words: ['1,234', '567.89'], groups: [[123400, ['1,234']], [56789, ['567.89']]], notFound: ['1234567.89'] },
+  { rule: 'F09B mixed grouping: "1" ",234" "567" keeps the comma group and leaves "567" alone', words: ['1', ',234', '567'], groups: [[123400, ['1', ',234']], [56700, ['567']]], notFound: ['1234567'] },
+  { rule: 'F09B mixed grouping: "1" "234" ",567" keeps the space group; ",567" alone is no amount', words: ['1', '234', ',567'], groups: [[123400, ['1', '234']]], notFound: ['1234567', '567'] },
+  { rule: 'F09B mixed grouping: "1,234" ",567" "890" chains the comma groups and leaves "890" alone', words: ['1,234', ',567', '890'], groups: [[123456700, ['1,234', ',567']], [89000, ['890']]], notFound: ['1234567890'] },
+  { rule: 'F09B one style is fine: "1" "234" "567" still joins as space groups', words: ['1', '234', '567'], groups: [[123456700, ['1', '234', '567']]], notFound: ['567'] },
+]
+
+describe('F09B check 4: one grouping style per amount', () => {
+  for (const row of MIXED_ROWS) {
+    test(`EV-6 grammar row: ${row.rule}`, () => {
+      const words = lay(row.words)
+      expect(view(words)).toEqual(row.groups)
+      const result = resultOf(words)
+      for (const [cents] of row.groups) {
+        expect(valueInBox(result, WHOLE_PAGE_BAND, centsText(cents)), `${row.rule}: ${centsText(cents)}`).toEqual({ ok: true })
+      }
+      for (const decoy of row.notFound ?? []) {
+        expect(valueInBox(result, WHOLE_PAGE_BAND, decoy), `${row.rule}: decoy ${decoy}`).toEqual(NOT_FOUND)
+      }
+    })
+  }
+
+  for (const text of ['1,234 567', '1 ,234 567', '1 234 ,567', '1,234 567.89']) {
+    test(`EV-6 F09B normaliseAmount refuses mixed grouping "${text}"`, () => {
+      const got = normaliseAmount(text)
+      expect(got.ok).toBe(false)
+      expect(got.ok ? '' : got.reason.trim()).not.toBe('')
+    })
+  }
+})
+
+describe('F09B check 5: joining groups is linear', () => {
+  const longRun = (first: string, group: string, count: number): Word[] => {
+    const width = 0.00001
+    const words: Word[] = []
+    for (let i = 0; i <= count; i++) {
+      words.push({ text: i === 0 ? first : group, box: { page: 1, left: 0.01 + i * width, top: 0.2, width, height: WORD_HEIGHT }, confidence: 0.99, order: i + 1 })
+    }
+    return words
+  }
+
+  test('EV-6 F09B 50000 "000" group words after a "1" return within 2 s (too large for a safe integer, so no group)', () => {
+    const words = longRun('1', '000', 50_000)
+    const started = performance.now()
+    const groups = amountGroups(words)
+    expect(performance.now() - started).toBeLessThan(2000)
+    expect(groups).toEqual([])
+  })
+
+  test('EV-6 F09B 50000 ",000" comma group words after a "1" return within 2 s too', () => {
+    const words = longRun('1', ',000', 50_000)
+    const started = performance.now()
+    const groups = amountGroups(words)
+    expect(performance.now() - started).toBeLessThan(2000)
+    expect(groups).toEqual([])
+  })
+
+  test('EV-6 F09B normaliseAmount of "1" and 50000 " 000" groups is refused within 2 s', () => {
+    const text = `1${' 000'.repeat(50_000)}`
+    const started = performance.now()
+    const got = normaliseAmount(text)
+    expect(performance.now() - started).toBeLessThan(2000)
+    expect(got.ok).toBe(false)
+  })
+
+  test('EV-6 F09B a long run that fits still reads exactly: "1" then four "000" groups is 1,000,000,000,000.00', () => {
+    expect(view(longRun('1', '000', 4))).toEqual([[100_000_000_000_000, ['1', '000', '000', '000', '000']]])
+  })
+})
