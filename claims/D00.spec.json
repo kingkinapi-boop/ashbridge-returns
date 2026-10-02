@@ -2,7 +2,10 @@
  "card": "D00",
  "role": "spec",
  "worker": "cloud-0a2392",
- "state": "working",
- "at": "2026-10-02T06:29:15.338Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T06:31:43.387Z",
+ "mode": "turbo",
+ "note": "refit: vitest.d00 config removed, lint and typecheck clean",
+ "commit": "d1274d6",
+ "validated": "30986dd18e24409e456d9051c3d26125ffe10952"
 }
