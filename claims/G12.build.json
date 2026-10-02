@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "b8ec2300",
  "worker": "cloud-7c1598",
- "state": "working",
- "at": "2026-10-02T19:47:16.353Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:49:22.336Z",
+ "mode": "turbo",
+ "note": "spec test restored (net diff empty); scope.mjs flags history only, see report"
 }
