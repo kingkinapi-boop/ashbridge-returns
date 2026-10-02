@@ -2,7 +2,8 @@
  "card": "F02",
  "role": "spec",
  "worker": "cloud-575f8d",
- "state": "working",
- "at": "2026-10-02T14:52:07.184Z",
- "mode": "normal"
+ "state": "released",
+ "at": "2026-10-02T14:52:13.789Z",
+ "mode": "normal",
+ "note": "core spec needs an Opus subagent; budget hook refused dispatch (mode normal, 40/day used)"
 }
