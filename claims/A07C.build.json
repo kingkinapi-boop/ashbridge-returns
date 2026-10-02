@@ -1,11 +1,10 @@
 {
  "card": "A07C",
  "role": "build",
- "round": 10,
+ "round": 11,
  "spec": "ba50f80",
- "worker": "cloud-f765fb",
- "state": "released",
- "at": "2026-10-02T20:45:59.347Z",
- "mode": "turbo",
- "note": "Re-offered after release; not built, see previous note. Lead must restamp or reopen as A07D."
+ "worker": "cloud-197c89",
+ "state": "working",
+ "at": "2026-10-02T20:48:21.904Z",
+ "mode": "turbo"
 }
