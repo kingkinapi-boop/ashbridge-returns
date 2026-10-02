@@ -15,7 +15,7 @@ function validate(schema: z.ZodType, x: unknown): Validation {
   const reason = r.error.issues
     .map((i) => (i.path.length > 0 ? `${i.path.join('.')}: ${i.message}` : i.message))
     .join('; ')
-  return { ok: false, reason: reason || 'not valid' }
+  return { ok: false, reason }
 }
 
 const nonBlank = z.string().refine((s) => s.trim().length > 0, 'must not be blank')
