@@ -1,6 +1,7 @@
 // @mutate
 // The identifier list of one Taxprep release (S00): what a simulated return accepts, in the order it exports.
 import cellsFile from '../../../../reference/sample-clients/lib/taxprep-cells.json'
+import gifiDescriptions from './gifi-descriptions.json'
 
 export type CellKind = 'amount' | 'text' | 'date' | 'yesNo' | 'rate'
 
@@ -39,11 +40,11 @@ const CREATION_DRAFTS: readonly Draft[] = [
   { identifier: 'IFirm.ContactID', description: 'Contact ID', kind: 'text' },
 ]
 
-/** The 300 GIFI input cells (amount, confirmed in the trial's exports), then the eight creation cells. */
+/** The 300 GIFI input cells (amount, confirmed in the trial's exports; descriptions are Taxprep's own text from the day 2 exports), then the eight creation cells. */
 export function defaultReleaseList(): readonly ReleaseCell[] {
   const drafts: Draft[] = []
   for (const [code, identifier] of Object.entries(cellsFile.gifi.byCode)) {
-    drafts.push({ identifier, description: `GIFI code ${code}`, kind: 'amount', confirmed: true })
+    drafts.push({ identifier, description: (gifiDescriptions as Record<string, string>)[identifier] ?? `GIFI code ${code}`, kind: 'amount', confirmed: true })
   }
   drafts.push(...CREATION_DRAFTS)
   return drafts.map((d, i) => ({ ...d, order: i + 1 }))

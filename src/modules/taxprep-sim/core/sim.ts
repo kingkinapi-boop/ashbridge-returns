@@ -183,6 +183,13 @@ export function createSimulator(options: SimulatorOptions = {}): Simulator {
       const label = describe(found.cell)
       if (row.current.kind === 'clear') {
         if (status === 'next' || !held(st, text)) continue
+        if (found.cell.kind === 'yesNo') {
+          // FINDINGS Q20: a yes or no cell cannot be emptied; a clear resets it to N.
+          setValue(st, text, 'N')
+          st.events.push({ identifier: text, source: 'import', value: 'N' })
+          lines.push({ form: NONE, description: label, box: NONE, result: REPLACED })
+          continue
+        }
         setValue(st, text, '')
         st.events.push({ identifier: text, source: 'import', value: '' })
         lines.push({ form: NONE, description: label, box: NONE, result: EMPTIED })
