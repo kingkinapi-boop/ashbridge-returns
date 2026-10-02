@@ -8,3 +8,8 @@ Amber: (1) the failure messages are pinned to the card's wording ("spec file edi
 None (node 24 via nvm for npm ci).
 ## Model
 Sonnet 5.5 (card is not core).
+
+## Round 2 (cloud-d1020a, 2 Oct, Sonnet 5.5; non-core)
+Adds R22 (per-file break, acceptance 2a): 6 tests in `done-gate.test.mjs` (97.5 versus 100 names file, score, survivor line and mutator; a no-coverage mutant counts; aggregate above 70 with one file below 100 fails; all at 100 passes; a Stryker disable with no reason fails naming file and line 2; with a reason passes). The Stryker stub now writes `reports/mutation/mutation.json` (a planted `stryker-report.json` is copied; otherwise one killed mutant per `--mutate` file, so the 21 older tests are unchanged); 7 new fixture files under `trees/`. ARC-9 title test now accepts R19 to R22 (at least 24 titles). 4 R22 tests fail now for the right reason (no report reading, no disable-comment check), 23 pass; typecheck and lint clean; validated on main 2738575.
+Amber: report path is `reports/mutation/mutation.json` (the Stryker config's jsonReporter); output wording for the disable-comment failure only pinned to the file, line 2 and the word "disable"; survivor line and mutator pinned, wording otherwise free.
+Permission gaps: none.
