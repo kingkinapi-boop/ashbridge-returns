@@ -1,9 +1,8 @@
 {
  "card": "W01",
  "role": "spec",
- "worker": "local-a3f9c1",
- "state": "released",
- "at": "2026-10-02T14:25:55.606Z",
- "mode": "turbo",
- "note": "draft spec pushed claude/W01 aa40774 (1 file, 22 tests) but NOT run: main checkout has no node_modules, so no vitest/typecheck; W00 build not on main (tests import testworld/index). Cloud: run step 6/6b after W00 lands, then report"
+ "worker": "cloud-b4a9c0",
+ "state": "working",
+ "at": "2026-10-02T14:27:42.449Z",
+ "mode": "turbo"
 }
