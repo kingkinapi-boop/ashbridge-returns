@@ -4,6 +4,7 @@
 // layer is reported as such, never as an empty success (ARC-6). Results are stored per fingerprint (ARC-11).
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { now } from '../../../core/clock'
+import { isBlank } from '../../../contracts/text'
 import { ReadingResultSchema, type ReadingDocument, type ReadingEngine, type ReadingResult, type Word } from '../../../contracts/reading'
 
 export const TEXTLAYER_LIBRARY = { name: 'pdfjs-dist', version: '6.3.289' } as const
@@ -67,8 +68,7 @@ async function parse(bytes: Uint8Array, fingerprint: string): Promise<ReadingRes
       for (const item of content.items) {
         // Stryker disable next-line ConditionalExpression,LogicalOperator: a type guard only; without includeMarkedContent every item has a str.
         if (!('str' in item)) continue
-        // Stryker disable next-line ConditionalExpression,MethodExpression,StringLiteral: pdfjs only emits a blank item between two words, so `any` is already set and a blank item makes no word.
-        if (item.str.trim() === '') continue
+        if (isBlank(item.str)) continue
         any = true
         const t = item.transform as number[]
         const [a = 1, b = 0] = t
@@ -79,6 +79,8 @@ async function parse(bytes: Uint8Array, fingerprint: string): Promise<ReadingRes
         const up: Corner = [-along[1], along[0]]
         const chars = item.str.length
         for (const m of item.str.matchAll(/\S+/g)) {
+          // Stryker disable next-line ConditionalExpression: pdfjs 6.3.289 ends an item at an invisible character, so a blank token never sits inside a non-blank item; the guard keeps the reader and WordSchema in step if that changes.
+          if (isBlank(m[0])) continue
           const s = (m.index / chars) * item.width
           const w = (m[0].length / chars) * item.width
           const quad: Corner[] = [

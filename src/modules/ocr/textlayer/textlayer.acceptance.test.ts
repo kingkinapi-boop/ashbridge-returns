@@ -23,7 +23,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { fixedClock, getClock, setClock, type Clock } from '../../../core/clock'
 import { ReadingResultSchema, valueInBox, type ReadingResult } from '../../../contracts/reading'
 import { createTextLayerEngine, TEXTLAYER_LIBRARY } from './index'
-import { buildFixtures, expectedFileName, FIXTURES_DIR } from './__fixtures__/make-fixtures'
+import { buildFixtures, expectedFileName, FIXTURES_DIR, invisibleTextPdf, NEL, SOFT_HYPHEN } from './__fixtures__/make-fixtures'
 import { expected, failure, fixtureBytes, fixtureDoc, sha256, snapshot, tempDir, TOLERANCE, wordProblems } from './__fixtures__/harness'
 
 const T1 = '2026-10-01T12:00:00-04:00'
@@ -293,5 +293,70 @@ describe('A01 check 6: word boxes are computed once per document (ARC-11)', () =
     const second = await e.read(fixtureDoc('one-page.pdf'))
     expect(e.parseCount()).toBe(1)
     expect(wordProblems(second, expected('one-page.pdf').words)).toEqual([])
+  })
+})
+
+// Round 3 (A357, reports/A01-check.md): one blank rule. pdfjs-dist 6.3.289 hands back U+0085 (NEL) as text; a reader
+// that drops only what String.prototype.trim strips made a word of it, and F09's WordSchema then threw a raw ZodError.
+// A page whose only text is invisible (src/contracts/text.ts isBlank) is a page with no text layer (ARC-6), not a throw.
+describe('A01 round 3: a page of only invisible text has no text layer', () => {
+  const page = (codePoints: readonly number[]): { fingerprint: string; fileName: string; bytes: Uint8Array } => {
+    const bytes = invisibleTextPdf(codePoints)
+    return { fingerprint: sha256(bytes), fileName: 'invisible (Test).pdf', bytes }
+  }
+
+  for (const name of ['nel-only.pdf', 'cf-only.pdf']) {
+    test(`ARC-6 ${name}: a page whose only text is ${name === 'nel-only.pdf' ? 'U+0085 (NEL)' : 'a Cf character (U+00AD)'} reads as no text layer, never a thrown error`, async () => {
+      let result: ReadingResult | undefined
+      const err = await failure(async () => {
+        result = await read(name)
+      })
+      expect(err?.message, 'the read must not throw').toBeUndefined()
+      if (result === undefined) throw new Error('no result')
+      const want = expected(name)
+      expect(result.pageCount).toBe(want.pageCount)
+      expect(result.pages.map((p) => [p.number, p.hasTextLayer])).toEqual([[1, false]])
+      expect(result.words).toEqual([])
+      expect(ReadingResultSchema.safeParse(result).success).toBe(true)
+    })
+  }
+
+  // The geometry unit test "a page holding only spaces", with NEL and Cf rows, so a reader that keeps a blank item
+  // (the mutant the Stryker disable comment at index.ts hid) is caught.
+  const rows: readonly (readonly [string, readonly number[]])[] = [
+    ['spaces', [0x20, 0x20, 0x20]],
+    ['NEL (U+0085)', [NEL]],
+    ['NEL between spaces', [0x20, NEL, 0x20]],
+    ['two NELs', [NEL, NEL]],
+    ['a soft hyphen (U+00AD, Cf)', [SOFT_HYPHEN]],
+    ['Cf characters (U+00AD, U+200B, U+FEFF)', [SOFT_HYPHEN, 0x200b, 0xfeff]],
+    ['NEL and a Cf character', [NEL, SOFT_HYPHEN]],
+  ]
+  for (const [label, codePoints] of rows) {
+    test(`ARC-6 a page holding only ${label} has no text layer and no words`, async () => {
+      let result: ReadingResult | undefined
+      const err = await failure(async () => {
+        result = await engine().read(page(codePoints))
+      })
+      expect(err?.message, 'the read must not throw').toBeUndefined()
+      expect(result?.words).toEqual([])
+      expect(result?.pages.map((p) => [p.number, p.hasTextLayer])).toEqual([[1, false]])
+    })
+  }
+
+  test('ARC-6 planted fault: the same CMap route with a visible glyph is read, so the rows above do not pass by accident', async () => {
+    const x = await engine().read(page([0x58]))
+    expect(x.words.map((w) => w.text)).toEqual(['X'])
+    expect(x.pages.map((p) => [p.number, p.hasTextLayer])).toEqual([[1, true]])
+  })
+
+  test('ARC-6 a NEL beside a visible word on the same line: only the visible word is read and the page has a text layer', async () => {
+    let result: ReadingResult | undefined
+    const err = await failure(async () => {
+      result = await engine().read(page([NEL, 0x20, 0x58]))
+    })
+    expect(err?.message, 'the read must not throw').toBeUndefined()
+    expect(result?.words.map((w) => w.text)).toEqual(['X'])
+    expect(result?.pages.map((p) => [p.number, p.hasTextLayer])).toEqual([[1, true]])
   })
 })
