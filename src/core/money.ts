@@ -23,7 +23,8 @@ export function roundCentsToDollars(c: Cents): number {
   cents(c)
   const abs = Math.abs(c)
   const dollars = Math.floor(abs / 100) + (abs % 100 >= 50 ? 1 : 0)
-  return dollars === 0 ? 0 : c < 0 ? -dollars : dollars
+  // + 0 turns -0 into 0, so an amount of zero never prints or compares as negative.
+  return Math.sign(c) * dollars + 0
 }
 
 export function formatCents(c: Cents): string {

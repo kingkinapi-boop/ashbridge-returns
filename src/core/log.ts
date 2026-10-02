@@ -47,10 +47,8 @@ function wordParts(key: string): string[] {
 const KIND_PARTS: readonly (readonly string[])[] = SENSITIVE_KINDS.map((k) => k.split(' '))
 
 function hasRun(parts: readonly string[], run: readonly string[]): boolean {
-  for (let i = 0; i + run.length <= parts.length; i++) {
-    if (run.every((w, j) => parts[i + j] === w)) return true
-  }
-  return false
+  // Parts never hold a space, so a space either side makes the match whole word parts only.
+  return ` ${parts.join(' ')} `.includes(` ${run.join(' ')} `)
 }
 
 function isSensitiveKey(key: string): boolean {
@@ -58,13 +56,13 @@ function isSensitiveKey(key: string): boolean {
   return KIND_PARTS.some((run) => hasRun(parts, run))
 }
 
-function redactValue(value: unknown, depth: number, ancestors: readonly object[]): unknown {
+function redactValue(value: unknown, depth: number, ancestors: ReadonlySet<object>): unknown {
   if (typeof value === 'string') return value.replace(SIN_PATTERN, REDACTED)
   if (typeof value === 'number') return SIN_ONE.test(String(value)) ? REDACTED : value
   if (value === null || typeof value !== 'object') return value
   if (depth >= MAX_DEPTH) return REDACTED
-  if (ancestors.includes(value)) return CIRCULAR
-  const next = [...ancestors, value]
+  if (ancestors.has(value)) return CIRCULAR
+  const next = new Set(ancestors).add(value)
   if (Array.isArray(value)) return value.map((v) => redactValue(v, depth + 1, next))
   const out: Record<string, unknown> = {}
   for (const [k, v] of Object.entries(value)) out[k] = isSensitiveKey(k) ? REDACTED : redactValue(v, depth + 1, next)
@@ -72,7 +70,7 @@ function redactValue(value: unknown, depth: number, ancestors: readonly object[]
 }
 
 export function redact(value: unknown): unknown {
-  return redactValue(value, 0, [])
+  return redactValue(value, 0, new Set())
 }
 
 export type Sink = (line: string) => void

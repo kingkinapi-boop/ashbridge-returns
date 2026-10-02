@@ -5,7 +5,7 @@ import { now } from './clock'
 
 type RandomSource = (byteCount: number) => Uint8Array
 
-let random: RandomSource = (n) => randomBytes(n)
+let random: RandomSource | undefined
 
 /** Tests pin the random part of ids here (ARC-16); resetIdRandom puts the real source back. */
 export function setIdRandom(source: RandomSource): void {
@@ -13,7 +13,7 @@ export function setIdRandom(source: RandomSource): void {
 }
 
 export function resetIdRandom(): void {
-  random = (n) => randomBytes(n)
+  random = undefined
 }
 
 let lastMs = 0
@@ -29,6 +29,6 @@ export function newId(): string {
   return (
     ms.toString(16).padStart(12, '0') +
     counter.toString(16).padStart(4, '0') +
-    Buffer.from(random(4)).toString('hex')
+    Buffer.from(random ? random(4) : randomBytes(4)).toString('hex')
   )
 }
