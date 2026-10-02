@@ -1,11 +1,9 @@
 {
  "card": "F04",
  "role": "spec",
- "note": "toolchain refit: typecheck, lint clean; only round 2 acceptance tests fail (23)",
- "worker": "cloud-1452fe",
- "state": "reported",
- "at": "2026-10-02T09:45:30.776Z",
- "mode": "turbo",
- "commit": "7e93051",
- "validated": "6d1efdf"
+ "note": "toolchain refit",
+ "worker": "cloud-db355d",
+ "state": "working",
+ "at": "2026-10-02T11:21:08.106Z",
+ "mode": "turbo"
 }
