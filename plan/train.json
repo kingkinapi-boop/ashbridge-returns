@@ -1,5 +1,5 @@
 {
-  "status": "red",
+  "status": "red-held",
   "branch": "claude/train",
   "head": "7bea948",
   "cards": [
@@ -7,5 +7,6 @@
   ],
   "requested_at": "2026-10-02T13:54:05Z",
   "by": "cloud-2a9ed7",
-  "report": "reports/train-20261002-1359.md"
+  "report": "reports/train-20261002-1359.md",
+  "note": "G01 not at fault; re-board with FX1 (A361)"
 }
