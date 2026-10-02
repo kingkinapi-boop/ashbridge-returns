@@ -1,455 +1,896 @@
 /**
- * F03 Taxprep CSV contract: acceptance tests (spec-writer; builders never edit this file).
+ * F03 Taxprep CSV contract: acceptance tests (re-spec of 2 Oct 2026; spec-writer only, builders never edit).
+ * Follows plan/cards/F03.md and reference/taxprep/FINDINGS.md (release CCH iFirm 2026.20.198267), not CCH's help page.
  *
  * The contract these tests pin (src/contracts/taxprep.ts):
  *
- *   type CellId = { form: string; copy?: number; cell: string }
- *     `T4SLIP[1].TOATSC4` -> { form: 'T4SLIP', copy: 1, cell: 'TOATSC4' }
- *     `S100.1002`         -> { form: 'S100', cell: '1002' }            (no copy key)
- *     `S1.ADD[1].DESC`    -> { form: 'S1.ADD', copy: 1, cell: 'DESC' } (form = everything before the
- *                            last dot; at most one copy index, written just before the last dot)
+ *   type CellId = { readonly text: string; readonly copyPath: string | null; readonly copyIndex: number | null }
+ *     made only by parseCellId (a plain string is not a CellId). copyPath is the identifier up to the part that
+ *     carries the copy index, without the index (`CCACat.FD08C[2].FED.Ttw08cA1` -> 'CCACat.FD08C', 2);
+ *     both null when the identifier has no copy index.
  *   parseCellId(text): { ok: true; id: CellId } | { ok: false; reason: string }
- *   formatCellId(id): string
+ *   withCopyIndex(id, n): CellId          (throws when id has no copy index or n is not a whole number from 1)
  *
- *   type TaxprepHeader = { taxpayerName: string; returnId: string; language: string }
- *   type TaxprepRow = { id: CellId; thisYear: string | null; priorYear?: string | null }
- *     thisYear null = blank = "no import" (RT-12); priorYear absent = the row has no prior-year field;
- *     priorYear null = the field is present but blank.
- *   type TaxprepFile = { header: TaxprepHeader; rows: TaxprepRow[] }
- *   type NaturalKeyRegistry = Readonly<Record<string, readonly string[]>>   (form -> key cells, RT-7)
+ *   type CellValue = { kind: 'clear' } | { kind: 'value'; text: string }
+ *   type RowShape = 'current-only' | 'standard' | 'extra-columns'
+ *   type ParsedRow = { line: number; id: CellId; current: CellValue; last: CellValue | null;
+ *                      description: string | null; shape: RowShape; apostrophe: boolean }
+ *     line 1 is the header; last and description are null on a current-only row; apostrophe is true when a
+ *     value carried the export's leading apostrophe before a negative number (the value holds the number).
+ *   type TaxprepHeader = { returnName: string; guid: string }
+ *   parseTaxprepCsv(bytes): { ok: true; file: { header: TaxprepHeader; rows: ParsedRow[] } }
+ *                         | { ok: false; faults: { code: TaxprepFaultCode; reason: string; line: number | null }[] }
+ *     TaxprepFaultCode includes 'bom' | 'line-ends' | 'separator' | 'unquoted' | 'negative-parens' | 'thousands'
+ *       | 'decimal-comma' | 'scientific' | 'date-format' | 'utf8' | 'header' | 'identifier' | 'apostrophe'.
  *
- *   parseTaxprepCsv(bytes: Uint8Array, options?: { naturalKeys?: NaturalKeyRegistry }): ParseResult
- *   type ParseResult = { ok: true; file: TaxprepFile } | { ok: false; faults: TaxprepFault[] }
- *   type TaxprepFault = { code: TaxprepFaultCode; reason: string; line?: number; row?: string }
- *     line is 1-based (the header is line 1); row is the raw text of that line.
- *   writeTaxprepCsv(file: TaxprepFile): Uint8Array   (UTF-8, no BOM, LF after every line;
- *     throws with a plain reason when a value cannot be written under the fixed settings)
+ *   type WriteValue = { kind: 'amount'; amount: number } | { kind: 'text'; text: string } | { kind: 'date'; date: string }
+ *                   | { kind: 'yesNo'; yes: boolean } | { kind: 'rate'; rate: number } | { kind: 'clear' }
+ *   type WriteRow = { id: CellId; current: WriteValue; last?: WriteValue; description?: string }
+ *   writeTaxprepCsv({ header, rows }, { purpose: 'import' | 'export' })
+ *     : { ok: true; bytes: Uint8Array } | { ok: false; problems: { index; identifier; reason; character? }[] }
+ *     index is the row's position in `rows` (0-based); rates are written with 4 decimals ('0.2000').
+ *     'import' refuses the ignored-on-import cells (RT-13); 'export' writes the shape Taxprep's export writes
+ *     (the simulator, S00) and allows them.
  *
- *   TAXPREP_EXPORT_SETTINGS (RT-9), T2_YEAR_START_ID, T2_YEAR_END_ID, isIgnoredOnImport (RT-13),
- *   CELL_CLASSES, type CellClass, isCellClass (RT-14).
+ *   TAXPREP_SETTINGS (RT-9), IGNORED_ON_IMPORT: readonly { identifier: string; finding: string }[] (RT-13),
+ *   type NaturalKeyRegistry = Readonly<Record<string, string>>  (copy path -> key cell under the copy), NATURAL_KEYS,
+ *   copiesByNaturalKey(rows, copyPath, registry = NATURAL_KEYS)
+ *     : { ok: true; copies: ReadonlyMap<string, number> } | { ok: false; reason: string }   (RT-7)
+ *   CELL_CLASSES, type CellClass, isCellClass(value: unknown) (RT-14).
+ *
+ * The type tests (RT-8/RT-12 and the CellId one) are enforced by `npm run typecheck`: every `@ts-expect-error`
+ * below must be needed.
+ *
+ * Committed CSVs under reference/ are stored LF by .gitattributes (`* text=auto eol=lf`); `taxprepBytes` restores
+ * the CRLF Taxprep wrote. Golden files in __golden__/ keep their bytes (`-text`) and are compared byte for byte;
+ * the parsed records are golden JSON files (toMatchFileSnapshot).
  */
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import fc from 'fast-check'
 import { describe, expect, expectTypeOf, test } from 'vitest'
 import {
   CELL_CLASSES,
-  T2_YEAR_END_ID,
-  T2_YEAR_START_ID,
-  TAXPREP_EXPORT_SETTINGS,
-  formatCellId,
+  IGNORED_ON_IMPORT,
+  NATURAL_KEYS,
+  TAXPREP_SETTINGS,
+  copiesByNaturalKey,
   isCellClass,
-  isIgnoredOnImport,
   parseCellId,
   parseTaxprepCsv,
+  withCopyIndex,
   writeTaxprepCsv,
   type CellClass,
   type CellId,
+  type CellValue,
   type NaturalKeyRegistry,
-  type ParseResult,
+  type ParsedRow,
   type TaxprepFaultCode,
-  type TaxprepFile,
-  type TaxprepRow,
+  type TaxprepHeader,
+  type WriteRow,
+  type WriteValue,
 } from './taxprep'
 
-const SEED = 20261001
+const SEED = 20261002
 
-const goldenUrl = (name: string) => new URL(`./__golden__/${name}`, import.meta.url)
-const readGolden = (name: string): Buffer => readFileSync(goldenUrl(name))
-const decode = (bytes: Uint8Array): string =>
-  new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes)
+// ---------- helpers (test-side only) ----------
 
-const CCH_EXAMPLE = 'cch-example.csv'
-const NATURAL_KEYS = 'natural-keys.csv'
-const REGISTRY: NaturalKeyRegistry = { S50: ['SIN'], S8: ['CLASS'] }
+const repoUrl = (rel: string): URL => new URL(`../../${rel}`, import.meta.url)
+const golden = (name: string): Buffer => readFileSync(new URL(`./__golden__/${name}`, import.meta.url))
+const goldenPath = (name: string): string => `./__golden__/${name}`
 
-const SAMPLE_CLIENTS = [
-  '01-maple-ridge',
-  '02-halton-haulage',
-  '03-bluewater-renovations',
-  '04-lakeshore-eats',
-  '05-eglinton-holdings',
-  '06-eglinton-retail',
-  '07-riverdale-rentals',
-  '08-queen-west-design',
-  '09-scarborough-robotics',
-  '10-danforth-cleaning',
-] as const
-const sampleImport = (client: string): Buffer =>
-  readFileSync(new URL(`../../reference/sample-clients/${client}/taxprep/import.csv`, import.meta.url))
-
-/** The golden text with line `lineNo` (1-based) replaced. */
-function withLine(name: string, lineNo: number, text: string): Buffer {
-  const lines = readGolden(name).toString('utf8').split('\n')
-  expect(lines[lineNo - 1], `golden ${name} has a line ${String(lineNo)}`).toBeDefined()
-  lines[lineNo - 1] = text
-  return Buffer.from(lines.join('\n'), 'utf8')
+/** A committed reference CSV (LF in git) with the CRLF line ends Taxprep wrote. */
+function taxprepBytes(rel: string): Buffer {
+  const raw = readFileSync(repoUrl(rel))
+  if (raw.includes(0x0d)) throw new Error(`${rel} already holds CR bytes: the CRLF restore would double them`)
+  return Buffer.from(raw.toString('latin1').replace(/\n/g, '\r\n'), 'latin1')
 }
 
-function parsedOk(result: ParseResult): TaxprepFile {
-  if (!result.ok) throw new Error(`expected the file to parse, got faults ${JSON.stringify(result.faults)}`)
-  return result.file
+/** Bytes as a 1:1 string (latin1), for readable exact comparisons. */
+const asText = (bytes: Uint8Array): string => Buffer.from(bytes).toString('latin1')
+const fromText = (text: string): Buffer => Buffer.from(text, 'latin1')
+
+function must<T>(value: T | undefined | null, what: string): T {
+  if (value === undefined || value === null) throw new Error(`test fixture: ${what} missing`)
+  return value
 }
 
-/** Expects a refusal carrying `code`, a plain reason and (for row faults) the line and the row text. */
-function expectRefused(
-  result: ParseResult,
-  code: TaxprepFaultCode,
-  at?: { line: number; row?: string },
-): void {
-  expect(result.ok, 'the file must be refused').toBe(false)
-  if (result.ok) return
-  const fault = result.faults.find((f) => f.code === code)
-  expect(fault, `expected a "${code}" fault, got ${JSON.stringify(result.faults)}`).toBeDefined()
-  if (!fault) return
-  expect(fault.reason.trim().length, 'the reason is a plain sentence').toBeGreaterThan(10)
-  expect(fault.reason).not.toBe(code)
-  if (at) {
-    expect(fault.line).toBe(at.line)
-    if (at.row !== undefined) expect(fault.row).toBe(at.row)
+function id(text: string): CellId {
+  const r = parseCellId(text)
+  if (!r.ok) throw new Error(`test fixture: ${text} should parse: ${r.reason}`)
+  return r.id
+}
+
+function parseOk(bytes: Uint8Array) {
+  const r = parseTaxprepCsv(bytes)
+  if (!r.ok) throw new Error(`expected the file to parse, got faults: ${JSON.stringify(r.faults)}`)
+  return r.file
+}
+
+function writeOk(header: TaxprepHeader, rows: readonly WriteRow[], purpose: 'import' | 'export'): Uint8Array {
+  const r = writeTaxprepCsv({ header, rows }, { purpose })
+  if (!r.ok) throw new Error(`expected the writer to accept, got: ${JSON.stringify(r.problems)}`)
+  return r.bytes
+}
+
+function writeRefused(header: TaxprepHeader, rows: readonly WriteRow[], purpose: 'import' | 'export') {
+  const r = writeTaxprepCsv({ header, rows }, { purpose })
+  if (r.ok) throw new Error(`expected the writer to refuse, but it wrote: ${asText(r.bytes)}`)
+  return r.problems
+}
+
+type Kind = 'amount' | 'text' | 'date' | 'yesNo' | 'rate'
+
+/** A parsed value turned back into a writer value, given the cell's kind (the caller knows the kind). */
+function toWriteValue(v: CellValue, kind: Kind): WriteValue {
+  if (v.kind === 'clear') return { kind: 'clear' }
+  switch (kind) {
+    case 'amount':
+      return { kind: 'amount', amount: Number(v.text) }
+    case 'text':
+      return { kind: 'text', text: v.text }
+    case 'date':
+      return { kind: 'date', date: v.text }
+    case 'yesNo':
+      return { kind: 'yesNo', yes: v.text === 'Y' }
+    case 'rate':
+      return { kind: 'rate', rate: Number(v.text) }
   }
 }
 
-describe('F03 Taxprep CSV contract', () => {
-  // ---------------------------------------------------------------- check 1: golden round trip
-  test('RT-3 ARC-14 the CCH example file parses then writes back the same bytes (golden)', async () => {
-    const golden = readGolden(CCH_EXAMPLE)
-    const out = writeTaxprepCsv(parsedOk(parseTaxprepCsv(golden)))
-    expect(out).toBeInstanceOf(Uint8Array)
-    await expect(decode(out)).toMatchFileSnapshot(`./__golden__/${CCH_EXAMPLE}`)
-    expect(Buffer.from(out).equals(golden), 'byte for byte').toBe(true)
+function toWriteRows(rows: readonly ParsedRow[], kinds: Readonly<Record<string, Kind>>): WriteRow[] {
+  return rows.map((r) => {
+    const kind = kinds[r.id.text] ?? 'amount'
+    const row: WriteRow = { id: r.id, current: toWriteValue(r.current, kind) }
+    if (r.description !== null && r.description !== '') row.description = r.description
+    return row
+  })
+}
+
+/** A stable view of parsed rows for the golden records (independent of CellId's inner fields). */
+const view = (rows: readonly ParsedRow[]) =>
+  rows.map((r) => ({
+    line: r.line,
+    id: r.id.text,
+    copyPath: r.id.copyPath,
+    copyIndex: r.id.copyIndex,
+    current: r.current,
+    last: r.last,
+    description: r.description,
+    shape: r.shape,
+    apostrophe: r.apostrophe,
+  }))
+
+const PROBE: TaxprepHeader = { returnName: 'Probe Co. (Test)', guid: '5f0c2e9a-1b7d-4c3e-9a21-0d6e8b4f7a10' }
+const ZERO_GUID = '00000000-0000-0000-0000-000000000000'
+const HEADER_LINE = '[Probe Co. (Test)|0|0|5f0c2e9a-1b7d-4c3e-9a21-0d6e8b4f7a10],"Current Year","Last Year",""\r\n'
+
+const RT07 = 'reference/taxprep/2026-10-02-day2/exports/rt-07-imported-default.csv'
+const MAPLE = 'reference/sample-clients/01-maple-ridge/taxprep/import.csv'
+const MADE_UP = 'made-up-return.csv'
+const IGNORED = ['IDENT.Ident120', 'IDENT.Ident121', 'IDENT.Ident311', 'IDENT.Ident492']
+
+const RT07_KINDS: Readonly<Record<string, Kind>> = {
+  'IDENT.Ident120': 'date',
+  'IDENT.Ident121': 'date',
+  'IDENT.Ident311': 'text',
+  'IDENT.Ident230': 'text',
+  'IDENT.Ident451': 'text',
+  'IDENT.Ident492': 'yesNo',
+  'IFirm.ContactPartner': 'text',
+}
+const MADE_UP_KINDS: Readonly<Record<string, Kind>> = {
+  'IDENT.Ident120': 'date',
+  'IDENT.Ident311': 'text',
+  'IDENT.Ident180': 'yesNo',
+  'IDENT.Ident183': 'yesNo',
+  'CCACat.FD08C[2].FED.Ttw08cA2': 'rate',
+}
+
+// ---------- generators (fixed seed) ----------
+
+const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+const ALNUM = [...UPPER, ...'abcdefghijklmnopqrstuvwxyz0123456789'.split('')]
+const partArb = fc
+  .tuple(fc.constantFrom(...UPPER), fc.array(fc.constantFrom(...ALNUM), { maxLength: 8 }))
+  .map(([first, rest]) => first + rest.join(''))
+const identifierArb: fc.Arbitrary<string> = fc
+  .tuple(fc.array(partArb, { minLength: 2, maxLength: 4 }), fc.option(fc.integer({ min: 1, max: 99 })), fc.nat())
+  .map(([parts, copy, at]) => {
+    if (copy === null) return parts.join('.')
+    const i = at % (parts.length - 1)
+    return parts.map((p, j) => (j === i ? `${p}[${String(copy)}]` : p)).join('.')
   })
 
-  test('RT-3 the CCH example parses into the header, a zero, a blank, a date, copy indexes and a row with no prior-year field', () => {
-    const file = parsedOk(parseTaxprepCsv(readGolden(CCH_EXAMPLE)))
-    expect(file.header).toStrictEqual({
-      taxpayerName: 'Société Birchwood Exemple (Test)',
-      returnId: '0',
-      language: '0',
+// No character that encodes to 80 to BF (€, ’, °, «): next to an accented letter those bytes form a valid UTF-8
+// sequence, which the parser must refuse (RT-9). The € and ’ bytes have their own example test (check 5).
+const TEXT_CHARS = [
+  ...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
+  ...[' ', '.', '-', '&', '(', ')', 'é', 'è', 'ç', 'à', 'É', 'Ç', 'ô', 'ü', 'ñ'],
+]
+const textArb = fc
+  .tuple(fc.constantFrom(...UPPER), fc.array(fc.constantFrom(...TEXT_CHARS), { maxLength: 30 }))
+  .map(([first, rest]) => first + rest.join(''))
+const dateArb = fc
+  .date({ min: new Date(Date.UTC(1990, 0, 1)), max: new Date(Date.UTC(2040, 11, 31)), noInvalidDate: true })
+  .map((d) => d.toISOString().slice(0, 10))
+
+type Expected = { value: WriteValue; text: string | null }
+const valueArb: fc.Arbitrary<Expected> = fc.oneof(
+  fc
+    .integer({ min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER })
+    .map((n): Expected => ({ value: { kind: 'amount', amount: n }, text: String(n) })),
+  textArb.map((t): Expected => ({ value: { kind: 'text', text: t }, text: t })),
+  dateArb.map((d): Expected => ({ value: { kind: 'date', date: d }, text: d })),
+  fc.boolean().map((yes): Expected => ({ value: { kind: 'yesNo', yes }, text: yes ? 'Y' : 'N' })),
+  fc
+    .integer({ min: 0, max: 10_000 })
+    .map((n): Expected => ({ value: { kind: 'rate', rate: n / 10_000 }, text: (n / 10_000).toFixed(4) })),
+  fc.constant<Expected>({ value: { kind: 'clear' }, text: null }),
+)
+const rowsArb = fc
+  .uniqueArray(fc.tuple(identifierArb, valueArb), { selector: ([t]) => t, maxLength: 25 })
+  .map((rows) => rows.filter(([t]) => !IGNORED.includes(t)))
+
+// ---------- 1. RT-3, ARC-14: known files in, the same files out ----------
+
+describe('F03 check 1: round trip byte for byte (RT-3, ARC-14)', () => {
+  test('RT-3 ARC-14 the trial export rt-07-imported-default.csv parses and is written back byte for byte', async () => {
+    const bytes = taxprepBytes(RT07)
+    const file = parseOk(bytes)
+    expect(file.header).toEqual({
+      returnName: 'Riverdale Rentals Inc. (Test)',
+      guid: '0aad6c0c-6444-466e-a247-ed6d63078cd2',
     })
-    expect(file.rows).toHaveLength(11)
-    const [t4a, t4b, s100a, s100b, s125, netIncome, dateInc, addDesc, name, sin, pct] = file.rows
-    expect(t4a).toStrictEqual({
-      id: { form: 'T4SLIP', copy: 1, cell: 'TOATSC4' },
-      thisYear: '57565.00',
-      priorYear: '51200.00',
-    })
-    expect(t4b).toStrictEqual({ id: { form: 'T4SLIP', copy: 2, cell: 'TOATSC4' }, thisYear: '0', priorYear: null })
-    expect(s100a).toStrictEqual({ id: { form: 'S100', cell: '1002' }, thisYear: '131184.97', priorYear: '120000.00' })
-    expect(s100b).toStrictEqual({ id: { form: 'S100', cell: '3700' }, thisYear: '-20000.00' })
-    expect(s100b !== undefined && 'priorYear' in s100b, 'no prior-year field means no priorYear key').toBe(false)
-    expect(s125).toStrictEqual({ id: { form: 'S125', cell: '8000' }, thisYear: null, priorYear: '186700.00' })
-    expect(netIncome).toStrictEqual({ id: { form: 'S1', cell: 'NETINCOME' }, thisYear: null })
-    expect(dateInc).toStrictEqual({ id: { form: 'T2', cell: 'DATEINC' }, thisYear: '2019-03-15' })
-    expect(addDesc).toStrictEqual({
-      id: { form: 'S1.ADD', copy: 1, cell: 'DESC' },
-      thisYear: '50% of meals and entertainment',
-    })
-    expect(name).toStrictEqual({ id: { form: 'S50', copy: 1, cell: 'NAME' }, thisYear: 'Jane Example (Test)' })
-    expect(sin).toStrictEqual({ id: { form: 'S50', copy: 1, cell: 'SIN' }, thisYear: '046454286' })
-    expect(pct).toStrictEqual({ id: { form: 'S50', copy: 1, cell: 'COMMONPCT' }, thisYear: '100.00' })
-  })
-
-  test('RT-3 ARC-14 sample client 01 import.csv round-trips byte for byte', () => {
-    const bytes = sampleImport('01-maple-ridge')
-    const file = parsedOk(parseTaxprepCsv(bytes, { naturalKeys: REGISTRY }))
-    expect(file.header).toStrictEqual({
-      taxpayerName: 'Maple Ridge Consulting Inc. (Test)',
-      returnId: 'TEST-01',
-      language: 'EN',
-    })
-    expect(file.rows).toHaveLength(26)
-    expect(Buffer.from(writeTaxprepCsv(file)).equals(bytes)).toBe(true)
-  })
-
-  test.each(SAMPLE_CLIENTS)('RT-3 RT-9 no false alarm: sample client %s import.csv parses clean and round-trips', (client) => {
-    const bytes = sampleImport(client)
-    const file = parsedOk(parseTaxprepCsv(bytes, { naturalKeys: REGISTRY }))
-    expect(decode(writeTaxprepCsv(file))).toBe(decode(bytes))
-  })
-
-  // ---------------------------------------------------------------- check 2: other formats refused
-  test('RT-9 the fixed export settings are one constant: comma columns, leading minus, point decimal, no thousands separator', () => {
-    expect(TAXPREP_EXPORT_SETTINGS).toMatchObject({
-      columnSeparator: ',',
-      negativeNumbers: 'leading-minus',
-      decimalSeparator: '.',
-      thousandsSeparator: null,
-    })
-  })
-
-  test.each([
-    ['semicolon', ';'],
-    ['tab', '\t'],
-    ['pipe', '|'],
-  ])('RT-9 a file written with %s column separators is refused', (_label, sep) => {
-    const text = readGolden(CCH_EXAMPLE)
-      .toString('utf8')
-      .split('\n')
-      .map((line, i) => (i === 0 ? line : line.replaceAll(',', sep)))
-      .join('\n')
-    expectRefused(parseTaxprepCsv(Buffer.from(text, 'utf8')), 'separator')
-  })
-
-  test('RT-9 a semicolon file with decimal commas (57565,00) is refused', () => {
-    const text = readGolden(CCH_EXAMPLE)
-      .toString('utf8')
-      .split('\n')
-      .map((line, i) => (i === 0 ? line : line.replaceAll(',', ';').replace(/(\d)\.(\d\d)(?=;|$)/g, '$1,$2')))
-      .join('\n')
-    expect(text).toContain('T4SLIP[1].TOATSC4;57565,00;51200,00')
-    expectRefused(parseTaxprepCsv(Buffer.from(text, 'utf8')), 'separator')
-  })
-
-  test.each([
-    ['a quoted number with a thousands separator', 'T4SLIP[1].TOATSC4,"57,565.00",51200.00', 2],
-    ['a negative in parentheses', 'S100.3700,(20000.00)', 5],
-    ['a trailing minus', 'S100.3700,20000.00-', 5],
-    ['a currency symbol', 'T4SLIP[1].TOATSC4,$57565.00,51200.00', 2],
-    ['a thousands separator in the prior-year field', 'S100.1002,131184.97,"120,000.00"', 4],
-  ])('RT-9 a number written with %s is refused with a plain reason', (_label, row, line) => {
-    expectRefused(parseTaxprepCsv(withLine(CCH_EXAMPLE, line, row)), 'number-format', { line, row })
-  })
-
-  test('RT-9 a row with an unquoted thousands separator (more than three fields) is refused at its line', () => {
-    const result = parseTaxprepCsv(withLine(CCH_EXAMPLE, 4, 'S100.1002,131,184.97,120000.00'))
-    expect(result.ok).toBe(false)
-    if (result.ok) return
-    expect(result.faults.some((f) => f.line === 4 && f.reason.trim().length > 10)).toBe(true)
-  })
-
-  test('RT-9 the writer refuses a value it cannot write under the fixed settings', () => {
-    const header = { taxpayerName: 'Writer Example (Test)', returnId: '0', language: '0' }
-    const comma: TaxprepRow = { id: { form: 'S50', copy: 1, cell: 'NAME' }, thisYear: 'Example, Jane (Test)' }
-    const newline: TaxprepRow = { id: { form: 'S1.ADD', copy: 1, cell: 'DESC' }, thisYear: 'Line one\nLine two' }
-    expect(() => writeTaxprepCsv({ header, rows: [comma] })).toThrow(/separator|comma/i)
-    expect(() => writeTaxprepCsv({ header, rows: [newline] })).toThrow(/line|newline/i)
-  })
-
-  // ---------------------------------------------------------------- check 3: blank is "no import"
-  test('RT-12 a blank value parses as "no import" (null), never as zero, and "0" stays a value', () => {
-    const file = parsedOk(parseTaxprepCsv(readGolden(CCH_EXAMPLE)))
-    const byId = new Map(file.rows.map((r) => [formatCellId(r.id), r]))
-    expect(byId.get('S1.NETINCOME')?.thisYear).toBeNull()
-    expect(byId.get('S125.8000')?.thisYear).toBeNull()
-    expect(byId.get('S125.8000')?.thisYear).not.toBe('0')
-    expect(byId.get('T4SLIP[2].TOATSC4')?.thisYear).toBe('0')
-    expect(byId.get('T4SLIP[2].TOATSC4')?.priorYear).toBeNull()
-  })
-
-  test('RT-12 a blank written back stays blank: a null value writes an empty field, not a zero', () => {
-    const file: TaxprepFile = {
-      header: { taxpayerName: 'Blank Example (Test)', returnId: '0', language: '0' },
-      rows: [
-        { id: { form: 'S1', cell: 'NETINCOME' }, thisYear: null },
-        { id: { form: 'S100', cell: '1002' }, thisYear: '0', priorYear: null },
-      ],
-    }
-    expect(decode(writeTaxprepCsv(file))).toBe('[Blank Example (Test)|0|0]\nS1.NETINCOME,\nS100.1002,0,\n')
-  })
-
-  // ---------------------------------------------------------------- check 4: year start and end ignored
-  test('RT-13 the T2 year-start and year-end identifiers are marked "ignored on import"', () => {
-    expect(T2_YEAR_START_ID).not.toBe(T2_YEAR_END_ID)
-    for (const text of [T2_YEAR_START_ID, T2_YEAR_END_ID]) {
-      const parsed = parseCellId(text)
-      expect(parsed.ok, `${text} follows the identifier grammar`).toBe(true)
-      if (parsed.ok) expect(isIgnoredOnImport(parsed.id)).toBe(true)
-    }
-  })
-
-  test('RT-13 planted fault: an ordinary cell (or another T2 date) is not marked ignored on import', () => {
-    expect(isIgnoredOnImport({ form: 'S100', cell: '1002' })).toBe(false)
-    expect(isIgnoredOnImport({ form: 'T2', cell: 'DATEINC' })).toBe(false)
-    expect(isIgnoredOnImport({ form: 'T4SLIP', copy: 1, cell: 'TOATSC4' })).toBe(false)
-  })
-
-  // ---------------------------------------------------------------- check 5: natural keys
-  test('RT-7 repeating-form rows with distinct natural keys parse, whatever the copy order', () => {
-    const file = parsedOk(parseTaxprepCsv(readGolden(NATURAL_KEYS), { naturalKeys: REGISTRY }))
-    expect(file.rows).toHaveLength(8)
-  })
-
-  test('RT-7 two shareholder copies with the same SIN are refused as duplicates', () => {
-    const row = 'S50[1].SIN,046454294'
-    const result = parseTaxprepCsv(withLine(NATURAL_KEYS, 5, row), { naturalKeys: REGISTRY })
-    expectRefused(result, 'duplicate-key', { line: 5, row })
-    if (!result.ok) expect(result.faults.find((f) => f.code === 'duplicate-key')?.reason).toMatch(/S50/)
-  })
-
-  test('RT-7 two CCA copies with the same class number are refused as duplicates', () => {
-    const row = 'S8[2].CLASS,8'
-    expectRefused(parseTaxprepCsv(withLine(NATURAL_KEYS, 8, row), { naturalKeys: REGISTRY }), 'duplicate-key', {
-      line: 8,
-      row,
-    })
-  })
-
-  // ---------------------------------------------------------------- check 6: property round trip
-  test('RT-3 property: any list of valid rows survives write then parse unchanged (fixed seed)', () => {
-    const segment = fc.stringMatching(/^[A-Z][A-Z0-9]{0,5}$/)
-    const form = fc.array(segment, { minLength: 1, maxLength: 2 }).map((s) => s.join('.'))
-    const cell = fc.stringMatching(/^[A-Z0-9]{1,8}$/).filter((c) => c !== 'SIN')
-    const copy = fc.option(fc.integer({ min: 1, max: 99 }), { nil: undefined })
-    const cellId: fc.Arbitrary<CellId> = fc
-      .record({ form, copy, cell })
-      .map(({ form: f, copy: n, cell: c }) => (n === undefined ? { form: f, cell: c } : { form: f, copy: n, cell: c }))
-    const amount = fc
-      .tuple(fc.boolean(), fc.integer({ min: 0, max: 999_999_999 }), fc.integer({ min: 0, max: 99 }))
-      .map(([neg, whole, cents]) => `${neg && whole + cents > 0 ? '-' : ''}${String(whole)}.${String(cents).padStart(2, '0')}`)
-    const date = fc
-      .integer({ min: Date.UTC(1990, 0, 1), max: Date.UTC(2030, 11, 31) })
-      .map((ms) => new Date(ms).toISOString().slice(0, 10))
-    const text = fc.stringMatching(/^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ ().%&'-]{0,30}[A-Za-z)]$/)
-    const value: fc.Arbitrary<string | null> = fc.oneof(
-      fc.constant(null),
-      fc.constant('0'),
-      amount,
-      date,
-      text,
-      fc.integer({ min: 1, max: 99_999 }).map(String),
+    expect(file.rows).toHaveLength(20)
+    expect(file.rows.every((r) => r.shape === 'standard' && !r.apostrophe)).toBe(true)
+    await expect(JSON.stringify(view(file.rows), null, 2) + '\n').toMatchFileSnapshot(
+      goldenPath('rt-07-imported-default.parsed.json'),
     )
-    const prior = fc.option(value, { nil: undefined })
-    const row: fc.Arbitrary<TaxprepRow> = fc
-      .record({ id: cellId, thisYear: value, priorYear: prior })
-      .map(({ id, thisYear, priorYear }) => (priorYear === undefined ? { id, thisYear } : { id, thisYear, priorYear }))
-    const key = (id: CellId) => `${id.form}${id.copy === undefined ? '' : `[${String(id.copy)}]`}.${id.cell}`
-    const header = fc.record({
-      taxpayerName: fc.stringMatching(/^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9 .&'()-]{0,40}$/),
-      returnId: fc.stringMatching(/^[A-Z0-9-]{1,10}$/),
-      language: fc.constantFrom('0', '1', 'EN', 'FR'),
-    })
-    // fc.record builds null-prototype objects; spread into plain objects so toStrictEqual compares data only.
-    const fileArb: fc.Arbitrary<TaxprepFile> = fc
-      .record({ header, rows: fc.uniqueArray(row, { selector: (r) => key(r.id), maxLength: 30 }) })
-      .map(({ header: h, rows }) => ({ header: { ...h }, rows }))
+    const out = writeOk(file.header, toWriteRows(file.rows, RT07_KINDS), 'export')
+    expect(asText(out)).toBe(asText(bytes))
+  })
 
+  test('RT-3 ARC-14 a made-up file with a GUID, a zero, a clear, a date, Y and N, an accented text (E9), a copy index and a rate parses and is written back byte for byte', async () => {
+    const bytes = golden(MADE_UP)
+    const file = parseOk(bytes)
+    expect(file.header).toEqual(PROBE)
+    const byId = new Map(file.rows.map((r) => [r.id.text, r]))
+    expect(must(byId.get('GFGBA.Ttwgba64'), 'zero row').current).toEqual({ kind: 'value', text: '0' })
+    expect(must(byId.get('GFGBA.Ttwgba72'), 'clear row').current).toEqual({ kind: 'clear' })
+    expect(must(byId.get('IDENT.Ident120'), 'date row').current).toEqual({ kind: 'value', text: '2025-01-01' })
+    expect(must(byId.get('IDENT.Ident180'), 'Y row').current).toEqual({ kind: 'value', text: 'Y' })
+    expect(must(byId.get('IDENT.Ident183'), 'N row').current).toEqual({ kind: 'value', text: 'N' })
+    expect(must(byId.get('IDENT.Ident311'), 'accented row').current).toEqual({
+      kind: 'value',
+      text: 'Café Étienne Ltée (Test)',
+    })
+    const copy = must(byId.get('CCACat.FD08C[2].FED.Ttw08cA1'), 'copy row')
+    expect([copy.id.copyPath, copy.id.copyIndex]).toEqual(['CCACat.FD08C', 2])
+    expect(must(byId.get('CCACat.FD08C[2].FED.Ttw08cA2'), 'rate row').current).toEqual({
+      kind: 'value',
+      text: '0.2000',
+    })
+    await expect(JSON.stringify(view(file.rows), null, 2) + '\n').toMatchFileSnapshot(
+      goldenPath('made-up-return.parsed.json'),
+    )
+    const out = writeOk(file.header, toWriteRows(file.rows, MADE_UP_KINDS), 'export')
+    expect(asText(out)).toBe(asText(bytes))
+  })
+
+  test("RT-3 ARC-14 sample client 01's import.csv (all-zero GUID) parses and is written back byte for byte as an import", () => {
+    const bytes = taxprepBytes(MAPLE)
+    const file = parseOk(bytes)
+    expect(file.header).toEqual({ returnName: 'Maple Ridge Consulting Inc. (Test)', guid: ZERO_GUID })
+    expect(file.rows).toHaveLength(15)
+    const out = writeOk(file.header, toWriteRows(file.rows, {}), 'import')
+    expect(asText(out)).toBe(asText(bytes))
+  })
+
+  test('RT-3 the parser returns any return name and GUID without checking them (identity is T02)', () => {
+    const text = asText(golden(MADE_UP)).replace(
+      'Probe Co. (Test)|0|0|5f0c2e9a-1b7d-4c3e-9a21-0d6e8b4f7a10',
+      'Some Other Co. (Test)|0|0|not-a-guid',
+    )
+    expect(parseOk(fromText(text)).header).toEqual({ returnName: 'Some Other Co. (Test)', guid: 'not-a-guid' })
+  })
+})
+
+// ---------- 2. RT-3: row shapes ----------
+
+describe('F03 check 2: row shapes (RT-3)', () => {
+  test('RT-3 a row with only the current value and a row with two extra trailing columns both parse, with their shape reported', () => {
+    const file = parseOk(golden('row-shapes-in.csv'))
+    expect(file.header).toEqual({ returnName: 'Probe Co. (Test)', guid: ZERO_GUID })
+    expect(file.rows).toHaveLength(2)
+    const a = must(file.rows[0], 'row 1')
+    const b = must(file.rows[1], 'row 2')
+    expect(a.id.text).toBe('GFGBA.Ttwgba64')
+    expect(a).toMatchObject({
+      line: 2,
+      current: { kind: 'value', text: '7693' },
+      last: null,
+      description: null,
+      shape: 'current-only',
+    })
+    expect(b.id.text).toBe('GFGBA.Ttwgba72')
+    expect(b).toMatchObject({
+      line: 3,
+      current: { kind: 'value', text: '975' },
+      last: { kind: 'clear' },
+      description: 'GIFI code 1062 - Trade accounts receivable',
+      shape: 'extra-columns',
+    })
+  })
+
+  test('RT-3 the writer writes both rows back in the four-column shape, description empty unless given (golden)', () => {
+    const file = parseOk(golden('row-shapes-in.csv'))
+    const out = writeOk(file.header, toWriteRows(file.rows, {}), 'import')
+    expect(asText(out)).toBe(asText(golden('row-shapes-out.csv')))
+  })
+})
+
+// ---------- 3. RT-12, RT-8: clear versus zero ----------
+
+describe('F03 check 3: a clear is not zero (RT-12, RT-8)', () => {
+  const file = (current: string) => fromText(`${HEADER_LINE}GFGBA.Ttwgba64,"${current}","",""\r\n`)
+
+  test('RT-12 "" parses as a clear, never as zero', () => {
+    expect(must(parseOk(file('')).rows[0], 'row').current).toEqual({ kind: 'clear' })
+  })
+
+  test('RT-12 " " (one space) parses as a clear, never as zero', () => {
+    expect(must(parseOk(file(' ')).rows[0], 'row').current).toEqual({ kind: 'clear' })
+  })
+
+  test('RT-12 "0" parses as zero, not as a clear', () => {
+    expect(must(parseOk(file('0')).rows[0], 'row').current).toEqual({ kind: 'value', text: '0' })
+  })
+
+  test('RT-8 RT-12 the writer cannot be called with an empty value without the explicit clear flag (type test, enforced by typecheck)', () => {
+    const cell = id('GFGBA.Ttwgba64')
+    const typeOnly = (): unknown[] => {
+      // @ts-expect-error a row with no value is a type error (a blank cannot be written by accident)
+      const noValue: WriteRow = { id: cell }
+      // @ts-expect-error an undefined value is a type error
+      const undefinedValue: WriteRow = { id: cell, current: undefined }
+      // @ts-expect-error a bare empty string is not a writer value
+      const bareEmpty: WriteRow = { id: cell, current: '' }
+      // @ts-expect-error a text value must carry its text
+      const textWithout: WriteRow = { id: cell, current: { kind: 'text' } }
+      // @ts-expect-error an amount value must carry its amount
+      const amountWithout: WriteRow = { id: cell, current: { kind: 'amount' } }
+      return [noValue, undefinedValue, bareEmpty, textWithout, amountWithout]
+    }
+    expect(typeOnly).toBeTypeOf('function')
+    expectTypeOf<{ kind: 'clear' }>().toExtend<WriteValue>()
+    expectTypeOf<WriteRow['current']>().toEqualTypeOf<WriteValue>()
+  })
+
+  test('RT-8 with the explicit clear flag the writer writes ""', () => {
+    const out = writeOk(PROBE, [{ id: id('GFGBA.Ttwgba64'), current: { kind: 'clear' } }], 'import')
+    expect(asText(out)).toBe(`${HEADER_LINE}GFGBA.Ttwgba64,"","",""\r\n`)
+  })
+
+  test.each(['', ' '])(
+    'RT-12 planted fault: the text value %j is refused naming the row (a clear must be explicit)',
+    (text) => {
+      const problems = writeRefused(
+        PROBE,
+        [
+          { id: id('GFGBA.Ttwgba64'), current: { kind: 'amount', amount: 1 } },
+          { id: id('IFirm.ContactPartner'), current: { kind: 'text', text } },
+        ],
+        'import',
+      )
+      expect(problems).toHaveLength(1)
+      expect(problems[0]).toMatchObject({ index: 1, identifier: 'IFirm.ContactPartner' })
+      expect(must(problems[0], 'problem').reason).toMatch(/clear/i)
+    },
+  )
+})
+
+// ---------- 4. RT-9: the fault set ----------
+
+describe('F03 check 4: the fault set, each refused with its own reason (RT-9)', () => {
+  const good = asText(golden(MADE_UP))
+  const GOOD_HEADER = '[Probe Co. (Test)|0|0|5f0c2e9a-1b7d-4c3e-9a21-0d6e8b4f7a10]'
+
+  /** Each member: the one change from the good file, and the fault code (and line) it must be refused with. */
+  const members: readonly { name: string; code: TaxprepFaultCode; line: number | null; make: (t: string) => string }[] =
+    [
+      { name: 'a byte-order mark', code: 'bom', line: null, make: (t) => 'ï»¿' + t },
+      { name: 'LF-only line ends', code: 'line-ends', line: null, make: (t) => t.replace(/\r\n/g, '\n') },
+      { name: 'a missing CRLF on the last line', code: 'line-ends', line: null, make: (t) => t.slice(0, -2) },
+      { name: 'a tab separator', code: 'separator', line: null, make: (t) => t.replace(/,"/g, '\t"') },
+      { name: 'a semicolon separator', code: 'separator', line: null, make: (t) => t.replace(/,"/g, ';"') },
+      { name: 'a space separator', code: 'separator', line: null, make: (t) => t.replace(/,"/g, ' "') },
+      { name: 'an unquoted value', code: 'unquoted', line: 8, make: (t) => t.replace('"1620"', '1620') },
+      { name: 'a (123) negative', code: 'negative-parens', line: 10, make: (t) => t.replace('"-1356"', '"(1356)"') },
+      { name: 'a thousands comma', code: 'thousands', line: 9, make: (t) => t.replace('"48600"', '"48,600"') },
+      { name: 'a thousands space', code: 'thousands', line: 9, make: (t) => t.replace('"48600"', '"48 600"') },
+      { name: 'a decimal comma', code: 'decimal-comma', line: 12, make: (t) => t.replace('"0.2000"', '"0,2000"') },
+      { name: 'scientific notation', code: 'scientific', line: 9, make: (t) => t.replace('"48600"', '"4.86E+04"') },
+      {
+        name: 'a reformatted date',
+        code: 'date-format',
+        line: 2,
+        make: (t) => t.replace('"2025-01-01"', '"01/01/2025"'),
+      },
+      {
+        name: 'UTF-8 byte sequences (C3 A9 for e-acute)',
+        code: 'utf8',
+        line: 3,
+        make: (t) => t.replace(/é/g, 'Ã©').replace(/É/g, 'Ã\u0089'),
+      },
+      {
+        name: 'a header that is not in brackets',
+        code: 'header',
+        line: 1,
+        make: (t) => t.replace(GOOD_HEADER, GOOD_HEADER.slice(1, -1)),
+      },
+    ]
+
+  test('RT-9 the good file the fault set is made from parses (no false alarm)', () => {
+    expect(parseTaxprepCsv(golden(MADE_UP)).ok).toBe(true)
+  })
+
+  for (const m of members) {
+    test(`RT-9 ${m.name} is refused with its own reason`, () => {
+      const bad = m.make(good)
+      expect(bad).not.toBe(good)
+      const r = parseTaxprepCsv(fromText(bad))
+      expect(r.ok).toBe(false)
+      if (r.ok) return
+      const fault = r.faults.find((f) => f.code === m.code)
+      expect(fault, `codes seen: ${r.faults.map((f) => f.code).join(', ')}`).toBeDefined()
+      expect(must(fault, 'fault').reason.trim().length).toBeGreaterThan(10)
+      if (m.line !== null) expect(must(fault, 'fault').line).toBe(m.line)
+    })
+  }
+
+  test('RT-9 every member of the fault set has its own plain reason (no two codes share a reason)', () => {
+    const reasons = new Map<TaxprepFaultCode, string>()
+    for (const m of members) {
+      const r = parseTaxprepCsv(fromText(m.make(good)))
+      if (r.ok) throw new Error(`${m.name} was not refused`)
+      const fault = must(
+        r.faults.find((f) => f.code === m.code),
+        `${m.code} fault`,
+      )
+      reasons.set(m.code, fault.reason)
+    }
+    expect(reasons.size).toBe(11)
+    expect(new Set(reasons.values()).size).toBe(reasons.size)
+  })
+
+  test('RT-9 commas and spaces inside a text value, and an apostrophe in a description, are not faults', () => {
+    const text = `${HEADER_LINE}IDENT.Ident311,"Lakeshore Eats, Inc. (Test)","","Corporation's name, line 1"\r\n`
+    const row = must(parseOk(fromText(text)).rows[0], 'row')
+    expect(row.current).toEqual({ kind: 'value', text: 'Lakeshore Eats, Inc. (Test)' })
+    expect(row.description).toBe("Corporation's name, line 1")
+  })
+
+  test("RT-9 the fixed settings are one constant holding Taxprep's defaults", () => {
+    expect(TAXPREP_SETTINGS).toMatchObject({
+      separator: ',',
+      negatives: '-123',
+      decimal: '.',
+      thousands: 'none',
+      encoding: 'windows-1252',
+      lineEnd: '\r\n',
+      quoteValues: true,
+      byteOrderMark: false,
+    })
+  })
+})
+
+// ---------- 5. RT-9: Windows-1252 on the writer ----------
+
+describe('F03 check 5: the writer encodes Windows-1252 and refuses anything outside it (RT-9)', () => {
+  const textRow = (text: string): WriteRow => ({ id: id('IFirm.ContactPartner'), current: { kind: 'text', text } })
+  const rowBytes = (out: Uint8Array): Buffer => Buffer.from(out).subarray(Buffer.byteLength(HEADER_LINE, 'latin1'))
+
+  test.each(['≥', '😀'])('RT-9 a text value holding %s is refused naming the row and the character', (ch) => {
+    const problems = writeRefused(
+      PROBE,
+      [{ id: id('GFGBA.Ttwgba64'), current: { kind: 'amount', amount: 7694 } }, textRow(`Partner ${ch} (Test)`)],
+      'import',
+    )
+    expect(problems).toHaveLength(1)
+    expect(problems[0]).toMatchObject({ index: 1, identifier: 'IFirm.ContactPartner', character: ch })
+    expect(must(problems[0], 'problem').reason).toContain(ch)
+  })
+
+  test('RT-9 é, è, ç and à are written as the single bytes E9, E8, E7 and E0', () => {
+    const row = rowBytes(writeOk(PROBE, [textRow('éèçà (Test)')], 'import'))
+    expect([...row]).toEqual([...fromText('IFirm.ContactPartner,"éèçà (Test)","",""\r\n')])
+    expect(row.includes(0xc3)).toBe(false)
+  })
+
+  test('RT-9 Windows-1252 characters above Latin-1 (€ and ’) are written as the single bytes 80 and 92 and read back', () => {
+    const out = writeOk(PROBE, [textRow('Caf€’s (Test)')], 'import')
+    const row = rowBytes(out)
+    expect(row.includes(0x80)).toBe(true)
+    expect(row.includes(0x92)).toBe(true)
+    expect(must(parseOk(out).rows[0], 'row').current).toEqual({ kind: 'value', text: 'Caf€’s (Test)' })
+  })
+})
+
+// ---------- 6. RT-25: whole dollars ----------
+
+describe('F03 check 6: amounts are whole dollars (RT-25)', () => {
+  const amountRow = (amount: number): WriteRow => ({ id: id('GFGBA.Ttwgba64'), current: { kind: 'amount', amount } })
+
+  test('RT-25 an amount of 7693.52 is refused naming the row', () => {
+    const problems = writeRefused(PROBE, [amountRow(100), amountRow(7693.52)], 'import')
+    expect(problems).toHaveLength(1)
+    expect(problems[0]).toMatchObject({ index: 1, identifier: 'GFGBA.Ttwgba64' })
+    expect(must(problems[0], 'problem').reason).toMatch(/whole dollars|cents/i)
+  })
+
+  test('RT-25 7694 and -123 are written as "7694" and "-123"', () => {
+    const out = writeOk(
+      PROBE,
+      [amountRow(7694), { id: id('FDONE.Ttwone5'), current: { kind: 'amount', amount: -123 } }],
+      'import',
+    )
+    expect(asText(out)).toBe(`${HEADER_LINE}GFGBA.Ttwgba64,"7694","",""\r\nFDONE.Ttwone5,"-123","",""\r\n`)
+  })
+
+  test('RT-25 property (fixed seed): every whole-dollar amount is written as plain digits with a leading - and reads back equal', () => {
     fc.assert(
-      fc.property(fileArb, (file) => {
-        const bytes = writeTaxprepCsv(file)
-        const parsed = parsedOk(parseTaxprepCsv(bytes))
-        expect(parsed).toStrictEqual(file)
-        expect(Buffer.from(writeTaxprepCsv(parsed)).equals(Buffer.from(bytes))).toBe(true)
+      fc.property(fc.integer({ min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER }), (n) => {
+        const out = writeOk(PROBE, [amountRow(n)], 'import')
+        const row = asText(out).slice(HEADER_LINE.length)
+        expect(row).toBe(`GFGBA.Ttwgba64,"${String(n)}","",""\r\n`)
+        expect(row).toMatch(/^GFGBA\.Ttwgba64,"-?\d+","",""\r\n$/)
+        const back = must(parseOk(out).rows[0], 'row').current
+        expect(back.kind === 'value' ? Number(back.text) : null).toBe(n)
       }),
       { seed: SEED, numRuns: 300 },
     )
   })
 
-  // ---------------------------------------------------------------- check 7: the fault set
-  test('RT-9 fault set: a byte-order mark is refused', () => {
-    const bytes = Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), readGolden(CCH_EXAMPLE)])
-    expectRefused(parseTaxprepCsv(bytes), 'bom')
+  test('RT-25 property (fixed seed): every amount with cents is refused naming the row', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -1_000_000_000, max: 1_000_000_000 }), fc.integer({ min: 1, max: 99 }), (d, c) => {
+        const amount = d + (d < 0 ? -c : c) / 100
+        const problems = writeRefused(PROBE, [amountRow(amount)], 'import')
+        expect(problems[0]).toMatchObject({ index: 0, identifier: 'GFGBA.Ttwgba64' })
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
   })
 
-  test('RT-9 fault set: CRLF line endings are refused', () => {
-    const text = readGolden(CCH_EXAMPLE).toString('utf8').replaceAll('\n', '\r\n')
-    expectRefused(parseTaxprepCsv(Buffer.from(text, 'utf8')), 'crlf')
-  })
-
-  test('RT-9 fault set: Windows-1252 accents (not UTF-8) are refused', () => {
-    const golden = readGolden(CCH_EXAMPLE)
-    const accent = golden.indexOf(Buffer.from('é', 'utf8'))
-    expect(accent, 'the golden header carries an accent').toBeGreaterThan(0)
-    const bytes = Buffer.concat([golden.subarray(0, accent), Buffer.from([0xe9]), golden.subarray(accent + 2)])
-    expectRefused(parseTaxprepCsv(bytes), 'encoding')
-  })
-
-  test('RT-9 fault set: another column separator is refused', () => {
-    expectRefused(parseTaxprepCsv(withLine(CCH_EXAMPLE, 4, 'S100.1002;131184.97;120000.00')), 'separator')
-  })
-
-  test.each([
-    ['1.31185E+05'],
-    ['1.31185e+05'],
-    ['1E+05'],
-  ])('RT-9 fault set: scientific notation %s is refused', (value) => {
-    const row = `S100.1002,${value},120000.00`
-    expectRefused(parseTaxprepCsv(withLine(CCH_EXAMPLE, 4, row)), 'scientific-notation', { line: 4, row })
-  })
-
-  test('RT-9 fault set: a SIN that lost its leading zero is refused', () => {
-    const row = 'S50[1].SIN,46454286'
-    expectRefused(parseTaxprepCsv(withLine(CCH_EXAMPLE, 11, row)), 'leading-zeros-lost', { line: 11, row })
-  })
-
-  test.each([['03/15/2019'], ['15/03/2019'], ['2019/03/15'], ['15-Mar-19'], ['2019-3-15']])(
-    'RT-9 fault set: a reformatted date %s is refused',
-    (value) => {
-      const row = `T2.DATEINC,${value}`
-      expectRefused(parseTaxprepCsv(withLine(CCH_EXAMPLE, 8, row)), 'date-format', { line: 8, row })
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 2])(
+    'RT-25 planted fault: %s is refused as an amount, naming the row',
+    (bad) => {
+      const problems = writeRefused(PROBE, [amountRow(bad)], 'import')
+      expect(problems[0]).toMatchObject({ index: 0, identifier: 'GFGBA.Ttwgba64' })
     },
   )
+})
 
-  test.each([
-    ['a dash (a spreadsheet zero)', 'T4SLIP[2].TOATSC4,-,'],
-    ['spaces only', 'T4SLIP[2].TOATSC4, ,'],
-  ])('RT-9 RT-12 fault set: blank versus "0", %s is refused as neither blank nor zero', (_label, row) => {
-    expectRefused(parseTaxprepCsv(withLine(CCH_EXAMPLE, 3, row)), 'blank-or-zero', { line: 3, row })
-  })
+// ---------- 7. RT-21: identifier grammar ----------
 
-  test('RT-3 a file without the [name|return id|language] header is refused', () => {
-    const text = readGolden(CCH_EXAMPLE).toString('utf8').split('\n').slice(1).join('\n')
-    expectRefused(parseTaxprepCsv(Buffer.from(text, 'utf8')), 'header', { line: 1 })
-  })
+describe('F03 check 7: the identifier grammar (RT-21)', () => {
+  const exportDirs = ['reference/taxprep/2026-10-01-day1/exports', 'reference/taxprep/2026-10-02-day2/exports']
+  const exportIds: string[] = []
+  for (const dir of exportDirs) {
+    for (const name of readdirSync(repoUrl(dir)).filter((n) => n.endsWith('.csv'))) {
+      const lines = readFileSync(repoUrl(`${dir}/${name}`), 'latin1').split(/\r?\n/).slice(1)
+      for (const line of lines) if (line !== '') exportIds.push(must(line.split(',')[0], 'identifier'))
+    }
+  }
 
-  // ---------------------------------------------------------------- check 8: identifier grammar
-  test.each([
-    ['T4SLIP[1].TOATSC4', { form: 'T4SLIP', copy: 1, cell: 'TOATSC4' }],
-    ['T4SLIP[12].TOATSC4', { form: 'T4SLIP', copy: 12, cell: 'TOATSC4' }],
-    ['S100.1002', { form: 'S100', cell: '1002' }],
-    ['S1.ADD[1].DESC', { form: 'S1.ADD', copy: 1, cell: 'DESC' }],
-  ] as const)('RT-3 the identifier %s parses into form, copy and cell, and formats back', (text, id) => {
-    const parsed = parseCellId(text)
-    expect(parsed).toStrictEqual({ ok: true, id })
-    expect(formatCellId(id)).toBe(text)
-  })
-
-  test.each([
-    ['no form', 'TOATSC4'],
-    ['an empty form', '.TOATSC4'],
-    ['no cell', 'T4SLIP[1]'],
-    ['an empty cell', 'T4SLIP[1].'],
-    ['a copy index of 0', 'T4SLIP[0].TOATSC4'],
-    ['a negative copy index', 'T4SLIP[-1].TOATSC4'],
-    ['a copy index that is not a number', 'T4SLIP[a].TOATSC4'],
-    ['a fractional copy index', 'T4SLIP[1.5].TOATSC4'],
-    ['an empty copy index', 'T4SLIP[].TOATSC4'],
-    ['a copy index with a leading zero', 'T4SLIP[01].TOATSC4'],
-    ['a copy index on the cell', 'T4SLIP.TOATSC4[1]'],
-    ['a leading space', ' T4SLIP[1].TOATSC4'],
-    ['a trailing space', 'T4SLIP[1].TOATSC4 '],
-    ['a space before the copy index', 'T4SLIP [1].TOATSC4'],
-    ['a space after the dot', 'T4SLIP[1]. TOATSC4'],
-    ['an empty identifier', ''],
-  ])('RT-3 an identifier with %s is refused with a reason', (_label, text) => {
-    const parsed = parseCellId(text)
-    expect(parsed.ok).toBe(false)
-    if (!parsed.ok) expect(parsed.reason.trim().length).toBeGreaterThan(10)
+  test('RT-21 every identifier in the committed trial exports (days 1 and 2) parses, keeping its text', () => {
+    expect(exportIds.length).toBeGreaterThan(2000)
+    const refused = exportIds.filter((t) => {
+      const r = parseCellId(t)
+      return !r.ok || r.id.text !== t
+    })
+    expect(refused).toEqual([])
   })
 
   test.each([
-    ['no form', 'TOATSC4,57565.00,51200.00'],
-    ['a copy index of 0', 'T4SLIP[0].TOATSC4,57565.00,51200.00'],
-    ['a copy index that is not a number', 'T4SLIP[x].TOATSC4,57565.00,51200.00'],
-    ['stray spaces', 'T4SLIP[1] .TOATSC4,57565.00,51200.00'],
-  ])('RT-3 a file row whose identifier has %s is refused with the row and the reason', (_label, row) => {
-    expectRefused(parseTaxprepCsv(withLine(CCH_EXAMPLE, 2, row)), 'identifier', { line: 2, row })
+    ['IDENT.Ident120', null, null],
+    ['GFBGII[1].GFGIJ.Ttwgij104', 'GFBGII', 1],
+    ['GFGBA.Ttwgba64', null, null],
+    ['FDONE.SLIPA[3].TtwoneA2', 'FDONE.SLIPA', 3],
+    ['CCACat.FD08C[2].FED.Ttw08cA1', 'CCACat.FD08C', 2],
+    ['IFirm.ContactPartner', null, null],
+  ])('RT-21 %s parses with copy path %s and copy index %s', (text, copyPath, copyIndex) => {
+    const r = parseCellId(text)
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect(r.id.text).toBe(text)
+    expect(r.id.copyPath).toBe(copyPath)
+    expect(r.id.copyIndex).toBe(copyIndex)
   })
 
-  // ---------------------------------------------------------------- check 9: the six cell classes
-  test('RT-14 the cell-class type holds exactly the six classes', () => {
-    expect([...CELL_CLASSES].sort()).toStrictEqual(
-      ['calculated', 'dropped', 'orphan', 'overridden', 'rolled-forward', 'traced'].sort(),
+  test.each([
+    ['no dot', 'IDENT'],
+    ['an empty part', 'IDENT..Ident120'],
+    ['a lower-case first character in a part', 'IDENT.ident120'],
+    ['a lower-case first character in the first part', 'iDENT.Ident120'],
+    ['a digit first character in a part', 'IDENT.7Ident'],
+    ['a copy index of 0', 'CCACat.FD08C[0].FED.Ttw08cA1'],
+    ['a non-number copy index', 'CCACat.FD08C[a].FED.Ttw08cA1'],
+    ['a space', 'IDENT.Ident 120'],
+    ['a leading space', ' IDENT.Ident120'],
+    ['nothing', ''],
+  ])('RT-21 an identifier with %s (%j) is refused with a reason', (_what, text) => {
+    const r = parseCellId(text)
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    expect(r.reason.trim().length).toBeGreaterThan(5)
+  })
+
+  test('RT-21 a file row with a bad identifier is refused naming the row and the reason', () => {
+    const text = asText(golden(MADE_UP)).replace('CCACat.FD08C[2].FED.Ttw08cA1', 'CCACat.FD08C[0].FED.Ttw08cA1')
+    const r = parseTaxprepCsv(fromText(text))
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    const fault = must(
+      r.faults.find((f) => f.code === 'identifier'),
+      'identifier fault',
     )
-    expectTypeOf<CellClass>().toEqualTypeOf<
-      'traced' | 'overridden' | 'dropped' | 'rolled-forward' | 'orphan' | 'calculated'
-    >()
-    for (const c of CELL_CLASSES) expect(isCellClass(c)).toBe(true)
+    expect(fault.line).toBe(11)
+    expect(fault.reason).toContain('CCACat.FD08C[0].FED.Ttw08cA1')
   })
 
-  test.each([['imported'], ['Traced'], ['rolled forward'], ['rolled_forward'], [''], ['unknown']])(
-    'RT-14 a value outside the six classes (%s) is refused',
+  test('RT-21 withCopyIndex replaces the copy index and keeps the rest', () => {
+    const moved = withCopyIndex(id('CCACat.FD08C[2].FED.Ttw08cA1'), 1)
+    expect(moved.text).toBe('CCACat.FD08C[1].FED.Ttw08cA1')
+    expect([moved.copyPath, moved.copyIndex]).toEqual(['CCACat.FD08C', 1])
+    expect(withCopyIndex(id('FDONE.SLIPA[3].TtwoneA2'), 12).text).toBe('FDONE.SLIPA[12].TtwoneA2')
+  })
+
+  test('RT-21 planted fault: withCopyIndex refuses 0, a fraction, and an identifier with no copy index', () => {
+    expect(() => withCopyIndex(id('CCACat.FD08C[2].FED.Ttw08cA1'), 0)).toThrow()
+    expect(() => withCopyIndex(id('CCACat.FD08C[2].FED.Ttw08cA1'), 1.5)).toThrow()
+    expect(() => withCopyIndex(id('IDENT.Ident120'), 1)).toThrow()
+  })
+
+  test('RT-21 a plain string is not a CellId (type test, enforced by typecheck)', () => {
+    const typeOnly = (): unknown => {
+      // @ts-expect-error a CellId comes only from parseCellId
+      const row: WriteRow = { id: 'GFGBA.Ttwgba64', current: { kind: 'amount', amount: 1 } }
+      return row
+    }
+    expect(typeOnly).toBeTypeOf('function')
+  })
+
+  test('RT-21 property (fixed seed): identifiers built from the grammar parse back to the same text', () => {
+    fc.assert(
+      fc.property(identifierArb, (text) => {
+        const r = parseCellId(text)
+        expect(r.ok).toBe(true)
+        if (r.ok) expect(r.id.text).toBe(text)
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+})
+
+// ---------- 8. RT-7: natural keys ----------
+
+describe('F03 check 8: copies are found by natural key (RT-7)', () => {
+  const exportRows = (rows: readonly (readonly [string, string])[]): ParsedRow[] => {
+    const body = rows.map(([i, v]) => `${i},"${v}","",""\r\n`).join('')
+    return parseOk(fromText(HEADER_LINE + body)).rows
+  }
+
+  test('RT-7 the registry keys CCACat.FD08C by FED.Ttw08cA1 (the CCA class)', () => {
+    const registry: NaturalKeyRegistry = NATURAL_KEYS
+    expect(registry['CCACat.FD08C']).toBe('FED.Ttw08cA1')
+  })
+
+  test('RT-7 after a delete renumbered class 8 from copy 2 to copy 1, the helper maps class 8 to copy 1', () => {
+    const rows = exportRows([
+      ['CCACat.FD08C[1].FED.Ttw08cA1', '8'],
+      ['CCACat.FD08C[1].FED.Ttw08cA2', '0.2000'],
+      ['CCACat.FD08C[1].FED.Ttw08cA5', '5000'],
+      ['CCACat.FED.Ttw08c3', '1000'],
+    ])
+    const r = copiesByNaturalKey(rows, 'CCACat.FD08C')
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect([...r.copies]).toEqual([['8', 1]])
+  })
+
+  test('RT-7 classes 1 and 8 at copies 1 and 2 map to their own copies', () => {
+    const rows = exportRows([
+      ['CCACat.FD08C[1].FED.Ttw08cA1', '1'],
+      ['CCACat.FD08C[2].FED.Ttw08cA1', '8'],
+      ['CCACat.FD08C[2].FED.Ttw08cA2', '0.2000'],
+    ])
+    const r = copiesByNaturalKey(rows, 'CCACat.FD08C', NATURAL_KEYS)
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect(r.copies.get('1')).toBe(1)
+    expect(r.copies.get('8')).toBe(2)
+    expect(r.copies.size).toBe(2)
+  })
+
+  test('RT-7 planted fault: two copies holding the same class are refused as duplicates, naming the key', () => {
+    const rows = exportRows([
+      ['CCACat.FD08C[1].FED.Ttw08cA1', '8'],
+      ['CCACat.FD08C[2].FED.Ttw08cA1', '8'],
+    ])
+    const r = copiesByNaturalKey(rows, 'CCACat.FD08C')
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    expect(r.reason).toMatch(/duplicate/i)
+    expect(r.reason).toContain('8')
+  })
+
+  test('RT-7 planted fault: a copy path with no natural-key cell in the registry is refused', () => {
+    const rows = exportRows([['FDONE.SLIPA[1].TtwoneA2', '100']])
+    const r = copiesByNaturalKey(rows, 'FDONE.SLIPA', {})
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    expect(r.reason).toContain('FDONE.SLIPA')
+  })
+})
+
+// ---------- 9. RT-13: ignored on import ----------
+
+describe('F03 check 9: cells Taxprep ignores on import (RT-13)', () => {
+  test('RT-13 the ignored-on-import list is one constant: year start and end and the contact-synchronised cells, each with its finding', () => {
+    expect(IGNORED_ON_IMPORT.map((e) => e.identifier).sort()).toEqual([...IGNORED].sort())
+    for (const e of IGNORED_ON_IMPORT) expect(e.finding.trim().length).toBeGreaterThan(10)
+  })
+
+  const valueFor = (ignored: string): WriteValue => {
+    if (ignored === 'IDENT.Ident120' || ignored === 'IDENT.Ident121') return { kind: 'date', date: '2025-12-31' }
+    if (ignored === 'IDENT.Ident492') return { kind: 'yesNo', yes: false }
+    return { kind: 'text', text: 'Probe Co. (Test)' }
+  }
+
+  test.each(IGNORED)('RT-13 the import writer refuses a row for %s, naming it', (ignored) => {
+    const problems = writeRefused(
+      PROBE,
+      [
+        { id: id('GFGBA.Ttwgba64'), current: { kind: 'amount', amount: 1 } },
+        { id: id(ignored), current: valueFor(ignored) },
+      ],
+      'import',
+    )
+    expect(problems).toHaveLength(1)
+    expect(problems[0]).toMatchObject({ index: 1, identifier: ignored })
+    expect(must(problems[0], 'problem').reason).toContain(ignored)
+  })
+
+  test('RT-13 the import writer refuses a clear for an ignored cell too', () => {
+    const problems = writeRefused(PROBE, [{ id: id('IDENT.Ident311'), current: { kind: 'clear' } }], 'import')
+    expect(problems[0]).toMatchObject({ index: 0, identifier: 'IDENT.Ident311' })
+  })
+
+  test('RT-13 the export writer (the shape Taxprep exports, for the simulator) writes those cells', () => {
+    const out = writeOk(PROBE, [{ id: id('IDENT.Ident121'), current: { kind: 'date', date: '2025-12-31' } }], 'export')
+    expect(asText(out)).toBe(`${HEADER_LINE}IDENT.Ident121,"2025-12-31","",""\r\n`)
+  })
+})
+
+// ---------- 10. RT-3 property: write then parse ----------
+
+describe('F03 check 10: write then parse (RT-3 property)', () => {
+  test('RT-3 property (fixed seed): any list of valid rows survives write then parse unchanged', () => {
+    fc.assert(
+      fc.property(rowsArb, (rows) => {
+        const out = writeOk(
+          PROBE,
+          rows.map(([t, e]) => ({ id: id(t), current: e.value })),
+          'import',
+        )
+        const back = parseOk(out)
+        expect(back.header).toEqual(PROBE)
+        expect(back.rows.map((r) => [r.id.text, r.current])).toEqual(
+          rows.map(([t, e]) => [t, e.text === null ? { kind: 'clear' } : { kind: 'value', text: e.text }]),
+        )
+        expect(back.rows.every((r) => r.shape === 'standard' && !r.apostrophe)).toBe(true)
+      }),
+      { seed: SEED, numRuns: 200 },
+    )
+  })
+
+  test('RT-3 planted fault: a date that is not YYYY-MM-DD is refused by the writer, naming the row', () => {
+    for (const date of ['31/12/2025', '2025-02-30', '2025-1-5']) {
+      const problems = writeRefused(PROBE, [{ id: id('IDENT.Ident121'), current: { kind: 'date', date } }], 'export')
+      expect(problems[0]).toMatchObject({ index: 0, identifier: 'IDENT.Ident121' })
+    }
+  })
+
+  test('RT-3 yes and no are written as Y and N, and a rate with 4 decimals', () => {
+    const out = writeOk(
+      PROBE,
+      [
+        { id: id('IDENT.Ident180'), current: { kind: 'yesNo', yes: true } },
+        { id: id('IDENT.Ident183'), current: { kind: 'yesNo', yes: false } },
+        { id: id('CCACat.FD08C[1].FED.Ttw08cA2'), current: { kind: 'rate', rate: 0.2 } },
+      ],
+      'import',
+    )
+    expect(asText(out)).toBe(
+      `${HEADER_LINE}IDENT.Ident180,"Y","",""\r\nIDENT.Ident183,"N","",""\r\nCCACat.FD08C[1].FED.Ttw08cA2,"0.2000","",""\r\n`,
+    )
+  })
+})
+
+// ---------- 11. RT-14: cell classes ----------
+
+describe('F03 check 11: the six cell classes (RT-14)', () => {
+  const SIX = ['traced', 'overridden', 'dropped', 'rolled-forward', 'orphan', 'calculated'] as const
+
+  test('RT-14 the cell-class type holds exactly the six classes', () => {
+    expect([...CELL_CLASSES].sort()).toEqual([...SIX].sort())
+    expectTypeOf<CellClass>().toEqualTypeOf<(typeof SIX)[number]>()
+    for (const c of SIX) expect(isCellClass(c)).toBe(true)
+  })
+
+  test.each(['imported', 'Traced', 'rolled forward', 'rolledForward', '', 'calculated ', null, 3])(
+    'RT-14 planted fault: %j is refused as a cell class',
     (value) => {
       expect(isCellClass(value)).toBe(false)
     },
   )
+})
+
+// ---------- 12. RT-3, RT-9: the export apostrophe ----------
+
+describe('F03 check 12: a negative exported with a leading apostrophe (RT-3, RT-9; trial day 3)', () => {
+  test('RT-3 RT-9 FDONE.Ttwone66,"\'-1356" parses as the amount -1356 with the row marked apostrophe', () => {
+    const row = must(parseOk(golden('apostrophe-in.csv')).rows[0], 'row')
+    expect(row.id.text).toBe('FDONE.Ttwone66')
+    expect(row.current).toEqual({ kind: 'value', text: '-1356' })
+    expect(row.apostrophe).toBe(true)
+  })
+
+  test('RT-3 RT-9 written back it is "-1356" with no apostrophe (golden)', () => {
+    const file = parseOk(golden('apostrophe-in.csv'))
+    const out = writeOk(file.header, toWriteRows(file.rows, {}), 'export')
+    expect(asText(out)).toBe(asText(golden('apostrophe-out.csv')))
+  })
+
+  test('RT-9 a negative without the apostrophe is not marked', () => {
+    expect(must(parseOk(golden('apostrophe-out.csv')).rows[0], 'row').apostrophe).toBe(false)
+  })
+
+  test.each(["'1356", "''-1356", "-'1356", "'0"])('RT-9 planted fault: %s is refused naming the row', (value) => {
+    const r = parseTaxprepCsv(
+      fromText(`${HEADER_LINE}GFGBA.Ttwgba64,"7693","",""\r\nFDONE.Ttwone66,"${value}","",""\r\n`),
+    )
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    const fault = must(
+      r.faults.find((f) => f.code === 'apostrophe'),
+      'apostrophe fault',
+    )
+    expect(fault.line).toBe(3)
+  })
+
+  test('RT-9 planted fault: a text value starting with an apostrophe is refused by the writer, naming the row', () => {
+    const problems = writeRefused(
+      PROBE,
+      [{ id: id('IFirm.ContactPartner'), current: { kind: 'text', text: "'-1356" } }],
+      'import',
+    )
+    expect(problems[0]).toMatchObject({ index: 0, identifier: 'IFirm.ContactPartner' })
+  })
+
+  test('RT-9 property (fixed seed): no input to the writer produces an apostrophe-marked value, import or export', () => {
+    fc.assert(
+      fc.property(rowsArb, fc.constantFrom('import' as const, 'export' as const), (rows, purpose) => {
+        const out = writeOk(
+          PROBE,
+          rows.map(([t, e]) => ({ id: id(t), current: e.value })),
+          purpose,
+        )
+        expect(asText(out)).not.toMatch(/,"'/)
+        expect(parseOk(out).rows.some((r) => r.apostrophe)).toBe(false)
+      }),
+      { seed: SEED, numRuns: 200 },
+    )
+  })
 })
