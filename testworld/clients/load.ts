@@ -1,6 +1,6 @@
 // @mutate
 // Loads one sample client from reference/sample-clients/ in place (never copied or rewritten) into the model (ARC-8).
-import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs'
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
@@ -8,7 +8,7 @@ import { decimalToCents } from '../../src/core/money'
 import { faults, type FaultEntry } from '../model/faults'
 import { guardIssues, type GuardFile } from '../model/guard'
 import { modelIssues } from '../model/checks'
-import { CLIENT_ID, ClientSchema, TestWorldLoadError, type Client, type ClientId, type LoadIssue } from '../model/schema'
+import { ACCOUNT_ROLES, CLIENT_ID, ClientSchema, TestWorldLoadError, calendarDate, type Client, type ClientId, type LoadIssue } from '../model/schema'
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 export const SAMPLE_ROOT = join(REPO_ROOT, 'reference', 'sample-clients')
@@ -26,11 +26,11 @@ const tb = z.object({ rows: z.array(line) })
 
 const RawKey = z.object({
   name: z.string(),
-  fiscalYear: z.object({ start: z.string(), end: z.string() }),
+  fiscalYear: z.object({ start: calendarDate, end: calendarDate }),
   accounts: z.array(
     z.object({
       key: z.string(),
-      role: z.string(),
+      role: z.enum(ACCOUNT_ROLES),
       currency: z.string(),
       file: z.string(),
       qboFile: z.string(),
@@ -43,7 +43,7 @@ const RawKey = z.object({
     z.object({
       id: z.string(),
       acct: z.string(),
-      date: z.string(),
+      date: calendarDate,
       amount: dollars,
       account: z.string(),
       accountNo: z.string().nullish(),
@@ -57,7 +57,7 @@ const RawKey = z.object({
   adjustingEntries: z.array(
     z.object({
       id: z.string(),
-      date: z.string(),
+      date: calendarDate,
       reason: z.string(),
       lines: z.array(line),
       source: z.object({ transactions: z.array(z.string()), onboarding: z.array(z.string()) }),
@@ -133,7 +133,10 @@ function readJson(path: string, moneyIssue?: (record: string, reason: string) =>
   return JSON.parse(readFileSync(path, 'utf8'), reviver as Parameters<typeof JSON.parse>[1]) as unknown
 }
 
-/** Reads one JSON file of the client folder; a file that is not there is a 'file' issue and undefined, never a raw ENOENT. */
+/**
+ * Reads one JSON file of the client folder. A file that is missing, is not a regular file (a directory) or is not valid
+ * JSON is a 'file' issue and undefined, never a raw ENOENT, EISDIR or SyntaxError.
+ */
 function readClientJson(
   folder: string,
   name: string,
@@ -145,7 +148,17 @@ function readClientJson(
     fileIssue(name, 'the file is not in the client folder')
     return undefined
   }
-  return readJson(path, moneyIssue)
+  if (!statSync(path).isFile()) {
+    fileIssue(name, 'it is not a regular file')
+    return undefined
+  }
+  try {
+    return readJson(path, moneyIssue)
+  } catch (e) {
+    if (!(e instanceof SyntaxError)) throw e
+    fileIssue(name, `it is not valid JSON: ${e.message}`)
+    return undefined
+  }
 }
 
 /** Data rows of an account CSV: every non-blank line after the header. */
@@ -172,9 +185,9 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
     issues.push({ client: id, check: 'file', record, reason })
   }
   // clientFolders only lists a folder that has its answer-key.json; the onboarding file may be missing.
-  const keyJson = readJson(join(folder, 'answer-key.json'), moneyIssue)
+  const keyJson = readClientJson(folder, 'answer-key.json', moneyIssue, fileIssue)
   const onbJson = readClientJson(folder, 'onboarding.json', moneyIssue, fileIssue)
-  if (onbJson === undefined) throw new TestWorldLoadError(id, issues)
+  if (keyJson === undefined || onbJson === undefined) throw new TestWorldLoadError(id, issues)
   const keyResult = RawKey.safeParse(keyJson)
   const onbResult = RawOnboarding.safeParse(onbJson)
   if (!keyResult.success) for (const i of keyResult.error.issues) schemaIssue(`answer-key.json ${i.path.join('.')}`, i.message)
@@ -213,30 +226,34 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   }))
 
   const home = realpathSync(folder)
-  /** Rows of an account file, or 0 and a 'file' issue when it leaves the client folder or is not there. */
-  const accountFile = (account: string, field: string, name: string): number => {
-    const path = resolve(folder, name)
-    const out = relative(folder, path)
-    if (isAbsolute(name) || out === '..' || out.startsWith(`..${sep}`)) {
-      fileIssue(`${account} ${field}`, `${name} is outside the client folder`)
+  /** Rows of an account file, or 0 and a 'file' issue when it is not `<dir>/<name>.csv`, is not a regular file in the client folder, or is not there. */
+  const accountFile = (account: string, field: string, name: string, dir: string): number => {
+    const record = `${account} ${field}`
+    if (!name.startsWith(`${dir}/`) || !name.endsWith('.csv') || name.length <= dir.length + 5 || name.indexOf('/', dir.length + 1) >= 0) {
+      fileIssue(record, `${name} is not a ${dir}/<name>.csv file of the client folder`)
       return 0
     }
+    const path = resolve(folder, name)
     if (!existsSync(path)) {
-      fileIssue(`${account} ${field}`, `${name} is not in the client folder`)
+      fileIssue(record, `${name} is not in the client folder`)
       return 0
     }
     const real = relative(home, realpathSync(path))
     if (real === '..' || real.startsWith(`..${sep}`)) {
-      fileIssue(`${account} ${field}`, `${name} leads out of the client folder`)
+      fileIssue(record, `${name} leads out of the client folder`)
+      return 0
+    }
+    if (!statSync(path).isFile()) {
+      fileIssue(record, `${name} is not a regular file`)
       return 0
     }
     return csvRows(path)
   }
 
   const accounts = key.accounts.map((a) => {
-    const months = (key.statementBalances[a.key] ?? []).map((m) => {
+    const months = (Object.hasOwn(key.statementBalances, a.key) ? (key.statementBalances[a.key] ?? []) : []).map((m) => {
       const activityCents = transactions
-        .filter((t) => t.accountKey === a.key && t.date.startsWith(m.month) && !t.missingFromExport)
+        .filter((t) => t.accountKey === a.key && t.date.slice(0, 7) === m.month && !t.missingFromExport)
         .reduce((s, t) => s + t.amountCents, 0)
       const net = a.role === 'card' || a.role === 'pcard' ? m.opening - activityCents : m.opening + activityCents
       return { month: m.month, openingCents: m.opening, closingCents: m.closing, activityCents, rolls: net === m.closing }
@@ -248,8 +265,8 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
       glAccount: a.glAccount,
       openingCents: a.openingBalance,
       closingCents: a.closingBalance,
-      exportRows: accountFile(a.key, 'file', a.file),
-      qboRows: accountFile(a.key, 'qboFile', a.qboFile),
+      exportRows: accountFile(a.key, 'file', a.file, 'accounts'),
+      qboRows: accountFile(a.key, 'qboFile', a.qboFile, 'qbo'),
       months,
     }
   })
@@ -261,12 +278,20 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   const txIds = new Set(key.transactions.map((t) => t.id))
   const onbAnswers = (onbJson as { answers?: unknown }).answers
   const onbKeys = onbJson as Record<string, unknown>
+  /** The `{account, name}` items of an onboarding key, for a "(NNNN Name)" qualifier to name one of them. */
+  const recordsOf = (base: string): { account: string; name: string }[] => {
+    const holder = onbKeys[base]
+    const list = holder !== null && typeof holder === 'object' ? (holder as { accounts?: unknown }).accounts : undefined
+    return Array.isArray(list) ? list.map((x) => ({ account: String((x as { account?: unknown }).account), name: String((x as { name?: unknown }).name) })) : []
+  }
   const resolves = (source: string): boolean => {
-    const base = source.replace(/\s*\([^)]*\)\s*$/, '')
-    return (
-      Object.hasOwn(onbKeys, base) ||
-      (Array.isArray(onbAnswers) && onbAnswers.some((x) => (x as { question_asked?: unknown }).question_asked === source))
-    )
+    if (Array.isArray(onbAnswers) && onbAnswers.some((x) => (x as { question_asked?: unknown }).question_asked === source)) return true
+    const q = /^(.*?)\s*\(([^)]*)\)\s*$/.exec(source)
+    if (q === null) return Object.hasOwn(onbKeys, source)
+    // A "(...)" qualifier must name a record of that key: "(1200 Prepaid expenses)" is the account 1200 called "Prepaid expenses".
+    const base = q[1] ?? ''
+    const named = /^(\d+) (.+)$/.exec(q[2] ?? '')
+    return Object.hasOwn(onbKeys, base) && named !== null && recordsOf(base).some((r) => r.account === named[1] && r.name === named[2])
   }
   for (const j of key.adjustingEntries) {
     for (const s of j.source.transactions) {
