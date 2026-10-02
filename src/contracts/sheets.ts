@@ -5,6 +5,8 @@ import { z } from 'zod'
 import { normaliseAmount } from './amount-grammar'
 
 const fingerprint = z.string().regex(/^[0-9a-f]{64}$/)
+/** Non-blank without rewriting: a name is kept exactly as stored ("TB " is not "TB"), so no trim transform. */
+const nonBlank = z.string().refine((s) => s.trim().length > 0, { message: 'must not be blank' })
 const columnLetters = z.string().regex(/^[A-Z]{1,3}$/)
 
 export const CellSchema = z.strictObject({
@@ -13,26 +15,31 @@ export const CellSchema = z.strictObject({
   column: z.strictObject({ letter: columnLetters, number: z.number().int().min(1) }),
   /** Exactly as stored; ISO for a date; the cached value for a formula. */
   text: z.string(),
-  type: z.enum(['text', 'number', 'date', 'boolean', 'formula', 'empty']),
+  type: z.enum(['text', 'number', 'date', 'boolean', 'formula', 'error', 'empty']),
   /** The formula without its "=", on formula cells only. */
   formula: z.string().optional(),
+  /** On formula cells only: the type and text of the value the file cached (`none` when it stored no value). Never recalculated. */
+  cached: z.strictObject({ type: z.enum(['number', 'text', 'boolean', 'date', 'error', 'none']), text: z.string() }).optional(),
   hiddenRow: z.boolean(),
   hiddenColumn: z.boolean(),
   /** The merged range this cell belongs to, for example "A1:C1". */
   merged: z.string().nullable(),
-})
+}).refine((cell) => (cell.type === 'formula') === (cell.cached !== undefined), { message: 'a formula cell carries its cached value, any other cell does not' })
 export type Cell = z.infer<typeof CellSchema>
 
 export const SheetSchema = z.strictObject({
-  name: z.string().trim().min(1),
+  name: nonBlank,
   hidden: z.boolean(),
+  /** 1-based, sorted; rows and columns with no cells are listed too. */
+  hiddenRows: z.array(z.number().int().min(1)),
+  hiddenColumns: z.array(z.number().int().min(1)),
   cells: z.array(CellSchema),
 })
 
 /** ARC-10: the engine name and version are on every result and never blank. */
 export const SheetEngineSchema = z.strictObject({
-  name: z.string().trim().min(1),
-  version: z.string().trim().min(1),
+  name: nonBlank,
+  version: nonBlank,
 })
 
 export const SheetResultSchema = z.strictObject({
@@ -51,7 +58,7 @@ export type SheetResult = z.infer<typeof SheetResultSchema>
 /** EV-5: file fingerprint, sheet, row and column. A CSV's sheet is the fixed name "csv". */
 export const CellPointerSchema = z.strictObject({
   fileFingerprint: fingerprint,
-  sheet: z.string().trim().min(1),
+  sheet: nonBlank,
   row: z.number().int().min(1),
   column: columnLetters,
 })
@@ -59,7 +66,7 @@ export type CellPointer = z.infer<typeof CellPointerSchema>
 
 export type CellMatch =
   | { ok: true }
-  | { ok: false; reason: 'no such cell' | 'empty cell' | 'value differs' | 'formula cell: cached value differs' }
+  | { ok: false; reason: 'no such cell' | 'empty cell' | 'value differs' | 'formula cell: no cached value' | 'formula cell: cached value differs' }
 
 /** Column number to letters: 1 is A, 26 is Z, 27 is AA. */
 export function columnLetter(number: number): string {
@@ -92,6 +99,7 @@ export function cellValueMatches(result: SheetResult, pointer: CellPointer, valu
   const cell = sheet?.cells.find((c) => c.row === pointer.row && c.column.letter === pointer.column)
   if (!cell) return { ok: false, reason: 'no such cell' }
   if (cell.type === 'empty') return { ok: false, reason: 'empty cell' }
+  if (cell.cached?.type === 'none') return { ok: false, reason: 'formula cell: no cached value' }
   if (sameValue(cell.text, value)) return { ok: true }
   return { ok: false, reason: cell.type === 'formula' ? 'formula cell: cached value differs' : 'value differs' }
 }
