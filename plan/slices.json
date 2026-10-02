@@ -3149,7 +3149,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "G01",
@@ -3171,10 +3171,11 @@
       "family": "question",
       "params": {
         "topic": "assets-cca"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "G01",
@@ -3196,10 +3197,11 @@
       "family": "question",
       "params": {
         "topic": "shareholders-dividends"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "G01",
@@ -3221,10 +3223,11 @@
       "family": "question",
       "params": {
         "topic": "payroll-bonuses"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "G01",
@@ -3246,10 +3249,11 @@
       "family": "question",
       "params": {
         "topic": "shareholder-loans"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "G01",
@@ -3271,10 +3275,11 @@
       "family": "question",
       "params": {
         "topic": "vehicle-home-office"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "G01",
@@ -3296,7 +3301,8 @@
       "family": "question",
       "params": {
         "topic": "cra-hst-instalments"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
       "status": "carded",
