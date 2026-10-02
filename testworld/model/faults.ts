@@ -1,0 +1,145 @@
+// @mutate
+// The fault catalogue: what each sample client plants and the exact flag or exception it must raise (ARC-8).
+// Hand-written, never built from the clients' own files, so checking the clients against it is not circular (A353).
+// W01 to W13 add theirs in testworld/kinds/<kind>/faults.ts and register them here.
+import type { ClientId } from './schema'
+import type { KindId } from './kinds'
+
+export type FaultEntry = {
+  id: string
+  client?: ClientId
+  kind?: KindId
+  flagId?: string
+  planted: string
+  expected: string
+  clause?: string
+  /** A roll waiver: the one account and month (YYYY-MM) of this client that is allowed not to roll. */
+  roll?: { account: string; month: string }
+}
+
+const CATALOGUE: readonly FaultEntry[] = [
+  { id: '01-F01', client: 'C01', flagId: '01-F01', planted: 'personal services business signs', expected: 'flag 01-F01 (personal services business signs), must fire: flag for a person; do not decide alone' },
+  { id: '01-F02', client: 'C01', flagId: '01-F02', planted: 'shareholder loan unpaid at year end, repayment deadline 31 Dec 2026', expected: 'flag 01-F02 (shareholder loan unpaid at year end, repayment deadline 31 Dec 2026), must fire: flag for a person; do not decide alone' },
+  { id: '01-F03', client: 'C01', flagId: '01-F03', planted: 'repay then reborrow: series of loans and repayments', expected: 'flag 01-F03 (repay then reborrow: series of loans and repayments), must fire: flag for a person; do not decide alone' },
+  { id: '01-F04', client: 'C01', flagId: '01-F04', planted: 'no interest charged on shareholder loan', expected: 'flag 01-F04 (no interest charged on shareholder loan), must fire: flag for a person; do not decide alone' },
+  { id: '01-F05', client: 'C01', flagId: '01-F05', planted: 'business items on the owner personal card', expected: 'flag 01-F05 (business items on the owner personal card), must fire: flag for a person; do not decide alone' },
+  { id: '01-F06', client: 'C01', flagId: '01-F06', planted: 'meals: 50% limit on the deduction and on the HST claim', expected: 'flag 01-F06 (meals: 50% limit on the deduction and on the HST claim), must fire: flag for a person; do not decide alone' },
+  { id: '01-F07', client: 'C01', flagId: '01-F07', planted: 'home office: rent paid personally, needs a person\'s decision', expected: 'flag 01-F07 (home office: rent paid personally, needs a person\'s decision), must fire: flag for a person; do not decide alone' },
+  { id: '01-F08', client: 'C01', flagId: '01-F08', planted: 'dividend needs a resolution and a T5', expected: 'flag 01-F08 (dividend needs a resolution and a T5), must fire: flag for a person; do not decide alone' },
+  { id: '01-F09', client: 'C01', flagId: '01-F09', planted: 'HST payable at year end (Q4 paid 30 Jan 2026)', expected: 'flag 01-F09 (HST payable at year end (Q4 paid 30 Jan 2026)), must fire: flag for a person; do not decide alone' },
+  { id: '02-F01', client: 'C02', flagId: '02-F01', planted: 'financed tractor: class 16 addition with interest and principal', expected: 'flag 02-F01 (financed tractor: class 16 addition with interest and principal), must fire: flag for a person; do not decide alone' },
+  { id: '02-F02', client: 'C02', flagId: '02-F02', planted: 'personal costs on the business card: groceries and a family flight', expected: 'flag 02-F02 (personal costs on the business card: groceries and a family flight), must fire: flag for a person; do not decide alone' },
+  { id: '02-F03', client: 'C02', flagId: '02-F03', planted: 'CRA instalments do not agree: bank shows four, CRA credits three', expected: 'flag 02-F03 (CRA instalments do not agree: bank shows four, CRA credits three), must fire: flag for a person; do not decide alone' },
+  { id: '02-F04', client: 'C02', flagId: '02-F04', planted: 'non-deductible penalty on a late HST return', expected: 'flag 02-F04 (non-deductible penalty on a late HST return), must fire: flag for a person; do not decide alone' },
+  { id: '02-F05', client: 'C02', flagId: '02-F05', planted: 'one customer only: worker status and personal services business signs', expected: 'flag 02-F05 (one customer only: worker status and personal services business signs), must fire: flag for a person; do not decide alone' },
+  { id: '02-F06', client: 'C02', flagId: '02-F06', planted: 'non-calendar fiscal year end (31 Mar 2026)', expected: 'flag 02-F06 (non-calendar fiscal year end (31 Mar 2026)), info: flag for a person; do not decide alone' },
+  { id: '02-F07', client: 'C02', flagId: '02-F07', planted: 'HST payable at year end: March 2026 return (monthly filer)', expected: 'flag 02-F07 (HST payable at year end: March 2026 return (monthly filer)), must fire: flag for a person; do not decide alone' },
+  { id: '03-F01', client: 'C03', flagId: '03-F01', planted: 'bonus paid after day 179', expected: 'flag 03-F01 (bonus paid after day 179), must fire: flag for a person; do not decide alone' },
+  { id: '03-F02', client: 'C03', flagId: '03-F02', planted: 'customer deposit for a job after year end is not revenue', expected: 'flag 03-F02 (customer deposit for a job after year end is not revenue), must fire: flag for a person; do not decide alone' },
+  { id: '03-F03', client: 'C03', flagId: '03-F03', planted: 'payroll against T4 summaries across two calendar years', expected: 'flag 03-F03 (payroll against T4 summaries across two calendar years), must fire: flag for a person; do not decide alone' },
+  { id: '03-F04', client: 'C03', flagId: '03-F04', planted: 'CCA additions in classes 10 and 8', expected: 'flag 03-F04 (CCA additions in classes 10 and 8), must fire: flag for a person; do not decide alone' },
+  { id: '03-F05', client: 'C03', flagId: '03-F05', planted: 'subcontractor payments: slip and status checks', expected: 'flag 03-F05 (subcontractor payments: slip and status checks), info: flag for a person; do not decide alone' },
+  { id: '03-F06', client: 'C03', flagId: '03-F06', planted: 'WSIB premiums paid quarterly, unpaid quarter not accrued', expected: 'flag 03-F06 (WSIB premiums paid quarterly, unpaid quarter not accrued), info: flag for a person; do not decide alone' },
+  { id: '04-F01', client: 'C04', flagId: '04-F01', planted: 'HST quick method: rate, line 101 and no input tax credits on costs', expected: 'flag 04-F01 (HST quick method: rate, line 101 and no input tax credits on costs), must fire: flag for a person; do not decide alone' },
+  { id: '04-F02', client: 'C04', flagId: '04-F02', planted: 'card batches are net of fees and include tips and HST', expected: 'flag 04-F02 (card batches are net of fees and include tips and HST), must fire: flag for a person; do not decide alone' },
+  { id: '04-F03', client: 'C04', flagId: '04-F03', planted: 'payroll with tips: tips paid out through payroll', expected: 'flag 04-F03 (payroll with tips: tips paid out through payroll), must fire: flag for a person; do not decide alone' },
+  { id: '04-F04', client: 'C04', flagId: '04-F04', planted: 'two shareholders: Schedule 50', expected: 'flag 04-F04 (two shareholders: Schedule 50), must fire: flag for a person; do not decide alone' },
+  { id: '04-F05', client: 'C04', flagId: '04-F05', planted: 'kitchen equipment: class 8 addition', expected: 'flag 04-F05 (kitchen equipment: class 8 addition), must fire: flag for a person; do not decide alone' },
+  { id: '04-F06', client: 'C04', flagId: '04-F06', planted: 'equipment lease: operating or capital', expected: 'flag 04-F06 (equipment lease: operating or capital), info: flag for a person; do not decide alone' },
+  { id: '05-F01', client: 'C05', flagId: '05-F01', planted: 'investment income over $50,000 in the group: business limit reduction', expected: 'flag 05-F01 (investment income over $50,000 in the group: business limit reduction), must fire: flag for a person; do not decide alone' },
+  { id: '05-F02', client: 'C05', flagId: '05-F02', planted: 'capital dividend paid with no election filed', expected: 'flag 05-F02 (capital dividend paid with no election filed), must fire: flag for a person; do not decide alone' },
+  { id: '05-F03', client: 'C05', flagId: '05-F03', planted: 'eligible dividend designated above GRIP', expected: 'flag 05-F03 (eligible dividend designated above GRIP), must fire: flag for a person; do not decide alone' },
+  { id: '05-F04', client: 'C05', flagId: '05-F04', planted: 'business limit allocation contradicts Eglinton Retail', expected: 'flag 05-F04 (business limit allocation contradicts Eglinton Retail), must fire: flag for a person; do not decide alone' },
+  { id: '05-F05', client: 'C05', flagId: '05-F05', planted: 'dividends from a connected corporation', expected: 'flag 05-F05 (dividends from a connected corporation), must fire: flag for a person; do not decide alone' },
+  { id: '05-F06', client: 'C05', flagId: '05-F06', planted: 'capital gain on ETF units', expected: 'flag 05-F06 (capital gain on ETF units), must fire: flag for a person; do not decide alone' },
+  { id: '05-F07', client: 'C05', flagId: '05-F07', planted: 'not registered for HST', expected: 'flag 05-F07 (not registered for HST), info: flag for a person; do not decide alone' },
+  { id: '06-F01', client: 'C06', flagId: '06-F01', planted: 'shared business limit set inconsistently with Eglinton Holdings', expected: 'flag 06-F01 (shared business limit set inconsistently with Eglinton Holdings), must fire: flag for a person; do not decide alone' },
+  { id: '06-F02', client: 'C06', flagId: '06-F02', planted: 'zero-rated exports: no HST on US sales', expected: 'flag 06-F02 (zero-rated exports: no HST on US sales), must fire: flag for a person; do not decide alone' },
+  { id: '06-F03', client: 'C06', flagId: '06-F03', planted: 'foreign exchange: year-end revaluation at a test rate', expected: 'flag 06-F03 (foreign exchange: year-end revaluation at a test rate), must fire: flag for a person; do not decide alone' },
+  { id: '06-F04', client: 'C06', flagId: '06-F04', planted: 'inventory count: closing $51,500.00 against opening $42,000.00', expected: 'flag 06-F04 (inventory count: closing $51,500.00 against opening $42,000.00), must fire: flag for a person; do not decide alone' },
+  { id: '06-F05', client: 'C06', flagId: '06-F05', planted: 'dividends to the holding company', expected: 'flag 06-F05 (dividends to the holding company), must fire: flag for a person; do not decide alone' },
+  { id: '06-F06', client: 'C06', flagId: '06-F06', planted: 'payouts are net of processor fees', expected: 'flag 06-F06 (payouts are net of processor fees), must fire: flag for a person; do not decide alone' },
+  { id: '07-F01', client: 'C07', flagId: '07-F01', planted: 'specified investment business: no employees', expected: 'flag 07-F01 (specified investment business: no employees), must fire: flag for a person; do not decide alone' },
+  { id: '07-F02', client: 'C07', flagId: '07-F02', planted: 'new roof is capital, not repair', expected: 'flag 07-F02 (new roof is capital, not repair), must fire: flag for a person; do not decide alone' },
+  { id: '07-F03', client: 'C07', flagId: '07-F03', planted: 'prepaid insurance', expected: 'flag 07-F03 (prepaid insurance), must fire: flag for a person; do not decide alone' },
+  { id: '07-F04', client: 'C07', flagId: '07-F04', planted: 'owner lent the company money', expected: 'flag 07-F04 (owner lent the company money), must fire: flag for a person; do not decide alone' },
+  { id: '07-F05', client: 'C07', flagId: '07-F05', planted: 'rent arrears at year end', expected: 'flag 07-F05 (rent arrears at year end), must fire: flag for a person; do not decide alone' },
+  { id: '07-F06', client: 'C07', flagId: '07-F06', planted: 'mortgage payments: interest and principal', expected: 'flag 07-F06 (mortgage payments: interest and principal), must fire: flag for a person; do not decide alone' },
+  { id: '07-F07', client: 'C07', flagId: '07-F07', planted: 'not registered for HST: residential rent is exempt', expected: 'flag 07-F07 (not registered for HST: residential rent is exempt), info: flag for a person; do not decide alone' },
+  { id: '08-F01', client: 'C08', flagId: '08-F01', planted: 'bad debt: invoice of $4,520.00 written off in September', expected: 'flag 08-F01 (bad debt: invoice of $4,520.00 written off in September), must fire: flag for a person; do not decide alone' },
+  { id: '08-F02', client: 'C08', flagId: '08-F02', planted: 'prepaid insurance', expected: 'flag 08-F02 (prepaid insurance), must fire: flag for a person; do not decide alone' },
+  { id: '08-F03', client: 'C08', flagId: '08-F03', planted: 'accrued year-end accounting fee', expected: 'flag 08-F03 (accrued year-end accounting fee), must fire: flag for a person; do not decide alone' },
+  { id: '08-F04', client: 'C08', flagId: '08-F04', planted: 'owner salary and one employee: payroll against T4', expected: 'flag 08-F04 (owner salary and one employee: payroll against T4), must fire: flag for a person; do not decide alone' },
+  { id: '08-F05', client: 'C08', flagId: '08-F05', planted: 'US clients paid in USD: zero-rated and exchange', expected: 'flag 08-F05 (US clients paid in USD: zero-rated and exchange), must fire: flag for a person; do not decide alone' },
+  { id: '08-F06', client: 'C08', flagId: '08-F06', planted: 'software on the owner personal card', expected: 'flag 08-F06 (software on the owner personal card), must fire: flag for a person; do not decide alone' },
+  { id: '08-F07', client: 'C08', flagId: '08-F07', planted: 'CCA: laptop class 50 and camera class 8', expected: 'flag 08-F07 (CCA: laptop class 50 and camera class 8), must fire: flag for a person; do not decide alone' },
+  { id: '08-F08', client: 'C08', flagId: '08-F08', planted: 'meals: 50% limit', expected: 'flag 08-F08 (meals: 50% limit), must fire: flag for a person; do not decide alone' },
+  { id: '08-F09', client: 'C08', flagId: '08-F09', planted: 'HST annual filer with instalments', expected: 'flag 08-F09 (HST annual filer with instalments), must fire: flag for a person; do not decide alone' },
+  { id: '09-F01', client: 'C09', flagId: '09-F01', planted: 'short first taxation year: business limit prorated', expected: 'flag 09-F01 (short first taxation year: business limit prorated), must fire: flag for a person; do not decide alone' },
+  { id: '09-F02', client: 'C09', flagId: '09-F02', planted: 'loss year: non-capital loss', expected: 'flag 09-F02 (loss year: non-capital loss), must fire: flag for a person; do not decide alone' },
+  { id: '09-F03', client: 'C09', flagId: '09-F03', planted: 'two shareholders lending money', expected: 'flag 09-F03 (two shareholders lending money), must fire: flag for a person; do not decide alone' },
+  { id: '09-F04', client: 'C09', flagId: '09-F04', planted: 'grant: treatment needs a person', expected: 'flag 09-F04 (grant: treatment needs a person), must fire: flag for a person; do not decide alone' },
+  { id: '09-F05', client: 'C09', flagId: '09-F05', planted: 'HST registration part-way through the year', expected: 'flag 09-F05 (HST registration part-way through the year), must fire: flag for a person; do not decide alone' },
+  { id: '09-F06', client: 'C09', flagId: '09-F06', planted: 'research costs: eligibility needs a person', expected: 'flag 09-F06 (research costs: eligibility needs a person), must fire: flag for a person; do not decide alone' },
+  { id: '09-F07', client: 'C09', flagId: '09-F07', planted: 'incorporation legal fees: expense or class 14.1', expected: 'flag 09-F07 (incorporation legal fees: expense or class 14.1), info: flag for a person; do not decide alone' },
+  { id: '10-F01', client: 'C10', flagId: '10-F01', planted: 'missing month: the chequing export has no May rows', expected: 'flag 10-F01 (missing month: the chequing export has no May rows), must fire: flag for a person; do not decide alone' },
+  { id: '10-F02', client: 'C10', flagId: '10-F02', planted: 'duplicate lines in March', expected: 'flag 10-F02 (duplicate lines in March), must fire: flag for a person; do not decide alone' },
+  { id: '10-F03', client: 'C10', flagId: '10-F03', planted: 'last year\'s statement mixed in', expected: 'flag 10-F03 (last year\'s statement mixed in), must fire: flag for a person; do not decide alone' },
+  { id: '10-F04', client: 'C10', flagId: '10-F04', planted: 'personal spending paid from the business account', expected: 'flag 10-F04 (personal spending paid from the business account), must fire: flag for a person; do not decide alone' },
+  { id: '10-F05', client: 'C10', flagId: '10-F05', planted: 'spouse paid with no payroll', expected: 'flag 10-F05 (spouse paid with no payroll), must fire: flag for a person; do not decide alone' },
+  { id: '10-F06', client: 'C10', flagId: '10-F06', planted: 'luxury vehicle: class 10.1 cost limit', expected: 'flag 10-F06 (luxury vehicle: class 10.1 cost limit), must fire: flag for a person; do not decide alone' },
+  { id: '10-F07', client: 'C10', flagId: '10-F07', planted: 'HST returns filed late twice: penalties and interest', expected: 'flag 10-F07 (HST returns filed late twice: penalties and interest), must fire: flag for a person; do not decide alone' },
+  { id: '10-F08', client: 'C10', flagId: '10-F08', planted: 'contract cleaners: worker status', expected: 'flag 10-F08 (contract cleaners: worker status), info: flag for a person; do not decide alone' },
+  { id: '11-F01', client: 'C11', flagId: '11-F01', planted: 'CCA addition: laptop in class 50', expected: 'flag 11-F01 (CCA addition: laptop in class 50), info: flag for a person; do not decide alone' },
+  { id: '11-F02', client: 'C11', flagId: '11-F02', planted: 'payroll against T4 agrees', expected: 'flag 11-F02 (payroll against T4 agrees), info: flag for a person; do not decide alone' },
+  { id: '11-F03', client: 'C11', flagId: '11-F03', planted: 'last year\'s return is ours', expected: 'flag 11-F03 (last year\'s return is ours), info: flag for a person; do not decide alone' },
+  { id: '11-F04', client: 'C11', flagId: '11-F04', planted: 'HST regular, quarterly', expected: 'flag 11-F04 (HST regular, quarterly), info: flag for a person; do not decide alone' },
+  { id: '11-F05', client: 'C11', flagId: '11-F05', planted: 'corporate tax instalments follow last year (prior-year option)', expected: 'flag 11-F05 (corporate tax instalments follow last year (prior-year option)), info: flag for a person; do not decide alone' },
+  { id: '12-F01', client: 'C12', flagId: '12-F01', planted: 'no third-party evidence for revenue', expected: 'flag 12-F01 (no third-party evidence for revenue), must fire: flag for a person; do not decide alone' },
+  { id: '12-F02', client: 'C12', flagId: '12-F02', planted: 'bank balance has no statement', expected: 'flag 12-F02 (bank balance has no statement), must fire: flag for a person; do not decide alone' },
+  { id: '12-F03', client: 'C12', flagId: '12-F03', planted: 'home office rests on the client\'s word', expected: 'flag 12-F03 (home office rests on the client\'s word), must fire: flag for a person; do not decide alone' },
+  { id: '12-F04', client: 'C12', flagId: '12-F04', planted: 'vehicle use rests on the client\'s word', expected: 'flag 12-F04 (vehicle use rests on the client\'s word), must fire: flag for a person; do not decide alone' },
+  { id: '12-F05', client: 'C12', flagId: '12-F05', planted: 'shareholder loan rests on the client\'s word', expected: 'flag 12-F05 (shareholder loan rests on the client\'s word), must fire: flag for a person; do not decide alone' },
+  { id: '13-F01', client: 'C13', flagId: '13-F01', planted: 'OHIP accrual after year end', expected: 'flag 13-F01 (OHIP accrual after year end), must fire: flag for a person; do not decide alone' },
+  { id: '13-F02', client: 'C13', flagId: '13-F02', planted: 'RA reduction (recovery of a prior payment)', expected: 'flag 13-F02 (RA reduction (recovery of a prior payment)), must fire: flag for a person; do not decide alone' },
+  { id: '13-F03', client: 'C13', flagId: '13-F03', planted: 'rejected and resubmitted claim', expected: 'flag 13-F03 (rejected and resubmitted claim), must fire: flag for a person; do not decide alone' },
+  { id: '13-F04', client: 'C13', flagId: '13-F04', planted: 'non-OHIP taxable supplies against the small supplier limit', expected: 'flag 13-F04 (non-OHIP taxable supplies against the small supplier limit), must fire: flag for a person; do not decide alone' },
+  { id: '13-F05', client: 'C13', flagId: '13-F05', planted: 'no HST return expected', expected: 'flag 13-F05 (no HST return expected), info: flag for a person; do not decide alone' },
+  { id: '13-F06', client: 'C13', flagId: '13-F06', planted: 'payroll against T4 agrees', expected: 'flag 13-F06 (payroll against T4 agrees), info: flag for a person; do not decide alone' },
+  { id: '13-F07', client: 'C13', flagId: '13-F07', planted: 'CCA addition: exam-room equipment in class 8', expected: 'flag 13-F07 (CCA addition: exam-room equipment in class 8), info: flag for a person; do not decide alone' },
+  { id: '14-F01', client: 'C14', flagId: '14-F01', planted: 'catch-up years filed in order', expected: 'flag 14-F01 (catch-up years filed in order), must fire: flag for a person; do not decide alone' },
+  { id: '14-F02', client: 'C14', flagId: '14-F02', planted: 'second return waits for the first', expected: 'flag 14-F02 (second return waits for the first), must fire: flag for a person; do not decide alone' },
+  { id: '14-F03', client: 'C14', flagId: '14-F03', planted: 'year end to be confirmed by ops', expected: 'flag 14-F03 (year end to be confirmed by ops), must fire: flag for a person; do not decide alone' },
+  { id: '14-F04', client: 'C14', flagId: '14-F04', planted: '2025 bought twice', expected: 'flag 14-F04 (2025 bought twice), must fire: flag for a person; do not decide alone' },
+  { id: '14-F05', client: 'C14', flagId: '14-F05', planted: 'late-filing exposure', expected: 'flag 14-F05 (late-filing exposure), must fire: flag for a person; do not decide alone' },
+  { id: '14-F06', client: 'C14', flagId: '14-F06', planted: 'non-capital loss for 2024', expected: 'flag 14-F06 (non-capital loss for 2024), must fire: flag for a person; do not decide alone' },
+  { id: '14-F07', client: 'C14', flagId: '14-F07', planted: 'CCA additions: mower in class 8 and trailer in class 10', expected: 'flag 14-F07 (CCA additions: mower in class 8 and trailer in class 10), info: flag for a person; do not decide alone' },
+  { id: '14-F08', client: 'C14', flagId: '14-F08', planted: 'shareholder loan from the owner', expected: 'flag 14-F08 (shareholder loan from the owner), must fire: flag for a person; do not decide alone' },
+  { id: '15-F01', client: 'C15', flagId: '15-F01', planted: 'catch-up years filed in order', expected: 'flag 15-F01 (catch-up years filed in order), must fire: flag for a person; do not decide alone' },
+  { id: '15-F02', client: 'C15', flagId: '15-F02', planted: 'second return waits for the first', expected: 'flag 15-F02 (second return waits for the first), must fire: flag for a person; do not decide alone' },
+  { id: '15-F03', client: 'C15', flagId: '15-F03', planted: 'year end to be confirmed by ops', expected: 'flag 15-F03 (year end to be confirmed by ops), must fire: flag for a person; do not decide alone' },
+  { id: '15-F04', client: 'C15', flagId: '15-F04', planted: '2025 bought twice', expected: 'flag 15-F04 (2025 bought twice), must fire: flag for a person; do not decide alone' },
+  { id: '15-F05', client: 'C15', flagId: '15-F05', planted: 'late-filing exposure', expected: 'flag 15-F05 (late-filing exposure), must fire: flag for a person; do not decide alone' },
+  { id: '15-F06', client: 'C15', flagId: '15-F06', planted: 'opening balances from the 2024 return', expected: 'flag 15-F06 (opening balances from the 2024 return), must fire: flag for a person; do not decide alone' },
+  { id: '15-F07', client: 'C15', flagId: '15-F07', planted: 'non-capital loss applied from 2024', expected: 'flag 15-F07 (non-capital loss applied from 2024), must fire: flag for a person; do not decide alone' },
+  { id: '15-F08', client: 'C15', flagId: '15-F08', planted: 'shareholder loan carried from 2024', expected: 'flag 15-F08 (shareholder loan carried from 2024), must fire: flag for a person; do not decide alone' },
+  {
+    id: 'C10-roll-CHQ-2025-03',
+    client: 'C10',
+    planted: 'CHQ 2025-03 does not roll: duplicated rows in the March export',
+    expected: 'roll exception for CHQ 2025-03, listed so the loader accepts it',
+    roll: { account: 'CHQ', month: '2025-03' },
+  },
+  {
+    id: 'C10-roll-CHQ-2025-05',
+    client: 'C10',
+    planted: 'CHQ 2025-05 does not roll: the missing May rows',
+    expected: 'roll exception for CHQ 2025-05, listed so the loader accepts it',
+    roll: { account: 'CHQ', month: '2025-05' },
+  },
+]
+
+/** Every fault the test world plants: each sample client's flags and the two roll waivers. */
+export function faults(): FaultEntry[] {
+  return [...CATALOGUE]
+}

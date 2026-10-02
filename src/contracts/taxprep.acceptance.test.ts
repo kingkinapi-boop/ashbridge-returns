@@ -41,8 +41,9 @@
  * The type tests (RT-8/RT-12 and the CellId one) are enforced by `npm run typecheck`: every `@ts-expect-error`
  * below must be needed.
  *
- * Committed CSVs under reference/ are stored LF by .gitattributes (`* text=auto eol=lf`); `taxprepBytes` restores
- * the CRLF Taxprep wrote. Golden files in __golden__/ keep their bytes (`-text`) and are compared byte for byte;
+ * Committed CSVs under reference/ are stored either CRLF (`-text`: the sample clients' taxprep/*.csv, A347) or LF
+ * (`* text=auto eol=lf`: the older trial exports); `taxprepBytes` (the shared fixture __fixtures__/taxprep-bytes.ts,
+ * W00 round 2) returns the CRLF Taxprep wrote either way and refuses a file with mixed line ends. Golden files in __golden__/ keep their bytes (`-text`) and are compared byte for byte;
  * the parsed records are golden JSON files (toMatchFileSnapshot).
  */
 import { readFileSync, readdirSync } from 'node:fs'
@@ -71,6 +72,7 @@ import {
 } from './taxprep'
 // F03R check 8 reads ALWAYS_EXPORTED through the module object, so the spec typechecks before the build adds it.
 import * as taxprepModule from './taxprep'
+import { taxprepBytes as readTaxprepBytes } from './__fixtures__/taxprep-bytes'
 
 const SEED = 20261002
 
@@ -80,12 +82,8 @@ const repoUrl = (rel: string): URL => new URL(`../../${rel}`, import.meta.url)
 const golden = (name: string): Buffer => readFileSync(new URL(`./__golden__/${name}`, import.meta.url))
 const goldenPath = (name: string): string => `./__golden__/${name}`
 
-/** A committed reference CSV (LF in git) with the CRLF line ends Taxprep wrote. */
-function taxprepBytes(rel: string): Buffer {
-  const raw = readFileSync(repoUrl(rel))
-  if (raw.includes(0x0d)) throw new Error(`${rel} already holds CR bytes: the CRLF restore would double them`)
-  return Buffer.from(raw.toString('latin1').replace(/\n/g, '\r\n'), 'latin1')
-}
+/** A committed reference CSV with the CRLF line ends Taxprep wrote (stored CRLF: as is; stored LF: restored; mixed: refused). */
+const taxprepBytes = (rel: string): Buffer => readTaxprepBytes(repoUrl(rel), rel)
 
 /** Bytes as a 1:1 string (latin1), for readable exact comparisons. */
 const asText = (bytes: Uint8Array): string => Buffer.from(bytes).toString('latin1')
@@ -1047,11 +1045,20 @@ describe('F03 round 2: the writer refuses what Windows-1252 cannot hold (RT-9)',
 describe('F03 round 2: the RT-3 round trip over the whole Windows-1252 alphabet', () => {
   // Every printable Windows-1252 character: 20 to 7E, the 27 defined in 80 to 9F, A0 to FF. The five undefined
   // characters (U+0081, U+008D, U+008F, U+0090, U+009D) are left out: the writer refuses them (RT-9).
-  const decoder = new TextDecoder('windows-1252')
+  // The characters come from a fixed table, never from TextDecoder (Node 22 decodes 80 to 9F as C1 controls;
+  // W00 round 2, findings W00 r1 S2). Bytes 20 to 7E and A0 to FF are the same code point; 80 to 9F follow the
+  // Windows-1252 table, with each of the five undefined bytes kept as its C1 code point (as WHATWG maps them) so
+  // the filter below still removes them.
+  const HIGH_1252: readonly number[] = [
+    0x20ac, 0x0081, 0x201a, 0x0192, 0x201e, 0x2026, 0x2020, 0x2021, 0x02c6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008d,
+    0x017d, 0x008f, 0x0090, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014, 0x02dc, 0x2122, 0x0161, 0x203a,
+    0x0153, 0x009d, 0x017e, 0x0178,
+  ]
+  const char1252 = (b: number): string => String.fromCharCode(b >= 0x80 && b <= 0x9f ? (HIGH_1252[b - 0x80] ?? b) : b)
   const ALPHABET: string[] = []
   for (let b = 0x20; b <= 0xff; b++) {
     if (b === 0x7f) continue
-    const ch = decoder.decode(Uint8Array.of(b))
+    const ch = char1252(b)
     if (!UNDEFINED_1252.includes(ch)) ALPHABET.push(ch)
   }
 
