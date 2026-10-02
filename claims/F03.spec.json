@@ -1,9 +1,11 @@
 {
  "card": "F03",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: typecheck, lint, npm test green on main 93fa27f (443 unit + 2 db)",
  "worker": "cloud-f60439",
- "state": "working",
- "at": "2026-10-02T03:10:56.734Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T03:12:58.026Z",
+ "mode": "turbo",
+ "commit": "2cdf2f2",
+ "validated": "93fa27f7ecd2373b2e7831ad8b5650e0093e9a5f"
 }
