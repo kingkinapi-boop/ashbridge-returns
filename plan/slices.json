@@ -1018,7 +1018,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F01D",
@@ -1038,7 +1038,8 @@
       "id": "F06",
       "title": "Jobs table and worker",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -1069,7 +1070,7 @@
       "hard": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F01D",
@@ -1092,7 +1093,8 @@
       "title": "Client-app bridge on made-up data",
       "phase": 1,
       "size": "M",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
