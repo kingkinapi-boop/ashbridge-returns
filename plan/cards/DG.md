@@ -62,3 +62,9 @@ Build:
 - `stryker.config.mjs` and `vitest.mutate.config.ts`: only what checks 1 to 3 need (for example the sandbox path the helper relies on stays fixed); no change to the break, the reporters or the test set.
 
 Check: a checker who did neither; the canary 100; `npm test` and `npm run test:flake` 5 of 5; `node tools/scope.mjs DG` on DG's branch. At landing the Lead updates `.claude/rules/testing.md` (source-scan tests read through `readOwnSource`). Then S00 (build round 3) and A01 (build round 2) may run.
+
+## Round 3 spec fix (2 Oct, from reports/DG-build.md on claude/DG; single cause, A306)
+The round 3 build is kept; only the spec changes (a spec worker who did not write round 3):
+1. `src/core/testing/read-own-source.acceptance.test.ts:6` imports `./read-own-source` without the `.ts` extension (TS5097 otherwise; matches every other test).
+2. The "first 5 lines carry `// @mutate`" test (line 64): the planted original puts `// @mutate` where the instrumented copy's 3 header lines cannot push it into the first 5 lines falsely, or the planted header is 6+ lines; the test still fails on a planted real violation. Sweep: any other source-scan test in this spec that counts lines from the top of an instrumented copy.
+Then the build re-runs (round 3 counts once; this is a spec defect, not a build failure).
