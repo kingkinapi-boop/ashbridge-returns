@@ -1,10 +1,8 @@
 {
  "card": "F03",
  "role": "spec",
- "worker": "cloud-d367f7",
- "state": "reopened",
- "at": "2026-10-01T23:26:50.680Z",
- "mode": "turbo",
- "note": "80 tests, RT-3/7/9/12/13/14 ARC-14",
- "commit": "d6807e553a2a8504e1d74d1d582b6a3345e2bdd6"
+ "worker": "cloud-839492",
+ "state": "working",
+ "at": "2026-10-02T00:14:33.126Z",
+ "mode": "turbo"
 }
