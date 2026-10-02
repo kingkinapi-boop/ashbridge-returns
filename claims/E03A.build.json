@@ -4,8 +4,8 @@
  "round": 8,
  "spec": "ab2a22d",
  "worker": "cloud-1d0d85",
- "state": "released",
- "at": "2026-10-02T16:56:38.306Z",
+ "state": "reopened",
+ "at": "2026-10-02T17:36:02.154Z",
  "mode": "turbo",
- "note": "decision 0021 line: .gitleaks.toml edit refused by a permission prompt; see reports/E03A-build-r3b.md"
+ "note": "Zo's gitleaks edit is on the branch (0462739); re-run gitleaks over HEAD and report"
 }
