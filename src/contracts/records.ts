@@ -31,11 +31,18 @@ import { isBlank, NonBlankSchema } from './text'
 const common = { created_at: z.date(), is_test: z.boolean() }
 const cents = z.number().int()
 /** A whole number from 1: version numbers, mapping versions, pages and rows (SQL checks the same). */
-const fromOne = z.number().int().min(1)
+const fromOne = z.number().int().min(1).max(2147483647)
 /** ARC-10: the versions that made a derived record; never empty, values are non-blank strings or numbers. */
+const stampMember = z.union([NonBlankSchema, z.number()])
+const stampRecord = z.record(NonBlankSchema, stampMember).refine((v) => Object.keys(v).length > 0)
+/** The key __proto__ is refused: a plain record would drop it and keep the rest (SQL refuses it too). */
+const hasProtoKey = (v: unknown): boolean =>
+  typeof v === 'object' && v !== null && Object.prototype.hasOwnProperty.call(v, '__proto__')
 export const VersionStampSchema = z
-  .record(NonBlankSchema, z.union([NonBlankSchema, z.number()]))
-  .refine((v) => Object.keys(v).length > 0)
+  .unknown()
+  .refine((v) => !hasProtoKey(v))
+  .pipe(stampRecord)
+  .transform((v): Record<string, string | number> => Object.assign(Object.create(null) as Record<string, string | number>, v))
 
 /** Blueprint 02: the states of a return (FLOW-1). */
 export const RETURN_STATES = [
@@ -142,8 +149,9 @@ export type GifiMappingRecord = z.infer<typeof GifiMappingRecordSchema>
 const saysSomething = (m: unknown): boolean => {
   if (typeof m === 'string') return !isBlank(m)
   if (m === null || Array.isArray(m)) return false
+  if (hasProtoKey(m)) return false
   const fields = Object.entries(m as object)
-  return fields.length > 0 && fields.every(([k, v]) => !isBlank(k) && (typeof v === 'number' || (typeof v === 'string' && !isBlank(v))))
+  return fields.length > 0 && fields.every(([k, v]) => !isBlank(k) && (Number.isFinite(v) || (typeof v === 'string' && !isBlank(v))))
 }
 export const sourcesAreReal = (sources: readonly unknown[]): boolean => sources.length > 0 && sources.every(saysSomething)
 
