@@ -21,6 +21,8 @@ Status on 1 Oct: days 1, 2 and 3 run (day 3 partial: `reference/taxprep/2026-10-
 
 ## Days 4 to 6: the walker scripts
 
+**Day 4 done on 2 Oct 2026** (the Lead with Zo, decision 0022): see `reference/taxprep/2026-10-04-day4/notes.md` and `reference/taxprep/FINDINGS.md` section 3e. O8 is answered (one corporation only).
+
 ### Order and dates
 Days 5 and 6 need no one; day 4 needs Zo. Proposed order: **day 5 on Fri 2 Oct, day 4 on Sat 3 Oct, day 6 on Sun 4 Oct** (day 6 then compares exports made two days apart). The Lead tells Zo about day 4 in `plan/TODO-ZO.md` on **Fri 2 Oct** at the latest. If Zo picks another day, day 4 moves; days 5 and 6 do not wait for it.
 
@@ -33,7 +35,7 @@ FINDINGS.md section 3 gives Q20 to Q27. Its section 6 ("Still open") has no ids,
 - **O5** Step 26: one export per non-default setting (F03's fault files).
 - **O6** The T2 jacket, Schedules 3, 4, 23, 50 (and 53), the rest of S8, by "Select all input cells" and "Select all" filters (RT-10, RT-22).
 - **O7** Day 3 leftovers: dividend designation, Schedule 23, Eglinton diagnostics, the "Track changes" filter, print "More options", whether diagnostics print (RT-17); roll forward (RT-24); conversion.
-- **O8** Auto-fill structure (day 4; feeds CK-12 and RT-14).
+- **O8** Auto-fill structure (day 4; feeds CK-12 and RT-14). Answered 2 Oct: FINDINGS section 3e.
 - **O9** All ten companies: import errors and diagnostics.
 - **O10** Changes after lock and the check export (RT-19, RT-20).
 
