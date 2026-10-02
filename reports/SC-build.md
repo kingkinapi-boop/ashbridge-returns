@@ -28,3 +28,6 @@ New since the spec was validated on 6d8efd6: F06 and F07 landed and are not in K
 - R41 src/modules/bridge/run.ts (F07): a `.trim()` blank rule (go through src/contracts/text.ts).
 Needed from the Lead: add these to F06 and F07 (or KNOWN via a spec refit), and the older F01/records.ts/gaps/ai.ts defects to their cards; re-offer only then.
 Permission gaps: none. Model: Sonnet 5.5.
+
+## Run 2 Oct 20:10Z (cloud-3e2f84), main e77ffc5, no new commits since the last run
+Nothing changed on main; same defects (F01 schema, records.ts, gaps, ai.ts, F06 queue.ts and jobs.ts, F07 run.ts) are not on their owning cards or in KNOWN. Not re-run; released.
