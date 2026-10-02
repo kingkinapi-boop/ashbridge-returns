@@ -52,7 +52,7 @@ type Lexed = Marks | Part
 function trailOf(rest: string): { body: string; trail: Trail | '' } {
   if (rest.endsWith('-')) return { body: rest.slice(0, -1), trail: '-' }
   if (rest.endsWith(')')) return { body: rest.slice(0, -1), trail: ')' }
-  const tail = rest.slice(-2).toUpperCase()
+  const tail = rest.slice(-2)
   if (tail === 'CR' || tail === 'DR') return { body: rest.slice(0, -2), trail: tail }
   return { body: rest, trail: '' }
 }
@@ -94,8 +94,17 @@ function centsOf(whole: string, negative: boolean): { cents: number; tooLarge: b
   return { cents: negative && cents !== 0 ? -cents : cents, tooLarge: false }
 }
 
-/** The group that starts at word `start`, or null. */
-function groupAt(spots: readonly Spot[], lexed: readonly (Lexed | null)[], start: number, tolerance: number): Found | null {
+/**
+ * The group that starts at word `start`, or null. With `headOnly` it stops after the number word and its own
+ * trailing mark: enough to say whether a group can start there, and never looks ahead again (no recursion).
+ */
+function groupAt(
+  spots: readonly Spot[],
+  lexed: readonly (Lexed | null)[],
+  start: number,
+  tolerance: number,
+  headOnly = false,
+): Found | null {
   const at = (i: number): Lexed | null => lexed[i] ?? null
   const spot = (i: number): Spot => spots[i] as Spot
   const next = (i: number): boolean => i + 1 < spots.length && adjacent(spot(i), spot(i + 1), tolerance)
@@ -140,12 +149,15 @@ function groupAt(spots: readonly Spot[], lexed: readonly (Lexed | null)[], start
   }
 
   let end = i + 1
+  // Stryker disable next-line ObjectLiteral,BooleanLiteral: a head-only caller reads only whether a group starts here
+  if (headOnly) return { end, cents: 0, tooLarge: false }
   while (!done && end < spots.length && adjacent(spot(end - 1), spot(end), tolerance)) {
     const w = at(end)
     if (w === null) break
     if (w.marks) {
       // A marks-only word: only a trailing mark can join, and a "-" followed by an amount leads that amount.
-      if (w.trail === '' || (w.trail === '-' && next(end) && groupAt(spots, lexed, end + 1, tolerance) !== null)) break
+      // Leading binds first: the dash leads the next amount only when the dash and that word make a valid group
+      if (w.trail === '' || groupAt(spots, lexed, end, tolerance, true) !== null) break
       if (!takeTrail(w.trail)) break
       done = true
       end += 1

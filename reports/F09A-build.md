@@ -1,14 +1,8 @@
-# F09A build (cloud-e81ab0, 2 Oct 2026)
+# F09A build (round 3), cloud-e43f36
 
-Branch claude/F09A. Files: src/contracts/amount-grammar.ts, amount-grammar.test.ts, reading.ts (acceptance tests untouched).
-Acceptance: all of amount-grammar.acceptance (spec round 2) and reading-strict.acceptance pass; npm test 843 of 843; test:flake 5 of 5.
-Gates: typecheck, lint, deps:check clean; scope OK; mutation 100.00 on amount-grammar.ts and reading.ts (full run, incremental file removed).
-Done: strict schemas at every depth (z.strictObject); valueInBox parses through ReadingResultSchema (throws on a refused result); foldText disable comment names toLowerCase and claims nothing tested; lexer rewritten (marks-only vs number words, separators lex to null) to remove equivalent mutants; extra unit tests for edges.
-Ambers: (1) three Stryker disables on proven-equivalent mutants (centsOf default, groupsOver loop bound, debitCredit 'DR' fallthrough); reverse: delete the comments. (2) `valueInBox` throws ZodError on an invalid result rather than answering not found; reverse: safeParse and answer ok false.
-Note: stale `reports/mutation/stryker-incremental.json` made static mutants look like survivors; delete it before a mutation run.
-
-## Permission gaps
-None.
-
-## Model
-Sonnet 5.5.
+Branch claude/F09A. Files: src/contracts/amount-grammar.ts, src/contracts/reading.ts.
+- Dash look-ahead tests the same candidate group (dash plus next word) via a head-only groupAt; no recursion, so a 20000-word "1" "-" run is linear and never throws.
+- Trailing CR and DR are upper case only (A348); WordSchema refuses words of only U+200B to U+200D and U+FEFF.
+- Acceptance and unit tests in src/contracts: 581 pass; full npm test 883 unit + 2 db pass; typecheck, lint, deps:check, scope OK.
+- mutate:changed F09A: 100 on amount-grammar.ts and reading.ts (one Stryker disable on the head-only return value, which callers read only as non-null).
+- Ambers: none. Not done: test:flake 5 of 5 left to the checker.
