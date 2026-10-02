@@ -1,9 +1,11 @@
 {
  "card": "S00",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit; 14703ba round 3 spec kept; only missing F03R/DG members fail",
  "worker": "cloud-8a9d55",
- "state": "working",
- "at": "2026-10-02T09:02:49.228Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T09:05:37.198Z",
+ "mode": "turbo",
+ "commit": "9a08eb5",
+ "validated": "1812262792d1c5665af123d983dd14046dec1570"
 }
