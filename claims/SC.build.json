@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "62f6c18",
- "worker": "cloud-4cdd51",
- "state": "released",
- "at": "2026-10-02T17:41:36.358Z",
- "mode": "turbo",
- "note": "58/65 pass; 7 rule failures are defects owned by F01, G10/G11, ai.ts, or spec lists (KNOWN, R23_SAMPLES, FUTURE_POINTERS); see reports/SC-build.md"
+ "worker": "cloud-658451",
+ "state": "working",
+ "at": "2026-10-02T17:42:55.655Z",
+ "mode": "turbo"
 }
