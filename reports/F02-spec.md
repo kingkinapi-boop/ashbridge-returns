@@ -19,3 +19,7 @@ Step 6b: a throwaway stub passed all 102 and the whole suite (unit 1557, db 372)
 None met.
 ## Model
 claude-opus-5-5 (spec-writer).
+
+## Toolchain refit (cloud-390404, Opus spec-writer, 2 Oct)
+Old validated sha e949b5c, new 0c4015c (origin/main merged; toolchain-rules.test.mjs gained the FX1 cold-tool timeout rule). origin/claude/F01D d2f0a41 merged in (F01's current contracts; F01C 2866afe is inside it). Both merges clean, no assertion touched.
+typecheck and lint: errors only in the two lifecycle acceptance files (missing ./index and ../../contracts/lifecycle, and implicit any that follows). Unit 1646 passed, 1 file failed (lifecycle.acceptance.test.ts at import); db 350 passed, 1 file failed (lifecycle.acceptance.db.test.ts at import). Rule tests green. Nothing to fix.
