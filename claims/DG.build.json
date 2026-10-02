@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "8f165c2a9170288b9d68627cb42ad6445f824c5f",
  "worker": "cloud-32295d",
- "state": "working",
- "at": "2026-10-02T06:41:51.404Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T06:43:57.863Z",
+ "mode": "turbo",
+ "note": "spec defects in read-own-source.acceptance.test.ts (ts import fails typecheck; marker test wrong), see reports/DG-build.md"
 }
