@@ -4,8 +4,8 @@
  "round": 7,
  "spec": "8f165c2a9170288b9d68627cb42ad6445f824c5f",
  "worker": "cloud-5d8906",
- "state": "failed",
- "at": "2026-10-02T06:50:28.917Z",
+ "state": "reopened",
+ "at": "2026-10-02T08:28:00.428Z",
  "mode": "turbo",
- "note": "blocked on spec: read-own-source.acceptance.test.ts lines 6 and 64 are wrong (reports/DG-build.md); needs spec round 4"
+ "note": "spec fix reported; build next (refit first if toolchain moved)"
 }
