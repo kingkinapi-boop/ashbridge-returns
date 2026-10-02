@@ -36,6 +36,7 @@ import { fixedClock, getClock, setClock, type Clock } from '../core/clock'
 import { AMOUNT_FORMATS, amountGroups, formatAmount, normaliseAmount } from './amount-grammar'
 import {
   ReadingResultSchema,
+  WordSchema,
   normaliseAmount as readingNormaliseAmount,
   valueInBox,
   type Box,
@@ -188,6 +189,14 @@ const ROWS: readonly Row[] = [
   { rule: 'dash rule: leading binds first, "1,234.56" "-" "7" is 1234.56 and -7', words: ['1,234.56', '-', '7'], groups: [[123456, ['1,234.56']], [-700, ['-', '7']]], notFound: ['-1234.56', '7'] },
   { rule: 'dash rule: a "-" with no amount after it within the gap trails the amount to its left', words: ['100.00', '-', WIDE, '50.00'], groups: [[-10000, ['100.00', '-']], [5000, ['50.00']]], notFound: ['100.00', '-50.00'] },
   { rule: 'dash rule: a "-" before a label trails the amount to its left', words: ['100.00', '-', 'Fee'], groups: [[-10000, ['100.00', '-']]], notFound: ['100.00'] },
+  { rule: 'dash rule r3: a "-" before an amount that carries its own leading minus trails the amount on its left', words: ['100.00', '-', '-50.00'], groups: [[-10000, ['100.00', '-']], [-5000, ['-50.00']]], notFound: ['100.00'] },
+  { rule: 'dash rule r3: a "-" before a bracketed amount trails the amount on its left', words: ['100.00', '-', '(50.00)'], groups: [[-10000, ['100.00', '-']], [-5000, ['(50.00)']]], notFound: ['100.00', '50.00'] },
+  { rule: 'dash rule r3: a "-" before an amount with an attached CR trails the amount on its left', words: ['100.00', '-', '50.00CR'], groups: [[-10000, ['100.00', '-']], [5000, ['50.00CR']]], notFound: ['100.00', '-50.00'] },
+  { rule: 'dash rule r3: a "-" before a trailing-minus amount trails the amount on its left', words: ['100.00', '-', '50.00-'], groups: [[-10000, ['100.00', '-']], [-5000, ['50.00-']]], notFound: ['100.00', '50.00'] },
+  { rule: 'dash rule r3: a "-" before an amount that can take it still leads that amount ("$" attached is no sign of its own)', words: ['100.00', '-', '$50.00'], groups: [[10000, ['100.00']], [-5000, ['-', '$50.00']]], notFound: ['-100.00'] },
+  { rule: 'trailing marks are exactly CR and DR in upper case (A348): "5.00" "cr" is not a credit', words: ['5.00', 'cr'], groups: [[500, ['5.00']]], notFound: ['-5.00'] },
+  { rule: 'trailing marks are exactly CR and DR in upper case (A348): "5.00" "dr" is not a debit', words: ['5.00', 'dr'], groups: [[500, ['5.00']]], notFound: ['-5.00'] },
+  { rule: 'trailing marks are exactly CR and DR in upper case (A348): "5.00Dr" attached is no amount', words: ['5.00Dr'], groups: [], notFound: ['5.00', '-5.00'] },
   { rule: '"100.00" "CR" "50.00": CR trails the amount before it and the next amount stands alone', words: ['100.00', 'CR', '50.00'], groups: [[10000, ['100.00', 'CR']], [5000, ['50.00']]], notFound: ['-50.00', '-100.00'] },
   { rule: 'a CR then a dash: CR trails the first amount, the dash leads the second', words: ['5.00', 'CR', '-', '3.00'], groups: [[500, ['5.00', 'CR']], [-300, ['-', '3.00']]], notFound: ['-5.00', '3.00'] },
   // Brackets and sign marks
@@ -245,6 +254,8 @@ const TEXT_ROWS: readonly TextRow[] = [
   { rule: 'normaliseAmount: a separate leading minus', text: '- 50.00', cents: -5000 },
   { rule: 'normaliseAmount: U+2212 is a minus', text: '−5.00', cents: -500 },
   { rule: 'normaliseAmount: a separate CR is a credit', text: '1,234.56 CR', cents: 123456 },
+  { rule: 'normaliseAmount r3: a lower-case "cr" is not a credit mark (A348)', text: '5 cr', cents: null },
+  { rule: 'normaliseAmount r3: a lower-case "dr" attached is not a debit mark (A348)', text: '5.00dr', cents: null },
   { rule: 'normaliseAmount: "1" ".5" is not one group', text: '1 .5', cents: null },
   { rule: 'normaliseAmount: "1" "234.5" is not one group', text: '1 234.5', cents: null },
   { rule: 'normaliseAmount: a stray ")" leaves a word outside the group', text: '5.00 )', cents: null },
@@ -404,6 +415,78 @@ describe('check 15: generator property', () => {
     // Control for the property: the separators are what keeps "1" and "234.56" apart.
     expect(view(lay(['1', '234.56']))).not.toEqual([[100, ['1']], [23456, ['234.56']]])
     expect(view(lay(['1', 'Fee', '234.56']))).toEqual([[100, ['1']], [23456, ['234.56']]])
+  })
+})
+
+describe('check 15 round 3: a sign word before an amount that already carries its own sign mark', () => {
+  const FORMS: readonly (readonly [string, (x: string) => string, number])[] = [
+    ['leading minus attached', (x) => `-${x}`, -1],
+    ['U+2212 attached', (x) => `\u2212${x}`, -1],
+    ['"$-" attached', (x) => `$-${x}`, -1],
+    ['"-$" attached', (x) => `-$${x}`, -1],
+    ['trailing minus attached', (x) => `${x}-`, -1],
+    ['brackets attached', (x) => `(${x})`, -1],
+    ['CR attached', (x) => `${x}CR`, 1],
+    ['DR attached', (x) => `${x}DR`, -1],
+  ]
+  test('EV-6 property: A "-" B where B carries its own sign gives -A and B with its own sign (the dash trails A)', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 99_999_999 }),
+        fc.integer({ min: 1, max: 99_999_999 }),
+        fc.constantFrom(...FORMS),
+        (a, b, [, form, sign]) => {
+          const words = lay([centsText(a), '-', form(centsText(b))])
+          expect(view(words)).toEqual([
+            [-a, [centsText(a), '-']],
+            [sign * b, [form(centsText(b))]],
+          ])
+        },
+      ),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+  test('EV-6 planted fault: when B has no sign of its own the same dash leads B instead', () => {
+    expect(view(lay(['100.00', '-', '50.00']))).toEqual([[10000, ['100.00']], [-5000, ['-', '50.00']]])
+  })
+})
+
+describe('check 14 round 3: long runs and blank words', () => {
+  const run = (pairs: number, first: string, second: string): Word[] => {
+    const width = 0.00002
+    const words: Word[] = []
+    for (let i = 0; i < pairs * 2; i++) {
+      words.push({ text: i % 2 === 0 ? first : second, box: { page: 1, left: 0.01 + i * width, top: 0.2, width, height: WORD_HEIGHT }, confidence: 0.99, order: i + 1 })
+    }
+    return words
+  }
+  test('EV-6 r3 a same-line run of 20000 alternating "1" "-" words returns within 2 s and never throws', () => {
+    const words = run(20_000, '1', '-')
+    const started = performance.now()
+    let groups: ReturnType<typeof amountGroups> = []
+    expect(() => {
+      groups = amountGroups(words)
+    }).not.toThrow()
+    expect(performance.now() - started).toBeLessThan(2000)
+    expect(groups.length).toBeGreaterThan(0)
+    for (const g of groups) expect(Math.abs(g.cents)).toBe(100)
+  })
+  test('EV-6 r3 valueInBox over the same long run does not throw either', () => {
+    const result = resultOf(run(20_000, '1', '-'))
+    expect(() => valueInBox(result, WHOLE_PAGE_BAND, '1.00')).not.toThrow()
+  })
+  test('EV-6 r3 a same-line run of 20000 alternating "1.00" "-" words is also iterative', () => {
+    expect(() => amountGroups(run(20_000, '1.00', '-'))).not.toThrow()
+  })
+  for (const [name, text] of [['U+200B', '\u200B'], ['U+200C', '\u200C'], ['U+200D', '\u200D'], ['U+FEFF', '\uFEFF'], ['a mix of them', '\u200B\uFEFF\u200D']] as const) {
+    test(`EV-5 r3 WordSchema refuses a word that is only ${name}`, () => {
+      const word = { text, box: { page: 1, left: 0.1, top: 0.1, width: 0.1, height: 0.02 }, confidence: 0.9, order: 1 }
+      expect(WordSchema.safeParse(word).success).toBe(false)
+    })
+  }
+  test('EV-5 r3 WordSchema keeps a word that has a real character beside a zero-width one', () => {
+    const word = { text: '\u200B5.00', box: { page: 1, left: 0.1, top: 0.1, width: 0.1, height: 0.02 }, confidence: 0.9, order: 1 }
+    expect(WordSchema.safeParse(word).success).toBe(true)
   })
 })
 
