@@ -4,7 +4,8 @@
  "round": 50,
  "spec": "ee0255d",
  "worker": "cloud-c29b25",
- "state": "working",
- "at": "2026-10-02T21:34:20.444Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T21:34:33.337Z",
+ "mode": "turbo",
+ "note": "needs spec refit: R34 and R47 for ocr/recorded (test-file edits), see reports/SC-build.md"
 }
