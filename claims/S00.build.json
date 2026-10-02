@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "9ec2e0f550e0a4513b0b0ced1ac4acb40c3eaeb1",
  "worker": "local-ed6f16",
- "state": "released",
- "at": "2026-10-02T04:55:13.376Z",
+ "state": "reopened",
+ "at": "2026-10-02T05:25:48.197Z",
  "mode": "turbo",
  "note": "code done, 58/58 pass; mutate gate blocked by spec defects (harness.ts lacks @mutate; ARC-15 test reads line 1 but Stryker prepends @ts-nocheck), see reports/S00-build.md"
 }
