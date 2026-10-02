@@ -4,7 +4,8 @@
  "round": 24,
  "spec": "62f6c18",
  "worker": "cloud-c520ec",
- "state": "working",
- "at": "2026-10-02T19:03:02.827Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:03:52.708Z",
+ "mode": "turbo",
+ "note": "same 7 failures (unit 4, db 3) in other cards' files; see reports/SC-build.md"
 }
