@@ -1,11 +1,11 @@
 {
  "card": "G01",
  "role": "spec",
- "note": "30 tests; stub passes all, full suite green",
+ "note": "refit: main merged, rule tests and full suite green, only G01 fails (module missing); old 0f31dc5 new f2e97da",
  "worker": "cloud-20e77a",
  "state": "reported",
- "at": "2026-10-02T12:58:19.769Z",
+ "at": "2026-10-02T13:00:31.641Z",
  "mode": "turbo",
- "commit": "5049668",
+ "commit": "b575ce1",
  "validated": "f2e97da"
 }
