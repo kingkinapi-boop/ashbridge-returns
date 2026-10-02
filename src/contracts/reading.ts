@@ -79,7 +79,14 @@ export type PixelsRect = { x: number; y: number; width: number; height: number }
 /** A fraction that overshot 0 or 1 only by float noise is snapped; a real overshoot was refused earlier. */
 const snap = (n: number): number => (n < 0 ? 0 : n > 1 ? 1 : n)
 
+const RECT_FIELDS = ['x', 'y', 'width', 'height'] as const
+
 function checkRect(rect: PointsRect, width: number, height: number): void {
+  for (const f of RECT_FIELDS) {
+    if (!Number.isFinite(rect[f])) throw new RangeError(`rect ${f} must be a finite number`)
+  }
+  if (!Number.isFinite(width)) throw new RangeError('page width must be a finite number')
+  if (!Number.isFinite(height)) throw new RangeError('page height must be a finite number')
   if (!(width > 0) || !(height > 0) || !Number.isFinite(width) || !Number.isFinite(height)) {
     throw new RangeError('page size must be above zero')
   }
@@ -89,7 +96,11 @@ function checkRect(rect: PointsRect, width: number, height: number): void {
   }
 }
 
-/** PDF points, origin bottom left, (x, y) the rect's bottom-left corner. Throws on an off-page rect. */
+/**
+ * PDF points, origin bottom left, (x, y) the rect's bottom-left corner. Throws RangeError on an off-page
+ * or non-finite rect.
+ * @converter
+ */
 export function pointsToBox(page: number, rect: PointsRect, pageWidthPt: number, pageHeightPt: number): Box {
   checkRect(rect, pageWidthPt, pageHeightPt)
   return BoxSchema.parse({
@@ -110,7 +121,11 @@ export function boxToPoints(box: Box, pageWidthPt: number, pageHeightPt: number)
   }
 }
 
-/** Image pixels, origin top left, (x, y) the rect's top-left corner. Throws on an off-image rect. */
+/**
+ * Image pixels, origin top left, (x, y) the rect's top-left corner. Throws RangeError on an off-image
+ * or non-finite rect.
+ * @converter
+ */
 export function pixelsToBox(page: number, rect: PixelsRect, imageWidthPx: number, imageHeightPx: number): Box {
   checkRect(rect, imageWidthPx, imageHeightPx)
   return BoxSchema.parse({
@@ -188,7 +203,7 @@ export function normaliseAmount(text: string): AmountResult {
   if (whole.length > 15) return { ok: false, reason: 'amount is too large' }
   const cents = Number(whole) * 100 + Number(frac)
   if (!Number.isSafeInteger(cents)) return { ok: false, reason: 'amount is too large' }
-  return { ok: true, cents: negative > 0 ? -cents : cents }
+  return { ok: true, cents: negative > 0 && cents !== 0 ? -cents : cents }
 }
 
 // ---- the value-in-box check (EV-6) ----
