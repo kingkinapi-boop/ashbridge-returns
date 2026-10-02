@@ -1,10 +1,9 @@
 {
  "card": "F00T",
  "role": "spec",
- "worker": "cloud-ee27ff",
- "state": "reported",
- "at": "2026-10-02T02:53:59.850Z",
- "mode": "turbo",
- "note": "validated on main fddfaee; 11 F00T tests fail by name on main",
- "commit": "fdd6b7a"
+ "note": "toolchain refit",
+ "worker": "cloud-90c777",
+ "state": "working",
+ "at": "2026-10-02T03:12:53.349Z",
+ "mode": "turbo"
 }
