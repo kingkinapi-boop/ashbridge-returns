@@ -55,3 +55,4 @@ R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden fi
 - R42 SQL and zod parity field by field, both ways; planted a `z.string()` field over a non-blank column.
 - R43 every return_id, and every `*_id` whose target table exists, is a foreign key; pointer ids to unbuilt tables are non-blank and the allow-list names the future card.
 - R44 every identity column refuses OVERRIDING SYSTEM VALUE; every `version_no` or `*_version` column refuses a gap or a jump.
+- R45 (E03 check note, 2 Oct): the sensitive-key name rule (facts.ts:45-51) is table-driven and covers bank transit, institution and account numbers, date of birth, SIN, business number and similar; planted keys `bank_transit`, `institution_no`, `dob` must be sensitive. The loader enforces each key's cite pattern and refuses duplicate enum options.
