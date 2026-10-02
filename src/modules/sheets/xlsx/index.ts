@@ -60,14 +60,13 @@ export function ulp(x: number): number {
 /** The snap band never reaches half a cent. */
 const MAX_BAND = 0.0025
 const ULPS_IN_BAND = 4
-const FLOOR_BAND = 1e-9
 
-/** A stored double as text: a value within 4 ulps (at least 1e-9, under half a cent) of a whole cent is that cent amount, anything else its shortest round-trip text. */
+/** A stored double as text: a value within 4 ulps (never half a cent) of a whole cent is that cent amount, anything else its shortest round-trip text. */
 export function numberText(x: number): string {
   const cents = Number.isInteger(x) ? x : Math.round(x * 100) / 100
   const gap = Math.abs(x - cents)
   const ulpBand = Math.min(MAX_BAND, ULPS_IN_BAND * ulp(Math.max(Math.abs(x), Math.abs(cents))))
-  return gap < FLOOR_BAND || gap <= ulpBand ? plain(cents) : String(x)
+  return gap <= ulpBand ? plain(cents) : String(x)
 }
 
 /** The error text for a number cell that is not a finite number (the library drops the stored text, so one code stands for all). */
@@ -119,7 +118,9 @@ function readCell(cell: ExcelJS.Cell, date1904: boolean, range: string | null, h
   // A cached empty string cannot be told from no cached value in ExcelJS 4.4.0: both read as none.
   const found = typed(notALiteral(raw) ? Number.NaN : result, date1904)
   const cached: Cached = found?.text ? found : { type: 'none', text: '' }
-  const formula = isHyperlink ? (raw.formula as string) : cell.formula
+  // The sheet's own <f> is the word on every formula (a shared child whose master was hyperlinked has none left in the library).
+  // Stryker disable next-line OptionalChaining,LogicalOperator: a formula cell the sheet XML does not mention is one the raw read could not map; the library's text is the same
+  const formula = raw.formula ?? cell.formula
   return { ...base, text: cached.text, type: 'formula', formula, cached }
 }
 

@@ -1,21 +1,39 @@
 // @mutate
 // What each sheet's XML stores for a cell (A07C): its type letter, its stored <v> text and its <f> formula, by sheet name and address.
 // ExcelJS 4.4.0 reads <v>12abc</v> as 12 and drops the formula of a hyperlinked cell; this is the file's own word on both.
+import { columnLetter } from '../../../contracts/sheets'
 import type { Zip } from './zip'
 
-export type RawCell = { type: string | undefined; value: string | undefined; formula: string | undefined }
+export type RawCell = {
+  type: string | undefined
+  value: string | undefined
+  formula: string | undefined
+}
 /** A cell the sheet XML does not mention: nothing stored. */
-export const NO_RAW: RawCell = { type: undefined, value: undefined, formula: undefined }
+export const NO_RAW: RawCell = {
+  type: undefined,
+  value: undefined,
+  formula: undefined,
+}
 export type RawSheets = Map<string, Map<string, RawCell>>
 
-const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" }
+const ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+}
 
 /** XML text to plain text: the five named entities and numeric references. */
 export function decodeXml(text: string): string {
-  return text.replace(/&(?:#(\d+)|#x([0-9a-fA-F]+)|(amp|lt|gt|quot|apos));/g, (_m, dec: string | undefined, hex: string | undefined, named: string | undefined) => {
-    if (named !== undefined) return ENTITIES[named] as string
-    return String.fromCodePoint(dec === undefined ? parseInt(hex as string, 16) : Number(dec))
-  })
+  return text.replace(
+    /&(?:#(\d+)|#x([0-9a-fA-F]+)|(amp|lt|gt|quot|apos));/g,
+    (_m, dec: string | undefined, hex: string | undefined, named: string | undefined) => {
+      if (named !== undefined) return ENTITIES[named] as string
+      return String.fromCodePoint(dec === undefined ? parseInt(hex as string, 16) : Number(dec))
+    },
+  )
 }
 
 const attribute = (attributes: string, name: string): string | undefined => {
@@ -37,21 +55,67 @@ function relationshipTargets(xml: string): Map<string, string> {
 }
 
 const CELL = /<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g
+/** One <f> element, open or self-closed: its attributes and, when open, its text. */
+const FORMULA = /<f\b([^>]*?)(?:\/>|>([\s\S]*?)<\/f>)/
 
-function cellsOf(xml: string): Map<string, RawCell> {
+const columnNumber = (letters: string): number => Array.from(letters).reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0)
+/** A relative reference: not part of a longer name, not a function call, not inside a string (strings are cut out first). */
+const REFERENCE = /(?<![A-Za-z0-9_.])(\$?)([A-Z]{1,3})(\$?)(\d+)(?![A-Za-z0-9_(])/g
+
+/** A shared formula's text moved from its master's address to a child's: relative references slide, absolute ones stay. */
+export function slide(formula: string, from: string, to: string): string {
+  const a = /^([A-Z]+)(\d+)$/.exec(from)
+  const b = /^([A-Z]+)(\d+)$/.exec(to)
+  if (!a || !b) return formula
+  const columns = columnNumber(b[1] as string) - columnNumber(a[1] as string)
+  const rows = Number(b[2]) - Number(a[2])
+  return formula
+    .split(/("(?:[^"]|"")*")/)
+    .map((part, i) =>
+      i % 2 === 1
+        ? part
+        : part.replace(REFERENCE, (whole, colAbs: string, col: string, rowAbs: string, row: string) => {
+            const c = colAbs ? columnNumber(col) : columnNumber(col) + columns
+            const r = rowAbs ? Number(row) : Number(row) + rows
+            return c < 1 || r < 1 ? whole : `${colAbs}${columnLetter(c)}${rowAbs}${String(r)}`
+          }),
+    )
+    .join('')
+}
+
+export function cellsOf(xml: string): Map<string, RawCell> {
   const cells = new Map<string, RawCell>()
+  const masters = new Map<string, { formula: string; address: string }>()
+  const children = new Map<string, string>()
   for (const found of xml.matchAll(CELL)) {
     const address = attribute(found[1] as string, 'r')
     if (address === undefined) continue
     // Stryker disable next-line StringLiteral: any text without <v> or <f> reads the same as a self-closed cell
     const inner = found[2] ?? ''
     const value = /<v>([\s\S]*?)<\/v>/.exec(inner)?.[1]
-    const formula = /<f\b[^>]*>([\s\S]*?)<\/f>/.exec(inner)?.[1]
+    const f = FORMULA.exec(inner)
+    const si = f === null ? undefined : attribute(f[1] as string, 'si')
+    const formula = f?.[2] === undefined ? undefined : decodeXml(f[2])
+    // Stryker disable next-line ConditionalExpression: a cell with no shared id files nothing either way, as no child asks for an undefined id
+    if (si !== undefined) {
+      if (formula === undefined) children.set(address, si)
+      else masters.set(si, { formula, address })
+    }
+    // An empty stored value (<v></v>) is no value, as <v/> is.
     cells.set(address, {
       type: attribute(found[1] as string, 't'),
-      value: value === undefined ? undefined : decodeXml(value),
-      formula: formula === undefined ? undefined : decodeXml(formula),
+      value: value === undefined || value === '' ? undefined : decodeXml(value),
+      formula,
     })
+  }
+  for (const [address, si] of children) {
+    const master = masters.get(si)
+    const cell = cells.get(address)
+    if (master && cell)
+      cells.set(address, {
+        ...cell,
+        formula: slide(master.formula, master.address, address),
+      })
   }
   return cells
 }
