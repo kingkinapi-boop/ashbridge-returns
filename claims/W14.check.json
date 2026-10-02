@@ -1,11 +1,9 @@
 {
  "card": "W14",
  "role": "check",
- "for": "2026-10-01T21:54:11.273Z",
- "worker": "cloud-c4f1c0",
- "state": "failed",
- "at": "2026-10-01T22:28:29.290Z",
- "mode": "turbo",
- "beat": "2026-10-01T22:25:21.158Z",
- "note": "FAIL: wording, contract ids, prior-year ties, see reports/W14-check.md"
+ "for": "2026-10-02T01:34:01.592Z",
+ "worker": "cloud-4a59ee",
+ "state": "working",
+ "at": "2026-10-02T01:44:42.840Z",
+ "mode": "turbo"
 }
