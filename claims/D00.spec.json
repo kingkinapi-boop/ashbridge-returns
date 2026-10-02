@@ -1,9 +1,9 @@
 {
  "card": "D00",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "F00 did not install govuk-frontend, MOJ, sass, nunjucks, axe-core; see reports/D00-spec.md on claude/D00",
  "worker": "cloud-790b0c",
- "state": "working",
- "at": "2026-10-02T08:31:03.389Z",
+ "state": "released",
+ "at": "2026-10-02T08:32:12.190Z",
  "mode": "turbo"
 }
