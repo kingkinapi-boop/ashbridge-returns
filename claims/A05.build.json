@@ -1,11 +1,10 @@
 {
  "card": "A05",
  "role": "build",
- "round": 1,
- "spec": "24f60a74eedde34dc7515076440479dca6c5e4a5",
- "worker": "cloud-45ec67",
- "state": "reopened",
- "at": "2026-10-02T00:56:18.449Z",
- "mode": "turbo",
- "note": "27 of 27 acceptance tests pass"
+ "round": 2,
+ "spec": "c52b2f4",
+ "worker": "cloud-b1776c",
+ "state": "working",
+ "at": "2026-10-02T01:29:05.944Z",
+ "mode": "turbo"
 }
