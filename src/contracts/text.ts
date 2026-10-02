@@ -18,12 +18,14 @@ export const BLANK_RANGES: readonly (readonly [number, number])[] = Object.freez
 ] as const)
 
 const hex = (cp: number): string => `\\u{${cp.toString(16)}}`
-// One compiled pattern: the check runs over every code point in the tests, so it must be fast.
-const BLANK_PATTERN = new RegExp(`^[${BLANK_RANGES.map(([lo, hi]) => `${hex(lo)}-${hex(hi)}`).join('')}]*$`, 'u')
+// One compiled pattern, built on first use: the check runs over every code point in the tests.
+let compiled: RegExp | undefined
+const blankPattern = (): RegExp =>
+  (compiled ??= new RegExp(`^[${BLANK_RANGES.map(([lo, hi]) => `${hex(lo)}-${hex(hi)}`).join('')}]*$`, 'u'))
 
 /** True when s holds no visible character. A lone surrogate is not blank. */
 export function isBlank(s: string): boolean {
-  return BLANK_PATTERN.test(s)
+  return blankPattern().test(s)
 }
 
 /** A string with at least one visible character; kept exactly as given (no trimming). */
