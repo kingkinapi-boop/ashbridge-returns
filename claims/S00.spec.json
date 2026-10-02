@@ -2,8 +2,11 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-5d8906",
- "state": "working",
- "at": "2026-10-02T06:53:39.134Z",
+ "state": "reported",
+ "at": "2026-10-02T07:03:44.459Z",
  "mode": "turbo",
- "beat": "2026-10-02T06:53:59.284Z"
+ "beat": "2026-10-02T06:53:59.284Z",
+ "note": "87 tests (round 3); fail at load until F03R and DG land",
+ "commit": "14703ba",
+ "validated": "6b11f49"
 }
