@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "383857c",
  "worker": "cloud-eea9f9",
- "state": "working",
- "at": "2026-10-02T19:54:58.754Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:56:31.798Z",
+ "mode": "turbo",
+ "note": "golden inbox-finding-c01.json still has 14 stale minLength lines; spec needs a regenerate round, see reports/A04-build.md"
 }
