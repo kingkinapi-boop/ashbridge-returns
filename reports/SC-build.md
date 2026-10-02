@@ -42,3 +42,10 @@ Permission gaps: none. Model: Sonnet 5.5.
 ## Run 2 Oct 20:2xZ (cloud-2cbd52), main e7abd12
 No product code on main changed since cloud-1fe112 (only plan/train and reports); same failures and owners. Not re-run; released. Re-offer only after the owning cards carry the defects or a spec refit adds KNOWN entries.
 Permission gaps: none. Model: Sonnet 5.5.
+
+## Run 2 Oct 21:15Z (cloud-b4d2b5), main 042c2dd merged, spec ee0255d
+No product code written (rules only; tests not mine to edit). Unit 2 of 75 fail, db 19 of 19 pass. KNOWN entries from the spec work; the two failures are new on main (src/modules/ocr/recorded landed after the spec was validated):
+- R34: `src/modules/ocr/recorded/__fixtures__/one-page.pdf` and `unrecorded.pdf` are binary fixtures not on BINARY_FIXTURES (needs a reasoned entry).
+- R47: `src/modules/ocr/recorded` is a reader adapter with no entry in the READERS registry.
+Needed: a spec refit adds both (test-file edits), then re-offer the build. Released.
+Permission gaps: none. Model: Sonnet 5.5.
