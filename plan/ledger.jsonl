@@ -178,3 +178,8 @@
 {"ts":"2026-10-02T03:10:11.457Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T03:10:11.471Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T03:37:43.763Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"local","desc":"Assemble Zo's design sitting bundle","allowed":true}
+{"ts":"2026-10-02T03:42:46.520Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T03:42:47.173Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T03:42:47.847Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T03:44:52.582Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":"sonnet","where":"worktree","desc":"Local queue worker, next batch","allowed":true}
+{"ts":"2026-10-02T04:00:20.819Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":"sonnet","where":"worktree","desc":"Local queue worker, second slot","allowed":true}
