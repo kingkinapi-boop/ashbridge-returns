@@ -1,9 +1,8 @@
 {
  "card": "D02",
  "role": "spec",
- "worker": "cloud-055342",
- "state": "released",
- "at": "2026-10-02T09:11:29.825Z",
- "mode": "turbo",
- "note": "re-offered in a loop; Lead must park D02 spec"
+ "worker": "cloud-413d14",
+ "state": "working",
+ "at": "2026-10-02T09:18:06.052Z",
+ "mode": "turbo"
 }
