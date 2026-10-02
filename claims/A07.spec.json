@@ -1,11 +1,9 @@
 {
  "card": "A07",
  "role": "spec",
- "worker": "cloud-b2418f",
- "state": "reported",
- "at": "2026-10-02T10:25:01.601Z",
- "mode": "turbo",
- "note": "50 tests",
- "commit": "92ba0e2",
- "validated": "e13bef5c0bad4e43b80854726a08568bff2630d2"
+ "note": "toolchain refit",
+ "worker": "cloud-63f8ba",
+ "state": "working",
+ "at": "2026-10-02T11:32:12.782Z",
+ "mode": "turbo"
 }
