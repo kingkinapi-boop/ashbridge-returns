@@ -2,7 +2,8 @@
  "card": "BL0",
  "role": "spec",
  "worker": "cloud-8ee837",
- "state": "working",
- "at": "2026-10-02T13:26:17.436Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T13:26:31.800Z",
+ "mode": "turbo",
+ "note": "no code base: src/contracts/text.ts (F01 r3) and ai.ts (F04) are not on main; F01 and F04 unmerged. Re-offer after both land"
 }
