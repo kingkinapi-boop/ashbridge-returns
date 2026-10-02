@@ -1,10 +1,10 @@
 {
  "card": "DG",
  "role": "spec",
- "note": "toolchain refit: no change needed, typecheck, lint, 212 unit and 2 db tests green on main 93fa27f",
+ "note": "round 3: mutate-changed skips __fixtures__/__golden__ for the marker",
  "worker": "cloud-7c7b81",
- "state": "reported",
- "at": "2026-10-02T03:13:57.069Z",
+ "state": "reopened",
+ "at": "2026-10-02T05:57:59.026Z",
  "mode": "turbo",
  "commit": "b903b9c",
  "validated": "93fa27f7ecd2373b2e7831ad8b5650e0093e9a5f"
