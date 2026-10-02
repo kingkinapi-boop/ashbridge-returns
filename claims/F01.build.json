@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "ee1fa1d",
  "worker": "cloud-d42547",
- "state": "working",
- "at": "2026-10-02T10:39:49.050Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T11:00:08.218Z",
+ "mode": "turbo",
+ "note": "166 of 166 acceptance pass; unit 960, db 168, flake 5/5, mutants 100/100"
 }
