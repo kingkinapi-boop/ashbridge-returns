@@ -363,3 +363,5 @@
 {"ts":"2026-10-02T20:32:03.881Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T20:32:04.537Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T20:32:05.015Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T20:38:35.913Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Token use since 02:50Z","allowed":true}
+{"ts":"2026-10-02T20:38:45.000Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Outside world since 2 Oct","allowed":true}
