@@ -1,9 +1,8 @@
 {
  "card": "D00",
  "role": "spec",
- "worker": "cloud-df251e",
- "state": "released",
- "at": "2026-10-02T06:23:49.554Z",
- "mode": "turbo",
- "note": "refit needs TH merged on main (design/**/*.test.ts only runs in unit once TH lands; cannot validate on main). Re-offer after TH lands."
+ "worker": "cloud-0a2392",
+ "state": "working",
+ "at": "2026-10-02T06:29:15.338Z",
+ "mode": "turbo"
 }
