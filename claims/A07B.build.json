@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "7d641b0",
  "worker": "cloud-91dc0c",
- "state": "reported",
- "at": "2026-10-02T15:44:13.373Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T15:58:42.827Z",
  "mode": "turbo",
- "note": "27 of 28 acceptance pass (1 skipped: A01 reader, ocr absent); mutation 100; see reports/A07B-build.md"
+ "note": "FAIL: mixed-sign sum noise, hyperlinked non-text cells, wrong-kind container under .csv, lenient number parse, see reports/A07B-check.md"
 }

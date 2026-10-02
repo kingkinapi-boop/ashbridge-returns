@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T15:44:13.373Z",
  "worker": "cloud-2f60ce",
- "state": "working",
- "at": "2026-10-02T15:44:50.775Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T15:58:42.827Z",
+ "mode": "turbo",
+ "note": "FAIL: mixed-sign sum noise, hyperlinked non-text cells, wrong-kind container under .csv, lenient number parse, see reports/A07B-check.md"
 }
