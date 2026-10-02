@@ -1,9 +1,12 @@
-# W00 build, worker cloud-f135fc
+# W00 build round 2 (cloud-40b1f5)
 
-Branch claude/W00. Files: testworld/model/{money,schema,guard,checks,kinds,faults,index}.ts, testworld/clients/load.ts, testworld/index.ts, testworld/generate.ts; `.gitattributes` (`reference/sample-clients/**/taxprep/*.csv -text`, A347) and the 13 regenerated `taxprep/import.csv` (CRLF, by make-csv.mjs, no content change).
-Acceptance tests: 223 of 223 in testworld/ pass. Full suite: 946 of 947; the one failure is NOT W00's: `src/contracts/taxprep.acceptance.test.ts` "sample client 01's import.csv ... byte for byte" (helper taxprepBytes throws "already holds CR bytes" now that the CSV is stored CRLF, as the W00 spec report predicted). F03R's spec must make taxprepBytes accept a CRLF-stored file (still refusing mixed endings) before W00 lands, or the train goes red.
-Numbers: typecheck, lint, deps:check clean; scope OK (31 files); mutate:changed W00 "no mutation targets" (no src file); test:flake 5 of 5.
-Card tagged security: `/security-review` is still owed before boarding.
-
-Ambers: (1) adjusting entries carry no type in the answer keys; the model derives `type` from the sources (from-transactions, from-onboarding, from-transactions-and-onboarding). Reverse: add a `type` to the keys and read it. (2) Roll check: activity = coded transactions not missingFromExport; card and pcard accounts flip the sign (balance is an amount owing). (3) Guard scans onboarding.json strings and profile.md for e-mail and phone, names in corporation, owners, related entities, parties and schedule 50, check digits on business numbers, CRA account numbers and SINs; bank descriptions are not scanned. (4) Fault catalogue holds each answer-key flag plus each non-rolling month (C10 March, May); profile.md's prose is not parsed. (5) kinds.ts and faults.ts sit in testworld/model/ (card Paths). (6) loadKind of a built kind returns the register entry plus its folder until W01 adds loaders. (7) checkRegeneration copies the generators, deletes the numbered folders in the temp copy, regenerates, compares every file byte for byte.
-Permission gaps: none. Model: Sonnet 5.5 (build).
+Branch claude/W00, code complete; NOT ready to board: mutation gate and security review open.
+- B1: strict `decimalToCents`/`centsToDecimal` now in `src/core/money.ts` (testworld/model/money.ts removed, `dollarsToCents` gone); loader reads money from the JSON source text (reviver with `context.source`, money fields by holder shape, rates untouched); a 3-decimal amount is a `money` issue.
+- B2: guard (`testworld/model/guard.ts`) reads every json/csv/md file in the folder: name fields, nine-digit numbers (plain, spaced, hyphened, RT suffix), e-mails, phones in all formats, person names in descriptions need TEST.
+- B3: `faults.ts` hand-written (105 flags + C10 roll waivers); roll waiver and flag list read the catalogue both ways; no vacuous passes (no balances, undeclared account, empty entry, null GIFI unless "confirm").
+- Results: typecheck, lint, deps:check clean; `npm test` 1244 unit + 2 db pass (all round 2 acceptance tests pass, none edited).
+- B4 OPEN: `mutate:changed` marks every changed testworld file (tool requires all, not the four in B4) and scores: money 67, load 70, generate 76, checks 83, faults 84, guard 79, kinds 84, schema 72; all must be 100. Needs a unit-test survivor round (builder tests, plus decide whether load/generate/schema/kinds/index need marking at all: Lead call). Full log 1721 mutants.
+- B5 OPEN: /security-review not run.
+- scope.mjs FAILs only on `plan/cards/W00.md` (Lead's commit 8d44550), not a builder edit.
+Ambers: faults `planted` uses the flag's rule text; month `rolls` in the model is now computed, the answer key's own bit is ignored.
+Permission gaps: none. Model: Sonnet 5.5.
