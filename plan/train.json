@@ -1,9 +1,12 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "9a19112",
-  "cards": ["F00T", "F05M"],
+  "cards": [
+    "F00T",
+    "F05M"
+  ],
   "requested_at": "2026-10-02T04:47:27Z",
-  "by": null,
+  "by": "cloud-b1035f",
   "report": null
 }
