@@ -2,7 +2,10 @@
  "card": "F09",
  "role": "spec",
  "worker": "cloud-f60439",
- "state": "working",
- "at": "2026-10-02T03:13:04.003Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T03:14:29.538Z",
+ "mode": "turbo",
+ "note": "refit: typecheck, lint, npm test green (264 unit + 2 db)",
+ "commit": "6b127d3",
+ "validated": "3b28533269a7f999ce144a6ab8fee0d697589fb1"
 }
