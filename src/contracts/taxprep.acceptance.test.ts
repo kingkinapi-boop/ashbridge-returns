@@ -1445,6 +1445,8 @@ describe('F03 round 2: writer refusals for dates, rates and the header (RT-3, RT
 // else)"; the card reads it as "a LEADING apostrophe is refused unless the value is '-<integer>", and an apostrophe
 // inside text (O'Brien) stays accepted, as the writer writes it. Assertions pin the fault code, the line, and the row
 // identifier in the reason; reason wording is not pinned.
+// Round 3 (A346) supersedes that reading: an apostrophe anywhere in a number is refused too (see "F03R round 3" below);
+// every assertion of check 1 still holds under it.
 // =====================================================================================================================
 
 /** A forged CellId that never went through parseCellId (what a cast or a careless caller can hand the writer). */
@@ -1904,5 +1906,283 @@ describe('F03R check 8: the cells the "entered" export lists even when empty are
   test('RT-23 RT-13 every cell skipped on import is one the "entered" export lists (the year dates, the name, Ident492)', () => {
     const identifiers = new Set(alwaysExported().map((e) => e.identifier))
     for (const e of IGNORED_ON_IMPORT) expect(identifiers.has(e.identifier), e.identifier).toBe(true)
+  })
+})
+
+// =====================================================================================================================
+// F03R spec round 3 (findings review F03R round 2, reports/findings-F03R-r2.md; A346, last round). RT-3 now reads:
+// the writer never writes an apostrophe in a number; the reader strips one leading apostrophe before a negative whole
+// number and refuses an apostrophe in any other number; text may hold one (O'Brien). This supersedes A333's "a leading
+// apostrophe" reading of check 1 above. "A number" is the card's B1 shape: once its apostrophes are taken out, the
+// value is an optional leading minus, then digits, points and commas with at least one digit. No other fault pattern
+// can match a value holding an apostrophe, so the refusal code is pinned to 'apostrophe'.
+// =====================================================================================================================
+
+const KEEP_RULE = /^'-[1-9]\d*$/
+const NUMBER_SHAPE = /^-?[\d.,]*\d[\d.,]*$/
+
+/** True when RT-3 (round 3) refuses `value`: an apostrophe in a number, other than the one leading '-<whole number>. */
+function rt3Refuses(value: string): boolean {
+  if (!value.includes("'") || KEEP_RULE.test(value)) return false
+  return value.startsWith("'") || value.startsWith("-'") || NUMBER_SHAPE.test(value.replace(/'/g, ''))
+}
+
+function expectApostropheFault(value: string, column: 'current' | 'last'): void {
+  const r = parseTaxprepCsv(apostropheFile(value, column))
+  expect(r.ok, r.ok ? `${JSON.stringify(value)} in ${column} was read: ${JSON.stringify(r.file.rows[1])}` : '').toBe(false)
+  if (r.ok) return
+  const hit = r.faults.find((f) => f.line === 3 && f.code === 'apostrophe')
+  expect(hit, `${JSON.stringify(value)} in ${column}, faults seen: ${JSON.stringify(r.faults)}`).toBeDefined()
+  expect(must(hit, 'fault').reason).toContain('FDONE.Ttwone66')
+}
+
+describe('F03R round 3 S1: an apostrophe inside a number is refused; text may hold one (RT-3, RT-9)', () => {
+  const IN_NUMBERS = ["1'234", "12'", "-12'", "1'2'3", "1'234.5", "-1'234"]
+  const TEXTS = ["O'Brien Holdings (Test)", "A'", "Z '-12"]
+  const CELL = 'IFirm.ContactPartner'
+
+  for (const column of ['current', 'last'] as const) {
+    test.each(IN_NUMBERS)(
+      `RT-3 planted fault: %j in the ${column} column is refused with an apostrophe fault naming row 3`,
+      (value) => {
+        expectApostropheFault(value, column)
+      },
+    )
+
+    test.each(IN_NUMBERS)(
+      `RT-3 planted fault: the writer refuses the text %j in the ${column} column naming the row (it never writes an apostrophe in a number)`,
+      (text) => {
+        for (const purpose of ['import', 'export'] as const) {
+          const w = writeTaxprepCsv(
+            { header: PROBE, rows: [oneValueRow(CELL, { kind: 'text', text }, column)] },
+            { purpose },
+          )
+          expect(w.ok, w.ok ? `${purpose}: it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+          if (w.ok) continue
+          expect(w.problems).toHaveLength(1)
+          const p = must(w.problems[0], 'problem')
+          expect(p).toMatchObject({ index: 0, identifier: CELL })
+          expect(p.reason).toContain(CELL)
+        }
+      },
+    )
+
+    test.each(TEXTS)(
+      `RT-3 %j in the ${column} column is text: it is read as that text with no apostrophe mark, and written back unchanged`,
+      (text) => {
+        const r = parseTaxprepCsv(apostropheFile(text, column))
+        expect(r.ok, r.ok ? '' : JSON.stringify(r.faults)).toBe(true)
+        if (!r.ok) return
+        const row = must(r.file.rows[1], 'row 3')
+        expect(column === 'current' ? row.current : row.last).toEqual({ kind: 'value', text })
+        expect(row.apostrophe).toBe(false)
+        for (const purpose of ['import', 'export'] as const) {
+          const out = writeOk(PROBE, [oneValueRow(CELL, { kind: 'text', text }, column)], purpose)
+          const back = must(parseOk(out).rows[0], 'row')
+          expect(column === 'current' ? back.current : back.last).toEqual({ kind: 'value', text })
+          expect(back.apostrophe).toBe(false)
+        }
+      },
+    )
+  }
+
+  test("RT-3 '-1299 (the one leading apostrophe before a negative whole number) is still read as -1299 in both columns (no false alarm)", () => {
+    for (const column of ['current', 'last'] as const) {
+      const row = must(parseOk(apostropheFile("'-1299", column)).rows[1], 'row 3')
+      expect(column === 'current' ? row.current : row.last).toEqual({ kind: 'value', text: '-1299' })
+      expect(row.apostrophe).toBe(true)
+    }
+  })
+})
+
+describe('F03R round 3 S2: every apostrophe in a number is refused, and nothing F03 refused is let in (RT-3, RT-9)', () => {
+  const ALPHABET = "0123456789'-,.".split('')
+  const COLUMN = fc.constantFrom('current' as const, 'last' as const)
+
+  /** A number shape (optional minus, digits, points, commas, one digit at least) with one to three apostrophes put in. */
+  const numberWithApostrophes: fc.Arbitrary<string> = fc
+    .tuple(
+      fc.boolean(),
+      fc.array(fc.constantFrom(...'0123456789.,'.split('')), { minLength: 1, maxLength: 7 }),
+      fc.constantFrom(...'0123456789'.split('')),
+      fc.nat(),
+      fc.array(fc.nat(), { minLength: 1, maxLength: 3 }),
+    )
+    .map(([minus, body, digit, at, cuts]) => {
+      const chars = [...body]
+      chars.splice(at % (chars.length + 1), 0, digit)
+      let s = (minus ? '-' : '') + chars.join('')
+      for (const c of cuts) {
+        const i = c % (s.length + 1)
+        s = `${s.slice(0, i)}'${s.slice(i)}`
+      }
+      return s
+    })
+  /** Any string over the card's alphabet holding an apostrophe. */
+  const anyWithApostrophe: fc.Arbitrary<string> = fc
+    .array(fc.constantFrom(...ALPHABET), { minLength: 1, maxLength: 8 })
+    .map((cs) => cs.join(''))
+    .filter((s) => s.includes("'"))
+
+  test("RT-3 property (fixed seed): over [0-9 ' - , .], any value with an apostrophe in a number other than exactly '-<whole number> is refused with an apostrophe fault on its row", () => {
+    let refusedCases = 0
+    fc.assert(
+      fc.property(fc.oneof(numberWithApostrophes, anyWithApostrophe), COLUMN, (value, column) => {
+        if (!rt3Refuses(value)) return
+        refusedCases += 1
+        expectApostropheFault(value, column)
+      }),
+      { seed: SEED, numRuns: 1000 },
+    )
+    expect(refusedCases).toBeGreaterThan(500)
+  })
+
+  test("RT-3 property (fixed seed): the only value over [0-9 ' - , .] with a leading apostrophe that is read is '-<whole number>, as that negative with apostrophe true", () => {
+    const whole = fc.integer({ min: 1, max: Number.MAX_SAFE_INTEGER })
+    fc.assert(
+      fc.property(whole, COLUMN, (n, column) => {
+        const row = must(parseOk(apostropheFile(`'-${String(n)}`, column)).rows[1], 'row 3')
+        expect(column === 'current' ? row.current : row.last).toEqual({ kind: 'value', text: `-${String(n)}` })
+        expect(row.apostrophe).toBe(true)
+      }),
+      { seed: SEED, numRuns: 200 },
+    )
+  })
+
+  type Ratchet = { source: string; refused: string[] }
+  const ratchet = JSON.parse(golden('rt-03-refused-at-a89d508.json').toString('utf8')) as Ratchet
+
+  test('RT-3 RT-9 ratchet: the list of values main refused at a89d508 holds the apostrophe-in-number cases the round 2 build let in', () => {
+    expect(ratchet.refused.length).toBeGreaterThan(600)
+    for (const v of ["1'234", "12'", "-12'", "1'2'3", "-1'234", "''-1356", "'0", "1,22"]) {
+      expect(ratchet.refused, v).toContain(v)
+    }
+  })
+
+  test('RT-3 RT-9 ratchet: every value main refused at a89d508 is still refused on its row, in either column', () => {
+    const letIn: string[] = []
+    for (const value of ratchet.refused) {
+      for (const column of ['current', 'last'] as const) {
+        const r = parseTaxprepCsv(apostropheFile(value, column))
+        if (r.ok || !r.faults.some((f) => f.line === 3)) letIn.push(`${JSON.stringify(value)} (${column})`)
+      }
+    }
+    expect(letIn, `now read, though a89d508 refused them: ${letIn.slice(0, 20).join(', ')}`).toEqual([])
+  })
+})
+
+// readBackMatches is read through the module object, so the spec typechecks before the build adds it (as check 8).
+type ClassifyOkSeen = { ok: true; value: CellValue; apostrophe: boolean }
+type ReadBackMatches = (v: WriteValue, back: ClassifyOkSeen) => boolean
+
+describe("F03R round 3 S3: readBackMatches, the writer's read-back check, catches a planted mismatch of every kind (RT-3, ARC-14)", () => {
+  function readBackMatches(): ReadBackMatches {
+    const fn = (taxprepModule as Record<string, unknown>)['readBackMatches']
+    expect(typeof fn, 'readBackMatches is not exported from taxprep.ts as a function').toBe('function')
+    return typeof fn === 'function' ? (fn as ReadBackMatches) : () => false
+  }
+  const read = (text: string | null, apostrophe = false): ClassifyOkSeen => ({
+    ok: true,
+    value: text === null ? { kind: 'clear' } : { kind: 'value', text },
+    apostrophe,
+  })
+  const show = (v: WriteValue): string =>
+    JSON.stringify(v, (_k, x: unknown) => (typeof x === 'number' && Object.is(x, -0) ? '-0' : x))
+
+  const MATCHES: readonly [string, WriteValue, ClassifyOkSeen][] = [
+    ['an amount and its digits', { kind: 'amount', amount: 7693 }, read('7693')],
+    ['a negative amount and its digits', { kind: 'amount', amount: -1299 }, read('-1299')],
+    ['the amount 0 and "0"', { kind: 'amount', amount: 0 }, read('0')],
+    ['the amount -0 and "0"', { kind: 'amount', amount: -0 }, read('0')],
+    ['a rate and its 4 decimals', { kind: 'rate', rate: 0.2 }, read('0.2000')],
+    ['a rate and the same number written shorter (rates compare as numbers)', { kind: 'rate', rate: 0.2 }, read('0.2')],
+    ['the rate -0 and "0.0000"', { kind: 'rate', rate: -0 }, read('0.0000')],
+    ['the rate 0.1 + 0.2 (float noise the writer rounds away) and "0.3000"', { kind: 'rate', rate: 0.1 + 0.2 }, read('0.3000')],
+    ['the rate 99.9999', { kind: 'rate', rate: 99.9999 }, read('99.9999')],
+    ['a date', { kind: 'date', date: '2025-12-31' }, read('2025-12-31')],
+    ['yes and Y', { kind: 'yesNo', yes: true }, read('Y')],
+    ['no and N', { kind: 'yesNo', yes: false }, read('N')],
+    ['text with an apostrophe inside', { kind: 'text', text: "O'Brien Holdings (Test)" }, read("O'Brien Holdings (Test)")],
+    ['a clear and a clear', { kind: 'clear' }, read(null)],
+  ]
+
+  test.each(MATCHES)('RT-3 ARC-14 %s match (no false alarm)', (_what, given, back) => {
+    expect(readBackMatches()(given, back), `${show(given)} vs ${JSON.stringify(back)}`).toBe(true)
+  })
+
+  const MISMATCHES: readonly [string, WriteValue, ClassifyOkSeen][] = [
+    ['amount: another number', { kind: 'amount', amount: 7693 }, read('7694')],
+    ['amount: the sign lost', { kind: 'amount', amount: -1299 }, read('1299')],
+    ['amount: read back as a clear', { kind: 'amount', amount: 0 }, read(null)],
+    ['amount: the right digits marked apostrophe', { kind: 'amount', amount: -1299 }, read('-1299', true)],
+    ['rate: another number', { kind: 'rate', rate: 0.2 }, read('0.2001')],
+    ['rate: read back as a clear', { kind: 'rate', rate: 0 }, read(null)],
+    ['rate: not a number', { kind: 'rate', rate: 0.2 }, read('abc')],
+    ['date: another day', { kind: 'date', date: '2025-12-31' }, read('2025-12-30')],
+    ['date: read back as a clear', { kind: 'date', date: '2025-12-31' }, read(null)],
+    ['yes or no: yes read as N', { kind: 'yesNo', yes: true }, read('N')],
+    ['yes or no: no read as Y', { kind: 'yesNo', yes: false }, read('Y')],
+    ['yes or no: read back as a clear', { kind: 'yesNo', yes: false }, read(null)],
+    ['text: one character changed', { kind: 'text', text: 'Maple Ridge (Test)' }, read('Maple Ridgé (Test)')],
+    ['text: a trailing space added', { kind: 'text', text: 'Maple Ridge (Test)' }, read('Maple Ridge (Test) ')],
+    ['text: read back as a clear', { kind: 'text', text: 'Maple Ridge (Test)' }, read(null)],
+    ['text: the right text marked apostrophe', { kind: 'text', text: '-12' }, read('-12', true)],
+    ['clear vs value: a clear read back as "0"', { kind: 'clear' }, read('0')],
+    ['clear vs value: a clear read back as text', { kind: 'clear' }, read('x')],
+    ['clear: a clear marked apostrophe', { kind: 'clear' }, read(null, true)],
+  ]
+
+  test.each(MISMATCHES)('RT-3 ARC-14 planted mismatch, %s: readBackMatches returns false', (_what, given, back) => {
+    expect(readBackMatches()(given, back), `${show(given)} vs ${JSON.stringify(back)}`).toBe(false)
+  })
+
+  test('RT-3 ARC-14 property (fixed seed): a whole-dollar amount matches its own digits and no other amount', () => {
+    const safe = fc.integer({ min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER })
+    fc.assert(
+      fc.property(safe, safe, (a, b) => {
+        const check = readBackMatches()
+        expect(check({ kind: 'amount', amount: a }, read(String(a)))).toBe(true)
+        expect(check({ kind: 'amount', amount: a }, read(String(a), true))).toBe(false)
+        if (a !== b) expect(check({ kind: 'amount', amount: a }, read(String(b)))).toBe(false)
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+})
+
+describe('F03R round 3 S4: each ALWAYS_EXPORTED entry cites the export finding, not the import one (RT-23, RT-13)', () => {
+  type Entry = { identifier?: unknown; finding?: unknown }
+  function alwaysExported(): Entry[] {
+    const list = (taxprepModule as Record<string, unknown>)['ALWAYS_EXPORTED']
+    expect(Array.isArray(list), 'ALWAYS_EXPORTED is not exported from taxprep.ts as a list').toBe(true)
+    return Array.isArray(list) ? (list as Entry[]) : []
+  }
+
+  test('RT-23 every ALWAYS_EXPORTED finding cites the "entered" export finding (FINDINGS.md section 4, item 9)', () => {
+    const list = alwaysExported()
+    expect(list).toHaveLength(8)
+    for (const e of list) {
+      const finding = String(e.finding)
+      expect(finding, String(e.identifier)).toContain('FINDINGS.md')
+      expect(finding, String(e.identifier)).toMatch(/\bentered\b/)
+      expect(finding, String(e.identifier)).toMatch(/\bitem 9\b/)
+    }
+  })
+
+  test('RT-23 RT-13 planted fault: no finding string is shared by ALWAYS_EXPORTED and IGNORED_ON_IMPORT (two lists, two findings)', () => {
+    const importFindings = new Set(IGNORED_ON_IMPORT.map((e) => e.finding))
+    const shared = alwaysExported()
+      .filter((e) => importFindings.has(String(e.finding)))
+      .map((e) => String(e.identifier))
+    expect(shared, `entries citing the import finding: ${shared.join(', ')}`).toEqual([])
+  })
+
+  test('RT-23 RT-13 the four cells on both lists (Ident120, Ident121, Ident311, Ident492) carry a different finding on each', () => {
+    const exported = new Map(alwaysExported().map((e) => [String(e.identifier), String(e.finding)]))
+    for (const e of IGNORED_ON_IMPORT) {
+      const f = exported.get(e.identifier)
+      expect(f, `${e.identifier} is not in ALWAYS_EXPORTED`).toBeDefined()
+      expect(f, e.identifier).not.toBe(e.finding)
+    }
   })
 })
