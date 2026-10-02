@@ -4,8 +4,8 @@
  "round": 5,
  "spec": "383857c",
  "worker": "cloud-1fe112",
- "state": "released",
- "at": "2026-10-02T20:10:29.480Z",
+ "state": "reopened",
+ "at": "2026-10-02T20:54:09.415Z",
  "mode": "turbo",
- "note": "golden inbox-finding-c01.json still stale (14 minLength lines); needs spec regen, see reports/A04-build.md"
+ "note": "golden regenerated"
 }
