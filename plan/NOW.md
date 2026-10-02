@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 12:50Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 13:25Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,10 +13,11 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 12:50Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| W00 build round 2 | cloud run | cloud | 2 Oct 12:19Z | claude/W00 |
-| Queue: A01 check, F01 build round 3 (last), F04 build round 2, refits then A07 and G01 builds, A03 build (after A01) | cloud runs | cloud | 2 Oct 12:50Z | claude/<card> |
+| Train: F04 | train check | cloud | 2 Oct 13:25Z | claude/train |
+| W00 build round 2; F01 build round 3 (last) | cloud runs | cloud | 2 Oct 12:19Z, 13:09Z | claude/W00, claude/F01 |
+| Queue: G01 check, A07 check, A03 build, G10 build, A01 spec round 3 (waits F01, A357) | cloud runs | cloud | 2 Oct 13:25Z | claude/<card> |
 
-No train open (E03 landed 9f5ec33). S00 build waits on W00 (A354); U00 and D02 to D13 parked until Zo's sitting.
+S00 build waits on W00 (A354); BL0 (one blank rule) waits on F01 and F04; U00 and D02 to D13 parked until Zo's sitting. Zo: to-do #2 (logo keep or remove).
 
 ## Next, in order
 
