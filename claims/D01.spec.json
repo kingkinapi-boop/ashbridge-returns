@@ -1,11 +1,9 @@
 {
  "card": "D01",
  "role": "spec",
- "note": "refit: no change, 19 tests pass in unit project",
- "worker": "cloud-0a2392",
- "state": "reported",
- "at": "2026-10-02T06:32:21.897Z",
- "mode": "turbo",
- "commit": "d998fa0",
- "validated": "30986dd18e24409e456d9051c3d26125ffe10952"
+ "note": "toolchain refit",
+ "worker": "cloud-e43f36",
+ "state": "working",
+ "at": "2026-10-02T08:31:11.997Z",
+ "mode": "turbo"
 }
