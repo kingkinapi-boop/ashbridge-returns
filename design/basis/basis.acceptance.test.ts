@@ -9,7 +9,7 @@
 //   design/basis/settings.scss : colours as #rrggbb hex literals inside $govuk-functional-colours.
 //   design/basis/parts.md      : every app- class that may appear, written in backticks, e.g. `app-width-container--wide`.
 // Needs: sass, govuk-frontend, @ministryofjustice/frontend, nunjucks, axe-core, playwright (chromium) from the build job.
-// Vitest: the unit project include does not cover design/**; run with design/basis/vitest.d00.config.ts.
+// Vitest: runs in the shared unit project (design/**/*.test.ts, tools/test-homes.json).
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdtempSync, readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -17,7 +17,7 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { beforeAll, describe, expect, test } from 'vitest'
-import { BAD_PAGE, contrast, listedAppClasses, unlistedClasses } from './d00-helpers.ts'
+import { BAD_PAGE, contrast, listedAppClasses, unlistedClasses } from './d00-helpers'
 
 const root = path.resolve(import.meta.dirname, '../..')
 const basis = path.join(root, 'design/basis')
@@ -112,10 +112,10 @@ describe('RV-54 axe on the sample page', () => {
       const page = await browser.newPage()
       await page.goto(url)
       await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') })
-      const res = (await page.evaluate(
+      const res: unknown = await page.evaluate(
         `axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa'] } })`,
-      )) as { violations: { id: string }[] }
-      return res.violations.map((v) => v.id)
+      )
+      return (res as { violations: { id: string }[] }).violations.map((v) => v.id)
     } finally {
       await browser.close()
     }
