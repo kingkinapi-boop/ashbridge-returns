@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Cloud queue: builds F09, A05, W14, TH (reopened after refit specs); specs F03, E03 (fix round 2); new DG, F05M | up to 3 cloud runs | cloud | 2 Oct 07:00Z | claude/<card> |
+| Cloud queue (3 runs, 01:30Z): builds A05, W14; specs TH (refit, A287), F03, E03 (round 2), F09 (round 3: checks 17, 18; amount grammar split to new card F09A, A296, A297); new DG, F05M, F09A | up to 3 cloud runs | cloud | 2 Oct 01:30Z | claude/<card> |
 | Design fix round 2: source viewer (uses design/parts/cite-or-reason/) | designer | local worktree | 2 Oct 06:30Z | claude/design-source-viewer-2 |
 | Queue repair 3: built (486eec1), check running | checker | local worktree | 2 Oct 07:30Z | claude/queue-repair-3 |
 
