@@ -15,3 +15,10 @@ Not run: typecheck, lint, deps:check, mutate (no TypeScript or core module chang
 None.
 ## Model
 Sonnet 5.5 (core card; the adversarial check is the check job's).
+
+## Round 3 (cloud-db88d1, Sonnet 5.5)
+Branch claude/W14. New `reference/sample-clients/lib/prior-year.mjs` (`priorYear`, `gifiStatement`); `clients/c11_12.mjs` now types only the 2023 retained earnings, 2024 book income, dividends, instalments paid, the asset register and the rates; tax, taxable income (119,486.87), balance owing (2,577.40), RE (118,092.60), 2025 instalments (3,644.35 x4) and the one-line-per-code balance sheet (2680 = 6,957.40) are outputs. README: only the pass count (375 to 401).
+- `tools/test/sample-prior-year.test.mjs`: 25 of 25 pass. `verify.mjs`: 401 passed, 5 known (R8 W16), 0 failed. `make-csv.mjs --check`: 1025 passes. Second generation byte-identical; 01 to 10 unchanged (only CRLF noise from make-csv, restored). `npm test` 210 + 2 db pass; typecheck, lint, deps:check clean. No TypeScript changed (mutate:changed has no target).
+- `node tools/scope.mjs W14` FAILs on README edits in earlier commits 66d4083 and ec6cf19 (round 2, the check already noted); this round touches README line 14 (counts) only. Lead to rule.
+- Amber: prior_year gains `schedule1` (R12) and `losses.nonCapital` takes `{amount}` when a loss; extra cents of the tax split go to the earlier instalments; CCA class rates held in the lib (1, 8, 10, 12, 50).
+- Permission gaps: nvm could not install Node 24; used the nodejs.org tarball (24.21.0).
