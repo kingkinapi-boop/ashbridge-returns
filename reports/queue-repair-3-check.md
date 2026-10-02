@@ -7,3 +7,6 @@ FAIL (one gap; everything else passes)
 - Item 2 had no code change (behaviour already existed); its test is a regression guard only.
 Docs that must change when it lands: worker.md spec report must pass `--validated <sha of origin/main used>` (after landing, a spec reported without it is offered again as "toolchain refit", so an old-docs spec worker loops until updated); dispatch skill (spec jobs merge main, run typecheck, lint, tests first); src/core/egress-rules.acceptance.test.ts still has its own old shellProblems (spec job, build amber a).
 Heavy slot waits were long (npm ci about 4 min here, tests 268 s; the tools suite is slow).
+
+## Re-check at b8d5847: PASS
+Forcing specReported = false in tools/next.mjs now fails the new gate test (restored). tools/test: 4 files, 60 passed, 0 failed, 0 errors. git merge origin/main: clean (tools/lib.mjs auto-merged with F08). worker.md --validated landed; dispatch skill still to update.
