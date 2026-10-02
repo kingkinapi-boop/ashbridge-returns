@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (0022). Zo said yes to the notes in the repo (0023), but agents cannot commit them: Zo does it by hand (to-do 1); the folder is git-excluded until then. RT-25 confirmed (0023). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (0022). Zo committed the notes by hand (eb7fbb7, 0023); test return and contact deleted. Next: fold O8 into FINDINGS.md, CK-12 and RT-14. RT-25 confirmed (0023). Times are UTC from `date -u`.
 
 ## State
 
