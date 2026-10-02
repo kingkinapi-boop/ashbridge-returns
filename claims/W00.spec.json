@@ -1,9 +1,11 @@
 {
  "card": "W00",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit, 81 own tests fail for the right reason",
  "worker": "cloud-db355d",
- "state": "working",
- "at": "2026-10-02T11:12:00.296Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T11:14:38.142Z",
+ "mode": "turbo",
+ "commit": "f6aed41",
+ "validated": "8e8fba1c6253c09a67ca3d4a857d650cb352a660"
 }
