@@ -340,3 +340,5 @@
 {"ts":"2026-10-02T18:38:52.113Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T18:38:52.443Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T19:00:35.189Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W00a findings review","allowed":true}
+{"ts":"2026-10-02T19:08:54.256Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T19:08:54.766Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
