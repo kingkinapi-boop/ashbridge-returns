@@ -1,0 +1,11 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fact catalogue key lines and planted test values; never whole folders"
+regexTarget = "line"
+regexes = [
+  '''"key":\s*"[a-z0-9_]+(\.[a-z0-9_]+)+"''',
+  '''PLANTED-[A-Za-z0-9_-]+''',
+  '''k-test-[A-Za-z0-9_-]+''',
+]
