@@ -57,6 +57,14 @@ const KNOWN = [
   { rule: 'R18', match: /^src\/(contracts\/jobs\.ts|modules\/bridge\/run\.ts|modules\/gaps\/bank\/index\.ts|modules\/jobs\/queue\.ts): a core card lists it, but it has no \/\/ @mutate/, owner: 'FX3 (F06 jobs.ts and queue.ts, F07 run.ts, G01 gaps/bank/index.ts: add the marker)' },
   { rule: 'R23', match: /^src\/contracts\/jobs\.ts#JobSchema: a stray key is accepted at \(top\)$/, owner: 'FX3 (F06 jobs.ts: .strict())' },
   { rule: 'R41', match: /^src\/modules\/bridge\/run\.ts: a \.trim\(\) blank rule/, owner: 'FX3 (F07 run.ts: go through src/contracts/text.ts)' },
+  // Found when main 33badd3 (A07C landed at b80c251) was merged into the SC spec (2 Oct 21:00Z, cloud-186a3b); owner FX3.
+  { rule: 'R36', match: /^src\/modules\/sheets\/xlsx\/index\.ts: float dollars to cents /, owner: 'FX3 (A07C sheets/xlsx/index.ts:66: Math.round(x * 100) / 100 on a library number; money is read from the stored text)' },
+  { rule: 'R41', match: /^src\/contracts\/sheets\.ts: a \.trim\(\) blank rule/, owner: 'FX3 (A07C sheets.ts nonBlank: s.trim().length > 0; go through src/contracts/text.ts)' },
+  { rule: 'R46', match: /^src\/modules\/sheets\/xlsx\/index\.ts: (reads a library value's display text \(\.text\)|turns a library value into text with String\(c\) and no typed switch)/, owner: 'FX3 (A07C sheets/xlsx/index.ts: ExcelJS rich.text and String(c) on an address part; build text from the typed value)' },
+  { rule: 'R56', match: /^src\/modules\/sheets\/xlsx\/raw\.ts: a regex over raw XML that misses a self-closed element /, owner: 'FX3 (A07C sheets/xlsx/raw.ts:95 <v>([\\s\\S]*?)<\\/v> and the comment at :104; the module treats <v/> as no value, so FX3 either matches <v/> in the regex or the Lead rules the comment hit a false positive)' },
+  { rule: 'R47', match: /^src\/modules\/sheets: a reader adapter with no entry in the SC READERS registry/, owner: 'FX3 spec job (a READERS entry for src/modules/sheets: make, good bytes, names, routes; was PENDING under A07C)' },
+  { rule: 'R48', match: /^src\/modules\/sheets: its contract says hidden or never dropped, and no empty instance tests it$/, owner: 'FX3 spec job (the sheets READERS entry: blank and keeps for an empty hidden row or column)' },
+  { rule: 'R54', match: /^src\/modules\/sheets: a reader with no entry in the SC READERS registry \(R54\)$/, owner: 'FX3 spec job (the sheets READERS entry: wrongKind and refusal; was PENDING under A07C)' },
   { rule: 'R54', match: /^A01: a zero-size MediaBox under statement \(Test\)\.pdf was not refused with a reason/, owner: 'A01 successor (A01-check-r3 note: a raw ZodError from ReadingResultSchema)' },
 ]
 
@@ -337,6 +345,22 @@ const R23_SAMPLES = {
       cites: [{ kind: 'onboarding_contract', ref: 'corporation.legalName' }],
     },
   ],
+  // A07C's sheets contract (landed after the spec was validated on 6d8efd6): a formula cell reaches .cached.
+  'src/contracts/sheets.ts#CellSchema': [R23_FORMULA_CELL()],
+  'src/contracts/sheets.ts#SheetSchema': [R23_SHEET()],
+  'src/contracts/sheets.ts#SheetResultSchema': [
+    { fileFingerprint: 'a'.repeat(64), engine: { name: 'exceljs (Test)', version: '4.4.0' }, readAt: '2026-10-02T16:00:00Z', sheets: [R23_SHEET()] },
+  ],
+  'src/contracts/sheets.ts#CellPointerSchema': [{ fileFingerprint: 'a'.repeat(64), sheet: 'TB (Test)', row: 2, column: 'B' }],
+}
+function R23_FORMULA_CELL() {
+  return {
+    row: 2, column: { letter: 'B', number: 2 }, text: '10.00', type: 'formula', formula: 'SUM(B3:B4)',
+    cached: { type: 'number', text: '10.00' }, hiddenRow: false, hiddenColumn: false, merged: null,
+  }
+}
+function R23_SHEET() {
+  return { name: 'TB (Test)', hidden: false, hiddenRows: [], hiddenColumns: [], cells: [R23_FORMULA_CELL()] }
 }
 const STRAY = 'strayKeyTest'
 
@@ -855,6 +879,10 @@ const TEXT_EXT = /\.(csv|json|md|txt|ts|tsx|mjs|js|sql|yml|yaml|html|xml|tsv)$/i
 const BINARY_FIXTURES = [
   { match: /^src\/modules\/ocr\/textlayer\/__fixtures__\/[a-z-]+\.pdf$/, reason: 'A01: PDFs written by make-fixtures.ts in raw PDF syntax from made-up lines' },
   { match: /^src\/modules\/storage\/__fixtures__\/drive-[a-z0-9-]+\/.+\.pdf$/, reason: 'A05: placeholder PDFs of under 100 bytes holding one made-up comment line' },
+  {
+    match: /^src\/modules\/sheets\/__fixtures__\/(xlsx\/(tb-1900|tb-1904|cells-r2|protected)\.xlsx|xlsx\/old\.xls|containers\/(letter \(Test\)\.docx|no-workbook \(Test\)\.xlsx|notes \(Test\)\.zip))$/,
+    reason: 'A07B and A07C: workbooks, compound files and containers written byte for byte by sheets/__fixtures__/make-fixtures.mjs from fixed made-up content',
+  },
 ]
 function testDataFiles() {
   return [
