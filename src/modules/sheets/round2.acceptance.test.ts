@@ -313,13 +313,27 @@ describe('A07 round 2 S6: the number text rule (EV-14)', () => {
   /** The cent amount in plain digits: String below 1e21, every digit from there up. */
   const plain = (c: number): string => (Math.abs(c) < 1e21 ? String(c) : BigInt(c).toString())
   const nearestCent = (x: number): number => (Number.isInteger(x) ? x : Math.round(x * 100) / 100)
-  /** The texts the rule allows for a stored double: the cent amount within 1e-9, the shortest round-trip text beyond it. */
+  /** One unit in the last place of x (the gap to the next double away from zero). */
+  function ulp(x: number): number {
+    const a = Math.abs(x)
+    if (a === Number.MAX_VALUE) return 2 ** 971
+    const view = new DataView(new ArrayBuffer(8))
+    view.setFloat64(0, a)
+    view.setBigInt64(0, view.getBigInt64(0) + 1n)
+    return view.getFloat64(0) - a
+  }
+  /**
+   * The texts the rule allows for a stored double (A07B item 1 supersedes the fixed 1e-9 band of round 2): the cent amount
+   * within 4 ulps or 1e-9, the shortest round-trip text beyond 64 ulps and 1e-9. A thin band either side accepts either
+   * text, so floating point in the bound itself never decides; past 1e12 (4 ulps of 0.001 or more) either text is allowed.
+   */
   function allowed(x: number): string[] {
     const c = nearestCent(x)
     const distance = Math.abs(x - c)
-    // A thin band either side of the 1e-9 bound accepts either text, so floating point in the bound itself never decides.
-    if (distance < 0.9e-9) return [plain(c)]
-    if (distance > 1.1e-9) return [String(x)]
+    const lower = Math.max(0.9e-9, 4 * ulp(x))
+    const upper = Math.max(1.1e-9, 64 * ulp(x))
+    if (lower < 0.001 && distance <= lower) return [plain(c)]
+    if (upper < 0.005 && distance > upper) return [String(x)]
     return [plain(c), String(x)]
   }
   async function readNumbers(values: number[]): Promise<{ x: number; text: string | undefined; type: string | undefined }[]> {
@@ -348,7 +362,7 @@ describe('A07 round 2 S6: the number text rule (EV-14)', () => {
     expect(got.every((g) => g.type === 'number')).toBe(true)
   })
 
-  test('EV-14 property (seed 20261002): any finite double reads back as its shortest round-trip text or, within 1e-9, its cent amount', async () => {
+  test('EV-14 property (seed 20261002): any finite double reads back as its shortest round-trip text or, within its magnitude band, its cent amount', async () => {
     const value = fc.oneof(
       fc.double({ noNaN: true, noDefaultInfinity: true }),
       // Money-sized values with float noise: a cent amount plus or minus a few units in the last place.

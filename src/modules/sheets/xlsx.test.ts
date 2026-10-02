@@ -115,6 +115,8 @@ describe('EV-14 an unreadable zip', () => {
   test('EV-14 a file that starts like a zip but is not one is refused with a reason that says so', async () => {
     const out = await readXlsx(Uint8Array.of(0x50, 0x4b, 0x03, 0x04, 1, 2, 3))
     expect(out.ok).toBe(false)
-    if (!out.ok) expect(out.reason).toMatch(/^not a readable \.xlsx file: .+/)
+    // A07B item 3: the reason says so and never carries the library's message or URL.
+    if (!out.ok) expect(out.reason).toMatch(/^not a readable \.xlsx file|not a workbook/)
+    if (!out.ok) expect(out.reason).not.toMatch(/https?:|central directory|corrupted|end of data|\?/i)
   })
 })
