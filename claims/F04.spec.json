@@ -1,11 +1,9 @@
 {
  "card": "F04",
  "role": "spec",
- "note": "refit, 23 own tests fail",
- "worker": "cloud-db355d",
- "state": "reported",
- "at": "2026-10-02T11:23:14.624Z",
- "mode": "turbo",
- "commit": "3d3d460",
- "validated": "8e8fba1c6253c09a67ca3d4a857d650cb352a660"
+ "note": "toolchain refit",
+ "worker": "cloud-eb759f",
+ "state": "working",
+ "at": "2026-10-02T12:47:39.709Z",
+ "mode": "turbo"
 }
