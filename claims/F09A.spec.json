@@ -1,11 +1,8 @@
 {
  "card": "F09A",
  "role": "spec",
- "worker": "cloud-df251e",
- "state": "reopened",
- "at": "2026-10-02T07:54:49.184Z",
- "mode": "turbo",
- "note": "round 3: dash look-ahead, iterative, CR/DR case, zero-width blank (card Round 3)",
- "commit": "41d00d7",
- "validated": "30986dd"
+ "worker": "cloud-2bd5d1",
+ "state": "working",
+ "at": "2026-10-02T07:55:36.716Z",
+ "mode": "turbo"
 }
