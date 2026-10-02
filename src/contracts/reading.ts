@@ -25,8 +25,8 @@ export const BoxSchema = z
 export type Box = z.infer<typeof BoxSchema>
 
 export const WordSchema = z.strictObject({
-  /** Never blank: a blank word (spaces or zero-width characters only) would let a blank value count as found (EV-6, AI-4). */
-  text: z.string().refine((t) => t.replace(/[\u200B-\u200D\uFEFF]/g, '').trim() !== '', { message: 'word text must not be blank' }),
+  /** Never blank: a blank word (spaces or format characters, category Cf, only) would let a blank value count as found (EV-6, AI-4). */
+  text: z.string().refine((t) => t.replace(/\p{Cf}/gu, '').trim() !== '', { message: 'word text must not be blank' }),
   box: BoxSchema,
   confidence: fraction,
   /** The engine's reading order. */

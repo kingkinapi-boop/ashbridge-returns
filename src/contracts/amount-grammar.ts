@@ -77,9 +77,11 @@ type Spot = { left: number; width: number; top: number; height: number }
 
 const sameLine = (a: Spot, b: Spot): boolean => a.top < b.top + b.height && b.top < a.top + a.height
 
-/** Same line and a gap between the words no wider than `tolerance` word heights. */
-const adjacent = (a: Spot, b: Spot, tolerance: number): boolean =>
-  sameLine(a, b) && b.left - (a.left + a.width) <= a.height * tolerance
+/** Same line, the second word to the right of the first (no overlap, no backwards gap), and a gap no wider than `tolerance` word heights. */
+const adjacent = (a: Spot, b: Spot, tolerance: number): boolean => {
+  const gap = b.left - (a.left + a.width)
+  return sameLine(a, b) && gap >= 0 && gap <= a.height * tolerance
+}
 
 /** The default join gap: one word height. */
 export const DEFAULT_GAP_TOLERANCE = 1
@@ -126,8 +128,12 @@ function groupAt(
   const signed = negative
   const open = lead.includes('(')
   let closed = false as boolean
-  let whole = first.body
-  let decimals = whole.includes('.')
+  // Joined linearly: the pieces are concatenated once at the end, and the whole-number test runs once
+  const pieces = [first.body]
+  let decimals = first.body.includes('.')
+  let joinsWhole = !decimals && WHOLE_SO_FAR.test(first.body)
+  // One grouping style per amount: a comma group in the first word counts as comma style
+  let style = (first.body.includes(',') ? 'comma' : '') as '' | 'comma' | 'space'
   let done = false
 
   /** Applies a trailing mark; false when it does not fit this group. */
@@ -164,22 +170,28 @@ function groupAt(
       continue
     }
     if (w.lead !== '') break
-    const joinsWhole = !decimals && WHOLE_SO_FAR.test(whole)
-    let joined: string
-    if (w.isDec2 && !decimals) joined = whole + w.body
-    else if (w.isGrp3 && joinsWhole) joined = `${whole},${w.body}`
-    else if (w.isCgrp && joinsWhole) joined = whole + w.body
-    else break
+    let piece: string
+    let nextStyle: typeof style = style
+    if (w.isDec2 && !decimals) piece = w.body
+    else if (w.isGrp3 && joinsWhole && style !== 'comma') {
+      piece = `,${w.body}`
+      nextStyle = 'space'
+    } else if (w.isCgrp && joinsWhole && style !== 'space') {
+      piece = w.body
+      nextStyle = 'comma'
+    } else break
     if (w.trail !== '') {
       if (!takeTrail(w.trail)) break
       done = true
     }
-    whole = joined
-    decimals = whole.includes('.')
+    pieces.push(piece)
+    style = nextStyle
+    decimals = decimals || piece.includes('.')
+    joinsWhole = joinsWhole && !decimals
     end += 1
   }
   if (open && !closed) return null
-  return { end, ...centsOf(whole, negative) }
+  return { end, ...centsOf(pieces.join(''), negative) }
 }
 
 /** Every maximal group over positioned words (reading order), as index ranges. */
