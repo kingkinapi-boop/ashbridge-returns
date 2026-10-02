@@ -1,6 +1,8 @@
+// @mutate
 // Records of blueprint 03 as zod schemas (F01). Property names are the column names in
 // db/schema/*.sql, so a row read from the database is the record. Money is integer cents.
 import { z } from 'zod'
+import { BoxSchema } from './reading'
 import {
   AccountIdSchema,
   AdjustingEntryIdSchema,
@@ -27,8 +29,10 @@ import {
 
 const common = { created_at: z.date(), is_test: z.boolean() }
 const cents = z.number().int()
-/** ARC-10: the versions that made a derived record; never empty. */
-export const VersionStampSchema = z.record(z.string(), z.unknown()).refine((v) => Object.keys(v).length > 0)
+/** ARC-10: the versions that made a derived record; never empty, values are non-blank strings or numbers. */
+export const VersionStampSchema = z
+  .record(z.string(), z.union([z.string().refine((s) => s.trim() !== ''), z.number()]))
+  .refine((v) => Object.keys(v).length > 0)
 
 /** Blueprint 02: the states of a return (FLOW-1). */
 export const RETURN_STATES = [
@@ -49,6 +53,7 @@ export const EntryTypeSchema = z.enum(ENTRY_TYPES)
 export const ReturnRecordSchema = z.object({
   id: ReturnIdSchema, ...common,
   entity_name: z.string(), year_end: z.date(), state: ReturnStateSchema,
+  current_state_event_id: StateEventIdSchema.nullable(),
 })
 export type ReturnRecord = z.infer<typeof ReturnRecordSchema>
 
@@ -83,15 +88,25 @@ export const EventRecordSchema = z.object({
 })
 export type EventRecord = z.infer<typeof EventRecordSchema>
 
-export const SourceBoxSchema = z.object({ x0: z.number(), y0: z.number(), x1: z.number(), y1: z.number() })
+/** EV-5: F09's Box without the page (fractions 0 to 1, inside the page); the page is source_page. */
+export const SourceBoxSchema = z
+  .strictObject({ left: z.number(), top: z.number(), width: z.number(), height: z.number() })
+  .refine((b) => BoxSchema.safeParse({ page: 1, ...b }).success, { message: 'box runs off the page' })
 export const FactRecordSchema = z.object({
   id: FactIdSchema, ...common,
   return_id: ReturnIdSchema, fact_key: z.string(), version_no: z.number().int(), value: z.string().nullable(),
   // EV-5: exactly one of these six pointers is set
+  // a document pointer is (page and box) or (sheet, row and column); a QBO pointer is the snapshot
+  // and the account, and the transaction where there is one
   source_document_id: DocumentIdSchema.nullable(),
   source_page: z.number().int().nullable(),
   source_box: SourceBoxSchema.nullable(),
+  source_sheet: z.string().nullable(),
+  source_row: z.number().int().nullable(),
+  source_column: z.string().nullable(),
   source_qbo_snapshot_id: z.string().nullable(),
+  source_qbo_account_id: z.string().nullable(),
+  source_qbo_txn_id: z.string().nullable(),
   source_client_answer_id: z.string().nullable(),
   source_cra_capture_id: z.string().nullable(),
   source_prior_return_id: z.string().nullable(),
@@ -125,6 +140,7 @@ export const AdjustingEntryRecordSchema = z.object({
   return_id: ReturnIdSchema, qbo_snapshot_id: z.string(), qbo_txn_id: z.string(),
   entry_type: EntryTypeSchema.nullable(), reason: z.string().nullable(),
   sources: z.array(z.unknown()), author: z.string().nullable(), explained: z.boolean(),
+  version_no: z.number().int(),
 })
 export type AdjustingEntryRecord = z.infer<typeof AdjustingEntryRecordSchema>
 
@@ -137,7 +153,7 @@ export type EntryLineRecord = z.infer<typeof EntryLineRecordSchema>
 export const JudgmentInputRecordSchema = z.object({
   id: JudgmentInputIdSchema, ...common,
   return_id: ReturnIdSchema, cell_id: z.string(), value: z.string().nullable(),
-  author: z.string(), reason: z.string(),
+  author: z.string(), reason: z.string(), version_no: z.number().int(),
 })
 export type JudgmentInputRecord = z.infer<typeof JudgmentInputRecordSchema>
 
@@ -150,6 +166,8 @@ export type FigureRecord = z.infer<typeof FigureRecordSchema>
 
 export const StateEventRecordSchema = z.object({
   id: StateEventIdSchema, ...common,
+  // FLOW-1: the order of events; set by the database, never by the caller
+  seq: z.union([z.number().int(), z.bigint()]),
   return_id: ReturnIdSchema, from_state: ReturnStateSchema, to_state: ReturnStateSchema,
   actor: z.string(), occurred_at: z.date(), reason: z.string(),
 })

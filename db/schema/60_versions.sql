@@ -23,7 +23,8 @@ create table returns.approvals (
   return_id text not null,
   version_id text not null references returns.versions (id),
   approved_by text not null,
-  fingerprint text not null
+  fingerprint text not null,
+  constraint approvals_approved_by check (btrim(approved_by) <> '')
 );
 create trigger versions_append_only before update or delete on returns.versions
   for each row execute function returns.refuse_change();
@@ -31,6 +32,12 @@ create trigger version_cells_append_only before update or delete on returns.vers
   for each row execute function returns.refuse_change();
 create trigger approvals_append_only before update or delete on returns.approvals
   for each row execute function returns.refuse_change();
+create trigger versions_no_truncate before truncate on returns.versions
+  for each statement execute function returns.refuse_change();
+create trigger version_cells_no_truncate before truncate on returns.version_cells
+  for each statement execute function returns.refuse_change();
+create trigger approvals_no_truncate before truncate on returns.approvals
+  for each statement execute function returns.refuse_change();
 
 alter table returns.versions enable row level security;
 alter table returns.version_cells enable row level security;
