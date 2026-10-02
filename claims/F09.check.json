@@ -1,10 +1,9 @@
 {
  "card": "F09",
  "role": "check",
- "for": "2026-10-01T23:32:56.079Z",
- "worker": "cloud-45ec67",
- "state": "failed",
- "at": "2026-10-01T23:56:09.668Z",
- "mode": "turbo",
- "note": "FAIL: lint 8 errors in acceptance file (spec defect) and valueInBox holes, see reports/F09-check.md"
+ "for": "2026-10-02T01:02:22.309Z",
+ "worker": "cloud-327258",
+ "state": "working",
+ "at": "2026-10-02T01:06:13.030Z",
+ "mode": "turbo"
 }
