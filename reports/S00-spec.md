@@ -11,3 +11,10 @@ Permission gaps: none. Model: Sonnet 5.5.
 ## Toolchain refit (cloud-8a9d55, 2 Oct)
 Merged origin/main 1812262 (was 6b11f49): vitest.config.ts, tsconfig.json, tools/test/toolchain-rules.test.mjs changed. No assertion touched. typecheck, lint and npm test: only sim.acceptance.test.ts fails, on missing F03R ALWAYS_EXPORTED and DG read-own-source (both in train F03R/D01 or DG, not yet on main), as expected; the other 33 test files (742 tests) pass. Validated on main 1812262.
 Permission gaps: none. Model: Sonnet 5.5.
+
+## Round 3 re-validation (cloud-ec71a6, Opus, 2 Oct): spec commit 8f0ba67 on claude/S00
+- Merged origin/main fe5adfe (F03R and DG now on main). Tests unchanged since 14703ba except the harness's taxprepBytes: CRLF-stored kept, LF-only converted, mixed line ends or a stray CR refused naming the file (W00's shared fixture rule; adopt `src/contracts/__fixtures__/taxprep-bytes.ts` once W00 lands).
+- typecheck: only sim.acceptance.test.ts (`ignoredOnImport`, `alwaysExported` not on Simulator); lint clean; unit 1516 of 1527, the 11 failures all S00 acceptance (items 14 to 17, check 10 copies property on a text "-x"); db 2 of 2. Validated on main fe5adfe.
+- Step 6b: a throwaway stub passing all 105 taxprep-sim tests left unit 1527 of 1527 and db 2 of 2 green: nothing retired or rewritten this round (round 3's retirements stand: sim.test.ts:34, release-list.test.ts:14).
+- Amber: the harness adopts W00's shared taxprep-bytes fixture only after W00 lands (not on main yet); its line-end rule copied meanwhile.
+Permission gaps: none. Model: Opus 5.5.
