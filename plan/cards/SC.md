@@ -69,3 +69,4 @@ R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden fi
 - R51 every loader is guarded: every module in testworld/** and e2e/_harness that reads data files goes through `guardFolder` or `guardValue`.
 - R52 markers: every fault-marker field in any answer key or kind has a catalogue entry and the arithmetic proof holds.
 - R53 sequences (joins R44): every month or version sequence is complete and each closing links to the next opening.
+- R54 (A07 round 2 check): every reader refuses a wrong-kind container with a reason and never throws (A01, A07, E00 intake); no reason carries a library message or URL; number-to-text rules are tested with large-magnitude noise.

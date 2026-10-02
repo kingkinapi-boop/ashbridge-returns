@@ -1975,7 +1975,7 @@
       "security": true
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -1999,7 +1999,36 @@
       "title": "Spreadsheet and CSV reader",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "note": " Parked 2 Oct after round 2 (A366): split into A07B, which lands its work."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09",
+        "F09B"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts",
+        "package.json",
+        "package-lock.json"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "A07B",
+      "title": "Spreadsheet reader: the last narrow repairs (A07 split)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/A07B from claude/A07 93ab657 (A366)."
     },
     {
       "status": "carded",
@@ -2324,7 +2353,7 @@
         "A01",
         "A02",
         "A05",
-        "A07",
+        "A07B",
         "SK0"
       ],
       "paths": [
@@ -2442,7 +2471,7 @@
         "E03",
         "L00",
         "A04",
-        "A07",
+        "A07B",
         "F10",
         "F09B"
       ],
@@ -2573,7 +2602,7 @@
       "deps": [
         "E01",
         "W25",
-        "A07"
+        "A07B"
       ],
       "paths": [
         "src/modules/extraction/tb-sheet/**"
@@ -2957,7 +2986,7 @@
       "deps": [
         "B05",
         "A05",
-        "A07"
+        "A07B"
       ],
       "paths": [
         "src/modules/books/gifi/**",
