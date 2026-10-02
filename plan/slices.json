@@ -9364,6 +9364,31 @@
       "title": "OCR benchmark on the test world (for choosing a vendor at go-live)",
       "phase": 4,
       "size": "M"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ1"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/next.mjs",
+        "tools/status.mjs",
+        "tools/scope.mjs",
+        "tools/test/claim.test.mjs",
+        "tools/test/scope.test.mjs",
+        "tools/test/__fixtures__/claims/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ2",
+      "title": "Queue: released checks re-offered, honest counts",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "CQ1 follow-up plus what the Lead saw on 2 Oct evening."
     }
   ]
 }
