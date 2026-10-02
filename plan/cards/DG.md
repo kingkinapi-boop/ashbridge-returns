@@ -43,3 +43,7 @@ Changing `builder.md`, `checker.md`, the merge skill or `package.json` (the Lead
 
 ## Impact
 F01, F03, F09 and E03 builds move from 70 overall to 100 per marked file; each card carries one line in its fix round section.
+
+## Also for round 2 (2 Oct)
+
+`tools/mutate-changed.mjs` skips files under `__fixtures__/` and `__golden__/` when it checks for the `// @mutate` marker (they are spec-owned test data, not product code; S00's harness.ts tripped it). Add a planted case to R20.

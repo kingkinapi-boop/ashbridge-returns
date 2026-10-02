@@ -4,8 +4,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import fc from 'fast-check'
-import { describe, expect, test } from 'vitest'
-import { makeLogger, SENSITIVE_KINDS } from './log'
+import { afterEach, describe, expect, test, vi } from 'vitest'
+import { CIRCULAR, makeLogger, redact, REDACTED, SENSITIVE_KINDS } from './log'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 
@@ -227,5 +227,129 @@ describe('F00 logger redaction (SEC-5, SEC-10)', () => {
   test('ARC-15 log.ts is a mutation target (// @mutate in its first 5 lines)', () => {
     const head = fs.readFileSync(path.join(ROOT, 'src', 'core', 'log.ts'), 'utf8').split('\n').slice(0, 5).join('\n')
     expect(head).toMatch(/\/\/ @mutate/)
+  })
+})
+
+// F00T (spec job): the survivors of the log.ts mutation run (reports/F00T-mutants.md), each as a test.
+/** Wraps a leaf in `levels` plain objects: the leaf sits at depth `levels`. */
+function wrap(levels: number, leaf: unknown): unknown {
+  let v = leaf
+  for (let i = 0; i < levels; i++) v = { inner: v }
+  return v
+}
+
+/** Follows `inner` down `levels` times. */
+function unwrap(levels: number, value: unknown): unknown {
+  let v = value
+  for (let i = 0; i < levels; i++) v = (v as { inner: unknown }).inner
+  return v
+}
+
+describe('F00T log.ts survivors (SEC-5, SEC-10)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  test('SEC-5 a redacted field prints exactly "[redacted]" and a SIN in text becomes "[redacted]" (survivor log.ts:9)', () => {
+    expect(REDACTED).toBe('[redacted]')
+    expect(printedFields({ sin: 'mk-x', note: 'ref 046-454-286 (Test)' })).toEqual({ sin: '[redacted]', note: 'ref [redacted] (Test)' })
+    expect(redact(123456789)).toBe('[redacted]')
+  })
+
+  test('SEC-5 a cycle prints exactly "[circular]" (survivor log.ts:10)', () => {
+    expect(CIRCULAR).toBe('[circular]')
+    const a: Record<string, unknown> = { name: 'Loop (Test)' }
+    a['self'] = a
+    expect(redact(a)).toEqual({ name: 'Loop (Test)', self: '[circular]' })
+    const list: unknown[] = ['x (Test)']
+    list.push(list)
+    expect(redact(list)).toEqual(['x (Test)', '[circular]'])
+  })
+
+  test('SEC-5 a SIN written without separators, or with one, is redacted in text (survivors log.ts:5)', () => {
+    const line = logLine({ a: 'ref 046454286 (Test)', b: 'ref 046-454286 (Test)', c: 'ref 046454 286 (Test)', d: 'ref 046 454 286 (Test)' })
+    for (const bad of ['046454286', '046-454286', '046454 286', '046 454 286']) expect(line).not.toContain(bad)
+    expect(printedFields({ a: 'ref 046454286 (Test)' })).toEqual({ a: 'ref [redacted] (Test)' })
+  })
+
+  test('SEC-5 no false alarm: a 10-digit amount in cents and other numbers are kept (survivors log.ts:6)', () => {
+    expect(printedFields({ amountCents: 1234567890, big: 12345678901, small: 12345678, zero: 0, negative: -500 })).toEqual({
+      amountCents: 1234567890,
+      big: 12345678901,
+      small: 12345678,
+      zero: 0,
+      negative: -500,
+    })
+  })
+
+  test('SEC-5 null, booleans and undefined pass through without throwing (survivor log.ts:64)', () => {
+    expect(redact(null)).toBeNull()
+    expect(redact({ a: null, b: [null], c: true, d: undefined })).toEqual({ a: null, b: [null], c: true, d: undefined })
+    expect(printedFields({ client: null, flags: [null, false] })).toEqual({ client: null, flags: [null, false] })
+  })
+
+  test('SEC-5 the depth cap: a value 19 levels deep is kept, 20 levels deep becomes "[redacted]" (survivors log.ts:65, 68, 70)', () => {
+    expect(unwrap(19, redact(wrap(19, 'kept (Test)')))).toBe('kept (Test)')
+    expect(unwrap(20, redact(wrap(20, { leaf: 'cut (Test)' })))).toBe('[redacted]')
+    expect(unwrap(19, redact(wrap(19, { leaf: 'kept (Test)' })))).toEqual({ leaf: 'kept (Test)' })
+    // arrays count as levels too
+    let arr: unknown = { leaf: 'cut (Test)' }
+    for (let i = 0; i < 20; i++) arr = [arr]
+    let out = redact(arr)
+    for (let i = 0; i < 20; i++) out = (out as unknown[])[0]
+    expect(out).toBe('[redacted]')
+  })
+
+  test('SEC-5 a very deep object (100000 levels) logs without throwing and prints none of its leaf', () => {
+    const deep = wrap(100_000, { note: 'mk-deepest' })
+    let line = ''
+    expect(() => {
+      line = logLine({ deep })
+    }).not.toThrow()
+    expect(line).not.toContain('mk-deepest')
+    expect(line).toContain('[redacted]')
+  })
+
+  test('SEC-5 keys with acronym runs before a word are split (APIKey, SINNumber, DOBValue) (survivors log.ts:41)', () => {
+    const line = logLine({ APIKey: 'mk-api', SINNumber: 'mk-sin', DOBValue: 'mk-dob', clientSINNumber: 'mk-client-sin', OWNERBankAccount: 'mk-bank' })
+    for (const m of ['mk-api', 'mk-sin', 'mk-dob', 'mk-client-sin', 'mk-bank']) expect(line).not.toContain(m)
+    expect(printedFields({ HTMLNote: 'kept (Test)', GSTRate: 13 })).toEqual({ HTMLNote: 'kept (Test)', GSTRate: 13 })
+  })
+
+  test('SEC-5 keys with runs of separators or edge separators are matched (bank__account, _sin_, api--key, date  of  birth) (log.ts:39, 42, 43)', () => {
+    const line = logLine({ bank__account: 'mk-1', _sin_: 'mk-2', 'api--key': 'mk-3', 'date  of  birth': 'mk-4', '__token': 'mk-5', 'access__token__': 'mk-6' })
+    for (const m of ['mk-1', 'mk-2', 'mk-3', 'mk-4', 'mk-5', 'mk-6']) expect(line).not.toContain(m)
+  })
+
+  test('SEC-5 word order counts: "account bank" is not the kind "bank account", while "number sin" still holds the kind "sin"', () => {
+    expect(printedFields({ accountBank: 'kept (Test)' })).toEqual({ accountBank: 'kept (Test)' })
+    expect(printedFields({ numberSin: 'mk-x' })).toEqual({ numberSin: '[redacted]' })
+  })
+
+  test('SEC-10 the three log levels print their own level name (survivors log.ts:85, 86, 87)', () => {
+    const lines: string[] = []
+    const log = makeLogger((l) => {
+      lines.push(l)
+    })
+    log.info('one (Test)')
+    log.warn('two (Test)')
+    log.error('three (Test)', { n: 3 })
+    expect(lines.map((l) => JSON.parse(l) as unknown)).toEqual([
+      { level: 'info', message: 'one (Test)' },
+      { level: 'warn', message: 'two (Test)' },
+      { level: 'error', message: 'three (Test)', fields: { n: 3 } },
+    ])
+  })
+
+  test('SEC-10 the default sink writes one JSON line ending in a newline to stdout (survivors log.ts:80)', () => {
+    const written: string[] = []
+    vi.spyOn(process.stdout, 'write').mockImplementation((chunk: unknown) => {
+      written.push(String(chunk))
+      return true
+    })
+    const log = makeLogger()
+    log.warn('stdout (Test)', { sin: 'mk-default-sink' })
+    vi.restoreAllMocks()
+    expect(written).toEqual([JSON.stringify({ level: 'warn', message: 'stdout (Test)', fields: { sin: '[redacted]' } }) + '\n'])
   })
 })

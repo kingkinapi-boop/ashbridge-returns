@@ -4,7 +4,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 02:37Z by the Lea
 
 ## State
 
-- **Mode: turbo** (Zo 2 Oct ~02:00Z "turbo on", decision 0018, after the Reviewer SLOW of 01:50Z, reviews/REVIEW.md). Wind-down Fri 9 Oct 18:00 Toronto. The Reviewer HOLD stands: nothing using money.ts, ids.ts or the clock lands until card F00T lands.
+- **Mode: turbo** (Zo 2 Oct ~02:00Z "turbo on", decision 0018, after the Reviewer SLOW of 01:50Z, reviews/REVIEW.md). Wind-down Fri 9 Oct 18:00 Toronto. The Reviewer HOLD on money.ts, ids.ts and the clock is LIFTED: F00T landed eb311e1 (2 Oct 04:55Z).ts, ids.ts or the clock lands until card F00T lands.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims, ScheduleWakeup ~30 min). Queue repair 3 landed 2 Oct 03:15Z: sign-off conditions met, up to 6 cloud runs. Laptop: the Lead, 2 local queue workers (0018), one Chrome walker, helpers.
 - **Zo:** to-do has no open question. Day 4 (Auto-fill, Zo) Sat 3 Oct. Decisions 0016 to 0018 today.
 - **Landed:** F00, F05, F08, DG round 1, queue repairs 1 to 3. Train A05 + W14 requested (fbe5c4b). Day 5 of the trial done; to-do #1 red (pasted diagnostics, T05 waits).
@@ -33,7 +33,7 @@ F05M check PASS but waits on F00T (Reviewer HOLD). F00T queued.
 
 ## Watch out
 
-- Train worktree: `git worktree add -B train .claude/worktrees/train origin/main` BEFORE any `git -C` into it (1 Oct a `git -C` into a plain folder switched the main checkout).
+- Landing a train: MERGE origin/main into the train (never rebase --rebase-merges: it replays card history and stops midway), run the code-diff guard, then ff main. Record done, release claims and delete branches only AFTER the push to main succeeded.
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time, window in front. QBO and iFirm sign out after a while: a walker that meets a sign-in page stops; ask Zo in the to-do. Walkers never type passwords.
 - Taking a helper branch: only the files in `git diff --name-only $(git merge-base main B) B`; plan/slices.json by `git merge-file`.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash` (shared stack).
