@@ -2,7 +2,10 @@
  "card": "CQ2",
  "role": "spec",
  "worker": "cloud-186a3b",
- "state": "working",
- "at": "2026-10-02T21:05:35.536Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T21:14:49.333Z",
+ "mode": "turbo",
+ "note": "23 tests (15 fail until built), 15 scope tests rewritten for origin/claude/<card>",
+ "commit": "11df325",
+ "validated": "042c2dd"
 }
