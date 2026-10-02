@@ -13,11 +13,11 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Design fix round 2: queues-record, workbench (builds design/parts/cite-or-reason/), cpa-review V1 (V1 to V8 from claude/design-verify 1f3fdda) | 3 designers | local worktrees | 2 Oct 00:45Z | claude/design-*-2 |
-| Checks of F01, F05, F08, F09 (builds reported; F01 and F09 note spec defects); F03 re-spec | 3 cloud runs | cloud | 2 Oct 03:35Z | claude/<card> |
-| Queue repair 3 build (reopened build re-offers check; next.mjs reads spec claims; async tools tests A247; shellProblems A253; parked-dep check test) | builder | local worktree | 2 Oct 03:00Z | claude/queue-repair-3 |
+| Cloud queue (3 runs, 01:30Z): builds A05, W14; specs TH (refit, A287), F03, E03 (round 2), F09 (round 3: checks 17, 18; amount grammar split to new card F09A, A296, A297); new DG, F05M, F09A | up to 3 cloud runs | cloud | 2 Oct 01:30Z | claude/<card> |
+| Design fix round 2: source viewer (uses design/parts/cite-or-reason/) | designer | local worktree | 2 Oct 06:30Z | claude/design-source-viewer-2 |
+| Queue repair 3: built (486eec1), check running | checker | local worktree | 2 Oct 07:30Z | claude/queue-repair-3 |
 
-All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -cpa-review-2 (V1), -source-viewer-2 (aa385a2; A251). Re-test in flight.
+Design round 2 done: queues-record 4acc091, workbench 637215d (A286), cpa-review V1 fc3515f. Landed: F00, F05, F08. Findings reports: findings-W14-D01, findings-F01-F09, findings-E03-F03, A05-security.
 
 ## Next, in order
 
@@ -27,7 +27,7 @@ All four design fix rounds done: claude/design-queues-record-2, -workbench-2, -c
 4. Phase 2: reviewed and fixed (reports/review-phase2.md, A234 to A246; red 1 settled as amber A245, RT-25 changed, CPA check item 33). Specs wait on S03 (FINDINGS final). Next design: D05 brief with Ready and the clear.
 5. Day 5: imports 01 to 07 done by script; exports and the 02 print (counter 96, file never arrived) blocked, window hidden. On Zo's "2 done": walker retries exports for 01 to 07, creates and imports 08 to 10, diagnostics 06, 07, then 5D. Then "After day 5" helper.
 6. .GFI: Accountant view reached (firm "Ashbridge Tax"); path Your books > Workpapers > Books to tax actions > Export GIFI file; header-only file (blank books). To-do #1: made-up accounts in the firm books (red: firm data) or Zo exports one (shape only). Then gfi-file.md and B01 spec.
-7. Designs: queues-record round 2 DONE (4acc091; 118 of 118 V checks; Q8 open for Zo; note: V2 must click by mouse, Playwright auto-scroll hides page moves: fix design/verify/rules.mjs on claude/design-verify before the sitting). Fix round 2 running for workbench and cpa-review; the source viewer round starts when workbench pushes its shared cite-or-reason part (its fixes 1 to 3 per reports/findings-designs-2.md). Then re-walk and V1 to V8 on all four, then the sitting page for Zo (Artifact, private) about 3 Oct. Then D00, D01, D05. claude/design-verify is merged into each design branch (design/ cannot go straight to main).
+7. Designs: round 2 DONE for queues-record (4acc091), workbench (637215d; A286), cpa-review V1 (fc3515f; panel body may scroll inside while an error summary shows). Earlier: queues-record round 2 DONE (4acc091; 118 of 118 V checks; Q8 open for Zo; note: V2 must click by mouse, Playwright auto-scroll hides page moves: fix design/verify/rules.mjs on claude/design-verify before the sitting). Fix round 2 running for workbench and cpa-review; the source viewer round starts when workbench pushes its shared cite-or-reason part (its fixes 1 to 3 per reports/findings-designs-2.md). Then re-walk and V1 to V8 on all four, then the sitting page for Zo (Artifact, private) about 3 Oct. Then D00, D01, D05. claude/design-verify is merged into each design branch (design/ cannot go straight to main).
 
 ## Watch out
 
