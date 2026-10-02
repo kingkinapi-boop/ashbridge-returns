@@ -366,3 +366,6 @@
 {"ts":"2026-10-02T20:38:35.913Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Token use since 02:50Z","allowed":true}
 {"ts":"2026-10-02T20:38:45.000Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Outside world since 2 Oct","allowed":true}
 {"ts":"2026-10-02T20:56:35.713Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"SC spec: KNOWN entries","allowed":true}
+{"ts":"2026-10-02T20:55:54.011Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T20:55:54.662Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T20:55:55.150Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
