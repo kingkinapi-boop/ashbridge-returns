@@ -1,12 +1,9 @@
 {
  "card": "W00",
  "role": "spec",
- "note": "223 tests; check 8 needs CRLF gitattributes fix, see reports/W00-spec.md",
- "worker": "cloud-0a2392",
- "state": "reported",
- "at": "2026-10-02T06:29:12.805Z",
- "mode": "turbo",
- "beat": "2026-10-02T06:16:50.207Z",
- "commit": "59bb5ae",
- "validated": "30986dd18e24409e456d9051c3d26125ffe10952"
+ "note": "toolchain refit",
+ "worker": "cloud-3703a0",
+ "state": "working",
+ "at": "2026-10-02T08:29:34.230Z",
+ "mode": "turbo"
 }
