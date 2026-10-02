@@ -1,11 +1,9 @@
 {
  "card": "A06",
  "role": "spec",
- "worker": "cloud-7f8978",
- "state": "reported",
- "at": "2026-10-02T15:11:27.310Z",
- "mode": "turbo",
- "note": "73 tests in 3 files; stub run green; see reports/A06-spec.md",
- "commit": "8af6557",
- "validated": "31ee347"
+ "note": "toolchain refit",
+ "worker": "cloud-80fece",
+ "state": "working",
+ "at": "2026-10-02T17:39:51.287Z",
+ "mode": "turbo"
 }
