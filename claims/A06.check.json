@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T21:33:13.029Z",
  "worker": "cloud-ad4518",
- "state": "working",
- "at": "2026-10-02T21:34:46.456Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T22:11:58.605Z",
+ "mode": "turbo",
+ "note": "PASS (PG16 parity not run, see report)"
 }
