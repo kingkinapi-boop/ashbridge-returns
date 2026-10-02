@@ -1,12 +1,8 @@
 {
  "card": "SC",
  "role": "spec",
- "note": "KNOWN entries for owner FX3: see the bold paragraph in plan/cards/SC.md",
- "worker": "cloud-18d04e",
- "state": "reopened",
- "at": "2026-10-02T20:31:23.956Z",
- "mode": "turbo",
- "beat": "2026-10-02T19:54:14.536Z",
- "commit": "34e8ac0",
- "validated": "6d8efd6"
+ "worker": "cloud-ef21b9",
+ "state": "working",
+ "at": "2026-10-02T20:32:36.062Z",
+ "mode": "turbo"
 }
