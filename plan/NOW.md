@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 14:10Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 14:35Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,13 +13,12 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 14:10Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Train: G01 | train check | cloud | 2 Oct 14:10Z | claude/train |
-| W00 build round 2; D00L build; SC spec; A01 spec round 3 | cloud runs | cloud | 2 Oct | claude/<card> |
-| 2 local workers (Zo asked; non-core jobs, 0018) | worker | laptop worktrees | 2 Oct 14:25Z | claude/<card> |
-| W00 check, F01C build; A07 spec round 2 (A360); W01 to W04 specs | cloud runs | cloud | 2 Oct 14:25Z | claude/<card> |
-| Queue: F01C spec then build (F01 split, A359; 13 cards wait on it), BL0 build (waits F01C), G10, G11 builds (wait G01), A03 build | cloud runs | cloud | 2 Oct 14:10Z | claude/<card> |
+| Train red-held: G01 failed only on a timing flake in the SEC-5 test (A361); re-board G01 with FX1 and D00L (PASS) once FX1 passes | train | - | 2 Oct 14:30Z | claude/train |
+| W00 check; F01C build; W02, W03 specs | cloud runs | cloud | 2 Oct | claude/<card> |
+| Local worker 1 (W04 spec); npm ci in the main checkout so local workers can run vitest | laptop | worktree | 2 Oct 14:30Z | claude/W04 |
+| Queue: FX1 spec (urgent: every train can flake until it lands), E03A spec (A362), A07 build round 2, W01 spec (draft on claude/W01, needs 6b), A01 build (waits F01C), S00 build (waits W00) | cloud runs | cloud | 2 Oct 14:35Z | claude/<card> |
 
-S00 build waits on W00 (A354); U00 and D02 to D13 in the design lane (A352). CRA walk copies on main in reference/cra/ (originals off git).
+U00 and D02 to D13 in the design lane (A352); G12 to G17 wait on E03A.
 
 ## Next, in order
 
