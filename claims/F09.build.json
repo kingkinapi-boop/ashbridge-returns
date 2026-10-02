@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "6b127d3",
  "worker": "local-4e140f",
- "state": "hold-findings",
- "at": "2026-10-02T02:57:16.309Z",
+ "state": "reopened",
+ "at": "2026-10-02T04:13:24.550Z",
  "mode": "turbo",
  "note": "FAIL: reading.ts mutation 76.29 (110 survived, 9 no cov), per-file 100 rule; see reports/F09-check.md on claude/F09-check"
 }
