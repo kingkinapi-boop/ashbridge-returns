@@ -1084,7 +1084,9 @@
         "reference/sample-clients/make-csv.mjs",
         "reference/sample-clients/verify.mjs",
         "reference/sample-clients/contract-ids.json",
-        "reference/sample-clients/README.md"
+        "reference/sample-clients/README.md",
+        "reference/sample-clients/lib/prior-year.mjs",
+        "tools/test/sample-prior-year.test.mjs"
       ],
       "clauses": [
         "ARC-8",
