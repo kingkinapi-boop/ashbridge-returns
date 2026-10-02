@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "046f8d4",
  "worker": "cloud-839492",
- "state": "hold-findings",
- "at": "2026-10-02T00:20:50.330Z",
+ "state": "reopened",
+ "at": "2026-10-02T10:38:40.844Z",
  "mode": "turbo",
- "note": "FAIL: 3 lint errors in facts.ts, scope fixture outside paths, see reports/E03-check.md on claude/E03-check"
+ "note": "round 2 spec reported; build per card fix list"
 }
