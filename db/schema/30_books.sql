@@ -22,6 +22,11 @@ create table returns.gifi_mappings (
   gifi_code text not null,
   unique (account_id, mapping_version)
 );
+create trigger gifi_mappings_next_version before insert on returns.gifi_mappings
+  for each row execute function returns.next_version_guard('mapping_version', 'account_id');
+-- TB-3: a new GIFI code or account is a new mapping version, never an edit.
+create trigger gifi_mappings_update_guard before update on returns.gifi_mappings
+  for each row execute function returns.version_update_guard('mapping_version', 'return_id', 'account_id', 'gifi_code');
 
 create table returns.adjusting_entries (
   id text primary key,
@@ -42,6 +47,9 @@ create table returns.adjusting_entries (
   ),
   constraint entries_sources_array check (jsonb_typeof(sources) = 'array')
 );
+
+create trigger entries_next_version before insert on returns.adjusting_entries
+  for each row execute function returns.next_version_guard('version_no', 'return_id', 'qbo_snapshot_id', 'qbo_txn_id');
 
 -- EV-1, SEC-7: lines are append-only.
 create table returns.entry_lines (
@@ -76,15 +84,22 @@ create trigger entries_no_truncate before truncate on returns.adjusting_entries
   for each statement execute function returns.refuse_change();
 
 -- TB-2: sources are a non-empty array of members that each say something: a non-blank string or a
--- non-empty object (never null, "", "  ", {} or a bare scalar).
+-- non-empty object of non-blank strings and numbers (never null, blank text, {}, {"x":""} or a bare scalar).
 create function returns.sources_are_real(s jsonb) returns boolean
 language sql immutable as $$
   select jsonb_typeof(s) = 'array' and jsonb_array_length(s) > 0
     and not exists (
       select 1 from jsonb_array_elements(s) m
       where not (
-        (jsonb_typeof(m.value) = 'string' and btrim(m.value #>> '{}') <> '')
-        or (jsonb_typeof(m.value) = 'object' and m.value <> '{}'::jsonb)
+        (jsonb_typeof(m.value) = 'string' and not returns.is_blank(m.value #>> '{}'))
+        or (jsonb_typeof(m.value) = 'object' and m.value <> '{}'::jsonb
+            and not exists (
+              select 1 from jsonb_each(m.value) f
+              where returns.is_blank(f.key) or not (
+                (jsonb_typeof(f.value) = 'string' and not returns.is_blank(f.value #>> '{}'))
+                or jsonb_typeof(f.value) = 'number'
+              )
+            ))
       )
     )
 $$;
@@ -100,7 +115,7 @@ begin
   if e.entry_type is null then
     raise exception 'TB-2: entry % has no type', e.id using errcode = '23514';
   end if;
-  if e.reason is null or btrim(e.reason) = '' then
+  if e.reason is null or returns.is_blank(e.reason) then
     raise exception 'TB-2: entry % has no reason', e.id using errcode = '23514';
   end if;
   if not returns.sources_are_real(e.sources) then
@@ -159,10 +174,10 @@ create table returns.judgment_inputs (
   author text not null,
   reason text not null,
   version_no integer not null default 1,
-  unique (return_id, cell_id, version_no),
-  constraint judgment_inputs_author check (btrim(author) <> ''),
-  constraint judgment_inputs_reason check (btrim(reason) <> '')
+  unique (return_id, cell_id, version_no)
 );
+create trigger judgment_inputs_next_version before insert on returns.judgment_inputs
+  for each row execute function returns.next_version_guard('version_no', 'return_id', 'cell_id');
 create trigger judgment_inputs_append_only before update or delete on returns.judgment_inputs
   for each row execute function returns.refuse_change();
 create trigger judgment_inputs_no_truncate before truncate on returns.judgment_inputs
@@ -173,3 +188,5 @@ alter table returns.gifi_mappings enable row level security;
 alter table returns.adjusting_entries enable row level security;
 alter table returns.entry_lines enable row level security;
 alter table returns.judgment_inputs enable row level security;
+
+comment on column returns.judgment_inputs.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';

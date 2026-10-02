@@ -46,6 +46,28 @@
 //   version of an entry is a new row with the same return, snapshot and transaction.
 // - facts and adjusting_entries refuse in-place UPDATE of value columns (status and explained may
 //   change) and DELETE.
+//
+// Round 3, the last (checks 16 and 17 widened, new check 20; reports/findings-F01-r2.md S1 to S8):
+// - Blank, defined once (src/contracts/text.ts isBlank, SQL returns.is_blank(text)): a string made
+//   only of White_Space, Cc, Cf or Default_Ignorable_Code_Point characters, or U+2800. The two agree
+//   on every code point except U+0000 (not storable) and the surrogates.
+// - Every text column outside the value list (facts.value, version_cells.value,
+//   judgment_inputs.value, figures.value, differences.before_value, differences.after_value) refuses
+//   a blank value with SQLSTATE 23514 (ids, pointer ids, and nullable columns when present); the
+//   same row with a non-blank value in that column is accepted; the matching records.ts field
+//   refuses the same blanks. (returns.current_state_event_id is set only by the move: zod only.)
+// - Every return_id is a foreign key to returns.returns(id).
+// - adjusting entry sources: each member is a non-blank string, or a non-empty object whose every
+//   value is a non-blank string or a number.
+// - state_events (FLOW-1), refused with SQLSTATE 23514 and a message naming the rule:
+//   a seq the caller set (OVERRIDING SYSTEM VALUE): message contains "seq";
+//   from_state other than the return's state: "from_state"; to_state equal to from_state: "to_state";
+//   a second pending event (one not yet used by a move) for the return: "pending".
+//   A move with no licence says "no matching state event" or "no pending state event".
+// - version_no on facts (per return_id, fact_key), adjusting_entries (per return_id,
+//   qbo_snapshot_id, qbo_txn_id), judgment_inputs (per return_id, cell_id), versions (per return_id)
+//   and gifi_mappings.mapping_version (per account_id) start at 1 and go up by exactly one; any other
+//   number is refused with SQLSTATE class 23 and a message or constraint naming the column.
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -78,8 +100,32 @@ import type {
   VersionRecord,
 } from './records'
 import type * as Ids from './ids'
-import { CheckResultRecordSchema, FactRecordSchema, FigureRecordSchema, VersionStampSchema } from './records'
+import {
+  AccountRecordSchema,
+  AdjustingEntryRecordSchema,
+  AnswerRecordSchema,
+  ApprovalRecordSchema,
+  CheckResultRecordSchema,
+  DifferenceRecordSchema,
+  DocumentRecordSchema,
+  EntryLineRecordSchema,
+  EventRecordSchema,
+  ExceptionRecordSchema,
+  FactRecordSchema,
+  FigureRecordSchema,
+  GifiMappingRecordSchema,
+  HoldRecordSchema,
+  JudgmentInputRecordSchema,
+  LessonRecordSchema,
+  LinkRecordSchema,
+  ReturnRecordSchema,
+  StateEventRecordSchema,
+  VersionCellRecordSchema,
+  VersionRecordSchema,
+  VersionStampSchema,
+} from './records'
 import { BoxSchema } from './reading'
+import { isBlank } from './text'
 
 // ids.ts must exist and name the id kinds; this line fails typecheck until it does.
 export type IdKindsExist = [Ids.ReturnId, Ids.FactId, Ids.FigureId, Ids.DocumentId]
@@ -152,6 +198,8 @@ const STAMP = { reader: 'qbo-reader (Test)', reader_version: '0.0.1', mapping_re
 const FINGERPRINT = 'sha256:' + 'a'.repeat(64)
 // F09's Box without the page: fractions of the page, origin top left.
 const BOX = { left: 0.62, top: 0.71, width: 0.11, height: 0.02 }
+// Round 3: the eight blanks every non-blank text column refuses (findings F01 r2, S2).
+const EIGHT_BLANKS = ['', ' ', '\t', '\n', ' ', '​', '　', '⠀'] as const
 
 type Row = Record<string, unknown>
 
@@ -168,15 +216,24 @@ async function insert(db: PGlite, table: Table, row: Row): Promise<void> {
 interface Refusal {
   code: string
   message: string
+  constraint: string
 }
 async function refusalOf(p: Promise<unknown>): Promise<Refusal | undefined> {
   try {
     await p
     return undefined
   } catch (e) {
-    const err = e as { code?: string; message?: string }
-    return { code: err.code ?? '', message: err.message ?? '' }
+    const err = e as { code?: string; message?: string; constraint?: string }
+    return { code: err.code ?? '', message: err.message ?? '', constraint: err.constraint ?? '' }
   }
+}
+// Round 3 (S8): refused, and the refusal names its rule: the constraint name or the message
+// matches `naming` (a column name, a constraint name or the trigger's words listed in the header).
+async function expectRefusedNaming(p: Promise<unknown>, naming: RegExp, code: RegExp = /^(23|P0001)/): Promise<void> {
+  const r = await refusalOf(p)
+  expect(r, 'expected the database to refuse this').toBeDefined()
+  expect(r?.code, `refused for the wrong reason: ${r?.code ?? ''} ${r?.message ?? ''}`).toMatch(code)
+  expect(`${r?.constraint ?? ''} ${r?.message ?? ''}`, 'the refusal names its rule').toMatch(naming)
 }
 // Refused by an integrity rule (class 23) or a trigger (P0001), never by a mistake such as a
 // missing column (42703) or a missing table (42P01).
@@ -487,9 +544,16 @@ describe('TB-2 an adjusting entry counts as explained only when complete and bal
     const e1 = await newEntry(db, w, { reason: null })
     await addLines(db, e1, [100, -100])
     await expectRefused(markExplained(db, e1))
-    const e2 = await newEntry(db, w, { reason: '   ' })
-    await addLines(db, e2, [100, -100])
-    await expectRefused(markExplained(db, e2))
+    // round 3 (check 17 widened): a blank reason may already be refused when the entry is written
+    // (23514); if it is written, it still cannot be marked explained
+    const e2 = tid()
+    const ins = await refusalOf(insert(db, 'adjusting_entries', { ...w.rows.adjusting_entries, id: e2, qbo_txn_id: 'JE-' + e2, reason: '   ' }))
+    if (ins) expect(ins.code, ins.message).toBe('23514')
+    else {
+      await addLines(db, e2, [100, -100])
+      await expectRefused(markExplained(db, e2))
+    }
+    expect(await count(db, 'adjusting_entries', 'id = $1 and explained', [e2])).toBe(0)
   })
 
   test('TB-2 an entry with no source cannot be marked explained', async () => {
@@ -814,11 +878,19 @@ async function stateEvent(db: PGlite, returnId: string, from: string, to: string
   })
   return id
 }
+// Round 3: a new return at intake with no state event yet, so no pending event can be the reason
+// a refusal happens.
+async function freshReturn(db: PGlite, w: World): Promise<string> {
+  const id = tid()
+  await insert(db, 'returns', { ...w.rows.returns, id, entity_name: 'Fresh return (Test)' })
+  return id
+}
+const NO_LICENCE = /no (matching|pending) state event/i
 
 describe('FLOW-1 a return has exactly one state and every change is an event', () => {
   test('FLOW-1 a return with no state is refused', async () => {
     const { db, w } = await freshWorld()
-    await expectRefused(insert(db, 'returns', { ...w.rows.returns, id: tid(), state: null }))
+    await expectRefusedNaming(insert(db, 'returns', { ...w.rows.returns, id: tid(), state: null }), /\bstate\b|intake/)
   })
 
   test('FLOW-1 the state is a single value: one column, not a list', async () => {
@@ -844,18 +916,22 @@ describe('FLOW-1 a return has exactly one state and every change is an event', (
       await expectAccepted(moveTo(db, r, to))
       expect(await count(db, 'returns', 'id = $1 and state = $2', [r, to]), to).toBe(1)
     }
-    await expectRefused(insert(db, 'returns', { ...w.rows.returns, id: tid(), entity_name: 'Waiting (Test)', state: 'waiting_on_client' }))
+    await expectRefusedNaming(
+      insert(db, 'returns', { ...w.rows.returns, id: tid(), entity_name: 'Waiting (Test)', state: 'waiting_on_client' }),
+      /returns_state|intake/,
+    )
   })
 
   test('FLOW-1 a second current state for the same return is refused (one row per return)', async () => {
     const { db, w } = await freshWorld()
-    await expectRefused(insert(db, 'returns', { ...w.rows.returns, state: 'evidence' }))
+    await expectRefusedNaming(insert(db, 'returns', { ...w.rows.returns, state: 'evidence' }), /returns_pkey|intake/)
+    await expectRefusedNaming(insert(db, 'returns', { ...w.rows.returns, state: 'intake' }), /returns_pkey/)
     expect(await count(db, 'returns', 'id = $1', [w.ids.returns])).toBe(1)
   })
 
   test('FLOW-1 a state change with no event is refused', async () => {
     const { db, w } = await freshWorld()
-    await expectRefused(moveTo(db, w.ids.returns, 'gaps'))
+    await expectRefusedNaming(moveTo(db, w.ids.returns, 'gaps'), NO_LICENCE)
     expect(await count(db, 'returns', "id = $1 and state = 'intake'", [w.ids.returns])).toBe(1)
   })
 
@@ -869,26 +945,37 @@ describe('FLOW-1 a return has exactly one state and every change is an event', (
   test('FLOW-1 an event for a different move does not license this one', async () => {
     const { db, w } = await freshWorld()
     // the only event is intake -> evidence; intake -> gaps has none
-    await expectRefused(moveTo(db, w.ids.returns, 'gaps'))
+    await expectRefusedNaming(moveTo(db, w.ids.returns, 'gaps'), NO_LICENCE)
   })
 
   for (const missing of ['actor', 'occurred_at', 'from_state', 'to_state', 'reason']) {
     test(`FLOW-1 a state event with no ${missing} is refused`, async () => {
       const { db, w } = await freshWorld()
-      await expectRefused(insert(db, 'state_events', { ...w.rows.state_events, id: tid(), [missing]: null }))
+      // round 3 (S8): on a return with no pending event, so only the missing column can be the reason
+      const r = await freshReturn(db, w)
+      await expectRefusedNaming(
+        insert(db, 'state_events', { ...w.rows.state_events, id: tid(), return_id: r, [missing]: null }),
+        new RegExp(missing),
+      )
+      expect(await count(db, 'state_events', 'return_id = $1', [r])).toBe(0)
     })
   }
 
   test('FLOW-1 a complete state event is accepted (control for the refusals above)', async () => {
     const { db, w } = await freshWorld()
+    // round 3 (S8): the fixture's pending event (intake -> evidence) is used first
+    await expectAccepted(moveTo(db, w.ids.returns, 'evidence'))
     await expectAccepted(
       insert(db, 'state_events', { ...w.rows.state_events, id: tid(), from_state: 'evidence', to_state: 'gaps' }),
     )
+    const r = await freshReturn(db, w)
+    await expectAccepted(insert(db, 'state_events', { ...w.rows.state_events, id: tid(), return_id: r }))
   })
 
   test('FLOW-1 a state event with a blank reason is refused', async () => {
     const { db, w } = await freshWorld()
-    await expectRefused(insert(db, 'state_events', { ...w.rows.state_events, id: tid(), reason: '  ' }))
+    const r = await freshReturn(db, w)
+    await expectRefusedNaming(insert(db, 'state_events', { ...w.rows.state_events, id: tid(), return_id: r, reason: '  ' }), /reason/)
   })
 })
 
@@ -1191,19 +1278,22 @@ describe('FLOW-1 the latest state event is decided by an identity sequence', () 
     await expectAccepted(moveTo(db, r, 'intake'))
     expect(await count(db, 'returns', 'id = $1 and current_state_event_id = $2', [r, back])).toBe(1)
     // the first event (intake -> evidence) was used; it cannot move the return again
-    await expectRefused(moveTo(db, r, 'evidence'))
-    await expectRefused(
+    await expectRefusedNaming(moveTo(db, r, 'evidence'), NO_LICENCE)
+    await expectRefusedNaming(
       db.query('update returns.returns set state = $1, current_state_event_id = $2 where id = $3', ['evidence', first, r]),
+      /no (matching|pending) state event|current_state_event_id/i,
     )
     expect(await count(db, 'returns', "id = $1 and state = 'intake'", [r])).toBe(1)
   })
 
   test('FLOW-1 a state event with a from or to state outside the 16 is refused', async () => {
     const { db, w } = await freshWorld()
-    const r = w.ids.returns
-    await expectRefused(stateEvent(db, r, 'waiting_on_client', 'evidence'))
-    await expectRefused(stateEvent(db, r, 'intake', 'waiting_on_client'))
-    await expectRefused(stateEvent(db, r, 'Intake', 'evidence'))
+    // round 3 (S6, S8): a return with no pending event, so the state list is the only reason
+    const r = await freshReturn(db, w)
+    await expectRefusedNaming(stateEvent(db, r, 'waiting_on_client', 'evidence'), /from_state|state_events_from/)
+    await expectRefusedNaming(stateEvent(db, r, 'intake', 'waiting_on_client'), /to_state|state_events_to/)
+    await expectRefusedNaming(stateEvent(db, r, 'Intake', 'evidence'), /from_state|state_events_from/)
+    expect(await count(db, 'state_events', 'return_id = $1', [r])).toBe(0)
     await expectAccepted(stateEvent(db, r, 'intake', 'evidence'))
   })
 
@@ -1211,7 +1301,10 @@ describe('FLOW-1 the latest state event is decided by an identity sequence', () 
     test(`FLOW-1 a return inserted in state ${s} is refused (later states are reached through events)`, async () => {
       const { db, w } = await freshWorld()
       const id = tid()
-      await expectRefused(insert(db, 'returns', { ...w.rows.returns, id, entity_name: 'Inserted late (Test)', state: s }))
+      await expectRefusedNaming(
+        insert(db, 'returns', { ...w.rows.returns, id, entity_name: 'Inserted late (Test)', state: s }),
+        /intake|returns_state/,
+      )
       expect(await count(db, 'returns', 'id = $1', [id])).toBe(0)
     })
   }
@@ -1220,7 +1313,8 @@ describe('FLOW-1 the latest state event is decided by an identity sequence', () 
 // ---------- 17. EV-1, FLOW-1 non-blank actor, reason, author ----------
 
 describe('EV-1 FLOW-1 who and why are never blank', () => {
-  const blanks = ['', '   ']
+  // round 3: the eight blanks of the findings (one definition of blank), not only spaces
+  const blanks = EIGHT_BLANKS
   const cases: readonly (readonly [Table, string])[] = [
     ['events', 'actor'],
     ['events', 'reason'],
@@ -1232,12 +1326,16 @@ describe('EV-1 FLOW-1 who and why are never blank', () => {
   for (const [t, col] of cases) {
     test(`EV-1 FLOW-1 a blank or all-space ${col} on ${t} is refused`, async () => {
       const { db, w } = await freshWorld()
+      // round 3 (S8): a state event goes on a return with no pending event and a judgment input on
+      // a new cell (version 1), so blankness is the only reason for a refusal
+      const where = async (): Promise<Row> =>
+        t === 'state_events' ? { return_id: await freshReturn(db, w) } : t === 'judgment_inputs' ? { cell_id: 'T2S8.' + tid() } : {}
       for (const b of blanks) {
-        await expectRefused(insert(db, t, { ...w.rows[t], id: tid(), [col]: b }))
+        await expectRefusedNaming(insert(db, t, { ...w.rows[t], id: tid(), ...(await where()), [col]: b }), new RegExp(col))
       }
       expect(await count(db, t)).toBe(1)
       // control: the same row with a real name is accepted (a judgment input on another cell)
-      const other: Row = t === 'judgment_inputs' ? { cell_id: 'T2S8.CCA.CLASS8' } : {}
+      const other: Row = t === 'judgment_inputs' ? { cell_id: 'T2S8.CCA.CLASS8' } : await where()
       await expectAccepted(insert(db, t, { ...w.rows[t], id: tid(), ...other, [col]: 'Someone (Test)' }))
     })
   }
@@ -1402,5 +1500,505 @@ describe('FLOW-4 EV-1 facts, entries and judgment inputs change by a new version
     await expectRefused(db.query(`update returns.judgment_inputs set is_test = false where id = $1`, [id]), /append-only/i)
     await expectRefused(db.query('delete from returns.judgment_inputs where id = $1', [id]), /append-only/i)
     expect(await count(db, 'judgment_inputs', "id = $1 and value = '4200' and is_test", [id])).toBe(1)
+  })
+})
+
+// ======================= Round 3, the last (findings F01 r2: S1 to S7) =======================
+
+// The value allow-list: the only text columns that may hold a blank (an empty cell is a value).
+const VALUE_COLUMNS: readonly string[] = [
+  'facts.value',
+  'version_cells.value',
+  'judgment_inputs.value',
+  'figures.value',
+  'differences.before_value',
+  'differences.after_value',
+]
+// Set only by the move trigger and refused on insert whatever it holds: tested in records.ts only
+// (check 16 covers the column itself).
+const ZOD_ONLY: readonly string[] = ['returns.current_state_event_id']
+// A column the fixture leaves to its default: the non-blank value to use as the control.
+const CONTROL_OVERRIDE: Readonly<Record<string, string>> = { 'exceptions.status': 'open' }
+
+interface FieldSchema {
+  safeParse: (x: unknown) => { success: boolean }
+}
+const ZOD: Record<Table, { shape: Record<string, FieldSchema | undefined> }> = {
+  returns: ReturnRecordSchema,
+  documents: DocumentRecordSchema,
+  versions: VersionRecordSchema,
+  version_cells: VersionCellRecordSchema,
+  approvals: ApprovalRecordSchema,
+  events: EventRecordSchema,
+  facts: FactRecordSchema,
+  links: LinkRecordSchema,
+  accounts: AccountRecordSchema,
+  gifi_mappings: GifiMappingRecordSchema,
+  adjusting_entries: AdjustingEntryRecordSchema,
+  entry_lines: EntryLineRecordSchema,
+  judgment_inputs: JudgmentInputRecordSchema,
+  figures: FigureRecordSchema,
+  state_events: StateEventRecordSchema,
+  holds: HoldRecordSchema,
+  check_results: CheckResultRecordSchema,
+  exceptions: ExceptionRecordSchema,
+  answers: AnswerRecordSchema,
+  differences: DifferenceRecordSchema,
+  lessons: LessonRecordSchema,
+}
+
+const P_SHEET = (w: World): Row => ({
+  ...NO_SOURCE,
+  source_document_id: w.ids.documents,
+  source_sheet: 'Trial balance (Test)',
+  source_row: 12,
+  source_column: 'D',
+})
+const P_QBO: Row = { ...NO_SOURCE, source_qbo_snapshot_id: 'snap-0001', source_qbo_account_id: '35', source_qbo_txn_id: 'JE-0001' }
+const P_REASON: Row = { ...NO_SOURCE, origin: 'judgment', source_reason: 'Half of the phone bill is personal (Test)' }
+
+async function freshAccount(db: PGlite, w: World): Promise<string> {
+  const id = tid()
+  await insert(db, 'accounts', { ...w.rows.accounts, id, qbo_account_id: 'acct-' + id })
+  return id
+}
+
+// Fresh, valid rows for a table (new ids and new keys, version 1 of a new version key, a state
+// event on a return with no pending event), one per pointer shape where the table has several.
+async function freshRows(db: PGlite, w: World, t: Table): Promise<Row[]> {
+  const id = tid()
+  switch (t) {
+    case 'returns':
+      return [{ ...w.rows.returns, id, entity_name: 'Fresh return (Test)' }]
+    case 'versions':
+      return [{ id, return_id: await freshReturn(db, w), version_no: 1 }]
+    case 'version_cells':
+      return [{ ...w.rows.version_cells, id, cell_id: 'T2S100.' + id }]
+    case 'facts':
+      return [
+        factWith(w, {}),
+        factWith(w, P_SHEET(w)),
+        factWith(w, P_QBO),
+        factWith(w, { ...NO_SOURCE, origin: 'client_said', source_client_answer_id: 'ca-0001' }),
+        factWith(w, { ...NO_SOURCE, origin: 'third_party', source_cra_capture_id: 'cra-0001' }),
+        factWith(w, { ...NO_SOURCE, origin: 'client_filed', source_prior_return_id: 'pr-0001' }),
+        factWith(w, P_REASON),
+      ]
+    case 'accounts':
+      return [{ ...w.rows.accounts, id, qbo_account_id: 'acct-' + id }]
+    case 'gifi_mappings':
+      return [{ ...w.rows.gifi_mappings, id, account_id: await freshAccount(db, w), mapping_version: 1 }]
+    case 'adjusting_entries':
+      return [{ ...w.rows.adjusting_entries, id, qbo_txn_id: 'JE-' + id }]
+    case 'judgment_inputs':
+      return [{ ...w.rows.judgment_inputs, id, cell_id: 'T2S8.' + id }]
+    case 'figures':
+      return [{ ...w.rows.figures, id, figure_key: 'key-' + id }]
+    case 'state_events':
+      return [{ ...w.rows.state_events, id, return_id: await freshReturn(db, w) }]
+    case 'holds':
+      return [{ ...w.rows.holds, id, reason: 'Waiting on the bank (Test)' }]
+    case 'check_results':
+      return [{ ...w.rows.check_results, id, check_id: 'CK-' + id }]
+    case 'exceptions':
+      return [{ ...w.rows.exceptions, id, status: 'open' }]
+    default:
+      return [{ ...w.rows[t], id }]
+  }
+}
+
+// A fresh row in which column c holds a non-blank value, and that value (the control).
+async function rowWith(db: PGlite, w: World, t: Table, c: string): Promise<{ row: Row; control: unknown }> {
+  const rows = await freshRows(db, w, t)
+  const hit = rows.find((r) => r[c] !== undefined && r[c] !== null)
+  if (hit) return { row: hit, control: hit[c] }
+  const base = rows[0] ?? {}
+  return { row: base, control: CONTROL_OVERRIDE[`${t}.${c}`] ?? 'Control value (Test)' }
+}
+
+async function textColumns(db: PGlite, t: Table): Promise<string[]> {
+  const r = await db.query<{ c: string }>(
+    `select column_name as c from information_schema.columns
+     where table_schema = 'returns' and table_name = $1 and data_type in ('text', 'character varying')
+     order by ordinal_position`,
+    [t],
+  )
+  return r.rows.map((x) => x.c)
+}
+
+const show = (s: string): string => JSON.stringify(s).replace(/[\u0080-￿]/g, (ch) => `\\u${ch.charCodeAt(0).toString(16).padStart(4, '0')}`)
+
+// ---------- 17 widened (S2): every text column outside the value list refuses a blank ----------
+
+describe('EV-1 FLOW-1 every text column outside the value list refuses a blank, in SQL and zod alike', () => {
+  for (const t of F01_TABLES) {
+    test(`EV-1 FLOW-1 ARC-3 every text column of ${t} outside the value list refuses the eight blanks with 23514, and so does records.ts`, async () => {
+      const { db, w } = await freshWorld()
+      const cols = (await textColumns(db, t)).filter((c) => !VALUE_COLUMNS.includes(`${t}.${c}`))
+      expect(cols, 'the catalog lists the id column at least').toContain('id')
+      const problems: string[] = []
+      for (const c of cols) {
+        const field = ZOD[t].shape[c]
+        if (!field) problems.push(`${t}.${c}: no field in records.ts`)
+        for (const b of EIGHT_BLANKS) {
+          if (field?.safeParse(b).success) problems.push(`${t}.${c} = ${show(b)}: records.ts accepts it`)
+          if (ZOD_ONLY.includes(`${t}.${c}`)) continue
+          const { row } = await rowWith(db, w, t, c)
+          const r = await refusalOf(insert(db, t, { ...row, [c]: b }))
+          if (r?.code !== '23514') problems.push(`${t}.${c} = ${show(b)}: ${r ? `${r.code} ${r.message}` : 'accepted'}`)
+        }
+        const { row, control } = await rowWith(db, w, t, c)
+        if (field && !field.safeParse(control).success) problems.push(`${t}.${c}: records.ts refuses the control ${String(control)}`)
+        if (ZOD_ONLY.includes(`${t}.${c}`)) continue
+        const r = await refusalOf(insert(db, t, { ...row, [c]: control }))
+        if (r) problems.push(`${t}.${c}: the control ${String(control)} is refused: ${r.code} ${r.message}`)
+      }
+      expect(problems).toEqual([])
+    })
+  }
+
+  test('EV-1 the value columns keep an empty value (an empty cell is a value, RT-12)', async () => {
+    const { db, w } = await freshWorld()
+    const tables: readonly Table[] = ['facts', 'version_cells', 'judgment_inputs', 'figures', 'differences']
+    for (const t of tables) {
+      const { row } = await rowWith(db, w, t, 'id')
+      const empty: Row = t === 'differences' ? { before_value: '', after_value: '' } : { value: '' }
+      await expectAccepted(insert(db, t, { ...row, ...empty }))
+    }
+  })
+})
+
+// ---------- 14 widened (S4): explaining an entry needs real text everywhere ----------
+
+describe('TB-2 explaining an adjusting entry is refused on any blank reason, source or pointer', () => {
+  // The entry is never explained: either the row itself is refused (23514), or marking it explained is.
+  async function expectNeverExplained(db: PGlite, w: World, over: Row): Promise<void> {
+    const id = tid()
+    const ins = await refusalOf(insert(db, 'adjusting_entries', { ...w.rows.adjusting_entries, id, qbo_txn_id: 'JE-' + id, ...over }))
+    if (ins) {
+      expect(ins.code, `${JSON.stringify(over)}: ${ins.message}`).toBe('23514')
+      return
+    }
+    await addLines(db, id, [100, -100])
+    await expectRefused(markExplained(db, id))
+    expect(await count(db, 'adjusting_entries', 'id = $1 and explained', [id])).toBe(0)
+  }
+
+  const cases: readonly (readonly [string, Row])[] = [
+    ['reason tab', { reason: '\t' }],
+    ['reason NBSP and U+200B', { reason: ' ​' }],
+    ['sources ["\\t"]', { sources: ['\t'] }],
+    ['sources [" "]', { sources: [' '] }],
+    ['sources [NBSP]', { sources: [' '] }],
+    ['sources [U+2800]', { sources: ['⠀'] }],
+    ['sources [{"x":""}]', { sources: [{ x: '' }] }],
+    ['sources [{"x":null}]', { sources: [{ x: null }] }],
+    ['sources [{"x":"\\t"}]', { sources: [{ x: '\t' }] }],
+    ['sources with a good member and {"document_id":" "}', { sources: ['Landlord invoice 1042 (Test)', { document_id: ' ' }] }],
+    ['a blank snapshot id', { qbo_snapshot_id: ' ' }],
+    ['a blank transaction id', { qbo_txn_id: '\t' }],
+    ['a blank author', { author: '　' }],
+  ]
+  for (const [label, over] of cases) {
+    test(`TB-2 an adjusting entry with ${label} is never explained`, async () => {
+      const { db, w } = await freshWorld()
+      await expectNeverExplained(db, w, over)
+    })
+  }
+
+  test('TB-2 a source object of non-blank strings and numbers is enough (control for the refusals above)', async () => {
+    const { db, w } = await freshWorld()
+    const e = await newEntry(db, w, { sources: [{ document_id: w.ids.documents, page: 1, note: 'Invoice 1042 (Test)' }] })
+    await addLines(db, e, [100, -100])
+    await expectAccepted(markExplained(db, e))
+  })
+})
+
+describe('EV-5 a blank pointer id is not a source', () => {
+  const blankPointers: readonly (readonly [string, Row])[] = [
+    ['an empty client answer id', { ...NO_SOURCE, origin: 'client_said', source_client_answer_id: '' }],
+    ['a blank QBO snapshot and account', { ...NO_SOURCE, source_qbo_snapshot_id: ' ', source_qbo_account_id: ' ' }],
+    ['a real snapshot with a blank account', { ...NO_SOURCE, source_qbo_snapshot_id: 'snap-0001', source_qbo_account_id: '\t' }],
+    ['a blank QBO transaction', { ...P_QBO, source_qbo_txn_id: '​' }],
+    ['a tab CRA capture id', { ...NO_SOURCE, source_cra_capture_id: '\t' }],
+    ['an NBSP prior return id', { ...NO_SOURCE, origin: 'client_filed', source_prior_return_id: ' ' }],
+    ['a U+2800 reason', { ...NO_SOURCE, origin: 'judgment', source_reason: '⠀' }],
+    ['a blank document id', { source_document_id: '　' }],
+  ]
+  for (const [label, over] of blankPointers) {
+    test(`EV-5 a fact whose only pointer is ${label} is refused with 23514`, async () => {
+      const { db, w } = await freshWorld()
+      const r = await refusalOf(insert(db, 'facts', factWith(w, over)))
+      expect(r?.code, r ? r.message : 'accepted').toBe('23514')
+      expect(await count(db, 'facts')).toBe(1)
+    })
+  }
+})
+
+// ---------- 18 widened (S5): stamps with any blank value ----------
+
+describe('ARC-10 a version stamp value made only of blank characters is refused, in SQL and zod alike', () => {
+  const stamped = ['facts', 'figures', 'check_results'] as const
+  const keyCol: Record<(typeof stamped)[number], string> = { facts: 'fact_key', figures: 'figure_key', check_results: 'check_id' }
+  const blanks: readonly (readonly [string, string])[] = [
+    ['tab', '\t'],
+    ['NBSP', ' '],
+    ['U+200B', '​'],
+    ['U+2800', '⠀'],
+    ['a newline and U+3000', '\n　'],
+  ]
+  for (const t of stamped) {
+    for (const [label, x] of blanks) {
+      test(`ARC-10 ${t} refuses the version stamp {"x": ${label}}, and so does records.ts`, async () => {
+        const { db, w } = await freshWorld()
+        const id = tid()
+        await expectRefused(insert(db, t, { ...w.rows[t], id, [keyCol[t]]: 'key-' + id, version_stamp: { reader: 'qbo-reader (Test)', x } }))
+        expect(ZOD[t].shape['version_stamp']?.safeParse({ x }).success).toBe(false)
+        expect(VersionStampSchema.safeParse({ x }).success).toBe(false)
+      })
+    }
+  }
+})
+
+// ---------- 20 (S3): every return_id is a foreign key ----------
+
+describe('EV-5 ARC-3 every return_id points at a real return', () => {
+  test('EV-5 ARC-3 every return_id column in schema returns is a foreign key to returns.returns(id) (catalog)', async () => {
+    const db = await cloneTestDb()
+    const r = await db.query<{ t: string; fk: boolean }>(
+      `select c.relname as t,
+              exists (select 1 from pg_constraint k
+                      where k.conrelid = c.oid and k.contype = 'f'
+                        and k.confrelid = 'returns.returns'::regclass and k.conkey = array[a.attnum]) as fk
+       from pg_attribute a
+       join pg_class c on c.oid = a.attrelid
+       join pg_namespace n on n.oid = c.relnamespace
+       where n.nspname = 'returns' and c.relkind in ('r', 'p') and a.attname = 'return_id' and not a.attisdropped
+       order by 1`,
+    )
+    const have = r.rows.map((x) => x.t)
+    for (const t of [
+      'documents', 'facts', 'accounts', 'gifi_mappings', 'adjusting_entries', 'judgment_inputs', 'figures',
+      'versions', 'approvals', 'check_results', 'exceptions', 'differences', 'state_events', 'holds',
+    ]) expect(have, t).toContain(t)
+    expect(r.rows.filter((x) => !x.fk).map((x) => x.t)).toEqual([])
+  })
+
+  test('EV-5 ARC-3 a row whose return does not exist is refused in every table with return_id', async () => {
+    const { db, w } = await freshWorld()
+    const tables = F01_TABLES.filter((t) => t !== 'returns' && 'return_id' in w.rows[t])
+    expect(tables.length).toBeGreaterThanOrEqual(14)
+    const problems: string[] = []
+    for (const t of tables) {
+      const { row } = await rowWith(db, w, t, 'return_id')
+      const r = await refusalOf(insert(db, t, { ...row, return_id: 'no-such-return (Test)' }))
+      // a state event's trigger may refuse first (the return has no state), with 23514
+      if (!r || !/^23(503|514)$/.test(r.code)) problems.push(`${t}: ${r ? `${r.code} ${r.message}` : 'accepted'}`)
+    }
+    expect(problems).toEqual([])
+  })
+})
+
+// ---------- 16 widened (S6): FLOW-1 the caller cannot set the order or skip the state ----------
+
+describe('FLOW-1 a state event follows the return: no caller-set seq, no stale or duplicate licence', () => {
+  async function eventWithSeq(db: PGlite, r: string, seqValue: number | string, from = 'intake', to = 'evidence'): Promise<unknown> {
+    return db.query(
+      `insert into returns.state_events (id, seq, return_id, from_state, to_state, actor, occurred_at, reason)
+       overriding system value values ($1, ${typeof seqValue === 'number' ? String(seqValue) : seqValue}, $2, $3, $4, $5, $6, $7)`,
+      [tid(), r, from, to, 'Preparer (Test)', AT, 'Caller-set order (Test)'],
+    )
+  }
+
+  test('FLOW-1 a state event with a caller-set seq (OVERRIDING SYSTEM VALUE, seq 999) is refused', async () => {
+    const { db, w } = await freshWorld()
+    const r = await freshReturn(db, w)
+    await expectRefusedNaming(eventWithSeq(db, r, 999), /seq/i, /^23514$/)
+    expect(await count(db, 'state_events', 'return_id = $1', [r])).toBe(0)
+  })
+
+  test('FLOW-1 a caller-set seq equal to the next number is refused too', async () => {
+    const { db, w } = await freshWorld()
+    const r = await freshReturn(db, w)
+    await expectRefusedNaming(
+      eventWithSeq(db, r, '(select coalesce(max(seq), 0) + 1 from returns.state_events)'),
+      /seq/i,
+      /^23514$/,
+    )
+    expect(await count(db, 'state_events', 'return_id = $1', [r])).toBe(0)
+    // control: the same event with the sequence's own number is accepted and moves the return
+    await expectAccepted(stateEvent(db, r, 'intake', 'evidence'))
+    await expectAccepted(moveTo(db, r, 'evidence'))
+  })
+
+  test('FLOW-1 a state event from filed to closed is refused while the return is at evidence', async () => {
+    const { db, w } = await freshWorld()
+    const r = w.ids.returns
+    await expectAccepted(moveTo(db, r, 'evidence'))
+    await expectRefusedNaming(stateEvent(db, r, 'filed', 'closed'), /from_state/, /^23514$/)
+    await expectRefusedNaming(stateEvent(db, r, 'intake', 'gaps'), /from_state/, /^23514$/)
+    expect(await count(db, 'state_events', 'return_id = $1', [r])).toBe(1)
+    await expectAccepted(stateEvent(db, r, 'evidence', 'gaps'))
+  })
+
+  test('FLOW-1 a second pending state event for a return is refused', async () => {
+    const { db, w } = await freshWorld()
+    const r = w.ids.returns
+    // the fixture's intake -> evidence is pending (not yet used by a move)
+    await expectRefusedNaming(stateEvent(db, r, 'intake', 'evidence'), /pending/i, /^23514$/)
+    await expectRefusedNaming(stateEvent(db, r, 'intake', 'gaps'), /pending/i, /^23514$/)
+    expect(await count(db, 'state_events', 'return_id = $1', [r])).toBe(1)
+    // once it is used, the next event is accepted
+    await expectAccepted(moveTo(db, r, 'evidence'))
+    await expectAccepted(stateEvent(db, r, 'evidence', 'gaps'))
+  })
+
+  test('FLOW-1 a state event whose to_state equals its from_state is refused', async () => {
+    const { db, w } = await freshWorld()
+    const r = await freshReturn(db, w)
+    await expectRefusedNaming(stateEvent(db, r, 'intake', 'intake'), /to_state/, /^23514$/)
+    expect(await count(db, 'state_events', 'return_id = $1', [r])).toBe(0)
+  })
+
+  test('FLOW-1 property: a walk of random events moves the return only along licensed, pending events', async () => {
+    const db = await cloneTestDb()
+    const w = await insertWorld(db)
+    const st = fc.constantFrom(...STATES)
+    await fc.assert(
+      fc.asyncProperty(fc.array(fc.record({ from: st, to: st, move: fc.boolean() }), { minLength: 1, maxLength: 8 }), async (steps) => {
+        const r = await freshReturn(db, w)
+        let state = 'intake'
+        let pending: string | undefined
+        for (const s of steps) {
+          const ok = s.from === state && s.to !== s.from && pending === undefined
+          const res = await refusalOf(stateEvent(db, r, s.from, s.to))
+          expect(res === undefined, `event ${s.from} -> ${s.to} at ${state}, pending ${pending ?? 'none'}: ${res?.message ?? 'accepted'}`).toBe(ok)
+          if (ok) pending = s.to
+          if (s.move && pending !== undefined) {
+            await expectAccepted(moveTo(db, r, pending))
+            state = pending
+            pending = undefined
+          }
+        }
+        expect(await count(db, 'returns', 'id = $1 and state = $2', [r, state])).toBe(1)
+      }),
+      { seed: 20261005, numRuns: 30 },
+    )
+  }, 20_000)
+})
+
+// ---------- 20 (S7): version numbers start at 1 and go up by exactly one ----------
+
+describe('FLOW-4 EV-1 a version number is the previous plus one', () => {
+  type Versioned = 'facts' | 'adjusting_entries' | 'judgment_inputs' | 'versions' | 'gifi_mappings'
+  const col: Record<Versioned, string> = {
+    facts: 'version_no',
+    adjusting_entries: 'version_no',
+    judgment_inputs: 'version_no',
+    versions: 'version_no',
+    gifi_mappings: 'mapping_version',
+  }
+  // A new version key for the table, and a row of that key with a given number.
+  async function newKey(db: PGlite, w: World, t: Versioned): Promise<(n: number) => Row> {
+    const k = tid()
+    switch (t) {
+      case 'facts':
+        return (n) => factWith(w, { fact_key: 'test.version.' + k, version_no: n })
+      case 'adjusting_entries':
+        return (n) => ({ ...w.rows.adjusting_entries, id: tid(), qbo_txn_id: 'JE-V-' + k, version_no: n })
+      case 'judgment_inputs':
+        return (n) => ({ ...w.rows.judgment_inputs, id: tid(), cell_id: 'T2S8.V.' + k, version_no: n })
+      case 'versions': {
+        const r = await freshReturn(db, w)
+        return (n) => ({ id: tid(), return_id: r, version_no: n })
+      }
+      case 'gifi_mappings': {
+        const a = await freshAccount(db, w)
+        return (n) => ({ ...w.rows.gifi_mappings, id: tid(), account_id: a, mapping_version: n })
+      }
+    }
+  }
+
+  for (const t of Object.keys(col) as Versioned[]) {
+    test(`FLOW-4 EV-1 ${t}.${col[t]} starts at 1: a first row numbered 2, 999, 0 or -1 is refused`, async () => {
+      const { db, w } = await freshWorld()
+      const row = await newKey(db, w, t)
+      for (const n of [2, 999, 0, -1]) {
+        await expectRefusedNaming(insert(db, t, row(n)), new RegExp(col[t]), /^23/)
+      }
+      await expectAccepted(insert(db, t, row(1)))
+    })
+
+    test(`FLOW-4 EV-1 ${t}.${col[t]} goes up by exactly one: a gap, 999, a repeat or a step back is refused`, async () => {
+      const { db, w } = await freshWorld()
+      const row = await newKey(db, w, t)
+      await expectAccepted(insert(db, t, row(1)))
+      for (const n of [3, 999, 1, 0]) {
+        await expectRefusedNaming(insert(db, t, row(n)), new RegExp(col[t]), /^23/)
+      }
+      await expectAccepted(insert(db, t, row(2)))
+      await expectRefusedNaming(insert(db, t, row(4)), new RegExp(col[t]), /^23/)
+      await expectAccepted(insert(db, t, row(3)))
+    })
+  }
+
+  test('FLOW-4 EV-1 numbering is per key: a new key starts at 1 again', async () => {
+    const { db, w } = await freshWorld()
+    for (const t of Object.keys(col) as Versioned[]) {
+      const a = await newKey(db, w, t)
+      await expectAccepted(insert(db, t, a(1)))
+      await expectAccepted(insert(db, t, a(2)))
+      const b = await newKey(db, w, t)
+      await expectAccepted(insert(db, t, b(1)))
+    }
+  })
+})
+
+// ---------- S1: SQL returns.is_blank and text.ts isBlank are one definition ----------
+
+describe('EV-1 FLOW-1 returns.is_blank and isBlank agree', () => {
+  test('EV-1 returns.is_blank agrees with isBlank on every code point except U+0000 and the surrogates', async () => {
+    const db = await cloneTestDb()
+    const r = await db.query<{ cps: number[] | null }>(
+      `select array_agg(n order by n) as cps from generate_series(1, 1114111) as n
+       where (n < 55296 or n > 57343) and returns.is_blank(chr(n))`,
+    )
+    const sql = new Set(r.rows[0]?.cps ?? [])
+    const disagree: string[] = []
+    for (let cp = 1; cp <= 0x10ffff && disagree.length <= 20; cp++) {
+      if (cp >= 0xd800 && cp <= 0xdfff) continue
+      if (isBlank(String.fromCodePoint(cp)) !== sql.has(cp)) disagree.push(`U+${cp.toString(16).toUpperCase().padStart(4, '0')}`)
+    }
+    expect(sql.size, 'some code points are blank').toBeGreaterThan(100)
+    expect(disagree).toEqual([])
+  }, 30_000)
+
+  test('EV-1 mixed blanks are blank in SQL; one visible character among blanks, even a lone U+0301, is not', async () => {
+    const db = await cloneTestDb()
+    const sqlBlank = async (s: string): Promise<boolean | undefined> =>
+      (await db.query<{ b: boolean }>('select returns.is_blank($1) as b', [s])).rows[0]?.b
+    for (const s of ['', ' ', ' \t\n\r ​　⠀﻿͏ㅤ\u0085', '\u{E0001}\u{E0020}']) {
+      expect(await sqlBlank(s), show(s)).toBe(true)
+    }
+    for (const s of ['́', ' ́ ', '⠀a', ' Preparer (Test)\t', '\u{1F600}', '⠁']) {
+      expect(await sqlBlank(s), show(s)).toBe(false)
+    }
+  })
+
+  test('EV-1 property: returns.is_blank and isBlank agree on strings of blanks with or without a visible character', async () => {
+    const db = await cloneTestDb()
+    const ch = fc.oneof(
+      fc.constantFrom(' ', '\t', '\n', ' ', '​', '　', '⠀', '﻿', '͏', '­', '\u{E0001}', ' '),
+      fc.constantFrom('a', '0', '́', '⠁', '\u{1F600}'),
+      fc.integer({ min: 1, max: 0x10ffff - 0x800 }).map((n) => String.fromCodePoint(n >= 0xd800 ? n + 0x800 : n)),
+    )
+    await fc.assert(
+      fc.asyncProperty(fc.array(ch, { maxLength: 8 }), async (chars) => {
+        const s = chars.join('')
+        const b = (await db.query<{ b: boolean }>('select returns.is_blank($1) as b', [s])).rows[0]?.b
+        expect(b, show(s)).toBe(isBlank(s))
+      }),
+      { seed: 20261006, numRuns: 200 },
+    )
   })
 })

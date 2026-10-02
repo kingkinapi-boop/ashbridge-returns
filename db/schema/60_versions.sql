@@ -7,6 +7,8 @@ create table returns.versions (
   version_no integer not null,
   unique (return_id, version_no)
 );
+create trigger versions_next_version before insert on returns.versions
+  for each row execute function returns.next_version_guard('version_no', 'return_id');
 create table returns.version_cells (
   id text primary key,
   created_at timestamptz not null default now(),
@@ -23,8 +25,7 @@ create table returns.approvals (
   return_id text not null,
   version_id text not null references returns.versions (id),
   approved_by text not null,
-  fingerprint text not null,
-  constraint approvals_approved_by check (btrim(approved_by) <> '')
+  fingerprint text not null
 );
 create trigger versions_append_only before update or delete on returns.versions
   for each row execute function returns.refuse_change();
@@ -42,3 +43,5 @@ create trigger approvals_no_truncate before truncate on returns.approvals
 alter table returns.versions enable row level security;
 alter table returns.version_cells enable row level security;
 alter table returns.approvals enable row level security;
+
+comment on column returns.version_cells.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';
