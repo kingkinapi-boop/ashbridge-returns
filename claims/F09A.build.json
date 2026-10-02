@@ -1,12 +1,10 @@
 {
  "card": "F09A",
  "role": "build",
- "round": 2,
- "spec": "41d00d7",
- "worker": "cloud-e81ab0",
- "state": "reopened",
- "at": "2026-10-02T08:28:09.952Z",
- "mode": "turbo",
- "beat": "2026-10-02T06:48:58.489Z",
- "note": "spec fix reported; build next (refit first if toolchain moved)"
+ "round": 3,
+ "spec": "df991b4",
+ "worker": "cloud-e43f36",
+ "state": "working",
+ "at": "2026-10-02T08:32:49.677Z",
+ "mode": "turbo"
 }
