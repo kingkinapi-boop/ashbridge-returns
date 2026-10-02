@@ -1,11 +1,10 @@
 {
  "card": "E03A",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "5acfe13",
- "worker": "cloud-c5a0ac",
- "state": "reopened",
- "at": "2026-10-02T15:42:24.992Z",
- "mode": "turbo",
- "note": "GitHub gitleaks finds 1 leak on claude/E03A (run after c15ca66); FX1 with the same main passes, so it is in E03A's commits. Find it with gitleaks detect --log-opts=HEAD; fix the data or add a line-scoped allowlist regex, never a path or a rule off"
+ "worker": "cloud-2f60ce",
+ "state": "working",
+ "at": "2026-10-02T15:44:00.823Z",
+ "mode": "turbo"
 }
