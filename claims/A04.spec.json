@@ -2,7 +2,10 @@
  "card": "A04",
  "role": "spec",
  "worker": "cloud-197c89",
- "state": "working",
- "at": "2026-10-02T20:45:46.734Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T20:48:15.153Z",
+ "mode": "turbo",
+ "note": "golden regenerated, 46 tests pass; validated on main 9371ba4",
+ "commit": "ea5d29d",
+ "validated": "9371ba4"
 }
