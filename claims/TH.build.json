@@ -4,8 +4,8 @@
  "round": 7,
  "spec": "0299b2e",
  "worker": "cloud-0a2392",
- "state": "reported",
- "at": "2026-10-02T06:14:21.396Z",
+ "state": "reopened",
+ "at": "2026-10-02T06:41:21.894Z",
  "mode": "turbo",
- "note": "all acceptance pass (51 of 51 in the two files, 726 of 726 whole suite), flake 5/5, canary 100"
+ "note": "round 2: gitleaks 1 leak on own branch, see card"
 }
