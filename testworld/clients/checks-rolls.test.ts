@@ -148,6 +148,13 @@ describe('ARC-8 W00a both rolls', () => {
     const waiver = entry({ id: 'R1', roll: { account: 'CHQ', month: '2025-02', cause: 'duplicate' } })
     expect(run(c, [marker, waiver])).toEqual([])
   })
+  it('a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows', () => {
+    const c = clean()
+    c.transactions.push(tx('D1', '2025-02-06', 50, { dupOf: 'T2' }))
+    const marker = entry({ id: 'F1', flagId: 'F1', marker: { field: 'dupOf', account: 'CHQ', month: '2025-02' } })
+    const waiver = entry({ id: 'R1', roll: { account: 'CHQ', month: '2025-02' } })
+    expect(run(c, [marker, waiver])).toEqual([issue('roll', 'CHQ 2025-02', "the export gap -0.50 is not explained exactly by the catalogue's cause undefined")])
+  })
   it('a waived missing month explains its gap exactly, and only the missing rows count', () => {
     const c = clean()
     c.transactions.push(tx('M1', '2025-02-06', 0, { missingFromExport: true }))
