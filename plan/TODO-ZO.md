@@ -4,6 +4,8 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
+**1. One more sign-in, then reply "1 done":** Taxprep (iFirm) has signed out in the "Ashbridge Test" Chrome; its sign-in page is open in a tab there. Sign in, then leave that window in front, full size, not covered (it was behind another window). If you would rather sleep, skip it and the walk runs tomorrow.
+
 **Before you sleep (no answer needed):** leave the laptop on and plugged in, with sleep off, and leave the "Ashbridge Test" Chrome full size and in front, not covered or minimised. The walkers use it overnight for the .GFI and the day 5 Taxprep exports. If it drops, they stop and pick up again in the morning; nothing breaks.
 
 **Coming soon from you, Sat 3 Oct (about 30 minutes):** day 4 of the trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". No walker runs that day. Any other day suits too; days 5 and 6 do not wait for it. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
