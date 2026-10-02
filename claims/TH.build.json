@@ -4,8 +4,8 @@
  "round": 8,
  "spec": "0299b2e",
  "worker": "cloud-5d8906",
- "state": "reported",
- "at": "2026-10-02T06:53:36.494Z",
+ "state": "released",
+ "at": "2026-10-02T08:27:09.907Z",
  "mode": "turbo",
- "note": "gitleaks clean on branch history, 726 of 726 tests"
+ "note": "merged"
 }
