@@ -1,0 +1,6 @@
+# W15 build: released, premise wrong (local-98ddb8)
+
+Not built. The card's "Fix round 1" says the re-spec on top of W14's new spec comes first (drop the `answerId` and `/: \S/` label check, add the 14-to-15 opening-tie check, run W14's rules 7 to 13 on folders 13 to 15, validate on main). The claims list says the same for W15's spec job: "refit only ... fix-round-1 re-spec NOT done, needs a new spec worker after W14 lands". W14 has landed (main verify.mjs is at `spec(W14): round 3 acceptance tests`, 0751e5e), but no W15 re-spec exists, and `git merge origin/main` into claude/W15 conflicts in `reference/sample-clients/verify.mjs` (W15's branch still carries W14's first-round entries). A build now would be written against a spec the card calls void and would have to edit the spec job's verify entries, which a builder must not do.
+Needed: a spec job on W15 (a worker who did not write the first W15 spec) that merges main, re-specs per the card, validates on main; then the build.
+Queue note for the Lead: `claim next` offered the build because the spec shows as reported; the reopen step (`update W15 spec reopened`) was not run after the W14 landing.
+Permission gaps: none. Model: Sonnet 5.5.
