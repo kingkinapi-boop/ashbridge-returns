@@ -1,4 +1,19 @@
-// Stands in for node_modules/@stryker-mutator/core/bin/stryker.js: records its arguments and succeeds.
+// Stands in for node_modules/@stryker-mutator/core/bin/stryker.js: records its arguments, writes the JSON mutation
+// report the real tool would (reports/mutation/mutation.json) and succeeds. A planted stryker-report.json in the cwd
+// is copied as the report; with none, every file named by --mutate gets one killed mutant (score 100).
 const fs = require('node:fs')
-fs.writeFileSync('stryker-called.txt', process.argv.slice(2).join(' '))
+const args = process.argv.slice(2)
+fs.writeFileSync('stryker-called.txt', args.join(' '))
+fs.mkdirSync('reports/mutation', { recursive: true })
+if (fs.existsSync('stryker-report.json')) {
+  fs.copyFileSync('stryker-report.json', 'reports/mutation/mutation.json')
+} else {
+  const i = args.indexOf('--mutate')
+  const files = i >= 0 ? args[i + 1].split(',') : []
+  const out = { schemaVersion: '2', thresholds: { high: 90, low: 80 }, files: {} }
+  for (const f of files) {
+    out.files[f] = { language: 'typescript', source: '', mutants: [{ id: '1', mutatorName: 'ArithmeticOperator', status: 'Killed', location: { start: { line: 2, column: 1 }, end: { line: 2, column: 2 } } }] }
+  }
+  fs.writeFileSync('reports/mutation/mutation.json', JSON.stringify(out))
+}
 console.log('STRYKER STUB RAN')

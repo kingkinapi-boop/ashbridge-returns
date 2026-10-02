@@ -1,0 +1,611 @@
+{
+  "client": "15",
+  "name": "Rouge Valley Landscaping Inc. (Test)",
+  "fiscalYear": {
+    "start": "2025-01-01",
+    "end": "2025-12-31",
+    "days": 365
+  },
+  "generator": {
+    "file": "generate.mjs",
+    "seed": 1115
+  },
+  "idRule": "id = <client>-<TAG>-<YYYY>-<MM>-<seq>. TAG names the account (CHQ chequing, USD US-dollar chequing, BCD business card, PCD personal card, BRK brokerage). YYYY-MM is the month of the row date. seq is the 1-based position of the row among that account and month, in file order (header lines do not count). Rows missing from an export get the next numbers of their month.",
+  "amountConvention": "amount is the cash effect on the company account: money in is positive, money out is negative. On a card a charge is negative and a payment positive (the card CSV shows the opposite sign). post lines list the coded entry: dr and cr in dollars, the last line is the bank or card account itself.",
+  "postingCurrency": "CAD: every post line, adjusting entry and trial balance figure is in Canadian dollars; USD rows are posted at the monthly test rate in fx",
+  "accounts": [
+    {
+      "key": "CHQ",
+      "tag": "CHQ",
+      "layout": "B: Maplestone Bank (Test) chequing",
+      "role": "bank",
+      "currency": "CAD",
+      "file": "accounts/maplestone-chequing-4417.csv",
+      "qboFile": "qbo/maplestone-chequing-4417.csv",
+      "glAccount": "1010",
+      "openingBalance": 4254.06,
+      "closingBalance": 25221.57,
+      "balanceMeaning": "cash balance",
+      "rowsInExport": 126,
+      "rowsMissingFromExport": 0
+    },
+    {
+      "key": "BCD",
+      "tag": "BCD",
+      "layout": "Aurora Card (Test)",
+      "role": "card",
+      "currency": "CAD",
+      "file": "accounts/aurora-business-card-9031.csv",
+      "qboFile": "qbo/aurora-business-card-9031.csv",
+      "glAccount": "2010",
+      "openingBalance": 119.39,
+      "closingBalance": 119.03,
+      "balanceMeaning": "amount owing on the card",
+      "rowsInExport": 99,
+      "rowsMissingFromExport": 0
+    }
+  ],
+  "transactions": [
+    {"id":"15-CHQ-2025-01-0001","acct":"CHQ","date":"2025-01-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":4,"qboLine":2,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-01-0002","acct":"CHQ","date":"2025-01-20","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-119.39,"currency":"CAD","kind":"card-payment","line":5,"qboLine":3,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":119.39},{"a":"1010","cr":119.39}],"pair":"15-BCD-2025-01-0003"},
+    {"id":"15-CHQ-2025-01-0003","acct":"CHQ","date":"2025-01-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":6,"qboLine":4,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-02-0001","acct":"CHQ","date":"2025-02-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":7,"qboLine":5,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-02-0002","acct":"CHQ","date":"2025-02-20","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-118.81,"currency":"CAD","kind":"card-payment","line":8,"qboLine":6,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":118.81},{"a":"1010","cr":118.81}],"pair":"15-BCD-2025-02-0003"},
+    {"id":"15-CHQ-2025-02-0003","acct":"CHQ","date":"2025-02-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":9,"qboLine":7,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-03-0001","acct":"CHQ","date":"2025-03-03","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":946.85,"currency":"CAD","kind":"revenue","line":10,"qboLine":8,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":837.92},{"a":"2050","cr":108.93},{"a":"1010","dr":946.85}],"hstCollected":108.93},
+    {"id":"15-CHQ-2025-03-0002","acct":"CHQ","date":"2025-03-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":11,"qboLine":9,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-03-0003","acct":"CHQ","date":"2025-03-05","description":"E-TRANSFER RECEIVED PETER WONG TEST","amount":854.01,"currency":"CAD","kind":"revenue","line":12,"qboLine":10,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":755.76},{"a":"2050","cr":98.25},{"a":"1010","dr":854.01}],"hstCollected":98.25},
+    {"id":"15-CHQ-2025-03-0004","acct":"CHQ","date":"2025-03-05","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1554.78,"currency":"CAD","kind":"subcontractor","line":13,"qboLine":11,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1554.78},{"a":"1010","cr":1554.78}]},
+    {"id":"15-CHQ-2025-03-0005","acct":"CHQ","date":"2025-03-07","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":925,"currency":"CAD","kind":"revenue","line":14,"qboLine":12,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":818.58},{"a":"2050","cr":106.42},{"a":"1010","dr":925}],"hstCollected":106.42},
+    {"id":"15-CHQ-2025-03-0006","acct":"CHQ","date":"2025-03-12","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":421.15,"currency":"CAD","kind":"revenue","line":15,"qboLine":13,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":372.7},{"a":"2050","cr":48.45},{"a":"1010","dr":421.15}],"hstCollected":48.45},
+    {"id":"15-CHQ-2025-03-0007","acct":"CHQ","date":"2025-03-19","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1245.04,"currency":"CAD","kind":"subcontractor","line":16,"qboLine":14,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1245.04},{"a":"1010","cr":1245.04}]},
+    {"id":"15-CHQ-2025-03-0008","acct":"CHQ","date":"2025-03-20","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-118.52,"currency":"CAD","kind":"card-payment","line":17,"qboLine":15,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":118.52},{"a":"1010","cr":118.52}],"pair":"15-BCD-2025-03-0003"},
+    {"id":"15-CHQ-2025-03-0009","acct":"CHQ","date":"2025-03-25","description":"E-TRANSFER RECEIVED DENIS TREMBLAY TEST","amount":453.56,"currency":"CAD","kind":"revenue","line":18,"qboLine":16,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":401.38},{"a":"2050","cr":52.18},{"a":"1010","dr":453.56}],"hstCollected":52.18},
+    {"id":"15-CHQ-2025-03-0010","acct":"CHQ","date":"2025-03-27","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":565.92,"currency":"CAD","kind":"revenue","line":19,"qboLine":17,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":500.81},{"a":"2050","cr":65.11},{"a":"1010","dr":565.92}],"hstCollected":65.11},
+    {"id":"15-CHQ-2025-03-0011","acct":"CHQ","date":"2025-03-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":20,"qboLine":18,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-04-0001","acct":"CHQ","date":"2025-04-02","description":"E-TRANSFER RECEIVED DENIS TREMBLAY TEST","amount":450.37,"currency":"CAD","kind":"revenue","line":21,"qboLine":19,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":398.56},{"a":"2050","cr":51.81},{"a":"1010","dr":450.37}],"hstCollected":51.81},
+    {"id":"15-CHQ-2025-04-0002","acct":"CHQ","date":"2025-04-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":22,"qboLine":20,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-04-0003","acct":"CHQ","date":"2025-04-04","description":"E-TRANSFER RECEIVED HASSAN KARIMI TEST","amount":879.96,"currency":"CAD","kind":"revenue","line":23,"qboLine":21,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":778.73},{"a":"2050","cr":101.23},{"a":"1010","dr":879.96}],"hstCollected":101.23},
+    {"id":"15-CHQ-2025-04-0004","acct":"CHQ","date":"2025-04-07","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1595.22,"currency":"CAD","kind":"subcontractor","line":24,"qboLine":22,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1595.22},{"a":"1010","cr":1595.22}]},
+    {"id":"15-CHQ-2025-04-0005","acct":"CHQ","date":"2025-04-15","description":"E-TRANSFER RECEIVED AMINA YUSUF TEST","amount":941.39,"currency":"CAD","kind":"revenue","line":25,"qboLine":23,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":833.09},{"a":"2050","cr":108.3},{"a":"1010","dr":941.39}],"hstCollected":108.3},
+    {"id":"15-CHQ-2025-04-0006","acct":"CHQ","date":"2025-04-21","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1359.64,"currency":"CAD","kind":"subcontractor","line":26,"qboLine":24,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1359.64},{"a":"1010","cr":1359.64}]},
+    {"id":"15-CHQ-2025-04-0007","acct":"CHQ","date":"2025-04-21","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-159.66,"currency":"CAD","kind":"card-payment","line":27,"qboLine":25,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":159.66},{"a":"1010","cr":159.66}],"pair":"15-BCD-2025-04-0011"},
+    {"id":"15-CHQ-2025-04-0008","acct":"CHQ","date":"2025-04-23","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":619.44,"currency":"CAD","kind":"revenue","line":28,"qboLine":26,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":548.18},{"a":"2050","cr":71.26},{"a":"1010","dr":619.44}],"hstCollected":71.26},
+    {"id":"15-CHQ-2025-04-0009","acct":"CHQ","date":"2025-04-24","description":"E-TRANSFER RECEIVED WILLOWDALE PLAZA MGMT TEST","amount":1396.19,"currency":"CAD","kind":"revenue","line":29,"qboLine":27,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1235.57},{"a":"2050","cr":160.62},{"a":"1010","dr":1396.19}],"hstCollected":160.62},
+    {"id":"15-CHQ-2025-04-0010","acct":"CHQ","date":"2025-04-24","description":"E-TRANSFER RECEIVED GRANT LAWSON TEST","amount":666.77,"currency":"CAD","kind":"revenue","line":30,"qboLine":28,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":590.06},{"a":"2050","cr":76.71},{"a":"1010","dr":666.77}],"hstCollected":76.71},
+    {"id":"15-CHQ-2025-04-0011","acct":"CHQ","date":"2025-04-28","description":"E-TRANSFER RECEIVED GRANT LAWSON TEST","amount":942.3,"currency":"CAD","kind":"revenue","line":31,"qboLine":29,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":833.89},{"a":"2050","cr":108.41},{"a":"1010","dr":942.3}],"hstCollected":108.41},
+    {"id":"15-CHQ-2025-04-0012","acct":"CHQ","date":"2025-04-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":32,"qboLine":30,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-05-0001","acct":"CHQ","date":"2025-05-02","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":884.37,"currency":"CAD","kind":"revenue","line":33,"qboLine":31,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":782.63},{"a":"2050","cr":101.74},{"a":"1010","dr":884.37}],"hstCollected":101.74},
+    {"id":"15-CHQ-2025-05-0002","acct":"CHQ","date":"2025-05-05","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":409.63,"currency":"CAD","kind":"revenue","line":34,"qboLine":32,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":362.5},{"a":"2050","cr":47.13},{"a":"1010","dr":409.63}],"hstCollected":47.13},
+    {"id":"15-CHQ-2025-05-0003","acct":"CHQ","date":"2025-05-05","description":"E-TRANSFER RECEIVED PETER WONG TEST","amount":520.79,"currency":"CAD","kind":"revenue","line":35,"qboLine":33,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":460.88},{"a":"2050","cr":59.91},{"a":"1010","dr":520.79}],"hstCollected":59.91},
+    {"id":"15-CHQ-2025-05-0004","acct":"CHQ","date":"2025-05-05","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1247.51,"currency":"CAD","kind":"subcontractor","line":36,"qboLine":34,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1247.51},{"a":"1010","cr":1247.51}]},
+    {"id":"15-CHQ-2025-05-0005","acct":"CHQ","date":"2025-05-05","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":37,"qboLine":35,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-05-0006","acct":"CHQ","date":"2025-05-07","description":"E-TRANSFER RECEIVED HASSAN KARIMI TEST","amount":583.4,"currency":"CAD","kind":"revenue","line":38,"qboLine":36,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":516.28},{"a":"2050","cr":67.12},{"a":"1010","dr":583.4}],"hstCollected":67.12},
+    {"id":"15-CHQ-2025-05-0007","acct":"CHQ","date":"2025-05-16","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":849.69,"currency":"CAD","kind":"revenue","line":39,"qboLine":37,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":751.94},{"a":"2050","cr":97.75},{"a":"1010","dr":849.69}],"hstCollected":97.75},
+    {"id":"15-CHQ-2025-05-0008","acct":"CHQ","date":"2025-05-19","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1372.39,"currency":"CAD","kind":"subcontractor","line":40,"qboLine":38,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1372.39},{"a":"1010","cr":1372.39}]},
+    {"id":"15-CHQ-2025-05-0009","acct":"CHQ","date":"2025-05-20","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-662.61,"currency":"CAD","kind":"card-payment","line":41,"qboLine":39,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":662.61},{"a":"1010","cr":662.61}],"pair":"15-BCD-2025-05-0006"},
+    {"id":"15-CHQ-2025-05-0010","acct":"CHQ","date":"2025-05-22","description":"E-TRANSFER RECEIVED CEDAR HEIGHTS DENTAL TEST","amount":1307.73,"currency":"CAD","kind":"revenue","line":42,"qboLine":40,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1157.28},{"a":"2050","cr":150.45},{"a":"1010","dr":1307.73}],"hstCollected":150.45},
+    {"id":"15-CHQ-2025-05-0011","acct":"CHQ","date":"2025-05-22","description":"POS PURCHASE GREENLINE TURF EQUIPMENT TEST","amount":-448.8,"currency":"CAD","kind":"expense","line":43,"qboLine":41,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":397.17},{"a":"2050","dr":51.63},{"a":"1010","cr":448.8}],"hstItc":51.63},
+    {"id":"15-CHQ-2025-05-0012","acct":"CHQ","date":"2025-05-23","description":"E-TRANSFER RECEIVED CEDAR HEIGHTS DENTAL TEST","amount":1286.99,"currency":"CAD","kind":"revenue","line":44,"qboLine":42,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1138.93},{"a":"2050","cr":148.06},{"a":"1010","dr":1286.99}],"hstCollected":148.06},
+    {"id":"15-CHQ-2025-05-0013","acct":"CHQ","date":"2025-05-28","description":"E-TRANSFER RECEIVED SOFIA MARTINEZ TEST","amount":682.07,"currency":"CAD","kind":"revenue","line":45,"qboLine":43,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":603.6},{"a":"2050","cr":78.47},{"a":"1010","dr":682.07}],"hstCollected":78.47},
+    {"id":"15-CHQ-2025-05-0014","acct":"CHQ","date":"2025-05-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":46,"qboLine":44,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-05-0015","acct":"CHQ","date":"2025-05-30","description":"E-TRANSFER RECEIVED CEDAR HEIGHTS DENTAL TEST","amount":933.92,"currency":"CAD","kind":"revenue","line":47,"qboLine":45,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":826.48},{"a":"2050","cr":107.44},{"a":"1010","dr":933.92}],"hstCollected":107.44},
+    {"id":"15-CHQ-2025-06-0001","acct":"CHQ","date":"2025-06-02","description":"E-TRANSFER RECEIVED SOFIA MARTINEZ TEST","amount":625.42,"currency":"CAD","kind":"revenue","line":48,"qboLine":46,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":553.47},{"a":"2050","cr":71.95},{"a":"1010","dr":625.42}],"hstCollected":71.95},
+    {"id":"15-CHQ-2025-06-0002","acct":"CHQ","date":"2025-06-02","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":629.67,"currency":"CAD","kind":"revenue","line":49,"qboLine":47,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":557.23},{"a":"2050","cr":72.44},{"a":"1010","dr":629.67}],"hstCollected":72.44},
+    {"id":"15-CHQ-2025-06-0003","acct":"CHQ","date":"2025-06-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":50,"qboLine":48,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-06-0004","acct":"CHQ","date":"2025-06-05","description":"E-TRANSFER RECEIVED GRANT LAWSON TEST","amount":788.37,"currency":"CAD","kind":"revenue","line":51,"qboLine":49,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":697.67},{"a":"2050","cr":90.7},{"a":"1010","dr":788.37}],"hstCollected":90.7},
+    {"id":"15-CHQ-2025-06-0005","acct":"CHQ","date":"2025-06-05","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1172.35,"currency":"CAD","kind":"subcontractor","line":52,"qboLine":50,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1172.35},{"a":"1010","cr":1172.35}]},
+    {"id":"15-CHQ-2025-06-0006","acct":"CHQ","date":"2025-06-10","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":704.39,"currency":"CAD","kind":"revenue","line":53,"qboLine":51,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":623.35},{"a":"2050","cr":81.04},{"a":"1010","dr":704.39}],"hstCollected":81.04},
+    {"id":"15-CHQ-2025-06-0007","acct":"CHQ","date":"2025-06-11","description":"E-TRANSFER RECEIVED WILLOWDALE PLAZA MGMT TEST","amount":1685.29,"currency":"CAD","kind":"revenue","line":54,"qboLine":52,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1491.41},{"a":"2050","cr":193.88},{"a":"1010","dr":1685.29}],"hstCollected":193.88},
+    {"id":"15-CHQ-2025-06-0008","acct":"CHQ","date":"2025-06-16","description":"E-TRANSFER RECEIVED ROUGE PARK CONDO BOARD TEST","amount":1592.52,"currency":"CAD","kind":"revenue","line":55,"qboLine":53,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1409.31},{"a":"2050","cr":183.21},{"a":"1010","dr":1592.52}],"hstCollected":183.21},
+    {"id":"15-CHQ-2025-06-0009","acct":"CHQ","date":"2025-06-19","description":"E-TRANSFER RECEIVED AMINA YUSUF TEST","amount":452.92,"currency":"CAD","kind":"revenue","line":56,"qboLine":54,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":400.81},{"a":"2050","cr":52.11},{"a":"1010","dr":452.92}],"hstCollected":52.11},
+    {"id":"15-CHQ-2025-06-0010","acct":"CHQ","date":"2025-06-19","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1326.84,"currency":"CAD","kind":"subcontractor","line":57,"qboLine":55,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1326.84},{"a":"1010","cr":1326.84}]},
+    {"id":"15-CHQ-2025-06-0011","acct":"CHQ","date":"2025-06-20","description":"E-TRANSFER RECEIVED ROUGE PARK CONDO BOARD TEST","amount":1594.5,"currency":"CAD","kind":"revenue","line":58,"qboLine":56,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1411.06},{"a":"2050","cr":183.44},{"a":"1010","dr":1594.5}],"hstCollected":183.44},
+    {"id":"15-CHQ-2025-06-0012","acct":"CHQ","date":"2025-06-20","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-1165.16,"currency":"CAD","kind":"card-payment","line":59,"qboLine":57,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":1165.16},{"a":"1010","cr":1165.16}],"pair":"15-BCD-2025-06-0011"},
+    {"id":"15-CHQ-2025-06-0013","acct":"CHQ","date":"2025-06-30","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":60,"qboLine":58,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-07-0001","acct":"CHQ","date":"2025-07-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":61,"qboLine":59,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-07-0002","acct":"CHQ","date":"2025-07-07","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1189.52,"currency":"CAD","kind":"subcontractor","line":62,"qboLine":60,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1189.52},{"a":"1010","cr":1189.52}]},
+    {"id":"15-CHQ-2025-07-0003","acct":"CHQ","date":"2025-07-15","description":"E-TRANSFER RECEIVED HASSAN KARIMI TEST","amount":484.17,"currency":"CAD","kind":"revenue","line":63,"qboLine":61,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":428.47},{"a":"2050","cr":55.7},{"a":"1010","dr":484.17}],"hstCollected":55.7},
+    {"id":"15-CHQ-2025-07-0004","acct":"CHQ","date":"2025-07-16","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":679.91,"currency":"CAD","kind":"revenue","line":64,"qboLine":62,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":601.69},{"a":"2050","cr":78.22},{"a":"1010","dr":679.91}],"hstCollected":78.22},
+    {"id":"15-CHQ-2025-07-0005","acct":"CHQ","date":"2025-07-16","description":"E-TRANSFER RECEIVED WILLOWDALE PLAZA MGMT TEST","amount":1011.75,"currency":"CAD","kind":"revenue","line":65,"qboLine":63,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":895.35},{"a":"2050","cr":116.4},{"a":"1010","dr":1011.75}],"hstCollected":116.4},
+    {"id":"15-CHQ-2025-07-0006","acct":"CHQ","date":"2025-07-18","description":"E-TRANSFER RECEIVED CEDAR HEIGHTS DENTAL TEST","amount":1307.41,"currency":"CAD","kind":"revenue","line":66,"qboLine":64,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1157},{"a":"2050","cr":150.41},{"a":"1010","dr":1307.41}],"hstCollected":150.41},
+    {"id":"15-CHQ-2025-07-0007","acct":"CHQ","date":"2025-07-21","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1565.16,"currency":"CAD","kind":"subcontractor","line":67,"qboLine":65,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1565.16},{"a":"1010","cr":1565.16}]},
+    {"id":"15-CHQ-2025-07-0008","acct":"CHQ","date":"2025-07-21","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-1196.97,"currency":"CAD","kind":"card-payment","line":68,"qboLine":66,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":1196.97},{"a":"1010","cr":1196.97}],"pair":"15-BCD-2025-07-0007"},
+    {"id":"15-CHQ-2025-07-0009","acct":"CHQ","date":"2025-07-23","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":777.44,"currency":"CAD","kind":"revenue","line":69,"qboLine":67,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":688},{"a":"2050","cr":89.44},{"a":"1010","dr":777.44}],"hstCollected":89.44},
+    {"id":"15-CHQ-2025-07-0010","acct":"CHQ","date":"2025-07-23","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":777.12,"currency":"CAD","kind":"revenue","line":70,"qboLine":68,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":687.72},{"a":"2050","cr":89.4},{"a":"1010","dr":777.12}],"hstCollected":89.4},
+    {"id":"15-CHQ-2025-07-0011","acct":"CHQ","date":"2025-07-28","description":"E-TRANSFER RECEIVED AMINA YUSUF TEST","amount":945.29,"currency":"CAD","kind":"revenue","line":71,"qboLine":69,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":836.54},{"a":"2050","cr":108.75},{"a":"1010","dr":945.29}],"hstCollected":108.75},
+    {"id":"15-CHQ-2025-07-0012","acct":"CHQ","date":"2025-07-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":72,"qboLine":70,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-07-0013","acct":"CHQ","date":"2025-07-31","description":"E-TRANSFER RECEIVED ROUGE PARK CONDO BOARD TEST","amount":999.59,"currency":"CAD","kind":"revenue","line":73,"qboLine":71,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":884.59},{"a":"2050","cr":115},{"a":"1010","dr":999.59}],"hstCollected":115},
+    {"id":"15-CHQ-2025-08-0001","acct":"CHQ","date":"2025-08-04","description":"E-TRANSFER RECEIVED SOFIA MARTINEZ TEST","amount":729.62,"currency":"CAD","kind":"revenue","line":74,"qboLine":72,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":645.68},{"a":"2050","cr":83.94},{"a":"1010","dr":729.62}],"hstCollected":83.94},
+    {"id":"15-CHQ-2025-08-0002","acct":"CHQ","date":"2025-08-04","description":"E-TRANSFER RECEIVED DENIS TREMBLAY TEST","amount":795.51,"currency":"CAD","kind":"revenue","line":75,"qboLine":73,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":703.99},{"a":"2050","cr":91.52},{"a":"1010","dr":795.51}],"hstCollected":91.52},
+    {"id":"15-CHQ-2025-08-0003","acct":"CHQ","date":"2025-08-04","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":76,"qboLine":74,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-08-0004","acct":"CHQ","date":"2025-08-05","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1450.88,"currency":"CAD","kind":"subcontractor","line":77,"qboLine":75,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1450.88},{"a":"1010","cr":1450.88}]},
+    {"id":"15-CHQ-2025-08-0005","acct":"CHQ","date":"2025-08-06","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":415.63,"currency":"CAD","kind":"revenue","line":78,"qboLine":76,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":367.81},{"a":"2050","cr":47.82},{"a":"1010","dr":415.63}],"hstCollected":47.82},
+    {"id":"15-CHQ-2025-08-0006","acct":"CHQ","date":"2025-08-07","description":"E-TRANSFER RECEIVED WILLOWDALE PLAZA MGMT TEST","amount":1010.45,"currency":"CAD","kind":"revenue","line":79,"qboLine":77,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":894.2},{"a":"2050","cr":116.25},{"a":"1010","dr":1010.45}],"hstCollected":116.25},
+    {"id":"15-CHQ-2025-08-0007","acct":"CHQ","date":"2025-08-08","description":"E-TRANSFER RECEIVED CEDAR HEIGHTS DENTAL TEST","amount":1178.44,"currency":"CAD","kind":"revenue","line":80,"qboLine":78,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1042.87},{"a":"2050","cr":135.57},{"a":"1010","dr":1178.44}],"hstCollected":135.57},
+    {"id":"15-CHQ-2025-08-0008","acct":"CHQ","date":"2025-08-12","description":"E-TRANSFER RECEIVED PETER WONG TEST","amount":646.46,"currency":"CAD","kind":"revenue","line":81,"qboLine":79,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":572.09},{"a":"2050","cr":74.37},{"a":"1010","dr":646.46}],"hstCollected":74.37},
+    {"id":"15-CHQ-2025-08-0009","acct":"CHQ","date":"2025-08-14","description":"POS PURCHASE GREENLINE TURF EQUIPMENT TEST","amount":-637.9,"currency":"CAD","kind":"expense","line":82,"qboLine":80,"account":"6120 Repairs and maintenance","accountNo":"6120","gifi":8960,"gifiStatus":"settled","post":[{"a":"6120","dr":564.51},{"a":"2050","dr":73.39},{"a":"1010","cr":637.9}],"hstItc":73.39},
+    {"id":"15-CHQ-2025-08-0010","acct":"CHQ","date":"2025-08-19","description":"E-TRANSFER RECEIVED SOFIA MARTINEZ TEST","amount":411.65,"currency":"CAD","kind":"revenue","line":83,"qboLine":81,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":364.29},{"a":"2050","cr":47.36},{"a":"1010","dr":411.65}],"hstCollected":47.36},
+    {"id":"15-CHQ-2025-08-0011","acct":"CHQ","date":"2025-08-19","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1496.26,"currency":"CAD","kind":"subcontractor","line":84,"qboLine":82,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1496.26},{"a":"1010","cr":1496.26}]},
+    {"id":"15-CHQ-2025-08-0012","acct":"CHQ","date":"2025-08-20","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-926.53,"currency":"CAD","kind":"card-payment","line":85,"qboLine":83,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":926.53},{"a":"1010","cr":926.53}],"pair":"15-BCD-2025-08-0010"},
+    {"id":"15-CHQ-2025-08-0013","acct":"CHQ","date":"2025-08-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":86,"qboLine":84,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-09-0001","acct":"CHQ","date":"2025-09-02","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":502.04,"currency":"CAD","kind":"revenue","line":87,"qboLine":85,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":444.28},{"a":"2050","cr":57.76},{"a":"1010","dr":502.04}],"hstCollected":57.76},
+    {"id":"15-CHQ-2025-09-0002","acct":"CHQ","date":"2025-09-02","description":"E-TRANSFER RECEIVED AMINA YUSUF TEST","amount":766.19,"currency":"CAD","kind":"revenue","line":88,"qboLine":86,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":678.04},{"a":"2050","cr":88.15},{"a":"1010","dr":766.19}],"hstCollected":88.15},
+    {"id":"15-CHQ-2025-09-0003","acct":"CHQ","date":"2025-09-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":89,"qboLine":87,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-09-0004","acct":"CHQ","date":"2025-09-05","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1146.72,"currency":"CAD","kind":"subcontractor","line":90,"qboLine":88,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1146.72},{"a":"1010","cr":1146.72}]},
+    {"id":"15-CHQ-2025-09-0005","acct":"CHQ","date":"2025-09-08","description":"E-TRANSFER RECEIVED PETER WONG TEST","amount":598.57,"currency":"CAD","kind":"revenue","line":91,"qboLine":89,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":529.71},{"a":"2050","cr":68.86},{"a":"1010","dr":598.57}],"hstCollected":68.86},
+    {"id":"15-CHQ-2025-09-0006","acct":"CHQ","date":"2025-09-08","description":"E-TRANSFER RECEIVED ROUGE PARK CONDO BOARD TEST","amount":1354.2,"currency":"CAD","kind":"revenue","line":92,"qboLine":90,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1198.41},{"a":"2050","cr":155.79},{"a":"1010","dr":1354.2}],"hstCollected":155.79},
+    {"id":"15-CHQ-2025-09-0007","acct":"CHQ","date":"2025-09-16","description":"E-TRANSFER RECEIVED DENIS TREMBLAY TEST","amount":435.59,"currency":"CAD","kind":"revenue","line":93,"qboLine":91,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":385.48},{"a":"2050","cr":50.11},{"a":"1010","dr":435.59}],"hstCollected":50.11},
+    {"id":"15-CHQ-2025-09-0008","acct":"CHQ","date":"2025-09-18","description":"E-TRANSFER RECEIVED SOFIA MARTINEZ TEST","amount":574.83,"currency":"CAD","kind":"revenue","line":94,"qboLine":92,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":508.7},{"a":"2050","cr":66.13},{"a":"1010","dr":574.83}],"hstCollected":66.13},
+    {"id":"15-CHQ-2025-09-0009","acct":"CHQ","date":"2025-09-19","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1113.59,"currency":"CAD","kind":"subcontractor","line":95,"qboLine":93,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1113.59},{"a":"1010","cr":1113.59}]},
+    {"id":"15-CHQ-2025-09-0010","acct":"CHQ","date":"2025-09-22","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-919.39,"currency":"CAD","kind":"card-payment","line":96,"qboLine":94,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":919.39},{"a":"1010","cr":919.39}],"pair":"15-BCD-2025-09-0008"},
+    {"id":"15-CHQ-2025-09-0011","acct":"CHQ","date":"2025-09-24","description":"E-TRANSFER RECEIVED AMINA YUSUF TEST","amount":702.5,"currency":"CAD","kind":"revenue","line":97,"qboLine":95,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":621.68},{"a":"2050","cr":80.82},{"a":"1010","dr":702.5}],"hstCollected":80.82},
+    {"id":"15-CHQ-2025-09-0012","acct":"CHQ","date":"2025-09-24","description":"E-TRANSFER RECEIVED CEDAR HEIGHTS DENTAL TEST","amount":1509.24,"currency":"CAD","kind":"revenue","line":98,"qboLine":96,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1335.61},{"a":"2050","cr":173.63},{"a":"1010","dr":1509.24}],"hstCollected":173.63},
+    {"id":"15-CHQ-2025-09-0013","acct":"CHQ","date":"2025-09-25","description":"E-TRANSFER RECEIVED AMINA YUSUF TEST","amount":896.36,"currency":"CAD","kind":"revenue","line":99,"qboLine":97,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":793.24},{"a":"2050","cr":103.12},{"a":"1010","dr":896.36}],"hstCollected":103.12},
+    {"id":"15-CHQ-2025-09-0014","acct":"CHQ","date":"2025-09-29","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":100,"qboLine":98,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-10-0001","acct":"CHQ","date":"2025-10-02","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":957.19,"currency":"CAD","kind":"revenue","line":101,"qboLine":99,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":847.07},{"a":"2050","cr":110.12},{"a":"1010","dr":957.19}],"hstCollected":110.12},
+    {"id":"15-CHQ-2025-10-0002","acct":"CHQ","date":"2025-10-02","description":"E-TRANSFER RECEIVED MIRELA COSTA TEST","amount":508.31,"currency":"CAD","kind":"revenue","line":102,"qboLine":100,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":449.83},{"a":"2050","cr":58.48},{"a":"1010","dr":508.31}],"hstCollected":58.48},
+    {"id":"15-CHQ-2025-10-0003","acct":"CHQ","date":"2025-10-02","description":"E-TRANSFER RECEIVED SOFIA MARTINEZ TEST","amount":557.94,"currency":"CAD","kind":"revenue","line":103,"qboLine":101,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":493.75},{"a":"2050","cr":64.19},{"a":"1010","dr":557.94}],"hstCollected":64.19},
+    {"id":"15-CHQ-2025-10-0004","acct":"CHQ","date":"2025-10-03","description":"E-TRANSFER RECEIVED CEDAR HEIGHTS DENTAL TEST","amount":1462.41,"currency":"CAD","kind":"revenue","line":104,"qboLine":102,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1294.17},{"a":"2050","cr":168.24},{"a":"1010","dr":1462.41}],"hstCollected":168.24},
+    {"id":"15-CHQ-2025-10-0005","acct":"CHQ","date":"2025-10-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":105,"qboLine":103,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-10-0006","acct":"CHQ","date":"2025-10-06","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1457.05,"currency":"CAD","kind":"subcontractor","line":106,"qboLine":104,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1457.05},{"a":"1010","cr":1457.05}]},
+    {"id":"15-CHQ-2025-10-0007","acct":"CHQ","date":"2025-10-08","description":"E-TRANSFER RECEIVED HASSAN KARIMI TEST","amount":827.92,"currency":"CAD","kind":"revenue","line":107,"qboLine":105,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":732.67},{"a":"2050","cr":95.25},{"a":"1010","dr":827.92}],"hstCollected":95.25},
+    {"id":"15-CHQ-2025-10-0008","acct":"CHQ","date":"2025-10-13","description":"E-TRANSFER RECEIVED HASSAN KARIMI TEST","amount":506.29,"currency":"CAD","kind":"revenue","line":108,"qboLine":106,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":448.04},{"a":"2050","cr":58.25},{"a":"1010","dr":506.29}],"hstCollected":58.25},
+    {"id":"15-CHQ-2025-10-0009","acct":"CHQ","date":"2025-10-16","description":"E-TRANSFER RECEIVED HASSAN KARIMI TEST","amount":638.44,"currency":"CAD","kind":"revenue","line":109,"qboLine":107,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":564.99},{"a":"2050","cr":73.45},{"a":"1010","dr":638.44}],"hstCollected":73.45},
+    {"id":"15-CHQ-2025-10-0010","acct":"CHQ","date":"2025-10-20","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1134.87,"currency":"CAD","kind":"subcontractor","line":110,"qboLine":108,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1134.87},{"a":"1010","cr":1134.87}]},
+    {"id":"15-CHQ-2025-10-0011","acct":"CHQ","date":"2025-10-20","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-1044.52,"currency":"CAD","kind":"card-payment","line":111,"qboLine":109,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":1044.52},{"a":"1010","cr":1044.52}],"pair":"15-BCD-2025-10-0008"},
+    {"id":"15-CHQ-2025-10-0012","acct":"CHQ","date":"2025-10-24","description":"E-TRANSFER RECEIVED AMINA YUSUF TEST","amount":526.25,"currency":"CAD","kind":"revenue","line":112,"qboLine":110,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":465.71},{"a":"2050","cr":60.54},{"a":"1010","dr":526.25}],"hstCollected":60.54},
+    {"id":"15-CHQ-2025-10-0013","acct":"CHQ","date":"2025-10-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":113,"qboLine":111,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-10-0014","acct":"CHQ","date":"2025-10-29","description":"E-TRANSFER RECEIVED CEDAR HEIGHTS DENTAL TEST","amount":1471.9,"currency":"CAD","kind":"revenue","line":114,"qboLine":112,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1302.57},{"a":"2050","cr":169.33},{"a":"1010","dr":1471.9}],"hstCollected":169.33},
+    {"id":"15-CHQ-2025-11-0001","acct":"CHQ","date":"2025-11-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":115,"qboLine":113,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-11-0002","acct":"CHQ","date":"2025-11-04","description":"E-TRANSFER RECEIVED LINDA ODONNELL TEST","amount":495.55,"currency":"CAD","kind":"revenue","line":116,"qboLine":114,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":438.54},{"a":"2050","cr":57.01},{"a":"1010","dr":495.55}],"hstCollected":57.01},
+    {"id":"15-CHQ-2025-11-0003","acct":"CHQ","date":"2025-11-05","description":"E-TRANSFER SENT KOFI ASANTE TEST","amount":-1301.34,"currency":"CAD","kind":"subcontractor","line":117,"qboLine":115,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1301.34},{"a":"1010","cr":1301.34}]},
+    {"id":"15-CHQ-2025-11-0004","acct":"CHQ","date":"2025-11-10","description":"E-TRANSFER RECEIVED GRANT LAWSON TEST","amount":545.76,"currency":"CAD","kind":"revenue","line":118,"qboLine":116,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":482.97},{"a":"2050","cr":62.79},{"a":"1010","dr":545.76}],"hstCollected":62.79},
+    {"id":"15-CHQ-2025-11-0005","acct":"CHQ","date":"2025-11-11","description":"E-TRANSFER RECEIVED GRANT LAWSON TEST","amount":620.91,"currency":"CAD","kind":"revenue","line":119,"qboLine":117,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":549.48},{"a":"2050","cr":71.43},{"a":"1010","dr":620.91}],"hstCollected":71.43},
+    {"id":"15-CHQ-2025-11-0006","acct":"CHQ","date":"2025-11-12","description":"E-TRANSFER RECEIVED SOFIA MARTINEZ TEST","amount":567.93,"currency":"CAD","kind":"revenue","line":120,"qboLine":118,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":502.59},{"a":"2050","cr":65.34},{"a":"1010","dr":567.93}],"hstCollected":65.34},
+    {"id":"15-CHQ-2025-11-0007","acct":"CHQ","date":"2025-11-13","description":"E-TRANSFER RECEIVED HASSAN KARIMI TEST","amount":616.63,"currency":"CAD","kind":"revenue","line":121,"qboLine":119,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":545.69},{"a":"2050","cr":70.94},{"a":"1010","dr":616.63}],"hstCollected":70.94},
+    {"id":"15-CHQ-2025-11-0008","acct":"CHQ","date":"2025-11-19","description":"E-TRANSFER RECEIVED ROUGE PARK CONDO BOARD TEST","amount":1260.2,"currency":"CAD","kind":"revenue","line":122,"qboLine":120,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":1115.22},{"a":"2050","cr":144.98},{"a":"1010","dr":1260.2}],"hstCollected":144.98},
+    {"id":"15-CHQ-2025-11-0009","acct":"CHQ","date":"2025-11-19","description":"E-TRANSFER RECEIVED GRANT LAWSON TEST","amount":662.5,"currency":"CAD","kind":"revenue","line":123,"qboLine":121,"account":"4010 Sales","accountNo":"4010","gifi":8000,"gifiStatus":"settled","post":[{"a":"4010","cr":586.28},{"a":"2050","cr":76.22},{"a":"1010","dr":662.5}],"hstCollected":76.22},
+    {"id":"15-CHQ-2025-11-0010","acct":"CHQ","date":"2025-11-19","description":"E-TRANSFER SENT RYAN BOUCHARD TEST","amount":-1612.82,"currency":"CAD","kind":"subcontractor","line":124,"qboLine":122,"account":"5040 Subcontractors (cost of sales)","accountNo":"5040","gifi":8360,"gifiStatus":"settled","post":[{"a":"5040","dr":1612.82},{"a":"1010","cr":1612.82}]},
+    {"id":"15-CHQ-2025-11-0011","acct":"CHQ","date":"2025-11-20","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-791.35,"currency":"CAD","kind":"card-payment","line":125,"qboLine":123,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":791.35},{"a":"1010","cr":791.35}],"pair":"15-BCD-2025-11-0009"},
+    {"id":"15-CHQ-2025-11-0012","acct":"CHQ","date":"2025-11-28","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":126,"qboLine":124,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-CHQ-2025-12-0001","acct":"CHQ","date":"2025-12-03","description":"PRE-AUTH DEBIT RIVERBEND INSURANCE TEST","amount":-215,"currency":"CAD","kind":"expense","line":127,"qboLine":125,"account":"6060 Insurance","accountNo":"6060","gifi":8690,"gifiStatus":"settled","post":[{"a":"6060","dr":215},{"a":"1010","cr":215}]},
+    {"id":"15-CHQ-2025-12-0002","acct":"CHQ","date":"2025-12-22","description":"PAYMENT TO CARD AURORA CARD TEST 9031","amount":-952.17,"currency":"CAD","kind":"card-payment","line":128,"qboLine":126,"account":"2010 Credit card payable","accountNo":"2010","gifi":2707,"gifiStatus":"confirm","post":[{"a":"2010","dr":952.17},{"a":"1010","cr":952.17}],"pair":"15-BCD-2025-12-0003"},
+    {"id":"15-CHQ-2025-12-0003","acct":"CHQ","date":"2025-12-29","description":"MONTHLY ACCOUNT FEE","amount":-14.95,"currency":"CAD","kind":"expense","line":129,"qboLine":127,"account":"6075 Bank charges","accountNo":"6075","gifi":8715,"gifiStatus":"settled","post":[{"a":"6075","dr":14.95},{"a":"1010","cr":14.95}]},
+    {"id":"15-BCD-2025-01-0001","acct":"BCD","date":"2025-01-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":2,"qboLine":2,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-01-0002","acct":"BCD","date":"2025-01-12","description":"ROGERS","amount":-79.81,"currency":"CAD","kind":"expense","line":3,"qboLine":3,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":70.63},{"a":"2050","dr":9.18},{"a":"2010","cr":79.81}],"hstItc":9.18},
+    {"id":"15-BCD-2025-01-0003","acct":"BCD","date":"2025-01-20","description":"PAYMENT - THANK YOU","amount":119.39,"currency":"CAD","kind":"card-payment","line":4,"qboLine":4,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-01-0002","postedVia":"15-CHQ-2025-01-0002"},
+    {"id":"15-BCD-2025-02-0001","acct":"BCD","date":"2025-02-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":5,"qboLine":5,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-02-0002","acct":"BCD","date":"2025-02-12","description":"ROGERS","amount":-79.52,"currency":"CAD","kind":"expense","line":6,"qboLine":6,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":70.37},{"a":"2050","dr":9.15},{"a":"2010","cr":79.52}],"hstItc":9.15},
+    {"id":"15-BCD-2025-02-0003","acct":"BCD","date":"2025-02-20","description":"PAYMENT - THANK YOU","amount":118.81,"currency":"CAD","kind":"card-payment","line":7,"qboLine":7,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-02-0002","postedVia":"15-CHQ-2025-02-0002"},
+    {"id":"15-BCD-2025-03-0001","acct":"BCD","date":"2025-03-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":8,"qboLine":8,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-03-0002","acct":"BCD","date":"2025-03-12","description":"ROGERS","amount":-76.05,"currency":"CAD","kind":"expense","line":9,"qboLine":9,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":67.3},{"a":"2050","dr":8.75},{"a":"2010","cr":76.05}],"hstItc":8.75},
+    {"id":"15-BCD-2025-03-0003","acct":"BCD","date":"2025-03-20","description":"PAYMENT - THANK YOU","amount":118.52,"currency":"CAD","kind":"card-payment","line":10,"qboLine":10,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-03-0008","postedVia":"15-CHQ-2025-03-0008"},
+    {"id":"15-BCD-2025-03-0004","acct":"BCD","date":"2025-03-31","description":"FACEBK *ADS","amount":-44.61,"currency":"CAD","kind":"expense","line":11,"qboLine":11,"account":"6010 Advertising and promotion","accountNo":"6010","gifi":8520,"gifiStatus":"settled","post":[{"a":"6010","dr":39.48},{"a":"2050","dr":5.13},{"a":"2010","cr":44.61}],"hstItc":5.13},
+    {"id":"15-BCD-2025-04-0001","acct":"BCD","date":"2025-04-01","description":"FACEBK *ADS","amount":-43.16,"currency":"CAD","kind":"expense","line":12,"qboLine":12,"account":"6010 Advertising and promotion","accountNo":"6010","gifi":8520,"gifiStatus":"settled","post":[{"a":"6010","dr":38.19},{"a":"2050","dr":4.97},{"a":"2010","cr":43.16}],"hstItc":4.97},
+    {"id":"15-BCD-2025-04-0002","acct":"BCD","date":"2025-04-03","description":"ESSO #4102 PICKERING ON","amount":-68.98,"currency":"CAD","kind":"expense","line":13,"qboLine":13,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":61.04},{"a":"2050","dr":7.94},{"a":"2010","cr":68.98}],"hstItc":7.94},
+    {"id":"15-BCD-2025-04-0003","acct":"BCD","date":"2025-04-03","description":"PRINCESS AUTO #4185 PICKERING ON","amount":-62.99,"currency":"CAD","kind":"expense","line":14,"qboLine":14,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":55.74},{"a":"2050","dr":7.25},{"a":"2010","cr":62.99}],"hstItc":7.25},
+    {"id":"15-BCD-2025-04-0004","acct":"BCD","date":"2025-04-04","description":"PETRO-CANADA #2687 MILTON ON","amount":-89.78,"currency":"CAD","kind":"expense","line":15,"qboLine":15,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":79.45},{"a":"2050","dr":10.33},{"a":"2010","cr":89.78}],"hstItc":10.33},
+    {"id":"15-BCD-2025-04-0005","acct":"BCD","date":"2025-04-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":16,"qboLine":16,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-04-0006","acct":"BCD","date":"2025-04-07","description":"ESSO #8750 BURLINGTON ON","amount":-52.96,"currency":"CAD","kind":"expense","line":17,"qboLine":17,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":46.87},{"a":"2050","dr":6.09},{"a":"2010","cr":52.96}],"hstItc":6.09},
+    {"id":"15-BCD-2025-04-0007","acct":"BCD","date":"2025-04-10","description":"PETRO-CANADA #8354 MILTON ON","amount":-108.87,"currency":"CAD","kind":"expense","line":18,"qboLine":18,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":96.35},{"a":"2050","dr":12.52},{"a":"2010","cr":108.87}],"hstItc":12.52},
+    {"id":"15-BCD-2025-04-0008","acct":"BCD","date":"2025-04-10","description":"PRINCESS AUTO #5530 PICKERING ON","amount":-65.24,"currency":"CAD","kind":"expense","line":19,"qboLine":19,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":57.73},{"a":"2050","dr":7.51},{"a":"2010","cr":65.24}],"hstItc":7.51},
+    {"id":"15-BCD-2025-04-0009","acct":"BCD","date":"2025-04-12","description":"ROGERS","amount":-78.21,"currency":"CAD","kind":"expense","line":20,"qboLine":20,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":69.21},{"a":"2050","dr":9},{"a":"2010","cr":78.21}],"hstItc":9},
+    {"id":"15-BCD-2025-04-0010","acct":"BCD","date":"2025-04-15","description":"SHELL #7545 HAMILTON ON","amount":-53.42,"currency":"CAD","kind":"expense","line":21,"qboLine":21,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":47.27},{"a":"2050","dr":6.15},{"a":"2010","cr":53.42}],"hstItc":6.15},
+    {"id":"15-BCD-2025-04-0011","acct":"BCD","date":"2025-04-21","description":"PAYMENT - THANK YOU","amount":159.66,"currency":"CAD","kind":"card-payment","line":22,"qboLine":22,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-04-0007","postedVia":"15-CHQ-2025-04-0007"},
+    {"id":"15-BCD-2025-05-0001","acct":"BCD","date":"2025-05-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":23,"qboLine":23,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-05-0002","acct":"BCD","date":"2025-05-12","description":"ROGERS","amount":-78.17,"currency":"CAD","kind":"expense","line":24,"qboLine":24,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":69.18},{"a":"2050","dr":8.99},{"a":"2010","cr":78.17}],"hstItc":8.99},
+    {"id":"15-BCD-2025-05-0003","acct":"BCD","date":"2025-05-12","description":"HOME DEPOT #5530 OAKVILLE ON","amount":-237.74,"currency":"CAD","kind":"expense","line":25,"qboLine":25,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":210.39},{"a":"2050","dr":27.35},{"a":"2010","cr":237.74}],"hstItc":27.35},
+    {"id":"15-BCD-2025-05-0004","acct":"BCD","date":"2025-05-13","description":"FACEBK *ADS","amount":-82.82,"currency":"CAD","kind":"expense","line":26,"qboLine":26,"account":"6010 Advertising and promotion","accountNo":"6010","gifi":8520,"gifiStatus":"settled","post":[{"a":"6010","dr":73.29},{"a":"2050","dr":9.53},{"a":"2010","cr":82.82}],"hstItc":9.53},
+    {"id":"15-BCD-2025-05-0005","acct":"BCD","date":"2025-05-16","description":"PETRO-CANADA #790 PICKERING ON","amount":-97.66,"currency":"CAD","kind":"expense","line":27,"qboLine":27,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":86.42},{"a":"2050","dr":11.24},{"a":"2010","cr":97.66}],"hstItc":11.24},
+    {"id":"15-BCD-2025-05-0006","acct":"BCD","date":"2025-05-20","description":"PAYMENT - THANK YOU","amount":662.61,"currency":"CAD","kind":"card-payment","line":28,"qboLine":28,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-05-0009","postedVia":"15-CHQ-2025-05-0009"},
+    {"id":"15-BCD-2025-05-0007","acct":"BCD","date":"2025-05-21","description":"PRINCESS AUTO #6155 SCARBOROUGH ON","amount":-223.37,"currency":"CAD","kind":"expense","line":29,"qboLine":29,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":197.67},{"a":"2050","dr":25.7},{"a":"2010","cr":223.37}],"hstItc":25.7},
+    {"id":"15-BCD-2025-05-0008","acct":"BCD","date":"2025-05-24","description":"SHELL #8360 BRAMPTON ON","amount":-97.13,"currency":"CAD","kind":"expense","line":30,"qboLine":30,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":85.96},{"a":"2050","dr":11.17},{"a":"2010","cr":97.13}],"hstItc":11.17},
+    {"id":"15-BCD-2025-05-0009","acct":"BCD","date":"2025-05-25","description":"HOME DEPOT #424 ETOBICOKE ON","amount":-37.5,"currency":"CAD","kind":"expense","line":31,"qboLine":31,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":33.19},{"a":"2050","dr":4.31},{"a":"2010","cr":37.5}],"hstItc":4.31},
+    {"id":"15-BCD-2025-05-0010","acct":"BCD","date":"2025-05-28","description":"PETRO-CANADA #2238 BRAMPTON ON","amount":-114.54,"currency":"CAD","kind":"expense","line":32,"qboLine":32,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":101.36},{"a":"2050","dr":13.18},{"a":"2010","cr":114.54}],"hstItc":13.18},
+    {"id":"15-BCD-2025-05-0011","acct":"BCD","date":"2025-05-30","description":"PRINCESS AUTO #1638 NORTH YORK ON","amount":-157.23,"currency":"CAD","kind":"expense","line":33,"qboLine":33,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":139.14},{"a":"2050","dr":18.09},{"a":"2010","cr":157.23}],"hstItc":18.09},
+    {"id":"15-BCD-2025-06-0001","acct":"BCD","date":"2025-06-02","description":"ULTRAMAR #9241 AJAX ON","amount":-71.76,"currency":"CAD","kind":"expense","line":34,"qboLine":34,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":63.5},{"a":"2050","dr":8.26},{"a":"2010","cr":71.76}],"hstItc":8.26},
+    {"id":"15-BCD-2025-06-0002","acct":"BCD","date":"2025-06-02","description":"CANADIAN TIRE #861 TORONTO ON","amount":-95.34,"currency":"CAD","kind":"expense","line":35,"qboLine":35,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":84.37},{"a":"2050","dr":10.97},{"a":"2010","cr":95.34}],"hstItc":10.97},
+    {"id":"15-BCD-2025-06-0003","acct":"BCD","date":"2025-06-02","description":"FACEBK *ADS","amount":-70.18,"currency":"CAD","kind":"expense","line":36,"qboLine":36,"account":"6010 Advertising and promotion","accountNo":"6010","gifi":8520,"gifiStatus":"settled","post":[{"a":"6010","dr":62.11},{"a":"2050","dr":8.07},{"a":"2010","cr":70.18}],"hstItc":8.07},
+    {"id":"15-BCD-2025-06-0004","acct":"BCD","date":"2025-06-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":37,"qboLine":37,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-06-0005","acct":"BCD","date":"2025-06-07","description":"FACEBK *ADS","amount":-78.35,"currency":"CAD","kind":"expense","line":38,"qboLine":38,"account":"6010 Advertising and promotion","accountNo":"6010","gifi":8520,"gifiStatus":"settled","post":[{"a":"6010","dr":69.34},{"a":"2050","dr":9.01},{"a":"2010","cr":78.35}],"hstItc":9.01},
+    {"id":"15-BCD-2025-06-0006","acct":"BCD","date":"2025-06-09","description":"ULTRAMAR #5608 AJAX ON","amount":-68.83,"currency":"CAD","kind":"expense","line":39,"qboLine":39,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":60.91},{"a":"2050","dr":7.92},{"a":"2010","cr":68.83}],"hstItc":7.92},
+    {"id":"15-BCD-2025-06-0007","acct":"BCD","date":"2025-06-12","description":"ROGERS","amount":-76.31,"currency":"CAD","kind":"expense","line":40,"qboLine":40,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":67.53},{"a":"2050","dr":8.78},{"a":"2010","cr":76.31}],"hstItc":8.78},
+    {"id":"15-BCD-2025-06-0008","acct":"BCD","date":"2025-06-13","description":"SHELL #2099 AJAX ON","amount":-80.93,"currency":"CAD","kind":"expense","line":41,"qboLine":41,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":71.62},{"a":"2050","dr":9.31},{"a":"2010","cr":80.93}],"hstItc":9.31},
+    {"id":"15-BCD-2025-06-0009","acct":"BCD","date":"2025-06-13","description":"HOME DEPOT #3444 TORONTO ON","amount":-110.94,"currency":"CAD","kind":"expense","line":42,"qboLine":42,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":98.18},{"a":"2050","dr":12.76},{"a":"2010","cr":110.94}],"hstItc":12.76},
+    {"id":"15-BCD-2025-06-0010","acct":"BCD","date":"2025-06-20","description":"CANADIAN TIRE #7384 BURLINGTON ON","amount":-221.73,"currency":"CAD","kind":"expense","line":43,"qboLine":43,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":196.22},{"a":"2050","dr":25.51},{"a":"2010","cr":221.73}],"hstItc":25.51},
+    {"id":"15-BCD-2025-06-0011","acct":"BCD","date":"2025-06-20","description":"PAYMENT - THANK YOU","amount":1165.16,"currency":"CAD","kind":"card-payment","line":44,"qboLine":44,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-06-0012","postedVia":"15-CHQ-2025-06-0012"},
+    {"id":"15-BCD-2025-06-0012","acct":"BCD","date":"2025-06-25","description":"SHELL #9393 PICKERING ON","amount":-69.26,"currency":"CAD","kind":"expense","line":45,"qboLine":45,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":61.29},{"a":"2050","dr":7.97},{"a":"2010","cr":69.26}],"hstItc":7.97},
+    {"id":"15-BCD-2025-06-0013","acct":"BCD","date":"2025-06-26","description":"HOME DEPOT #2703 MARKHAM ON","amount":-214.34,"currency":"CAD","kind":"expense","line":46,"qboLine":46,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":189.68},{"a":"2050","dr":24.66},{"a":"2010","cr":214.34}],"hstItc":24.66},
+    {"id":"15-BCD-2025-07-0001","acct":"BCD","date":"2025-07-04","description":"CANADIAN TIRE #1744 MISSISSAUGA ON","amount":-38.8,"currency":"CAD","kind":"expense","line":47,"qboLine":47,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":34.34},{"a":"2050","dr":4.46},{"a":"2010","cr":38.8}],"hstItc":4.46},
+    {"id":"15-BCD-2025-07-0002","acct":"BCD","date":"2025-07-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":48,"qboLine":48,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-07-0003","acct":"BCD","date":"2025-07-06","description":"CANADIAN TIRE #5206 BRAMPTON ON","amount":-254.84,"currency":"CAD","kind":"expense","line":49,"qboLine":49,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":225.52},{"a":"2050","dr":29.32},{"a":"2010","cr":254.84}],"hstItc":29.32},
+    {"id":"15-BCD-2025-07-0004","acct":"BCD","date":"2025-07-12","description":"ROGERS","amount":-78.84,"currency":"CAD","kind":"expense","line":50,"qboLine":50,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":69.77},{"a":"2050","dr":9.07},{"a":"2010","cr":78.84}],"hstItc":9.07},
+    {"id":"15-BCD-2025-07-0005","acct":"BCD","date":"2025-07-15","description":"ESSO #9062 HAMILTON ON","amount":-91.27,"currency":"CAD","kind":"expense","line":51,"qboLine":51,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":80.77},{"a":"2050","dr":10.5},{"a":"2010","cr":91.27}],"hstItc":10.5},
+    {"id":"15-BCD-2025-07-0006","acct":"BCD","date":"2025-07-16","description":"ULTRAMAR #1835 PICKERING ON","amount":-112.77,"currency":"CAD","kind":"expense","line":52,"qboLine":52,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":99.8},{"a":"2050","dr":12.97},{"a":"2010","cr":112.77}],"hstItc":12.97},
+    {"id":"15-BCD-2025-07-0007","acct":"BCD","date":"2025-07-21","description":"PAYMENT - THANK YOU","amount":1196.97,"currency":"CAD","kind":"card-payment","line":53,"qboLine":53,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-07-0008","postedVia":"15-CHQ-2025-07-0008"},
+    {"id":"15-BCD-2025-07-0008","acct":"BCD","date":"2025-07-26","description":"ESSO #4800 ETOBICOKE ON","amount":-73.79,"currency":"CAD","kind":"expense","line":54,"qboLine":54,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":65.3},{"a":"2050","dr":8.49},{"a":"2010","cr":73.79}],"hstItc":8.49},
+    {"id":"15-BCD-2025-07-0009","acct":"BCD","date":"2025-07-26","description":"HOME DEPOT #820 HAMILTON ON","amount":-144.75,"currency":"CAD","kind":"expense","line":55,"qboLine":55,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":128.1},{"a":"2050","dr":16.65},{"a":"2010","cr":144.75}],"hstItc":16.65},
+    {"id":"15-BCD-2025-07-0010","acct":"BCD","date":"2025-07-28","description":"ESSO #2530 MISSISSAUGA ON","amount":-92.47,"currency":"CAD","kind":"expense","line":56,"qboLine":56,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":81.83},{"a":"2050","dr":10.64},{"a":"2010","cr":92.47}],"hstItc":10.64},
+    {"id":"15-BCD-2025-08-0001","acct":"BCD","date":"2025-08-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":57,"qboLine":57,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-08-0002","acct":"BCD","date":"2025-08-07","description":"PRINCESS AUTO #7071 MILTON ON","amount":-73.23,"currency":"CAD","kind":"expense","line":58,"qboLine":58,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":64.81},{"a":"2050","dr":8.42},{"a":"2010","cr":73.23}],"hstItc":8.42},
+    {"id":"15-BCD-2025-08-0003","acct":"BCD","date":"2025-08-10","description":"PIONEER #3841 VAUGHAN ON","amount":-113.2,"currency":"CAD","kind":"expense","line":59,"qboLine":59,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":100.18},{"a":"2050","dr":13.02},{"a":"2010","cr":113.2}],"hstItc":13.02},
+    {"id":"15-BCD-2025-08-0004","acct":"BCD","date":"2025-08-12","description":"ROGERS","amount":-80.27,"currency":"CAD","kind":"expense","line":60,"qboLine":60,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":71.04},{"a":"2050","dr":9.23},{"a":"2010","cr":80.27}],"hstItc":9.23},
+    {"id":"15-BCD-2025-08-0005","acct":"BCD","date":"2025-08-13","description":"PIONEER #2397 OAKVILLE ON","amount":-57.34,"currency":"CAD","kind":"expense","line":61,"qboLine":61,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":50.74},{"a":"2050","dr":6.6},{"a":"2010","cr":57.34}],"hstItc":6.6},
+    {"id":"15-BCD-2025-08-0006","acct":"BCD","date":"2025-08-13","description":"ULTRAMAR #5985 MISSISSAUGA ON","amount":-51.87,"currency":"CAD","kind":"expense","line":62,"qboLine":62,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":45.9},{"a":"2050","dr":5.97},{"a":"2010","cr":51.87}],"hstItc":5.97},
+    {"id":"15-BCD-2025-08-0007","acct":"BCD","date":"2025-08-13","description":"CANADIAN TIRE #755 AJAX ON","amount":-258.38,"currency":"CAD","kind":"expense","line":63,"qboLine":63,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":228.65},{"a":"2050","dr":29.73},{"a":"2010","cr":258.38}],"hstItc":29.73},
+    {"id":"15-BCD-2025-08-0008","acct":"BCD","date":"2025-08-13","description":"HOME DEPOT #4251 BURLINGTON ON","amount":-85.39,"currency":"CAD","kind":"expense","line":64,"qboLine":64,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":75.57},{"a":"2050","dr":9.82},{"a":"2010","cr":85.39}],"hstItc":9.82},
+    {"id":"15-BCD-2025-08-0009","acct":"BCD","date":"2025-08-17","description":"SHELL #1767 HAMILTON ON","amount":-76.12,"currency":"CAD","kind":"expense","line":65,"qboLine":65,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":67.36},{"a":"2050","dr":8.76},{"a":"2010","cr":76.12}],"hstItc":8.76},
+    {"id":"15-BCD-2025-08-0010","acct":"BCD","date":"2025-08-20","description":"PAYMENT - THANK YOU","amount":926.53,"currency":"CAD","kind":"card-payment","line":66,"qboLine":66,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-08-0012","postedVia":"15-CHQ-2025-08-0012"},
+    {"id":"15-BCD-2025-08-0011","acct":"BCD","date":"2025-08-25","description":"PIONEER #3414 MILTON ON","amount":-84.59,"currency":"CAD","kind":"expense","line":67,"qboLine":67,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":74.86},{"a":"2050","dr":9.73},{"a":"2010","cr":84.59}],"hstItc":9.73},
+    {"id":"15-BCD-2025-09-0001","acct":"BCD","date":"2025-09-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":68,"qboLine":68,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-09-0002","acct":"BCD","date":"2025-09-06","description":"PIONEER #2708 PICKERING ON","amount":-113.27,"currency":"CAD","kind":"expense","line":69,"qboLine":69,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":100.24},{"a":"2050","dr":13.03},{"a":"2010","cr":113.27}],"hstItc":13.03},
+    {"id":"15-BCD-2025-09-0003","acct":"BCD","date":"2025-09-12","description":"ROGERS","amount":-78.03,"currency":"CAD","kind":"expense","line":70,"qboLine":70,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":69.05},{"a":"2050","dr":8.98},{"a":"2010","cr":78.03}],"hstItc":8.98},
+    {"id":"15-BCD-2025-09-0004","acct":"BCD","date":"2025-09-12","description":"PRINCESS AUTO #6893 PICKERING ON","amount":-259.96,"currency":"CAD","kind":"expense","line":71,"qboLine":71,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":230.05},{"a":"2050","dr":29.91},{"a":"2010","cr":259.96}],"hstItc":29.91},
+    {"id":"15-BCD-2025-09-0005","acct":"BCD","date":"2025-09-13","description":"SHELL #9022 MARKHAM ON","amount":-74.86,"currency":"CAD","kind":"expense","line":72,"qboLine":72,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":66.25},{"a":"2050","dr":8.61},{"a":"2010","cr":74.86}],"hstItc":8.61},
+    {"id":"15-BCD-2025-09-0006","acct":"BCD","date":"2025-09-14","description":"PRINCESS AUTO #5882 MILTON ON","amount":-120.06,"currency":"CAD","kind":"expense","line":73,"qboLine":73,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":106.25},{"a":"2050","dr":13.81},{"a":"2010","cr":120.06}],"hstItc":13.81},
+    {"id":"15-BCD-2025-09-0007","acct":"BCD","date":"2025-09-19","description":"ULTRAMAR #2612 TORONTO ON","amount":-114.54,"currency":"CAD","kind":"expense","line":74,"qboLine":74,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":101.36},{"a":"2050","dr":13.18},{"a":"2010","cr":114.54}],"hstItc":13.18},
+    {"id":"15-BCD-2025-09-0008","acct":"BCD","date":"2025-09-22","description":"PAYMENT - THANK YOU","amount":919.39,"currency":"CAD","kind":"card-payment","line":75,"qboLine":75,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-09-0010","postedVia":"15-CHQ-2025-09-0010"},
+    {"id":"15-BCD-2025-09-0009","acct":"BCD","date":"2025-09-25","description":"HOME DEPOT #8925 AJAX ON","amount":-244.8,"currency":"CAD","kind":"expense","line":76,"qboLine":76,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":216.64},{"a":"2050","dr":28.16},{"a":"2010","cr":244.8}],"hstItc":28.16},
+    {"id":"15-BCD-2025-10-0001","acct":"BCD","date":"2025-10-03","description":"PETRO-CANADA #9139 MISSISSAUGA ON","amount":-55.34,"currency":"CAD","kind":"expense","line":77,"qboLine":77,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":48.97},{"a":"2050","dr":6.37},{"a":"2010","cr":55.34}],"hstItc":6.37},
+    {"id":"15-BCD-2025-10-0002","acct":"BCD","date":"2025-10-03","description":"PRINCESS AUTO #921 ETOBICOKE ON","amount":-67.55,"currency":"CAD","kind":"expense","line":78,"qboLine":78,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":59.78},{"a":"2050","dr":7.77},{"a":"2010","cr":67.55}],"hstItc":7.77},
+    {"id":"15-BCD-2025-10-0003","acct":"BCD","date":"2025-10-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":79,"qboLine":79,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-10-0004","acct":"BCD","date":"2025-10-10","description":"CANADIAN TIRE #7486 MARKHAM ON","amount":-114.49,"currency":"CAD","kind":"expense","line":80,"qboLine":80,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":101.32},{"a":"2050","dr":13.17},{"a":"2010","cr":114.49}],"hstItc":13.17},
+    {"id":"15-BCD-2025-10-0005","acct":"BCD","date":"2025-10-12","description":"ROGERS","amount":-77.45,"currency":"CAD","kind":"expense","line":81,"qboLine":81,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":68.54},{"a":"2050","dr":8.91},{"a":"2010","cr":77.45}],"hstItc":8.91},
+    {"id":"15-BCD-2025-10-0006","acct":"BCD","date":"2025-10-14","description":"CANADIAN TIRE #9319 BURLINGTON ON","amount":-116.38,"currency":"CAD","kind":"expense","line":82,"qboLine":82,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":102.99},{"a":"2050","dr":13.39},{"a":"2010","cr":116.38}],"hstItc":13.39},
+    {"id":"15-BCD-2025-10-0007","acct":"BCD","date":"2025-10-16","description":"PIONEER #8209 HAMILTON ON","amount":-54.44,"currency":"CAD","kind":"expense","line":83,"qboLine":83,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":48.18},{"a":"2050","dr":6.26},{"a":"2010","cr":54.44}],"hstItc":6.26},
+    {"id":"15-BCD-2025-10-0008","acct":"BCD","date":"2025-10-20","description":"PAYMENT - THANK YOU","amount":1044.52,"currency":"CAD","kind":"card-payment","line":84,"qboLine":84,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-10-0011","postedVia":"15-CHQ-2025-10-0011"},
+    {"id":"15-BCD-2025-10-0009","acct":"BCD","date":"2025-10-21","description":"SHELL #1201 TORONTO ON","amount":-108.41,"currency":"CAD","kind":"expense","line":85,"qboLine":85,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":95.94},{"a":"2050","dr":12.47},{"a":"2010","cr":108.41}],"hstItc":12.47},
+    {"id":"15-BCD-2025-10-0010","acct":"BCD","date":"2025-10-31","description":"PRINCESS AUTO #3097 BRAMPTON ON","amount":-158.29,"currency":"CAD","kind":"expense","line":86,"qboLine":86,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":140.08},{"a":"2050","dr":18.21},{"a":"2010","cr":158.29}],"hstItc":18.21},
+    {"id":"15-BCD-2025-11-0001","acct":"BCD","date":"2025-11-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":87,"qboLine":87,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-11-0002","acct":"BCD","date":"2025-11-07","description":"ESSO #6439 MARKHAM ON","amount":-66.14,"currency":"CAD","kind":"expense","line":88,"qboLine":88,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":58.53},{"a":"2050","dr":7.61},{"a":"2010","cr":66.14}],"hstItc":7.61},
+    {"id":"15-BCD-2025-11-0003","acct":"BCD","date":"2025-11-10","description":"HUSKY #1865 OAKVILLE ON","amount":-87.08,"currency":"CAD","kind":"expense","line":89,"qboLine":89,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":77.06},{"a":"2050","dr":10.02},{"a":"2010","cr":87.08}],"hstItc":10.02},
+    {"id":"15-BCD-2025-11-0004","acct":"BCD","date":"2025-11-11","description":"PRINCESS AUTO #2526 SCARBOROUGH ON","amount":-134.35,"currency":"CAD","kind":"expense","line":90,"qboLine":90,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":118.89},{"a":"2050","dr":15.46},{"a":"2010","cr":134.35}],"hstItc":15.46},
+    {"id":"15-BCD-2025-11-0005","acct":"BCD","date":"2025-11-11","description":"CANADIAN TIRE #8249 SCARBOROUGH ON","amount":-60.26,"currency":"CAD","kind":"expense","line":91,"qboLine":91,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":53.33},{"a":"2050","dr":6.93},{"a":"2010","cr":60.26}],"hstItc":6.93},
+    {"id":"15-BCD-2025-11-0006","acct":"BCD","date":"2025-11-12","description":"ROGERS","amount":-80.55,"currency":"CAD","kind":"expense","line":92,"qboLine":92,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":71.28},{"a":"2050","dr":9.27},{"a":"2010","cr":80.55}],"hstItc":9.27},
+    {"id":"15-BCD-2025-11-0007","acct":"BCD","date":"2025-11-12","description":"CANADIAN TIRE #7529 SCARBOROUGH ON","amount":-240.88,"currency":"CAD","kind":"expense","line":93,"qboLine":93,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":213.17},{"a":"2050","dr":27.71},{"a":"2010","cr":240.88}],"hstItc":27.71},
+    {"id":"15-BCD-2025-11-0008","acct":"BCD","date":"2025-11-15","description":"HUSKY #6706 MILTON ON","amount":-60.71,"currency":"CAD","kind":"expense","line":94,"qboLine":94,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":53.73},{"a":"2050","dr":6.98},{"a":"2010","cr":60.71}],"hstItc":6.98},
+    {"id":"15-BCD-2025-11-0009","acct":"BCD","date":"2025-11-20","description":"PAYMENT - THANK YOU","amount":791.35,"currency":"CAD","kind":"card-payment","line":95,"qboLine":95,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-11-0011","postedVia":"15-CHQ-2025-11-0011"},
+    {"id":"15-BCD-2025-11-0010","acct":"BCD","date":"2025-11-26","description":"ESSO #742 TORONTO ON","amount":-112.48,"currency":"CAD","kind":"expense","line":96,"qboLine":96,"account":"6190 Vehicle expenses","accountNo":"6190","gifi":9281,"gifiStatus":"settled","post":[{"a":"6190","dr":99.54},{"a":"2050","dr":12.94},{"a":"2010","cr":112.48}],"hstItc":12.94},
+    {"id":"15-BCD-2025-11-0011","acct":"BCD","date":"2025-11-27","description":"HOME DEPOT #3491 AJAX ON","amount":-70.72,"currency":"CAD","kind":"expense","line":97,"qboLine":97,"account":"6150 Supplies","accountNo":"6150","gifi":9130,"gifiStatus":"settled","post":[{"a":"6150","dr":62.58},{"a":"2050","dr":8.14},{"a":"2010","cr":70.72}],"hstItc":8.14},
+    {"id":"15-BCD-2025-12-0001","acct":"BCD","date":"2025-12-06","description":"INTUIT *QUICKBOOKS","amount":-39,"currency":"CAD","kind":"expense","line":98,"qboLine":98,"account":"6155 Software and computer expenses","accountNo":"6155","gifi":9150,"gifiStatus":"settled","post":[{"a":"6155","dr":34.51},{"a":"2050","dr":4.49},{"a":"2010","cr":39}],"hstItc":4.49},
+    {"id":"15-BCD-2025-12-0002","acct":"BCD","date":"2025-12-12","description":"ROGERS","amount":-80.03,"currency":"CAD","kind":"expense","line":99,"qboLine":99,"account":"6185 Telephone and telecommunications","accountNo":"6185","gifi":9225,"gifiStatus":"settled","post":[{"a":"6185","dr":70.82},{"a":"2050","dr":9.21},{"a":"2010","cr":80.03}],"hstItc":9.21},
+    {"id":"15-BCD-2025-12-0003","acct":"BCD","date":"2025-12-22","description":"PAYMENT - THANK YOU","amount":952.17,"currency":"CAD","kind":"card-payment","line":100,"qboLine":100,"account":"1010 Chequing (CAD)","accountNo":"1010","gifi":1002,"gifiStatus":"settled","mirror":true,"pair":"15-CHQ-2025-12-0002","postedVia":"15-CHQ-2025-12-0002"}
+  ],
+  "statementBalances": {
+    "CHQ": [
+      {"month":"2025-01","opening":4254.06,"closing":3904.72,"exportActivity":-349.34,"rolls":true},
+      {"month":"2025-02","opening":3904.72,"closing":3555.96,"exportActivity":-348.76,"rolls":true},
+      {"month":"2025-03","opening":3555.96,"closing":4574.16,"exportActivity":1018.2,"rolls":true},
+      {"month":"2025-04","opening":4574.16,"closing":7126.11,"exportActivity":2551.95,"rolls":true},
+      {"month":"2025-05","opening":7126.11,"closing":10623.44,"exportActivity":3497.33,"rolls":true},
+      {"month":"2025-06","opening":10623.44,"closing":14802.22,"exportActivity":4178.78,"rolls":true},
+      {"month":"2025-07","opening":14802.22,"closing":17603.3,"exportActivity":2801.08,"rolls":true},
+      {"month":"2025-08","opening":17603.3,"closing":18049.54,"exportActivity":446.24,"rolls":true},
+      {"month":"2025-09","opening":18049.54,"closing":21979.41,"exportActivity":3929.87,"rolls":true},
+      {"month":"2025-10","opening":21979.41,"closing":25569.67,"exportActivity":3590.26,"rolls":true},
+      {"month":"2025-11","opening":25569.67,"closing":26403.69,"exportActivity":834.02,"rolls":true},
+      {"month":"2025-12","opening":26403.69,"closing":25221.57,"exportActivity":-1182.12,"rolls":true}
+    ],
+    "BCD": [
+      {"month":"2025-01","opening":119.39,"closing":118.81,"exportActivity":0.58,"rolls":true},
+      {"month":"2025-02","opening":118.81,"closing":118.52,"exportActivity":0.29,"rolls":true},
+      {"month":"2025-03","opening":118.52,"closing":159.66,"exportActivity":-41.14,"rolls":true},
+      {"month":"2025-04","opening":159.66,"closing":662.61,"exportActivity":-502.95,"rolls":true},
+      {"month":"2025-05","opening":662.61,"closing":1165.16,"exportActivity":-502.55,"rolls":true},
+      {"month":"2025-06","opening":1165.16,"closing":1196.97,"exportActivity":-31.81,"rolls":true},
+      {"month":"2025-07","opening":1196.97,"closing":926.53,"exportActivity":270.44,"rolls":true},
+      {"month":"2025-08","opening":926.53,"closing":919.39,"exportActivity":7.14,"rolls":true},
+      {"month":"2025-09","opening":919.39,"closing":1044.52,"exportActivity":-125.13,"rolls":true},
+      {"month":"2025-10","opening":1044.52,"closing":791.35,"exportActivity":253.17,"rolls":true},
+      {"month":"2025-11","opening":791.35,"closing":952.17,"exportActivity":-160.82,"rolls":true},
+      {"month":"2025-12","opening":952.17,"closing":119.03,"exportActivity":833.14,"rolls":true}
+    ]
+  },
+  "adjustingEntries": [
+    {
+      "id": "15-AJE-01",
+      "date": "2025-12-31",
+      "amount": 4200,
+      "reason": "Book amortization for 2025 (straight-line, 5 years): mower and trailer brought forward from 2024",
+      "note": "mower 2840, trailer 1360",
+      "lines": [
+        {"account":"6050","name":"Amortization of tangible assets","gifi":8670,"debit":4200,"credit":0},
+        {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"debit":0,"credit":2840},
+        {"account":"1521","name":"Accumulated amortization, vehicles","gifi":1743,"debit":0,"credit":1360}
+      ],
+      "source": {
+        "transactions": [],
+        "onboarding": ["prior_year_closing_balances"]
+      }
+    }
+  ],
+  "trialBalance": {
+    "basis": "debits and credits in dollars; unadjusted = opening balances plus every coded transaction; adjusted = plus the adjusting entries; income tax is not booked (Taxprep computes it)",
+    "opening": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":4254.06,"credit":0},
+        {"account":"1520","name":"Vehicles","gifi":1742,"gifiName":"Motor vehicles","gifiStatus":"settled","debit":6800,"credit":0},
+        {"account":"1521","name":"Accumulated amortization, vehicles","gifi":1743,"gifiName":"Accumulated amortization of motor vehicles","gifiStatus":"settled","debit":0,"credit":1020},
+        {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":14200,"credit":0},
+        {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"gifiName":"Accumulated amortization of machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":0,"credit":2130},
+        {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":119.39},
+        {"account":"2050","name":"HST payable (receivable)","gifi":1066,"gifiName":"Taxes receivable","gifiStatus":"settled","debit":279.72,"credit":0},
+        {"account":"2080","name":"Due to shareholders (loans)","gifi":2781,"gifiName":"Due to individual shareholder(s)","gifiStatus":"confirm","note":"current (2781) or long-term (3261) depends on terms","debit":0,"credit":25000},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":2835.61,"credit":0}
+      ],
+      "totalDebit": 28369.39,
+      "totalCredit": 28369.39
+    },
+    "unadjusted": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":25221.57,"credit":0},
+        {"account":"1520","name":"Vehicles","gifi":1742,"gifiName":"Motor vehicles","gifiStatus":"settled","debit":6800,"credit":0},
+        {"account":"1521","name":"Accumulated amortization, vehicles","gifi":1743,"gifiName":"Accumulated amortization of motor vehicles","gifiStatus":"settled","debit":0,"credit":1020},
+        {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":14200,"credit":0},
+        {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"gifiName":"Accumulated amortization of machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":0,"credit":2130},
+        {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":119.03},
+        {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":5250.35},
+        {"account":"2080","name":"Due to shareholders (loans)","gifi":2781,"gifiName":"Due to individual shareholder(s)","gifiStatus":"confirm","note":"current (2781) or long-term (3261) depends on terms","debit":0,"credit":25000},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":2835.61,"credit":0},
+        {"account":"4010","name":"Sales","gifi":8000,"gifiName":"Trade sales of goods and services","gifiStatus":"settled","debit":0,"credit":50735.07},
+        {"account":"5040","name":"Subcontractors (cost of sales)","gifi":8360,"gifiName":"Trades and sub-contracts","gifiStatus":"settled","debit":24341.98,"credit":0},
+        {"account":"6010","name":"Advertising and promotion","gifi":8520,"gifiName":"Advertising and promotion","gifiStatus":"settled","debit":282.41,"credit":0},
+        {"account":"6060","name":"Insurance","gifi":8690,"gifiName":"Insurance","gifiStatus":"settled","debit":2580,"credit":0},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","debit":179.4,"credit":0},
+        {"account":"6120","name":"Repairs and maintenance","gifi":8960,"gifiName":"Repairs and maintenance","gifiStatus":"settled","debit":961.68,"credit":0},
+        {"account":"6150","name":"Supplies","gifi":9130,"gifiName":"Supplies","gifiStatus":"settled","debit":3424.38,"credit":0},
+        {"account":"6155","name":"Software and computer expenses","gifi":9150,"gifiName":"Computer-related expenses","gifiStatus":"settled","debit":414.12,"credit":0},
+        {"account":"6185","name":"Telephone and telecommunications","gifi":9225,"gifiName":"Telephone and telecommunications","gifiStatus":"settled","debit":834.72,"credit":0},
+        {"account":"6190","name":"Vehicle expenses","gifi":9281,"gifiName":"Vehicle expenses","gifiStatus":"settled","debit":2278.58,"credit":0}
+      ],
+      "totalDebit": 84354.45,
+      "totalCredit": 84354.45
+    },
+    "adjusted": {
+      "rows": [
+        {"account":"1010","name":"Chequing (CAD)","gifi":1002,"gifiName":"Deposits in Canadian banks and institutions - Canadian currency","gifiStatus":"settled","debit":25221.57,"credit":0},
+        {"account":"1520","name":"Vehicles","gifi":1742,"gifiName":"Motor vehicles","gifiStatus":"settled","debit":6800,"credit":0},
+        {"account":"1521","name":"Accumulated amortization, vehicles","gifi":1743,"gifiName":"Accumulated amortization of motor vehicles","gifiStatus":"settled","debit":0,"credit":2380},
+        {"account":"1530","name":"Equipment","gifi":1740,"gifiName":"Machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":14200,"credit":0},
+        {"account":"1531","name":"Accumulated amortization, equipment","gifi":1741,"gifiName":"Accumulated amortization of machinery, equipment, furniture, and fixtures","gifiStatus":"settled","debit":0,"credit":4970},
+        {"account":"2010","name":"Credit card payable","gifi":2707,"gifiName":"Credit card loans","gifiStatus":"confirm","note":"credit card loans (2707) or accounts payable (2620)","debit":0,"credit":119.03},
+        {"account":"2050","name":"HST payable (receivable)","gifi":2680,"gifiName":"Taxes payable","gifiStatus":"settled","debit":0,"credit":5250.35},
+        {"account":"2080","name":"Due to shareholders (loans)","gifi":2781,"gifiName":"Due to individual shareholder(s)","gifiStatus":"confirm","note":"current (2781) or long-term (3261) depends on terms","debit":0,"credit":25000},
+        {"account":"3010","name":"Common shares","gifi":3500,"gifiName":"Common shares","gifiStatus":"settled","debit":0,"credit":100},
+        {"account":"3600","name":"Retained earnings, opening","gifi":3600,"gifiName":"Retained earnings/deficit","gifiStatus":"settled","debit":2835.61,"credit":0},
+        {"account":"4010","name":"Sales","gifi":8000,"gifiName":"Trade sales of goods and services","gifiStatus":"settled","debit":0,"credit":50735.07},
+        {"account":"5040","name":"Subcontractors (cost of sales)","gifi":8360,"gifiName":"Trades and sub-contracts","gifiStatus":"settled","debit":24341.98,"credit":0},
+        {"account":"6010","name":"Advertising and promotion","gifi":8520,"gifiName":"Advertising and promotion","gifiStatus":"settled","debit":282.41,"credit":0},
+        {"account":"6050","name":"Amortization of tangible assets","gifi":8670,"gifiName":"Amortization of tangible assets","gifiStatus":"settled","debit":4200,"credit":0},
+        {"account":"6060","name":"Insurance","gifi":8690,"gifiName":"Insurance","gifiStatus":"settled","debit":2580,"credit":0},
+        {"account":"6075","name":"Bank charges","gifi":8715,"gifiName":"Bank charges","gifiStatus":"settled","debit":179.4,"credit":0},
+        {"account":"6120","name":"Repairs and maintenance","gifi":8960,"gifiName":"Repairs and maintenance","gifiStatus":"settled","debit":961.68,"credit":0},
+        {"account":"6150","name":"Supplies","gifi":9130,"gifiName":"Supplies","gifiStatus":"settled","debit":3424.38,"credit":0},
+        {"account":"6155","name":"Software and computer expenses","gifi":9150,"gifiName":"Computer-related expenses","gifiStatus":"settled","debit":414.12,"credit":0},
+        {"account":"6185","name":"Telephone and telecommunications","gifi":9225,"gifiName":"Telephone and telecommunications","gifiStatus":"settled","debit":834.72,"credit":0},
+        {"account":"6190","name":"Vehicle expenses","gifi":9281,"gifiName":"Vehicle expenses","gifiStatus":"settled","debit":2278.58,"credit":0}
+      ],
+      "totalDebit": 88554.45,
+      "totalCredit": 88554.45
+    },
+    "netIncomeLossBeforeTax": 11237.8
+  },
+  "assets": [
+    {
+      "description": "Zero-turn mower",
+      "glAccount": "1530",
+      "accumAccount": "1531",
+      "class": "8",
+      "cost": 14200,
+      "availableForUse": "2024-04-12",
+      "book": {
+        "method": "straight-line",
+        "years": 5,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    },
+    {
+      "description": "Trailer",
+      "glAccount": "1520",
+      "accumAccount": "1521",
+      "class": "10",
+      "cost": 6800,
+      "availableForUse": "2024-04-26",
+      "book": {
+        "method": "straight-line",
+        "years": 5,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    }
+  ],
+  "t2Inputs": {
+    "netIncomeLossPerBooksBeforeTax": 11237.8,
+    "schedule1": {
+      "addBacks": [
+        {
+          "item": "Book amortization",
+          "amount": 4200,
+          "reason": "accounting amortization is added back; capital cost allowance is claimed on Schedule 8",
+          "source": {
+            "account": "6050",
+            "adjustingEntries": ["15-AJE-01"]
+          }
+        }
+      ],
+      "deductions": [],
+      "note": "Inputs only. Taxprep computes taxable income and tax."
+    },
+    "schedule8": {
+      "openingUcc": [
+        {
+          "class": "8",
+          "ucc": 11360,
+          "note": "2024 closing UCC from folder 14 (made up)"
+        },
+        {
+          "class": "10",
+          "ucc": 4760,
+          "note": "2024 closing UCC from folder 14 (made up)"
+        }
+      ],
+      "closingUcc": [
+        {
+          "class": "8",
+          "opening": 11360,
+          "additions": 0,
+          "disposals": 0,
+          "ccaClaimed": 2272,
+          "ucc": 9088
+        },
+        {
+          "class": "10",
+          "opening": 4760,
+          "additions": 0,
+          "disposals": 0,
+          "ccaClaimed": 1428,
+          "ucc": 3332
+        }
+      ],
+      "classes": [],
+      "note": "No additions or disposals in the year."
+    },
+    "schedule50": [
+      {
+        "name": "Declan Murphy (Test)",
+        "sin": "535301453",
+        "percentCommonShares": 100,
+        "percentPreferredShares": 0
+      }
+    ],
+    "slips": {
+      "T4": [],
+      "T5": [],
+      "note": "No payroll and no dividends."
+    },
+    "schedule3": {
+      "dividendsReceived": [],
+      "dividendsPaid": []
+    },
+    "schedule23": {
+      "required": false,
+      "note": "no associated corporations"
+    },
+    "losses": {
+      "nonCapitalLossForYear": 0,
+      "nonCapitalBroughtForward": [
+        {
+          "taxYearEnd": "2024-12-31",
+          "amount": 7838.05
+        }
+      ],
+      "nonCapitalApplied": 7838.05,
+      "nonCapitalClosing": 0,
+      "note": "the lesser of the 2024 loss and this year's income for tax is applied"
+    },
+    "schedule4": {
+      "note": "the 2024 non-capital loss is brought forward and applied (see losses)"
+    }
+  },
+  "prior_year": {
+    "note": "the 2024 return as folder 14's books give it (a loss year, so no tax); prepared in the same catch-up, not yet filed",
+    "client": "14",
+    "fiscalYear": {
+      "start": "2024-01-01",
+      "end": "2024-12-31"
+    },
+    "cpaFinal": false,
+    "assessed": false,
+    "filedByUs": false,
+    "schedule1": {
+      "amortization": 3150,
+      "otherAddBacks": 0,
+      "cca": 4880
+    },
+    "incomeStatement": {
+      "netIncomeBeforeTax": -6108.05,
+      "incomeTax": 0,
+      "netIncomeAfterTax": -6108.05
+    },
+    "retainedEarnings": {
+      "opening": 3272.44,
+      "dividends": 0,
+      "closing": -2835.61
+    },
+    "retainedEarnings3849": -2835.61,
+    "ucc": [
+      {
+        "class": "8",
+        "ucc": 11360
+      },
+      {
+        "class": "10",
+        "ucc": 4760
+      }
+    ],
+    "losses": {
+      "nonCapital": [
+        {
+          "taxYearEnd": "2024-12-31",
+          "amount": 7838.05
+        }
+      ],
+      "capital": []
+    },
+    "rv2": {
+      "net_income": -6108.05,
+      "taxable_income": 0,
+      "federal_tax": 0,
+      "ontario_tax": 0,
+      "instalments": 0,
+      "balance_or_refund": 0
+    }
+  },
+  "hst": {
+    "method": "regular",
+    "collectedOnSales": 6595.6,
+    "itcClaimedOnPurchases": 1065.53,
+    "paidToCraNetOfRefunds": 0,
+    "balanceAtYearEndPayable": 5250.35
+  },
+  "flags": [
+    {"id":"15-F01","rule":"catch-up years filed in order","detail":"Onboarding says not all prior years are filed and holds the unfiled years only as text (\"2024 and 2025\"). Catch-up years are filed in order, oldest first: red tier (CK-40's list), a person decides. This folder is 2025.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["corporation.all_prior_years_filed","corporation.outstanding_years"],"adjustingEntries":[]}},
+    {"id":"15-F02","rule":"second return waits for the first","detail":"The 2025 return opens from the 2024 closing balances, retained earnings, UCC and non-capital loss, so it waits until the 2024 return is final. Any change to 2024 changes 2025.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":[],"adjustingEntries":[]}},
+    {"id":"15-F03","rule":"year end to be confirmed by ops","detail":"The client app stored 31 December as a guess from the quote month; no question confirms it (contract U4). Ops confirms the year end from CRA capture, the articles or the prior return before either year is filed.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["corporation.financial_year_end"],"adjustingEntries":[]}},
+    {"id":"15-F04","rule":"2025 bought twice","detail":"Onboarding lists two T2 engagements for tax year 2025 (created 10 Feb and 18 Mar 2025) and none for 2024: the second quote reused the year (contract U3). Ops confirms which is real and that 2024 is covered.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["engagements"],"adjustingEntries":[]}},
+    {"id":"15-F05","rule":"late-filing exposure","detail":"Neither the T2 nor the annual HST return is filed for 2024 or 2025: CRA late-filing penalty and interest may apply. No penalty is in the books (no row says CRA or penalty); a person estimates the exposure and tells the client.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["corporation.outstanding_years"],"adjustingEntries":[]}},
+    {"id":"15-F06","rule":"opening balances from the 2024 return","detail":"Every opening balance equals the closing balance sheet of the 2024 books (folder 14), retained earnings is 2024's opening plus its net income, opening UCC is 2024's closing UCC by class (8 and 10), and each account opens at the 2024 statement closing balance. If the 2024 return changes, this year's opening changes with it.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["prior_year_closing_balances"],"adjustingEntries":[]}},
+    {"id":"15-F07","rule":"non-capital loss applied from 2024","detail":"The 2024 non-capital loss of $7,838.05 is available. This year's income for tax is $11,737.80 (profit per books plus book amortization less the CCA claimed), so $7,838.05 is applied and $0.00 is carried on. A person confirms the application once the 2024 return is final.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["prior_year_closing_balances"],"adjustingEntries":[]}},
+    {"id":"15-F08","rule":"shareholder loan carried from 2024","detail":"The $25,000.00 loan from the owner carries untouched (no repayment, no new loan, no rows with his name). Still no interest and no written terms: a person confirms the terms.","severity":"must fire","action":"flag for a person; do not decide alone","judgement":true,"evidence":{"transactions":[],"onboarding":["owners"],"adjustingEntries":[]}}
+  ],
+  "parties": [
+    {"name":"Declan Murphy (Test)","kind":"person"},
+    {"name":"Kofi Asante (Test)","kind":"person"},
+    {"name":"Ryan Bouchard (Test)","kind":"person"},
+    {"name":"Mirela Costa (Test)","kind":"person"},
+    {"name":"Hassan Karimi (Test)","kind":"person"},
+    {"name":"Linda Odonnell (Test)","kind":"person"},
+    {"name":"Peter Wong (Test)","kind":"person"},
+    {"name":"Sofia Martinez (Test)","kind":"person"},
+    {"name":"Grant Lawson (Test)","kind":"person"},
+    {"name":"Amina Yusuf (Test)","kind":"person"},
+    {"name":"Denis Tremblay (Test)","kind":"person"},
+    {"name":"Willowdale Plaza Mgmt (Test)","kind":"company"},
+    {"name":"Rouge Park Condo Board (Test)","kind":"company"},
+    {"name":"Cedar Heights Dental (Test)","kind":"company"},
+    {"name":"Maplestone Bank (Test)","kind":"company"},
+    {"name":"Aurora Card (Test)","kind":"company"},
+    {"name":"Greenline Turf Equipment (Test)","kind":"company"},
+    {"name":"Northbay Trailer Sales (Test)","kind":"company"},
+    {"name":"Riverbend Insurance (Test)","kind":"company"}
+  ],
+  "notes": []
+}
