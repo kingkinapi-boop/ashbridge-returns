@@ -2,7 +2,10 @@
  "card": "G15",
  "role": "spec",
  "worker": "cloud-37afbb",
- "state": "working",
- "at": "2026-10-02T19:33:53.712Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:41:53.065Z",
+ "mode": "turbo",
+ "note": "13 tests (8 fail until built)",
+ "commit": "f534da87",
+ "validated": "6ac92e8f"
 }
