@@ -4,9 +4,9 @@
  "round": 2,
  "spec": "f4144b9cdfe350f846a90a257426cedcd8d8e2ed",
  "worker": "cloud-ff757e",
- "state": "hold-findings",
- "at": "2026-10-02T12:52:32.971Z",
+ "state": "reopened",
+ "at": "2026-10-02T14:27:02.256Z",
  "mode": "turbo",
  "beat": "2026-10-02T12:20:48.326Z",
- "note": "FAIL: blank-item trim() differs from WordSchema (NEL/Cf throws ZodError), see reports/A01-check.md"
+ "note": "spec round reported; build per card"
 }
