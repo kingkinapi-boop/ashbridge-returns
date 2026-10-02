@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (decision 0022); its notes stay on the laptop (reference/taxprep/2026-10-04-day4/, git-excluded) until Zo answers to-do #1. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (0022). Zo said yes to the notes in the repo (0023), but agents cannot commit them: Zo does it by hand (to-do 1); the folder is git-excluded until then. RT-25 confirmed (0023). Times are UTC from `date -u`.
 
 ## State
 
@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lea
 |---|---|---|---|---|
 | W00a check, F06 check | cloud runs | cloud | 2 Oct 17:50Z | claude/<card> |
 | A06 build, A07C build (round 2), F07 check (Paths fixed, A369), W00b spec (branch pushed from W00a) | 4 cloud runs | cloud | 2 Oct 18:15Z | claude/<card> |
-| Train: E03A, BL0, A01, F02 (all PASS) | Lead | worktree | 2 Oct 18:15Z | train |
+| Train 3ccdd3a: E03A, BL0, A01, F02 (all PASS; A370 gitleaks note) | train check, 1 cloud run | cloud | 2 Oct 18:30Z | claude/train |
 
 ## Next, in order
 
