@@ -1,11 +1,8 @@
 {
  "card": "F09",
  "role": "spec",
- "worker": "cloud-85862e",
- "state": "reopened",
- "at": "2026-10-02T03:09:52.381Z",
- "mode": "turbo",
- "beat": "2026-10-02T01:40:45.432Z",
- "note": "round 4: mutation survivors",
- "commit": "6b127d3"
+ "worker": "cloud-f60439",
+ "state": "working",
+ "at": "2026-10-02T03:13:04.003Z",
+ "mode": "turbo"
 }
