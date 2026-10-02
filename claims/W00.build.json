@@ -4,9 +4,9 @@
  "round": 3,
  "spec": "f6aed41",
  "worker": "cloud-8b2502",
- "state": "reported",
- "at": "2026-10-02T14:02:34.953Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T14:28:16.130Z",
  "mode": "turbo",
  "beat": "2026-10-02T13:10:50.574Z",
- "note": "round 2 done: mutation 100 all marked files, security review no medium+, 1773 unit pass, head f905b7e"
+ "note": "FAIL: SEC-11 guard holes (numbers, separators, key list, file types), roll check gaps, see reports/W00-check.md"
 }
