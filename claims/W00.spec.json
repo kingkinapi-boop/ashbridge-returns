@@ -1,9 +1,11 @@
 {
  "card": "W00",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit, validated on main 7dd2c02; finding: src/contracts/taxprep.acceptance.test.ts:280 taxprepBytes (line 84) must accept CRLF-stored file after A347, F03R spec to fix",
  "worker": "cloud-3703a0",
- "state": "working",
- "at": "2026-10-02T08:29:34.230Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T08:38:02.647Z",
+ "mode": "turbo",
+ "commit": "87b5390",
+ "validated": "7dd2c02"
 }
