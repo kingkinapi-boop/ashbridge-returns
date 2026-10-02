@@ -1,7 +1,8 @@
-// Rule tests R19 to R21 (card DG, findings review E03-F03): the done gate reads what the jobs actually did.
+// Rule tests R19 to R22 (card DG, findings review E03-F03): the done gate reads what the jobs actually did.
 //   R19 scope.mjs: spec files by commit, spec files edited by the build, the ledger rows.
 //   R20 mutate-changed.mjs: a core card's changed src file must carry // @mutate, no card id is a usage error.
 //   R21 scope.mjs --board: a card branch carrying plan/ledger.jsonl does not board.
+//   R22 mutate-changed.mjs per-file break: every // @mutate file scores 100 in the Stryker JSON report; a disable comment needs a reason.
 // Every case runs the real tools against a temp git repo built from tools/test/__fixtures__/done-gate/ (a base commit on
 // main, then the commits a spec job and a build job would make). No real repo history is read. Node built-ins only.
 import { execFileSync, spawnSync } from 'node:child_process'
@@ -273,12 +274,72 @@ describe('R21 scope --board: a ledger on a card branch does not board the train'
   })
 })
 
+describe('R22 mutate-changed: every marked file scores 100, whatever the aggregate says', () => {
+  // The Stryker stub copies a planted stryker-report.json (the JSON the real tool writes to reports/mutation/mutation.json).
+  const withReport = (reportTree, files) => {
+    const w = world('DGC')
+    w.commit('build DGC', files)
+    w.put('stryker-report.json', tree(reportTree))
+    return w
+  }
+  const TWO = { 'src/gate/add.ts': tree('impl-marked.ts.txt'), 'src/gate/sub.ts': tree('impl-sub-marked.ts.txt') }
+
+  test('R22 ARC-15: two marked files at 100 and 97.5 fail naming the second, its score and its survivor line and mutator', () => {
+    const r = mutate(withReport('report-97.json.txt', TWO), 'DGC', 'main')
+    expect(r.code).toBe(1)
+    expect(r.out).toContain('src/gate/sub.ts')
+    expect(r.out).toContain('97.5')
+    expect(r.out).toContain('ConditionalExpression')
+    expect(r.out).toMatch(/\b7\b/)
+    expect(r.out).not.toMatch(/src\/gate\/add\.ts[^\n]*(97|below)/)
+  })
+
+  test('R22 ARC-15: a no-coverage mutant counts as a survivor', () => {
+    const r = mutate(withReport('report-nocov.json.txt', TWO), 'DGC', 'main')
+    expect(r.code).toBe(1)
+    expect(r.out).toContain('src/gate/sub.ts')
+    expect(r.out).toContain('BlockStatement')
+  })
+
+  test('R22 ARC-15: an aggregate far above 70 with one file below 100 still fails', () => {
+    const r = mutate(withReport('report-aggregate.json.txt', TWO), 'DGC', 'main')
+    expect(r.code).toBe(1)
+    expect(r.out).toContain('src/gate/sub.ts')
+    expect(r.out).toContain('EqualityOperator')
+  })
+
+  test('R22 ARC-15: every marked file at 100 passes', () => {
+    const w = withReport('report-100.json.txt', TWO)
+    const r = mutate(w, 'DGC', 'main')
+    expect(r.code).toBe(0)
+    expect(strykerArgs(w)).toContain('src/gate/sub.ts')
+  })
+
+  test('R22 ARC-15: a Stryker disable comment with no reason fails naming the file and line', () => {
+    const w = world('DGC')
+    w.commit('build DGC', { 'src/gate/label.ts': tree('impl-disable-noreason.ts.txt') })
+    const r = mutate(w, 'DGC', 'main')
+    expect(r.code).toBe(1)
+    expect(r.out).toContain('src/gate/label.ts')
+    expect(r.out).toMatch(/label\.ts:?\s*(line\s*)?2\b/)
+    expect(r.out).toContain('disable')
+  })
+
+  test('R22 ARC-15: a Stryker disable comment with a reason passes', () => {
+    const w = world('DGC')
+    w.commit('build DGC', { 'src/gate/label.ts': tree('impl-disable-reason.ts.txt') })
+    const r = mutate(w, 'DGC', 'main')
+    expect(r.code).toBe(0)
+    expect(strykerArgs(w)).toContain('src/gate/label.ts')
+  })
+})
+
 describe('ARC-9 the gate tests name their rule and .gitattributes keeps the ledger merge rule', () => {
-  test('R19 ARC-9: every test in this file names its rule (R19, R20 or R21) and a clause', () => {
+  test('R19 ARC-9: every test in this file names its rule (R19 to R22) and a clause', () => {
     const src = fs.readFileSync(fileURLToPath(import.meta.url), 'utf8')
     const titles = [...src.matchAll(/^\s*test\('((?:[^'\\]|\\.)*)'/gm)].map((m) => m[1]).concat([...src.matchAll(/^\s*test\("((?:[^"\\]|\\.)*)"/gm)].map((m) => m[1]))
-    expect(titles.length).toBeGreaterThanOrEqual(18)
-    const unnamed = titles.filter((t) => !/^R(19|20|21) ARC-\d+/.test(t))
+    expect(titles.length).toBeGreaterThanOrEqual(24)
+    const unnamed = titles.filter((t) => !/^R(19|20|21|22) ARC-\d+/.test(t))
     expect(unnamed).toEqual([])
   })
 

@@ -194,9 +194,9 @@ export function buildKey(c, fin) {
   const t2 = {
     netIncomeLossPerBooksBeforeTax: D(fin.netIncome),
     schedule1: { addBacks: add, deductions: c.t2.deductions ?? [], note: 'Inputs only. Taxprep computes taxable income and tax.' },
-    schedule8: { openingUcc: c.t2.openingUcc ?? [], classes: Object.values(byClass).sort((x, y) => String(x.class).localeCompare(String(y.class), undefined, { numeric: true })), note: c.ccaAdds.length || c.ccaDisposals.length ? 'Capital cost is before recoverable HST. Disposals: none unless listed.' : 'No additions or disposals in the year.' },
+    schedule8: { openingUcc: c.t2.openingUcc ?? [], ...(c.t2.closingUcc ? { closingUcc: c.t2.closingUcc } : {}), classes: Object.values(byClass).sort((x, y) => String(x.class).localeCompare(String(y.class), undefined, { numeric: true })), note: c.ccaAdds.length || c.ccaDisposals.length ? 'Capital cost is before recoverable HST. Disposals: none unless listed.' : 'No additions or disposals in the year.' },
     schedule50: c.owners.map((o) => ({ name: o.name, ...(o.corp ? { businessNumber: o.sin } : { sin: o.sin }), percentCommonShares: o.percent, percentPreferredShares: 0 })),
-    ...Object.fromEntries(Object.entries(c.t2).filter(([k]) => !['addBacks', 'deductions', 'openingUcc'].includes(k))),
+    ...Object.fromEntries(Object.entries(c.t2).filter(([k]) => !['addBacks', 'deductions', 'openingUcc', 'closingUcc'].includes(k))),
   };
   return {
     client: c.num, name: c.name, fiscalYear: { start: c.fyStart, end: c.fyEnd, days: diffDays(c.fyStart, c.fyEnd) + 1 },
@@ -212,6 +212,7 @@ export function buildKey(c, fin) {
     ...(c.assets ? { assets: res(c.assets, fin, c) } : {}),
     t2Inputs: res(t2, fin, c),
     ...(c.priorYear ? { prior_year: res(c.priorYear, fin, c) } : {}),
+    ...(c.extraKey ? res(c.extraKey, fin, c) : {}), // blocks only some clients carry (W15: client 13's OHIP reconciliation and non-OHIP income)
     hst: { ...fin.hst, ...(c.hstNote ? { note: res(c.hstNote, fin, c) } : {}) },
     flags,
     parties: c.parties,

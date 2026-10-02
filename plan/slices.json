@@ -240,7 +240,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "src/contracts/ai.ts",
@@ -326,7 +327,10 @@
         "tools/mutate-changed.mjs",
         ".gitattributes",
         "tools/test/done-gate.test.mjs",
-        "tools/test/__fixtures__/done-gate/**"
+        "tools/test/__fixtures__/done-gate/**",
+        "stryker.config.mjs",
+        "vitest.mutate.config.ts",
+        "src/core/testing/read-own-source.ts"
       ],
       "clauses": [
         "ARC-12",
@@ -338,7 +342,7 @@
       "title": "Done gate: scope and mutation agree with how jobs make files",
       "phase": 0,
       "size": "S",
-      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW)."
+      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW). Round 2 landed 2 Oct; round 3 (skip __fixtures__ for the marker) open."
     },
     {
       "status": "done",
@@ -541,7 +545,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F03"
+        "F03",
+        "F03R"
       ],
       "paths": [
         "src/modules/taxprep-sim/core/**",
@@ -650,7 +655,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
@@ -1173,7 +1179,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "W14"
@@ -1204,7 +1210,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
