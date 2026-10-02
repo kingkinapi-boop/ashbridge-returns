@@ -4,7 +4,8 @@
  "round": 5,
  "spec": "82aeffe",
  "worker": "cloud-f135fc",
- "state": "working",
- "at": "2026-10-02T08:46:24.373Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T08:46:31.257Z",
+ "mode": "turbo",
+ "note": "worker job limit reached; premise still wrong (packages and logo missing, see reports/D00-build.md)"
 }
