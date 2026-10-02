@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "15bceab",
  "worker": "cloud-f10790",
- "state": "reported",
- "at": "2026-10-02T18:11:41.364Z",
+ "state": "released",
+ "at": "2026-10-02T19:45:56.233Z",
  "mode": "turbo",
- "note": "card Paths fixed by Lead (A369); ready for check"
+ "note": "merged"
 }
