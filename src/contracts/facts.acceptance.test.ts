@@ -360,6 +360,147 @@ function bridgeFactFields(): string[] {
   return [...new Set(fields.filter((f) => !notFacts.has(f)))].sort()
 }
 
+/**
+ * Spec round 2 (card E03 "Fix round 2", item 1; findings E03-F03 fix 7).
+ * Every column reference/onboarding-contract.md section 1 lists, by table: `<table>: col Mnnnn:n, ...`
+ * (a header like "corporations, facts and switches:" belongs to the table "corporations").
+ * Section 3 ("Never read") and section 4 (what this system writes) are not fields to cite.
+ */
+function contractFieldsByTable(): Map<string, Set<string>> {
+  const md = fs.readFileSync(CONTRACT_FILE, 'utf8')
+  const start = md.indexOf('## 1.')
+  const end = md.indexOf('## 2.')
+  if (start < 0 || end < start) throw new Error('onboarding contract: section 1 not found')
+  const out = new Map<string, Set<string>>()
+  for (const line of md.slice(start, end).split('\n')) {
+    const headers = [...line.matchAll(/([a-z][a-z0-9_]*)(?:, [a-z ]+?)?: /g)]
+    headers.forEach((h, i) => {
+      const from = h.index + h[0].length
+      const to = i + 1 < headers.length ? (headers[i + 1]?.index ?? line.length) : line.length
+      const cols = [...line.slice(from, to).matchAll(/([a-z][a-z0-9_]*) M\d{4}:\d+/g)].map((m) => m[1] as string)
+      if (cols.length === 0) return
+      const table = h[1] as string
+      const set = out.get(table) ?? new Set<string>()
+      for (const c of cols) set.add(c)
+      out.set(table, set)
+    })
+  }
+  return out
+}
+
+/** The two shapes a cra_form cite may take (card E03 fix round 2): a schedule line or a T2 line. */
+const CRA_FORM_REF = /^(?:Schedule \d{1,3} line \d{3,4}|T2 line \d{3})$/
+const CONTRACT_REF = /^([a-z][a-z0-9_]*)\.([a-z][a-z0-9_]*)$/
+
+/** One finding per cite that breaks its kind's rule, each naming the key and the ref. */
+function citeFindings(entries: readonly FixtureEntry[], fields: Map<string, Set<string>>): string[] {
+  const out: string[] = []
+  for (const e of entries) {
+    const key = e['key'] as string
+    for (const c of e['cites'] as Cite[]) {
+      if (c.kind === 'cra_form' && !CRA_FORM_REF.test(c.ref)) {
+        out.push(`${key}: cra_form cite "${c.ref}" is not "Schedule NNN line NNNN" or "T2 line NNN"`)
+      }
+      if (c.kind === 'onboarding_contract') {
+        const m = CONTRACT_REF.exec(c.ref)
+        const ok = m !== null && (fields.get(m[1] as string)?.has(m[2] as string) ?? false)
+        if (!ok) out.push(`${key}: onboarding_contract cite "${c.ref}" names no field the onboarding contract lists`)
+      }
+    }
+  }
+  return out
+}
+
+/** The committed catalogue with one cite added to its first entry. */
+function committedWithCite(cite: Cite): { entries: FixtureEntry[]; key: string } {
+  const raw = clone(committedRaw())
+  const first = raw.entries[0] as FixtureEntry
+  first['cites'] = [...(first['cites'] as Cite[]), cite]
+  return { entries: raw.entries, key: first['key'] as string }
+}
+
+describe('EV-5 every cite names a real source: a contract field or a CRA form line (spec round 2)', () => {
+  test('EV-5 the contract field list read from the repo is the one expected (guard against a silent empty read)', () => {
+    const f = contractFieldsByTable()
+    for (const [table, col] of [
+      ['corporations', 'legal_name'], ['corporations', 'business_number'], ['corporations', 'has_cra_login'],
+      ['corporations', 'books_kept_by'], ['shareholders', 'share_class'], ['shareholders', 'tax_residency'],
+      ['declared_dividends', 'amount_cents'], ['cra_program_accounts', 'program'], ['cra_program_accounts', 'is_open'],
+    ] as const) {
+      expect(f.get(table)?.has(col), `${table}.${col}`).toBe(true)
+    }
+    // Section 3 ("Never read") is not a source of fields.
+    expect(f.get('people')?.has('email') ?? false).toBe(false)
+    expect(f.get('restricted_data')).toBeUndefined()
+    expect(f.get('shareholders')?.has('legal_name') ?? false).toBe(false)
+  })
+
+  test('EV-5 every committed onboarding_contract cite names a field reference/onboarding-contract.md lists (table.column)', () => {
+    const fields = contractFieldsByTable()
+    const bad = citeFindings(committedRaw().entries, fields).filter((f) => f.includes('onboarding_contract'))
+    expect(bad).toEqual([])
+    const count = committedRaw().entries.flatMap((e) => e['cites'] as Cite[]).filter((c) => c.kind === 'onboarding_contract')
+    expect(count.length).toBeGreaterThan(0)
+  })
+
+  test('EV-5 every committed cra_form cite is "Schedule NNN line NNNN" or "T2 line NNN", never free text', () => {
+    const bad = citeFindings(committedRaw().entries, contractFieldsByTable()).filter((f) => f.includes('cra_form'))
+    expect(bad).toEqual([])
+    const count = committedRaw().entries.flatMap((e) => e['cites'] as Cite[]).filter((c) => c.kind === 'cra_form')
+    expect(count.length).toBeGreaterThan(0)
+  })
+
+  test.each([
+    ['a field the contract does not list', 'corporations.favourite_colour_test'],
+    ['a real column under the wrong table', 'shareholders.legal_name'],
+    ['a table the contract does not list', 'clients_test.legal_name'],
+    ['a column from "Never read"', 'people.email'],
+    ['a bare column with no table', 'legal_name'],
+    ['free text', 'the legal name on the articles (Test)'],
+    ['an empty ref', ''],
+  ])('EV-5 planted fault: an onboarding_contract cite naming %s is caught, naming the key and the ref', (_what, ref) => {
+    const planted = committedWithCite({ kind: 'onboarding_contract', ref })
+    const found = citeFindings(planted.entries, contractFieldsByTable())
+    const hit = found.filter((f) => f.startsWith(`${planted.key}: onboarding_contract cite "${ref}"`))
+    expect(hit, found.join('\n')).toHaveLength(1)
+  })
+
+  test.each([
+    ['Notice of assessment, balance'],
+    ['T2 Schedule 1 line 300'],
+    ['T2 page 1 line 061'],
+    ['Schedules 100 and 125'],
+    ['Schedule 100 line 2599 (Test)'],
+    ['schedule 100 line 2599'],
+    ['Schedule 100 line 25999'],
+    ['Schedule 1000 line 2599'],
+    ['T2 line 36'],
+    ['T2 line 3600'],
+    ['T4 Summary box 14'],
+    ['GST34 line 109'],
+    [' T2 line 360'],
+    [''],
+  ])('EV-5 planted fault: the free-text cra_form cite %j is caught, naming the key and the ref', (ref) => {
+    const planted = committedWithCite({ kind: 'cra_form', ref })
+    const found = citeFindings(planted.entries, contractFieldsByTable())
+    const hit = found.filter((f) => f.startsWith(`${planted.key}: cra_form cite "${ref}"`))
+    expect(hit, found.join('\n')).toHaveLength(1)
+  })
+
+  test.each([
+    ['cra_form', 'Schedule 100 line 2599'],
+    ['cra_form', 'Schedule 8 line 225'],
+    ['cra_form', 'Schedule 125 line 9999'],
+    ['cra_form', 'T2 line 061'],
+    ['onboarding_contract', 'corporations.legal_name'],
+    ['onboarding_contract', 'declared_dividends.declared_on'],
+  ])('EV-5 no false alarm: the %s cite %j is accepted', (kind, ref) => {
+    const planted = committedWithCite({ kind, ref })
+    const found = citeFindings(planted.entries, contractFieldsByTable())
+    expect(found.filter((f) => f.includes(`"${ref}"`))).toEqual([])
+  })
+})
+
 describe('EV-5 every fact the sample clients and the bridge rely on is in the catalogue', () => {
   test('EV-5 the lists read from the repo are the ones expected (guard against a silent empty read)', () => {
     const flagFields = answerKeyOnboardingFields()
