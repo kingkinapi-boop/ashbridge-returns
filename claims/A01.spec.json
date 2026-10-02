@@ -1,9 +1,11 @@
 {
  "card": "A01",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit; 24 round-3 tests fail as designed",
  "worker": "cloud-390404",
- "state": "working",
- "at": "2026-10-02T17:16:40.560Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T17:22:16.366Z",
+ "mode": "turbo",
+ "commit": "2f0b92b",
+ "validated": "0c4015cd3c4e367061f3ffccd29adca6faff10f9"
 }
