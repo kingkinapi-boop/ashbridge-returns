@@ -39,3 +39,4 @@
 {"card":"G14","closed":"2026-10-02","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":6,"amber":0,"red":0,"accepted":true}
 {"card":"G15","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":3,"amber":0,"red":0,"accepted":true}
 {"card":"G16","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":3,"amber":0,"red":0,"accepted":true}
+{"card":"A07C","closed":"2026-10-02","mode":"turbo","rounds":12,"check_fails":0,"train_fails":0,"jobs":20,"amber":0,"red":0,"accepted":true}
