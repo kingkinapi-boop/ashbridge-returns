@@ -42,6 +42,7 @@ function directory(buf: Buffer): Map<string, Entry> | undefined {
 /** The parts of a zip, or undefined when the bytes are not a well-formed zip (truncated, damaged, or an unsupported kind). */
 export function openZip(bytes: Uint8Array): Zip | undefined {
   const buf = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+  // Stryker disable next-line ObjectLiteral: the first value is replaced on every path; an empty Map only makes an emptied catch visible
   const found: { entries: Map<string, Entry> | undefined } = { entries: new Map() }
   try {
     found.entries = directory(buf)
