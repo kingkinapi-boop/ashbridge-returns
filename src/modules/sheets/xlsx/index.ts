@@ -58,14 +58,10 @@ export function ulp(x: number): number {
 const MAX_BAND = 0.0025
 const ULPS_IN_BAND = 4
 
-/** Beyond this a double has no cents to snap to: its own shortest round-trip text, never digits written out in full. */
-const NO_CENTS_FROM = 1e21
-
-/** A stored double as text: a value within 4 ulps (never half a cent) of a whole cent is that cent amount (never zero for a nonzero value), anything else its shortest round-trip text. */
+/** A stored double as text: a value within 4 ulps (never half a cent) of a whole cent is that cent amount (a value that rounds to zero keeps its own text), anything else its shortest round-trip text. */
 export function numberText(x: number): string {
-  if (Math.abs(x) >= NO_CENTS_FROM) return String(x)
   const cents = Number.isInteger(x) ? x : Math.round(x * 100) / 100
-  if (cents === 0 && x !== 0) return String(x)
+  if (cents === 0) return String(x)
   const gap = Math.abs(x - cents)
   const ulpBand = Math.min(MAX_BAND, ULPS_IN_BAND * ulp(Math.max(Math.abs(x), Math.abs(cents))))
   return gap <= ulpBand ? String(cents) : String(x)
@@ -146,6 +142,7 @@ type SumNode = { cell: Cell; range: RegExpExecArray; original: number; terms?: C
 
 /** The cells of a SUM range that exist, in range order. */
 function termCells(byAddress: Map<string, Cell>, range: RegExpExecArray): Cell[] {
+  // Stryker disable next-line ArrayDeclaration: a stray entry that is no cell has no type and is skipped like a text cell
   const found: Cell[] = []
   for (let r = Number(range[2]); r <= Number(range[4]); r++) {
     for (let c = columnNumber(range[1] as string); c <= columnNumber(range[3] as string); c++) {
@@ -167,9 +164,9 @@ function sumOf(terms: Cell[], nodes: Map<Cell, SumNode>): { cents: bigint; bound
   let peak = 0
   let drift = 0
   for (const term of terms) {
-    const value = term.type === 'formula' ? term.cached : term
-    if (value?.type === 'error') return undefined
-    if (value?.type !== 'number') continue
+    const value = term.cached ?? term
+    if (value.type === 'error') return undefined
+    if (value.type !== 'number') continue
     const termCents = toCents(value.text)
     if (termCents === undefined) return undefined
     cents += termCents
@@ -214,7 +211,7 @@ function snapSums(cells: Cell[]): void {
       node.terms = termCells(byAddress, node.range)
       stack.push({ node, dependencies: node.terms.flatMap((t) => nodes.get(t) ?? []), next: 0 })
     }
-    if (!root.done && root.terms === undefined) enter(root)
+    if (root.terms === undefined) enter(root)
     while (stack.length > 0) {
       const top = stack[stack.length - 1] as (typeof stack)[number]
       const dependency = top.dependencies[top.next++]

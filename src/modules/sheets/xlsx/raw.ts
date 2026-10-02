@@ -69,16 +69,19 @@ const ROW_PART = '\\$?\\d+'
 const AREA = new RegExp(`${CELL_PART}(?::${CELL_PART})?${NOT_NAME_AFTER}`, 'y')
 const COLUMNS = new RegExp(`${COLUMN_PART}:${COLUMN_PART}${NOT_NAME_AFTER}`, 'y')
 const ROWS = new RegExp(`${ROW_PART}:${ROW_PART}${NOT_NAME_AFTER}`, 'y')
-const NUMBER = /\d[\d.]*(?:[eE][+-]?\d+)?[A-Za-z0-9_.]*/y
+/** A number with whatever name characters run on from it ("1E5", "1A1"): never a reference. */
+const NUMBER = /\d[\d.]*[A-Za-z0-9_.]*/y
+const STRING = /"(?:[^"]|"")*"?/y
+const QUOTED_NAME = /'(?:[^']|'')*'?/y
 const WORD = /[A-Za-z_\\][A-Za-z0-9_.]*/y
-const PART = /^(\$?)([A-Z]{1,3})?(\$?)(\d+)?$/
 
 /** One end of a reference (a cell, a column or a row) moved by (dc, dr); undefined when it falls off the grid. */
 function slidePart(part: string, columns: number, rows: number): string | undefined {
-  const [, first, col, second, row] = PART.exec(part) as unknown as [string, string, string | undefined, string, string | undefined]
-  // A row alone ("$1") has its "$" before the digits, where a cell has it between letters and digits.
-  const colAbs = col === undefined ? '' : first
-  const rowAbs = col === undefined ? first : second
+  const col = /[A-Z]+/.exec(part)?.[0]
+  const row = /\d+/.exec(part)?.[0]
+  // The row's "$" is the second one when a column comes first ("$A$1"), the first when it stands alone ("$1").
+  const rowAbs = part.includes('$', col === undefined ? 0 : 1) ? '$' : ''
+  const colAbs = col !== undefined && part.startsWith('$') ? '$' : ''
   let out = ''
   if (col !== undefined) {
     const c = colAbs ? columnNumber(col) : columnNumber(col) + columns
@@ -93,24 +96,13 @@ function slidePart(part: string, columns: number, rows: number): string | undefi
   return out
 }
 
-/** The end of a quoted name or string starting at `start` (the quote), where a doubled quote is part of it. */
-function closeQuote(formula: string, start: number): number {
-  const quote = formula[start] as string
-  let i = start + 1
-  while (i < formula.length) {
-    if (formula[i] === quote) {
-      if (formula[i + 1] === quote) i += 2
-      else return i + 1
-    } else i++
-  }
-  return formula.length
-}
-
 /** The end of a bracketed part starting at `start` (the "["), brackets nested. */
 function closeBracket(formula: string, start: number): number {
   let depth = 0
+  // Stryker disable next-line EqualityOperator: one step past the end reads nothing and the loop ends there either way
   for (let i = start; i < formula.length; i++) {
     if (formula[i] === '[') depth++
+    // Stryker disable next-line ArithmeticOperator: ending one character early leaves the "]" to be copied as itself
     else if (formula[i] === ']' && --depth === 0) return i + 1
   }
   return formula.length
@@ -135,16 +127,10 @@ export function slide(formula: string, from: string, to: string): string {
   }
   while (i < formula.length) {
     const ch = formula[i] as string
-    if (ch === '"' || ch === "'") {
-      const end = closeQuote(formula, i)
-      out += formula.slice(i, end)
-      i = end
-      continue
-    }
-    if (ch === '[') {
-      const end = closeBracket(formula, i)
-      out += formula.slice(i, end)
-      i = end
+    const quoted = ch === '"' ? take(STRING) : ch === "'" ? take(QUOTED_NAME) : ch === '[' ? formula.slice(i, closeBracket(formula, i)) : undefined
+    if (quoted !== undefined) {
+      out += quoted
+      i += quoted.length
       continue
     }
     const reference = take(ROWS) ?? take(COLUMNS) ?? take(AREA)
