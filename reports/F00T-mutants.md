@@ -1,15 +1,17 @@
 # F00T mutants: Stryker on main over the five core files
 
-Spec job, 2 Oct 2026 (cloud). Run on main `fddfaee` with the main tests only (core.test.ts and log.acceptance.test.ts), StrykerJS 10.0.0, Vitest runner, `vitest.mutate.config.ts`, `--mutate src/core/{money,ids,clock,env,log}.ts`, incremental off, break off.
+Spec job, 2 Oct 2026 (cloud). First run on main `fddfaee`; rerun on main `eae6b11` (core files unchanged between the two) with the main tests only (core.test.ts and log.acceptance.test.ts), StrykerJS 10.0.0, Vitest runner, `vitest.mutate.config.ts`, `--mutate src/core/{money,ids,clock,env,log}.ts`, incremental off, break off.
 
-| File | Score on main | Killed | Timeout | Survived | No coverage |
+| File | Score on main (eae6b11) | Killed | Timeout | Survived | No coverage |
 |---|---|---|---|---|---|
 | clock.ts | 62.50 | 5 | 0 | 2 | 1 |
 | env.ts | 66.67 | 10 | 0 | 5 | 0 |
-| ids.ts | 27.27 | 3 | 0 | 8 | 0 |
-| log.ts | 76.74 | 97 | 2 | 24 | 6 |
+| ids.ts | 36.36 | 4 | 0 | 7 | 0 |
+| log.ts | 75.19 | 95 | 2 | 26 | 6 |
 | money.ts | 83.33 | 30 | 0 | 6 | 0 |
-| All | 73.87 | 145 | 2 | 45 | 7 |
+| All | 73.37 | 144 | 2 | 46 | 7 |
+
+The two runs differ on main from run to run (Stryker score stability, upstream 6073): on fddfaee ids.ts:11 `false` survived and log.ts:66 and log.ts:67 were killed; on eae6b11 the reverse. The table below is the union of both runs. The eae6b11 numbers match `reports/F00-check.md` (ids 36.36, log 75.19).
 
 Class: **test** = a behaviour, now killed by a named acceptance test; **equivalent** = no input can tell the mutant apart, the build removes it by a rewrite or a disable comment with this reason. No survivor is classed internal: each behaviour one is reachable through the public functions.
 
@@ -53,6 +55,8 @@ Class: **test** = a behaviour, now killed by a named acceptance test; **equivale
 | log.ts:64 | ConditionalExpression | `value === null` to `false` | SEC-5 | test | log: "null, booleans and undefined pass through" (null otherwise reaches Object.entries and throws) |
 | log.ts:65 | ConditionalExpression | depth cap `false` | SEC-5 | test | log: "depth cap" and "a very deep object (100000 levels)" |
 | log.ts:65 | EqualityOperator | `depth > MAX_DEPTH` | SEC-5 | test | log: "depth cap: 19 kept, 20 redacted" |
+| log.ts:66 | ConditionalExpression | cycle check `ancestors.includes(value)` to `false` (eae6b11 run) | SEC-5 | test | log: "a cycle prints exactly [circular]" (the cycle otherwise runs to the depth cap); planted by hand on the spec branch, fails |
+| log.ts:67 | ArrayDeclaration | `next = []` (ancestors never grow; eae6b11 run) | SEC-5 | test | log: same; planted by hand on the spec branch, fails |
 | log.ts:68 | ArithmeticOperator | arrays `depth - 1` | SEC-5 | test | log: depth cap (array levels) |
 | log.ts:70 | ArithmeticOperator | objects `depth - 1` | SEC-5 | test | log: depth cap |
 | log.ts:75 | ArrayDeclaration | ancestors `["Stryker was here"]` | SEC-5 | equivalent | a string is never `===` an object, so the seed entry never matches; rewrite (e.g. a `WeakSet` or default parameter) or disable |
