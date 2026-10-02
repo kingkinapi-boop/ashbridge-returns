@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "b8ec2300",
  "worker": "cloud-c7ae52",
- "state": "working",
- "at": "2026-10-02T19:32:20.001Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:33:07.664Z",
+ "mode": "turbo",
+ "note": "all acceptance tests pass (123 in bank folder)"
 }
