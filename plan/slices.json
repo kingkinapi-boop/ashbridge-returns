@@ -2060,7 +2060,7 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": " Parked 2 Oct after round 2 (A366): split into A07B, which lands its work."
+      "note": "Parked 2 Oct after round 2 (A366): split into A07B, which lands its work. Superseded: landed through A07C (2 Oct)."
     },
     {
       "status": "parked",
@@ -2088,10 +2088,10 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "Branch claude/A07B from claude/A07 93ab657 (A366). Parked 2 Oct after its last round (A368): split into A07C."
+      "note": "Branch claude/A07B from claude/A07 93ab657 (A366). Parked 2 Oct after its last round (A368): split into A07C. Superseded: landed through A07C (2 Oct)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2116,7 +2116,8 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "Branch claude/A07C from claude/A07B round head (A368)."
+      "note": "Branch claude/A07C from claude/A07B round head (A368). Lands at b80c251 with D1 to D3 moved to A07D (reports/A07C-findings.md).",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -2693,7 +2694,7 @@
       "deps": [
         "E01",
         "W25",
-        "A07C"
+        "A07D"
       ],
       "paths": [
         "src/modules/extraction/tb-sheet/**"
@@ -3351,7 +3352,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3374,10 +3375,11 @@
       "params": {
         "topic": "assets-cca"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3400,10 +3402,11 @@
       "params": {
         "topic": "shareholders-dividends"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3426,10 +3429,11 @@
       "params": {
         "topic": "payroll-bonuses"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3452,10 +3456,11 @@
       "params": {
         "topic": "shareholder-loans"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3478,7 +3483,8 @@
       "params": {
         "topic": "vehicle-home-office"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -9520,6 +9526,87 @@
       "core": false,
       "security": true,
       "note": "From reports/A06-findings.md, 2 Oct."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09",
+        "F09B",
+        "A07C"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "A07D",
+      "title": "Spreadsheet reader: formula slides, nested totals, number text (A07C split)",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A07D"
+      ],
+      "paths": [
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/__fixtures__/reading-rules/**"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "ARC-10"
+      ],
+      "id": "SC4",
+      "title": "Reading rules R67 to R70, and the R56 exemption",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/A07C-findings.md."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC"
+      ],
+      "paths": [
+        "db/schema/**",
+        "src/contracts/records.ts",
+        "src/contracts/jobs.ts",
+        "src/contracts/ai.ts",
+        "src/modules/gaps/index.ts",
+        "src/modules/gaps/bank/index.ts",
+        "src/modules/jobs/queue.ts",
+        "src/modules/bridge/run.ts",
+        "tools/test/__fixtures__/schema-contract/known.json"
+      ],
+      "clauses": [
+        "SEC-7",
+        "EV-1",
+        "ARC-10",
+        "EV-5",
+        "FLOW-1",
+        "ARC-15"
+      ],
+      "id": "FX3",
+      "title": "Rule defects in landed code (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-build.md, 2 Oct."
     }
   ]
 }

@@ -6,18 +6,17 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 
 - **Mode: turbo** (Zo, 15:30Z, after the Reviewer SLOW of 14:40Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 17:37Z: 5h 3% (new window), week 45%. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`); runs cannot notify, so poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core jobs only; node_modules is installed in the main checkout. None running now.
-- **Landed (34):** F00, F05, F08, DG, DG2, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, D00, D00L, F09B (with F09A), E03, F04, FX1, G01, CQ1, F01D (with F01 and F01C), G10, G11, queue repairs. E03A, BL0, A01, F02. F06, F07. Last train 3c654bb (19:50Z).
+- **Landed (40):** F00, F05, F08, DG, DG2, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, D00, D00L, F09B (with F09A), E03, F04, FX1, G01, CQ1, F01D (with F01 and F01C), G10, G11, queue repairs. E03A, BL0, A01, F02. F06, F07. G12 to G16. A07C (split, A384). Last train 9a02190 (20:56Z).
 - **Zo today:** decisions 0020 (design sitting 1 accepted, viewer B by the Lead A358, his logo, CRA walks off git with data-free copies in reference/cra/) and 0021 (one gitleaks line for fact names in tests; Zo made the edit himself on claude/E03A, 0462739, because the permission system blocks agents from editing .gitleaks.toml).
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| A06 round 2 spec (reopened again 19:50Z: the first taker did a refit) | queue | cloud | 2 Oct 19:50Z | claude/A06 |
-| G12 build round 2 (restore edited spec test), G14 build round 2 (missing builder test) | queue | cloud | 2 Oct 19:50Z | claude/<card> |
-| A07C build, G15 build, G16 build, SC spec (refit) | cloud runs | cloud | 2 Oct 19:30Z | claude/<card> |
-| Ready to board (check PASS): G13; A03 build reported (check next; its spec said R46 to R48 not covered) | Lead | | | |
-| W00c spec | queue | cloud | 2 Oct 19:20Z | claude/W00c |
+| Train 3c3de19: A03, G17 | train check, 1 cloud run | cloud | 2 Oct 21:00Z | claude/train |
+| SC build (KNOWN owner FX3 added), A04 build (golden regenerated) | queue | cloud | 2 Oct 20:56Z | claude/<card> |
+| A06 round 2 spec (directive at the top of its card) | queue | cloud | 2 Oct 20:45Z | claude/A06 |
+| W00c spec; then A07D, CQ2, FX2 specs as the queue offers | queue | cloud | 2 Oct 20:45Z | claude/<card> |
 
 ## Next, in order
 
@@ -31,6 +30,8 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 8. Critic about every two days from Sat 3 Oct; Reviewer daily.
 
 ## Splits today (last rounds)
+
+Evening: W00a to W00c (A379), A07C to A07D (A384; no more rounds, fallbacks are removals); new rule cards SC2 (R57 to R61), SC3 (R62 to R66, security), SC4 (R67 to R70).
 
 F09A to F09B (landed), F01 to F01C to F01D (landed), W00 to W00a and W00b (A364), A07 to A07B to A07C (A366, A368). Each split card has a landing rule: new edge cases outside its named classes go to SC as rule tests (SC now lists rules up to R55).
 

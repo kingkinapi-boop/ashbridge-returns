@@ -1,0 +1,25 @@
+# Token use since 2 Oct 02:50Z, and what the two approved proposals would have saved
+
+Window: 02:50Z to 20:32Z (17.7 hours), local transcripts only. Cloud runs leave no local log and are not counted (blind spot, fact). The Critic's own two sessions (91 turns) are left out. Method as in `2026-10-02-token-use.md`; one id appeared twice across files (negligible).
+
+## Facts
+
+1. Cache use. Lead (3 sessions, Opus): 698 turns, 225.0M read, 1.0M written (all in the 1-hour tier). Reviewer (1 session): 39 turns, 3.2M read. Helpers (35, local only): 857 turns, 56.2M read, 4.0M written (all 5-minute tier). Helpers by model: Sonnet 475 turns, 32.3M read, 2.5M written; Opus 382 turns, 23.8M read, 1.5M written; Haiku none. The Lead is 79 percent of all tokens read.
+2. Lead sessions. 6ef93dfe (from 02:52Z, 126 turns): started at 516k, median 590k, peak 687k. 922f6cca (347 turns): median 320k, peak 571k. c6730363 (225 turns): median 181k, peak 319k. 463 of 698 Lead turns (66 percent) are above 200k and hold 196M of the 225M read (87 percent); 300 turns are above 320k and hold 154M (68 percent).
+3. Helpers. 35 ran (31 started after 02:50Z, 4 older ones carried on). 3 peaked above 150k, 1 above 200k (design fix round 2: source viewer, 212k, 6 turns over 200k), none above 320k; median peak 72k. Five biggest by tokens read (44 percent of helper reads): Local queue worker 1 retry, Sonnet, 8.5M, 72 turns, peak 168k; Local queue worker second slot, Sonnet, 4.9M, 72 turns, peak 149k; After day 5 compare and fold findings, Opus, 3.8M, 34 turns, peak 165k; Cards from findings wave 2, Opus, 3.7M, 43 turns, peak 114k; Local queue worker 2 retry, Sonnet, 3.7M, 55 turns, peak 105k.
+4. Full re-writes (more than 50k written and more written than read): Lead 0, Reviewer 0, helpers 15 totalling 1.4M tokens. All 15 came after a gap over 5 minutes (5.6 to 28 minutes). Command before the gap: `tools/heavy.mjs` 8 (0.81M, gaps 6 to 10 min); `until`/sleep/poll loops 5 (0.37M, gaps 6 to 10 min); helper had already handed back and was woken by a background-task note 28 and 17 minutes later 2 (0.18M); Read 0. All 13 non-handback cases are in four local queue-worker helpers. The Lead had 47 gaps over 5 minutes (longest 31) and no re-write, because its cache lasts an hour.
+5. Revived helpers. The Lead sent 0 SendMessage calls since 02:50Z (its 6 earlier ones were all before 02:31Z). No helper was continued past 150k. The only SendMessage was the Critic's, 03:05Z, to a docs helper at 47k after 14.7 minutes idle: one 50k re-write.
+6. Compaction. No compaction event in any session (no compact_boundary, no summary marker, no per-turn context drop of 30 percent or more). Largest context seen: 687k, no compaction. `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` appears only in `reviews/CRITIC.md:52` and the 2 Oct research note; not in `.claude/settings.json`, not in `C:\Users\User\.claude\settings.json`, not in the shell environment. No file in `decisions/`, `.claude/agents` or `.claude/skills` mentions a 270-second limit.
+7. Replay (context per turn counted as tokens read; each compaction also costs one full-context summary read; after it a fresh start plus re-orient turns). At 200k, start 60k, 10 turns: Lead 226.1M becomes 90.6M, saved 60 percent (range 52 to 63 across start 45k with 8 turns and start 90k with 15 turns), 6 compactions in 3 sessions. Helpers 60.2M becomes 60.1M, saved 0 percent (one helper would compact once). All local: saved 47 percent (41 to 49). At 150k: Lead 66, helpers 4, all 52 percent. At 250k: Lead 55, all 43 percent. At 300k: Lead 47, all 37 percent.
+8. Against the last measurement. Lead average per turn is flat (322k now, 301k before); helper average per turn fell (66k now, 143k before). Helpers are now a small part of local use; local helper reads are 56M against 780M in the first 2.6 days.
+
+## Inference
+
+- Cost in input-token equivalents (read 0.1, 5-minute write 1.25, 1-hour write 2): Lead 24.6M, Reviewer 0.5M, helpers 10.6M, total 35.7M. The 15 helper re-writes cost about 1.75M, 1.6M more than reads would have; about 4.5 percent of the total. Proposal 2 (no wait over 270 s) would have saved at most that.
+- A 200k compaction would have cut Lead reads by about 13.5M equivalents, less about 0.7M for six fresh starts: roughly 12.8M, about 36 percent of all local use. Proposal 1 is where the money is; proposal 2 is small by comparison since 02:50Z.
+- The heavy.mjs gaps (6 to 10 minutes) cannot be told apart in the logs as slot waits or long test runs; either way a call over 270 s lets the 5-minute cache lapse.
+- Cloud workers, where long waits are most likely, are not in these numbers; the real cost of proposal 2 is unmeasured.
+
+## Method notes
+
+Scripts in the Critic scratchpad (`parse.mjs`, `analyze.mjs`). Turns deduped by `message.id`; gap = time since the previous assistant turn in the same file (turns before 02:50Z used only for gaps); previous call classified by its Bash command text (`until`, `sleep`, `seq` loops; `heavy.mjs`) or tool name. Replay adds only the growth between turns, resets on compaction, counts no output tokens.
