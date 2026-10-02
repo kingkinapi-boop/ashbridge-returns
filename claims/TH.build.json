@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "f1c8095",
  "worker": "cloud-a4e82b",
- "state": "working",
- "at": "2026-10-02T00:31:49.332Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T00:35:27.757Z",
+ "mode": "turbo",
+ "note": "R1 blocked: reference/taxprep/tools/strip-values.test.mjs is node:test with no home; see reports/TH-build.md"
 }
