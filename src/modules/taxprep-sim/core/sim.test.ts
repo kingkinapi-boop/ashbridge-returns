@@ -22,6 +22,9 @@ const input = {
   corporationName: 'A',
   clientCode: 'C1',
 }
+// Retired by spec(S00) round 3 (card item 17, ARC-14: the id source is required): the default-guid test. The tests
+// below that built a simulator with no id source now inject one; what they assert is unchanged.
+const newGuid = (): string => '00000000-0000-4000-8000-000000000001'
 const REPLACED = 'The value of this cell has been replaced by a new imported value.'
 
 function must(made: ReturnType<typeof makeReturn>, rows: string[]) {
@@ -31,14 +34,8 @@ function must(made: ReturnType<typeof makeReturn>, rows: string[]) {
 }
 
 describe('S00 simulator unit', () => {
-  test('ARC-14 default guids are numbered, one per return, in order', () => {
-    const sim = createSimulator()
-    expect(sim.createReturn(input).guid).toBe('00000000-0000-4000-8000-000000000001')
-    expect(sim.createReturn({ ...input, businessNumber: '2' }).guid).toBe('00000000-0000-4000-8000-000000000002')
-  })
-
   test('RT-23 the same business number and year end gives the same return; getReturn finds it', () => {
-    const sim = createSimulator()
+    const sim = createSimulator({ newGuid })
     const a = sim.createReturn(input)
     expect(sim.createReturn(input)).toBe(a)
     expect(sim.getReturn('1', '2025-12-31')).toBe(a)
@@ -47,8 +44,8 @@ describe('S00 simulator unit', () => {
 
   test('RT-23 the release name is the default or the one given', () => {
     expect(DEFAULT_RELEASE_NAME).toBe('CCH iFirm 2026.20.198267')
-    expect(createSimulator().createReturn(input).releaseName).toBe(DEFAULT_RELEASE_NAME)
-    expect(createSimulator({ releaseName: 'R1' }).createReturn(input).releaseName).toBe('R1')
+    expect(createSimulator({ newGuid }).createReturn(input).releaseName).toBe(DEFAULT_RELEASE_NAME)
+    expect(createSimulator({ newGuid, releaseName: 'R1' }).createReturn(input).releaseName).toBe('R1')
   })
 
   test("RT-23 rows export in the list's order field, and the caller's list is left alone", () => {
@@ -72,7 +69,7 @@ describe('S00 simulator unit', () => {
         order: 3,
       },
     ]
-    const sim = createSimulator({ releaseList: list })
+    const sim = createSimulator({ newGuid, releaseList: list })
     const ret = sim.createReturn(input)
     sim.typeCell(ret, 'GFGBA.Ttwgba127', '3')
     sim.typeCell(ret, 'GFGBA.Ttwgba72', '2')
@@ -88,6 +85,7 @@ describe('S00 simulator unit', () => {
 
   test('ARC-6 a release list with a bad identifier throws its reason on export', () => {
     const sim = createSimulator({
+      newGuid,
       releaseList: [{ identifier: 'bad', description: '', kind: 'text', order: 1 }],
     })
     const ret = sim.createReturn(input)
@@ -95,8 +93,8 @@ describe('S00 simulator unit', () => {
   })
 
   test('RT-23 a return from another simulator is refused with a plain sentence', () => {
-    const ret = createSimulator().createReturn(input)
-    expect(() => createSimulator().exportCsv(ret, 'entered')).toThrow('this return belongs to another simulator')
+    const ret = createSimulator({ newGuid }).createReturn(input)
+    expect(() => createSimulator({ newGuid }).exportCsv(ret, 'entered')).toThrow('this return belongs to another simulator')
   })
 
   test('RT-1 a file F03 refuses changes nothing and returns its faults', () => {

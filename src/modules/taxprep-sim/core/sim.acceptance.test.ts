@@ -13,8 +13,12 @@
  *     A cell written with `[1]` that is not marked repeating (`GFBGII[1].GFGIJ...`) is an ordinary cell.
  *   defaultReleaseList(): readonly ReleaseCell[]   (from reference/sample-clients/lib/taxprep-cells.json:
  *     the 300 GIFI input cells as amount cells with `confirmed: true`, the eight creation and contact cells)
- *   createSimulator(options?: { releaseList?: readonly ReleaseCell[]; newGuid?: () => string; releaseName?: string }): Simulator
- *     (no options: the default list, a deterministic guid source built on src/core/ids, no clock read)
+ *   createSimulator(options: { newGuid: () => string; releaseList?: readonly ReleaseCell[]; releaseName?: string }): Simulator
+ *     (round 3, ARC-14: the id source is required; no options, or options without a newGuid function, throw an Error
+ *     whose message names `newGuid`; no list given: the default list; no clock read)
+ *   Simulator.ignoredOnImport: the very IGNORED_ON_IMPORT array of src/contracts/taxprep.ts (F03) the import skips by;
+ *   Simulator.alwaysExported: the very ALWAYS_EXPORTED array (F03R) the "entered" export always lists (round 3, RT-13;
+ *     amber: the card asks for `toBe` against both lists, so the simulator shows the lists it uses).
  *
  *   Simulator.createReturn(input: { businessNumber: string; yearEnd: string; returnName: string;
  *                                   corporationName: string; clientCode: string }): SimReturn
@@ -48,14 +52,19 @@
  *     in order; a clear has value "".
  *
  * Amber, unasked by the card: (1) F03's writer never writes an apostrophe, so the exported leading apostrophe is the
- * simulator's own addition on top of the writer's bytes; the tests read bytes only. (2) The golden export header
- * carries the guid the test injects.
+ * simulator's own addition on top of the writer's bytes; the tests read bytes only. Round 3: the apostrophe is chosen by
+ * the cell's kind (a negative whole number in an amount cell), never by the value's text (A333, findings wave 2 fix 1c).
+ * (2) The golden export header carries the guid the test injects. (3) Round 3 source scans read the committed text
+ * through DG's readOwnSource, so they hold inside Stryker's sandbox.
  */
-import { readFileSync, readdirSync } from 'node:fs'
+import { readdirSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
+import { ALWAYS_EXPORTED, IGNORED_ON_IMPORT } from '../../../contracts/taxprep'
+import { readOwnSource } from '../../../core/testing/read-own-source'
 import * as simModule from '../index'
-import { createSimulator, defaultReleaseList } from '../index'
+import { createSimulator, defaultReleaseList, type SimulatorOptions } from '../index'
 import {
   CCA,
   CLAIMED_CELL,
@@ -74,6 +83,8 @@ import {
   amt,
   asText,
   clr,
+  day2Descriptions,
+  exportedApostrophe,
   extendedList,
   file,
   fixtureList,
@@ -152,12 +163,14 @@ describe('RT-3 import then export (check 1)', () => {
       const out = readExport(made, 'entered')
       expect(out.header).toEqual({ returnName: name, guid: GUID_1 })
       expect(out.header.guid).not.toBe(imported.header.guid)
+      const kindOf = new Map(fixtureList().map((c) => [c.identifier, c.kind]))
       for (const row of imported.rows) {
         const seen = out.seen.get(row.id.text)
         expect(seen, row.id.text).toBeDefined()
         const value = row.current.kind === 'value' ? row.current.text : ''
         expect(seen?.value, row.id.text).toBe(value)
-        expect(seen?.apostrophe, row.id.text).toBe(value.startsWith('-'))
+        // round 3: by the cell's kind (a negative whole number in an amount cell), not by the value's text
+        expect(seen?.apostrophe, row.id.text).toBe(exportedApostrophe(kindOf.get(row.id.text) ?? 'text', value))
       }
       for (const cell of EIGHT) expect(out.ids, cell).toContain(cell)
       expect(out.ids).toHaveLength(imported.rows.length + EIGHT.length)
@@ -737,9 +750,9 @@ describe('RT-3 import then export holds the last value written for each cell (ch
   ]
   const textPool: string[] = [1, 2, 3].map((n) => CLASS_CELL(n))
   const pool = [...amountPool, ...textPool]
-  // text a class-number cell may hold: letters, digits, a period, an inner space and é (Windows-1252 E9); never a
-  // leading minus, so no text is mistaken for a negative number
-  const textArb = fc.stringMatching(/^[A-Za-z0-9é][A-Za-z0-9é. ]{0,8}[A-Za-z0-9é]$/)
+  // text a class-number cell may hold: letters, digits, a period, an inner space and é (Windows-1252 E9), with or
+  // without a leading minus: round 3, a text cell never gets the apostrophe, whatever its text (by kind, A333)
+  const textArb = fc.stringMatching(/^-?[A-Za-z0-9é][A-Za-z0-9é. ]{0,8}[A-Za-z0-9é]$/)
   const clearArb = fc.constantFrom<V>({ kind: 'clear', blank: '' }, { kind: 'clear', blank: ' ' })
   const amountOp = fc.tuple(
     fc.constantFrom(...amountPool),
@@ -904,18 +917,18 @@ describe('RT-23 the default release list and constructor defaults', () => {
     }
   })
 
-  test('RT-23 the default list covers every cell of all twelve sample clients\' import files', () => {
+  test('RT-23 the default list covers every cell of every sample client\'s import file (12 at first, 15 since W15)', () => {
     const ids = new Set(defaultReleaseList().map((c) => c.identifier))
     const dirs = readdirSync(new URL('../../../../reference/sample-clients/', import.meta.url)).filter((d) => /^\d\d-/.test(d))
-    expect(dirs).toHaveLength(12)
+    expect(dirs.length).toBeGreaterThanOrEqual(15)
     for (const d of dirs) {
       const csv = taxprepBytes(`reference/sample-clients/${d}/taxprep/import.csv`)
       for (const row of parseOk(csv).rows) expect(ids.has(row.id.text), `${d} ${row.id.text}`).toBe(true)
     }
   })
 
-  test('RT-3 a simulator made with no options imports client 01 and exports every row with its own header', () => {
-    const sim = createSimulator()
+  test('RT-3 a simulator made with only its id source takes the default list, imports client 01 and exports every row with its own header', () => {
+    const sim = createSimulator({ newGuid: () => GUID_1 })
     const importBytes = taxprepBytes(`${SAMPLES[0].dir}/taxprep/import.csv`)
     const imported = parseOk(importBytes)
     const ret = sim.createReturn({
@@ -925,8 +938,7 @@ describe('RT-23 the default release list and constructor defaults', () => {
       corporationName: imported.header.returnName,
       clientCode: 'C001',
     })
-    expect(ret.guid.length).toBeGreaterThan(0)
-    expect(ret.guid).not.toMatch(/[|\]\s]/)
+    expect(ret.guid).toBe(GUID_1)
     expect(sim.importCsv(ret, importBytes).ok).toBe(true)
     const out = parseOk(sim.exportCsv(ret, 'entered'))
     expect(out.header).toEqual({ returnName: imported.header.returnName, guid: ret.guid })
@@ -935,7 +947,7 @@ describe('RT-23 the default release list and constructor defaults', () => {
   })
 
   test('RT-23 the release name is the one given to the simulator and is kept on every return', () => {
-    const sim = createSimulator({ releaseList: fixtureList(), releaseName: 'CCH iFirm 2026.20.198267' })
+    const sim = createSimulator({ releaseList: fixtureList(), releaseName: 'CCH iFirm 2026.20.198267', newGuid: () => GUID_1 })
     const ret = sim.createReturn({
       businessNumber: '100000001RC0001',
       yearEnd: '2025-12-31',
@@ -964,6 +976,157 @@ describe('RT-23 the default release list and constructor defaults', () => {
   })
 })
 
+// ---------- round 3 (findings wave 2): descriptions, single-source lists, apostrophe by kind, id source ----------
+
+describe('RT-3 the default list\'s descriptions are the day 2 export text, nothing invented (round 3 item 14)', () => {
+  const IDENT230 = 'Line 990 - Indicate your language of correspondence of your choice.|`English|`Fran\u00e7ais'
+
+  test('RT-3 every default-list description equals the day 2 export text for that cell, and is "" where no day 2 export holds it', () => {
+    const day2 = day2Descriptions()
+    expect(day2.size).toBeGreaterThan(300)
+    const list = defaultReleaseList()
+    for (const cell of list) expect(cell.description, cell.identifier).toBe(day2.get(cell.identifier) ?? '')
+  })
+
+  test('RT-3 IDENT.Ident230 carries its full export text; Ident492 and IFirm.ContactID, blank in the exports, stay ""', () => {
+    const day2 = day2Descriptions()
+    expect(day2.get('IDENT.Ident230')).toBe(IDENT230)
+    expect(day2.get('IDENT.Ident492')).toBe('')
+    expect(day2.get('IFirm.ContactID')).toBe('')
+    const byId = new Map(defaultReleaseList().map((c) => [c.identifier, c.description]))
+    expect(byId.get('IDENT.Ident230')).toBe(IDENT230)
+    expect(byId.get('IDENT.Ident492')).toBe('')
+    expect(byId.get('IFirm.ContactID')).toBe('')
+  })
+
+  test('RT-3 the default list\'s "entered" export writes the export text in the description column, Ident230 with its accent as the byte 0xE7', () => {
+    const sim = createSimulator({ newGuid: () => GUID_1 })
+    const ret = sim.createReturn({
+      businessNumber: '100000001RC0001',
+      yearEnd: '2025-12-31',
+      returnName: 'Probe Co. (Test)',
+      corporationName: 'Probe Co. (Test)',
+      clientCode: 'C000',
+    })
+    const bytes = Buffer.from(sim.exportCsv(ret, 'entered'))
+    const rows = new Map(parseOk(bytes).rows.map((r) => [r.id.text, r.description]))
+    expect(rows.get('IDENT.Ident230')).toBe(IDENT230)
+    expect(rows.get('IDENT.Ident492')).toBe('')
+    expect(rows.get('IFirm.ContactID')).toBe('')
+    expect(bytes.includes(Buffer.from('`Fran\u00e7ais', 'latin1'))).toBe(true)
+  })
+})
+
+describe('RT-13 the skip list and the eight cells come from F03 and F03R, the same objects (round 3 item 15)', () => {
+  test('RT-13 the simulator\'s ignored-on-import list is F03\'s IGNORED_ON_IMPORT itself (toBe, not a copy)', () => {
+    const sim = makeSim()
+    expect(sim.ignoredOnImport).toBe(IGNORED_ON_IMPORT)
+    expect(createSimulator({ newGuid: () => GUID_1 }).ignoredOnImport).toBe(IGNORED_ON_IMPORT)
+  })
+
+  test('RT-13 the simulator\'s always-exported cells are F03R\'s ALWAYS_EXPORTED itself (toBe, not a copy), the same eight cells as the trial\'s', () => {
+    const sim = makeSim()
+    expect(sim.alwaysExported).toBe(ALWAYS_EXPORTED)
+    expect(createSimulator({ newGuid: () => GUID_1 }).alwaysExported).toBe(ALWAYS_EXPORTED)
+    expect(new Set(ALWAYS_EXPORTED.map((c) => c.identifier))).toEqual(new Set(EIGHT))
+  })
+
+  test('RT-13 a row for each cell on F03\'s IGNORED_ON_IMPORT, even a clear, changes nothing and gives no line, no event', () => {
+    const made = makeReturn({ name: 'Probe Co. (Test)', clientCode: 'C000' })
+    const before = asText(made.sim.exportCsv(made.ret, 'all-input'))
+    const rows = IGNORED_ON_IMPORT.flatMap((c) => [`${c.identifier},"9","",""`, `${c.identifier},"","",""`])
+    expect(rows.length).toBeGreaterThan(0)
+    expect(mustImport(made, rawFile(rows))).toEqual({ lines: [], summary: OK })
+    expect(asText(made.sim.exportCsv(made.ret, 'all-input'))).toBe(before)
+    expect(made.sim.events(made.ret)).toEqual([])
+  })
+
+  test('RT-13 every cell on F03R\'s ALWAYS_EXPORTED is in the "entered" export of a fresh return, cleared or not', () => {
+    const made = makeReturn()
+    made.sim.openReturn(made.ret)
+    const ids = readExport(made, 'entered').ids
+    for (const c of ALWAYS_EXPORTED) expect(ids, c.identifier).toContain(c.identifier)
+    expect(ids).toHaveLength(ALWAYS_EXPORTED.length)
+  })
+})
+
+describe('RT-3 the exported apostrophe is chosen by the cell\'s kind (round 3 item 16; unconfirmed beyond amount cells)', () => {
+  const lineOf = (text: string, cell: string): string | undefined => text.split('\r\n').find((l) => l.startsWith(`${cell},`))
+
+  test('RT-3 a negative whole number in an amount cell exports with exactly one leading apostrophe', () => {
+    const made = makeReturn({ list: extendedList() })
+    made.sim.typeCell(made.ret, GIFI_CASH, '-1299')
+    const text = asText(made.sim.exportCsv(made.ret, 'entered'))
+    expect(lineOf(text, GIFI_CASH)).toBe(`${GIFI_CASH},"'-1299","","${describeOf(GIFI_CASH)}"`)
+  })
+
+  test('RT-3 (unconfirmed) a negative decimal in a rate cell exports with no apostrophe', () => {
+    const made = makeReturn({ list: extendedList() })
+    made.sim.addCopy(made.ret, CCA)
+    made.sim.typeCell(made.ret, RATE_CELL(1), '-0.0500')
+    const text = asText(made.sim.exportCsv(made.ret, 'entered'))
+    expect(lineOf(text, RATE_CELL(1))).toBe(`${RATE_CELL(1)},"-0.0500","","CCA rate"`)
+    expect(readExport(made, 'entered').seen.get(RATE_CELL(1))).toMatchObject({ value: '-0.0500', apostrophe: false })
+  })
+
+  test('RT-3 (unconfirmed) "-5" in a text cell exports with no apostrophe, typed by hand or imported (planted fault: a value-text rule would add one)', () => {
+    const made = makeReturn({ list: extendedList() })
+    made.sim.addCopy(made.ret, CCA)
+    made.sim.addCopy(made.ret, CCA)
+    made.sim.typeCell(made.ret, CLASS_CELL(1), '-5')
+    expect(mustImport(made, rawFile([`${CLASS_CELL(2)},"-5","",""`]))).toEqual({ lines: [], summary: OK })
+    const text = asText(made.sim.exportCsv(made.ret, 'entered'))
+    expect(lineOf(text, CLASS_CELL(1))).toBe(`${CLASS_CELL(1)},"-5","","CCA class number"`)
+    expect(lineOf(text, CLASS_CELL(2))).toBe(`${CLASS_CELL(2)},"-5","","CCA class number"`)
+    expect(text).not.toContain(`"'-5"`)
+  })
+
+  test('RT-3 (unconfirmed) a negative whole number in a rate cell gets no apostrophe either: the kind decides, not the text', () => {
+    const made = makeReturn({ list: extendedList() })
+    made.sim.addCopy(made.ret, CCA)
+    made.sim.typeCell(made.ret, RATE_CELL(1), '-5')
+    made.sim.typeCell(made.ret, UCC_CELL(1), '-5')
+    const out = readExport(made, 'entered')
+    expect(out.seen.get(RATE_CELL(1))).toMatchObject({ value: '-5', apostrophe: false })
+    expect(out.seen.get(UCC_CELL(1))).toMatchObject({ value: '-5', apostrophe: true })
+  })
+
+  test('RT-3 ARC-14 the by-kind export reads back into a fresh return unchanged: text "-5" stays text, the amount keeps its apostrophe', () => {
+    const a = makeReturn({ list: extendedList(), guids: [GUID_1] })
+    a.sim.addCopy(a.ret, CCA)
+    a.sim.typeCell(a.ret, CLASS_CELL(1), '-5')
+    a.sim.typeCell(a.ret, UCC_CELL(1), '-700')
+    a.sim.typeCell(a.ret, RATE_CELL(1), '-0.0500')
+    const first = a.sim.exportCsv(a.ret, 'entered')
+    const b = makeReturn({ list: extendedList(), guids: [GUID_1] })
+    expect(b.sim.importCsv(b.ret, first).ok).toBe(true)
+    expect(asText(b.sim.exportCsv(b.ret, 'entered'))).toBe(asText(first))
+  })
+})
+
+describe('ARC-14 the id source is required (round 3 item 17)', () => {
+  const loose = createSimulator as unknown as (options?: unknown) => unknown
+
+  test('ARC-14 constructing the simulator with no options is refused with a reason that names newGuid', () => {
+    expect(() => loose()).toThrow(/newGuid/)
+  })
+
+  test('ARC-14 options without an id source, or with one that is not a function, are refused with the reason', () => {
+    expect(() => loose({ releaseList: fixtureList() })).toThrow(/newGuid/)
+    expect(() => loose({ releaseList: fixtureList(), newGuid: 'not a function' })).toThrow(/newGuid/)
+    const opts: SimulatorOptions = { releaseList: fixtureList(), newGuid: () => GUID_2 }
+    const sim = createSimulator(opts)
+    const ret = sim.createReturn({
+      businessNumber: '100000001RC0001',
+      yearEnd: '2025-12-31',
+      returnName: 'Probe Co. (Test)',
+      corporationName: 'Probe Co. (Test)',
+      clientCode: 'C000',
+    })
+    expect(ret.guid).toBe(GUID_2)
+  })
+})
+
 // ---------- source rules: ARC-14, ARC-15, F03 only ----------
 
 describe('ARC-14, ARC-15 the simulator source follows the rules the card names', () => {
@@ -976,12 +1139,13 @@ describe('ARC-14, ARC-15 the simulator source follows the rules the card names',
           if (entry.name === '__fixtures__' || entry.name === '__golden__') continue
           walk(new URL(`${entry.name}/`, dir), `${prefix}${entry.name}/`)
         } else if (entry.name.endsWith('.ts') && !/\.test\.ts$/.test(entry.name)) {
-          out.push({ name: `${prefix}${entry.name}`, text: readFileSync(new URL(entry.name, dir), 'utf8') })
+          // the committed text, even inside Stryker's sandbox (DG round 3, readOwnSource)
+          out.push({ name: `${prefix}${entry.name}`, text: readOwnSource(fileURLToPath(new URL(entry.name, dir))) })
         }
       }
     }
     walk(coreDir, 'core/')
-    out.push({ name: 'index.ts', text: readFileSync(new URL('../index.ts', import.meta.url), 'utf8') })
+    out.push({ name: 'index.ts', text: readOwnSource(fileURLToPath(new URL('../index.ts', import.meta.url))) })
     return out
   }
 
@@ -1012,5 +1176,26 @@ describe('ARC-14, ARC-15 the simulator source follows the rules the card names',
 
   test('RT-2 no source file names a token cell', () => {
     for (const f of files()) expect(f.text, f.name).not.toMatch(/\bTOKEN\b|import[_ ]token/i)
+  })
+
+  // round 3 item 15 (RC4): one source for the skip list and the eight cells. A local list is any bracketed span with no
+  // inner bracket that quotes two or more of the eight identifiers (an array of them, or of objects naming them).
+  const quoted = `['"\`](?:${EIGHT.map((c) => c.replace(/\./g, '\\.')).join('|')})['"\`]`
+  const localList = new RegExp(`\\[[^\\[\\]]*${quoted}[^\\[\\]]*${quoted}[^\\[\\]]*\\]`)
+
+  test('RT-13 the scan for a local list of the creation cells catches one (planted fault)', () => {
+    const planted = `export const CREATION_CELLS = [\n  'IDENT.Ident120',\n  'IDENT.Ident121',\n]\n`
+    const plantedDrafts = `const D = [\n  { identifier: 'IDENT.Ident492', kind: 'yesNo' },\n  { identifier: "IFirm.ContactID", kind: 'text' },\n]\n`
+    expect(planted).toMatch(localList)
+    expect(plantedDrafts).toMatch(localList)
+    expect(`values.set('IDENT.Ident311', name)\nvalues.set('IDENT.Ident230', '1')\nconst k: string[] = []\n`).not.toMatch(localList)
+  })
+
+  test('RT-13 no source file keeps its own list of the eight creation and contact cells; the module uses F03\'s IGNORED_ON_IMPORT and F03R\'s ALWAYS_EXPORTED', () => {
+    const all = files()
+    for (const f of all) expect(f.text, f.name).not.toMatch(localList)
+    const text = all.map((f) => f.text).join('\n')
+    expect(text).toMatch(/\bIGNORED_ON_IMPORT\b/)
+    expect(text).toMatch(/\bALWAYS_EXPORTED\b/)
   })
 })

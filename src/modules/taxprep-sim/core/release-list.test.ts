@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { CREATION_CELLS, defaultReleaseList } from './release-list'
+import { defaultReleaseList } from './release-list'
 
 describe('S00 release list unit', () => {
   const list = defaultReleaseList()
@@ -11,17 +11,6 @@ describe('S00 release list unit', () => {
     expect(list[0]?.description).toMatch(/^GIFI code \d+ - /)
   })
 
-  test('RT-13 the eight creation cells close the list, with their kinds and descriptions', () => {
-    expect(list.slice(300).map((c) => [c.identifier, c.kind, c.description])).toEqual([
-      ['IDENT.Ident120', 'date', 'Line 060 - Tax year start date'],
-      ['IDENT.Ident121', 'date', 'Line 061 - Tax year-end'],
-      ['IDENT.Ident311', 'text', "Corporation's name"],
-      ['IDENT.Ident230', 'text', 'Line 990 - Language of correspondence'],
-      ['IDENT.Ident451', 'text', 'CCH iFirm - Client code'],
-      ['IDENT.Ident492', 'yesNo', 'Creation flag'],
-      ['IFirm.ContactPartner', 'text', 'Partner'],
-      ['IFirm.ContactID', 'text', 'Contact ID'],
-    ])
-    expect(CREATION_CELLS).toEqual(list.slice(300).map((c) => c.identifier))
-  })
+  // Retired by spec(S00) round 3: 'RT-13 the eight creation cells close the list, with their kinds and descriptions'
+  // pinned invented descriptions and a local list of the eight cells (card items 14 and 15, findings wave 2 RC4).
 })

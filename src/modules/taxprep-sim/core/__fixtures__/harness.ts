@@ -1,6 +1,6 @@
 // S00 test harness (spec-writer only; builders never edit). Test-side helpers for the Taxprep simulator tests.
 // Nothing here imports the simulator's own code except its public types and factory (from '../../index').
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import {
   parseCellId,
   parseTaxprepCsv,
@@ -24,6 +24,44 @@ export function taxprepBytes(rel: string): Buffer {
   const raw = readFileSync(repoUrl(rel))
   return Buffer.from(raw.toString('latin1').replace(/\r?\n/g, '\r\n'), 'latin1')
 }
+
+/**
+ * A day 2 reference export (reference/taxprep/2026-10-02-day2/exports/): CRLF line ends, and a final CR LF where the
+ * committed structure copy lost it (gifi-dict-structure.csv and probe-enc-structure.csv end without a line end).
+ */
+export function day2ExportBytes(name: string): Buffer {
+  const text = taxprepBytes(`reference/taxprep/2026-10-02-day2/exports/${name}`).toString('latin1')
+  return Buffer.from(text.endsWith('\r\n') ? text : `${text}\r\n`, 'latin1')
+}
+
+/**
+ * Taxprep's own description text for every cell the six day 2 exports hold (RT-3; FINDINGS day 2), read through F03's
+ * reader. A cell two exports describe differently is a test-data fault and throws.
+ */
+export function day2Descriptions(): Map<string, string> {
+  const names = readdirSync(repoUrl('reference/taxprep/2026-10-02-day2/exports/')).filter((n) => n.endsWith('.csv'))
+  if (names.length !== 6) throw new Error(`test fixture: expected the six day 2 exports, found ${String(names.length)}`)
+  const out = new Map<string, string>()
+  for (const name of names) {
+    for (const row of parseOk(day2ExportBytes(name)).rows) {
+      const text = row.description ?? ''
+      const before = out.get(row.id.text)
+      if (before !== undefined && before !== text) {
+        throw new Error(`test fixture: day 2 exports disagree on ${row.id.text}: ${JSON.stringify(before)} and ${JSON.stringify(text)}`)
+      }
+      out.set(row.id.text, text)
+    }
+  }
+  return out
+}
+
+/**
+ * The exported apostrophe rule (RT-3, A333, findings wave 2 fix 1c): one leading apostrophe on a negative whole number
+ * in an amount cell, chosen by the cell's kind; nothing on any other kind, whatever the value's text (unconfirmed for
+ * kinds other than amount: the trial has exported negatives only in amount cells).
+ */
+export const exportedApostrophe = (kind: ReleaseCell['kind'], value: string): boolean =>
+  kind === 'amount' && /^-[1-9]\d*$/.test(value)
 
 export const asText = (bytes: Uint8Array): string => Buffer.from(bytes).toString('latin1')
 export const fromText = (text: string): Buffer => Buffer.from(text, 'latin1')
@@ -196,7 +234,8 @@ export function readExport(made: Made, filter: 'entered' | 'all-input'): { heade
 /**
  * What the "entered" export of a fresh return must hold after one import of `importBytes`, written by hand from the
  * trial's rules (not by the simulator): the file's rows in list order with the creation cells, a leading apostrophe on
- * every negative, descriptions from the list, the return's own header. `fixed` gives the creation cells' values.
+ * a negative whole number in an amount cell only (by the cell's kind, round 3), descriptions from the list, the
+ * return's own header. `fixed` gives the creation cells' values.
  */
 export function referenceEntered(args: {
   importBytes: Uint8Array
@@ -216,7 +255,7 @@ export function referenceEntered(args: {
   for (const cell of [...args.list].sort((a, b) => a.order - b.order)) {
     const v = values.get(cell.identifier)
     if (!eight.has(cell.identifier) && (v === undefined || v === '')) continue
-    const shown = (v ?? '').startsWith('-') ? `'${v ?? ''}` : (v ?? '')
+    const shown = exportedApostrophe(cell.kind, v ?? '') ? `'${v ?? ''}` : (v ?? '')
     out += `${cell.identifier},"${shown}","","${cell.description}"\r\n`
   }
   return fromText(out)
