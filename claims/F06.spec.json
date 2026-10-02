@@ -1,9 +1,11 @@
 {
  "card": "F06",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit only: validated on main 2de6057; only F06's own missing modules fail",
  "worker": "cloud-f10790",
- "state": "working",
- "at": "2026-10-02T17:39:46.618Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T17:45:37.777Z",
+ "mode": "turbo",
+ "commit": "cebbb2a",
+ "validated": "2de6057"
 }
