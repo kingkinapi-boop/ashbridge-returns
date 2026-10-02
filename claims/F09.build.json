@@ -1,11 +1,10 @@
 {
  "card": "F09",
  "role": "build",
- "round": 2,
- "spec": "79893e4",
- "worker": "cloud-e1c409",
- "state": "reopened",
- "at": "2026-10-02T02:00:20.918Z",
- "mode": "turbo",
- "note": "FAIL: '-' between two amounts breaks grouping, one-digit decimals join, see reports/F09-check.md"
+ "round": 3,
+ "spec": "6b127d3",
+ "worker": "local-4e140f",
+ "state": "working",
+ "at": "2026-10-02T02:03:10.966Z",
+ "mode": "turbo"
 }
