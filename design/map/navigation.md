@@ -10,7 +10,7 @@ The GOV.UK service navigation sits under the header on every screen and shows on
 - Ops: Today, Ops work (Ops queue, New returns), Search.
 - CPA: Today, Review (CPA queue), Queue, Ops work, Board, Search. The CPA sees everything.
 - Owner: Today, Board (Pipeline, Weekly lessons, Measures), Review, Queue, Ops work, Search. The owner sees everything.
-- Inside a return, the record tabs show the role's screens for that return: preparer tabs Overview, Gaps, Round trip, Judgment, Exceptions, Comments; CPA tabs Overview, Brief, Full return; ops tabs Overview and the ops step the return is waiting on.
+- Inside a return, every role sees the same record tabs (Z20-6; the approved record, version A, Z20-1). Each role lands on its own tab: the preparer on Workbench, the CPA on Review, ops on Overview (A387).
 
 ## Identity bar
 

@@ -13,9 +13,10 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| A06 round 2 spec (directive now at the top of its card; the queue drops reopen notes, CQ2 item 5) | queue | cloud | 2 Oct 20:12Z | claude/A06 |
-| A03 check; G17 build; W00c spec | queue | cloud | 2 Oct 20:15Z | claude/<card> |
-| Queue repairs 20:45Z: SC spec (KNOWN owner FX3; new card FX3), A04 spec (stale golden), A03 check re-offered, A06 round 2 spec | queue | cloud | 2 Oct 20:45Z | claude/<card> |
+| Train 3c3de19: A03, G17 | train check, 1 cloud run | cloud | 2 Oct 21:00Z | claude/train |
+| SC build (KNOWN owner FX3 added), A04 build (golden regenerated) | queue | cloud | 2 Oct 20:56Z | claude/<card> |
+| A06 round 2 spec (directive at the top of its card) | queue | cloud | 2 Oct 20:45Z | claude/A06 |
+| W00c spec; then A07D, CQ2, FX2 specs as the queue offers | queue | cloud | 2 Oct 20:45Z | claude/<card> |
 
 ## Next, in order
 
