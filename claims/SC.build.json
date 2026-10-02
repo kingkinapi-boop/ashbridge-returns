@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 32,
+ "round": 33,
  "spec": "34e8ac0",
  "worker": "cloud-3e2f84",
- "state": "released",
- "at": "2026-10-02T20:00:15.188Z",
- "mode": "turbo",
- "note": "main unchanged since last release; owner defects (F01, records.ts, gaps, ai.ts, F06, F07) still not carded or in KNOWN, see reports/SC-build.md"
+ "state": "working",
+ "at": "2026-10-02T20:00:17.994Z",
+ "mode": "turbo"
 }
