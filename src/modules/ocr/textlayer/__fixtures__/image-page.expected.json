@@ -1,0 +1,108 @@
+{
+  "file": "image-page.pdf",
+  "note": "Made up (A01 spec). Page 2 is an image with no text (a scan); pages 1 and 3 have text.",
+  "pageCount": 3,
+  "pages": [
+    {
+      "number": 1,
+      "widthPt": 612,
+      "heightPt": 792,
+      "hasTextLayer": true
+    },
+    {
+      "number": 2,
+      "widthPt": 612,
+      "heightPt": 792,
+      "hasTextLayer": false
+    },
+    {
+      "number": 3,
+      "widthPt": 612,
+      "heightPt": 792,
+      "hasTextLayer": true
+    }
+  ],
+  "words": [
+    {
+      "text": "Before",
+      "box": {
+        "page": 1,
+        "left": 0.117647059,
+        "top": 0.075757576,
+        "width": 0.070588235,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "the",
+      "box": {
+        "page": 1,
+        "left": 0.2,
+        "top": 0.075757576,
+        "width": 0.035294118,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "scan",
+      "box": {
+        "page": 1,
+        "left": 0.247058824,
+        "top": 0.075757576,
+        "width": 0.047058824,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "(Test)",
+      "box": {
+        "page": 1,
+        "left": 0.305882353,
+        "top": 0.075757576,
+        "width": 0.070588235,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "After",
+      "box": {
+        "page": 3,
+        "left": 0.117647059,
+        "top": 0.075757576,
+        "width": 0.058823529,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "the",
+      "box": {
+        "page": 3,
+        "left": 0.188235294,
+        "top": 0.075757576,
+        "width": 0.035294118,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "scan",
+      "box": {
+        "page": 3,
+        "left": 0.235294118,
+        "top": 0.075757576,
+        "width": 0.047058824,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "(Test)",
+      "box": {
+        "page": 3,
+        "left": 0.294117647,
+        "top": 0.075757576,
+        "width": 0.070588235,
+        "height": 0.015151515
+      }
+    }
+  ],
+  "boxes": {}
+}
