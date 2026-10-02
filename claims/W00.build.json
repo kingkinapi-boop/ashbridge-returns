@@ -4,8 +4,9 @@
  "round": 3,
  "spec": "f6aed41",
  "worker": "cloud-8b2502",
- "state": "working",
- "at": "2026-10-02T12:19:05.321Z",
+ "state": "reported",
+ "at": "2026-10-02T14:02:34.953Z",
  "mode": "turbo",
- "beat": "2026-10-02T13:10:50.574Z"
+ "beat": "2026-10-02T13:10:50.574Z",
+ "note": "round 2 done: mutation 100 all marked files, security review no medium+, 1773 unit pass, head f905b7e"
 }
