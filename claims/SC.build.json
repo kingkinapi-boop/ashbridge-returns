@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 11,
+ "round": 12,
  "spec": "62f6c18",
- "worker": "cloud-f2e775",
- "state": "released",
- "at": "2026-10-02T17:50:43.634Z",
- "mode": "turbo",
- "note": "released unstarted: this worker's session ran long on W00a (mutation cycles); a fresh worker costs less"
+ "worker": "cloud-bb208a",
+ "state": "working",
+ "at": "2026-10-02T17:52:57.969Z",
+ "mode": "turbo"
 }
