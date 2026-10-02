@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "ec29150",
  "worker": "cloud-3d81d3",
- "state": "reported",
- "at": "2026-10-02T05:31:37.742Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T05:40:38.735Z",
  "mode": "turbo",
- "note": "48 of 48 acceptance tests pass, mutation 85.6"
+ "note": "FAIL: box accepts unknown keys, missing finding kinds, see reports/F04-check.md"
 }
