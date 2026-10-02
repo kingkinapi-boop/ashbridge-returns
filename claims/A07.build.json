@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "cf84ea2",
  "worker": "cloud-e945f9",
- "state": "hold-findings",
- "at": "2026-10-02T13:28:38.108Z",
+ "state": "reopened",
+ "at": "2026-10-02T14:26:57.287Z",
  "mode": "turbo",
  "beat": "2026-10-02T13:05:24.842Z",
- "note": "FAIL: cached 0/false/error text wrong, empty hidden rows dropped, cache key misses name, see reports/A07-check.md"
+ "note": "spec round reported; build per card"
 }
