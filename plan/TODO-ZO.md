@@ -4,13 +4,15 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-Nothing. Your answers of this morning are in. All seven design recommendations are accepted. The source viewer question had no recommendation, so I picked B (cite, or write a reason); say "viewer A" or "viewer C" to change it. Your logo is in use, and turbo stays on.
+**1. Type `turbo on`, or let the build wait until midnight UTC (8 pm Toronto).** The Reviewer slowed the build to normal at 14:40 and you agreed turbo returns once FX1 (a timing fix for one flaky test) and F01C (the last records-schema repairs) land. But normal allows 40 cloud runs a day and 157 have run today, so the safety hook now refuses the runs that would land those two cards: nothing can move until you raise the mode or the day turns. Recommendation: `turbo on` now; I land FX1 and F01C first, then the rest, and the Reviewer's other fixes (fewer wasted re-offers in the queue, more cards written ahead) go in today. Meanwhile I do the work that needs no runs: writing cards and fixing the queue tool's card.
+
+Your answers of this morning are in: all seven design recommendations accepted (for the source viewer, which had no recommendation, I picked B, cite or write a reason; say "viewer A" or "viewer C" to change it), and your logo is in use.
 
 **Your CRA walks:** thank you. They name one real corporation and one real person, with their numbers and amounts, so the originals stay on the laptop only (the `Assets` folder is kept out of the repo, decision 0003). Copies with every name, number and amount taken out go to `reference\cra\` for the build to use. Nothing needed from you.
 
 **Sat 3 Oct (about 30 minutes):** day 4 of the Taxprep trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". Any other day suits too; nothing waits on it.
 
-**What the Lead is doing now (2 Oct, 14:00 UTC):** turbo, building in the cloud. 20 of 296 cards are on main. In flight: the records schema (its last round), the test world generator, the PDF reader, the AI output contract, the spreadsheet reader and two check cards. Next: your approved screen designs go into the design cards, and your logo goes onto the design basis. Plan use this week: 37%.
+**What the Lead is doing now (2 Oct, 15:15 UTC):** normal mode, waiting on item 1 for cloud runs. 21 of 299 cards are on main. In flight: the records schema (its last round), the test world generator, the PDF reader, the AI output contract, the spreadsheet reader and two check cards. Next: your approved screen designs go into the design cards, and your logo goes onto the design basis. Plan use this week: 37%.
 
 **Reviewer, 2 Oct 14:40 UTC:** mode lowered from turbo to normal (too much rework, one flaky test, too few cards ready). Details in `reviews\REVIEW.md`. Your answer: turbo comes back by itself when FX1 and F01C land; nothing needed from you.
 
