@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "7145c18",
  "worker": "cloud-3620d3",
- "state": "reported",
- "at": "2026-10-02T05:13:16.067Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T05:34:47.232Z",
  "mode": "turbo",
- "note": "272 of 272 acceptance tests pass, mutation 100"
+ "note": "FAIL: rate 1e21 writes 1e+21 the parser refuses, see reports/F03R-check.md"
 }
