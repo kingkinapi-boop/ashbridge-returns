@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "28b0fed",
  "worker": "cloud-dd6ff9",
- "state": "reported",
- "at": "2026-10-02T15:13:57.579Z",
+ "state": "released",
+ "at": "2026-10-02T16:04:41.057Z",
  "mode": "turbo",
- "note": "3 of 3 acceptance tests pass; npm test 3 runs green"
+ "note": "merged"
 }
