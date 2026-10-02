@@ -4,7 +4,8 @@
  "round": 4,
  "spec": "435acc2",
  "worker": "cloud-ce4873",
- "state": "working",
- "at": "2026-10-02T03:54:46.521Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T03:54:52.047Z",
+ "mode": "turbo",
+ "note": "re-offered after release; still blocked: fix-round-1 re-spec not done (needs new spec worker). Lead: reopen W15 spec."
 }
