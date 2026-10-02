@@ -216,6 +216,29 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "F03"
+      ],
+      "paths": [
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.test.ts",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/contracts/__golden__/**"
+      ],
+      "clauses": [
+        "RT-3",
+        "RT-9",
+        "RT-13",
+        "RT-21"
+      ],
+      "id": "F03R",
+      "title": "Taxprep CSV contract: apostrophe and writer repairs",
+      "phase": 0,
+      "size": "S"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "F00",
         "F09"
       ],
