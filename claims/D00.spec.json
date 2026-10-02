@@ -1,9 +1,8 @@
 {
  "card": "D00",
  "role": "spec",
- "worker": "cloud-f684f9",
- "state": "released",
- "at": "2026-10-02T06:22:20.785Z",
- "mode": "turbo",
- "note": "refit blocked until TH lands (design/** has no unit-project home)"
+ "worker": "cloud-df251e",
+ "state": "working",
+ "at": "2026-10-02T06:23:39.699Z",
+ "mode": "turbo"
 }
