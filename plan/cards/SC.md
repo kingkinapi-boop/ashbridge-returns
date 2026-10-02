@@ -56,3 +56,9 @@ R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden fi
 - R43 every return_id, and every `*_id` whose target table exists, is a foreign key; pointer ids to unbuilt tables are non-blank and the allow-list names the future card.
 - R44 every identity column refuses OVERRIDING SYSTEM VALUE; every `version_no` or `*_version` column refuses a gap or a jump.
 - R45 (E03 check note, 2 Oct): the sensitive-key name rule (facts.ts:45-51) is table-driven and covers bank transit, institution and account numbers, date of birth, SIN, business number and similar; planted keys `bank_transit`, `institution_no`, `dob` must be sensitive. The loader enforces each key's cite pattern and refuses duplicate enum options.
+
+## From findings A07 round 1 (2 Oct, reports/findings-A07-r1.md)
+- R46 no module turns a library value into text through `.text`, `String(x)` or a template without a typed switch; planted `cell.text`.
+- R47 every ARC-11 cache key covers every input its result depends on and the cache returns a copy; run on each reader adapter (A01, A02, A03, A07, B04): same bytes under two names or options, then mutate a returned result and read again.
+- R48 every reader whose contract says "hidden" or "never dropped" is tested with an empty instance (empty hidden row or column, blank page).
+- R49 no `z.string().trim()` transform in src/contracts (joins R41).
