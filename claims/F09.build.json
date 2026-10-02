@@ -4,7 +4,8 @@
  "round": 4,
  "spec": "981d672",
  "worker": "cloud-662626",
- "state": "working",
- "at": "2026-10-02T04:14:29.452Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T04:19:45.042Z",
+ "mode": "turbo",
+ "note": "round 4: reading.ts mutation 100, 363 tests pass, see reports/F09-build.md"
 }
