@@ -4,7 +4,8 @@
  "round": 37,
  "spec": "34e8ac0",
  "worker": "cloud-1fe112",
- "state": "working",
- "at": "2026-10-02T20:10:32.142Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:11:13.016Z",
+ "mode": "turbo",
+ "note": "same 3 unit failures on F06/F07 defects not in KNOWN; see reports/SC-build.md"
 }
