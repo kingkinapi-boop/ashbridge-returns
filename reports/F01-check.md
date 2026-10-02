@@ -1,22 +1,14 @@
-# F01 check: FAIL
-Worker cloud-329cd2 (check). Branch claude/F01 @ 7e83251. Node 24.
+# F01 check (round 2): FAIL
 
-Passed: typecheck, lint, deps:check; db project 65 of 65 (63 acceptance + 2); test:flake 5 of 5 cold runs; canary ran; spec file unchanged since ea1e06e; mutate:changed has no targets (SQL only).
+Worker cloud-63f8ba. Passed: typecheck, lint, deps:check, npm test (960 unit, 168 db), test:flake 5 of 5, scope clean, spec files untouched since 8d503f9, mutate canary 100, mutate:changed F01 100 on ids.ts and records.ts, lists match blueprint (16 states, 3 statuses, 5 origins, 5 entry types), RLS on all tables, no public tables.
 
-## Failures
-1. `npm test` red: tools/test/db-rules.test.mjs "ARC-4 rule: no file outside src/core/db constructs PGlite" flags src/contracts/records.acceptance.db.test.ts (new PGlite()). Spec defect (builder may not edit): spec job must use createTemplate/clone from src/core/db. Because `npm test` is unit && db, the db project does not run in the cloud script until this is fixed.
-2. `node tools/scope.mjs F01`: the spec file is outside the card Paths (expected; add it to the card Paths).
-3. Adversarial read (Opus), real gaps against the card, none covered by a test:
-   - EV-1/SEC-7: append-only triggers are row-level only; TRUNCATE bypasses them (20_ledger.sql:64, 30_books.sql:54, 50_returns.sql:28, 60_versions.sql:28-33). Needs before-truncate triggers.
-   - TB-2: sources check only counts array length, so `[null]` or `[""]` passes (30_books.sql:70); one 0-cent line passes "has lines and nets to zero" (30_books.sql:73-79).
-   - EV-5: source_page/source_box not required with a document pointer, and allowed with another pointer kind (20_ledger.sql:10-12,24-29).
-   - FLOW-1: "latest state event" ordered by caller-settable created_at, then text id ('se-2' > 'se-10'), so a back- or future-dated event licenses a move (50_returns.sql:38-39). state_events.from_state/to_state have no CHECK to the 16 states (50_returns.sql:20-21); a return can be inserted in any state with no event.
-   - EV-1: events.actor/reason have no non-blank CHECK, unlike state_events (20_ledger.sql:58,62).
-   - Card says entries and judgment inputs change by new version row (FLOW-4 fingerprints id and version): adjusting_entries and judgment inputs have no version_no (30_books.sql:26-43, 112-121).
-   - ARC-10: version stamp check accepts any non-empty object, e.g. {"x":null} (00_schema.sql:15, records.ts:31).
-   - Minor: gifi_mappings.return_id not tied to account return_id; RLS enabled, not FORCEd (meets card as written).
-4. No secrets, no table missing is_test or RLS, nothing built beyond the card. Note: test entity name "Maple Grove Dental Professional Corporation (Test)" (spec file:203) might match a real business; spec job should pick a clearly made-up name.
+Failures (Opus adversarial read, reproduced in PGlite; no existing test covers them):
+1. Blank checks use btrim(x), which strips only spaces. Tab, newline, U+00A0 pass: actor/reason on events (20_ledger.sql:93-94), state_events (50_returns.sql:29-30), judgment_inputs author/reason (30_books.sql:163-164); version stamp {"x":"\t"} passes SQL (00_schema.sql:19) but zod refuses it (records.ts:34), so SQL and zod disagree (check 18); adjusting entry with reason "\t" and sources ["\t"] can be explained (30_books.sql:86,103; check 14). Same gap: holds_holder (50_returns.sql:96), approvals_approved_by (60_versions.sql:27), answers_author (70_checks.sql:30), pointer checks (20_ledger.sql:32,50-51).
+2. EV-5/check 3: blank pointer ids count as real (source_client_answer_id '', source_qbo_snapshot_id ' ' with account ' '); also cra_capture, prior_return, qbo_txn ids (20_ledger.sql:29-34,53-58).
+3. FLOW-1/check 16: seq is generated always as identity but INSERT ... OVERRIDING SYSTEM VALUE with seq=999 is accepted (50_returns.sql:20).
+4. (weaker) A state event filed->closed was accepted while the return was at evidence (50_returns.sql:17-45).
 
-Rule candidates: (a) every append-only table also refuses TRUNCATE; (b) every "has a source/reason" check rejects blank and null array members; (c) every event table: non-blank actor and reason.
+Rule candidate: every non-blank check uses one returns.is_blank(text) stripping all whitespace ([[:space:]] and U+00A0), applied to every text column in every schema file, with a rule test that enumerates columns.
+Suggested fix: is_blank used everywhere incl. is_version_stamp and sources_are_real; non-blank checks on every pointer id; BEFORE INSERT trigger on state_events forcing seq to nextval and requiring from_state = return's current state.
 
-Permission gaps: none (Node 24 via /opt/nvm needed on PATH). Model: claude-sonnet-5-5 (adversarial read: Opus subagent).
+Permission gaps: none. Model: Sonnet 5.5 checker; Opus 5.5 adversarial read.
