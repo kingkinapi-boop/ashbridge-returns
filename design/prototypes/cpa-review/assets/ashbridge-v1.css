@@ -120,8 +120,6 @@ kbd { background: #f3f5f8; border: 1px solid #15283b; border-bottom-width: 3px; 
 .app-scroll-x:focus { outline: 3px solid #f5c94c; }
 .app-scroll { border: 1px solid #b1b4b6; }
 .app-narrow { max-width: 900px; padding: 6px 0; }
-.app-commentpanel { border: 2px solid #15283b; padding: 8px 10px; margin-bottom: 10px; background: #fff; }
-.app-commentpanel .govuk-form-group { margin-bottom: 8px; }
 .app-sendback { border: 1px solid #b1b4b6; padding: 10px 12px; margin-top: 12px; max-width: 700px; }
 
 /* Brief */
@@ -153,8 +151,8 @@ kbd { background: #f3f5f8; border: 1px solid #15283b; border-bottom-width: 3px; 
 .app-caption { font-weight: 700; margin: 0 0 6px; font-size: .875rem; }
 .app-card { border: 1px solid #15283b; padding: 10px; background: #fff; font-size: .875rem; }
 .app-card h4 { margin: 0 0 6px; }
-.app-card dl { margin: 0; }
-.app-card dt { font-weight: 700; margin-top: 6px; }
+.app-card dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; }
+.app-card dt { font-weight: 700; margin: 0; }
 .app-card dd { margin: 0; }
 .app-sheet td, .app-sheet th { border: 1px solid #b1b4b6; padding: 2px 6px; font-size: .8125rem; }
 .app-sheet th { background: #f3f5f8; text-align: center; }
@@ -228,3 +226,40 @@ kbd { background: #f3f5f8; border: 1px solid #15283b; border-bottom-width: 3px; 
 .app-find__input { width: 150px; }
 .app-pane h4.govuk-heading-s { font-size: 1rem; }
 .app-tabs { margin-right: 8px; }
+
+/* The comment panel (fix 2): one panel over the trace and the source panes, so its 3 fields and Add comment are in view with no scrolling inside.
+   Its header keeps the boxed figure's caption. Only the body scrolls (an error summary); the buttons stay pinned. */
+.app-panes { position: relative; }
+.app-panes[data-layout="three"] .app-pane--list { grid-column: 1; grid-row: 1; }
+.app-panes[data-layout="three"] .app-pane--trace { grid-column: 2; grid-row: 1; }
+.app-panes[data-layout="three"] .app-pane--source { grid-column: 3; grid-row: 1; }
+.app-cpanel { display: none; grid-column: 2 / 4; grid-row: 1; z-index: 5; min-height: 0; min-width: 0; background: #fff; border: 2px solid #15283b; }
+.app-cpanel[data-open] { display: flex; flex-direction: column; }
+.app-panes[data-layout="wide"] .app-cpanel { display: none; }
+.app-cp { display: flex; flex-direction: column; min-height: 0; height: 100%; }
+.app-cp__head { flex: none; padding: 4px 10px 2px; background: #f3f5f8; border-bottom: 1px solid #b1b4b6; }
+.app-cp__head h3 { margin: 0; font-size: 1rem; }
+.app-cp__head .app-caption { margin: 0; font-size: .875rem; font-weight: 400; }
+.app-cp__body { flex: 1; min-height: 0; overflow: auto; padding: 4px 10px 0; }
+.app-cp__body .govuk-form-group { margin-bottom: 4px; }
+.app-cp__body .govuk-fieldset__legend { margin-bottom: 2px; font-size: .875rem; }
+.app-cp__body .govuk-label--s { font-size: .875rem; margin-bottom: 2px; }
+.app-cp__body .govuk-radios--small .govuk-radios__item { margin-bottom: 0; }
+.app-cp__body .govuk-textarea { padding: 3px 6px; font-size: 1rem; min-height: 0; }
+.app-cp__body .govuk-hint { font-size: .8125rem; margin: 2px 0 0; }
+.app-cp__body .govuk-error-summary { padding: 6px 10px; margin-bottom: 4px; border-width: 4px; }
+.app-cp__body .govuk-error-summary__title { font-size: 1rem; margin-bottom: 2px; }
+.app-cp__foot { flex: none; padding: 4px 10px; border-top: 1px solid #b1b4b6; background: #f3f5f8; display: flex; gap: 6px; }
+@media (max-width: 900px) {
+  .app-cpanel { grid-column: 1; grid-row: auto; order: -1; }
+  .app-cp { height: auto; }
+  .app-cp__body { overflow: visible; }
+}
+.app-cp__foot { align-items: center; }
+.app-cp__note { margin: 0; font-size: .8125rem; line-height: 1.2; flex: 1; min-width: 0; }
+.app-cp__body .govuk-radios__label { font-size: .875rem; line-height: 1.2; padding: 4px 6px 4px 2px; min-height: 0; }
+.app-cp__body .govuk-radios--inline .govuk-radios__item { margin-right: 10px; margin-bottom: 0; }
+.app-cp__body .govuk-radios--small { margin-bottom: 0; }
+.app-cp__body .govuk-hint { margin-bottom: 0; }
+.app-cp__body .govuk-radios__label { white-space: nowrap; width: auto; max-width: none; }
+.app-cp__body .govuk-textarea { margin-bottom: 0; }

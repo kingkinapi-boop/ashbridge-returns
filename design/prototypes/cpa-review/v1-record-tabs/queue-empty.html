@@ -5,8 +5,8 @@
 <title>Review queue, empty - Ashbridge Tax</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#355b7d">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.css">
+<link rel="stylesheet" href="../assets/vendor/govuk-frontend.min.css">
+<link rel="stylesheet" href="../assets/vendor/moj-frontend.min.css">
 <link rel="stylesheet" href="../assets/ashbridge-v1.css">
 </head>
 <body class="govuk-template__body" >
@@ -17,8 +17,9 @@
 <div class="govuk-width-container app-wide"><main class="govuk-main-wrapper app-main " id="main-content" role="main"><h1 class="govuk-heading-l">Review queue</h1><div class="govuk-inset-text"><p class="govuk-body"><strong>No returns are waiting for your review.</strong></p><p class="govuk-body">New returns appear here when a preparer sends them. Nothing to do now.</p></div></main></div>
 <footer class="govuk-footer app-footer"><div class="govuk-width-container app-wide"><p class="govuk-body-s govuk-!-margin-bottom-0">Prototype for Zo to look at. Made-up data only (sample clients). Prototype date: 10 Mar 2026. Written against blueprint commit b9c5003.</p></div></footer>
 <div id="app-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
-<script type="module">import { initAll } from 'https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.js'; initAll();</script>
-<script type="module">import { initAll as mojInit } from 'https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.js'; mojInit();</script>
+<script src="../assets/vendor/govuk-frontend.bundle.js"></script>
+<script src="../assets/vendor/moj-frontend.bundle.js"></script>
+<script>if (window.GOVUKFrontend) { GOVUKFrontend.initAll(); } if (window.MOJFrontend) { MOJFrontend.initAll(); }</script>
 
 </body>
 </html>

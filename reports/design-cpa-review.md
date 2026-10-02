@@ -1,10 +1,10 @@
-# Design: the CPA review, fix round (version 1 only)
+# Design: the CPA review, fix rounds 1 and 2 (version 1 only)
 
-Branch `claude/design-cpa-review-2`, from `claude/design-cpa-review` with `origin/main` merged twice (the second time for the source viewer findings review: rule 3 adds the `region` and `landmark-unique` rules, rule 18 adds readable text, rule 21 puts the selection in the URL, check 8 serves over http). Brief: `design/briefs/cpa-review.md`, rewritten from **blueprint commit `b9c5003`**. Front page: `design/prototypes/cpa-review/index.html`; start at `design/prototypes/cpa-review/v1-record-tabs/queue.html` (needs internet for the GOV.UK Frontend 6.5.1 and MOJ Frontend 11 CSS and JS on cdn.jsdelivr.net). Made-up data only: Maple Ridge Consulting Inc. (Test), red tier, and Queen West Design Studio Inc. (Test), green tier, from `reference/sample-clients/`. Prototype date pinned at 10 Mar 2026.
+Branch `claude/design-cpa-review-2`, from `claude/design-cpa-review` with `origin/main` merged twice (the second time for the source viewer findings review: rule 3 adds the `region` and `landmark-unique` rules, rule 18 adds readable text, rule 21 puts the selection in the URL, check 8 serves over http). Brief: `design/briefs/cpa-review.md`, rewritten from **blueprint commit `b9c5003`**. Front page: `design/prototypes/cpa-review/index.html`; start at `design/prototypes/cpa-review/v1-record-tabs/queue.html` (works offline: local copies of GOV.UK Frontend 6.5.1 and MOJ Frontend 11 in `assets/vendor/`). Made-up data only: Maple Ridge Consulting Inc. (Test), red tier, and Queen West Design Studio Inc. (Test), green tier, from `reference/sample-clients/`. Prototype date pinned at 10 Mar 2026.
 
 Only version 1 (record tabs, the second window opened on demand) is kept in the index. `v2-list-and-detail/` and `v3-two-monitors/` stay in their folders as first drafted; they fail the new rules and are not part of the sitting. Their generators (`_build/split.mjs`, `tabs.mjs`, `notes.mjs`) are marked frozen.
 
-Rebuild: `node design/prototypes/cpa-review/_build/build.mjs`. Checks: `node design/prototypes/cpa-review/_build/lint.mjs` (checks 6, 7, 9) and `_build/verify.mjs [axe|walk|reflow|budgets|rules]` (checks 7 and 8; needs `AUDIT_MODULES` pointing at a folder with playwright-core and axe-core installed outside the repo; it serves the pages over http on a free local port and drives the installed Edge).
+Rebuild: `node design/prototypes/cpa-review/_build/build.mjs`. Checks: `node design/prototypes/cpa-review/_build/lint.mjs` (checks 6, 7, 9) and `_build/verify.mjs [axe|walk|reflow|budgets|rules|v|tasks|all]` (checks 7 and 8; needs `AUDIT_MODULES` pointing at a folder with playwright-core and axe-core installed outside the repo; it serves the pages over http on a free local port and drives the installed Edge).
 
 ## What changed: the eight fixes ((a) CPA review V1)
 
@@ -23,37 +23,62 @@ Rebuild: `node design/prototypes/cpa-review/_build/build.mjs`. Checks: `node des
 
 Also from the new rules: SIN shows "SIN on file" (no digits, rule 23); body text is 16 px or larger in the panes, labels and buttons are 14 px, source page text 13 px (rule 18); the trace's sources and "agrees with" are short lists, not three-column tables, so a 270 px pane holds them at 16 px; below 1200 px wide the rail gives way to a Section select in the tab row so the three panes keep their width at 125% zoom (the panes never stack at either size).
 
-## Check numbers (design card checks 6 to 9)
+## Round 2: the fix list for CPA review (V1), fixes 1 to 3 (reports/findings-designs-2.md)
 
-**Check 6, retired terms and the commit.** `lint.mjs` searched the brief, the 13 pages, the CSS, the script and the builders for export 1, export 2, review-lines export, receipt export, gate 1, judgment input sheet, AI-proposed GIFI and the em dash: 0 hits. The brief names blueprint commit `b9c5003` (the last commit touching `blueprint/`).
+| # | Fix | Where it is now |
+|---|---|---|
+| 1 (C1) | `a` with sections left focuses "Approve: N sections left" and says why | The key moves focus to that link and announces "Approve is not ready: N of 11 sections left to mark Reviewed. The brief lists them." With every section marked it focuses "Approve return" (never approves). Clicking that link while already on the brief says so and focuses the list of sections left. |
+| 2 (C2) | At 1093 the comment panel opens over the trace and source panes, keeping the boxed figure's caption in its header; 3 fields and the button in view, no scrolling inside | `c` opens one panel laid over the trace and source panes (grid cells 2 to 3, so it works at every width above 900 px; at 1093 x 525 it is 575 x 335 px, at 1366 x 650 it is 657 x 460). Header: "Comment on <number>" and "Source: <the boxed figure's caption>". Type and Severity are inline small radios, the Comment textarea is 2 rows, the RV-12 sentence sits beside the buttons. Add comment and Cancel are pinned at the foot. Only the body can scroll, and only when an error summary adds its lines. |
+| 3 | Local copies of the GOV.UK and MOJ files so the sitting works offline | `assets/vendor/` holds GOV.UK Frontend 6.5.1 and MOJ Frontend 11 (CSS, the classic-script bundles, the icons), unchanged except that `url(/assets/` became `url(assets/`. The pages load them by relative paths and call `GOVUKFrontend.initAll()` and `MOJFrontend.initAll()`; no request leaves the laptop. The GDS Transport fonts are not copied (the Ashbridge stack never loads them). |
 
-**Check 7, prototype lint.** `lint.mjs`: 13 pages, 0 issues. It looks for self-links (the active service navigation item and the header logo are exempt), links to `#` or to a missing page, an unknown route, a button or link drawn as plain text, a button link without a role, filler or placeholder text, empty data cells, duplicate ids, one h1, the title, the skip link, and counts that disagree (table caption counts against rows, "N numbers" in the history against the rows, "N flags in all" against the pinned flags, "N large changes" against the tags). In the browser `verify.mjs rules` also checks that the Comments badge equals the rows in the list and that the identity bar's Reviewed count equals the rail marks.
+Rule-check hooks added (design/verify/README.md): `data-identity-bar` on both identity bars; `data-evidence` on the boxed figure of every source page (or on the whole card when there is no box, and on the printed-return table); `data-primary` on Comment on this number, Reviewed, next, Record decision and Add comment; `data-count` and `data-scope` on the reviewed count, the Comments and Changes tabs, the pinned flags caption, "N flags need a decision", "N large changes", the sections-left heading and the queue count. `verify.mjs v` runs V1 to V8 at both sizes; `verify.mjs tasks` re-walks tasks 5, 6 and 7.
 
-**Check 8, axe, keyboard walk, 320 px, budgets.** Pages are served over http on a local port (never file://). Edge headless at 1366 x 650, 1093 x 525 and 320 x 640.
-- axe (tags wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa, plus the `region` and `landmark-unique` rules), every route of the four return pages in their states (brief, flags, every section, comments, history, changes, search, no evidence, source loading, source failed, comment panel and its error, flag decision error, send back error, taking a mark off) plus the queue pages, approval pages, source windows and notes: **246 page states, 0 violations, 0 incomplete**. By size: 1366 x 650: 82 states, 0 violations, 0 incomplete; 1093 x 525: 82 states, 0 violations, 0 incomplete; 320 x 640: 82 states, 0 violations, 0 incomplete. A further 231 incomplete results on the MOJ timeline and badge (a pseudo element axe cannot see through) were checked by hand and counted apart.
-- Keyboard walk (Tab through 12 views at both sizes): 447 tab stops over 12 views, 0 controls not reached, 0 focused controls covered, 0 without a focus style
-- 320 px reflow (WCAG 1.4.10): 38 views, 0 overflow
-- In-place rules (`verify.mjs rules`, 25 checks): 25 of 25 pass. Reviewed, next never unmarks; the unmark control has no key and asks for a reason; key a does not approve; no Reviewed button while a flag is open; flag decisions run in place with 0 loads; a section change is a client-side route with its own URL (0 loads); search with many matches shows a results page and with one match goes to it; send back runs in place; the second window opens from a click and follows a number, a section change and a tab change; a flag shows its own cited evidence; the queue's filters survive Back.
-- Budgets (`verify.mjs budgets`; times are measured through the browser tool, so they include its overhead except the key timings, which are measured inside the page):
+What the new checks found and this round also fixed (all would have been real faults at the desk):
+- V6: the find box says "by name or account number" but account numbers found nothing. The index now holds the account number.
+- V4: `]`, `[` and `o` left focus on the page body. They now leave it on the source and on the "Open in a second window" button.
+- V7: the skip link replaced the route with the brief (it was read as a route); it now keeps the route and focuses the heading. A click on the link to where you already are (current tab, current section, "Approve: N sections left" on the brief, the logo and "Review queue" on the queue, an already selected flag) now says so and moves focus instead of doing nothing.
+- Cards in the source pane: the fields are in a two-column list so the Taxprep card fits the 1093 x 525 pane (V3 found it 28 px below the pane).
+- Axe: the comment panel covers the panes beneath it, so axe reported their contrast as "incomplete" (overlap). The contrast pass now lays the panes out in flow, as it already did for scrolling.
+- V8 does not apply: no text field on these pages is tied to an option (a check confirms none is a conditional of a radio or checkbox). The comment text is not an option.
+
+Re-walk of tasks 5, 6 and 7 at both sizes (`verify.mjs tasks`, 16 of 16 pass):
+- Task 5, check one number: pick a number 1 click, 0 loads, boxed figure inside the source pane, focus moved into the source, trace beside it, page scroll 0; `j` 1 key, 0 loads, source and trace follow, focus on the row; `]` and `[` change the source; Escape returns focus to the number.
+- Task 6, comment: 1 key opens the panel over the trace and source with the caption in its header, 3 fields, no scrolling inside, Add comment in view (at 1366 x 650 and 1093 x 525); submit 0 loads, comments 3 to 4, the trace lists it, focus back on the row.
+- Task 7, approve: `a` with sections left focuses "Approve: 9 sections left" and says why; after all 11 marks `a` focuses Approve return and Enter loads the approval record once (12 rows) with a link to the next return.
+
+## Check numbers (design card checks 6 to 9), round 2
+
+**Check 6, retired terms and the commit.** `lint.mjs`: the brief, 13 pages, the CSS, the script, the builders: 0 hits for export 1, export 2, review-lines export, receipt export, gate 1, judgment input sheet, AI-proposed GIFI and the em dash. Blueprint commit `b9c5003`.
+
+**Check 7, prototype lint.** `lint.mjs`: 13 pages, 104 `app-` classes each listed with a reason in `notes.html`, 0 issues. In the browser `verify.mjs rules`: 25 of 25 pass.
+
+**Check 8, axe, keyboard walk, 320 px, budgets, V1 to V8** (served over http, Edge headless; 1366 x 650, 1093 x 525 and 320 x 640 for axe).
+- axe (wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa, `region`, `landmark-unique`): **246 page states, 0 violations**. The first full run found 6 "incomplete" states, all the open comment panel hiding the panes below it from axe's contrast check; after the harness fix the 72 red-return states (all three sizes) re-ran with 0 violations and 0 incomplete, and the other 174 states of the full run had 0 incomplete. Another 231 incomplete results on the MOJ timeline and badge pseudo elements are checked by hand and counted apart, as before.
+- Keyboard walk, 12 views at both sizes: 447 tab stops, 0 controls not reached, 0 covered, 0 without a focus style.
+- 320 px reflow: 38 views, 0 overflow.
+- V1 to V8 (`design/verify/rules.mjs`, both sizes): **144 checks, 0 failing**. By rule: V1 28 (12 page states, comment panel typing, unmark form), V2 22 (11 in-place actions), V3 22 (9 pane states and the open comment panel), V4 26 (9 actions, 10 shortcuts, `a` three ways), V5 24 (five red pages, three green pages, the queue, a filter caption), V6 4 (Find a number: name and account number; queue: name), V7 16 (seven pages with every visible control, plus the skip link), V8 2 (not applicable: checked that no text field is tied to an option). The comment panel at 1093 x 525 is 575 x 335 px with 3 groups, Add comment inside and no inner scroll; at 1366 x 650 it is 657 x 460.
+- Budgets (`verify.mjs budgets`; times include the browser tool's overhead except the key timings, which are measured in the page):
 
 | Task | 1366 x 650 | 1093 x 525 |
 |---|---|---|
-| open a return | loads 1, clicks 1, 579 ms | loads 1, clicks 1, 529 ms |
-| brief on the first screen | six numbers end 409 px, tier line ends 246, flag rows fully visible 1, viewport 650, pane ends 638, page height 745 | six numbers end 447 px, tier line ends 265, flag rows fully visible 0, viewport 525, pane ends 513, page height 620 |
-| open a number's source | loads 0, clicks 1, 97 ms (incl. tool overhead), figure in view true, focus moved to the source true | loads 0, clicks 1, 112 ms (incl. tool overhead), figure in view true, focus moved to the source true |
+| open a return | loads 1, clicks 1, 401 ms | loads 1, clicks 1, 379 ms |
+| brief on the first screen | six numbers end 409 px, tier line 246, flag rows fully visible 1, pane ends 638, page 745 | six numbers end 447 px, tier line 265, flag rows fully visible 0, pane ends 513, page 620 |
+| open a number's source | loads 0, clicks 1, 103 ms, figure in view, focus in the source | loads 0, clicks 1, 93 ms, figure in view, focus in the source |
 | history entries added by opening sources | 0 | 0 |
-| key to result in the page | {"j":12,"k":10,"f":18,"n":28,"next":13,"prev":10} | {"j":19,"k":11,"f":19,"n":35,"next":18,"prev":12} |
-| Reviewed, next | 1 key, loads 0, now #/capital, 2 reviewed | 1 key, loads 0, now #/capital, 2 reviewed |
-| comment | loads 0, 1 key + 3 fields + 1 submit, 488 ms, comments 3 -> 4, trace pane lists it: true | loads 0, 1 key + 3 fields + 1 submit, 323 ms, comments 3 -> 4, trace pane lists it: true |
-| walk every number by j | 53 rows, 58 keys, ends at #/payment/p-bal | 53 rows, 58 keys, ends at #/payment/p-bal |
-| approve | loads 1, clicks 1, 262 ms | loads 1, clicks 1, 297 ms |
-| three panes side by side | [[132,179,557,460],[697,179,309,460],[1014,179,340,460]] stacked: false | [[12,179,486,335],[506,179,270,335],[784,179,297,335]] stacked: false |
-| readable text and rows beside a pane | smallest body text 16 px over 81 text nodes (offenders: []), smallest source text 12 px, 6 return rows fully visible in a 386 px list pane | smallest body text 16 px over 81 text nodes (offenders: []), smallest source text 12 px, 4 return rows fully visible in a 261 px list pane |
-| record page height | page 745 px for a 650 px window; list body 386 px, source body 348 px | page 620 px for a 525 px window; list body 261 px, source body 223 px |
+| key to result in the page (ms) | j 11, k 15, f 18, n 21, ] 11, [ 18 | j 12, k 16, f 31, n 22, ] 9, [ 8 |
+| Reviewed, next | 1 key, 0 loads, now #/capital | 1 key, 0 loads, now #/capital |
+| comment | 0 loads, 1 key + 3 fields + 1 submit, 296 ms, comments 3 to 4, trace lists it | 0 loads, 1 key + 3 fields + 1 submit, 312 ms, comments 3 to 4, trace lists it |
+| walk every number by j | 53 rows, 58 keys | 53 rows, 58 keys |
+| approve | loads 1, clicks 1, 219 ms | loads 1, clicks 1, 261 ms |
+| three panes side by side | [[132,179,557,460],[697,179,309,460],[1014,179,340,460]] stacked false | [[12,179,486,335],[506,179,270,335],[784,179,297,335]] stacked false |
+| readable text and rows beside a pane | body text 16 px over 81 nodes, source text 12 px, 6 rows in a 386 px list pane | body text 16 px over 81 nodes, source text 12 px, 4 rows in a 261 px list pane |
+| record page height | page 745 px for 650; list 386 px, source 348 px | page 620 px for 525; list 261 px, source 223 px |
 
 **Check 9, the basis.** `design/basis/` does not exist yet (D00 is not built), so the listed parts are in `notes.html` and below; `lint.mjs` fails any `app-` class that is used but not listed with its reason. No CSS `zoom`, no `@font-face` or hosted font in the CSS (Roboto is named in the stack and falls back to Arial). The same CSS custom properties stand in for `design/basis/settings.scss`.
 
 ## Parts used
+
+Both libraries are loaded from local copies in `assets/vendor/` (GOV.UK Frontend 6.5.1, MOJ Frontend 11), not from a CDN.
 
 ### GOV.UK Frontend
 | Part | Used for, or the reason it is composed |
@@ -93,7 +118,8 @@ Also from the new rules: SIN shows "SIN on file" (no digits, rule 23); body text
 | app-tabs | Tightens the MOJ sub navigation so the record tabs take one slim row. |
 | app-toolbar, app-toolbar__body, app-h1, app-sectionof, app-approvehint, app-unmark, app-offwhy, app-btn-sm | The one bar above the work: section name, mark state, "Reviewed, next", Approve (only when every section is Reviewed, RV-10), taking a mark off with a reason. Built from GOV.UK buttons and tags; the bar and the small button size are composed. |
 | app-work, app-panes, app-pane, app-pane--list, app-pane--trace, app-pane--source, app-pane__title, app-pane__sub, app-pane__body, app-pane__foot | The three panes of RV-4: the return, the trace, the source at full height. No GOV.UK or MOJ split view exists (searched 28 Sep). They stay side by side at 1093 px and 1366 px and stack only on a narrow screen. |
-| app-commentpanel, app-decide, app-sendback | The in-place comment panel, the flag decision and the send-back form: ordinary GOV.UK form parts in a bordered box so they sit inside the trace pane and the Comments tab. |
+| app-decide, app-sendback | The flag decision and the send-back form: ordinary GOV.UK form parts in a bordered box so they sit inside the trace pane and the Comments tab. |
+| app-cpanel, app-cp, app-cp__head, app-cp__body, app-cp__foot, app-cp__note | The in-place comment panel (round 2): one box laid over the trace and source panes so the 3 fields and Add comment are in view with no scrolling inside, even at 1093 px. Its header keeps the boxed figure caption; only the body scrolls (an error summary), the buttons stay pinned. Ordinary GOV.UK radios (small, inline), textarea, hint, error summary and button inside. No GOV.UK or MOJ part lays a form over a split view. |
 | app-brief, app-brief3, app-tiles, app-tile, app-tile__value, app-tile__small, app-h2, app-ref, app-lines, app-left, app-inline-list, app-strip, app-required | The brief: six numbers as tiles (RV-2), three short lists, the sections still to mark as links (RV-10), and the red asterisk on required fields (amber A20). |
 | app-source, app-source__hit, app-source__faded, app-source__label, app-caption, app-card, app-sheet, app-hit, app-entry, app-skeleton | The source viewer: a statement page with the figure boxed (thick outline plus the words "Boxed figure"), cards for entries, client answers, captures and results, a sheet grid for spreadsheets (EV-14), a loading skeleton. The build draws these from the prepared page image and PDF.js text layer. The same viewer fills the second window. |
 | app-sources | The sources in the trace as a short list of buttons with their status: a three-column table does not fit a 240 px pane at 16 px text. |

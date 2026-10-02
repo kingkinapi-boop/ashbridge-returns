@@ -5,13 +5,14 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import fs from 'node:fs';
 import http from 'node:http';
+import * as R from '../../../verify/rules.mjs'; // shared rule checks V1 to V8 (design/verify/README.md)
 const req = createRequire(path.join(process.env.AUDIT_MODULES, 'package.json'));
 const { chromium } = req('playwright-core');
 const axeSrc = fs.readFileSync(req.resolve('axe-core/axe.min.js'), 'utf8');
 const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 // the pages are served over http, never file:// (design card check 8)
 const SITE = path.resolve('design/prototypes/cpa-review');
-const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png' };
 const server = http.createServer((rq, rs) => {
   const p = decodeURIComponent(rq.url.split('?')[0]); const f = path.join(SITE, p);
   if (!f.startsWith(SITE) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { rs.writeHead(404); return rs.end('not found'); }
@@ -43,7 +44,7 @@ const goHash = async (page, h) => { await page.evaluate((x) => { location.hash =
 
 // ------------------------------------------------------------------ axe
 const SECS = ['brief', 'flags', 'statements', 'schedule-1', 'capital', 'losses', 'rate', 'dividends', 'shareholders', 'ontario', 'disclosures', 'payment', 'comments', 'history', 'find/loan'];
-const EXPAND = '.app-main--record{height:auto!important;display:block!important}.app-review,.app-work,.app-panes{height:auto!important}.app-pane{max-height:none!important}.app-pane__body,.app-rail,.app-winbody,[data-view],.app-scroll-x{overflow:visible!important;max-height:none!important}';
+const EXPAND = '.app-panes{display:block!important}.app-cpanel{position:static!important}.app-main--record{height:auto!important;display:block!important}.app-review,.app-work,.app-panes{height:auto!important}.app-pane{max-height:none!important}.app-pane__body,.app-rail,.app-winbody,[data-view],.app-scroll-x{overflow:visible!important;max-height:none!important}';
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 // Pass 1 is the page as laid out: violations and incomplete results. Pass 2 removes the scrolling of the panes for the colour contrast rule only,
 // because axe cannot judge text that a scrolling pane clips ("partially obscured": incomplete); contrast does not depend on the scroll position.
@@ -337,7 +338,185 @@ async function rules() {
   results.rules = R;
 }
 
+// ------------------------------------------------------------------ V1 to V8 (design/verify/rules.mjs), at both rule-18 sizes
+async function rulesV() {
+  const out = { run: 0, bad: 0, byRule: {} };
+  const A = (rule, label, r) => { out.run++; out.byRule[rule] = (out.byRule[rule] || 0) + 1; if (!r.ok) { out.bad++; fail(`${rule} ${label}: ${r.failures.join('; ')}`); } };
+  const rowBtn = (id) => `[data-row="${id}"] [data-pick]`;
+  const only = process.env.V_ONLY ? process.env.V_ONLY.split(',') : null;
+  const want = (r) => !only || only.includes(r);
+  for (const size of SIZES) {
+    const tag = size.join('x');
+    const L = (m) => `${m} @${tag}`;
+    // ---- V1: no early error, on load of every page and after non-submit input
+    if (want('V1')) {
+      for (const [f, h] of [['red.html', '#/brief'], ['red.html', '#/flags/01-F03'], ['red.html', '#/statements/n-6090'], ['red.html', '#/comments'], ['red.html', '#/comments/send'], ['red.html', '#/history'], ['red-rework.html', '#/changes'], ['green.html', '#/brief'], ['green-ready.html', '#/payment'], ['queue.html', ''], ['queue-empty.html', ''], ['approved-green.html', '']]) {
+        const page = await open(f, h, size); A('V1', L(`${f}${h}`), await R.V1(page)); await page.ctx.close();
+      }
+      { const page = await open('red.html', '#/statements/n-6090', size); await page.keyboard.press('c'); await page.waitForTimeout(150); A('V1', L('comment panel open, typing'), await R.V1(page)); await page.ctx.close(); }
+      { const page = await open('green-ready.html', '#/payment', size); await page.evaluate(() => document.querySelector('[data-unmark-open]').click()); await page.waitForTimeout(100); A('V1', L('unmark form open, typing'), await R.V1(page)); await page.ctx.close(); }
+    }
+    // ---- V2: in-place actions leave scroll and the identity bar alone
+    if (want('V2')) {
+      const page = await open('red.html', '#/statements/n-6090', size);
+      const acts = [
+        { name: 'pick a number', click: rowBtn('n-6095') }, { name: 'j', press: 'j' }, { name: 'k', press: 'k' }, { name: 'f (next flag)', press: 'f' },
+        { name: 'open comment panel', run: async (p) => { await p.evaluate(() => { location.hash = '#/statements/n-6090'; }); await p.waitForTimeout(100); await p.keyboard.press('c'); } },
+        { name: 'cancel comment', click: '[data-comment-cancel]' },
+        { name: 'section from the rail or the select', run: async (p) => { if (await p.locator('[data-rail="s1"]').isVisible()) await p.click('[data-rail="s1"]'); else await p.selectOption('[data-section-pick]', '#/schedule-1'); } },
+        { name: 'n (next section)', press: 'n' }, { name: 'r (Reviewed, next)', press: 'r' },
+        { name: 'record a flag decision', run: async (p) => { await p.evaluate(() => { location.hash = '#/flags/01-F03'; }); await p.waitForTimeout(100); await p.click('[data-trace]:not([hidden]) [data-flag-form] label[for$="-a"]'); await p.click('[data-trace]:not([hidden]) [data-flag-form] button'); } },
+        { name: 'comment panel error', run: async (p) => { await p.evaluate(() => { location.hash = '#/statements/n-6090'; }); await p.waitForTimeout(100); await p.keyboard.press('c'); await p.click('[data-comment-form] button.govuk-button'); } },
+      ];
+      for (const a of acts) A('V2', L(a.name), await R.V2(page, a));
+      await page.ctx.close();
+    }
+    // ---- V3: the evidence and the primary action in view, no page scroll, in every pane state
+    if (want('V3')) {
+      for (const [f, h, lab] of [['red.html', '#/statements/n-6090', 'number with a source'], ['red.html', '#/statements/n-6170', 'number with no evidence'], ['red.html', '#/flags/01-F03', 'flag with cited evidence'], ['red.html', '#/schedule-1', 'Schedule 1 first number'], ['red.html', '#/losses', 'losses'], ['red.html', '#/payment', 'payment and filing'], ['red-rework.html', '#/statements', 'back from rework'], ['green.html', '#/statements', 'green return'], ['green-ready.html', '#/payment', 'green, section marked']]) {
+        const page = await open(f, h, size); A('V3', L(`${lab} (${f}${h})`), await R.V3(page)); await page.ctx.close();
+      }
+      const page = await open('red.html', '#/statements/n-6090', size); await page.keyboard.press('c'); await page.waitForTimeout(150);
+      A('V3', L('comment panel open'), await R.V3(page));
+      const inside = await page.evaluate(() => { const b = document.querySelector('.app-cp__body'); const f = [...document.querySelectorAll('.app-cp [data-g]')].map((g) => g.getBoundingClientRect()); const bt = document.querySelector('.app-cp [data-primary]').getBoundingClientRect(); const cap = document.querySelector('[data-cp-caption]'); const cp = document.querySelector('[data-comment-host]').getBoundingClientRect(); return { innerScroll: b.scrollHeight > b.clientHeight + 1, groups: f.length, fieldsInside: f.every((r) => r.top >= cp.top && r.bottom <= cp.bottom + 0.5), btnInside: bt.bottom <= cp.bottom + 0.5, capText: cap ? cap.textContent.slice(0, 40) : null, panelH: Math.round(cp.height), panelW: Math.round(cp.width) }; });
+      const ok3 = !inside.innerScroll && inside.groups === 3 && inside.fieldsInside && inside.btnInside && /^Source: /.test(inside.capText || '');
+      A('V3', L(`comment panel: 3 fields + Add comment inside, no inner scroll, caption in header (${inside.panelW} x ${inside.panelH})`), { ok: ok3, failures: [JSON.stringify(inside)] });
+      results.cpanel = results.cpanel || {}; results.cpanel[tag] = inside; await page.ctx.close();
+    }
+    // ---- V4: focus lands after every action, Back, and each shortcut
+    if (want('V4')) {
+      const page = await open('red.html', '#/statements/n-6090', size);
+      const acts = [
+        { name: 'click a number', click: rowBtn('n-6095'), expect: '[data-source-body]' },
+        { name: 'c opens the comment panel', press: 'c', expect: '#type-0' },
+        { name: 'Escape closes the panel', press: 'Escape', expect: '[data-pick]' },
+        { name: 'c, then Cancel', run: async (p) => { await p.keyboard.press('c'); await p.click('[data-comment-cancel]'); }, expect: '[data-pick]' },
+        { name: 'empty submit shows the summary', run: async (p) => { await p.keyboard.press('c'); await p.click('[data-comment-form] button.govuk-button'); }, expect: '[data-es]' },
+        { name: 'add a comment', run: async (p) => { await p.click('label[for="type-0"]'); await p.click('label[for="severity-1"]'); await p.fill('#text', 'Receipts please.'); await p.click('[data-comment-form] button.govuk-button'); }, expect: '[data-pick]' },
+        { name: 'j', press: 'j', expect: '[data-pick]' },
+        { name: 'Back after a section change', run: async (p) => { await p.evaluate(() => { location.hash = '#/schedule-1'; }); await p.waitForTimeout(150); await p.goBack(); }, expect: '#route-title, [data-pick]' },
+        { name: 'r (Reviewed, next)', press: 'r', expect: '[data-pick], #route-title' },
+      ];
+      for (const a of acts) A('V4', L(a.name), await R.V4(page, a));
+      await page.evaluate(() => { location.hash = '#/statements/n-6090'; }); await page.waitForTimeout(150);
+      A('V4', L('shortcuts j k f ] [ o n r a c'), await R.V4(page, null, { shortcuts: [
+        { key: 'j', selector: '[data-pick]' }, { key: 'k', selector: '[data-pick]' }, { key: 'f', selector: '[data-pick]' },
+        { key: ']', selector: '[data-source-body]' }, { key: '[', selector: '[data-source-body]' }, { key: 'o', selector: '[data-open-source]' },
+        { key: 'n', selector: '[data-pick], #route-title' }, { key: 'r', selector: '[data-pick], #route-title' },
+        { key: 'a', selector: '[data-approve], .app-approvehint a' }, { key: 'c', selector: '#type-0' }] }));
+      await page.ctx.close();
+      const pg2 = await open('green.html', '#/brief', size);
+      A('V4', L('a with sections left focuses "Approve: N sections left"'), await R.V4(pg2, { name: 'a', press: 'a', expect: '.app-approvehint a' }));
+      const said = await pg2.evaluate(() => document.getElementById('app-live').textContent);
+      A('V4', L('a announces why'), { ok: /not ready: \d+ of 11 sections left/.test(said), failures: [`live region says "${said}"`] });
+      await pg2.ctx.close();
+      const pg3 = await open('green-ready.html', '#/brief', size);
+      A('V4', L('a with every section Reviewed focuses Approve return'), await R.V4(pg3, { name: 'a', press: 'a', expect: '[data-approve]' }));
+      await pg3.ctx.close();
+    }
+    // ---- V5: counts carry their scope; the same count is the same number on every page of one return
+    if (want('V5')) {
+      const seen = [];
+      for (const h of ['#/brief', '#/flags', '#/statements/n-6090', '#/comments', '#/history']) { const page = await open('red.html', h, size); const r = await R.V5(page); A('V5', L(`red.html${h}`), r); seen.push(r); await page.ctx.close(); }
+      A('V5', L('red.html: same count, same number across pages'), R.V5same(seen));
+      const seenG = []; for (const h of ['#/brief', '#/comments', '#/payment']) { const page = await open('green.html', h, size); const r = await R.V5(page); A('V5', L(`green.html${h}`), r); seenG.push(r); await page.ctx.close(); }
+      A('V5', L('green.html: same count, same number across pages'), R.V5same(seenG));
+      const q = await open('queue.html', '', size); A('V5', L('queue.html'), await R.V5(q));
+      A('V5', L('queue caption updates with a filter'), await R.V5caption(q, { name: 'tier filter', run: (p) => p.selectOption('#q-tier', 'green') }, { caption: '[data-q-count]' })); await q.ctx.close();
+    }
+    // ---- V6: search keeps its promise
+    if (want('V6')) {
+      const page = await open('red.html', '#/brief', size);
+      A('V6', L('Find a number: name and account number'), await R.V6(page, { input: '#find-q', result: '[data-find-results] tbody tr, [data-row].is-selected', label: '#find-hint', kinds: [{ kind: 'name', value: 'Dividend paid' }, { kind: 'account number', value: '6090' }] }));
+      await page.ctx.close();
+      const q = await open('queue.html', '', size);
+      A('V6', L('Queue: search by name'), await R.V6(q, { input: '#q-search', result: 'tbody tr:not([hidden])', label: 'label[for="q-search"]', kinds: [{ kind: 'name', value: 'Queen West Design Studio Inc. (Test)' }] })); await q.ctx.close();
+    }
+    // ---- V7: every click does something
+    if (want('V7')) {
+      for (const [f, h, lab] of [['red.html', '#/brief', 'brief'], ['red.html', '#/statements/n-6090', 'a number picked'], ['red.html', '#/flags/01-F03', 'a flag'], ['red.html', '#/comments', 'comments'], ['green-ready.html', '#/payment', 'every section Reviewed, last section'], ['queue.html', '', 'queue'], ['approved-green.html', '', 'approved']]) {
+        const page = await open(f, h, size);
+        A('V7', L(`${lab} (${f}${h})`), await R.V7(page, { selector: 'button, a[href]:not(.govuk-skip-link), [role=button], input[type=submit], summary', limit: 70, reset: async (p) => { await p.goto('about:blank'); await p.goto(url(f, h)); await p.waitForTimeout(200); } })); await page.ctx.close();
+      }
+    }
+    if (want('V7')) {
+      // the skip link is visually hidden until focused, so the shared check cannot click it: Tab to it, press Enter, and the route must stay and focus must land on the heading
+      const page = await open('red.html', '#/statements/n-6090', size); await page.keyboard.press('Tab'); await page.keyboard.press('Enter'); await page.waitForTimeout(200);
+      const st = await page.evaluate(() => ({ hash: location.hash, active: document.activeElement && document.activeElement.id }));
+      A('V7', L('skip link keeps the route and focuses the heading'), { ok: st.hash === '#/statements/n-6090' && st.active === 'route-title', failures: [JSON.stringify(st)] }); await page.ctx.close();
+    }
+    // ---- V8: no field on these pages is tied to an option, so there is nothing to type into (checked: every text field is a stand-alone field)
+    if (want('V8')) {
+      const page = await open('red.html', '#/statements/n-6090', size); await page.keyboard.press('c');
+      const tied = await page.evaluate(() => [...document.querySelectorAll('input[type=text],input[type=search],textarea')].filter((e) => e.closest('.govuk-radios__conditional, .govuk-checkboxes__conditional')).length);
+      A('V8', L('no text field is a conditional of a radio or checkbox'), { ok: tied === 0, failures: [`${tied} fields tied to an option: run R.V8 on them`] });
+      await page.ctx.close();
+    }
+  }
+  log(`V1 TO V8: ${out.run} checks, ${out.bad} failing; by rule ${JSON.stringify(out.byRule)}; comment panel ${JSON.stringify(results.cpanel)}`);
+  results.v = out;
+}
+
+// ------------------------------------------------------------------ re-walk of tasks 5, 6 and 7 of the brief (round 2): counts of loads, clicks and keys
+async function tasks() {
+  const rep = [];
+  const t = (name, cond, extra) => { rep.push([name, cond, extra]); if (cond) ok(`${name}: ${extra}`); else fail(`${name}: ${extra}`); };
+  for (const size of SIZES) {
+    const tag = size.join('x');
+    // task 5: check one number (pick, source beside it, next number, next source, back)
+    let page = await open('red.html', '#/statements', size); let loads = 0; page.on('load', () => { loads++; });
+    await page.click('[data-row="n-6095"] [data-pick]'); await page.waitForTimeout(150);
+    const s5 = await page.evaluate(() => { const h = document.querySelector('[data-source]:not([hidden]) [data-evidence]'); const b = document.querySelector('[data-source-body]').getBoundingClientRect(); const r = h && h.getBoundingClientRect(); return { hit: !!r, inView: !!r && r.top >= b.top - 1 && r.bottom <= b.bottom + 1, focusSource: document.activeElement === document.querySelector('[data-source-body]'), scrollY: scrollY, trace: !!document.querySelector('[data-trace="n-6095"]:not([hidden])') }; });
+    t(`task 5 pick a number @${tag}`, loads === 0 && s5.hit && s5.inView && s5.focusSource && s5.trace && s5.scrollY <= 8, `1 click, ${loads} loads, boxed figure in view ${s5.inView}, focus in source ${s5.focusSource}, trace beside it ${s5.trace}, page scroll ${s5.scrollY}`);
+    const before = await page.evaluate(() => location.hash); await page.keyboard.press('j'); await page.waitForTimeout(120);
+    const after = await page.evaluate(() => ({ h: location.hash, src: !!document.querySelector('[data-source]:not([hidden]) [data-evidence]'), act: document.activeElement.hasAttribute('data-pick') }));
+    t(`task 5 j to the next number @${tag}`, after.h !== before && after.src && after.act && loads === 0, `1 key, ${before} -> ${after.h}, source shown ${after.src}, focus on the row ${after.act}, ${loads} loads`);
+    await page.keyboard.press(']'); await page.waitForTimeout(120);
+    const cap1 = await page.evaluate(() => (document.querySelector('[data-source]:not([hidden]) .app-caption') || {}).textContent);
+    await page.keyboard.press('['); await page.waitForTimeout(120);
+    const cap2 = await page.evaluate(() => (document.querySelector('[data-source]:not([hidden]) .app-caption') || {}).textContent);
+    t(`task 5 next and previous source @${tag}`, cap1 !== cap2, `${cap2} | ${cap1}`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(80);
+    const back = await page.evaluate(() => document.activeElement.hasAttribute('data-pick'));
+    t(`task 5 Escape returns to the number @${tag}`, back, `focus on the row ${back}`);
+    await page.ctx.close();
+    // task 6: comment on a number
+    page = await open('red.html', '#/statements/n-6090', size); loads = 0; page.on('load', () => { loads++; });
+    const c0 = await page.evaluate(() => +document.querySelector('[data-comment-count]').textContent);
+    await page.keyboard.press('c'); await page.waitForTimeout(120);
+    const pan = await page.evaluate(() => { const p = document.querySelector('[data-comment-host]').getBoundingClientRect(); const tr = document.querySelector('.app-pane--trace').getBoundingClientRect(); const so = document.querySelector('.app-pane--source').getBoundingClientRect(); const bt = document.querySelector('.app-cp [data-primary]').getBoundingClientRect(); return { coversTraceAndSource: p.left <= tr.left + 1 && p.right >= so.right - 1, btnInView: bt.bottom <= innerHeight && bt.top >= 0, caption: document.querySelector('[data-cp-caption]').textContent, fields: document.querySelectorAll('.app-cp [data-g]').length, innerScroll: (b => b.scrollHeight > b.clientHeight + 1)(document.querySelector('.app-cp__body')) }; });
+    t(`task 6 panel opens over trace and source @${tag}`, pan.coversTraceAndSource && pan.btnInView && pan.fields === 3 && !pan.innerScroll && /^Source: /.test(pan.caption), `1 key, 3 fields, no scrolling inside ${!pan.innerScroll}, Add comment in view ${pan.btnInView}, header "${pan.caption}"`);
+    await page.click('label[for="type-0"]'); await page.click('label[for="severity-1"]'); await page.fill('#text', 'Please attach the receipts.'); await page.click('[data-comment-form] button.govuk-button'); await page.waitForTimeout(150);
+    const c1 = await page.evaluate(() => ({ n: +document.querySelector('[data-comment-count]').textContent, listed: document.querySelector('[data-trace="n-6090"] [data-notes]').textContent.includes('Please attach'), row: document.activeElement.hasAttribute('data-pick'), closed: !document.querySelector('[data-comment-host]').hasAttribute('data-open'), scrollY }));
+    t(`task 6 submit @${tag}`, c1.n === c0 + 1 && c1.listed && c1.row && c1.closed && loads === 0 && c1.scrollY <= 8, `1 key + 3 fields + 1 submit, ${loads} loads, comments ${c0} -> ${c1.n}, trace lists it ${c1.listed}, focus back on the row ${c1.row}`);
+    await page.ctx.close();
+    // task 7: approve
+    page = await open('green.html', '#/brief', size);
+    await page.keyboard.press('a'); await page.waitForTimeout(100);
+    const a1 = await page.evaluate(() => ({ foc: document.activeElement.matches('.app-approvehint a') && document.activeElement.textContent, live: document.getElementById('app-live').textContent }));
+    t(`task 7 a with sections left @${tag}`, /^Approve: \d+ sections left$/.test(a1.foc || '') && /not ready/.test(a1.live), `focus on "${a1.foc}", says "${a1.live}"`);
+    for (const slug of ['flags', 'statements', 'schedule-1', 'capital', 'losses', 'rate', 'dividends', 'shareholders', 'ontario', 'disclosures', 'payment']) {
+      await goHash(page, '#/' + slug);
+      let g = 0; while (g++ < 12 && (await page.evaluate(() => !!document.querySelector('[data-trace]:not([hidden]) [data-flag-form] input')))) { await page.click('[data-trace]:not([hidden]) [data-flag-form] label[for$="-a"]'); await page.click('[data-trace]:not([hidden]) [data-flag-form] button'); await page.waitForTimeout(80); }
+      if (slug === 'flags' && (await page.evaluate(() => !document.querySelector('[data-reviewed-next]')))) await goHash(page, '#/flags');
+      await page.keyboard.press('r'); await page.waitForTimeout(100);
+    }
+    const n7 = await page.evaluate(() => ({ n: +document.querySelector('[data-count-reviewed]').textContent, ap: !!document.querySelector('[data-approve]') }));
+    t(`task 7 all 11 marks, Approve shows @${tag}`, n7.n === 11 && n7.ap, `${n7.n} of 11 marked, Approve return shown ${n7.ap}`);
+    await page.keyboard.press('a'); await page.waitForTimeout(80);
+    const a2 = await page.evaluate(() => document.activeElement.hasAttribute('data-approve'));
+    loads = 0; page.on('load', () => { loads++; });
+    await page.keyboard.press('Enter'); await page.waitForSelector('.govuk-panel', { timeout: 3000 }).catch(() => {});
+    const ap = await page.evaluate(() => ({ panel: !!document.querySelector('.govuk-panel'), rows: document.querySelectorAll('tbody tr').length, next: !!document.querySelector('[data-queue-next-link]') }));
+    t(`task 7 a, then Enter approves @${tag}`, a2 && ap.panel && ap.rows >= 12 && ap.next, `a focused Approve ${a2}, 1 key + Enter, ${loads} load, record rows ${ap.rows}, next return link ${ap.next}`);
+    await page.ctx.close();
+  }
+  results.tasks = rep;
+}
+
 try {
+  if (which === 'tasks' || which === 'all') await tasks();
+  if (which === 'v' || which === 'all') await rulesV();
   if (which === 'axe' || which === 'all') await axeAll();
   if (which === 'reflow' || which === 'all') await reflow();
   if (which === 'walk' || which === 'all') await walk();

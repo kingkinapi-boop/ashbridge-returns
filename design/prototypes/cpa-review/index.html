@@ -5,8 +5,8 @@
 <title>CPA review prototype - Ashbridge Tax</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#355b7d">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.css">
+<link rel="stylesheet" href="assets/vendor/govuk-frontend.min.css">
+<link rel="stylesheet" href="assets/vendor/moj-frontend.min.css">
 <link rel="stylesheet" href="assets/ashbridge-v1.css">
 </head>
 <body class="govuk-template__body" >
@@ -22,8 +22,9 @@
 </main></div>
 
 <div id="app-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
-<script type="module">import { initAll } from 'https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/govuk-frontend.min.js'; initAll();</script>
-<script type="module">import { initAll as mojInit } from 'https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/moj-frontend.min.js'; mojInit();</script>
+<script src="../assets/vendor/govuk-frontend.bundle.js"></script>
+<script src="../assets/vendor/moj-frontend.bundle.js"></script>
+<script>if (window.GOVUKFrontend) { GOVUKFrontend.initAll(); } if (window.MOJFrontend) { MOJFrontend.initAll(); }</script>
 
 </body>
 </html>

@@ -3,8 +3,8 @@
 import { esc, money, SECTIONS, SCENARIOS, getReturn, reworkView, PROTOTYPE_TODAY } from './model.mjs';
 import { H, chg, val, sourceBody, sourceCaption, statusOf } from './ui.mjs';
 
-const GOVUK = 'https://cdn.jsdelivr.net/npm/govuk-frontend@6.5.1/dist/govuk/';
-const MOJ = 'https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend@11/moj/';
+// Local copies of GOV.UK Frontend 6.5.1 and MOJ Frontend 11 (assets/vendor/, copied unchanged except the asset URLs), so the sitting works offline.
+const VENDOR = '../assets/vendor/';
 export const BLUEPRINT_COMMIT = 'b9c5003';
 const NOW = '10 Mar 2026, 11:40';
 const slugOf = (key) => SECTIONS.find((s) => s.key === key).slug;
@@ -22,8 +22,8 @@ export function frame({ title, main, ret, error = false, bodyAttrs = '', nav = '
 <title>${esc(t)}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#355b7d">
-<link rel="stylesheet" href="${GOVUK}govuk-frontend.min.css">
-<link rel="stylesheet" href="${MOJ}moj-frontend.min.css">
+<link rel="stylesheet" href="${VENDOR}govuk-frontend.min.css">
+<link rel="stylesheet" href="${VENDOR}moj-frontend.min.css">
 <link rel="stylesheet" href="../assets/ashbridge-v1.css">
 </head>
 <body class="govuk-template__body" ${bodyAttrs}>
@@ -34,8 +34,9 @@ ${serviceNav}
 ${main}
 ${foot}
 <div id="app-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
-<script type="module">import { initAll } from '${GOVUK}govuk-frontend.min.js'; initAll();</script>
-<script type="module">import { initAll as mojInit } from '${MOJ}moj-frontend.min.js'; mojInit();</script>
+<script src="${VENDOR}govuk-frontend.bundle.js"></script>
+<script src="${VENDOR}moj-frontend.bundle.js"></script>
+<script>if (window.GOVUKFrontend) { GOVUKFrontend.initAll(); } if (window.MOJFrontend) { MOJFrontend.initAll(); }</script>
 ${scripts}
 </body>
 </html>
@@ -65,7 +66,7 @@ function rowsFor(R, sec, lines) {
 function printedPanel(R, sec) {
   const pages = R.printed[sec.key];
   return `<div class="app-printed" data-printed="${sec.key}"><p class="app-ref">${esc(sec.ref)}. Not drawn as a structured view: the printed return's pages, with a mark like every other section (RV-9).</p>
-${pages.map((p, i) => `<section class="app-page" data-page="${sec.key}:${i}"${i ? ' hidden' : ''} aria-label="Printed return page ${p.no} of ${p.of}"><p class="app-caption">Printed return, page ${p.no} of ${p.of}: ${esc(p.title)} (page ${i + 1} of ${pages.length} for this section)</p><table class="app-printed__table"><caption class="govuk-visually-hidden">${esc(p.title)}</caption><tbody>${p.rows.map(([a, b]) => `<tr><th scope="row">${esc(a)}</th><td class="app-num">${esc(b)}</td></tr>`).join('')}</tbody></table></section>`).join('')}
+${pages.map((p, i) => `<section class="app-page" data-page="${sec.key}:${i}"${i ? ' hidden' : ''} aria-label="Printed return page ${p.no} of ${p.of}"><p class="app-caption">Printed return, page ${p.no} of ${p.of}: ${esc(p.title)} (page ${i + 1} of ${pages.length} for this section)</p><table class="app-printed__table" data-evidence><caption class="govuk-visually-hidden">${esc(p.title)}</caption><tbody>${p.rows.map(([a, b]) => `<tr><th scope="row">${esc(a)}</th><td class="app-num">${esc(b)}</td></tr>`).join('')}</tbody></table></section>`).join('')}
 <div class="app-pagebtns"><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-page-prev aria-keyshortcuts="[">Previous page</button> <button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-page-next aria-keyshortcuts="]">Next page</button></div></div>`;
 }
 
@@ -116,13 +117,16 @@ function flagTrace(R, f) {
 </div>`;
 }
 
+// The boxed figure (or the whole card when there is no box) is the evidence node of the pane: V3 checks it is in view (reports/findings-designs-2.md).
+const markEvidence = (h) => /app-source__hit|app-hit/.test(h) ? h.replace(/class="(app-source__hit|app-hit)"/g, 'class="$1" data-evidence') : h.replace(/<div class="app-card">/, '<div class="app-card" data-evidence>');
+
 // ---------------------------------------------------------------- source host (every source, hidden until chosen)
 function sourceHost(R) {
   const keyed = [...R.lines.map((l) => ({ id: l.id, srcs: l.srcs, label: l.label })), ...R.flags.map((f) => ({ id: f.id, srcs: f.evidence, label: f.title, flag: true }))];
   return keyed.map(({ id, srcs, label, flag }) => {
-    if (!srcs.length) return `<div data-srcset="${id}" data-nosource hidden><div class="app-card"><h4>Not checked: no evidence</h4><p>No statement page, entry, client answer or capture was found for this number (CK-2). It stays marked "Not checked: no evidence" until something is attached.</p><p class="govuk-body-s">The sources list is empty, so there is no boxed figure to show.</p><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-comment-kind="Missing evidence">Comment: missing evidence</button></div></div>`;
+    if (!srcs.length) return `<div data-srcset="${id}" data-nosource hidden><div class="app-card" data-evidence><h4>Not checked: no evidence</h4><p>No statement page, entry, client answer or capture was found for this number (CK-2). It stays marked "Not checked: no evidence" until something is attached.</p><p class="govuk-body-s">The sources list is empty, so there is no boxed figure to show.</p><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-comment-kind="Missing evidence">Comment: missing evidence</button></div></div>`;
     const n = srcs.length;
-    return `<div data-srcset="${id}" data-count="${n}" hidden>${srcs.map((s, k) => `<section data-source="${id}:${k}" hidden aria-label="${flag ? 'Evidence' : 'Source'} ${k + 1} of ${n} for ${esc(label)}"><p class="app-caption">${esc(flag ? 'Cited evidence: ' : '')}${esc(sourceCaption(s, k, n))}</p>${sourceBody(s)}</section>`).join('')}</div>`;
+    return `<div data-srcset="${id}" data-count="${n}" hidden>${srcs.map((s, k) => `<section data-source="${id}:${k}" hidden aria-label="${flag ? 'Evidence' : 'Source'} ${k + 1} of ${n} for ${esc(label)}"><p class="app-caption">${esc(flag ? 'Cited evidence: ' : '')}${esc(sourceCaption(s, k, n))}</p>${markEvidence(sourceBody(s))}</section>`).join('')}</div>`;
   }).join('');
 }
 
@@ -139,9 +143,9 @@ function briefPanel(R, scn, rv) {
 <div class="app-strip"><span><strong>Tier ${H.tierWord(R.cfg.tier)}.</strong> ${esc(R.cfg.tierWhy)}</span></div>
 <h2 class="govuk-heading-s app-h2">The return in six numbers, against last year <span class="app-madeup-note">Taxable income, tax, instalments and balance are made-up values for the design: the sample clients do not carry them yet.</span></h2>
 <ul class="app-tiles">${tiles}</ul>
-<div class="app-scroll" role="region" aria-label="Pinned flags" tabindex="0"><table class="govuk-table govuk-!-margin-bottom-0"><caption class="govuk-table__caption govuk-table__caption--s">Pinned flags: red first, then dollar effect (${R.flags.length})</caption><thead class="govuk-table__head"><tr><th scope="col" class="govuk-table__header">Flag</th><th scope="col" class="govuk-table__header">Dollar effect</th><th scope="col" class="govuk-table__header">Preparer's answer and your decision</th></tr></thead><tbody class="govuk-table__body">${flagRows}</tbody></table></div>
+<div class="app-scroll" role="region" aria-label="Pinned flags" tabindex="0"><table class="govuk-table govuk-!-margin-bottom-0"><caption class="govuk-table__caption govuk-table__caption--s" data-count="flags" data-scope="flags">Pinned flags: red first, then dollar effect (${R.flags.length})</caption><thead class="govuk-table__head"><tr><th scope="col" class="govuk-table__header">Flag</th><th scope="col" class="govuk-table__header">Dollar effect</th><th scope="col" class="govuk-table__header">Preparer's answer and your decision</th></tr></thead><tbody class="govuk-table__body">${flagRows}</tbody></table></div>
 <div class="app-brief3">
-<div><h2 class="govuk-heading-s">What changed since last year</h2><ul class="app-lines">${ch.map((l) => `<li>${esc(l.label)}: ${val(l, l.cy)} against ${val(l, l.ly)} (${chg(l)})</li>`).join('')}</ul><p class="govuk-body-s govuk-!-margin-bottom-0">${R.lines.filter((l) => l.changed).length} large changes in all, marked in the sections.</p></div>
+<div><h2 class="govuk-heading-s">What changed since last year</h2><ul class="app-lines">${ch.map((l) => `<li>${esc(l.label)}: ${val(l, l.cy)} against ${val(l, l.ly)} (${chg(l)})</li>`).join('')}</ul><p class="govuk-body-s govuk-!-margin-bottom-0" data-count="large-changes" data-scope="large changes">${R.lines.filter((l) => l.changed).length} large changes in all, marked in the sections.</p></div>
 <div><h2 class="govuk-heading-s">Assumptions and client decisions</h2><ul class="app-lines">${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul></div>
 <div><h2 class="govuk-heading-s">Attestations</h2><ul class="app-lines">${att.map((i) => `<li>${esc(i)}</li>`).join('')}</ul></div></div>
 <div class="app-left" data-left-list></div>
@@ -183,7 +187,7 @@ function keysPanel() {
   return `<details class="app-keys"><summary class="app-keys__summary">Keyboard shortcuts</summary><div class="app-keys__pop" role="group" aria-label="Keyboard shortcuts"><ul class="app-keys__list">${items.map(([k, v]) => `<li><kbd>${esc(k)}</kbd> ${esc(v)}</li>`).join('')}</ul><div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes"><div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="keys-off" type="checkbox"><label class="govuk-label govuk-checkboxes__label" for="keys-off">Turn single-key shortcuts off</label></div></div></div></details>`;
 }
 
-const miniBar = (R) => `<div class="moj-identity-bar" role="region" aria-label="This return"><div class="govuk-width-container app-wide"><div class="moj-identity-bar__container"><div class="moj-identity-bar__details"><h2 class="moj-identity-bar__title">${esc(R.corp)}</h2><p>Year end ${esc(R.ye)} ${H.tier(R.cfg.tier)}</p></div></div></div></div>`;
+const miniBar = (R) => `<div class="moj-identity-bar" data-identity-bar role="region" aria-label="This return"><div class="govuk-width-container app-wide"><div class="moj-identity-bar__container"><div class="moj-identity-bar__details"><h2 class="moj-identity-bar__title">${esc(R.corp)}</h2><p>Year end ${esc(R.ye)} ${H.tier(R.cfg.tier)}</p></div></div></div></div>`;
 
 // ---------------------------------------------------------------- the record page
 export function recordPage(scn) {
@@ -199,14 +203,14 @@ export function recordPage(scn) {
     sections, marks, comments, approveHref: `approved-${scn.which}.html`,
     flags: R.flags.map((f) => ({ id: f.id, title: f.title, tier: f.tier, decided: decidedFor(R0, scn, f) ? 'accept' : null })),
     offReason: scn.kind === 'rework' ? { stmt: `${R.byId[rv.rw.to].label} changed from ${money(rv.before[rv.rw.to])} to ${money(R.byId[rv.rw.to].cy)} and ${R.byId[rv.rw.from].label} from ${money(rv.before[rv.rw.from])} to ${money(R.byId[rv.rw.from].cy)}, by ${rv.rw.who}, ${rv.rw.when} (answering ${rv.rw.comment}). Re-mark it when you have looked at the changed numbers.` } : {},
-    index: [...R.lines.filter((l) => l.kind !== 'sub').map((l) => ({ id: l.id, label: l.label, sec: l.section, val: val(l, l.cy) })), ...R.flags.map((f) => ({ id: f.id, label: f.id + ' ' + f.title, sec: 'flags', val: f.effect === null ? 'Not stated' : money(f.effect) }))],
+    index: [...R.lines.filter((l) => l.kind !== 'sub').map((l) => ({ id: l.id, label: l.label, acct: String(l.acct || ''), sec: l.section, val: val(l, l.cy) })), ...R.flags.map((f) => ({ id: f.id, label: f.id + ' ' + f.title, sec: 'flags', val: f.effect === null ? 'Not stated' : money(f.effect) }))],
     lines: Object.fromEntries(R.lines.map((l) => [l.id, { label: l.label, val: val(l, l.cy), section: l.section }])),
     srcFile: `source-${scn.which}.html`,
   };
-  const idBar = `<div class="moj-identity-bar" role="region" aria-label="This return"><div class="govuk-width-container app-wide"><div class="moj-identity-bar__container"><div class="moj-identity-bar__details"><h2 class="moj-identity-bar__title">${esc(R.corp)}</h2><p>Year end ${esc(R.ye)} ${H.tier(R.cfg.tier)} ${scn.kind === 'rework' ? H.tag('Back from rework', 'purple') : H.tag('In review', 'blue')} <strong class="govuk-tag govuk-tag--grey" data-count-tag><span data-count-reviewed></span> of ${SECTIONS.length} sections Reviewed</strong></p><p class="app-idlinks"><a class="govuk-link" href="queue.html" data-queue-back>Back to the queue</a> <a class="govuk-link" href="queue.html" data-queue-prev hidden>Previous return</a> <a class="govuk-link" href="queue.html" data-queue-next hidden>Next return</a></p></div></div></div></div>`;
+  const idBar = `<div class="moj-identity-bar" data-identity-bar role="region" aria-label="This return"><div class="govuk-width-container app-wide"><div class="moj-identity-bar__container"><div class="moj-identity-bar__details"><h2 class="moj-identity-bar__title">${esc(R.corp)}</h2><p>Year end ${esc(R.ye)} ${H.tier(R.cfg.tier)} ${scn.kind === 'rework' ? H.tag('Back from rework', 'purple') : H.tag('In review', 'blue')} <strong class="govuk-tag govuk-tag--grey" data-count-tag data-count="reviewed" data-scope="sections Reviewed"><span data-count-reviewed></span> of ${SECTIONS.length} sections Reviewed</strong></p><p class="app-idlinks"><a class="govuk-link" href="queue.html" data-queue-back>Back to the queue</a> <a class="govuk-link" href="queue.html" data-queue-prev hidden>Previous return</a> <a class="govuk-link" href="queue.html" data-queue-next hidden>Next return</a></p></div></div></div></div>`;
   const findForm = `<form class="app-find" role="search" data-find><label class="govuk-label app-find__label" for="find-q">Find a number</label><input class="govuk-input app-find__input" id="find-q" name="q" type="search" autocomplete="off" aria-describedby="find-hint"><button type="submit" class="govuk-button govuk-button--secondary app-btn-sm">Find</button><span id="find-hint" class="govuk-visually-hidden">Searches every section, by name or account number</span></form>`;
   const pickSection = `<nav class="app-pick" aria-label="Jump to a section"><label class="govuk-label app-find__label" for="sec-pick">Section</label><select class="govuk-select app-pick__select" id="sec-pick" data-section-pick></select></nav>`;
-  const tabs = `<div class="govuk-width-container app-wide app-tabsrow"><nav class="moj-sub-navigation app-tabs" aria-label="Return record"><ul class="moj-sub-navigation__list"><li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#/brief" data-tab="review">Review</a></li><li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#/comments" data-tab="comments">Comments <span class="moj-badge moj-badge--blue" data-comment-count>${comments.length}</span></a></li>${scn.kind === 'rework' ? `<li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#/changes" data-tab="changes">Changes <span class="moj-badge moj-badge--purple">2<span class="govuk-visually-hidden"> changed numbers</span></span></a></li>` : ''}<li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#/history" data-tab="history">History</a></li></ul></nav><div class="app-tools">${pickSection}${findForm}</div></div>`;
+  const tabs = `<div class="govuk-width-container app-wide app-tabsrow"><nav class="moj-sub-navigation app-tabs" aria-label="Return record"><ul class="moj-sub-navigation__list"><li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#/brief" data-tab="review">Review</a></li><li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#/comments" data-tab="comments" data-count="comments" data-scope="Comments">Comments <span class="moj-badge moj-badge--blue" data-comment-count>${comments.length}</span></a></li>${scn.kind === 'rework' ? `<li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#/changes" data-tab="changes" data-count="changes" data-scope="Changes">Changes <span class="moj-badge moj-badge--purple">2<span class="govuk-visually-hidden"> changed numbers</span></span></a></li>` : ''}<li class="moj-sub-navigation__item"><a class="moj-sub-navigation__link" href="#/history" data-tab="history">History</a></li></ul></nav><div class="app-tools">${pickSection}${findForm}</div></div>`;
   const rail = `<nav class="app-rail" aria-label="Return sections"><ol class="app-rail__list"><li><a class="app-rail__link" href="#/brief" data-rail="brief"><span class="app-rail__num" aria-hidden="true">0</span><span class="app-rail__title">Brief</span></a></li>${SECTIONS.map((s, i) => `<li><a class="app-rail__link" href="#/${s.slug}" data-rail="${s.key}"><span class="app-rail__num" aria-hidden="true">${i + 1}</span><span class="app-rail__title">${esc(s.title)}</span><span class="app-rail__mark" data-rail-mark="${s.key}"></span></a></li>`).join('')}</ol></nav>`;
   const panels = SECTIONS.map((s) => {
     if (s.key === 'flags') return `<div data-panel="flags" hidden>${flagsPanel(R)}</div>`;
@@ -217,8 +221,9 @@ export function recordPage(scn) {
   const reviewView = `<div class="app-review" data-view="review">${rail}<div class="app-work" data-work>
 <div class="app-panes" data-panes>
 <div class="app-pane app-pane--list"><h2 class="app-pane__title" id="pl" data-list-title>Return</h2><div class="app-pane__body" data-list-body tabindex="0" role="region" aria-labelledby="pl">${briefPanel(R, scn, rv)}${panels}<div data-panel="find" hidden><div data-find-results></div></div></div><div class="app-pane__foot" data-list-foot><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-step-next aria-keyshortcuts="j">Next number</button><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-step-prev aria-keyshortcuts="k">Previous number</button><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-next-flag aria-keyshortcuts="f">Next flag</button></div></div>
-<div class="app-pane app-pane--trace"><h2 class="app-pane__title" id="pt">Trace</h2><div class="app-pane__body" data-trace-body tabindex="0" role="region" aria-labelledby="pt"><div data-comment-host></div><p class="govuk-body-s" data-trace-empty>Pick a number to see how it is built.</p>${traces}</div><div class="app-pane__foot"><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-comment-open aria-keyshortcuts="c">Comment on this number</button></div></div>
+<div class="app-pane app-pane--trace"><h2 class="app-pane__title" id="pt">Trace</h2><div class="app-pane__body" data-trace-body tabindex="0" role="region" aria-labelledby="pt"><p class="govuk-body-s" data-trace-empty>Pick a number to see how it is built.</p>${traces}</div><div class="app-pane__foot"><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-primary data-comment-open aria-keyshortcuts="c">Comment on this number</button></div></div>
 <div class="app-pane app-pane--source"><h2 class="app-pane__title" id="ps">Source <span class="app-pane__sub" data-source-win>Second window: not open</span></h2><div class="app-pane__body" data-source-body tabindex="0" role="region" aria-label="Source page"><p class="app-caption" data-source-caption>Pick a number to see its source.</p>${sourceHost(R)}<div data-source-state></div></div><div class="app-pane__foot"><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-src-prev aria-keyshortcuts="[">Previous source</button><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-src-next aria-keyshortcuts="]">Next source</button><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-open-source aria-keyshortcuts="o">Open in a second window</button></div></div>
+<div class="app-cpanel" data-comment-host></div>
 </div></div></div>`;
   const toolbar = `<div class="app-toolbar" data-toolbar><h1 class="app-h1" id="route-title" tabindex="-1">Brief</h1><div class="app-toolbar__body" data-toolbar-body></div>${keysPanel()}</div><div data-unmark></div>`;
   const main = `${idBar}${tabs}${wrapMain(`${toolbar}${reviewView}${commentsView(R, scn)}${historyView(R, scn)}${changesView(R, scn, rv)}<script type="application/json" id="app-data">${jsonSafe(data)}</script>`, 'app-main--record')}`;
@@ -271,7 +276,7 @@ export function queuePage(mode) {
 <div class="govuk-form-group"><label class="govuk-label govuk-label--s" for="q-tier">Tier</label><select class="govuk-select" id="q-tier" name="tier"><option value="">All tiers</option><option value="red">Red</option><option value="amber">Amber</option><option value="green">Green</option></select></div>
 <div class="govuk-form-group"><label class="govuk-label govuk-label--s" for="q-state">View</label><select class="govuk-select" id="q-state" name="state"><option value="">All waiting (${rows.length})</option><option value="Ready for review">Ready for review (${rows.length - nRework})</option><option value="Back from rework">Back from rework (${nRework})</option></select></div>
 <div class="govuk-form-group"><button type="button" class="govuk-button govuk-button--secondary app-btn-sm" data-q-clear>Clear filters</button></div></form>
-<p class="govuk-body" data-q-count role="status">${rows.length} returns waiting.</p>
+<p class="govuk-body" data-q-count data-count="queue" data-scope="waiting" role="status">${rows.length} returns waiting.</p>
 <div data-q-empty hidden class="govuk-inset-text"><p class="govuk-body"><strong>No returns match.</strong> Clear the filters to see all ${rows.length}. ${nRework === 0 ? 'Nothing is back from rework yet; the preparer sends a return back here.' : ''}</p></div>
 <div class="app-scroll-x" role="region" aria-label="Returns waiting for review" tabindex="0"><table class="govuk-table" data-module="moj-sortable-table" data-q-table><caption class="govuk-table__caption govuk-visually-hidden">Returns waiting for review, overdue first, then tier, then due date</caption><thead class="govuk-table__head"><tr><th scope="col" class="govuk-table__header" aria-sort="none">Return</th><th scope="col" class="govuk-table__header" aria-sort="none">Year end</th><th scope="col" class="govuk-table__header" aria-sort="ascending">Tier</th><th scope="col" class="govuk-table__header" aria-sort="none">Due</th><th scope="col" class="govuk-table__header" aria-sort="none">State</th><th scope="col" class="govuk-table__header" aria-sort="none">What blocks</th></tr></thead><tbody class="govuk-table__body">${tr}</tbody></table></div>
 <div class="govuk-inset-text">In this prototype two returns open: Maple Ridge (red tier) and Queen West (green tier). The other four rows show the list only.</div>`);
