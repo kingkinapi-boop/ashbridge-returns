@@ -317,7 +317,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -343,7 +343,8 @@
       "title": "Done gate: scope and mutation agree with how jobs make files",
       "phase": 0,
       "size": "S",
-      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW). Round 2 landed 2 Oct; round 3 (skip __fixtures__ for the marker) open."
+      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW). Round 2 landed 2 Oct; round 3 (skip __fixtures__ for the marker) open.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -602,7 +603,8 @@
       "spec": null,
       "deps": [
         "F03",
-        "F03R"
+        "F03R",
+        "W00"
       ],
       "paths": [
         "src/modules/taxprep-sim/core/**",
@@ -2050,7 +2052,7 @@
       "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -2071,7 +2073,8 @@
       "title": "Staff component library (GOV.UK and MOJ in React)",
       "phase": 1,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "note": "Parked 2 Oct (A354): starts only after Zo approves D00 at a design sitting (card \"When it starts\"); the queue offered it early."
     },
     {
       "status": "carded",
