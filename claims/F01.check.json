@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T11:00:08.218Z",
  "worker": "cloud-63f8ba",
- "state": "working",
- "at": "2026-10-02T11:11:47.927Z",
+ "state": "failed",
+ "at": "2026-10-02T11:25:43.101Z",
  "mode": "turbo",
- "beat": "2026-10-02T11:23:42.096Z"
+ "beat": "2026-10-02T11:23:42.096Z",
+ "note": "FAIL: whitespace-only blanks (tab/NBSP) pass SQL checks, blank pointer ids, caller-set seq; see reports/F01-check.md"
 }

@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "ee1fa1d",
  "worker": "cloud-d42547",
- "state": "reported",
- "at": "2026-10-02T11:00:08.218Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T11:25:43.101Z",
  "mode": "turbo",
- "note": "166 of 166 acceptance pass; unit 960, db 168, flake 5/5, mutants 100/100"
+ "note": "FAIL: whitespace-only blanks (tab/NBSP) pass SQL checks, blank pointer ids, caller-set seq; see reports/F01-check.md"
 }
