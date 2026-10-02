@@ -47,7 +47,7 @@ export const IGNORED_ON_IMPORT: readonly {
 export const CELL_CLASSES = ['traced', 'overridden', 'dropped', 'rolled-forward', 'orphan', 'calculated'] as const
 export type CellClass = (typeof CELL_CLASSES)[number]
 export function isCellClass(value: unknown): value is CellClass {
-  return typeof value === 'string' && (CELL_CLASSES as readonly string[]).includes(value)
+  return (CELL_CLASSES as readonly unknown[]).includes(value)
 }
 
 /** RT-7: for each repeating group path, the cell under the copy that holds the row's natural key. */
@@ -66,18 +66,18 @@ const CP1252_HIGH: readonly number[] = [
 /** Code points that cp1252 leaves undefined in 0x80 to 0x9F (kept as themselves when reading, refused when writing). */
 const CP1252_UNDEFINED = new Set([0x81, 0x8d, 0x8f, 0x90, 0x9d])
 const FROM_UNICODE = new Map<number, number>()
+const TO_UNICODE = new Map<number, number>()
 CP1252_HIGH.forEach((cp, i) => {
+  TO_UNICODE.set(0x80 + i, cp)
   if (!CP1252_UNDEFINED.has(cp)) FROM_UNICODE.set(cp, 0x80 + i)
 })
 
 /** A byte-faithful string (one char per byte) to real text. */
 function decode1252(raw: string): string {
-  let out = ''
-  for (let i = 0; i < raw.length; i++) {
-    const c = raw.charCodeAt(i)
-    out += c >= 0x80 && c <= 0x9f ? String.fromCharCode(CP1252_HIGH[c - 0x80] ?? c) : raw.charAt(i)
-  }
-  return out
+  return Array.from(raw, (ch) => {
+    const c = ch.charCodeAt(0)
+    return String.fromCharCode(TO_UNICODE.get(c) ?? c)
+  }).join('')
 }
 
 /** One character to its Windows-1252 byte, or null when it has none (or is a control character). */
@@ -88,9 +88,7 @@ function byteFor1252(cp: number): number | null {
 }
 
 function bytesToLatin1(bytes: Uint8Array): string {
-  let out = ''
-  for (let i = 0; i < bytes.length; i += 8192) out += String.fromCharCode(...bytes.subarray(i, i + 8192))
-  return out
+  return Array.from(bytes, (b) => String.fromCharCode(b)).join('')
 }
 
 // ---------- the identifier grammar (RT-21) ----------
@@ -117,7 +115,7 @@ export function parseCellId(text: string): { ok: true; id: CellId } | { ok: fals
   let copyPath: string | null = null
   let copyIndex: number | null = null
   const names: string[] = []
-  for (const [i, part] of parts.entries()) {
+  for (const part of parts) {
     const m = PART.exec(part)
     if (m === null) {
       return refuse(
@@ -126,14 +124,14 @@ export function parseCellId(text: string): { ok: true; id: CellId } | { ok: fals
           : `part "${part}" must be capital-letter first, then letters and digits, with an optional [n] copy index`,
       )
     }
-    names.push(m[1] ?? '')
+    names.push(m[1] as string)
     if (m[2] !== undefined) {
       if (copyIndex !== null) return refuse('it has more than one copy index')
       if (!/^[1-9]\d*$/.test(m[2]) || !Number.isSafeInteger(Number(m[2]))) {
         return refuse(`the copy index [${m[2]}] must be a whole number from 1`)
       }
       copyIndex = Number(m[2])
-      copyPath = names.slice(0, i + 1).join('.')
+      copyPath = names.join('.')
     }
   }
   const id = { text, copyPath, copyIndex } as CellId
@@ -144,9 +142,7 @@ export function parseCellId(text: string): { ok: true; id: CellId } | { ok: fals
 export function withCopyIndex(id: CellId, n: number): CellId {
   if (id.copyIndex === null) throw new Error(`identifier "${id.text}" has no copy index`)
   if (!Number.isSafeInteger(n) || n < 1) throw new Error(`copy index ${String(n)} must be a whole number from 1`)
-  const r = parseCellId(id.text.replace(`[${String(id.copyIndex)}]`, `[${String(n)}]`))
-  if (!r.ok) throw new Error(r.reason)
-  return r.id
+  return { ...id, text: id.text.replace(`[${String(id.copyIndex)}]`, `[${String(n)}]`), copyIndex: n }
 }
 
 // ---------- reading ----------
@@ -191,7 +187,7 @@ function classifyValue(
   const shown = JSON.stringify(decode1252(raw))
   if (raw === '' || raw === ' ') return { ok: true, value: { kind: 'clear' }, apostrophe: false }
   if (raw.includes("'") && /^-?\d+$/.test(raw.replace(/'/g, ''))) {
-    if (/^'-\d+$/.test(raw) && !/^'-0+$/.test(raw)) {
+    if (/^'-[1-9]\d*$/.test(raw)) {
       return {
         ok: true,
         value: { kind: 'value', text: raw.slice(1) },
@@ -263,31 +259,19 @@ function tokenize(rest: string): Tokens {
         reason: `a value ${shown} is not in double quotes; every value is quoted`,
       }
     }
-    let value = ''
-    pos += 1
+    const start = pos + 1
+    let close = start - 1
     for (;;) {
-      if (pos >= rest.length)
-        return {
-          ok: false,
-          code: 'unquoted',
-          reason: 'a quoted value is not closed',
-        }
-      const c = rest[pos]
-      if (c === '"') {
-        if (rest[pos + 1] === '"') {
-          value += '"'
-          pos += 2
-          continue
-        }
-        pos += 1
-        break
-      }
-      value += rest.charAt(pos)
-      pos += 1
+      close = rest.indexOf('"', close + 1)
+      if (close === -1) return { ok: false, code: 'unquoted', reason: 'a quoted value is not closed' }
+      // a doubled quote inside a value is one quote: step over both and look for the real closing quote
+      if (rest.charAt(close + 1) !== '"') break
+      close += 1
     }
-    fields.push(value)
+    fields.push(rest.slice(start, close).replace(/""/g, '"'))
+    pos = close + 1
     if (pos >= rest.length) return { ok: true, fields }
-    const next = rest[pos] ?? ''
+    const next = rest.charAt(pos)
     if (next === ',') {
       pos += 1
       continue
@@ -341,8 +325,8 @@ export function parseTaxprepCsv(
   if (lines[lines.length - 1] === '') lines.pop()
 
   // header
-  const headerLine = lines[0] ?? ''
-  let header: TaxprepHeader = { returnName: '', guid: '' }
+  const headerLine = lines.slice(0, 1).toString()
+  let header: TaxprepHeader | null = null
   const hm = /^\[(.*)\|([^|]*)\|([^|]*)\|([^|\]]*)\]/.exec(headerLine)
   if (hm === null) {
     faults.push({
@@ -351,12 +335,12 @@ export function parseTaxprepCsv(
       line: 1,
     })
   } else {
-    header = { returnName: decode1252(hm[1] ?? ''), guid: hm[4] ?? '' }
+    header = { returnName: decode1252(hm[1] as string), guid: hm[4] as string }
     const rest = headerLine.slice(hm[0].length)
-    if (WRONG_SEPARATORS.has(rest[0] ?? '')) {
+    if (WRONG_SEPARATORS.has(rest.charAt(0))) {
       faults.push({
         code: 'separator',
-        reason: `the header uses ${JSON.stringify(rest[0])} as a separator; it is a comma`,
+        reason: `the header uses ${JSON.stringify(rest.charAt(0))} as a separator; it is a comma`,
         line: 1,
       })
     } else if (!/^,"[^"]*","[^"]*",""$/.test(rest)) {
@@ -370,12 +354,12 @@ export function parseTaxprepCsv(
 
   // rows
   const rows: ParsedRow[] = []
-  for (let i = 1; i < lines.length; i++) {
+  rowLoop: for (let i = 1; i < lines.length; i++) {
     const line = i + 1
-    const text = lines[i] ?? ''
-    const m = /^([^,\t; "]*)(.?)/.exec(text)
-    const idText = m?.[1] ?? ''
-    const sep = m?.[2] ?? ''
+    const text = lines[i] as string
+    const cut = text.search(/[,\t; "]/)
+    const idText = cut < 0 ? text : text.slice(0, cut)
+    const sep = text.charAt(idText.length)
     const idResult = parseCellId(decode1252(idText))
     if (!idResult.ok) {
       faults.push({ code: 'identifier', reason: idResult.reason, line })
@@ -406,38 +390,35 @@ export function parseTaxprepCsv(
       })
       continue
     }
-    const [f0, f1, f2] = tokens.fields
+    const n = tokens.fields.length
     let apostrophe = false
-    let failed = false
     const values: CellValue[] = []
-    for (const f of [f0, f1].slice(0, Math.min(tokens.fields.length, 2))) {
-      const c = classifyValue(f ?? '')
+    for (const f of tokens.fields.slice(0, 2)) {
+      const c = classifyValue(f)
       if (!c.ok) {
         faults.push({
           code: c.code,
           reason: `${c.reason} (${idResult.id.text})`,
           line,
         })
-        failed = true
-        break
+        continue rowLoop
       }
       apostrophe = apostrophe || c.apostrophe
       values.push(c.value)
     }
-    if (failed) continue
-    const n = tokens.fields.length
+    const description = tokens.fields[2]
     rows.push({
       line,
       id: idResult.id,
-      current: values[0] ?? { kind: 'clear' },
-      last: n >= 2 ? (values[1] ?? null) : null,
-      description: n >= 3 ? decode1252(f2 ?? '') : null,
-      shape: n === 3 ? 'standard' : n > 3 ? 'extra-columns' : 'current-only',
+      current: values[0] as CellValue,
+      last: values[1] ?? null,
+      description: description === undefined ? null : decode1252(description),
+      shape: n > 3 ? 'extra-columns' : n === 3 ? 'standard' : 'current-only',
       apostrophe,
     })
   }
   if (faults.length > 0) return { ok: false, faults }
-  return { ok: true, file: { header, rows } }
+  return { ok: true, file: { header: header as TaxprepHeader, rows } }
 }
 
 // ---------- natural keys (RT-7) ----------
@@ -457,8 +438,8 @@ export function copiesByNaturalKey(
   }
   const copies = new Map<string, number>()
   for (const row of rows) {
-    const { copyIndex } = row.id
-    if (row.id.copyPath !== copyPath || copyIndex === null) continue
+    if (row.id.copyPath !== copyPath) continue
+    const copyIndex = row.id.copyIndex as number
     if (row.id.text.replace(`[${String(copyIndex)}]`, '') !== `${copyPath}.${keyCell}`) continue
     if (row.current.kind !== 'value') continue
     const key = row.current.text
@@ -518,11 +499,9 @@ function encode1252(text: string, what: string): string {
 }
 
 function validDate(s: string): boolean {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s)
-  if (m === null) return false
-  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])]
-  const t = new Date(Date.UTC(y, mo - 1, d))
-  return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d
+  const [y, mo, d] = s.split('-').map(Number)
+  const t = new Date(Date.UTC(y as number, (mo as number) - 1, d))
+  return !Number.isNaN(t.getTime()) && t.toISOString().slice(0, 10) === s
 }
 
 /** A value to its cell text (as a latin1 string), or a Refusal. */
@@ -551,7 +530,7 @@ function formatValue(v: WriteValue): string {
       if (!Number.isFinite(v.rate) || v.rate < 0)
         throw new Refusal(`the rate ${String(v.rate)} must be a number from 0`)
       const text = v.rate.toFixed(4)
-      if (Math.abs(Number(text) - v.rate) > 1e-9)
+      if (Number(text) !== Number(v.rate.toPrecision(12)))
         throw new Refusal(`the rate ${String(v.rate)} has more than 4 decimals`)
       return text
     }
@@ -606,7 +585,5 @@ export function writeTaxprepCsv(
     }
   })
   if (problems.length > 0) return { ok: false, problems }
-  const bytes = new Uint8Array(out.length)
-  for (let i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i)
-  return { ok: true, bytes }
+  return { ok: true, bytes: Uint8Array.from(out, (ch) => ch.charCodeAt(0)) }
 }
