@@ -4,8 +4,7 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 ## 1. Needs you
 
-**1. Auto-fill test, now (about 30 minutes, you and the Lead together).** Yes, this is the Auto-fill test the to-do meant (trial day 4). The Lead has opened a tab in the "Ashbridge Test" Chrome. Put the signed-in iFirm session in it and say `ready` in the Lead chat. The Lead then adds the return, runs "Import data using the T2 Auto-fill service" and exports three structure files. You type every password, CRA sign-in and business number when a screen asks; the Lead never types those and stops at any payment or licence screen. What comes out: `reference	axprep6-10-04-day4
-otes.md`, the process step by step and exactly which forms, lines and years Auto-fill fills, with no names, numbers or amounts. At the end the Lead deletes the test return and its contact.
+**1. Auto-fill test, now (about 30 minutes, you and the Lead together).** Yes, this is the Auto-fill test the to-do meant (trial day 4). The Lead has opened a tab in the "Ashbridge Test" Chrome. Put the signed-in iFirm session in it and say `ready` in the Lead chat. The Lead then adds the return, runs "Import data using the T2 Auto-fill service" and exports three structure files. You type every password, CRA sign-in and business number when a screen asks; the Lead never types those and stops at any payment or licence screen. What comes out: `reference\taxprep\2026-10-04-day4\notes.md`, the process step by step and exactly which forms, lines and years Auto-fill fills, with no names, numbers or amounts. At the end the Lead deletes the test return and its contact.
 
 **When convenient (nothing waits on it):** item 33 at the end of `reference\cpa-check.md` (rounding to whole dollars so the retained earnings ties still hold). Write "right" or a correction under it.
 
