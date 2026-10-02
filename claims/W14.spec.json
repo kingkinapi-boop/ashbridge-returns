@@ -1,9 +1,11 @@
 {
  "card": "W14",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: typecheck, lint, npm test green (231 unit + 2 db)",
  "worker": "cloud-f60439",
- "state": "working",
- "at": "2026-10-02T03:14:31.900Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T03:15:46.907Z",
+ "mode": "turbo",
+ "commit": "0751e5e",
+ "validated": "3b28533269a7f999ce144a6ab8fee0d697589fb1"
 }
