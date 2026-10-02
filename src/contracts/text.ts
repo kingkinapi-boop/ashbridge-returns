@@ -30,3 +30,17 @@ export function isBlank(s: string): boolean {
 
 /** A string with at least one visible character; kept exactly as given (no trimming). */
 export const NonBlankSchema = z.string().refine((s) => !isBlank(s), { message: 'must not be blank' })
+
+/**
+ * The text columns where an empty value is a value (RT-12), keyed 'table.column', each with the
+ * reason it may be blank. The one list: the schema marks these columns with a VALUE_COLUMN comment
+ * (db/schema) and the rule tests compare the two.
+ */
+export const VALUE_COLUMNS: Readonly<Record<string, string>> = Object.freeze({
+  'differences.after_value': 'a cell can be empty after the change',
+  'differences.before_value': 'a cell can be empty before the change',
+  'facts.value': 'an empty cell is a fact: the source cell was empty',
+  'figures.value': 'a computed figure can be empty',
+  'judgment_inputs.value': 'a preparer can set a cell to empty',
+  'version_cells.value': 'a frozen cell can be empty',
+})

@@ -28,13 +28,13 @@ create table returns.approvals (
   fingerprint text not null
 );
 create trigger versions_append_only before update or delete on returns.versions
-  for each row execute function returns.refuse_change();
+  for each row execute function returns.version_table_guard();
 create trigger version_cells_append_only before update or delete on returns.version_cells
   for each row execute function returns.refuse_change();
 create trigger approvals_append_only before update or delete on returns.approvals
   for each row execute function returns.refuse_change();
 create trigger versions_no_truncate before truncate on returns.versions
-  for each statement execute function returns.refuse_change();
+  for each statement execute function returns.version_table_guard();
 create trigger version_cells_no_truncate before truncate on returns.version_cells
   for each statement execute function returns.refuse_change();
 create trigger approvals_no_truncate before truncate on returns.approvals
@@ -43,3 +43,5 @@ create trigger approvals_no_truncate before truncate on returns.approvals
 alter table returns.versions enable row level security;
 alter table returns.version_cells enable row level security;
 alter table returns.approvals enable row level security;
+
+comment on column returns.version_cells.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';

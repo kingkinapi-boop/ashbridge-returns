@@ -98,23 +98,13 @@ create trigger events_no_truncate before truncate on returns.events
   for each statement execute function returns.refuse_change();
 
 -- EV-1, FLOW-4: a fact changes by a new version row; only its status may change in place.
-create function returns.facts_column_guard() returns trigger
-language plpgsql as $$
-begin
-  if tg_op = 'DELETE' then
-    raise exception 'append-only: DELETE on returns.facts is refused (write a new version row)';
-  end if;
-  if (to_jsonb(new) - 'status') is distinct from (to_jsonb(old) - 'status') then
-    raise exception 'append-only: only the status of a returns.facts row changes in place (write a new version row)';
-  end if;
-  return new;
-end
-$$;
 create trigger facts_column_guard before update or delete on returns.facts
-  for each row execute function returns.facts_column_guard();
+  for each row execute function returns.version_table_guard('status');
 create trigger facts_no_truncate before truncate on returns.facts
-  for each statement execute function returns.refuse_change();
+  for each statement execute function returns.version_table_guard('status');
 
 alter table returns.facts enable row level security;
 alter table returns.links enable row level security;
 alter table returns.events enable row level security;
+
+comment on column returns.facts.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';
