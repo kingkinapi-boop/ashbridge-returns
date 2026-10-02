@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "b903b9c",
  "worker": "cloud-ee27ff",
- "state": "released",
- "at": "2026-10-02T05:57:48.135Z",
+ "state": "reopened",
+ "at": "2026-10-02T06:40:26.431Z",
  "mode": "turbo",
  "beat": "2026-10-02T02:41:36.656Z",
  "note": "merged"
