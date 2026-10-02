@@ -4,7 +4,8 @@
  "round": 5,
  "spec": "62f6c18",
  "worker": "cloud-80fece",
- "state": "working",
- "at": "2026-10-02T17:45:10.065Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T17:45:17.847Z",
+ "mode": "turbo",
+ "note": "queue re-offers SC build at once after release; stopping, nothing to build"
 }
