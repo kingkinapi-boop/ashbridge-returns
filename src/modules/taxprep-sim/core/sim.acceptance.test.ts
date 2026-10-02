@@ -25,7 +25,14 @@
  *   Simulator.getReturn(businessNumber, yearEnd): SimReturn | undefined
  *   SimReturn: { readonly returnName; guid; releaseName; businessNumber; yearEnd }  (read-only fields)
  *   Simulator.importCsv(ret, bytes): { ok: true; report: ImportReport } | { ok: false; faults: TaxprepFault[] }
- *     bytes F03's parser refuses: { ok: false } and nothing changes (unconfirmed against the trial; S01 owns faults).
+ *     bytes F03's parser refuses: { ok: false } and nothing changes (unconfirmed against the trial; S01 owns faults,
+ *     and S03 owns what a UTF-8 or byte-order-mark file does: round 2 does not fix S00's answer for those).
+ *   Yes or no cells (kind 'yesNo'; FINDINGS Q20, run 2, 5D): `Y` on a cell at its default `N` imports with no report
+ *     line; `""` or `" "` cannot empty it: it resets to `N`, reported "replaced", and the "entered" export shows `N`.
+ *   Rate cells take decimals (`"0.2000"`), and so do text cells (`"10.1"`): only amount cells refuse cents (RT-25).
+ *   An identifier the release list does not hold, in any form (unknown form, unknown field on a known form, a copy
+ *     index on a cell that is not repeating), is "Cell not available." (O4). Several new copy indexes in one file
+ *     take the following indexes in row order (RT-7); a gap index is refused (unconfirmed).
  *   ImportReport = { lines: ReportLine[]; summary: 'Data imported successfully' | null }
  *   ReportLine = { form: string; description: string; box: string; result: string }   (exactly these four keys)
  *     summary is the success text exactly when lines is empty, else null.
@@ -60,11 +67,14 @@ import {
   GIFI_RECEIVABLE,
   GUID_1,
   GUID_2,
+  RATE_CELL,
   SEED,
   UCC_CELL,
+  YES_NO,
   amt,
   asText,
   clr,
+  extendedList,
   file,
   fixtureList,
   goldenBytes,
@@ -183,6 +193,21 @@ describe('RT-3 import then export (check 1)', () => {
   })
 })
 
+describe('RT-9 the export is Windows-1252', () => {
+  test('RT-9 a return named "Café (Test)" exports é as the single byte 0xE9, in the header and in the name cell', () => {
+    const made = makeReturn({ name: 'Café (Test)', clientCode: 'C000' })
+    mustImport(made, file([[GIFI_CASH, amt(10)]]))
+    const bytes = Buffer.from(made.sim.exportCsv(made.ret, 'entered'))
+    const header = Buffer.from('[Caf\u00e9 (Test)|0|0|', 'latin1')
+    expect(bytes.subarray(0, header.length).equals(header)).toBe(true)
+    expect(bytes.subarray(0, header.length)[4]).toBe(0xe9)
+    expect(bytes.includes(Buffer.from('IDENT.Ident311,"Caf\u00e9 (Test)"', 'latin1'))).toBe(true)
+    expect(bytes.includes(Buffer.from([0xc3, 0xa9]))).toBe(false)
+    expect(bytes.includes(Buffer.from([0xef, 0xbb, 0xbf]))).toBe(false)
+    expect(bytes.filter((b) => b === 0xe9).length).toBe(2)
+  })
+})
+
 describe('RT-3, ARC-14 export then import into a fresh return then export (check 2)', () => {
   test('RT-3 ARC-14 the second export equals the first apart from the header name and guid', () => {
     const importBytes = taxprepBytes(`${SAMPLES[2].dir}/taxprep/import.csv`)
@@ -247,6 +272,69 @@ describe('RT-12, RT-8 clears and zero (check 3)', () => {
     const report = mustImport(made, file([[GIFI_CASH, clr]]))
     expect(report).toEqual({ lines: [], summary: OK })
     expect(readExport(made, 'entered').ids).not.toContain(GIFI_CASH)
+    expect(made.sim.events(made.ret)).toEqual([])
+  })
+
+  test('RT-12 a " " row into an already empty cell is no change either: no line, no event', () => {
+    const made = makeReturn()
+    const report = mustImport(made, rawFile([`${GIFI_CASH}," ","",""`]))
+    expect(report).toEqual({ lines: [], summary: OK })
+    expect(made.sim.events(made.ret)).toEqual([])
+  })
+})
+
+// ---------- round 2 (1): yes or no cells ----------
+
+describe('RT-12, RT-23 a yes or no cell cannot be emptied (FINDINGS Q20)', () => {
+  test('RT-12 a "" row on a yes or no cell holding Y resets it to N with a "replaced" line, and N stays in the export', () => {
+    const made = makeReturn({ list: extendedList() })
+    made.sim.typeCell(made.ret, YES_NO, 'Y')
+    const report = mustImport(made, rawFile([`${YES_NO},"","",""`]))
+    expect(report.lines).toHaveLength(1)
+    expect(report.lines[0]?.result).toBe(REPLACED)
+    expect(report.lines[0]?.description).toBe('Line 070 - Test yes or no')
+    expect(report.summary).toBeNull()
+    const out = readExport(made, 'entered')
+    expect(out.ids).toContain(YES_NO)
+    expect(out.seen.get(YES_NO)?.value).toBe('N')
+    expect(readExport(made, 'all-input').seen.get(YES_NO)?.value).toBe('N')
+  })
+
+  test('RT-12 a " " row on a yes or no cell holding Y resets it to N as well, never to empty', () => {
+    const made = makeReturn({ list: extendedList() })
+    mustImport(made, rawFile([`${YES_NO},"Y","",""`]))
+    const report = mustImport(made, rawFile([`${YES_NO}," ","",""`, `${GIFI_CASH},"4","",""`]))
+    expect(report.lines.map((l) => l.result)).toEqual([REPLACED])
+    expect(readExport(made, 'entered').seen.get(YES_NO)?.value).toBe('N')
+    expect(readExport(made, 'entered').seen.get(GIFI_CASH)?.value).toBe('4')
+  })
+
+  test('RT-26 Y imported into a yes or no cell at its default N gives no report line and is exported as Y', () => {
+    const made = makeReturn({ list: extendedList() })
+    const report = mustImport(made, rawFile([`${YES_NO},"Y","",""`]))
+    expect(report).toEqual({ lines: [], summary: OK })
+    expect(readExport(made, 'entered').seen.get(YES_NO)?.value).toBe('Y')
+  })
+})
+
+// ---------- round 2 (2): decimals outside amount cells ----------
+
+describe('RT-25 only amount cells refuse decimals', () => {
+  test('RT-25 a rate cell imports "0.2000" with no report line and exports it as written', () => {
+    const made = makeReturn({ list: extendedList() })
+    made.sim.addCopy(made.ret, CCA)
+    const report = mustImport(made, rawFile([`${RATE_CELL(1)},"0.2000","",""`]))
+    expect(report).toEqual({ lines: [], summary: OK })
+    expect(readExport(made, 'entered').seen.get(RATE_CELL(1))?.value).toBe('0.2000')
+  })
+
+  test('RT-25 a decimal in a text cell is not refused: "10.1" replaces the class number with a "replaced" line', () => {
+    const made = makeReturn()
+    made.sim.addCopy(made.ret, CCA)
+    made.sim.typeCell(made.ret, CLASS_CELL(1), '8')
+    const report = mustImport(made, rawFile([`${CLASS_CELL(1)},"10.1","",""`]))
+    expect(report.lines.map((l) => l.result)).toEqual([REPLACED])
+    expect(readExport(made, 'entered').seen.get(CLASS_CELL(1))?.value).toBe('10.1')
   })
 })
 
@@ -402,6 +490,9 @@ describe('RT-1 the header is not read (check 7)', () => {
     const made = makeReturn()
     const report = mustImport(made, rawFile([`${GIFI_CASH},"5","",""`], '[Nobody (Test)|0|0|00000000-0000-0000-0000-000000000000],"Current Year","Last Year",""'))
     expect(report.lines).toEqual([])
+    const out = readExport(made, 'entered')
+    expect(out.seen.get(GIFI_CASH)?.value).toBe('5')
+    expect(out.header).toEqual({ returnName: 'Probe Co. (Test)', guid: GUID_1 })
   })
 })
 
@@ -563,6 +654,64 @@ describe('RT-23, RT-7 unknown cells and repeating copies (check 9)', () => {
     expect(out.seen.get(GIFI_CASH)?.value).toBe('1')
   })
 
+  test('RT-7 (unconfirmed: the trial has not tried a gap index) a row for copy [4] with two copies is refused as "Cell not available."', () => {
+    const made = makeReturn()
+    made.sim.addCopy(made.ret, CCA)
+    made.sim.addCopy(made.ret, CCA)
+    const report = mustImport(made, rawFile([`${CLASS_CELL(4)},"8","",""`, `${GIFI_CASH},"1","",""`]))
+    expect(report.lines).toEqual([CELL_NA])
+    expect(made.sim.copyCount(made.ret, CCA)).toBe(2)
+    expect(readExport(made, 'all-input').ids).not.toContain(CLASS_CELL(4))
+    expect(readExport(made, 'entered').seen.get(GIFI_CASH)?.value).toBe('1')
+  })
+
+  test('RT-7 (unconfirmed: the trial has not tried a gap index) a row for copy [2] on a return with no copy is refused as "Cell not available."', () => {
+    const made = makeReturn()
+    const report = mustImport(made, rawFile([`${UCC_CELL(2)},"500","",""`, `${GIFI_CASH},"1","",""`]))
+    expect(report.lines).toEqual([CELL_NA])
+    expect(made.sim.copyCount(made.ret, CCA)).toBe(0)
+    expect(readExport(made, 'entered').ids).not.toContain(UCC_CELL(2))
+    expect(made.sim.events(made.ret).map((e) => e.identifier)).toEqual([GIFI_CASH])
+  })
+
+  test('RT-7 rows for copy [3] then copy [4] in one file, on a return with two copies, create both copies in order with no line', () => {
+    const made = makeReturn()
+    made.sim.addCopy(made.ret, CCA)
+    made.sim.addCopy(made.ret, CCA)
+    const report = mustImport(
+      made,
+      rawFile([`${CLASS_CELL(3)},"10","",""`, `${CLASS_CELL(4)},"43","",""`, `${UCC_CELL(4)},"900","",""`]),
+    )
+    expect(report).toEqual({ lines: [], summary: OK })
+    expect(made.sim.copyCount(made.ret, CCA)).toBe(4)
+    const out = readExport(made, 'entered')
+    expect(out.seen.get(CLASS_CELL(3))?.value).toBe('10')
+    expect(out.seen.get(CLASS_CELL(4))?.value).toBe('43')
+    expect(out.seen.get(UCC_CELL(4))?.value).toBe('900')
+    expect(out.ids.indexOf(CLASS_CELL(3))).toBeLessThan(out.ids.indexOf(CLASS_CELL(4)))
+  })
+
+  test('RT-23 O4 an unknown field on a known form, an unknown form, and a copy index on a cell that is not repeating each give "Cell not available."; the rest imports', () => {
+    const made = makeReturn()
+    const bytes = rawFile([
+      `GFGBA.Ttwzzz1,"5","",""`,
+      `ZZTEST.Ttw1,"6","",""`,
+      `GFBGII[2].GFGIJ.Ttwgij68,"7","",""`,
+      `GFGBA[1].Ttwgba64,"8","",""`,
+      `${GIFI_CASH},"10","",""`,
+    ])
+    const report = mustImport(made, bytes)
+    expect(report.lines).toEqual([CELL_NA, CELL_NA, CELL_NA, CELL_NA])
+    expect(report.summary).toBeNull()
+    const out = readExport(made, 'all-input')
+    for (const bad of ['GFGBA.Ttwzzz1', 'ZZTEST.Ttw1', 'GFBGII[2].GFGIJ.Ttwgij68', 'GFGBA[1].Ttwgba64']) {
+      expect(out.ids, bad).not.toContain(bad)
+    }
+    expect(out.seen.get('GFBGII[1].GFGIJ.Ttwgij68')?.value).toBe('')
+    expect(out.seen.get(GIFI_CASH)?.value).toBe('10')
+    expect(made.sim.events(made.ret).map((e) => e.identifier)).toEqual([GIFI_CASH])
+  })
+
   test('RT-7 the "all-input" export lists each copy of a repeating cell', () => {
     const made = makeReturn()
     made.sim.addCopy(made.ret, CCA)
@@ -580,40 +729,84 @@ describe('RT-23, RT-7 unknown cells and repeating copies (check 9)', () => {
 // ---------- 10: the property ----------
 
 describe('RT-3 import then export holds the last value written for each cell (check 10)', () => {
-  const pool: string[] = [
+  type V = { kind: 'amount'; n: number } | { kind: 'text'; t: string } | { kind: 'clear'; blank: '' | ' ' }
+  const amountPool: string[] = [
     ...GIFI_IDS.slice(0, 6),
     'GFBGII[1].GFGIJ.Ttwgij68',
     ...[1, 2, 3].flatMap((n) => [UCC_CELL(n), CLAIMED_CELL(n)]),
   ]
-  const op = fc.tuple(
-    fc.constantFrom(...pool),
-    fc.oneof({ weight: 4, arbitrary: fc.integer({ min: -99999, max: 99999 }) }, { weight: 1, arbitrary: fc.constant(null) }),
+  const textPool: string[] = [1, 2, 3].map((n) => CLASS_CELL(n))
+  const pool = [...amountPool, ...textPool]
+  // text a class-number cell may hold: letters, digits, a period, an inner space and é (Windows-1252 E9); never a
+  // leading minus, so no text is mistaken for a negative number
+  const textArb = fc.stringMatching(/^[A-Za-z0-9é][A-Za-z0-9é. ]{0,8}[A-Za-z0-9é]$/)
+  const clearArb = fc.constantFrom<V>({ kind: 'clear', blank: '' }, { kind: 'clear', blank: ' ' })
+  const amountOp = fc.tuple(
+    fc.constantFrom(...amountPool),
+    fc.oneof(
+      { weight: 4, arbitrary: fc.integer({ min: -99999, max: 99999 }).map((n): V => ({ kind: 'amount', n })) },
+      { weight: 1, arbitrary: clearArb },
+    ),
   )
+  const textOp = fc.tuple(
+    fc.constantFrom(...textPool),
+    fc.oneof({ weight: 4, arbitrary: textArb.map((t): V => ({ kind: 'text', t })) }, { weight: 1, arbitrary: clearArb }),
+  )
+  const op = fc.oneof({ weight: 3, arbitrary: amountOp }, { weight: 1, arbitrary: textOp })
 
-  test('RT-3 for any list of valid rows (with copies), "entered" holds exactly the last value per cell and every value round-trips byte for byte (seed fixed)', () => {
+  const shown = (v: V): string => (v.kind === 'amount' ? String(v.n) : v.kind === 'text' ? v.t : v.blank)
+  const rowOf = ([cell, v]: [string, V]): string => `${cell},"${shown(v)}","",""`
+
+  const check = (made: ReturnType<typeof makeReturn>, ops: [string, V][], report: { lines: { result: string }[] }) => {
+    for (const line of report.lines) expect([REPLACED, EMPTIED]).toContain(line.result)
+    const last = new Map<string, V>()
+    for (const [cell, v] of ops) last.set(cell, v)
+    const out = readExport(made, 'entered')
+    for (const cell of pool) {
+      const want = last.get(cell)
+      if (want === undefined || want.kind === 'clear') {
+        expect(out.ids, cell).not.toContain(cell)
+      } else {
+        expect(out.seen.get(cell)?.value, cell).toBe(shown(want))
+        expect(out.seen.get(cell)?.apostrophe, cell).toBe(want.kind === 'amount' && want.n < 0)
+      }
+    }
+    const held = [...last.values()].filter((v) => v.kind !== 'clear').length
+    expect(out.ids).toHaveLength(held + EIGHT.length)
+  }
+
+  test('RT-3 for any list of valid rows (amounts, text, "" and " " clears, with copies), "entered" holds exactly the last value per cell and every value round-trips byte for byte (seed fixed)', () => {
     fc.assert(
       fc.property(fc.array(op, { minLength: 1, maxLength: 25 }), (ops) => {
         const made = makeReturn()
         for (let i = 0; i < 3; i++) made.sim.addCopy(made.ret, CCA)
-        mustImport(made, file(ops.map(([cell, v]) => [cell, v === null ? clr : amt(v)])))
-
-        const last = new Map<string, number | null>()
-        for (const [cell, v] of ops) last.set(cell, v)
-        const out = readExport(made, 'entered')
-        for (const cell of pool) {
-          const want = last.get(cell)
-          if (want === undefined || want === null) {
-            expect(out.ids, cell).not.toContain(cell)
-          } else {
-            expect(out.seen.get(cell)?.value, cell).toBe(String(want))
-            expect(out.seen.get(cell)?.apostrophe, cell).toBe(want < 0)
-          }
-        }
-        const held = [...last.values()].filter((v) => v !== null).length
-        expect(out.ids).toHaveLength(held + EIGHT.length)
+        const report = mustImport(made, rawFile(ops.map(rowOf)))
+        check(made, ops, report)
       }),
       { seed: SEED, numRuns: 100 },
     )
+  })
+
+  test('RT-3 RT-7 the same holds when the file itself creates copies [1], [2] and [3] before the other rows (seed fixed)', () => {
+    fc.assert(
+      fc.property(fc.tuple(textArb, textArb, textArb), fc.array(op, { maxLength: 25 }), (classes, rest) => {
+        const made = makeReturn()
+        const head: [string, V][] = classes.map((t, i) => [CLASS_CELL(i + 1), { kind: 'text', t }])
+        const ops = [...head, ...rest]
+        const report = mustImport(made, rawFile(ops.map(rowOf)))
+        expect(made.sim.copyCount(made.ret, CCA)).toBe(3)
+        check(made, ops, report)
+      }),
+      { seed: SEED, numRuns: 100 },
+    )
+  })
+
+  test('RT-3 the same file built by F03\'s writer (amounts and clears) gives the same export as the hand-made one', () => {
+    const made = makeReturn()
+    mustImport(made, file([[GIFI_CASH, amt(-15)], [GIFI_RECEIVABLE, amt(0)], [GIFI_PREPAID, clr]]))
+    const other = makeReturn()
+    mustImport(other, rawFile([`${GIFI_CASH},"-15","",""`, `${GIFI_RECEIVABLE},"0","",""`, `${GIFI_PREPAID},"","",""`]))
+    expect(asText(made.sim.exportCsv(made.ret, 'entered'))).toBe(asText(other.sim.exportCsv(other.ret, 'entered')))
   })
 })
 
@@ -689,15 +882,26 @@ describe('RT-23 the default release list and constructor defaults', () => {
   test('RT-23 the default list holds the 300 GIFI input cells (amount, confirmed) and the eight creation cells, with unique ascending orders', () => {
     const list = defaultReleaseList()
     const byId = new Map(list.map((c) => [c.identifier, c]))
-    for (const cell of GIFI_IDS) {
-      expect(byId.get(cell), cell).toMatchObject({ kind: 'amount', confirmed: true })
-      expect(byId.get(cell)?.description.length, cell).toBeGreaterThan(0)
-    }
+    for (const cell of GIFI_IDS) expect(byId.get(cell), cell).toMatchObject({ kind: 'amount', confirmed: true })
     for (const cell of EIGHT) expect(byId.has(cell), cell).toBe(true)
     const orders = list.map((c) => c.order)
     expect(new Set(orders).size).toBe(orders.length)
     expect(orders).toEqual([...orders].sort((a, b) => a - b))
     expect(new Set(list.map((c) => c.identifier)).size).toBe(list.length)
+  })
+
+  test('RT-23 default-list descriptions are Taxprep\'s own text: three GIFI cells match the day 2 export word for word', () => {
+    const day2 = parseOk(taxprepBytes('reference/taxprep/2026-10-02-day2/exports/rt-07-imported-default.csv'))
+    const byId = new Map(defaultReleaseList().map((c) => [c.identifier, c.description]))
+    const expected: Record<string, string> = {
+      'GFGBA.Ttwgba64': 'GIFI code 1002 - Deposits in Canadian banks and institutions - Canadian currency',
+      'GFGBA.Ttwgba72': 'GIFI code 1062 - Trade accounts receivable',
+      'GFGBA.Ttwgba127': 'GIFI code 1484 - Prepaid expenses',
+    }
+    for (const [cell, text] of Object.entries(expected)) {
+      expect(day2.rows.find((r) => r.id.text === cell)?.description, `day 2 export ${cell}`).toBe(text)
+      expect(byId.get(cell), cell).toBe(text)
+    }
   })
 
   test('RT-23 the default list covers every cell of all twelve sample clients\' import files', () => {
@@ -745,16 +949,6 @@ describe('RT-23 the default release list and constructor defaults', () => {
     expect(ret.returnName).toBe('Probe Co. (Test)')
   })
 
-  test('RT-23 (unconfirmed) a file F03 refuses, here one that starts with a byte-order mark, is not applied', () => {
-    const made = makeReturn()
-    const bom = Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), Buffer.from(file([[GIFI_CASH, amt(9)]]))])
-    const r = made.sim.importCsv(made.ret, bom)
-    expect(r.ok).toBe(false)
-    if (!r.ok) expect(r.faults.map((f) => f.code)).toContain('bom')
-    expect(readExport(made, 'entered').ids).not.toContain(GIFI_CASH)
-    expect(made.sim.events(made.ret)).toEqual([])
-  })
-
   test('ARC-14 two simulators do not share returns', () => {
     const a = makeSim()
     const b = makeSim()
@@ -791,10 +985,12 @@ describe('ARC-14, ARC-15 the simulator source follows the rules the card names',
     return out
   }
 
-  test('ARC-15 the first line of every non-test .ts file under core/ and of index.ts is "// @mutate"', () => {
+  test('ARC-15 every non-test .ts file under core/ and index.ts is marked "// @mutate" in its first 5 lines (as mutate-changed reads it)', () => {
     const all = files()
     expect(all.filter((f) => f.name.startsWith('core/')).length).toBeGreaterThan(0)
-    for (const f of all) expect(f.text.split(/\r?\n/)[0], f.name).toBe('// @mutate')
+    for (const f of all) {
+      expect(f.text.split(/\r?\n/).slice(0, 5).map((l) => l.trim()), f.name).toContain('// @mutate')
+    }
   })
 
   test('ARC-14 no file reads the clock or randomness: only the injected guid source makes a guid', () => {

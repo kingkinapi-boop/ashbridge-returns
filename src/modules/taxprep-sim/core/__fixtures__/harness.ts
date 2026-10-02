@@ -85,6 +85,23 @@ export function fixtureList(): ReleaseCell[] {
   return list.map((c, i) => ({ ...c, order: i + 1 }))
 }
 
+export const YES_NO = 'IDENT.Ident240'
+export const RATE_CELL = (n: number): string => `${CCA}[${String(n)}].FED.Ttw08cA2`
+
+/**
+ * The fixture list plus a yes or no cell (`IDENT.Ident240`, line 070, not on F03's ignored-on-import list) and the
+ * S8 rate cell (A2, exported to 4 decimals: FINDINGS run 4). Kept apart from fixtureList() so the goldens and the
+ * property do not depend on how an untouched yes or no cell is exported (the trial has not said).
+ */
+export function extendedList(): ReleaseCell[] {
+  const base = fixtureList()
+  const extra: Omit<ReleaseCell, 'order'>[] = [
+    { identifier: YES_NO, description: 'Line 070 - Test yes or no', kind: 'yesNo' },
+    { identifier: RATE_CELL(1), description: 'CCA rate', kind: 'rate', repeating: true },
+  ]
+  return [...base, ...extra.map((c, i) => ({ ...c, order: base.length + i + 1 }))]
+}
+
 export const GIFI_IDS: string[] = Object.values(cells.gifi.byCode)
 export const GIFI_CASH = 'GFGBA.Ttwgba64'
 export const GIFI_RECEIVABLE = 'GFGBA.Ttwgba72'
@@ -96,11 +113,11 @@ export const GUID_1 = '11111111-1111-4111-8111-111111111111'
 export const GUID_2 = '22222222-2222-4222-8222-222222222222'
 
 /** A simulator whose guid source hands out the given guids in order, then numbered ones. */
-export function makeSim(guids: string[] = [GUID_1, GUID_2]): Simulator {
+export function makeSim(guids: string[] = [GUID_1, GUID_2], list: ReleaseCell[] = fixtureList()): Simulator {
   const queue = [...guids]
   let n = 0
   return createSimulator({
-    releaseList: fixtureList(),
+    releaseList: list,
     newGuid: () => queue.shift() ?? `00000000-0000-4000-8000-${String(++n).padStart(12, '0')}`,
   })
 }
@@ -108,9 +125,17 @@ export function makeSim(guids: string[] = [GUID_1, GUID_2]): Simulator {
 export type Made = { sim: Simulator; ret: SimReturn }
 
 export function makeReturn(
-  opts: { name?: string; corp?: string; clientCode?: string; bn?: string; yearEnd?: string; guids?: string[] } = {},
+  opts: {
+    name?: string
+    corp?: string
+    clientCode?: string
+    bn?: string
+    yearEnd?: string
+    guids?: string[]
+    list?: ReleaseCell[]
+  } = {},
 ): Made {
-  const sim = makeSim(opts.guids)
+  const sim = makeSim(opts.guids, opts.list)
   const name = opts.name ?? 'Probe Co. (Test)'
   const ret = sim.createReturn({
     businessNumber: opts.bn ?? '100000001RC0001',
