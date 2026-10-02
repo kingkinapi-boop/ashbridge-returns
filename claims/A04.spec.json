@@ -1,10 +1,10 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "refit only: merged main 5bc19df, no assertions changed; only A04's own missing module fails (typecheck, lint, runner.acceptance); 1885 other unit tests pass",
+ "note": "regenerate the stale golden inbox-finding-c01.json (14 minLength lines); see reports/A04-build.md",
  "worker": "cloud-ae6ed2",
- "state": "reported",
- "at": "2026-10-02T19:27:50.980Z",
+ "state": "reopened",
+ "at": "2026-10-02T20:31:37.597Z",
  "mode": "turbo",
  "commit": "383857c",
  "validated": "5bc19df"
