@@ -1,8 +1,10 @@
 {
  "card": "A06",
  "role": "build",
- "state": "reopened",
- "worker": "lead",
- "at": "2026-10-02T17:36:22.417Z",
- "note": "F01D landed; spec current"
+ "round": 1,
+ "spec": "2e596ab",
+ "worker": "cloud-e72c49",
+ "state": "working",
+ "at": "2026-10-02T18:12:49.463Z",
+ "mode": "turbo"
 }
