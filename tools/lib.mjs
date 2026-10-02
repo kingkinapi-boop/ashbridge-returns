@@ -10,7 +10,11 @@ export function read(rel) {
 }
 
 export function loadIndex() {
-  return JSON.parse(read('plan/slices.json'))
+  try {
+    return JSON.parse(read('plan/slices.json'))
+  } catch (e) {
+    throw new Error(`plan/slices.json: ${e.message}`)
+  }
 }
 
 // Card statuses that hold their paths (tools/next.mjs never starts an overlapping card).
