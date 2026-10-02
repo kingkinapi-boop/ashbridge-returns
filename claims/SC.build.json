@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 21,
+ "round": 22,
  "spec": "62f6c18",
  "worker": "cloud-a03a3e",
- "state": "released",
- "at": "2026-10-02T18:45:05.401Z",
- "mode": "turbo",
- "note": "7 rule failures belong to F01, records.ts, gaps and ai.ts owners; see reports/SC-build.md"
+ "state": "working",
+ "at": "2026-10-02T18:45:09.645Z",
+ "mode": "turbo"
 }
