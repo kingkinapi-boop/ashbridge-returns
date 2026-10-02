@@ -4,7 +4,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-Nothing. Turbo is back on (your word, 15:30 UTC).
+Nothing. Your yes on the scanner line is recorded (decision 0021).
 
 Your answers of this morning are in: all seven design recommendations accepted (for the source viewer, which had no recommendation, I picked B, cite or write a reason; say "viewer A" or "viewer C" to change it), and your logo is in use.
 
