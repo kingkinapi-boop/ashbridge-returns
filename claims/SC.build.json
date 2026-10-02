@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 8,
+ "round": 9,
  "spec": "62f6c18",
- "worker": "cloud-8ec957",
- "state": "released",
- "at": "2026-10-02T17:46:15.440Z",
- "mode": "turbo",
- "note": "re-offered at once; blocked on owners, see previous release"
+ "worker": "cloud-bc1db8",
+ "state": "working",
+ "at": "2026-10-02T17:49:04.331Z",
+ "mode": "turbo"
 }
