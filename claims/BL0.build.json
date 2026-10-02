@@ -1,8 +1,10 @@
 {
  "card": "BL0",
  "role": "build",
- "state": "reopened",
- "worker": "lead",
- "at": "2026-10-02T17:36:53.797Z",
- "note": "F01D landed; spec current"
+ "round": 1,
+ "spec": "428bad0",
+ "worker": "cloud-658451",
+ "state": "working",
+ "at": "2026-10-02T17:38:46.007Z",
+ "mode": "turbo"
 }
