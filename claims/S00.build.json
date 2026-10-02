@@ -1,0 +1,10 @@
+{
+ "card": "S00",
+ "role": "build",
+ "round": 1,
+ "spec": "9ec2e0f550e0a4513b0b0ced1ac4acb40c3eaeb1",
+ "worker": "local-ed6f16",
+ "state": "working",
+ "at": "2026-10-02T04:49:02.535Z",
+ "mode": "turbo"
+}
