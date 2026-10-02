@@ -2,7 +2,10 @@
  "card": "G17",
  "role": "spec",
  "worker": "cloud-18d04e",
- "state": "working",
- "at": "2026-10-02T19:56:01.381Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:57:10.525Z",
+ "mode": "turbo",
+ "note": "18 tests; no askable instalment fact (amber)",
+ "commit": "e2c32e8",
+ "validated": "2c71b9e"
 }
