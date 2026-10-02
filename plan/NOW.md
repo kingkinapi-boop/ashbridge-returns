@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (0022). Zo said yes to the notes in the repo (0023), but agents cannot commit them: Zo does it by hand (to-do 1); the folder is git-excluded until then. RT-25 confirmed (0023). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (0022). Zo committed the notes by hand (eb7fbb7, 0023); test return and contact deleted. Next: fold O8 into FINDINGS.md, CK-12 and RT-14. RT-25 confirmed (0023). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,8 +13,8 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| W00a check, F06 check | cloud runs | cloud | 2 Oct 17:50Z | claude/<card> |
-| A06 build, A07C build (round 2), F07 check (Paths fixed, A369), W00b spec (branch pushed from W00a) | 4 cloud runs | cloud | 2 Oct 18:15Z | claude/<card> |
+| W00a check (F06 PASS), F07 check, W00b spec | cloud runs | cloud | 2 Oct 18:15Z | claude/<card> |
+| A07C build (round 2), A06 check (Paths fixed) | 2 cloud runs | cloud | 2 Oct 18:40Z | claude/<card> |
 | Train 3ccdd3a: E03A, BL0, A01, F02 (all PASS; A370 gitleaks note) | train check, 1 cloud run | cloud | 2 Oct 18:30Z | claude/train |
 
 ## Next, in order
@@ -23,7 +23,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lea
 2. After a spec reports, reopen the held build (`update <card> build reopened --worker lead`); after a released check, re-stamp the build (`update <card> build reported --worker <builder>`) until the CQ1 follow-up lands.
 3. W00a: when its build reports, push `claude/W00b` from `claude/W00a` (W00b's card), then W00b spec. S00, B04, JH0 wait on W00a; kinds W01 to W13, W20, SK0, I40 on W00a and W00b.
 4. E03A lands, then unpark G12 to G17 (parked so the queue stops offering them).
-5. Write the CQ1 follow-up card (a released check must be re-offered; specs not offered on built-not-merged deps) and the W16 card.
+5. CQ2 carded (the CQ1 follow-up). Write the W16 card, then T08, Q00, Q01, I01, I30, I40.
 6. Designs: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions, then D02 to D13 copy them into design/screens/ (design lane, A352; claim.mjs now honours `lane: "design"`).
 7. Taxprep: day 4 Zo Sat 3 Oct (Auto-fill); day 6 Sun 4 Oct.
 8. Critic about every two days from Sat 3 Oct; Reviewer daily.
