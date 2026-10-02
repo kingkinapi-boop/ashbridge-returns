@@ -1,11 +1,10 @@
 {
  "card": "E03A",
  "role": "build",
- "round": 7,
- "spec": "5acfe13",
- "worker": "cloud-d34b3d",
- "state": "reopened",
- "at": "2026-10-02T16:45:36.028Z",
- "mode": "turbo",
- "note": "round 3: decision 0021 approves the one allowlist line"
+ "round": 8,
+ "spec": "ab2a22d",
+ "worker": "cloud-1d0d85",
+ "state": "working",
+ "at": "2026-10-02T16:56:15.815Z",
+ "mode": "turbo"
 }
