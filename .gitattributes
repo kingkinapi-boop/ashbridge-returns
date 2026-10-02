@@ -5,3 +5,4 @@
 plan/metrics.jsonl merge=union
 plan/ledger.jsonl merge=union
 plan/AMBER.md merge=union
+reference/sample-clients/**/taxprep/*.csv -text
