@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "69eefb4",
  "worker": "cloud-7f8978",
- "state": "reported",
- "at": "2026-10-02T15:17:47.926Z",
+ "state": "released",
+ "at": "2026-10-02T16:05:19.632Z",
  "mode": "turbo",
- "note": "18 of 18 acceptance pass; full suite 1 unrelated cold-tool timeout (FX1); see reports/CQ1-build.md"
+ "note": "merged"
 }
