@@ -1,12 +1,10 @@
 {
  "card": "W00",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "f6aed41",
- "worker": "cloud-40b1f5",
- "state": "released",
- "at": "2026-10-02T12:16:06.739Z",
- "mode": "turbo",
- "beat": "2026-10-02T11:51:41.826Z",
- "note": "code complete, acceptance pass; mutation 67-84 (needs survivor round), security-review not run, see reports/W00-build.md"
+ "worker": "cloud-8b2502",
+ "state": "working",
+ "at": "2026-10-02T12:19:05.321Z",
+ "mode": "turbo"
 }
