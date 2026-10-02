@@ -1,10 +1,9 @@
 {
  "card": "F00T",
  "role": "spec",
- "note": "refit: validated on main eae6b11 (was fddfaee); log.ts:66/67 survivors added to report",
+ "note": "toolchain refit",
  "worker": "cloud-90c777",
- "state": "reported",
- "at": "2026-10-02T03:18:33.705Z",
- "mode": "turbo",
- "commit": "07ae6ad3f3d0e020e1e9c6422ddfd1491d9c534a"
+ "state": "working",
+ "at": "2026-10-02T03:18:53.568Z",
+ "mode": "turbo"
 }
