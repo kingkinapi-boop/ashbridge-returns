@@ -284,3 +284,10 @@
 {"ts":"2026-10-02T14:22:32.166Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 2","allowed":true}
 {"ts":"2026-10-02T14:22:33.198Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T14:22:33.706Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:27:16.448Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:27:17.222Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:27:17.669Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:27:18.154Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T14:39:56.541Z","day":"2026-10-02","mode":"normal","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 3","allowed":false}
+{"ts":"2026-10-02T14:39:58.581Z","day":"2026-10-02","mode":"normal","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 4","allowed":false}
+{"ts":"2026-10-02T14:40:37.416Z","day":"2026-10-02","mode":"normal","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":false}
