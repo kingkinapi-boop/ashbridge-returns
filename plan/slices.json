@@ -264,6 +264,32 @@
       "core": true
     },
     {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F01",
+        "F04",
+        "F05M"
+      ],
+      "paths": [
+        "src/contracts/ai.ts",
+        "src/contracts/ai.test.ts",
+        "src/contracts/checks.ts",
+        "src/contracts/checks.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts"
+      ],
+      "clauses": [
+        "AI-5",
+        "ARC-8"
+      ],
+      "id": "BL0",
+      "title": "One blank rule everywhere",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From F01 r2 findings and the F04, A01 checks (A357)."
+    },
+    {
       "status": "done",
       "spec": null,
       "deps": [
@@ -718,13 +744,15 @@
       "deps": [
         "F00",
         "F09",
-        "F09B"
+        "F09B",
+        "F01"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
         "src/modules/ocr/index.ts",
         "package.json",
-        "package-lock.json"
+        "package-lock.json",
+        "src/contracts/reading.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -1904,6 +1932,25 @@
       "phase": 1,
       "size": "M",
       "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": "n/a",
+      "deps": [
+        "D00"
+      ],
+      "paths": [
+        "design/basis/**"
+      ],
+      "clauses": [
+        "RV-55"
+      ],
+      "id": "D00L",
+      "title": "Design basis uses Zo's logo",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Decision 0020 Z20-8."
     },
     {
       "status": "done",
