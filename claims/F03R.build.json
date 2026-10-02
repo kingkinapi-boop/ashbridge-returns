@@ -1,11 +1,10 @@
 {
  "card": "F03R",
  "role": "build",
- "round": 1,
- "spec": "7145c18",
- "worker": "cloud-3620d3",
- "state": "reopened",
- "at": "2026-10-02T06:40:34.663Z",
- "mode": "turbo",
- "note": "FAIL: rate 1e21 writes 1e+21 the parser refuses, see reports/F03R-check.md"
+ "round": 2,
+ "spec": "af234ce",
+ "worker": "cloud-5d8906",
+ "state": "working",
+ "at": "2026-10-02T06:41:46.843Z",
+ "mode": "turbo"
 }
