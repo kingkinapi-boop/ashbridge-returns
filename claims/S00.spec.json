@@ -1,9 +1,11 @@
 {
  "card": "S00",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "105 taxprep-sim tests, 11 fail by name; harness line-ending edit only",
  "worker": "cloud-ec71a6",
- "state": "working",
- "at": "2026-10-02T14:13:45.642Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T14:21:23.094Z",
+ "mode": "turbo",
+ "commit": "8f0ba67",
+ "validated": "fe5adfe"
 }
