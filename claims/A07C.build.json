@@ -4,7 +4,8 @@
  "round": 7,
  "spec": "ba50f80",
  "worker": "cloud-ef21b9",
- "state": "working",
- "at": "2026-10-02T20:44:00.486Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:44:18.999Z",
+ "mode": "turbo",
+ "note": "Stale offer: A07C lands at b80c251 on train 727cd06 with D1 to D3 moved to A07D (A384); nothing to build. Lead: re-stamp or close the A07C build row."
 }
