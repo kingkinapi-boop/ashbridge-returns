@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 16,
+ "round": 17,
  "spec": "62f6c18",
- "worker": "cloud-ca47ab",
- "state": "released",
- "at": "2026-10-02T18:13:11.304Z",
- "mode": "turbo",
- "note": "Re-offered at once; nothing to build (tests only). Stopping so the queue is not looped."
+ "worker": "cloud-e72c49",
+ "state": "working",
+ "at": "2026-10-02T18:23:42.976Z",
+ "mode": "turbo"
 }
