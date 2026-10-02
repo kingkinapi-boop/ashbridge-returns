@@ -1,11 +1,8 @@
 {
  "card": "DG",
  "role": "spec",
- "worker": "cloud-df251e",
- "state": "reopened",
- "at": "2026-10-02T07:20:52.775Z",
- "mode": "turbo",
- "note": "spec fix: import without .ts, line-64 header length (card Round 3 spec fix)",
- "commit": "8f165c2a9170288b9d68627cb42ad6445f824c5f",
- "validated": "30986dd18e24409e456d9051c3d26125ffe10952"
+ "worker": "cloud-ec6494",
+ "state": "working",
+ "at": "2026-10-02T07:22:20.719Z",
+ "mode": "turbo"
 }
