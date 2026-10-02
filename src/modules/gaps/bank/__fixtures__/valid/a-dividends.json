@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "id": "Q-DIV-004",
+      "type": "ASK",
+      "resolves": "onboarding.dividend.amount",
+      "slots": [
+        {
+          "name": "amount",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Dividend amount, second ask",
+      "topic": "dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-DIV-002",
+      "type": "CONFIRM",
+      "resolves": "onboarding.dividend.declared_on",
+      "slots": [
+        {
+          "name": "declared_on",
+          "type": "date",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "yes_no"
+      },
+      "label": "Dividend date",
+      "topic": "dividends",
+      "retired": false
+    }
+  ]
+}

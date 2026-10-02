@@ -24,3 +24,6 @@ Rendering documents (W21 to W38). Any product code.
 
 ## Fault registration (2 Oct, A363)
 Each kind card registers its planted faults by adding a `KNN_FAULTS` list that `testworld/model/faults.ts` merges into the catalogue; W00's unit test that pins 107 entries is rewritten by the first kind's spec job to count the base list plus every registered kind list (computed, never a literal). A kind never edits another kind's list.
+
+## From findings W00 round 2 (2 Oct, A364)
+Check 4 runs W00b's `guardFolder` on the kind's folder (through `loadKind`). Each kind adds rows to `testworld/model/guard-fields.ts` for any new JSON path its data introduces; the closed table refuses unclassified paths.

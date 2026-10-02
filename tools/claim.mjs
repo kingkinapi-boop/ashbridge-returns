@@ -36,6 +36,11 @@
 //        and no update for 90 minutes is stale and can be taken again.
 //   node tools/claim.mjs list            all claims, one per line, with minutes since the last beat
 //
+// CQ1 (ARC-15): no wasted offers. A done card gets no job; a card whose build passed its check gets no
+// build and no spec refit until the Lead reopens the build; a spec or build released with a note that
+// starts "wait:" is held until the card's status, its deps or a dep's status change (the release stores
+// a snapshot key); a card with lane "design" gets no spec or build job.
+//
 // Tests pin the clock with CLAIMS_NOW (ISO time) and shorten the backoff with CLAIMS_BACKOFF_MS.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -126,6 +131,22 @@ function specNeedsRefit(s) {
 // Last sign of life: the later of the claim's write time and its heartbeat.
 const lastSeen = (c) => Math.max(Date.parse(c.at) || 0, Date.parse(c.beat) || 0)
 const isStale = (c) => c.state === 'working' && nowMs() - lastSeen(c) > STALE_MIN * 60000
+// CQ1 rule 2: a job released with a note starting "wait:" is held until the card's status, its deps or a
+// dep's status change. The key is a snapshot of exactly those, stored on the release.
+const WAIT_NOTE = /^wait:/i
+function waitKey(card, status) {
+  const deps = [...(card.deps || [])].sort()
+  return JSON.stringify({ status: card.status, deps, depStatus: deps.map((d) => status[d] ?? null) })
+}
+// CQ1 rule 1: the build's check reported PASS (for this very build while it is reported; a later release
+// of that build keeps the pass), and the Lead has not reopened the build since.
+function buildPassed(b, ck) {
+  if (!b || !ck || ck.state !== 'reported' || !/^PASS\b/i.test(ck.note || '')) return false
+  if (b.state === 'reopened') return false
+  return b.state !== 'reported' || ck.for === b.at
+}
+// CQ1 rule 2: a release with "wait:" is still held while the card's wait key is unchanged.
+const isHeld = (c, card, status) => Boolean(c && c.state === 'released' && WAIT_NOTE.test(c.note || '') && c.waitKey && card && c.waitKey === waitKey(card, status))
 const isActive = (c) => (c.state === 'working' || c.state === 'reported') && !isStale(c)
 
 // Write claims/<file> (one or several, in ONE commit) on top of the claims branch tip and push.
@@ -210,6 +231,7 @@ function next() {
       if (!allowed.includes(role) || pick) continue
       for (const c of cards) {
         if (['done', 'parked', 'todo'].includes(c.status)) continue
+        if (role !== 'check' && c.lane === 'design') continue
         if (role === 'check') {
           const b = claimFor(c.id, 'build')
           const ck = claimFor(c.id, 'check')
@@ -229,6 +251,8 @@ function next() {
           if (!specReady || !depGate(c, 'build', status, reportedBuilds).ok) continue
           const b = claimFor(c.id, 'build')
           if (b && isActive(b)) continue
+          if (buildPassed(b, claimFor(c.id, 'check'))) continue
+          if (isHeld(b, c, status)) continue
           if (b && b.state === 'hold-findings') continue // waits for the Lead's findings review
           if (b && b.state === 'failed' && (b.round || 1) >= MAX_ROUNDS) continue
           if (s && s.worker === worker && c.spec !== 'n/a') continue
@@ -240,7 +264,9 @@ function next() {
           const s = claimFor(c.id, 'spec')
           if (c.spec && !(s && s.state === 'reopened')) continue
           if (!depGate(c, 'spec', status, reportedBuilds).ok) continue
+          if (isHeld(s, c, status)) continue
           const refit = specNeedsRefit(s)
+          if (refit && buildPassed(claimFor(c.id, 'build'), claimFor(c.id, 'check'))) continue
           if (s && ((s.state === 'working' && !isStale(s)) || (s.state === 'reported' && !refit))) continue
           pick = refit ? { card: c.id, role, note: 'toolchain refit' } : { card: c.id, role }
           break
@@ -276,6 +302,16 @@ function update() {
     const at = new Date(nowMs()).toISOString()
     // The Lead updating someone else's claim leaves the holder's name on it.
     const obj = { ...prev, card, role, state, worker: prev.worker || worker, at, note: opt('note', prev.note), commit: opt('commit', prev.commit), validated: opt('validated', prev.validated) }
+    // CQ1 rule 2: a release with "wait:" stores the snapshot that lifts it.
+    let key
+    if (state === 'released' && WAIT_NOTE.test(obj.note || '')) {
+      try {
+        const sl = JSON.parse(readMain('plan/slices.json')).cards
+        const c = sl.find((k) => k.id === card)
+        key = c ? waitKey(c, Object.fromEntries(sl.map((k) => [k.id, k.status]))) : undefined
+      } catch {}
+    }
+    obj.waitKey = key
     const files = { [`${card}.${role}.json`]: obj }
     // A check FAIL: one push writes the failed check and holds the build for the findings review.
     const held = role === 'check' && state === 'failed' ? find('build') : null
@@ -309,10 +345,15 @@ function beat() {
 function list() {
   fetchAll()
   const claims = readClaims(claimsTip())
+  let slices = []
+  try {
+    slices = JSON.parse(readMain('plan/slices.json')).cards
+  } catch {}
+  const status = Object.fromEntries(slices.map((k) => [k.id, k.status]))
   if (!claims.length) return out('no claims', 0)
   for (const c of claims.sort((a, b) => a.at.localeCompare(b.at))) {
     const age = Math.round((nowMs() - lastSeen(c)) / 60000)
-    const tag = specNeedsRefit(c) ? ' (toolchain refit)' : isStale(c) ? ' (stale)' : isActive(c) || c.state === 'hold-findings' ? '' : ' (inactive)'
+    const tag = specNeedsRefit(c) ? ' (toolchain refit)' : isStale(c) ? ' (stale)' : isHeld(c, slices.find((k) => k.id === c.card), status) ? ' (waiting)' : isActive(c) || c.state === 'hold-findings' ? '' : ' (inactive)'
     console.log(`${c.card} ${c.role} ${c.state}${tag} | ${c.worker} | ${age} min since last beat${c.note ? ' | ' + c.note : ''}`)
   }
   return 0
