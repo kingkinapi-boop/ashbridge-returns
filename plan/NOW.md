@@ -13,7 +13,8 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| A06, F07 security reviews (both PASS checks; then board with F06) | 2 Opus helpers, local worktrees | laptop | 2 Oct 19:28Z | reports/<card>-security.md |
+| Train fae1588: F06, F07 (F07 security clean; its LOW moved to G00, A381) | train check, 1 cloud run | cloud | 2 Oct 19:45Z | claude/train |
+| A06 round 2 spec (findings: RC1 to RC3; then build, then fresh security review) | queue | cloud | 2 Oct 19:55Z | claude/A06 |
 | W00c spec, A07C build (round 2), S02 spec | cloud runs | cloud | 2 Oct 19:20Z | claude/<card> |
 | 4 queue runs (G12 to G17 specs and the next offers) | cloud runs | cloud | 2 Oct 19:32Z | claude/<card> |
 | Waiting: A04 build (needs F06 merged); W00b build waits on W00c; G12 to G17 unparked (E03A landed) | queue | | | |
@@ -23,7 +24,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 1. Poll claims; board every PASS: scope, GitHub checks green, Opus read for core (when a check's Opus read was refused, run one before boarding). One train at a time (plan/train.json); land by merging main into the train, code guard, push local main first so the ff works.
 2. After a spec reports, reopen the held build (`update <card> build reopened --worker lead`); after a released check, re-stamp the build (`update <card> build reported --worker <builder>`) until the CQ1 follow-up lands.
 3. W00c (split from W00a, A379, A380): spec, build, check; after it lands merge it into claude/W00b and re-run W00b's 242 tests, then W00b build. S00, B04, JH0, SK0, W01 to W13, W20, I40 now wait on W00c; SC2 (rules R57 to R61) after W00c.
-4. Next train: F06, F07, A06 once the security reviews are clean.
+4. A06 round 2: spec reopened, then build, then a fresh security review before boarding. New cards: SC3 (security rules R62 to R66, after A06 and FX2), FX2 (A01 and A05 refuse unset engines in production).
 5. CQ2 carded (the CQ1 follow-up). Write the W16 card, then T08, Q00, Q01, I01, I30, I40.
 6. Designs: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions, then D02 to D13 copy them into design/screens/ (design lane, A352; claim.mjs now honours `lane: "design"`).
 7. Taxprep: day 4 Zo Sat 3 Oct (Auto-fill); day 6 Sun 4 Oct.
