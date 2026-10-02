@@ -2,6 +2,7 @@
 // The reading contract (F09): what any reading engine returns, and the one code check that a value
 // sits inside a box (EV-6), used by extraction and by AI citations (AI-4). Money is integer cents.
 import { z } from 'zod'
+import { isBlank } from './text'
 import { amountGroups, normaliseAmount, type AmountResult } from './amount-grammar'
 
 const fraction = z.number().min(0).max(1)
@@ -26,7 +27,7 @@ export type Box = z.infer<typeof BoxSchema>
 
 export const WordSchema = z.strictObject({
   /** Never blank: a blank word (spaces, NEL or format characters, category Cf, only) would let a blank value count as found (EV-6, AI-4). */
-  text: z.string().refine((t) => t.replace(/[\p{Cf}\u0085]/gu, '').trim() !== '', { message: 'word text must not be blank' }),
+  text: z.string().refine((t) => !isBlank(t), { message: 'word text must not be blank' }),
   box: BoxSchema,
   confidence: fraction,
   /** The engine's reading order. */

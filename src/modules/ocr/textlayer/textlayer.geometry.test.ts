@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { createReadingAdapter } from '../index'
 import { createTextLayerEngine, type TextLayerEngine } from './index'
 import { sha256 } from './__fixtures__/harness'
+import { invisibleTextPdf, NEL } from './__fixtures__/make-fixtures'
 
 /** A one-page Courier 12 PDF (every glyph 7.2 pt wide) with the given content stream and page extras. */
 function pdf(content: string, pageExtra = ''): { fingerprint: string; fileName: string; bytes: Uint8Array } {
@@ -66,6 +67,12 @@ describe('A01 text layer geometry', () => {
     const r = await createTextLayerEngine().read(pdf('BT /F1 12 Tf 72 720 Td (   ) Tj ET'))
     expect(r.words).toEqual([])
     expect(r.pages[0]?.hasTextLayer).toBe(false)
+  })
+
+  test('ARC-6 an invisible token inside a line of words makes no word of its own', async () => {
+    const bytes = invisibleTextPdf([0x61, 0x20, NEL, 0x20, 0xad, 0x20, 0x62])
+    const r = await createTextLayerEngine().read({ fingerprint: sha256(bytes), fileName: 'mixed.pdf', bytes })
+    expect(r.words.map((w) => w.text)).toEqual(['a', 'b'])
   })
 
   test('ARC-6 the adapter hands its temp folder to the text layer engine', () => {
