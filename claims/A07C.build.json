@@ -5,7 +5,7 @@
  "spec": "ba50f80",
  "worker": "cloud-197c89",
  "state": "released",
- "at": "2026-10-02T20:48:54.620Z",
+ "at": "2026-10-02T20:53:58.647Z",
  "mode": "turbo",
- "note": "Queue keeps offering A07C build but the card is on train 727cd06 (green); Lead to stamp it built/landed. Not building."
+ "note": "merged"
 }
