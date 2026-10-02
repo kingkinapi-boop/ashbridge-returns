@@ -41,20 +41,19 @@ In chat say only `Critic written: reviews/CRITIC.md. Waiting on to-do #N.` and t
 
 **2 Oct 2026, 02:50Z** (since 29 Sep).
 
-1. Token leakage, yes: sessions carry 300k to 780k tokens and re-read it all at every step. No secret leaked.
-2. Two cheap fixes should make the same allowance do about a third more work.
-3. At today's pace, 9 Oct ends with phase 0 and part of phase 1 built, not a usable system.
+1. Token leakage, yes: sessions carry 300k to 780k tokens and re-read them every step. No secret leaked.
+2. Two cheap fixes, both approved, should do about a third more work per token.
+3. At today's pace, 9 Oct ends with phase 0 and part of phase 1, not a usable system.
 
 ### Proposals
 
-**1. Compact every session at about 200k tokens.** [verified numbers; saving inferred]
-- Problem: nothing compacts before about 650k (the watcher's 65% of a 1M window).
-- Evidence: laptop logs since 29 Sep: 1,043M tokens read. Lead peaks up to 781k; 14 helpers above 320k; two design fix rounds 177M. Replayed with a 200k limit: Lead 50 to 58% less, helpers 27 to 32% less (`reference/research/2026-10-02-token-use.md`).
-- Change: `.claude/settings.json` env `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "20"` (reaches helpers). The watcher stays as backstop. New evidence on Z9-8, shown once.
-- Cost: one line. Risk: a builder loses a detail at compaction; watch rounds per card.
-- Undo: delete the line.
+**1. Compact every session at about 200k tokens.** [verified numbers; saving inferred] Zo approved at 200k, 2 Oct.
+- Evidence: nothing compacts before about 650k; since 29 Sep 1,043M tokens read. Lead peaks up to 781k; 14 helpers above 320k. Replayed with a 200k limit: Lead 50 to 58% less, helpers 27 to 32% less (research file).
+- Change: `.claude/settings.json` env `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "20"`, switched on only with two guards: a "Compact instructions" section in CLAUDE.md (keep jobs in flight, unrecorded reports, half-done merges) and a SessionStart `compact` hook that reloads NOW.md, the claims list and the last hour of commits. New evidence on Z9-8; watcher stays.
+- Cost: small. 94 of 125 helpers never reach 200k; the Lead compacts about every 2 to 3 busy hours.
+- Undo: delete the env line; the guards can stay.
 
-**2. No wait over 4.5 minutes; never revive a big helper.** [verified]
+**2. No wait over 4.5 minutes; never revive a big helper.** [verified] Zo approved, 2 Oct.
 - Problem: a helper's cache lives 5 minutes; after a longer wait the next turn re-writes the whole context at about twelve times a read.
 - Evidence: 59 full re-writes (11.2M tokens) after gaps over 5 minutes, mostly `until` loops and heavy-slot waits. Two designers revived after a handover at 442k and 152k: 207 turns, 74M read.
 - Change: `tools/heavy.mjs` gives up after 270 s with "slot busy, run again" (small card); helper and walker orders: no command waits over 270 s, poll; skill `dispatch`: never SendMessage a helper past 150k, start a fresh one from its report.
@@ -63,8 +62,8 @@ In chat say only `Critic written: reviews/CRITIC.md. Waiting on to-do #N.` and t
 
 ### Watch list
 
-1. Pace [verified]: 4 cards and one repair in the first 10 hours of turbo; 288 left; 6 of the last 11 checks failed. If DG does not lift that above 60%, next run proposes a spec review before core builds.
-2. Cloud is unmeasured [verified]: 49 runs, no local log; metrics tokens read 0 or "unknown". The transcripts give local counts (research file).
-3. Secrets [verified]: none in files or logs; the one history hit is TH's planted fake key (f1c8095); `.env` is ignored.
+1. Pace [verified]: 5 cards in the first 10 hours of turbo; 288 left; 6 of the last 11 checks failed. Below 60% after DG, next run proposes a spec review before core builds.
+2. Cloud is unmeasured [verified]: 49 runs, no local log; metrics tokens read 0. Method: `reference/research/2026-10-02-token-use.md`.
+3. Secrets [verified]: none; the one history hit is a planted test key (f1c8095).
 
-E to G: no model change; cards still land on Claude Code 2.1.286, so no canary; nothing to subtract yet.
+E to G: no model change, no canary, nothing to subtract.

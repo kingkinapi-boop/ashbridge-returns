@@ -1,0 +1,6 @@
+// planted (Test): shell options with odd spacing, each one a problem
+import { spawnSync } from 'node:child_process'
+
+spawnSync('node', ['a.js'], { shell: true })
+spawnSync('node', ['b.js'], { shell : process.platform === 'win32' })
+spawnSync('node', ['c.js'], { shell:'bash' })

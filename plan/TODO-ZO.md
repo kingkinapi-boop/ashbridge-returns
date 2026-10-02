@@ -4,7 +4,9 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. Critic proposals of 2 Oct:** reply in the Lead chat `critic ok`, `critic ok 1 2` or `critic no 2`. What: two fixes for token leakage (sessions carry too much memory and re-read it at every step; helpers lose their cache while waiting). Why: the same allowance should do about a third more work. Next: the Lead applies what you approve; details in `reviews\CRITIC.md`. Nothing else waits on it.
+**1. Critic proposals of 2 Oct:** both approved by you on 2 Oct (1: sessions compact at 200k tokens; 2: no waits over 4.5 minutes, no reviving big helpers). On your question, compaction is switched on only with two guards: instructions on what every summary must keep, and an automatic reload of NOW.md, the jobs list and recent commits right after each compaction. The Lead applies them and records your yes as a decision; nothing needed from you. Details in `reviewsCRITIC.md`.
+
+**1. Taxprep does not print its diagnostics. May the preparer paste them in?** What: day 5 showed the printed return has no diagnostics page and no option to print one, and the export does not hold them. The only place they live is Taxprep's Diagnostics panel. Why it needs you: your approved end state says the preparer "uploads one export and the printed return"; this adds one step, copying the Diagnostics panel list and pasting it into Returns (about a minute per return), so Returns can block sign-off on an Error and show you each Warning with its reason. Recommendation: reply "1 yes". The other choice, "1 no", drops the diagnostics check and relies on the preparer clearing them in Taxprep. Meanwhile everything else keeps going; only card T05 waits.
 
 **Before you sleep (no answer needed):** leave the laptop on and plugged in, with sleep off, and leave the "Ashbridge Test" Chrome full size and in front, not covered or minimised. The walkers use it overnight for the .GFI and the day 5 Taxprep exports. If it drops, they stop and pick up again in the morning; nothing breaks.
 
