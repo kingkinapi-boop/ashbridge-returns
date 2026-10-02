@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T05:41:02.379Z",
  "worker": "cloud-d2cfdd",
- "state": "working",
- "at": "2026-10-02T05:43:23.962Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T05:46:47.208Z",
+ "mode": "turbo",
+ "note": "FAIL: invented descriptions, local ignore list, mutate tool stops on harness.ts, see reports/S00-check.md"
 }
