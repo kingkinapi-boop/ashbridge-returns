@@ -16,8 +16,10 @@ export function passesCheckDigit(digits: string): boolean {
     let d = Number(digits[i])
     if (double) {
       d *= 2
+      // Stryker disable next-line EqualityOperator: d was doubled so it is even and never exactly 9, so > 9 and >= 9 agree
       if (d > 9) d -= 9
     }
+    // Stryker disable next-line AssignmentOperator: only sum % 10 === 0 is read, and -sum % 10 is zero exactly when sum % 10 is
     sum += d
     double = !double
   }
@@ -40,7 +42,9 @@ function walkStrings(v: unknown, path: string, key: string, holder: Record<strin
   else if (Array.isArray(v)) {
     for (const [i, x] of v.entries()) walkStrings(x, `${path}.${String(i)}`, String(i), holder, visit)
   }
+  // Stryker disable ConditionalExpression: a number or boolean has no entries, so the typeof test is redundant; the null test is pinned by a test
   else if (v !== null && typeof v === 'object') {
+    // Stryker restore ConditionalExpression
     const o = v as Record<string, unknown>
     for (const [k, x] of Object.entries(o)) walkStrings(x, path === '' ? k : `${path}.${k}`, k, o, visit)
   }
@@ -52,22 +56,27 @@ function isNameField(key: string, holder: Record<string, unknown>): boolean {
   return !('account' in holder) && !('gifiName' in holder) && !('key' in holder)
 }
 
-const isPhoneOk = (exchange: string, last: string): boolean => exchange === '555' && /^01\d\d$/.test(last)
+// Stryker disable next-line Regex: the last group of both phone patterns is always exactly four digits, so the anchors change nothing
+const isPhoneOk =(exchange: string, last: string): boolean => exchange === '555' && /^01\d\d$/.test(last)
 
 /** Checks one chunk of text (a JSON string value, a CSV file, a profile) for numbers, e-mail addresses and phone numbers. */
 function scanText(text: string, where: string, add: (record: string, reason: string) => void): void {
   for (const m of text.matchAll(NINE_DIGITS)) {
+    // Stryker disable next-line StringLiteral: groups 1, 3 and 4 of NINE_DIGITS always take part in a match, so the fallback is never used
     if (passesCheckDigit(`${m[1] ?? ''}${m[3] ?? ''}${m[4] ?? ''}`)) {
       add(where, `the number ${m[0]} passes its check digit; made-up business numbers and SINs must fail it`)
     }
   }
   for (const m of text.matchAll(EMAIL)) {
+    // Stryker disable next-line StringLiteral: group 1 of EMAIL always takes part in a match, so the fallback is never used
     if (!RESERVED_DOMAIN.test(m[1] ?? '')) add(where, `the e-mail address ${m[0]} is outside a reserved test domain`)
   }
   for (const m of text.matchAll(PHONE10)) {
+    // Stryker disable next-line StringLiteral: groups 3 and 4 of PHONE10 always take part in a match, so the fallback is never used
     if (!isPhoneOk(m[3] ?? '', m[4] ?? '')) add(where, `the phone number ${m[0]} is outside 555-0100 to 555-0199`)
   }
   for (const m of text.matchAll(PHONE7)) {
+    // Stryker disable next-line StringLiteral: groups 1 and 2 of PHONE7 always take part in a match, so the fallback is never used
     if (!isPhoneOk(m[1] ?? '', m[2] ?? '')) add(where, `the phone number ${m[0]} is outside 555-0100 to 555-0199`)
   }
 }
@@ -103,7 +112,8 @@ export function guardIssues(client: ClientId, files: GuardFile[], people: string
         add(f.file, 'the file is not valid JSON, so it cannot be checked')
         continue
       }
-      walkStrings(parsed, '', '', {}, (path, key, value, holder) => {
+      // Stryker disable next-line StringLiteral: the start key is never a name key or "description" whatever its text, so changing it changes nothing (the start path is pinned by a test)
+      walkStrings(parsed, '', '', {},(path, key, value, holder) => {
         const where = `${f.file} ${path}`
         if (isNameField(key, holder) && !value.trim().endsWith('(Test)')) add(where, `the name "${value}" does not end with "(Test)"`)
         scanText(value, where, add)
