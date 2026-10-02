@@ -1,11 +1,9 @@
 {
  "card": "DG",
  "role": "spec",
- "worker": "cloud-ec6494",
- "state": "reported",
- "at": "2026-10-02T07:25:09.694Z",
- "mode": "turbo",
- "note": "round 3 spec fix: 2 defects fixed, 38 tests pass",
- "commit": "85a2e83",
- "validated": "ba4505f4e2d3f46812c82e93c5836d915d0aded9"
+ "note": "toolchain refit",
+ "worker": "cloud-f135fc",
+ "state": "working",
+ "at": "2026-10-02T08:29:05.912Z",
+ "mode": "turbo"
 }
