@@ -1,11 +1,11 @@
 {
-  "status": "landed",
+  "status": "red",
   "branch": "claude/train",
-  "head": "942323b",
+  "head": "7bea948",
   "cards": [
-    "E03"
+    "G01"
   ],
-  "requested_at": "2026-10-02T12:15:00Z",
-  "by": "cloud-8b2502",
-  "report": "reports/train-20261002-1218.md"
+  "requested_at": "2026-10-02T13:54:05Z",
+  "by": "cloud-2a9ed7",
+  "report": "reports/train-20261002-1359.md"
 }
