@@ -1,0 +1,10 @@
+{
+ "card": "SC",
+ "role": "build",
+ "round": 1,
+ "spec": "62f6c18",
+ "worker": "cloud-4cdd51",
+ "state": "working",
+ "at": "2026-10-02T17:38:50.895Z",
+ "mode": "turbo"
+}
