@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "62f6c18",
  "worker": "cloud-658451",
- "state": "released",
- "at": "2026-10-02T17:43:58.232Z",
- "mode": "turbo",
- "note": "7 failures belong to other cards or spec lists, see reports/SC-build.md"
+ "state": "working",
+ "at": "2026-10-02T17:44:00.789Z",
+ "mode": "turbo"
 }
