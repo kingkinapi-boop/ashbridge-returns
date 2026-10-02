@@ -14,21 +14,30 @@ const inFlight = cards.filter((c) => IN_FLIGHT.has(c.status))
 // reported build, a build for every dep to be merged. Reported builds come from `claim.mjs list`.
 const reportedBuilds = new Set()
 const reportedSpecs = new Set()
+const heldCards = new Set()
 try {
   const listing = execFileSync('node', [path.join(ROOT, 'tools', 'claim.mjs'), 'list'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
   for (const m of listing.matchAll(/^(\S+) build reported/gm)) reportedBuilds.add(m[1])
   // A reported spec (a reopened one is listed as "reopened", so it is not here).
   // A spec that needs a toolchain refit is listed with that tag and counts as not reported.
   for (const m of listing.matchAll(/^(\S+) spec reported(?! \(toolchain refit\))/gm)) reportedSpecs.add(m[1])
+  // CQ1 rule 2: a job released with "wait:" and not yet lifted is listed as waiting, never started.
+  for (const m of listing.matchAll(/^(\S+) (?:spec|build) released \(waiting\)/gm)) heldCards.add(m[1])
 } catch {}
 
 let taken = inFlight.flatMap((c) => c.paths || [])
 const picked = []
 const blockedByPaths = []
 const waitingOnDeps = []
+const waitingHeld = []
 for (const c of cards) {
   if (picked.length >= slots) break
   if (c.status !== 'carded') continue
+  if (c.lane === 'design') continue // CQ1 rule 3: the design lane has no spec or build job
+  if (heldCards.has(c.id)) {
+    waitingHeld.push(c.id)
+    continue
+  }
   const specReported = !c.spec && reportedSpecs.has(c.id)
   const gate = depGate(c, c.spec || specReported ? 'build' : 'spec', status, reportedBuilds)
   if (!gate.ok) {
@@ -52,6 +61,7 @@ for (const c of picked) {
   const spec = c.spec ? (c.spec === 'n/a' ? 'no spec needed' : `spec ${c.spec}`) : reportedSpecs.has(c.id) ? 'spec reported (commit in the claim)' : 'NEEDS SPEC FIRST'
   console.log(`START ${c.id} [${tags}] ${spec} | ${c.title}`)
 }
+if (waitingHeld.length) console.log(`waiting (released with wait:): ${waitingHeld.join(' ')}`)
 if (waitingOnDeps.length) console.log(`waiting on deps: ${waitingOnDeps.join(', ')}`)
 if (blockedByPaths.length) console.log(`waiting on paths in use: ${blockedByPaths.join(' ')}`)
 const toWrite = cards.filter((c) => c.status === 'todo').slice(0, 6)
