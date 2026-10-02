@@ -1,12 +1,9 @@
 {
  "card": "F01",
  "role": "spec",
- "worker": "cloud-01cf18",
- "state": "reported",
- "at": "2026-10-02T12:21:09.538Z",
- "mode": "turbo",
- "beat": "2026-10-02T11:52:08.565Z",
- "note": "round 3: 11 unit + ~80 db tests, S1-S8",
- "commit": "95a3b63",
- "validated": "8e58a89f8f7ef2e9960ccde4f3b78820c746e354"
+ "note": "toolchain refit",
+ "worker": "cloud-d37b76",
+ "state": "working",
+ "at": "2026-10-02T12:47:37.096Z",
+ "mode": "turbo"
 }
