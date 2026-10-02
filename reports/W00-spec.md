@@ -1,6 +1,5 @@
-
-# W00 spec report (cloud-0a2392, 2 Oct)
-Branch claude/W00, spec commit 59bb5ae (pushed 184dcd6). Refit of the existing spec: 223 tests in 4 files under testworld/, C01 to C15, clauses ARC-8, ARC-13, ARC-16, SEC-11, END-9. Validated on main 30986dd + claude/TH ccba63d. Fail for the right reason (missing modules); with a throwaway stub all pass. Retired tests: none.
-Finding for the Lead: check 8 byte-identical regeneration cannot pass a plain compare: .gitattributes (`* text=auto eol=lf`) stores taxprep/import.csv as LF but make-csv.mjs writes CRLF (251 failures), and generate.mjs deletes taxprep/. Suggested: `reference/sample-clients/**/taxprep/*.csv -text` plus re-commit with CRLF (reference/ edit, straight to main).
-Ambers: old spec API kept (decimalToCents/centsToDecimal, TestWorldLoadError, checkRegeneration({root})); K01, K05, K06, K13 start from 'new' per blueprint 00; fault catalogue covers all 15 folders.
-Permission gaps: none. Model: spec by Opus 5.5 subagent.
+# W00 spec report (toolchain refit, cloud, 2 Oct)
+Branch claude/W00. Tests unchanged since spec commit 59bb5ae (223 tests in 4 files under testworld/, C01 to C15, clauses ARC-8, ARC-13, ARC-16, SEC-11, END-9). Toolchain refit: validated on main 7dd2c02 (old: 30986dd + claude/TH ccba63d), merged as 003f4fa.
+Step 6: typecheck, lint and npm test green except W00's own 4 acceptance files, which fail only because testworld/index.ts, testworld/model/index.ts and testworld/generate.ts are missing (TS2307 and the no-unsafe-* lint errors that follow from it; nothing else flagged). db project 2/2 and tools/test 164/164 pass. No edits needed.
+Step 6b (throwaway stub plus the check 8 build side effects: the .gitattributes `-text` line and CRLF taxprep CSVs): one other test fails. src/contracts/taxprep.acceptance.test.ts:280 "RT-3 ARC-14 sample client 01's import.csv (all-zero GUID) parses and is written back byte for byte as an import": its helper taxprepBytes (line 84) throws "already holds CR bytes" once the CSV is stored CRLF (A347). Not retired: the file belongs to F03R (in flight), and W00 does not clearly supersede it. Finding for the Lead: F03R's spec should make taxprepBytes accept a CRLF-stored file (still refusing mixed endings), or the W00 build will turn the suite red.
+Retired tests: none. Permission gaps: none.
