@@ -2,7 +2,8 @@
  "card": "W00a",
  "role": "spec",
  "worker": "cloud-cc920f",
- "state": "working",
- "at": "2026-10-02T15:07:48.099Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T15:08:03.598Z",
+ "mode": "turbo",
+ "note": "no card: W00a is in neither plan/slices.json nor plan/cards; Lead to remove the stray claim"
 }
