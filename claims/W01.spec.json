@@ -2,7 +2,8 @@
  "card": "W01",
  "role": "spec",
  "worker": "cloud-ec71a6",
- "state": "working",
- "at": "2026-10-02T14:21:26.807Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T14:21:47.842Z",
+ "mode": "turbo",
+ "note": "deps W00 not merged (round 2 in build): no code base"
 }
