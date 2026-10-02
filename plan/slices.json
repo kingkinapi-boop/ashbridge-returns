@@ -262,6 +262,59 @@
       "done": "2026-10-02"
     },
     {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F05"
+      ],
+      "paths": [
+        "src/contracts/checks.ts",
+        "src/contracts/checks.test.ts"
+      ],
+      "clauses": [
+        "CK-1",
+        "CK-2",
+        "CK-3",
+        "CK-4",
+        "CK-5",
+        "CK-6",
+        "ARC-13",
+        "ARC-15"
+      ],
+      "id": "F05M",
+      "title": "Mutation on the check contract",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Fix 3 of reports/findings-E03-F03.md: marker, Stryker, survivors closed; lands before SC."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F08"
+      ],
+      "paths": [
+        "tools/scope.mjs",
+        "tools/mutate-changed.mjs",
+        ".gitattributes",
+        "tools/test/done-gate.test.mjs",
+        "tools/test/__fixtures__/done-gate/**"
+      ],
+      "clauses": [
+        "ARC-12",
+        "ARC-15",
+        "ARC-19",
+        "ARC-9"
+      ],
+      "id": "DG",
+      "title": "Done gate: scope and mutation agree with how jobs make files",
+      "phase": 0,
+      "size": "S",
+      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead)."
+    },
+    {
       "status": "done",
       "spec": null,
       "deps": [
@@ -315,7 +368,8 @@
       "spec": null,
       "deps": [
         "F01",
-        "F09"
+        "F09",
+        "F05M"
       ],
       "paths": [
         "tools/test/schema-contract-rules.test.mjs",
@@ -1976,12 +2030,14 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "TH"
       ],
       "paths": [
         "data/facts/catalogue.json",
         "src/contracts/facts.ts",
-        "src/contracts/facts.test.ts"
+        "src/contracts/facts.test.ts",
+        "src/contracts/__fixtures__/fact-catalogue.ts"
       ],
       "clauses": [
         "EV-5",

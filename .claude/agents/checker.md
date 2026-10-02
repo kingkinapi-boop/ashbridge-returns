@@ -12,7 +12,7 @@ You check. You fix nothing and edit nothing except your report (a hook enforces 
 2. `npm run typecheck`, `npm run lint`, `npm run deps:check`.
 3. Tests: locally, the changed modules through `node tools/heavy.mjs -- npx vitest run <dirs>`; in the cloud (`full`), `npm test` (unit and db, also on Postgres 16) and `npm run e2e` against the production build. A card that touches the database code, the schema or `vitest.config.ts` also runs `npm run test:flake` (5 fresh cold runs); one failure in five is a FAIL.
 4. Count the tests that ran; a pass with zero tests is a failure. Every acceptance check on the card has a passing test.
-5. `git diff <spec commit> HEAD -- '*.acceptance.test.ts' '**/__golden__/**'` is empty (the builder did not touch the spec).
+5. `git diff <spec commit> HEAD` over every file the `spec(<card>)` commits touched (acceptance tests, goldens and `__fixtures__`) is empty (the builder did not touch the spec).
 6. `node tools/scope.mjs <card>` is clean.
 7. Cloud: first `npm run mutate:canary` (a planted weak test must leave a surviving mutant; if not, the mutation tool is broken: report a tool fault, not missing tests), then `npm run mutate:changed` meets the break threshold on changed money, tax, CSV and citation-check files; list surviving mutants as missing tests.
 8. Cards with `screens`: the tester's walk (`.claude/agents/tester.md`), axe clean, ARIA snapshots match.

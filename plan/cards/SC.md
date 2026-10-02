@@ -1,6 +1,6 @@
 # SC Schema and contract rules
 
-Phase 0. Size M. Deps: F01, F09. Where: local or cloud.
+Phase 0. Size M. Deps: F01, F09, F05M. Where: local or cloud.
 Tags: core (permissions and citations: the rules keep every later table and box honest).
 Paths: tools/test/schema-contract-rules.test.mjs, src/contracts/schema-rules.db.test.ts, tools/test/__fixtures__/schema-contract/**
 Clauses: SEC-7, EV-1, ARC-10, EV-5, EV-8, EV-10, FLOW-1, ARC-15
@@ -21,7 +21,7 @@ The faults the F01 and F09 checks found (RC1 to RC5) can come back in every tabl
 4. EV-8, EV-10, FLOW-1 (R15): every column named state, `*_state`, status, origin or entry_type has a CHECK whose list equals the matching list in `src/contracts/records.ts`. Planted: a status CHECK with one value missing.
 5. FLOW-1 (R16): no `order by ... created_at` or `order by ... id` in `db/schema` or `src/modules` unless an identity seq comes first. Planted: a view ordering state events by created_at then id.
 6. EV-5 (R17): one box shape: no zod object with x0, y0, x1, y1 in `src/contracts`, and every box field uses F09's BoxSchema. Planted: a contract with its own `{x0,y0,x1,y1}` box.
-7. ARC-15 (R18): every core file under `src/contracts` and `src/modules` carries `// @mutate`. Planted: a core file without it.
+7. ARC-15 (R18): every core file under `src/contracts` and `src/modules` carries `// @mutate` in its first 5 lines. A file is core when a card whose `Tags:` line starts with `core` lists it in its `Paths:` line (globs expanded, test files left out); `plan/slices.json` is not the source. Planted: a core card's file without the marker fails; the same unmarked file under a non-core card passes.
 8. On main with F01 and F09 landed: `npm run typecheck`, `npm run lint`, `npm test`, the `db` project and `npm run test:flake` (5 of 5) pass.
 
 ## Not in this card
