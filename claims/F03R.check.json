@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T06:48:03.171Z",
  "worker": "cloud-e81ab0",
- "state": "working",
- "at": "2026-10-02T07:01:56.896Z",
+ "state": "failed",
+ "at": "2026-10-02T07:07:05.668Z",
  "mode": "turbo",
- "beat": "2026-10-02T07:05:32.382Z"
+ "beat": "2026-10-02T07:05:32.382Z",
+ "note": "FAIL: 3 defects (apostrophe-inside regression, read-back compare, ALWAYS_EXPORTED citations), see reports/F03R-check.md"
 }
