@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T10:50:14.040Z",
  "worker": "cloud-87cb2a",
- "state": "working",
- "at": "2026-10-02T10:52:16.902Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T10:53:18.462Z",
+ "mode": "turbo",
+ "note": "FAIL: 10 acceptance tests (sample clients grew 10 to 15; 9 answer-key fields uncited), see reports/E03-check.md"
 }
