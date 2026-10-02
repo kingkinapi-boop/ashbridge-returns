@@ -4,7 +4,8 @@
  "round": 36,
  "spec": "34e8ac0",
  "worker": "cloud-52c322",
- "state": "working",
- "at": "2026-10-02T20:09:47.645Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:09:53.808Z",
+ "mode": "turbo",
+ "note": "Re-offered at once; same blockers, Lead must add owner defects before re-offering."
 }
