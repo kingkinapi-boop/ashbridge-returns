@@ -52,6 +52,11 @@ const KNOWN = [
   { rule: 'R41', match: /^src\/modules\/gaps\/bank\/index\.ts: /, owner: 'G01 (.trim() and z.string().min(1) in the question bank loader)' },
   { rule: 'R49', match: /^src\/contracts\/reading\.ts: a z\.string\(\)\.trim\(\) transform/, owner: 'F09B (engine name and version, reading.ts:48-49)' },
   { rule: 'R45-cite', match: /^loadFactCatalogue accepts a cra_form cite that is free text/, owner: 'E03 (the loader does not enforce the cite patterns; only tests do)' },
+  // Found by the SC build on main fae1588 and later (2 Oct 20:45Z, reports/SC-build.md); owner FX3 fixes each and deletes its entry.
+  { rule: 'R16', match: /^src\/modules\/jobs\/queue\.ts: "order by created_at, id/, owner: 'FX3 (F06 queue.ts: order by the identity seq first)' },
+  { rule: 'R18', match: /^src\/(contracts\/jobs\.ts|modules\/bridge\/run\.ts|modules\/gaps\/bank\/index\.ts|modules\/jobs\/queue\.ts): a core card lists it, but it has no \/\/ @mutate/, owner: 'FX3 (F06 jobs.ts and queue.ts, F07 run.ts, G01 gaps/bank/index.ts: add the marker)' },
+  { rule: 'R23', match: /^src\/contracts\/jobs\.ts#JobSchema: a stray key is accepted at \(top\)$/, owner: 'FX3 (F06 jobs.ts: .strict())' },
+  { rule: 'R41', match: /^src\/modules\/bridge\/run\.ts: a \.trim\(\) blank rule/, owner: 'FX3 (F07 run.ts: go through src/contracts/text.ts)' },
   { rule: 'R54', match: /^A01: a zero-size MediaBox under statement \(Test\)\.pdf was not refused with a reason/, owner: 'A01 successor (A01-check-r3 note: a raw ZodError from ReadingResultSchema)' },
 ]
 

@@ -51,6 +51,13 @@ const KNOWN: readonly { rule: string; match: RegExp; owner: string }[] = [
   { rule: 'R12', match: /^returns\.returns: refuses UPDATE or DELETE but not TRUNCATE$/, owner: 'F01 family (50_returns.sql: the returns table has no truncate refusal)' },
   { rule: 'R15', match: /^returns\.exceptions\.status: no CHECK with a list of values$/, owner: 'F01 family (70_checks.sql and records.ts: exceptions.status has no list)' },
   { rule: 'R43', match: /^returns\.[a-z_]+\.[a-z_]+_id: points at no built table and FUTURE_POINTERS does not name the card that builds it$/, owner: 'F01 family (ids.ts exports no FUTURE_POINTERS; each pointer to an unbuilt table names its card)' },
+  // Found by the SC build (2 Oct 20:45Z, reports/SC-build.md); owner FX3 fixes each and deletes its entry.
+  { rule: 'R13', match: /^returns\.(bridge_returns\.return_id|jobs\.(id|return_id|lease_holder|last_error)) accepts the blank /, owner: 'FX3 (F06/F07 tables: non-blank checks through text.ts)' },
+  { rule: 'R15', match: /^returns\.(client_handoff|jobs)\.status: its CHECK list \[.*\] equals no list in records\.ts$/, owner: 'FX3 (F06 jobs, G-family client_handoff: add the status list to records.ts)' },
+  { rule: 'R42', match: /^returns\.(bridge_ops_items|bridge_returns|client_handoff|client_refs|jobs): no record schema$/, owner: 'FX3 (add a record schema in records.ts for each table)' },
+  { rule: 'R43', match: /^returns\.client_handoff\.fact_id: returns\.facts exists, but it is not a foreign key to it$/, owner: 'FX3 (client_handoff.fact_id gets its foreign key)' },
+  { rule: 'R44', match: /^returns\.(bridge_ops_items|client_refs)\.seq: no before-insert guard refuses OVERRIDING SYSTEM VALUE$/, owner: 'FX3 (add the identity guard)' },
+  { rule: 'R44', match: /^returns\.client_handoff\.list_version: no before-insert guard refuses a gap or a jump$/, owner: 'FX3 (add the version guard)' },
   { rule: 'R55', match: /^(version_stamp|sources): -?1\.797693134862315807937e308 is refused by SQL and accepted by JS$/, owner: 'F01 family (A367 landing rule: 00_schema.sql is_finite_number and records.ts disagree at the midpoint)' },
   { rule: 'R55', match: /^(version_stamp|sources): (1e-400|9007199254740993) is accepted, but JS reads it back as /, owner: 'F01 family (A367 landing rule: 1e-400 and integers above 2^53 must be refused or read back unchanged)' },
 ]
