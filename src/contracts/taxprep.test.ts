@@ -534,3 +534,24 @@ describe('F03 unit round 2: write refusals say why', () => {
     expect(() => writeTaxprepCsv({ header: H, rows: [broken] }, { purpose: 'import' })).toThrow(TypeError)
   })
 })
+
+describe('F03R unit: writer refusals say why', () => {
+  test('RT-9 a text value the reader would refuse is refused with the reader reason', () => {
+    const w = writeTaxprepCsv(
+      {
+        header: H,
+        rows: [{ id: id('GFGBA.Ttwgba64'), current: { kind: 'text', text: '1,234' } }],
+      },
+      { purpose: 'import' },
+    )
+    expect(problemOf(w)[0]?.reason).toMatch(/would be refused on reading.*thousands separator/)
+  })
+  test('RT-21 a forged identifier is refused and names itself', () => {
+    const forged = { text: 'A"\r\nB' } as unknown as CellId
+    const w = writeTaxprepCsv(
+      { header: H, rows: [{ id: forged, current: { kind: 'amount', amount: 1 } }] },
+      { purpose: 'import' },
+    )
+    expect(problemOf(w)[0]?.reason).toMatch(/is not a valid cell identifier/)
+  })
+})
