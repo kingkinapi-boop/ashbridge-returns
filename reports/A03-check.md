@@ -1,0 +1,4 @@
+# A03 check (cloud-f765fb, 2 Oct 2026): PASS
+Branch claude/A03 at 4a046be. typecheck, lint, deps:check clean. src/modules/ocr 169 tests pass; npm test unit and db (427) pass. Spec files (42e8c4b, 6504c0d) unchanged by the build. Scope OK (12 files). Mutation canary ok; mutate:changed A03 = 100 (110 killed, 0 survived). Opus adversarial read: PASS (no fallback, testWorld checked first, fingerprint must be 64 lowercase hex, deterministic output, no cache).
+Notes (not failures): the card's "From findings A07 round 1" section (R46 to R48) has no spec tests (spec said so); the recorded reader has no cache, no text conversion and returns copies, so the rules hold trivially, SC carries the rule tests. Recording from the `recorded` engine would give version `recorded@textlayer@...`: rule test candidate.
+Permission gaps: Opus subagent could not run vitest (read only). Model: Sonnet 5.5, Opus 5.5 read.
