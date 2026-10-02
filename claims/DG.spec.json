@@ -2,7 +2,8 @@
  "card": "DG",
  "role": "spec",
  "worker": "cloud-708ce4",
- "state": "working",
- "at": "2026-10-02T02:12:43.199Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T02:13:20.733Z",
+ "mode": "turbo",
+ "note": "Queue re-offer: DG spec 8a722d5 exists, build 21 of 21, check PASS, card is on green train f937407. No refit needed. Lead: hold DG spec"
 }
