@@ -2,7 +2,10 @@
  "card": "D00",
  "role": "spec",
  "worker": "cloud-790b0c",
- "state": "working",
- "at": "2026-10-02T08:32:14.612Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T08:34:26.724Z",
+ "mode": "turbo",
+ "note": "refit, 15 tests, fail for build.mjs missing; build must add govuk-frontend/MOJ/sass/nunjucks/axe-core to package.json",
+ "commit": "82aeffe",
+ "validated": "7dd2c02"
 }
