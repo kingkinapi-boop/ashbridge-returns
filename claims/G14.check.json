@@ -1,10 +1,9 @@
 {
  "card": "G14",
  "role": "check",
- "for": "2026-10-02T19:33:51.174Z",
- "worker": "cloud-d6217c",
- "state": "failed",
- "at": "2026-10-02T19:39:14.749Z",
- "mode": "turbo",
- "note": "FAIL: builder test payroll-bonuses.test.ts missing, see reports/G14-check.md"
+ "for": "2026-10-02T19:49:15.139Z",
+ "worker": "cloud-7c1598",
+ "state": "working",
+ "at": "2026-10-02T19:49:25.471Z",
+ "mode": "turbo"
 }
