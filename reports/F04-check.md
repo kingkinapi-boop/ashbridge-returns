@@ -1,22 +1,7 @@
-# F04 check (cloud-d2cfdd, 2 Oct 2026)
-
-FAIL (2 findings, 1 clash for the Lead).
-
-Passed: typecheck, lint, deps:check, npm test (33 files, 755 tests), spec file unchanged since the refit ec29150, scope clean, mutation 86.5 on ai.ts (threshold 70), `// @mutate` present.
-
-## Failures
-1. AI-1 / acceptance check 5: an unknown key inside a document citation's `box` is accepted and silently dropped. `src/contracts/ai.ts:13` uses `BoxSchema` from `src/contracts/reading.ts:14-22`, a non-strict `z.object().refine()`. Confirmed by a probe (since deleted): `citationSchema.safeParse({source:'document', documentId:'d', quote:'q', box:{page:1,left:0,top:0,width:.5,height:.5,figureKey:'x'}})` returns success, data without `figureKey`. The check-7 JSON Schema test cannot see this. The fix is a strict box at its source (reading.ts, outside F04's paths: an F09 follow-up or a widened scope), or a strict wrapper in ai.ts that keeps the one box shape.
-2. AI-5: `ai.ts:56` lets a "missing" finding cite any kind, so one citing only a ledger record passes. AI-5 says it cites "a document, a page or a return cell".
-
-## For the Lead
-3. Clash between AI-5 and AI-4: AI-5 allows citing a document or page for a missing item, but `ai.ts:13` always requires a box and a non-empty quote, and a missing item has no words to quote. Needs an amber or a spec decision before the fix.
-
-Rule candidate: every contract schema, and every schema a contract imports, rejects unknown keys at runtime, tested by a property test that adds a stray key at every nesting depth (not only through z.toJSONSchema).
-
-Note: the Opus read could not run tests; finding 1 was confirmed by me by running it. Findings 2 and 3 are from reading only.
-
-## Permission gaps
-Opus subagent could not run vitest or tsx (heavy.mjs timed out).
-
-## Model
-Worker Sonnet 5.5; adversarial read by an Opus subagent.
+# F04 check (round 2) by cloud-e945f9: PASS
+Branch claude/F04 at fe77e1c (main f2e97da merged earlier; main has moved since, no F04 file touched).
+- typecheck, lint, deps:check clean; scope OK (9 files). Spec file ai.acceptance.test.ts identical to spec commit 3d3d460.
+- npm test: 1422 unit plus 2 db green; e2e 3 of 3 on the production build. mutate:canary 100; mutate:changed F04 on ai.ts: 100.00 (112 mutants).
+- Opus adversarial read of ai.ts against AI-1, AI-4, AI-5, AI-6, AI-10 and checks 1 to 11: no violation (read-only, no probes run).
+Optional hardening, not a failure: `quote` uses trim().min(1), which lets a quote of only U+200B, U+2060 or U+0085 through; reading.ts WordSchema treats those as blank. I00's valueInBox never matches it. Suggest reusing WordSchema's blank rule.
+Permission gaps: none. Model: Sonnet 5.5 (adversarial read on Opus).
