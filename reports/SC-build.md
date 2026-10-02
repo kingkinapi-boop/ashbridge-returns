@@ -17,3 +17,6 @@ Unit file re-run after merging main: 4 fail (R15 file side, R18, R23, R41), 44 p
 
 ## Re-check (cloud-f10790, 2 Oct, main 2de6057+)
 Merged main; same 7 fail (unit 4: R15 file, R18, R23, R41; db 3: R12, R15, R43), same owners. SC's paths hold only tests; nothing to build. Released. Note for the Lead: F07 (claude/F07) adds tables client_refs, bridge_ops_items, client_handoff, bridge_returns; R12, R43 should be re-run once it lands (it has no return_id FK gaps and refuses truncate). Permission gaps: none. Model: Sonnet 5.5.
+
+## Re-check (cloud-e72c49, 2 Oct, main with decision 0023)
+Merged main; the same 7 fail (db: R12, R15, R43; unit: R15 file, R18, R23, R41), same owners. SC's paths hold only tests; nothing to build. Released. Not re-offering will help until the owners' fixes land (returns.returns TRUNCATE, exceptions.status CHECK, gaps `// @mutate` and trim, records.ts strict keys, FUTURE_POINTERS and R23_SAMPLES by a spec job). Permission gaps: none. Model: Sonnet 5.5.
