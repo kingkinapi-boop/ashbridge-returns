@@ -1,10 +1,9 @@
 {
  "card": "F09A",
  "role": "check",
- "for": "2026-10-02T05:36:25.328Z",
- "worker": "cloud-d2cfdd",
- "state": "failed",
- "at": "2026-10-02T05:43:09.515Z",
- "mode": "turbo",
- "note": "FAIL: F09 r4 test (reading.acceptance 1065) contradicts dash rule A296, see reports/F09A-check.md"
+ "for": "2026-10-02T07:01:49.916Z",
+ "worker": "cloud-34faae",
+ "state": "working",
+ "at": "2026-10-02T07:12:56.841Z",
+ "mode": "turbo"
 }
