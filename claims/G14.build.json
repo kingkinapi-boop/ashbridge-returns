@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "ebb2054",
  "worker": "cloud-eea9f9",
- "state": "reported",
- "at": "2026-10-02T19:49:15.139Z",
+ "state": "released",
+ "at": "2026-10-02T20:29:47.913Z",
  "mode": "turbo",
- "note": "13 of 13 acceptance tests pass, builder test added"
+ "note": "merged"
 }
