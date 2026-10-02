@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "ba50f80",
  "worker": "cloud-ae6ed2",
- "state": "working",
- "at": "2026-10-02T19:29:34.461Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:47:34.667Z",
+ "mode": "turbo",
+ "note": "331 of 331 sheet tests pass; full suite green; mutation 100; see reports/A07C-build.md"
 }
