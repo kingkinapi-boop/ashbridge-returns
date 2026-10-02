@@ -1926,7 +1926,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A01",
@@ -1946,7 +1946,8 @@
       "title": "Reading: recorded results for tests",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -3487,7 +3488,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3510,7 +3511,8 @@
       "params": {
         "topic": "cra-hst-instalments"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
