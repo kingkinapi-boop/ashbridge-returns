@@ -1,9 +1,11 @@
 {
  "card": "D01",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit only; no change; typecheck, lint, unit and db green on main merge",
  "worker": "cloud-e43f36",
- "state": "working",
- "at": "2026-10-02T08:31:11.997Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T08:32:47.280Z",
+ "mode": "turbo",
+ "commit": "d082015",
+ "validated": "7dd2c02a511607dfd78053eae5e40a510f95b03b"
 }
