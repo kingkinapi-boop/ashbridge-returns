@@ -2334,6 +2334,32 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "E03"
+      ],
+      "paths": [
+        "data/facts/catalogue.json",
+        "src/contracts/facts.test.ts",
+        "src/contracts/__fixtures__/fact-catalogue.ts",
+        "src/contracts/facts-askable.acceptance.test.ts"
+      ],
+      "clauses": [
+        "AI-12",
+        "ARC-2",
+        "END-7",
+        "R27",
+        "R28"
+      ],
+      "id": "E03A",
+      "title": "Fact catalogue: the client-askable facts the question bank needs",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From the G12 spec release (A362)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "E00",
         "E02",
         "E03",
@@ -2986,6 +3012,46 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "src/core/egress-rules.acceptance.test.ts",
+        "tools/test/toolchain-rules.test.mjs"
+      ],
+      "clauses": [
+        "SEC-5",
+        "ARC-15"
+      ],
+      "id": "FX1",
+      "title": "Cold-tool tests get a load-proof timeout",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the red G01 train (A361)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/next.mjs",
+        "tools/status.mjs",
+        "tools/test/claim.test.mjs",
+        "tools/test/__fixtures__/claims/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ1",
+      "title": "Queue: no wasted offers",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the Reviewer SLOW of 2 Oct 14:40Z."
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "F00",
         "E03"
@@ -3086,7 +3152,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/assets-cca.json",
@@ -3110,7 +3177,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/shareholders-dividends.json",
@@ -3134,7 +3202,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/payroll-bonuses.json",
@@ -3158,7 +3227,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/shareholder-loans.json",
@@ -3182,7 +3252,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/vehicle-home-office.json",
@@ -3206,7 +3277,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/cra-hst-instalments.json",
