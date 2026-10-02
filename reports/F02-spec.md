@@ -1,15 +1,21 @@
-# F02 spec (cloud-d42547, Opus spec-writer, 2 Oct)
-Spec commit 40bebf3 on claude/F02, based on origin/claude/F01 124b473 (F01 not yet on main) merged with origin/main; validated on main bb88e2e.
-Tests: 92 in src/modules/lifecycle/: lifecycle.acceptance.test.ts (unit, 25) and lifecycle.acceptance.db.test.ts (db, 67); fixture __fixtures__/blueprint-moves.ts. Clauses: FLOW-1, FLOW-2, FLOW-3, FLOW-4, FLOW-5, FLOW-7, FLOW-10, FLOW-12 (CRA T4012 cited); 3 seeded fast-check properties on due dates.
-Red for the right reason: both files fail at import (./index and ../../contracts/lifecycle missing); typecheck and lint errors are only those (TS2307 and the unresolved-type knock-ons). Unit 960/960 and db 168/168 otherwise green.
-Step 6b: a throwaway stub passed all 92 and the whole suite (985 unit, 235 db), lint clean on the tests with types resolved; planted faults caught (month-end balance rule, kind-blind fingerprint match). Retired: none. Stub worktree removed.
-## Ambers
-- Balance-due day counts months as the Interpretation Act s. 28 (30 Jun -> 30 Aug; 28 Feb -> 28 Apr), never later than a month-end reading, so it cannot make a payment late; filing keeps CRA's month-end rule. Reverse: four rows and balanceOracle in the unit test. Worth a CPA glance (Zo) if the earlier date bothers anyone.
-- API: createLifecycle({ db, clock, guards?, approvals? }) with move/voidApproval/setWaiting/clearWaiting/waitingOnClient/takeHold/releaseHold/holder; results are { ok } unions; guards keyed by MOVES[i].guard, a missing guard refuses "not built yet"; dueDates(yearEnd 'YYYY-MM-DD', { ccpcConditionsMet }) -> ISO text.
-- FLOW-4 shape set here (T06 not written): { cells: {cellId, value}[], facts|entries|judgmentInputs: {id, version}[] }; T06 supplies it through ApprovalFingerprintSource.current(returnId); matching is by kind and id.
-- voidApproval works from approved and ready_to_file (tested), writes one approved/ready_to_file -> trace state event (guards bypassed; not a table move) and one returns.events row (record_table 'approvals', record_id the approval id), since F02 has no schema path.
-- Waiting flag lives in returns.events (one row per set or clear, no state event); hold idle counts from the last take, the holder retaking renews; only the holder releases.
+# F02 spec (round 2: cloud-c8eb87, Opus spec-writer, 2 Oct; round 1: cloud-d42547)
+Spec commit f345742 on claude/F02, based on origin/claude/F01C 2866afe (F01C build reported, not yet on main) merged with origin/main; validated on main e949b5c.
+Tests: 102 in src/modules/lifecycle/ (unit 25, db 77). Round 2 adds the card's "From findings F01 round 2" section: who, why and holder checked with isBlank over the whole blank class (16 samples plus a seeded property over BLANK_RANGES) on move, voidApproval, setWaiting, clearWaiting, takeHold, releaseHold, returning ok:false (voidApproval: voided:false with a reason) before any guard or write; one transaction for event and return update (planted triggers on the return update and on the approval event; nothing kept, no pending event left); a refused guard leaves no pending event; FLOW-4 fingerprint refuses blank ids and versions below 1.
+Red for the right reason: both files fail at import (./index and ../../contracts/lifecycle missing); typecheck and lint errors only there. Unit 1532 and db 295 otherwise green.
+Step 6b: a throwaway stub passed all 102 and the whole suite (unit 1557, db 372), typecheck and lint clean. Planted faults caught: trim instead of isBlank (5 tests), no transaction (2 tests). Retired: none. Stub worktree removed.
+## Ambers (round 2)
+- voidApproval(returnId, changedItems, actor, why): the findings name its actor and why, so it takes them (the card's Build line showed two arguments); its state event carries them. Reverse: drop the two arguments and the actor/reason assertions.
+- Blank checks run before guards: no guard is asked about a move with a blank who or why (the test that catches a trim-only check, since the database refuses blanks anyway).
+- A changed item with a blank id refuses the whole void with a reason (a flag for a person), even beside a fingerprinted change.
+- setWaiting and clearWaiting return { ok: true } | { ok: false; reason }.
+- A database failure inside move or voidApproval may return a refusal or throw; either way nothing is kept.
+## Ambers (round 1, kept)
+- Balance-due day counts months as the Interpretation Act s. 28 (30 Jun -> 30 Aug); filing keeps CRA's month-end rule.
+- API: createLifecycle({ db, clock, guards?, approvals? }); guards keyed by MOVES[i].guard, a missing guard refuses "not built yet"; dueDates(yearEnd, { ccpcConditionsMet }) -> ISO text.
+- FLOW-4 shape: { cells: {cellId, value}[], facts|entries|judgmentInputs: {id, version}[] }; T06 supplies it through ApprovalFingerprintSource.
+- voidApproval writes one state event to trace and one returns.events row (record_table 'approvals').
+- Waiting flag lives in returns.events; hold idle counts from the last take; only the holder releases.
 ## Permission gaps
-- `git worktree add ... && ... && tail` in one compound call was denied; plain `git worktree add` worked. One `sed ...; ls ...; node -v` call denied; used Read instead.
+None met.
 ## Model
 claude-opus-5-5 (spec-writer).
