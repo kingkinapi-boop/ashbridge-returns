@@ -2,7 +2,10 @@
  "card": "F03R",
  "role": "spec",
  "worker": "cloud-18c550",
- "state": "working",
- "at": "2026-10-02T04:54:58.104Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T05:04:33.572Z",
+ "mode": "turbo",
+ "note": "49 tests (39 fail by design); needs Node 24",
+ "commit": "7145c18",
+ "validated": "86ebd54"
 }
