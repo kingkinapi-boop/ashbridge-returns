@@ -1,0 +1,9 @@
+{
+ "card": "W00b",
+ "role": "build",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-02T19:00:56.929Z",
+ "note": "wait: W00a check failed; build after W00a's fix round lands on claude/W00a",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"W00a\"],\"depStatus\":[\"carded\"]}"
+}
