@@ -4,7 +4,11 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-Nothing. Your yes on the scanner line is recorded (decision 0021).
+**1. The scanner line you approved needs your hands (about 2 minutes).** Claude Code's permission system blocks every agent from editing the secret scanner's settings, cloud workers and me alike, even with your yes (decision 0021). On GitHub, open the file `.gitleaks.toml` on the branch `claude/E03A` (https://github.com/kingkinapi-boop/ashbridge-returns/blob/claude/E03A/.gitleaks.toml), press the pencil (edit), and after the line that ends `rouge-valley-landscaping[a-z0-9-]*''',` add this line:
+
+    '''\.key\s*===\s*'[a-z0-9_]+(\.[a-z0-9_]+)+'''',
+
+Commit straight to `claude/E03A`, then type "done" here. Meanwhile only E03A (the asset facts for the question bank) waits; everything else keeps building.
 
 Your answers of this morning are in: all seven design recommendations accepted (for the source viewer, which had no recommendation, I picked B, cite or write a reason; say "viewer A" or "viewer C" to change it), and your logo is in use.
 
