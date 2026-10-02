@@ -1,11 +1,10 @@
 {
  "card": "D01",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "d082015",
- "worker": "cloud-a33104",
- "state": "reopened",
- "at": "2026-10-02T06:40:38.795Z",
- "mode": "turbo",
- "note": "FAIL: design/map tests not in vitest include or lint project, see reports/D01-check.md"
+ "worker": "cloud-790b0c",
+ "state": "working",
+ "at": "2026-10-02T08:34:29.321Z",
+ "mode": "turbo"
 }
