@@ -4,7 +4,8 @@
  "round": 29,
  "spec": "62f6c18",
  "worker": "cloud-14c055",
- "state": "working",
- "at": "2026-10-02T19:09:39.904Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:09:46.637Z",
+ "mode": "turbo",
+ "note": "unchanged blockers, see reports/SC-build.md; queue re-offers it, Lead must hold it"
 }
