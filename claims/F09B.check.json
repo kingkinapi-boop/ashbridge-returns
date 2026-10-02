@@ -1,11 +1,9 @@
 {
  "card": "F09B",
  "role": "check",
- "for": "2026-10-02T09:43:36.725Z",
- "worker": "cloud-7554c7",
- "state": "failed",
- "at": "2026-10-02T10:15:08.345Z",
- "mode": "turbo",
- "beat": "2026-10-02T10:13:47.627Z",
- "note": "FAIL: adjacent float gap has no epsilon; 50000-word tests never join; see reports/F09B-check.md"
+ "for": "2026-10-02T11:21:05.256Z",
+ "worker": "cloud-63f8ba",
+ "state": "working",
+ "at": "2026-10-02T11:25:53.887Z",
+ "mode": "turbo"
 }
