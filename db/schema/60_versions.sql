@@ -43,3 +43,5 @@ create trigger approvals_no_truncate before truncate on returns.approvals
 alter table returns.versions enable row level security;
 alter table returns.version_cells enable row level security;
 alter table returns.approvals enable row level security;
+
+comment on column returns.version_cells.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';

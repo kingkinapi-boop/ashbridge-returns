@@ -24,6 +24,9 @@ create table returns.gifi_mappings (
 );
 create trigger gifi_mappings_next_version before insert on returns.gifi_mappings
   for each row execute function returns.next_version_guard('mapping_version', 'account_id');
+-- TB-3: a new GIFI code or account is a new mapping version, never an edit.
+create trigger gifi_mappings_update_guard before update on returns.gifi_mappings
+  for each row execute function returns.version_update_guard('mapping_version', 'return_id', 'account_id', 'gifi_code');
 
 create table returns.adjusting_entries (
   id text primary key,
@@ -92,7 +95,7 @@ language sql immutable as $$
         or (jsonb_typeof(m.value) = 'object' and m.value <> '{}'::jsonb
             and not exists (
               select 1 from jsonb_each(m.value) f
-              where not (
+              where returns.is_blank(f.key) or not (
                 (jsonb_typeof(f.value) = 'string' and not returns.is_blank(f.value #>> '{}'))
                 or jsonb_typeof(f.value) = 'number'
               )
@@ -185,3 +188,5 @@ alter table returns.gifi_mappings enable row level security;
 alter table returns.adjusting_entries enable row level security;
 alter table returns.entry_lines enable row level security;
 alter table returns.judgment_inputs enable row level security;
+
+comment on column returns.judgment_inputs.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';

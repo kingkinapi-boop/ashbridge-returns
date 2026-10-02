@@ -118,3 +118,5 @@ create trigger facts_no_truncate before truncate on returns.facts
 alter table returns.facts enable row level security;
 alter table returns.links enable row level security;
 alter table returns.events enable row level security;
+
+comment on column returns.facts.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';

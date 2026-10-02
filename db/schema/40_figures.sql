@@ -11,3 +11,5 @@ create table returns.figures (
   constraint figures_version_stamp check (returns.is_version_stamp(version_stamp))
 );
 alter table returns.figures enable row level security;
+
+comment on column returns.figures.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';

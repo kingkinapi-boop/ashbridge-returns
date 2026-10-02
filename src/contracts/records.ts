@@ -26,13 +26,15 @@ import {
   VersionCellIdSchema,
   VersionIdSchema,
 } from './ids'
-import { NonBlankSchema } from './text'
+import { isBlank, NonBlankSchema } from './text'
 
 const common = { created_at: z.date(), is_test: z.boolean() }
 const cents = z.number().int()
+/** A whole number from 1: version numbers, mapping versions, pages and rows (SQL checks the same). */
+const fromOne = z.number().int().min(1)
 /** ARC-10: the versions that made a derived record; never empty, values are non-blank strings or numbers. */
 export const VersionStampSchema = z
-  .record(z.string(), z.union([NonBlankSchema, z.number()]))
+  .record(NonBlankSchema, z.union([NonBlankSchema, z.number()]))
   .refine((v) => Object.keys(v).length > 0)
 
 /** Blueprint 02: the states of a return (FLOW-1). */
@@ -65,7 +67,7 @@ export const DocumentRecordSchema = z.object({
 export type DocumentRecord = z.infer<typeof DocumentRecordSchema>
 
 export const VersionRecordSchema = z.object({
-  id: VersionIdSchema, ...common, return_id: ReturnIdSchema, version_no: z.number().int(),
+  id: VersionIdSchema, ...common, return_id: ReturnIdSchema, version_no: fromOne,
 })
 export type VersionRecord = z.infer<typeof VersionRecordSchema>
 
@@ -95,15 +97,15 @@ export const SourceBoxSchema = z
   .refine((b) => BoxSchema.safeParse({ page: 1, ...b }).success, { message: 'box runs off the page' })
 export const FactRecordSchema = z.object({
   id: FactIdSchema, ...common,
-  return_id: ReturnIdSchema, fact_key: NonBlankSchema, version_no: z.number().int(), value: z.string().nullable(),
+  return_id: ReturnIdSchema, fact_key: NonBlankSchema, version_no: fromOne, value: z.string().nullable(),
   // EV-5: exactly one of these six pointers is set
   // a document pointer is (page and box) or (sheet, row and column); a QBO pointer is the snapshot
   // and the account, and the transaction where there is one
   source_document_id: DocumentIdSchema.nullable(),
-  source_page: z.number().int().nullable(),
+  source_page: fromOne.nullable(),
   source_box: SourceBoxSchema.nullable(),
   source_sheet: NonBlankSchema.nullable(),
-  source_row: z.number().int().nullable(),
+  source_row: fromOne.nullable(),
   source_column: NonBlankSchema.nullable(),
   source_qbo_snapshot_id: NonBlankSchema.nullable(),
   source_qbo_account_id: NonBlankSchema.nullable(),
@@ -132,17 +134,26 @@ export type AccountRecord = z.infer<typeof AccountRecordSchema>
 
 export const GifiMappingRecordSchema = z.object({
   id: GifiMappingIdSchema, ...common,
-  return_id: ReturnIdSchema, account_id: AccountIdSchema, mapping_version: z.number().int(), gifi_code: NonBlankSchema,
+  return_id: ReturnIdSchema, account_id: AccountIdSchema, mapping_version: fromOne, gifi_code: NonBlankSchema,
 })
 export type GifiMappingRecord = z.infer<typeof GifiMappingRecordSchema>
+
+/** TB-2, mirrors returns.sources_are_real: a non-empty list whose members each say something. */
+const saysSomething = (m: unknown): boolean => {
+  if (typeof m === 'string') return !isBlank(m)
+  if (m === null || Array.isArray(m)) return false
+  const fields = Object.entries(m as object)
+  return fields.length > 0 && fields.every(([k, v]) => !isBlank(k) && (typeof v === 'number' || (typeof v === 'string' && !isBlank(v))))
+}
+export const sourcesAreReal = (sources: readonly unknown[]): boolean => sources.length > 0 && sources.every(saysSomething)
 
 export const AdjustingEntryRecordSchema = z.object({
   id: AdjustingEntryIdSchema, ...common,
   return_id: ReturnIdSchema, qbo_snapshot_id: NonBlankSchema, qbo_txn_id: NonBlankSchema,
   entry_type: EntryTypeSchema.nullable(), reason: NonBlankSchema.nullable(),
   sources: z.array(z.unknown()), author: NonBlankSchema.nullable(), explained: z.boolean(),
-  version_no: z.number().int(),
-})
+  version_no: fromOne,
+}).refine((e) => !e.explained || sourcesAreReal(e.sources), { message: 'an explained entry needs real sources', path: ['sources'] })
 export type AdjustingEntryRecord = z.infer<typeof AdjustingEntryRecordSchema>
 
 export const EntryLineRecordSchema = z.object({
@@ -154,7 +165,7 @@ export type EntryLineRecord = z.infer<typeof EntryLineRecordSchema>
 export const JudgmentInputRecordSchema = z.object({
   id: JudgmentInputIdSchema, ...common,
   return_id: ReturnIdSchema, cell_id: NonBlankSchema, value: z.string().nullable(),
-  author: NonBlankSchema, reason: NonBlankSchema, version_no: z.number().int(),
+  author: NonBlankSchema, reason: NonBlankSchema, version_no: fromOne,
 })
 export type JudgmentInputRecord = z.infer<typeof JudgmentInputRecordSchema>
 
