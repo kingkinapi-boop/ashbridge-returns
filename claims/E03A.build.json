@@ -4,7 +4,8 @@
  "round": 5,
  "spec": "5acfe13",
  "worker": "cloud-e592ae",
- "state": "working",
- "at": "2026-10-02T15:45:26.919Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T15:45:33.959Z",
+ "mode": "turbo",
+ "note": "CQ1 bug: re-offered again after check PASS; stopping"
 }
