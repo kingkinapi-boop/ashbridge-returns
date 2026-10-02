@@ -630,17 +630,30 @@ describe('check 20: mutation and money markers', () => {
 //     ends where the style changes and the next word starts afresh.
 //   - The 50000-group run is too large for a safe integer, so it makes no group and normaliseAmount
 //     refuses it; the test pins that and the time.
+//
+// Round 2 (float geometry, reports/F09B-check.md):
+//   - Real readings give decimal page fractions, so a boundary computed in floating point lands a hair
+//     either side of the exact value (0.3 - (0.1 + 0.2) is -5.55e-17). Rows marked `decimal` use such
+//     coordinates: a boundary that is exact on paper (touching, a gap of exactly the tolerance, touching
+//     lines) gives the same answer as with binary fractions; anything more than 1e-9 past it does not.
+//   - Rule: every geometry predicate has a decimal-coordinate boundary row (amber: the decimal rows for
+//     sameLine are included, so its "touching lines are two lines" boundary needs the same allowance).
+//   - The 50000-word runs use exact binary geometry (width 2^-17, every gap exactly 0), and every one of
+//     their 50000 neighbouring pairs is proved to join, so the run really is one chain. normaliseAmount's
+//     50000-group run is refused as too large (the whole text is one group), not as "not an amount".
 
 const GH = 0.03125 // word height, 2^-5
 const GTOP = 0.25
 const HAIR = 0.0009765625 // 2^-10
+/** Past a decimal boundary by clearly more than 1e-9 of the page. */
+const PAST = 2e-9
 
-type Placed = readonly [text: string, left: number, width: number, top?: number]
+type Placed = readonly [text: string, left: number, width: number, top?: number, height?: number]
 
 function place(items: readonly Placed[]): Word[] {
-  return items.map(([text, left, width, top], i) => ({
+  return items.map(([text, left, width, top, height], i) => ({
     text,
-    box: { page: 1, left, top: top ?? GTOP, width, height: GH },
+    box: { page: 1, left, top: top ?? GTOP, width, height: height ?? GH },
     confidence: 0.99,
     order: i + 1,
   }))
@@ -651,6 +664,8 @@ type GeometryRow = {
   /** The geometry predicate in amount-grammar.ts the row proves. */
   predicate: string
   gap: 'backwards' | 'overlapping' | 'edge'
+  /** Round 2: the row's coordinates are decimal page fractions (not binary), at or just past a boundary. */
+  decimal?: true
   words: readonly Placed[]
   tolerance?: number
   groups: readonly GroupView[]
@@ -682,6 +697,15 @@ const GEOMETRY_ROWS: readonly GeometryRow[] = [
   { rule: 'F09B a word offset down by a quarter of its height overlaps the line and joins', predicate: 'sameLine', gap: 'overlapping', words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125, GTOP + GH / 4]], groups: [[123456, ['1', '234.56']]] },
   { rule: 'F09B a word offset up by a quarter of its height overlaps the line and joins', predicate: 'sameLine', gap: 'overlapping', words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125, GTOP - GH / 4]], groups: [[123456, ['1', '234.56']]] },
   { rule: 'F09B a word that only touches the line below is another line', predicate: 'sameLine', gap: 'edge', words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125, GTOP + GH]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  // Round 2: decimal coordinates at the boundaries (float geometry)
+  { rule: 'F09B r2 decimal: "1" at left 0.1 width 0.2 touching "234.56" at left 0.3 joins to 123456 cents', predicate: 'adjacent', gap: 'edge', decimal: true, words: [['1', 0.1, 0.2], ['234.56', 0.3, 0.125]], groups: [[123456, ['1', '234.56']]], notFound: ['234.56'] },
+  { rule: 'F09B r2 decimal: a gap of exactly one height (0.82 after 0.7 + 0.1, height 0.02) joins', predicate: 'adjacent', gap: 'edge', decimal: true, words: [['1', 0.7, 0.1, GTOP, 0.02], ['234.56', 0.82, 0.1, GTOP, 0.02]], groups: [[123456, ['1', '234.56']]], notFound: ['234.56'] },
+  { rule: 'F09B r2 decimal: a gap more than 1e-9 past one height (0.82 + 2e-9 after 0.7 + 0.1, height 0.02) does not join', predicate: 'adjacent', gap: 'edge', decimal: true, words: [['1', 0.7, 0.1, GTOP, 0.02], ['234.56', 0.82 + PAST, 0.1, GTOP, 0.02]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B r2 decimal: an overlap of more than 1e-9 ("234.56" at 0.3 - 2e-9 after 0.1 + 0.2) does not join', predicate: 'adjacent', gap: 'overlapping', decimal: true, words: [['1', 0.1, 0.2], ['234.56', 0.3 - PAST, 0.125]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B r2 decimal: with tolerance 2 a gap of exactly two heights (0.84 after 0.7 + 0.1, height 0.02) joins', predicate: 'adjacent', gap: 'edge', decimal: true, tolerance: 2, words: [['1', 0.7, 0.1, GTOP, 0.02], ['234.56', 0.84, 0.1, GTOP, 0.02]], groups: [[123456, ['1', '234.56']]] },
+  { rule: 'F09B r2 decimal: a word whose top (0.3) touches the bottom of the line above (0.2 + 0.1) is another line', predicate: 'sameLine', gap: 'edge', decimal: true, words: [['1', 0.125, 0.0625, 0.2, 0.1], ['234.56', 0.1875, 0.125, 0.3, 0.1]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B r2 decimal: a word whose bottom (0.2 + 0.1) touches the top of the line below (0.3) is another line', predicate: 'sameLine', gap: 'edge', decimal: true, words: [['1', 0.125, 0.0625, 0.3, 0.1], ['234.56', 0.1875, 0.125, 0.2, 0.1]], groups: [[100, ['1']], [23456, ['234.56']]], notFound: ['1234.56'] },
+  { rule: 'F09B r2 decimal: a word overlapping the line by more than 1e-9 (top 0.3 - 2e-9 under 0.2 + 0.1) joins', predicate: 'sameLine', gap: 'overlapping', decimal: true, words: [['1', 0.125, 0.0625, 0.2, 0.1], ['234.56', 0.1875, 0.125, 0.3 - PAST, 0.1]], groups: [[123456, ['1', '234.56']]] },
 ]
 
 describe('F09B check 1: gap geometry (amountGroups)', () => {
@@ -737,6 +761,32 @@ describe('F09B check 2: rule, every geometry predicate has a backwards and an ov
     expect(found).toContain('overlapsBox')
     expect(GEOMETRY_ROWS.some((r) => r.predicate === 'nearBy')).toBe(false)
   })
+
+  /** A coordinate that is not a binary fraction with at most 20 bits after the point (0.1, 0.82, 0.3 - 2e-9). */
+  const isDecimal = (x: number): boolean => !Number.isInteger(x * 2 ** 20)
+  const coordinates = (row: GeometryRow): number[] =>
+    row.words.flatMap(([, left, width, top, height]) => [left, width, top ?? GTOP, height ?? GH])
+  const hasDecimalRow = (rows: readonly GeometryRow[], name: string): boolean =>
+    rows.some((r) => r.predicate === name && r.decimal === true && r.gap === 'edge' && coordinates(r).some(isDecimal))
+
+  test('EV-6 r2 rule: every geometry predicate in amount-grammar.ts has a decimal-coordinate boundary row in the geometry table', () => {
+    const found = predicates(source())
+    expect(found.length, 'no geometry predicate found by signature').toBeGreaterThan(0)
+    for (const name of found) expect(hasDecimalRow(GEOMETRY_ROWS, name), `${name}: no decimal-coordinate boundary row`).toBe(true)
+    // A row marked decimal really has a decimal coordinate.
+    for (const row of GEOMETRY_ROWS.filter((r) => r.decimal === true)) {
+      expect(coordinates(row).some(isDecimal), `${row.rule}: marked decimal but every coordinate is binary`).toBe(true)
+    }
+  })
+
+  test('EV-6 r2 rule planted fault: a new predicate with no decimal row fails, and a binary-only row marked decimal does not count', () => {
+    const planted = `${source()}\nconst nearBy = (a: Spot, b: Spot): boolean => a.left < b.left\n`
+    expect(predicates(planted)).toContain('nearBy')
+    expect(hasDecimalRow(GEOMETRY_ROWS, 'nearBy')).toBe(false)
+    const binaryOnly: GeometryRow = { rule: 'planted (Test)', predicate: 'nearBy', gap: 'edge', decimal: true, words: [['1', 0.125, 0.0625], ['234.56', 0.1875, 0.125]], groups: [] }
+    expect(hasDecimalRow([binaryOnly], 'nearBy')).toBe(false)
+    expect(hasDecimalRow([{ ...binaryOnly, words: [['1', 0.1, 0.2], ['234.56', 0.3, 0.125]] }], 'nearBy')).toBe(true)
+  })
 })
 
 // Every code point of Unicode category Cf (format characters), computed once.
@@ -765,6 +815,8 @@ describe('F09B check 3: a word of format characters only is blank', () => {
     ['U+E0001 (language tag, outside the BMP)', '\u{E0001}'],
     ['U+2060 and U+00AD around a space', '⁠ ­'],
     ['U+200B, U+2060 and U+FEFF together', '​⁠﻿'],
+    ['U+0085 (next line, NEL), which trim() keeps', '\u0085'],
+    ['U+0085 beside U+200B and a space', '\u0085​ '],
   ] as const) {
     test(`EV-5 F09B WordSchema refuses a word that is only ${name}`, () => {
       expect(WordSchema.safeParse(wordWith(text)).success).toBe(false)
@@ -775,6 +827,7 @@ describe('F09B check 3: a word of format characters only is blank', () => {
     ['"A" after U+2060', '⁠A'],
     ['"5" between U+00AD and U+200E', '­5‎'],
     ['"$" after U+180E and a space', '᠎ $'],
+    ['"5.00" after U+0085', '\u00855.00'],
   ] as const) {
     test(`EV-5 F09B WordSchema keeps a word with one visible character among format characters: ${name}`, () => {
       expect(WordSchema.safeParse(wordWith(text)).success).toBe(true)
@@ -835,14 +888,46 @@ describe('F09B check 4: one grouping style per amount', () => {
 })
 
 describe('F09B check 5: joining groups is linear', () => {
+  // Exact binary geometry (round 2): width 2^-17 from left 2^-7, so every left edge and right edge is
+  // exact and every gap is exactly 0 (50001 words end near 0.39 of the page).
+  const RUN_WIDTH = 2 ** -17
+  const RUN_LEFT = 2 ** -7
   const longRun = (first: string, group: string, count: number): Word[] => {
-    const width = 0.00001
     const words: Word[] = []
     for (let i = 0; i <= count; i++) {
-      words.push({ text: i === 0 ? first : group, box: { page: 1, left: 0.01 + i * width, top: 0.2, width, height: WORD_HEIGHT }, confidence: 0.99, order: i + 1 })
+      words.push({ text: i === 0 ? first : group, box: { page: 1, left: RUN_LEFT + i * RUN_WIDTH, top: 0.2, width: RUN_WIDTH, height: WORD_HEIGHT }, confidence: 0.99, order: i + 1 })
     }
     return words
   }
+  /** How many neighbouring pairs of the run join: each pair laid as "1" then the group word. */
+  const pairJoins = (words: readonly Word[], group: string): number => {
+    let joins = 0
+    for (let i = 0; i + 1 < words.length; i++) {
+      const pair = [{ ...words[i] as Word, text: '1' }, { ...words[i + 1] as Word, text: group }]
+      const groups = amountGroups(pair)
+      if (groups.length === 1 && groups[0]?.words.length === 2) joins += 1
+    }
+    return joins
+  }
+
+  for (const group of ['000', ',000']) {
+    test(`EV-6 r2 the 50000-word "${group}" run has exact geometry: every gap is exactly 0 and all 50000 neighbouring pairs join`, () => {
+      const words = longRun('1', group, 50_000)
+      for (let i = 0; i + 1 < words.length; i++) {
+        const a = (words[i] as Word).box
+        const b = (words[i + 1] as Word).box
+        expect(b.left - (a.left + a.width), `gap after word ${String(i)}`).toBe(0)
+      }
+      expect(pairJoins(words, group)).toBe(50_000)
+    })
+  }
+
+  test('EV-6 r2 planted fault: one word of the run moved a hair to the left of its neighbour breaks one pair, and the count sees it', () => {
+    const words = longRun('1', '000', 50_000)
+    const moved = words[25_000] as Word
+    words[25_000] = { ...moved, box: { ...moved.box, left: moved.box.left - RUN_WIDTH / 2 } }
+    expect(pairJoins(words, '000')).toBe(49_999)
+  })
 
   test('EV-6 F09B 50000 "000" group words after a "1" return within 2 s (too large for a safe integer, so no group)', () => {
     const words = longRun('1', '000', 50_000)
@@ -866,6 +951,9 @@ describe('F09B check 5: joining groups is linear', () => {
     const got = normaliseAmount(text)
     expect(performance.now() - started).toBeLessThan(2000)
     expect(got.ok).toBe(false)
+    // Round 2: refused because the whole text is one group too large for exact cents, not because the
+    // chain broke part way (normaliseAmount lays its words out itself, so its geometry must hold for 50001 words).
+    expect(got.ok ? '' : got.reason).toMatch(/too large/)
   })
 
   test('EV-6 F09B a long run that fits still reads exactly: "1" then four "000" groups is 1,000,000,000,000.00', () => {
