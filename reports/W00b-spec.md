@@ -1,0 +1,7 @@
+# W00b spec report (cloud-dea37c)
+
+- 242 acceptance tests in testworld/model/made-up-data.acceptance.test.ts (helpers in __fixtures__/guard/world.ts); SEC-11, ARC-8 (S1 to S4, S8). 237 fail by name on main, 5 pass. Spec commit b6b2120. Validated on main 3df2e9b (typecheck, lint clean; db project 350/350).
+- Retired/rewritten (step 6b): guard.test.ts :120 :131 :134 :143 :149 :176 and the markdown half of :210 (superseded by S1/S2); :39 lost mixed-separator inputs (S3); :46 and the :161 describe moved to classified paths, assertions kept. kinds.test.ts :62 :67 (built folder now also reads empty). testworld/clients/load.test.ts :95 (unknown key may be refused).
+- FOR THE LEAD: samples C07 (Grace Liu), C09 (Wei Zhang, Olu Adeyemi), C14 (Declan Murphy) name a declared person without "(Test)" in the answer-key flag detail and profile.md (lines 33, 33, 36). Generator fix needed; until then two "S1 no false alarm" tests fail for them, and W00 load tests will once the guard refuses bare names.
+- Amber: classOf keyed by one shared path format ("parties[].name"); declared persons = answer-key parties of kind person; money amounts like 1306925.44 exempt from number check; text kinds json/csv/md/txt/tsv/xml/ts, others refused "cannot be checked"; loadKind root holds <root>/<id>.
+- Gap: load.ts is outside the card Paths, so loadClient still scans only json/csv/md; SC "every loader is guarded" rule should cover it.
