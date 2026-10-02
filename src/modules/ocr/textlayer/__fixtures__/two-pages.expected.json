@@ -1,0 +1,150 @@
+{
+  "file": "two-pages.pdf",
+  "note": "Made up (A01 spec). Two Letter pages with different words at different positions.",
+  "pageCount": 2,
+  "pages": [
+    {
+      "number": 1,
+      "widthPt": 612,
+      "heightPt": 792,
+      "hasTextLayer": true
+    },
+    {
+      "number": 2,
+      "widthPt": 612,
+      "heightPt": 792,
+      "hasTextLayer": true
+    }
+  ],
+  "words": [
+    {
+      "text": "Page",
+      "box": {
+        "page": 1,
+        "left": 0.117647059,
+        "top": 0.075757576,
+        "width": 0.047058824,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "one",
+      "box": {
+        "page": 1,
+        "left": 0.176470588,
+        "top": 0.075757576,
+        "width": 0.035294118,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "(Test)",
+      "box": {
+        "page": 1,
+        "left": 0.223529412,
+        "top": 0.075757576,
+        "width": 0.070588235,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Opening",
+      "box": {
+        "page": 1,
+        "left": 0.117647059,
+        "top": 0.106060606,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "balance",
+      "box": {
+        "page": 1,
+        "left": 0.211764706,
+        "top": 0.106060606,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "$100.00",
+      "box": {
+        "page": 1,
+        "left": 0.305882353,
+        "top": 0.106060606,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Page",
+      "box": {
+        "page": 2,
+        "left": 0.235294118,
+        "top": 0.353535354,
+        "width": 0.047058824,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "two",
+      "box": {
+        "page": 2,
+        "left": 0.294117647,
+        "top": 0.353535354,
+        "width": 0.035294118,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "(Test)",
+      "box": {
+        "page": 2,
+        "left": 0.341176471,
+        "top": 0.353535354,
+        "width": 0.070588235,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Closing",
+      "box": {
+        "page": 2,
+        "left": 0.235294118,
+        "top": 0.383838384,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "balance",
+      "box": {
+        "page": 2,
+        "left": 0.329411765,
+        "top": 0.383838384,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "$987.65",
+      "box": {
+        "page": 2,
+        "left": 0.423529412,
+        "top": 0.383838384,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    }
+  ],
+  "boxes": {
+    "closingBalance": {
+      "page": 2,
+      "left": 0.418529412,
+      "top": 0.378838384,
+      "width": 0.092352941,
+      "height": 0.025151515
+    }
+  }
+}
