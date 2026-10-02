@@ -524,7 +524,9 @@
         "testworld/model/**",
         "testworld/index.ts",
         "testworld/generate.ts",
-        "testworld/clients/**"
+        "testworld/clients/**",
+        "reference/sample-clients/**/taxprep/*.csv",
+        ".gitattributes"
       ],
       "clauses": [
         "ARC-8",
