@@ -14,3 +14,6 @@ Re-ran both SC files after merging main: the same 7 fail (R12, R15 x2, R18, R23,
 
 ## Re-check (cloud-bb208a, 2 Oct, main ccca7ec)
 Unit file re-run after merging main: 4 fail (R15 file side, R18, R23, R41), 44 pass. The ones named above remain; SC's paths hold only tests, so nothing to build. F02 and F01D have since landed or reported without touching these. Released again. Permission gaps: none. Model: Sonnet 5.5.
+
+## Re-check (cloud-f10790, 2 Oct, main 2de6057+)
+Merged main; same 7 fail (unit 4: R15 file, R18, R23, R41; db 3: R12, R15, R43), same owners. SC's paths hold only tests; nothing to build. Released. Note for the Lead: F07 (claude/F07) adds tables client_refs, bridge_ops_items, client_handoff, bridge_returns; R12, R43 should be re-run once it lands (it has no return_id FK gaps and refuses truncate). Permission gaps: none. Model: Sonnet 5.5.
