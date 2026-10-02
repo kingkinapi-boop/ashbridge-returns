@@ -4,9 +4,9 @@
  "round": 2,
  "spec": "b903b9c",
  "worker": "cloud-ee27ff",
- "state": "reported",
- "at": "2026-10-02T02:42:35.221Z",
+ "state": "released",
+ "at": "2026-10-02T05:57:48.135Z",
  "mode": "turbo",
  "beat": "2026-10-02T02:41:36.656Z",
- "note": "round 2: 27 of 27 done-gate tests (R22 4 new pass), full suite 191 pass, flake 5/5, head 647c7e6"
+ "note": "merged"
 }
