@@ -300,3 +300,5 @@
 {"ts":"2026-10-02T14:58:14.241Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W00 findings review round 2","allowed":true}
 {"ts":"2026-10-02T14:58:16.562Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 3","allowed":true}
 {"ts":"2026-10-02T14:58:18.779Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 4","allowed":true}
+{"ts":"2026-10-02T15:00:30.401Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 5","allowed":true}
+{"ts":"2026-10-02T15:01:01.625Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Draft six cards for queue depth","allowed":true}
