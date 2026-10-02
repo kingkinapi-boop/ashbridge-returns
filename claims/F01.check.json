@@ -1,10 +1,9 @@
 {
  "card": "F01",
  "role": "check",
- "for": "2026-10-01T23:28:30.171Z",
- "worker": "cloud-329cd2",
- "state": "failed",
- "at": "2026-10-01T23:59:33.419Z",
- "mode": "turbo",
- "note": "FAIL: npm test red (spec PGlite rule) plus 7 schema gaps (TRUNCATE, blank sources, versions), see reports/F01-check.md"
+ "for": "2026-10-02T11:00:08.218Z",
+ "worker": "cloud-63f8ba",
+ "state": "working",
+ "at": "2026-10-02T11:11:47.927Z",
+ "mode": "turbo"
 }
