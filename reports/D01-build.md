@@ -10,3 +10,5 @@ Ambers:
 - Return brief, Full return, Three-pane view, Comment, Rework changes and Approve are separate screens (Zo's separate-tabs rule); merge rows if the D02 design chooses fewer.
 
 Permission gaps: none. Model: Sonnet 5.5.
+
+Re-check on main 7dd2c02 (cloud-790b0c, 2 Oct, fix round 1): branch already contains main; no content change. design/map runs in the shared unit project: 19 of 19 pass; typecheck, lint, deps:check clean; scope OK (7 files in design/map/** and reports).
