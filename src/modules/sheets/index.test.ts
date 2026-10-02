@@ -19,10 +19,11 @@ describe('EV-14 which reader a file gets', () => {
       expect(out.ok, name).toBe(true)
     }
   })
-  test('EV-14 any other name is refused by name: no extension, a longer one, a lookalike or none at all', async () => {
+  // Round 2 (A07 spec r2, 6b; A360 "reasons never name the file"): the reason text is pinned by round2.acceptance.test.ts.
+  test('EV-14 any other name is refused: no extension, a longer one, a lookalike or none at all', async () => {
     for (const name of ['noext', 'x.csv.bak', 'xcsv', 'x.csvx', 'a.pdf', 'file.', '']) {
       const out = await createSheetsReader().read(enc('a,b\n'), name)
-      expect(out, name).toEqual({ ok: false, reason: `unsupported file type: ${name}` })
+      expect(out.ok, name).toBe(false)
     }
   })
   test('EV-14 a CSV with an unterminated quote and a broken zip come back as refusals, not as results', async () => {
@@ -45,7 +46,8 @@ describe('EV-14 same bytes, same answer', () => {
     const reader = createSheetsReader()
     const first = await reader.read(enc('a,"b'), 'a.csv')
     setClock(fixedClock('2026-10-03T09:00:00-04:00'))
-    expect(await reader.read(enc('a,"b'), 'a.csv')).toBe(first)
+    // Round 2 (A07 spec r2, 6b; A360 "the cache returns a copy"): an equal answer, not the same object.
+    expect(await reader.read(enc('a,"b'), 'a.csv')).toEqual(first)
   })
   test('EV-14 the same bytes under a name that is read differently are read again, not taken from the cache', async () => {
     const reader = createSheetsReader()

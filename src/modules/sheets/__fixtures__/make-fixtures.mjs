@@ -4,7 +4,7 @@
 // Writes, next to this script:
 //   c01/            sample client C01's three made-up downloads, copied from reference/sample-clients/01-maple-ridge/accounts/
 //   csv-faults/     fault copies of the chequing download (see FAULTS below)
-//   xlsx/           tb-1900.xlsx and tb-1904.xlsx (hand-written SpreadsheetML in a stored zip), protected.xlsx
+//   xlsx/           tb-1900.xlsx, tb-1904.xlsx and cells-r2.xlsx (hand-written SpreadsheetML in a stored zip), protected.xlsx
 //                   (an encrypted-package compound file, as Excel writes a password-protected workbook) and old.xls
 //                   (a BIFF8 compound file), each with <name>.expected.json
 import fs from 'node:fs'
@@ -148,6 +148,8 @@ function sheetXml(spec, strings) {
     if (!rows.has(r)) rows.set(r, [])
     rows.get(r).push(c)
   }
+  // Round 2 (A360): rows written with no cells at all, for example an empty hidden row.
+  for (const r of spec.emptyRows ?? []) if (!rows.has(r)) rows.set(r, [])
   const cellXml = (c) => {
     const s = c.style ? ` s="${c.style}"` : ''
     switch (c.kind) {
@@ -163,6 +165,11 @@ function sheetXml(spec, strings) {
         return `<c r="${c.ref}" t="b"${s}><v>${c.raw}</v></c>`
       case 'formula':
         return `<c r="${c.ref}"${s}><f>${esc(c.formula)}</f><v>${c.raw}</v></c>`
+      // Round 2 (A360): a formula whose cached value is typed by the cell's t attribute (b, str, e), or has no <v> at all.
+      case 'typedFormula':
+        return `<c r="${c.ref}"${c.t ? ` t="${c.t}"` : ''}${s}><f>${esc(c.formula)}</f>${c.raw === null ? '' : `<v>${esc(c.raw)}</v>`}</c>`
+      case 'error':
+        return `<c r="${c.ref}" t="e"${s}><v>${esc(c.raw)}</v></c>`
       case 'empty':
         return `<c r="${c.ref}"${s}/>`
       default:
@@ -173,8 +180,11 @@ function sheetXml(spec, strings) {
     .sort((a, b) => a - b)
     .map((r) => `<row r="${r}"${spec.hiddenRows?.includes(r) ? ' hidden="1"' : ''}>${rows.get(r).map(cellXml).join('')}</row>`)
     .join('')
-  const cols = (spec.hiddenColumns ?? [])
-    .map((l) => `<col min="${colNumber(l)}" max="${colNumber(l)}" width="20" hidden="1" customWidth="1"/>`)
+  const cols = [
+    ...(spec.hiddenColumns ?? []).map((l) => [colNumber(l), colNumber(l)]),
+    ...(spec.hiddenColumnSpans ?? []),
+  ]
+    .map(([min, max]) => `<col min="${min}" max="${max}" width="20" hidden="1" customWidth="1"/>`)
     .join('')
   const merges = spec.merged?.length
     ? `<mergeCells count="${spec.merged.length}">${spec.merged.map((m) => `<mergeCell ref="${m}"/>`).join('')}</mergeCells>`
@@ -205,9 +215,29 @@ function workbook(sheets, { date1904 }) {
 const t = (ref, raw) => ({ ref, kind: 'text', raw, expect: { text: raw, type: 'text' } })
 const num = (ref, raw, style = STYLE.amount) => ({ ref, kind: 'number', raw, style, expect: { text: raw, type: 'number' } })
 const date = (ref, serial, iso, style = STYLE.dateIso) => ({ ref, kind: 'date', raw: String(serial), style, expect: { text: iso, type: 'date' } })
-const formula = (ref, f, cached) => ({ ref, kind: 'formula', raw: cached, formula: f, style: STYLE.amount, expect: { text: cached, type: 'formula', formula: f } })
+const formula = (ref, f, cached) => ({
+  ref,
+  kind: 'formula',
+  raw: cached,
+  formula: f,
+  style: STYLE.amount,
+  expect: { text: cached, type: 'formula', formula: f, cached: { type: 'number', text: cached } },
+})
 const empty = (ref) => ({ ref, kind: 'empty', raw: '', expect: { text: '', type: 'empty' } })
 const bool = (ref) => ({ ref, kind: 'bool', raw: '1', expect: { type: 'boolean' } })
+// Round 2 (A360). A number stored as `raw` that the reader writes as `text` (shortest round-trip text, or the cent amount
+// when the value is within 1e-9 of a whole cent; never exponent notation for a cent amount).
+const numAs = (ref, raw, text) => ({ ref, kind: 'number', raw, style: STYLE.amount, expect: { text, type: 'number' } })
+/** A formula with a typed cached value: t is the cell's t attribute (undefined for a number), raw null for no <v>. */
+const typedFormula = (ref, f, t, raw, cached) => ({
+  ref,
+  kind: 'typedFormula',
+  t,
+  raw,
+  formula: f,
+  expect: { text: cached.text, type: 'formula', formula: f, cached },
+})
+const error = (ref, raw) => ({ ref, kind: 'error', raw, expect: { text: raw, type: 'error' } })
 
 const TB_1900 = [
   {
@@ -253,10 +283,21 @@ const TB_1904 = [
   },
 ]
 
+const hiddenRowList = (s) => [...new Set([...(s.hiddenRows ?? [])])].sort((a, b) => a - b)
+const hiddenColumnList = (s) =>
+  [
+    ...new Set([
+      ...(s.hiddenColumns ?? []).map(colNumber),
+      ...(s.hiddenColumnSpans ?? []).flatMap(([min, max]) => Array.from({ length: max - min + 1 }, (_, i) => min + i)),
+    ]),
+  ].sort((a, b) => a - b)
+
 function expected(file, sheets) {
   return {
     file,
     sheets: sheets.map((s) => ({ name: s.name, hidden: Boolean(s.hidden) })),
+    // Round 2 (A360): every hidden row and column number per sheet (1-based, sorted), empty ones included.
+    hiddenLists: sheets.map((s) => ({ name: s.name, hiddenRows: hiddenRowList(s), hiddenColumns: hiddenColumnList(s) })),
     cells: sheets.flatMap((s) =>
       s.cells.map((c) => {
         const [, letter, row] = /^([A-Z]+)(\d+)$/.exec(c.ref)
@@ -285,6 +326,44 @@ out('xlsx/tb-1900.xlsx', workbook(TB_1900, { date1904: false }))
 out('xlsx/tb-1900.expected.json', json(expected('tb-1900.xlsx', TB_1900)))
 out('xlsx/tb-1904.xlsx', workbook(TB_1904, { date1904: true }))
 out('xlsx/tb-1904.expected.json', json(expected('tb-1904.xlsx', TB_1904)))
+
+// Round 2 (findings-A07-r1.md S1, A360): typed cached values, float noise, error cells, an empty hidden row, empty hidden
+// columns past the data, and a sheet named "TB " beside "TB".
+const CELLS_R2 = [
+  {
+    name: 'TB',
+    dimension: 'A1:C12',
+    hiddenRows: [3, 9],
+    emptyRows: [9],
+    hiddenColumns: ['C'],
+    hiddenColumnSpans: [[8, 9]],
+    cells: [
+      t('A1', 'Account (Test)'), t('B1', 'Debit'), t('C1', 'Credit'),
+      t('A2', 'Float noise (Test)'), numAs('B2', '1234.5600000000001', '1234.56'),
+      t('A3', 'Sum noise (Test)'), typedFormula('B3', '0.1+0.2', undefined, '0.30000000000000004', { type: 'number', text: '0.3' }),
+      t('A4', 'Large (Test)'), numAs('B4', '1E+21', '1000000000000000000000'),
+      t('A5', 'Zero total (Test)'), typedFormula('B5', 'B2-B2', undefined, '0', { type: 'number', text: '0' }),
+      t('A6', 'Flags (Test)'),
+      typedFormula('B6', 'B5=0', 'b', '1', { type: 'boolean', text: 'TRUE' }),
+      typedFormula('C6', 'B5<>0', 'b', '0', { type: 'boolean', text: 'FALSE' }),
+      // A cached empty string (<v></v>) cannot be told from no <v> through the pinned library: both read as none (A07 spec r2 amber).
+      t('A7', 'Blank text (Test)'), typedFormula('B7', 'IF(B5=0,"","x")', 'str', '', { type: 'none', text: '' }),
+      t('A8', 'Errors (Test)'),
+      typedFormula('B8', 'B2/0', 'e', '#DIV/0!', { type: 'error', text: '#DIV/0!' }),
+      error('C8', '#N/A'),
+      t('A10', 'No cached value (Test)'), typedFormula('B10', 'B2*2', undefined, null, { type: 'none', text: '' }),
+      t('A11', 'Not a cent (Test)'), numAs('B11', '0.125', '0.125'),
+      t('A12', 'Negative noise (Test)'), numAs('B12', '-1234.5600000000001', '-1234.56'),
+    ],
+  },
+  {
+    name: 'TB ',
+    dimension: 'A1:B2',
+    cells: [t('A1', 'trailing space sheet (Test)'), num('B2', '7', STYLE.general)],
+  },
+]
+out('xlsx/cells-r2.xlsx', workbook(CELLS_R2, { date1904: false }))
+out('xlsx/cells-r2.expected.json', json(expected('cells-r2.xlsx', CELLS_R2)))
 
 // ---------------------------------------------------------------- compound files (.xls, password-protected .xlsx)
 

@@ -56,7 +56,8 @@ describe('EV-14 xlsx cell kinds', () => {
     })
     expect(find(s, 1, 'A')).toMatchObject({ text: 'Rich text (Test)', type: 'text' })
     expect(find(s, 2, 'A')).toMatchObject({ text: 'Link (Test)', type: 'text' })
-    expect(find(s, 3, 'A')).toMatchObject({ text: '#N/A', type: 'text' })
+    // Round 2 (A07 spec r2, 6b; A360 type error): the type is pinned by round2.acceptance.test.ts.
+    expect(find(s, 3, 'A')).toMatchObject({ text: '#N/A' })
     expect(find(s, 4, 'A')).toMatchObject({ text: 'TRUE', type: 'boolean' })
     expect(find(s, 5, 'A')).toMatchObject({ text: 'FALSE', type: 'boolean' })
     expect(find(s, 6, 'A')).toMatchObject({ text: '12.5', type: 'number' })

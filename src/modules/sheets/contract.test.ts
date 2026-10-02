@@ -10,14 +10,18 @@ const cell = (row: number, letter: string, text: string, type: 'text' | 'empty' 
   hiddenRow: false,
   hiddenColumn: false,
   merged: null,
+  // Round 2 (A360): a formula cell carries its cached value.
+  ...(type === 'formula' ? { cached: { type: 'number', text } } : {}),
 })
+// Round 2 (A07 spec r2, 6b): a plain typed object, not SheetResultSchema.parse, so these cellValueMatches tests do not
+// depend on the round-2 sheet fields (hiddenRows, hiddenColumns), which the acceptance tests pin.
 const result = (cells: ReturnType<typeof cell>[]): SheetResult =>
-  SheetResultSchema.parse({
+  ({
     fileFingerprint: FP,
     engine: { name: 'test-engine', version: '1' },
     readAt: '2026-10-02T09:00:00-04:00',
-    sheets: [{ name: 'csv', hidden: false, cells }],
-  })
+    sheets: [{ name: 'csv', hidden: false, hiddenRows: [], hiddenColumns: [], cells }],
+  }) as unknown as SheetResult
 const point = (row: number, column: string) => ({ fileFingerprint: FP, sheet: 'csv', row, column })
 
 describe('EV-5 column letters', () => {

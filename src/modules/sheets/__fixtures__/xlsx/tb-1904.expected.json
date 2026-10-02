@@ -6,6 +6,13 @@
       "hidden": false
     }
   ],
+  "hiddenLists": [
+    {
+      "name": "Dates 1904 (Test)",
+      "hiddenRows": [],
+      "hiddenColumns": []
+    }
+  ],
   "cells": [
     {
       "sheet": "Dates 1904 (Test)",
