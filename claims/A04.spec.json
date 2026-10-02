@@ -1,11 +1,9 @@
 {
  "card": "A04",
  "role": "spec",
- "worker": "cloud-43b472",
- "state": "reported",
- "at": "2026-10-02T19:04:34.216Z",
- "mode": "turbo",
- "note": "51 tests (46 unit, 5 db); needs F06 merged before build",
- "commit": "9d97dd0",
- "validated": "3df2e9b"
+ "note": "toolchain refit",
+ "worker": "cloud-ae6ed2",
+ "state": "working",
+ "at": "2026-10-02T19:24:31.414Z",
+ "mode": "turbo"
 }
