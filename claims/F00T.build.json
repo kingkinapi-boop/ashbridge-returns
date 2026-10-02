@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "07ae6ad",
  "worker": "local-98ddb8",
- "state": "working",
- "at": "2026-10-02T03:45:00.091Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T03:58:38.273Z",
+ "mode": "turbo",
+ "note": "log.ts survivors closed (test + reasoned disables, A329); five core files at 100; core tests 95/95 x5"
 }
