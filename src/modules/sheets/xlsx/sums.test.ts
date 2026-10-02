@@ -33,6 +33,14 @@ describe('EV-14 a SUM cached as a floating-point total reads as the exact cent t
     expect((await run(rows, '8000000000.11', 'SUM(A1:A8)'))?.cached).toEqual({ type: 'number', text: '8000000000.11' })
   })
 
+  test('EV-14 the allowed noise is the sum bound: nine steps of a double at this size (8.6e-6) snap, thirty do not', async () => {
+    const step = 2 ** -20 // one step of a double between 4.3e9 and 8.6e9
+    const rows = sumRows('SUM(A1:A8)')
+    const exact = Number('8000000000.12')
+    expect((await run(rows, String(exact + 9 * step), 'SUM(A1:A8)'))?.cached).toEqual({ type: 'number', text: '8000000000.12' })
+    expect((await run(rows, String(exact + 30 * step), 'SUM(A1:A8)'))?.cached?.text).toBe(String(exact + 30 * step))
+  })
+
   test('EV-14 the formula is read as written: other formulas, other text around SUM and non-ranges are never snapped', async () => {
     for (const formula of ['SUM(A1:A8)+0', 'XSUM(A1:A8)', 'AVERAGE(A1:A8)', 'SUM(A1)', 'SUM(A1:A8,A1)', 'SUM(1A:A8)']) {
       expect((await run(sumRows(formula), NOISY, formula))?.cached, formula).toEqual({ type: 'number', text: NOISY })
@@ -67,7 +75,10 @@ describe('EV-14 a SUM cached as a floating-point total reads as the exact cent t
 
   test('EV-14 a range holding an error, or a term that is not a cent amount, is never snapped', async () => {
     const withError = [...col(EIGHT.slice(0, 7)), '<c r="A8" t="e"><v>#N/A</v></c>', total('SUM(A1:A8)', 'A9')]
-    expect((await run(withError, NOISY, 'SUM(A1:A8)'))?.cached).toEqual({ type: 'number', text: NOISY })
+    // Without the error cell this cache is the seven terms' sum plus noise and would snap to 7000000000.1.
+    expect((await run(withError, '7000000000.100005', 'SUM(A1:A8)'))?.cached).toEqual({ type: 'number', text: '7000000000.100005' })
+    const clean = [...col(EIGHT.slice(0, 7)), total('SUM(A1:A7)', 'A8')]
+    expect((await run(clean, '7000000000.100005', 'SUM(A1:A7)'))?.cached).toEqual({ type: 'number', text: '7000000000.1' })
     // A three-decimal term "1000000000.005" and zeros: not a cent amount, so the cache (1e9 plus noise) is kept.
     const rows = sumRows('SUM(A1:A9)', ['1000000000.005', '0', '0', '0', '0', '0', '0', '0', '0'])
     expect((await run(rows, '1000000000.000001', 'SUM(A1:A9)'))?.cached).toEqual({ type: 'number', text: '1000000000.000001' })

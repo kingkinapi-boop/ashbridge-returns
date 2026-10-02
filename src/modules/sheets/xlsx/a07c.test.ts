@@ -72,8 +72,18 @@ describe('EV-14 the zip reader reads stored and deflated parts and nothing else'
   })
 
   test('EV-14 an empty zip has no parts; the longest allowed archive comment is still found', () => {
+    // The end record is the whole file (it sits at offset 0).
+    expect(openZip(zip([]))).toBeDefined()
     expect(openZip(zip([]))?.read('a')).toBeUndefined()
     expect(openZip(zip([{ name: 'a', data: 'x' }], 'c'.repeat(0xffff)))?.read('a')?.toString()).toBe('x')
+  })
+
+  test('EV-14 an end record further from the end than any comment allows is not found; a directory outside the file is no zip', () => {
+    const base = zip([{ name: 'a', data: 'x' }])
+    expect(openZip(Buffer.concat([base, Buffer.alloc(0x10000 + 30, 0x78)]))).toBeUndefined()
+    const outside = Buffer.from(base)
+    outside.writeUInt32LE(0xfffffff0, outside.length - 22 + 16)
+    expect(openZip(outside)).toBeUndefined()
   })
 
   test('EV-14 bytes that are not a well-formed zip give nothing, never a throw', () => {
@@ -123,7 +133,7 @@ describe('EV-14 the sheet XML reader', () => {
         [
           {
             name: 'xl/worksheets/sheet1.xml',
-            data: '<worksheet><cols><col min="1" max="1"/></cols><sheetData><row r="1"><c r="A1" s="1"/><c r="B1" t="n"><v>12.50</v></c><c r="C1" t="str"><f>A1&amp;"x"</f><v>a&lt;b</v></c><c r="D1"><f t="shared" si="0"/><v>3</v></c><c r="E1"><f>1+1</f></c><c s="1"><v>9</v></c><c r="F1" t="inlineStr"><is><t>x</t></is></c><c r="G1"><v>1&#10;2</v></c></row></sheetData></worksheet>',
+            data: '<worksheet><cols><col min="1" max="1"/></cols><sheetData><row r="1"><c r="A1" s="1"/><c r="B1" t="n"><v>12.50</v></c><c r="C1" t="str"><f>A1&amp;"x"</f><v>a&lt;b</v></c><c r="D1"><f t="shared" si="0"/><v>3</v></c><c r="E1"><f>1+1</f></c><c s="1"><v>9</v></c><c r="F1" t="inlineStr"><is><t>x</t></is></c><c r="G1"><v>1&#10;2</v></c><c r="H1"><f t="array" ref="H1">1 +&#10;1</f><v>2</v></c></row></sheetData></worksheet>',
           },
           { name: 'xl/worksheets/sheet2.xml', data: '<worksheet><sheetData><row><c r="A1" t="b"><v>1</v></c></row></sheetData></worksheet>' },
         ],
@@ -139,14 +149,20 @@ describe('EV-14 the sheet XML reader', () => {
     expect(first?.get('E1')).toEqual({ type: undefined, value: undefined, formula: '1+1' })
     expect(first?.get('F1')).toEqual({ type: 'inlineStr', value: undefined, formula: undefined })
     expect(first?.get('G1')).toEqual({ type: undefined, value: '1\n2', formula: undefined })
-    expect(first?.size).toBe(7)
+    expect(first?.get('H1')).toEqual({ type: undefined, value: '2', formula: '1 +\n1' })
+    expect(first?.size).toBe(8)
     expect(raw?.get('Second')?.get('A1')).toEqual({ type: 'b', value: '1', formula: undefined })
   })
 
   test('EV-14 a sheet whose part is missing is left out; no workbook part or no relationships gives nothing', () => {
-    const only = book('<sheet name="One" r:id="rId1"/><sheet name="Two" r:id="rId9"/><sheet r:id="rId1"/>', '<Relationship Id="rId1" Target="worksheets/s.xml"/><Relationship Target="x.xml"/>', [
-      { name: 'xl/worksheets/s.xml', data: '<c r="A1"><v>1</v></c>' },
-    ])
+    const only = book(
+      '<sheet name="One" r:id="rId1"></sheet><sheet name="Two" r:id="rId9"/><sheet r:id="rId1"/><sheet name="NoId"/><sheet name="NoTarget" r:id="rId5"/><sheet name="Gone" r:id="rId6"/>',
+      '<Relationship Id="rId1" Target="worksheets/s.xml"></Relationship><Relationship Target="x.xml"/><Relationship Id="rId5"/><Relationship Id="rId6" Target="worksheets/gone.xml"/>',
+      [
+        { name: 'xl/worksheets/s.xml', data: '<c r="A1"><v>1</v></c>' },
+        { name: 'xl/x.xml', data: '<c r="A1"><v>9</v></c>' },
+      ],
+    )
     expect([...(readRaw(openZip(only) as NonNullable<ReturnType<typeof openZip>>)?.keys() ?? [])]).toEqual(['One'])
     expect(readRaw(openZip(zip([{ name: 'xl/_rels/workbook.xml.rels', data: '' }])) as NonNullable<ReturnType<typeof openZip>>)).toBeUndefined()
     expect(readRaw(openZip(zip([{ name: 'xl/workbook.xml', data: '' }])) as NonNullable<ReturnType<typeof openZip>>)).toBeUndefined()
@@ -159,7 +175,7 @@ describe('EV-14 the sheet XML reader', () => {
     expect(decodeXml('&amp;&lt;&gt;&quot;&apos;')).toBe('&<>"\'')
     expect(decodeXml('&#65;&#x42;&#x63;')).toBe('ABc')
     expect(decodeXml('&amp;lt; &nbsp; &#; &amp')).toBe('&lt; &nbsp; &#; &amp')
-    expect(NO_RAW).toEqual({ type: undefined, value: undefined, formula: undefined })
+    expect(NO_RAW).toStrictEqual({ type: undefined, value: undefined, formula: undefined })
   })
 })
 
@@ -172,12 +188,12 @@ const at = (cells: Cell[], row: number, letter: string): Cell | undefined => cel
 
 describe('EV-14 a number is one whole number literal', () => {
   test('EV-14 literals read as numbers (sign, point, exponent, leading zeros)', async () => {
-    const literals = ['12', '-0.5', '+3', '.5', '5.', '1e3', '1.5E-3', '007', '1E+2']
+    const literals = ['12', '-0.5', '+3', '.5', '.55', '5.', '1e3', '1.5E-3', '007', '1E+2']
     const out = await readXlsx(numbersXlsx(literals))
     if (!out.ok) throw new Error(out.reason)
     const cells = out.sheets[0]?.cells ?? []
     expect(cells.map((c) => c.type)).toEqual(literals.map(() => 'number'))
-    expect(cells.map((c) => c.text)).toEqual(['12', '-0.5', '3', '0.5', '5', '1000', '0.0015', '7', '100'])
+    expect(cells.map((c) => c.text)).toEqual(['12', '-0.5', '3', '0.5', '0.55', '5', '1000', '0.0015', '7', '100'])
   })
 
   test('EV-14 anything else reads as an error cell, never another number', async () => {

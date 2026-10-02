@@ -49,6 +49,7 @@ export function openZip(bytes: Uint8Array): Zip | undefined {
         return entry.method === DEFLATED ? inflateRawSync(data) : undefined
       },
     }
+  // Stryker disable next-line BlockStatement: an emptied catch falls out of the function and returns the same undefined
   } catch {
     return undefined
   }

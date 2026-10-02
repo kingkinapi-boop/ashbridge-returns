@@ -61,16 +61,18 @@ export function readRaw(zip: Zip): RawSheets | undefined {
   try {
     const book = text(zip, 'xl/workbook.xml')
     const rels = text(zip, 'xl/_rels/workbook.xml.rels')
+    // Stryker disable next-line ConditionalExpression,LogicalOperator: a missing part would throw on the next line and the catch below returns the same undefined
     if (book === undefined || rels === undefined) return undefined
     const targets = relationshipTargets(rels)
     const sheets: RawSheets = new Map()
     for (const found of book.matchAll(/<sheet\b([^>]*?)\/?>/g)) {
       const name = attribute(found[1] as string, 'name')
-      const target = targets.get(attribute(found[1] as string, 'r:id') ?? '')
-      const xml = target === undefined ? undefined : text(zip, target)
+      // A sheet with no relationship id looks up nothing; a relationship with no target was never listed.
+      const xml = text(zip, targets.get(attribute(found[1] as string, 'r:id') as string) as string)
       if (name !== undefined && xml !== undefined) sheets.set(name, cellsOf(xml))
     }
     return sheets
+    // Stryker disable next-line BlockStatement: an emptied catch falls out of the function and returns the same undefined
   } catch {
     return undefined
   }
