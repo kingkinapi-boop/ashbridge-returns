@@ -11,6 +11,8 @@ export const TEXTLAYER_LIBRARY = { name: 'pdfjs-dist', version: '6.3.289' } as c
 export interface TextLayerEngine extends ReadingEngine {
   name: 'textlayer'
   isLive: false
+  /** The folder the engine may write to; it writes nothing, so it stays empty. */
+  tempDir: string | null
   /** How many times this engine has parsed a PDF with the library; a read answered from the store does not count. */
   parseCount(): number
 }
@@ -103,12 +105,12 @@ async function parse(bytes: Uint8Array, fingerprint: string): Promise<ReadingRes
 }
 
 export function createTextLayerEngine(options: TextLayerOptions = {}): TextLayerEngine {
-  options
   const store = new Map<string, ReadingResult>()
   let parses = 0
   return {
     name: 'textlayer',
     isLive: false,
+    tempDir: options.tempDir ?? null,
     parseCount: () => parses,
     async read(document: ReadingDocument): Promise<ReadingResult> {
       const stored = store.get(document.fingerprint)
