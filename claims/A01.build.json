@@ -5,8 +5,8 @@
  "spec": "f4144b9cdfe350f846a90a257426cedcd8d8e2ed",
  "worker": "cloud-ff757e",
  "state": "reopened",
- "at": "2026-10-02T14:27:02.256Z",
+ "at": "2026-10-02T17:36:48.387Z",
  "mode": "turbo",
  "beat": "2026-10-02T12:20:48.326Z",
- "note": "spec round reported; build per card"
+ "note": "F01D landed; spec current"
 }
