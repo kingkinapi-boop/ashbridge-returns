@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "8d524cc",
  "worker": "cloud-c7ae52",
- "state": "reported",
- "at": "2026-10-02T19:32:17.397Z",
+ "state": "released",
+ "at": "2026-10-02T20:29:42.959Z",
  "mode": "turbo",
- "note": "20 of 20 acceptance tests pass; amber: no text answer shape for holder name"
+ "note": "merged"
 }
