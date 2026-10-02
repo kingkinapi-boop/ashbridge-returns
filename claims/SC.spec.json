@@ -1,10 +1,10 @@
 {
  "card": "SC",
  "role": "spec",
- "note": "75 unit + 19 db rules green with FX3 KNOWN entries; sheets defects (R36,R46,R41,R56,R47,R48,R54) added to KNOWN owner FX3; R56 raw.ts:104 may be false positive",
+ "note": "R34 and R47 entries for src/modules/ocr/recorded (A03); see the 21:40Z line at the top of the card",
  "worker": "cloud-186a3b",
- "state": "reported",
- "at": "2026-10-02T21:05:33.037Z",
+ "state": "reopened",
+ "at": "2026-10-02T21:36:21.995Z",
  "mode": "turbo",
  "commit": "ee0255d",
  "validated": "33badd3"
