@@ -1,9 +1,8 @@
 {
  "card": "A01",
  "role": "spec",
- "note": "needs readOwnSource from DG, not on main; re-offer after DG lands",
- "worker": "cloud-1452fe",
- "state": "released",
- "at": "2026-10-02T09:49:02.664Z",
+ "worker": "cloud-e7ec6a",
+ "state": "working",
+ "at": "2026-10-02T10:08:02.325Z",
  "mode": "turbo"
 }
