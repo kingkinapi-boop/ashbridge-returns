@@ -39,3 +39,10 @@ R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden fi
 ## From F03R round 3 check notes (2 Oct)
 - R32 candidate: the B1 apostrophe rule is total over number-like text: `+1'234`, `(1'234)`, ` 1'234`, `1'234 `, `1'234e3`, `--'12`, `1’234` either read as a number per RT-3 or raise a named fault, never pass as plain text silently.
 - R33 candidate: read-back of rates compares exact text against `toFixed(4)`, not `Number()`.
+
+## From findings W00 round 1 (2 Oct, reports/findings-W00-r1.md)
+- R34 SEC-11 repo scan (sample clients, testworld, fixtures, goldens): Luhn-valid nine digits (spaced, hyphenated, RT suffix), e-mails outside reserved domains, phones outside 555-01xx are refused; planted one of each.
+- R35 every exported model or kind check has a planted failing test; a check over an empty collection says "nothing to check" unless declared.
+- R36 money read from text only: no `dollarsToCents(number)`, no `x*100` from JSON numbers.
+- R37 (was TH R5) byte-compared files are `-text` or `binary` and `git ls-files --eol` agrees; planted CRLF CSV under `eol=lf`.
+- R38 (was TH R6) no test builds expected bytes with a non-UTF-8 TextDecoder or TextEncoder; setup fails below Node 24.

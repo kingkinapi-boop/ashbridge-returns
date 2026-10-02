@@ -15,3 +15,10 @@ Clauses 198 testable, 35 with tests (18%)
 | 07-learning.md | 0/9 | LL-1 LL-2 LL-3 LL-4 LL-5 LL-6 LL-7 LL-8 LL-9 |
 | 08-security.md | 3/11 | SEC-1 SEC-2 SEC-3 SEC-4 SEC-6 SEC-7 SEC-8 SEC-9 |
 | 09-architecture.md | 12/22 | ARC-1 ARC-2 ARC-3 ARC-5 ARC-8 ARC-11 ARC-18 ARC-20 ARC-21 ARC-22 |
+
+Acceptance tests whose name opens with no clause ID:
+- src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: outside the sandbox it reads the path as given
+- src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: inside the sandbox it returns the original text, not the instrumented copy, for a relative and an absolute path
+- src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: a "first 5 lines carry // @mutate" scan passes through the helper on the instrumented sandbox copy
+- src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: a "no network import" scan passes on a clean module and still fails on a planted real violation, in the sandbox too
+- src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: a missing file throws, it is not read as empty text
