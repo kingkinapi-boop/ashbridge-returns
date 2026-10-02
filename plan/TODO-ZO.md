@@ -4,6 +4,8 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
+**1. Critic proposals of 2 Oct:** reply in the Lead chat `critic ok`, `critic ok 1 2` or `critic no 2`. What: two fixes for token leakage (sessions carry too much memory and re-read it at every step; helpers lose their cache while waiting). Why: the same allowance should do about a third more work. Next: the Lead applies what you approve; details in `reviews\CRITIC.md`. Nothing else waits on it.
+
 **Before you sleep (no answer needed):** leave the laptop on and plugged in, with sleep off, and leave the "Ashbridge Test" Chrome full size and in front, not covered or minimised. The walkers use it overnight for the .GFI and the day 5 Taxprep exports. If it drops, they stop and pick up again in the morning; nothing breaks.
 
 **Coming soon from you, Sat 3 Oct (about 30 minutes):** day 4 of the trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". No walker runs that day. Any other day suits too; days 5 and 6 do not wait for it. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
