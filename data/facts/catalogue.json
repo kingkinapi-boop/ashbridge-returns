@@ -1,0 +1,3024 @@
+{
+  "entries": [
+    {
+      "key": "bank.statement.account_number",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "bank_account",
+      "suppliedBy": [
+        "bank"
+      ],
+      "label": "Bank account number",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "accounts"
+        }
+      ]
+    },
+    {
+      "key": "bank.statement.opening_balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "bank"
+      ],
+      "label": "Bank statement opening balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "statementBalances"
+        }
+      ]
+    },
+    {
+      "key": "bank.statement.closing_balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "bank"
+      ],
+      "label": "Bank statement closing balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "statementBalances"
+        }
+      ]
+    },
+    {
+      "key": "bank.statement.total_deposits",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "bank"
+      ],
+      "label": "Bank statement total deposits",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "bank.statement.total_withdrawals",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "bank"
+      ],
+      "label": "Bank statement total withdrawals",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "bank.statement.line_amount",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "line_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "bank"
+      ],
+      "label": "Bank statement line amount",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "bank.statement.line_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "line_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "bank"
+      ],
+      "label": "Bank statement line date",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "bank.statement.line_description",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "line_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "bank"
+      ],
+      "label": "Bank statement line description",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "card.statement.card_number",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "bank_account",
+      "suppliedBy": [
+        "card"
+      ],
+      "label": "Credit card number",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "accounts"
+        }
+      ]
+    },
+    {
+      "key": "card.statement.opening_balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "card"
+      ],
+      "label": "Card statement opening balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "statementBalances"
+        }
+      ]
+    },
+    {
+      "key": "card.statement.closing_balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "card"
+      ],
+      "label": "Card statement closing balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "statementBalances"
+        }
+      ]
+    },
+    {
+      "key": "card.statement.total_purchases",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "card"
+      ],
+      "label": "Card statement total purchases",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "card.statement.total_payments",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "card"
+      ],
+      "label": "Card statement total payments",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "card.statement.line_amount",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "line_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "card"
+      ],
+      "label": "Card statement line amount",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "card.statement.line_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "line_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "card"
+      ],
+      "label": "Card statement line date",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "card.statement.line_description",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "line_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "card"
+      ],
+      "label": "Card statement line description",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "loan.statement.account_number",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "bank_account",
+      "suppliedBy": [
+        "loan"
+      ],
+      "label": "Loan account number",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "loan"
+        }
+      ]
+    },
+    {
+      "key": "loan.statement.opening_balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "loan"
+      ],
+      "label": "Loan statement opening balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "loan"
+        }
+      ]
+    },
+    {
+      "key": "loan.statement.closing_balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "loan"
+      ],
+      "label": "Loan statement closing balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "loan"
+        }
+      ]
+    },
+    {
+      "key": "loan.statement.interest_charged",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "loan"
+      ],
+      "label": "Loan interest charged in the period",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "loan"
+        }
+      ]
+    },
+    {
+      "key": "loan.statement.principal_paid",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "loan"
+      ],
+      "label": "Loan principal paid in the period",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "loan"
+        }
+      ]
+    },
+    {
+      "key": "loan.statement.interest_rate",
+      "valueType": "percent",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "loan"
+      ],
+      "label": "Loan interest rate",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "loan"
+        }
+      ]
+    },
+    {
+      "key": "trial_balance.line.account_name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account_code"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "tb-pdf",
+        "tb-sheet",
+        "qbo"
+      ],
+      "label": "Trial balance account name",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "trialBalance"
+        }
+      ]
+    },
+    {
+      "key": "trial_balance.line.debit",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account_code"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "tb-pdf",
+        "tb-sheet",
+        "qbo"
+      ],
+      "label": "Trial balance debit",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "trialBalance"
+        }
+      ]
+    },
+    {
+      "key": "trial_balance.line.credit",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account_code"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "tb-pdf",
+        "tb-sheet",
+        "qbo"
+      ],
+      "label": "Trial balance credit",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "trialBalance"
+        }
+      ]
+    },
+    {
+      "key": "trial_balance.total.debits",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "tb-pdf",
+        "tb-sheet",
+        "qbo"
+      ],
+      "label": "Trial balance total debits",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "trialBalance"
+        }
+      ]
+    },
+    {
+      "key": "trial_balance.total.credits",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "tb-pdf",
+        "tb-sheet",
+        "qbo"
+      ],
+      "label": "Trial balance total credits",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "trialBalance"
+        }
+      ]
+    },
+    {
+      "key": "financial_statement.balance_sheet.total_assets",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "fs"
+      ],
+      "label": "Balance sheet total assets",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 100 line 2599"
+        }
+      ]
+    },
+    {
+      "key": "financial_statement.balance_sheet.total_liabilities",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "fs"
+      ],
+      "label": "Balance sheet total liabilities",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 100 line 3499"
+        }
+      ]
+    },
+    {
+      "key": "financial_statement.balance_sheet.total_equity",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "fs"
+      ],
+      "label": "Balance sheet total equity",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 100 line 3640"
+        }
+      ]
+    },
+    {
+      "key": "financial_statement.income_statement.total_revenue",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "fs"
+      ],
+      "label": "Income statement total revenue",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 125 line 8299"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "t2Inputs"
+        }
+      ]
+    },
+    {
+      "key": "financial_statement.income_statement.total_expenses",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "fs"
+      ],
+      "label": "Income statement total expenses",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 125 line 9368"
+        }
+      ]
+    },
+    {
+      "key": "financial_statement.income_statement.net_income",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "fs"
+      ],
+      "label": "Income statement net income",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 125 line 9999"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "t2Inputs"
+        }
+      ]
+    },
+    {
+      "key": "financial_statement.line.amount",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "line_label"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "fs"
+      ],
+      "label": "Financial statement line amount",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "trialBalance"
+        }
+      ]
+    },
+    {
+      "key": "invoice.document.total",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "invoice_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "invoice"
+      ],
+      "label": "Invoice total",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "invoice.document.tax_amount",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "invoice_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "invoice"
+      ],
+      "label": "Invoice tax amount",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "invoice.document.date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "invoice_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "invoice"
+      ],
+      "label": "Invoice date",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "invoice.document.supplier_name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "invoice_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "invoice"
+      ],
+      "label": "Invoice supplier name",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.return.taxation_year_end",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 taxation year end",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "T2 line 061"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.return.net_income_for_tax",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 net income for tax purposes",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 1 line 300"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.return.taxable_income",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 taxable income",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "T2 line 360"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.return.total_tax_payable",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 total tax payable",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "T2 line 770"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.return.small_business_deduction",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 small business deduction",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "T2 line 430"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.return.business_limit",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 business limit",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 23 line 410"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "business_limit"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.schedule_100.retained_earnings_closing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 retained earnings, closing",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 100 line 3600"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "prior_year_closing_balances"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.schedule_8.cca_closing_undepreciated",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "cca_class"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 closing undepreciated capital cost",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 225"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "prior_year_closing_balances"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.schedule_4.non_capital_loss_closing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 non-capital losses available",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 4 line 150"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.schedule_53.grip_closing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 general rate income pool, closing",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 53 line 590"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "grip"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.schedule_53.lrip_closing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 low rate income pool, closing",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 54 line 590"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.schedule_3.rdtoh_closing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 eligible RDTOH, closing",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 3 line 480"
+        }
+      ]
+    },
+    {
+      "key": "prior_t2.schedule_89.cda_closing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "prior-t2",
+        "prior_return"
+      ],
+      "label": "Prior T2 capital dividend account, closing",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 89 line 205"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "capital_dividend"
+        }
+      ]
+    },
+    {
+      "key": "noa.assessment.assessment_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "noa"
+      ],
+      "label": "Notice of assessment date",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "t2Inputs"
+        }
+      ]
+    },
+    {
+      "key": "noa.assessment.taxation_year_end",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "noa"
+      ],
+      "label": "Notice of assessment year end",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "t2Inputs"
+        }
+      ]
+    },
+    {
+      "key": "noa.assessment.taxable_income",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "noa"
+      ],
+      "label": "Notice of assessment taxable income",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "t2Inputs"
+        }
+      ]
+    },
+    {
+      "key": "noa.assessment.balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "noa"
+      ],
+      "label": "Notice of assessment balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "t2Inputs"
+        }
+      ]
+    },
+    {
+      "key": "noa.assessment.business_limit",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "noa"
+      ],
+      "label": "Notice of assessment business limit",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "business_limit"
+        }
+      ]
+    },
+    {
+      "key": "noa.assessment.grip_closing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "noa"
+      ],
+      "label": "Notice of assessment GRIP",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "grip"
+        }
+      ]
+    },
+    {
+      "key": "cra_capture.account.balance_owing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "cra-sheet",
+        "cra_capture"
+      ],
+      "label": "CRA corporate tax account balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "cra_capture.account.instalments_paid",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "payment_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "cra-sheet",
+        "cra_capture"
+      ],
+      "label": "CRA instalments paid in the year",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "T2 line 840"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "cra_capture.account.instalment_due",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "due_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "cra-sheet",
+        "cra_capture"
+      ],
+      "label": "CRA instalment due",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "cra_capture.account.last_return_filed_year_end",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "cra-sheet",
+        "cra_capture"
+      ],
+      "label": "CRA last return filed year end",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "cra_capture.account.filing_due_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "cra-sheet",
+        "cra_capture"
+      ],
+      "label": "CRA filing due date",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "cra_capture.dividends.eligible_paid",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "cra-sheet",
+        "cra_capture"
+      ],
+      "label": "CRA data eligible dividends paid",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 3 line 460"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "cra_capture.dividends.non_eligible_paid",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "cra-sheet",
+        "cra_capture"
+      ],
+      "label": "CRA data non-eligible dividends paid",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 3 line 465"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "cra_capture.rdtoh.closing",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "cra-sheet",
+        "cra_capture"
+      ],
+      "label": "CRA data RDTOH balance",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 3 line 480"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "hst.return.net_tax",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "period_end"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "hst"
+      ],
+      "label": "HST return net tax",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "hst.return.total_revenue",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "period_end"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "hst"
+      ],
+      "label": "HST return total sales and revenue",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "hst.return.tax_collected",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "period_end"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "hst"
+      ],
+      "label": "HST return tax collected",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "hst.return.input_tax_credits",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "period_end"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "hst"
+      ],
+      "label": "HST return input tax credits",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "hst.return.period_end",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "period_end"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "hst"
+      ],
+      "label": "HST return period end",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "hst.return.payment_made",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "period_end"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "hst"
+      ],
+      "label": "HST payment made with the return",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "t4.summary.total_employment_income",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t4"
+      ],
+      "label": "T4 summary total employment income",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "payroll"
+        }
+      ]
+    },
+    {
+      "key": "t4.summary.total_cpp_deducted",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t4"
+      ],
+      "label": "T4 summary total CPP deducted",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "payroll"
+        }
+      ]
+    },
+    {
+      "key": "t4.summary.total_ei_deducted",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t4"
+      ],
+      "label": "T4 summary total EI deducted",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "payroll"
+        }
+      ]
+    },
+    {
+      "key": "t4.summary.total_tax_deducted",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t4"
+      ],
+      "label": "T4 summary total income tax deducted",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "payroll"
+        }
+      ]
+    },
+    {
+      "key": "t4.summary.number_of_slips",
+      "valueType": "count",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t4"
+      ],
+      "label": "T4 summary number of slips",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "payroll"
+        }
+      ]
+    },
+    {
+      "key": "t4.slip.employment_income",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "slip_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "t4"
+      ],
+      "label": "T4 slip employment income",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owner_bonus"
+        }
+      ]
+    },
+    {
+      "key": "t4.slip.employee_sin",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "slip_number"
+      },
+      "sensitive": "sin",
+      "suppliedBy": [
+        "t4"
+      ],
+      "label": "T4 slip employee SIN",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "payroll"
+        }
+      ]
+    },
+    {
+      "key": "t4.slip.employee_name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "slip_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "t4"
+      ],
+      "label": "T4 slip employee name",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "payroll"
+        }
+      ]
+    },
+    {
+      "key": "t5.summary.total_eligible_dividends",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t5"
+      ],
+      "label": "T5 summary total eligible dividends",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "t5.summary.total_other_dividends",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t5"
+      ],
+      "label": "T5 summary total other than eligible dividends",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "t5.summary.total_interest",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t5"
+      ],
+      "label": "T5 summary total interest from Canadian sources",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "t2Inputs"
+        }
+      ]
+    },
+    {
+      "key": "t5.summary.number_of_slips",
+      "valueType": "count",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "t5"
+      ],
+      "label": "T5 summary number of slips",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "t5.slip.eligible_dividends",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "slip_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "t5"
+      ],
+      "label": "T5 slip eligible dividends",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "t5.slip.other_dividends",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "slip_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "t5"
+      ],
+      "label": "T5 slip other than eligible dividends",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "t5.slip.recipient_name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "slip_number"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "t5"
+      ],
+      "label": "T5 slip recipient name",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "shares"
+        }
+      ]
+    },
+    {
+      "key": "ohip.remittance.total_paid",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "remittance_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "ohip"
+      ],
+      "label": "OHIP remittance total paid",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "ohip_remittance_advice"
+        }
+      ]
+    },
+    {
+      "key": "ohip.remittance.remittance_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "remittance_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "ohip"
+      ],
+      "label": "OHIP remittance date",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "ohip_remittance_advice"
+        }
+      ]
+    },
+    {
+      "key": "ohip.remittance.claims_paid_count",
+      "valueType": "count",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "remittance_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "ohip"
+      ],
+      "label": "OHIP remittance claims paid",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "transactions"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "ohip_remittance_advice"
+        }
+      ]
+    },
+    {
+      "key": "share_register.holding.holder_name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "corporate"
+      ],
+      "label": "Share register holder name",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "shares"
+        }
+      ]
+    },
+    {
+      "key": "share_register.holding.share_class",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "corporate"
+      ],
+      "label": "Share register share class",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "shares"
+        }
+      ]
+    },
+    {
+      "key": "share_register.holding.shares_held",
+      "valueType": "count",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "corporate"
+      ],
+      "label": "Share register shares held",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "shares"
+        }
+      ]
+    },
+    {
+      "key": "share_register.holding.percent_common",
+      "valueType": "percent",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "corporate"
+      ],
+      "label": "Share register percent of common shares",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owners"
+        }
+      ]
+    },
+    {
+      "key": "shareholder.identity.sin",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "sin",
+      "suppliedBy": [
+        "corporate",
+        "qa"
+      ],
+      "label": "Shareholder SIN",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owners"
+        }
+      ]
+    },
+    {
+      "key": "director.identity.birth_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "director"
+      },
+      "sensitive": "birth_date",
+      "suppliedBy": [
+        "corporate",
+        "qa"
+      ],
+      "label": "Director date of birth",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owners"
+        }
+      ]
+    },
+    {
+      "key": "director.identity.name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "director"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "corporate"
+      ],
+      "label": "Director name",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owners"
+        }
+      ]
+    },
+    {
+      "key": "resolution.dividend.amount",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "resolution_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "resolution"
+      ],
+      "label": "Dividend resolution amount",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "resolution.dividend.declared_on",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "resolution_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "resolution"
+      ],
+      "label": "Dividend resolution date",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "resolution.dividend.kind",
+      "valueType": "enum",
+      "options": [
+        "eligible",
+        "non_eligible",
+        "capital"
+      ],
+      "period": "instant",
+      "repeating": {
+        "rowKey": "resolution_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "resolution"
+      ],
+      "label": "Dividend resolution kind",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "resolution.bonus.amount",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": {
+        "rowKey": "resolution_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "resolution"
+      ],
+      "label": "Bonus resolution amount",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owner_bonus"
+        }
+      ]
+    },
+    {
+      "key": "resolution.bonus.resolution_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "resolution_date"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "resolution"
+      ],
+      "label": "Bonus resolution date",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owner_bonus"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.legal_name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Legal name",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.legal_name"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.business_number",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Business number",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.business_number"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.financial_year_end",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Financial year end",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.financial_year_end"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "corporation.financial_year_end"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.incorporation_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Incorporation date",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.incorporation_date"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.jurisdiction",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Incorporation jurisdiction",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.jurisdiction"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.client_type",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Client type",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.client_type"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.all_prior_years_filed",
+      "valueType": "enum",
+      "options": [
+        "yes",
+        "no",
+        "unsure"
+      ],
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "All prior years filed",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.all_prior_years_filed"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "corporation.all_prior_years_filed"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.outstanding_years",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Outstanding years",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.outstanding_years"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "corporation.outstanding_years"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.engagement.tax_year",
+      "valueType": "count",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "engagement"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Engagement tax year",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "engagements.tax_year"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "engagements"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.has_cra_login",
+      "valueType": "enum",
+      "options": [
+        "yes",
+        "no",
+        "unsure"
+      ],
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Client has a CRA login",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.has_cra_login"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.is_partnership_member",
+      "valueType": "enum",
+      "options": [
+        "yes",
+        "no",
+        "unsure"
+      ],
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Corporation is a partnership member",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.is_partnership_member"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.holds_ontario_company_key",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Firm holds Ontario company key",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.holds_ontario_company_key"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.holds_federal_login",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Firm holds federal login",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.holds_federal_login"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.filed_initial_return",
+      "valueType": "enum",
+      "options": [
+        "yes",
+        "no",
+        "unsure"
+      ],
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Initial return filed",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.filed_initial_return"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.claims_small_business_deduction",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Claims small business deduction",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.claims_small_business_deduction"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.hst_filing_frequency",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "HST filing frequency",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.hst_filing_frequency"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.hst_basis",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "HST accounting basis",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.hst_basis"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.books_kept_by",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Books kept by",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "corporations.books_kept_by"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "corporation"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.shareholder.holder_name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Shareholder name",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "shareholders.holder_name"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "owners"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.shareholder.holder_kind",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Shareholder kind",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "shareholders.holder_kind"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.shareholder.percent_common",
+      "valueType": "percent",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Approximate share percent",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "shareholders.approximate_share_percent"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "owners"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.shareholder.share_class",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Share class",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "shareholders.share_class"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.shareholder.tax_residency",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "holder"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Shareholder tax residency",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "shareholders.tax_residency"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.dividend.declared_on",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "declared_on"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Dividend declared on",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "declared_dividends.declared_on"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.dividend.amount",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "declared_on"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Declared dividend amount",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "declared_dividends.amount_cents"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.dividend.resolution_on_file",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "declared_on"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Dividend resolution on file",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "declared_dividends.resolution_on_file"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "declared_dividends"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.cra_program.program",
+      "valueType": "enum",
+      "options": [
+        "corporate_tax",
+        "hst",
+        "payroll",
+        "information_returns"
+      ],
+      "period": "instant",
+      "repeating": {
+        "rowKey": "program"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "CRA program",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "cra_program_accounts.program"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "cra_program_accounts"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.cra_program.is_open",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "program"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "CRA program account open",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "cra_program_accounts.is_open"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "cra_program_accounts"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.client.notes",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Client notes",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "client_notes"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.staff.has_staff",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Corporation has staff",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "staff"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.expense.personal_card_business_items",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Business items on a personal card",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "personal_card_business_items"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.home_office.claimed",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Home office claimed by the owner",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "home_office"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.hst.registered",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Registered for HST",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "hst"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.loan.has_loan",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Corporation has a loan",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "loan"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.cra_record.available",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "CRA record available",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "cra_record"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.owner_bonus.paid",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Owner bonus paid",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owner_bonus"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.payroll.has_payroll",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Payroll run in the year",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "payroll"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.owners.count",
+      "valueType": "count",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Number of owners",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "owners"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.business_limit.associated_corporations",
+      "valueType": "count",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Associated corporations sharing the limit",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "business_limit"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.capital_dividend.received",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Capital dividend received",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "capital_dividend"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.grip.opening",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "GRIP opening balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "grip"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.sales_channels.list",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Sales channels",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "sales_channels"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.fx.has_foreign_currency",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Foreign currency transactions",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "fx"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.inventory.held",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Inventory held at year end",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "inventory"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.prior_year.closing_balances_provided",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Prior year closing balances provided",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "prior_year_closing_balances"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.tenants.has_tenants",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Rental tenants",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "tenants"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.mortgage.has_mortgage",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Mortgage on a rental property",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "mortgage"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.corporation.facts_note",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Corporation profile note",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "corporation"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.shareholder_loan.balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Shareholder loan balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "shareholder_loans"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.grant.received",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Government grant received",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "grant"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.research.claimed",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Research credit claimed",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "research"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.vehicle.business_use",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding",
+        "qa"
+      ],
+      "label": "Vehicle used for business",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "vehicle"
+        }
+      ]
+    },
+    {
+      "key": "corporation.reorganisation.kind",
+      "valueType": "enum",
+      "options": [
+        "none",
+        "amalgamation",
+        "wind-up"
+      ],
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "judgment"
+      ],
+      "label": "Corporate reorganisation kind",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "T2 line 071"
+        }
+      ]
+    },
+    {
+      "key": "corporation.reorganisation.effective_date",
+      "valueType": "date",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "judgment"
+      ],
+      "label": "Corporate reorganisation effective date",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "T2 line 076"
+        }
+      ]
+    },
+    {
+      "key": "qbo.account.balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account_code"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "qbo"
+      ],
+      "label": "QuickBooks account balance",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "trialBalance"
+        }
+      ]
+    },
+    {
+      "key": "qbo.account.name",
+      "valueType": "text",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "account_code"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "qbo"
+      ],
+      "label": "QuickBooks account name",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "accounts"
+        }
+      ]
+    }
+  ]
+}
