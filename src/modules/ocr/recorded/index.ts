@@ -6,7 +6,8 @@ import { createHash } from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { now } from '../../../core/clock'
-import { ReadingResultSchema, type ReadingDocument, type ReadingEngine, type ReadingResult } from '../../../contracts/reading'
+import { z } from 'zod'
+import { EngineStampSchema, ReadingResultSchema, type ReadingDocument, type ReadingEngine, type ReadingResult } from '../../../contracts/reading'
 
 export interface RecordedEngine extends ReadingEngine {
   name: 'recorded'
@@ -18,12 +19,7 @@ export type RecordedOptions = {
   folder: string
 }
 
-type Recording = {
-  fingerprint: string
-  recordedAt: string
-  result: ReadingResult
-  sourceEngine: { name: string; version: string }
-}
+type Recording = z.infer<typeof RecordingSchema>
 
 const FINGERPRINT = /^[0-9a-f]{64}$/
 
@@ -32,15 +28,20 @@ function fileFor(folder: string, fingerprint: string): string {
   return path.join(folder, `${fingerprint}.json`)
 }
 
-function reasons(issues: readonly { path: PropertyKey[]; message: string }[]): string {
-  return issues.map((i) => `${i.path.map(String).join('.') || '(root)'}: ${i.message}`).join('; ')
-}
+const RecordingSchema = z.strictObject({
+  fingerprint: z.string(),
+  recordedAt: z.iso.datetime({ offset: true }),
+  sourceEngine: EngineStampSchema,
+  result: ReadingResultSchema,
+})
+
+const refused = (fingerprint: string, why: string): Error => new Error(`recording for ${fingerprint} is refused: ${why}`)
 
 function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v)
 }
 
-/** Reads and checks one recording file; the stored result is validated by F09's schema. */
+/** Reads and checks one recording file; the whole file is validated, the result by F09's schema. */
 function load(folder: string, fingerprint: string): Recording {
   const file = fileFor(folder, fingerprint)
   let text: string
@@ -53,29 +54,17 @@ function load(folder: string, fingerprint: string): Recording {
   try {
     raw = JSON.parse(text)
   } catch {
-    throw new Error(`recording for ${fingerprint} is refused: the file is not JSON`)
+    throw refused(fingerprint, 'the file is not JSON')
   }
-  if (!isObject(raw)) throw new Error(`recording for ${fingerprint} is refused: the file is not a recording`)
-  if (raw['fingerprint'] !== fingerprint) {
-    throw new Error(`recording for ${fingerprint} is refused: its stored fingerprint differs from its file name`)
-  }
-  const stamp = raw['sourceEngine']
-  if (!isObject(stamp) || typeof stamp['name'] !== 'string' || typeof stamp['version'] !== 'string' || stamp['name'] === '' || stamp['version'] === '') {
-    throw new Error(`recording for ${fingerprint} is refused: it has no source engine name and version`)
-  }
-  const parsed = ReadingResultSchema.safeParse(raw['result'])
+  const parsed = RecordingSchema.safeParse(raw)
   if (!parsed.success) {
-    throw new Error(`recording for ${fingerprint} is refused: the result fails the reading schema (${reasons(parsed.error.issues)})`)
+    const why = parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')
+    throw refused(fingerprint, `the file fails the recording schema (${why})`)
   }
-  if (parsed.data.documentFingerprint !== fingerprint) {
-    throw new Error(`recording for ${fingerprint} is refused: the result's documentFingerprint differs from the fingerprint`)
-  }
-  return {
-    fingerprint,
-    recordedAt: typeof raw['recordedAt'] === 'string' ? raw['recordedAt'] : '',
-    result: parsed.data,
-    sourceEngine: { name: stamp['name'], version: stamp['version'] },
-  }
+  const rec = parsed.data
+  if (rec.fingerprint !== fingerprint) throw refused(fingerprint, 'its stored fingerprint differs from its file name')
+  if (rec.result.documentFingerprint !== fingerprint) throw refused(fingerprint, "the result's documentFingerprint differs from the fingerprint")
+  return rec
 }
 
 export function createRecordedEngine(options: RecordedOptions): RecordedEngine {
@@ -125,6 +114,7 @@ export async function record(
   if (document.bytes === undefined) throw new Error('record needs the document bytes')
   const fingerprint = createHash('sha256').update(document.bytes).digest('hex')
   const result = ReadingResultSchema.parse(await engine.read(document))
+  if (result.documentFingerprint !== fingerprint) throw new Error('record refused: the result is for another document')
   const recording: Recording = {
     fingerprint,
     recordedAt: now().toISOString(),
