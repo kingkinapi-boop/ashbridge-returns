@@ -4,8 +4,8 @@
  "round": 9,
  "spec": "ab2a22d",
  "worker": "cloud-22a0fc",
- "state": "reported",
- "at": "2026-10-02T17:40:18.020Z",
+ "state": "released",
+ "at": "2026-10-02T19:22:41.282Z",
  "mode": "turbo",
- "note": "gitleaks clean over HEAD after 0021 edit; scope OK"
+ "note": "merged"
 }
