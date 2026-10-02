@@ -1,9 +1,9 @@
 {
  "card": "F02",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "core spec needs an Opus subagent; budget hook refused dispatch (mode normal, 40/day used)",
  "worker": "cloud-575f8d",
- "state": "working",
- "at": "2026-10-02T14:51:52.600Z",
+ "state": "released",
+ "at": "2026-10-02T14:52:04.398Z",
  "mode": "normal"
 }
