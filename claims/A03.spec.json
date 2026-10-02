@@ -1,11 +1,9 @@
 {
  "card": "A03",
  "role": "spec",
- "note": "toolchain refit: validated on main f2e97da; only the 2 A03 acceptance files fail (./index missing), rest green, no assertion changed",
- "worker": "cloud-e945f9",
- "state": "reported",
- "at": "2026-10-02T12:55:43.222Z",
- "mode": "turbo",
- "commit": "298961d",
- "validated": "f2e97dab8911a9781bd33ac77032849c2f9e8f43"
+ "note": "toolchain refit",
+ "worker": "cloud-a03a3e",
+ "state": "working",
+ "at": "2026-10-02T18:39:19.982Z",
+ "mode": "turbo"
 }
