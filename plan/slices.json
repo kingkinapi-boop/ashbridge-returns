@@ -2516,7 +2516,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "E03"
@@ -2540,7 +2540,7 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From the G12 spec release (A362)."
+      "note": "From the G12 spec release (A362). Parked 2 Oct 16:30Z waiting on Zo to-do #1 (one gitleaks allowlist line)."
     },
     {
       "status": "carded",
