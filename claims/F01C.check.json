@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T14:30:19.833Z",
  "worker": "local-cc7d7a",
- "state": "working",
- "at": "2026-10-02T14:36:38.011Z",
- "mode": "normal"
+ "state": "released",
+ "at": "2026-10-02T14:36:48.522Z",
+ "mode": "normal",
+ "note": "core: cloud"
 }
