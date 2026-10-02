@@ -1,11 +1,8 @@
 {
  "card": "F09",
  "role": "spec",
- "worker": "cloud-f60439",
- "state": "reopened",
- "at": "2026-10-02T03:42:18.217Z",
- "mode": "turbo",
- "note": "round 4: mutation survivors per card Fix round 4 (Stryker JSON, classify, clause tests); not a refit",
- "commit": "6b127d3",
- "validated": "3b28533269a7f999ce144a6ab8fee0d697589fb1"
+ "worker": "cloud-ce4873",
+ "state": "working",
+ "at": "2026-10-02T03:43:09.988Z",
+ "mode": "turbo"
 }
