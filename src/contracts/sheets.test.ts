@@ -61,18 +61,21 @@ describe('ARC-10 result schema shapes', () => {
 })
 
 describe('EV-6 cellValueMatches', () => {
-  const r = result([cell(1, 'A', 'Straße (Test)'), cell(1, 'B', ''), cell(2, 'A', '000123'), cell(2, 'AA', '1234.56'), cell(3, 'A', '5', 'formula')].map((c) => (c.text === '' ? { ...c, type: 'empty' as const } : c)))
+  const build = (): SheetResult => result([cell(1, 'A', 'Straße (Test)'), cell(1, 'B', ''), cell(2, 'A', '000123'), cell(2, 'AA', '1234.56'), cell(3, 'A', '5', 'formula')].map((c) => (c.text === '' ? { ...c, type: 'empty' as const } : c)))
   test('EV-6 the amount grammar compares cents when both sides are amounts; a one-sided amount is plain text', () => {
+    const r = build()
     expect(cellValueMatches(r, point(2, 'AA'), '$1,234.56')).toEqual({ ok: true })
     expect(cellValueMatches(r, point(2, 'AA'), 'abc')).toEqual({ ok: false, reason: 'value differs' })
     expect(cellValueMatches(r, point(1, 'A'), '5')).toEqual({ ok: false, reason: 'value differs' })
   })
   test('EV-6 text is trimmed and case-folded; leading zeros are text', () => {
+    const r = build()
     expect(cellValueMatches(r, point(1, 'A'), '  straße (TEST) ')).toEqual({ ok: true })
     expect(cellValueMatches(r, point(2, 'A'), '123')).toEqual({ ok: false, reason: 'value differs' })
     expect(cellValueMatches(r, point(2, 'A'), '000123')).toEqual({ ok: true })
   })
   test('EV-5 a missing cell, a blank cell and a formula cell give their own reasons', () => {
+    const r = build()
     expect(cellValueMatches(r, point(9, 'A'), 'x')).toEqual({ ok: false, reason: 'no such cell' })
     expect(cellValueMatches(r, point(1, 'B'), 'x')).toEqual({ ok: false, reason: 'empty cell' })
     expect(cellValueMatches(r, point(3, 'A'), '6')).toEqual({ ok: false, reason: 'formula cell: cached value differs' })

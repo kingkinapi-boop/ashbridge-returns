@@ -21,14 +21,14 @@ function decode(bytes: Uint8Array): { text: string; encoding: CsvEncoding } {
 
 const SEPARATORS: readonly CsvSeparator[] = [',', ';', '\t']
 
-/** The first line's separator when it names exactly one kind outside quotes; otherwise a comma. */
+/** The first line's separator when it names exactly one kind outside quotes (every character outside quotes is collected, the separator list picks); otherwise a comma. */
 function detectSeparator(text: string): CsvSeparator {
   const found = new Set<string>()
   let quoted = false
   for (const ch of text) {
     if (ch === '"') quoted = !quoted
     else if (!quoted && (ch === '\n' || ch === '\r')) break
-    else if (!quoted && (ch === ',' || ch === ';' || ch === '\t')) found.add(ch)
+    else if (!quoted) found.add(ch)
   }
   const present = SEPARATORS.filter((s) => found.has(s))
   return present.length === 1 ? (present[0] as CsvSeparator) : ','
