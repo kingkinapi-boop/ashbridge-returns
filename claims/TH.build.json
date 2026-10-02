@@ -1,11 +1,10 @@
 {
  "card": "TH",
  "role": "build",
- "round": 4,
+ "round": 5,
  "spec": "f1c8095",
- "worker": "cloud-9d2580",
- "state": "released",
- "at": "2026-10-02T00:59:06.637Z",
- "mode": "turbo",
- "note": "re-offered after release; blocked on spec change (A287), see reports/TH-build.md"
+ "worker": "cloud-e1c409",
+ "state": "working",
+ "at": "2026-10-02T01:02:28.066Z",
+ "mode": "turbo"
 }
