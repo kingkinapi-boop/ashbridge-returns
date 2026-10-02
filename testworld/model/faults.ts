@@ -1,7 +1,7 @@
 // The fault catalogue: what each sample client plants and the exact flag or exception it must raise (ARC-8).
 // W01 to W13 add to it through testworld/kinds/<kind>/faults.ts.
-import { clientFolders, loadClient } from './clients/load'
-import type { ClientId } from './model/index'
+import { clientFolders, loadClient } from '../clients/load'
+import type { ClientId } from './index'
 import type { KindId } from './kinds'
 
 export type FaultEntry = {

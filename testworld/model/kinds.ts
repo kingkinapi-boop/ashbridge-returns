@@ -1,8 +1,8 @@
 // The register of the thirteen return kinds (END-9, blueprint 00): which sample client each starts from, and whether it is built.
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import type { ClientId } from './model/index'
-import { REPO_ROOT } from './clients/load'
+import type { ClientId } from './index'
+import { REPO_ROOT } from '../clients/load'
 
 export const KIND_IDS = ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13'] as const
 export type KindId = (typeof KIND_IDS)[number]
