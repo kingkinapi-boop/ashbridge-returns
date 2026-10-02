@@ -226,15 +226,44 @@ function objectKey(fileKey: Uint8Array, num: number): Uint8Array {
   return md5(fileKey, tail).slice(0, Math.min(fileKey.length + 5, 16))
 }
 
-function writePdf(pages: readonly PageSpec[], encrypt = false): Uint8Array {
-  // 1 catalog, 2 pages, 3 font, 4 image, then a page and its content per page; encrypt dict last.
+/** A ToUnicode CMap (PDF 9.10.3) mapping single-byte codes to code points; supplementary code points as UTF-16 pairs. */
+function toUnicodeCMap(map: ReadonlyMap<number, number>): string {
+  const utf16 = (cp: number): string => {
+    const s = String.fromCodePoint(cp)
+    return Array.from({ length: s.length }, (_, i) => s.charCodeAt(i).toString(16).padStart(4, '0')).join('')
+  }
+  const rows = [...map].map(([code, cp]) => `<${code.toString(16).padStart(2, '0')}> <${utf16(cp)}>`)
+  return [
+    '/CIDInit /ProcSet findresource begin',
+    '12 dict begin',
+    'begincmap',
+    '/CMapName /A01Test def',
+    '/CMapType 2 def',
+    '1 begincodespacerange',
+    '<00> <ff>',
+    'endcodespacerange',
+    `${String(rows.length)} beginbfchar`,
+    ...rows,
+    'endbfchar',
+    'endcmap',
+    'CMapName currentdict /CMap defineresource pop',
+    'end',
+    'end',
+    '',
+  ].join('\n')
+}
+
+function writePdf(pages: readonly PageSpec[], encrypt = false, toUnicode?: ReadonlyMap<number, number>): Uint8Array {
+  // 1 catalog, 2 pages, 3 font, 4 image, then a page and its content per page; a ToUnicode CMap, then the encrypt
+  // dict, last (each only when asked for, so files without them keep their bytes).
   const objects: PdfObject[] = []
   const widths = Array.from({ length: 95 }, () => '600').join(' ')
   const kids = pages.map((_, i) => `${String(5 + 2 * i)} 0 R`).join(' ')
   objects.push({ dict: '<< /Type /Catalog /Pages 2 0 R >>' })
   objects.push({ dict: `<< /Type /Pages /Kids [${kids}] /Count ${String(pages.length)} >>` })
+  const toUnicodeRef = toUnicode ? ` /ToUnicode ${String(5 + 2 * pages.length)} 0 R` : ''
   objects.push({
-    dict: `<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding /FirstChar 32 /LastChar 126 /Widths [${widths}] >>`,
+    dict: `<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding /FirstChar 32 /LastChar 126 /Widths [${widths}]${toUnicodeRef} >>`,
   })
   objects.push({
     dict: `<< /Type /XObject /Subtype /Image /Width 4 /Height 4 /ColorSpace /DeviceGray /BitsPerComponent 8 /Length ${String(IMAGE_PIXELS.length)} >>`,
@@ -249,6 +278,10 @@ function writePdf(pages: readonly PageSpec[], encrypt = false): Uint8Array {
     const data = latin1(p.content)
     objects.push({ dict: `<< /Length ${String(data.length)} >>`, stream: data })
   })
+  if (toUnicode) {
+    const cmap = latin1(toUnicodeCMap(toUnicode))
+    objects.push({ dict: `<< /Length ${String(cmap.length)} >>`, stream: cmap })
+  }
   const enc = encrypt ? encryption() : null
   if (enc) objects.push({ dict: enc.dict })
 
@@ -277,6 +310,28 @@ function writePdf(pages: readonly PageSpec[], encrypt = false): Uint8Array {
   parts.push(latin1(xref + trailer))
   return concat(parts)
 }
+
+// ---- invisible text (A01 round 3, A357) ----
+
+/** The glyph codes invisibleTextPdf shows, in order: A, B, C, ... (each mapped by the CMap, never by the font). */
+const INVISIBLE_FIRST_CODE = 0x41
+
+/**
+ * One Letter page whose only text is one Tj at (72, 720) showing one glyph per code point given, each glyph mapped
+ * through a ToUnicode CMap to that code point. The page draws the glyphs (Courier, 7.2 pt each) but a reader that
+ * extracts text gets only the code points given: for blank ones (src/contracts/text.ts isBlank) the page has no text.
+ */
+export function invisibleTextPdf(codePoints: readonly number[]): Uint8Array {
+  if (codePoints.length === 0 || codePoints.length > 26) throw new Error('invisibleTextPdf takes 1 to 26 code points')
+  const map = new Map(codePoints.map((cp, i) => [INVISIBLE_FIRST_CODE + i, cp] as const))
+  const shown = String.fromCharCode(...map.keys())
+  return writePdf([letterPage([{ x: 72, baseline: 720, text: shown }])], false, map)
+}
+
+/** U+0085 NEXT LINE: a Cc control that White_Space includes and String.prototype.trim does not strip. */
+export const NEL = 0x85
+/** U+00AD SOFT HYPHEN: the commonest Cf (format) character in real PDFs. */
+export const SOFT_HYPHEN = 0xad
 
 // ---- the fixtures ----
 
@@ -372,7 +427,19 @@ export function buildFixtures(): Fixture[] {
   const truncated: Fixture = { name: 'truncated.pdf', bytes: onePage.bytes.slice(0, 60) }
   const notPdf: Fixture = { name: 'not-a-pdf.pdf', bytes: latin1('This is a text file named .pdf, not a PDF (Test).\n') }
 
-  return [onePage, rotated, twoPages, imagePageFixture, scanOnly, encrypted, truncated, notPdf]
+  const noText = (file: string, note: string): Expected => ({ file, note, pageCount: 1, pages: [letter(1, false)], words: [], boxes: {} })
+  const nelOnly: Fixture = {
+    name: 'nel-only.pdf',
+    bytes: invisibleTextPdf([NEL]),
+    expected: noText('nel-only.pdf', 'Made up (A01 round 3). One page whose only text is one glyph that maps to U+0085 (NEL): no text layer.'),
+  }
+  const cfOnly: Fixture = {
+    name: 'cf-only.pdf',
+    bytes: invisibleTextPdf([SOFT_HYPHEN]),
+    expected: noText('cf-only.pdf', 'Made up (A01 round 3). One page whose only text is one glyph that maps to U+00AD (a Cf character): no text layer.'),
+  }
+
+  return [onePage, rotated, twoPages, imagePageFixture, scanOnly, encrypted, truncated, notPdf, nelOnly, cfOnly]
 }
 
 export const FIXTURES_DIR = path.dirname(fileURLToPath(import.meta.url))
