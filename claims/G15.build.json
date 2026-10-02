@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "f534da87",
  "worker": "cloud-85bb68",
- "state": "working",
- "at": "2026-10-02T19:43:01.779Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:50:56.244Z",
+ "mode": "turbo",
+ "note": "all acceptance tests pass"
 }
