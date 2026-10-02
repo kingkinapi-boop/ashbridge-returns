@@ -381,3 +381,5 @@
 {"ts":"2026-10-02T21:36:54.230Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T21:36:54.808Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T21:36:55.208Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T21:14:59.658Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"builder","model":"sonnet","where":"local","desc":"A04 build","allowed":true}
+{"ts":"2026-10-02T21:16:25.685Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"A08 spec tests","allowed":true}
