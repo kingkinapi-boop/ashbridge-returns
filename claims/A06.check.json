@@ -1,10 +1,9 @@
 {
  "card": "A06",
  "role": "check",
- "for": "2026-10-02T18:38:40.782Z",
- "worker": "cloud-dea37c",
- "state": "reported",
- "at": "2026-10-02T19:04:26.446Z",
- "mode": "turbo",
- "note": "PASS"
+ "for": "2026-10-02T21:33:13.029Z",
+ "worker": "cloud-ad4518",
+ "state": "working",
+ "at": "2026-10-02T21:34:46.456Z",
+ "mode": "turbo"
 }
