@@ -1,12 +1,10 @@
 {
  "card": "A07C",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "ba50f80",
- "worker": "cloud-ae6ed2",
- "state": "released",
- "at": "2026-10-02T20:17:14.532Z",
- "mode": "turbo",
- "note": "wait: lands at b80c251 per reports/A07C-findings.md; D1 to D3 to A07D",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"F00\",\"F09\",\"F09B\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
+ "worker": "cloud-d8bb50",
+ "state": "working",
+ "at": "2026-10-02T20:32:39.612Z",
+ "mode": "turbo"
 }
