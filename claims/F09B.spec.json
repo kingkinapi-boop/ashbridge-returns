@@ -1,9 +1,11 @@
 {
  "card": "F09B",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit only (package.json); typecheck, lint green; only the 8 card acceptance tests fail, for the round 2 reasons",
  "worker": "cloud-40b1f5",
- "state": "working",
- "at": "2026-10-02T11:11:55.653Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T11:14:42.048Z",
+ "mode": "turbo",
+ "commit": "8b941c9",
+ "validated": "8e8fba1"
 }
