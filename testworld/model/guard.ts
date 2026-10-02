@@ -42,9 +42,7 @@ function walkStrings(v: unknown, path: string, key: string, holder: Record<strin
   else if (Array.isArray(v)) {
     for (const [i, x] of v.entries()) walkStrings(x, `${path}.${String(i)}`, String(i), holder, visit)
   }
-  // Stryker disable ConditionalExpression: a number or boolean has no entries, so the typeof test is redundant; the null test is pinned by a test
-  else if (v !== null && typeof v === 'object') {
-    // Stryker restore ConditionalExpression
+  else if (v instanceof Object) {
     const o = v as Record<string, unknown>
     for (const [k, x] of Object.entries(o)) walkStrings(x, path === '' ? k : `${path}.${k}`, k, o, visit)
   }
