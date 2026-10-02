@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "0786eca",
  "worker": "cloud-c1cb2b",
- "state": "working",
- "at": "2026-10-02T10:39:52.384Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T10:50:14.040Z",
+ "mode": "turbo",
+ "note": "lint/scope/typecheck clean, mutation 100; 10 acceptance fail = stale spec (15 clients, question-id fields), see reports/E03-build.md"
 }
