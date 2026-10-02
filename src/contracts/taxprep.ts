@@ -43,6 +43,33 @@ export const IGNORED_ON_IMPORT: readonly {
   },
 ]
 
+/** The creation and contact cells Taxprep's "entered" export lists even when empty (RT-23), each with its finding. */
+export const ALWAYS_EXPORTED: readonly {
+  readonly identifier: string
+  readonly finding: string
+}[] = [
+  ...IGNORED_ON_IMPORT,
+  {
+    identifier: 'IDENT.Ident230',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the language cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IDENT.Ident451',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9): the client code cell is one of the eight cells listed even when empty',
+  },
+  {
+    identifier: 'IFirm.ContactPartner',
+    finding: 'FINDINGS.md, filters ("entered", item 9): the contact partner cell is listed even when empty',
+  },
+  {
+    identifier: 'IFirm.ContactID',
+    finding:
+      'FINDINGS.md, filters ("entered", item 9; day 5): IFirm.ContactID is in every "entered" export since day 5',
+  },
+]
+
 /** The six cell classes of RT-14. */
 export const CELL_CLASSES = ['traced', 'overridden', 'dropped', 'rolled-forward', 'orphan', 'calculated'] as const
 export type CellClass = (typeof CELL_CLASSES)[number]
@@ -186,7 +213,7 @@ function classifyValue(
 ): { ok: true; value: CellValue; apostrophe: boolean } | { ok: false; code: TaxprepFaultCode; reason: string } {
   const shown = JSON.stringify(decode1252(raw))
   if (raw === '' || raw === ' ') return { ok: true, value: { kind: 'clear' }, apostrophe: false }
-  if (raw.startsWith("'") || /^-'\d+$/.test(raw)) {
+  if (raw.startsWith("'") || raw.startsWith("-'")) {
     if (/^'-[1-9]\d*$/.test(raw)) {
       return {
         ok: true,
@@ -504,8 +531,15 @@ function validDate(s: string): boolean {
   return !Number.isNaN(t.getTime()) && t.toISOString().slice(0, 10) === s
 }
 
-/** A value to its cell text (as a latin1 string), or a Refusal. */
+/** A value to its cell text (as a latin1 string), or a Refusal. Every text is re-read through the parser's classifyValue. */
 function formatValue(v: WriteValue): string {
+  const written = formatKind(v)
+  const back = classifyValue(written)
+  if (!back.ok) throw new Refusal(`the value would be refused on reading: ${back.reason}`)
+  return written
+}
+
+function formatKind(v: WriteValue): string {
   switch (v.kind) {
     case 'clear':
       return ''
@@ -519,10 +553,7 @@ function formatValue(v: WriteValue): string {
     case 'text': {
       if (v.text.trim() === '') throw new Refusal('a blank text value would be read as a clear; use the explicit clear')
       if (v.text.startsWith("'")) throw new Refusal('a text value must not start with an apostrophe')
-      const written = encode1252(v.text, 'the text value')
-      const reread = classifyValue(written)
-      if (!reread.ok) throw new Refusal(`the text value would be refused on reading: ${reread.reason}`)
-      return written
+      return encode1252(v.text, 'the text value')
     }
     case 'date':
       if (!validDate(v.date)) throw new Refusal(`the date ${v.date} is not a real date written YYYY-MM-DD`)
@@ -543,7 +574,7 @@ function formatValue(v: WriteValue): string {
 const quote = (s: string): string => `"${s.replace(/"/g, '""')}"`
 
 /**
- * The bytes of a Taxprep file. 'import' refuses the cells Taxprep ignores on import (RT-13); 'export' writes the shape
+ * The bytes of a Taxprep file. @writes parseTaxprepCsv. 'import' refuses the cells Taxprep ignores on import (RT-13); 'export' writes the shape
  * Taxprep's export writes (for the simulator) and allows them. A clear is written only from an explicit `clear` value.
  */
 export function writeTaxprepCsv(
