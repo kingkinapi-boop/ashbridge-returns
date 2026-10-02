@@ -44,15 +44,18 @@ const DECIMAL = /^(-?)(\d+)(?:\.(\d{1,2}))?$/
 export function decimalToCents(s: string): CentsResult {
   const m = DECIMAL.exec(s)
   if (m === null) return { ok: false, reason: refusalReason(s) }
+  // Stryker disable next-line StringLiteral: groups 1 and 2 always match (the regex cannot match without them), so their defaults are never used
   const [, sign = '', whole = '0', frac = ''] = m
   const abs = BigInt(whole) * 100n + BigInt(frac.padEnd(2, '0'))
   const cents = Number(sign === '-' ? -abs : abs)
   if (!Number.isSafeInteger(cents)) return { ok: false, reason: `"${s}" is too large to hold exactly in cents` }
+  // Stryker disable next-line ArithmeticOperator: -abs of 0n is 0n (BigInt has no negative zero), so + 0 and - 0 are both no-ops
   return { ok: true, cents: cents + 0 }
 }
 
 function refusalReason(s: string): string {
   if (s.trim() === '') return 'an amount cannot be blank'
+  // Stryker disable next-line Regex: the regex only matches text that includes(','), so any change to it leaves the result unchanged
   if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s) || s.includes(',')) return `"${s}" has a thousands separator; amounts carry none`
   if (/[eE]/.test(s) && /\d/.test(s)) return `"${s}" is in exponent notation; amounts are written in full`
   if (/^-?\d+\.\d{3,}$/.test(s)) return `"${s}" has more than two decimals; cents are the smallest unit`

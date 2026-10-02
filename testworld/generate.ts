@@ -27,6 +27,7 @@ export async function checkRegeneration(opts: { root?: string } = {}): Promise<{
   const temp = mkdtempSync(join(tmpdir(), 'w00-regen-'))
   try {
     cpSync(SAMPLE_ROOT, temp, { recursive: true })
+    // Stryker disable next-line BooleanLiteral: force only silences a missing path, and every path removed here was just listed, so it exists
     for (const n of readdirSync(temp).filter((x) => NUMBERED.test(x))) rmSync(join(temp, n), { recursive: true, force: true })
     for (const script of ['generate.mjs', 'make-csv.mjs']) {
       await run(process.execPath, [join(temp, script)], { cwd: temp })
@@ -43,6 +44,7 @@ export async function checkRegeneration(opts: { root?: string } = {}): Promise<{
       .sort()
     return { identical: differing.length === 0, differing }
   } finally {
+    // Stryker disable next-line BooleanLiteral: force only silences a missing path, and the temp folder always exists here
     rmSync(temp, { recursive: true, force: true })
   }
 }
