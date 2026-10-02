@@ -4,7 +4,8 @@
  "round": 6,
  "spec": "ea5d29d",
  "worker": "cloud-186a3b",
- "state": "working",
- "at": "2026-10-02T21:14:51.871Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T21:16:16.106Z",
+ "mode": "turbo",
+ "note": "46 of 46 acceptance tests pass; scope OK; mutate:changed not run"
 }
