@@ -4,7 +4,8 @@
  "round": 8,
  "spec": "62f6c18",
  "worker": "cloud-8ec957",
- "state": "working",
- "at": "2026-10-02T17:46:10.436Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T17:46:15.440Z",
+ "mode": "turbo",
+ "note": "re-offered at once; blocked on owners, see previous release"
 }
