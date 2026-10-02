@@ -171,9 +171,10 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   const fileIssue = (record: string, reason: string): void => {
     issues.push({ client: id, check: 'file', record, reason })
   }
-  const keyJson = readClientJson(folder, 'answer-key.json', moneyIssue, fileIssue)
+  // clientFolders only lists a folder that has its answer-key.json; the onboarding file may be missing.
+  const keyJson = readJson(join(folder, 'answer-key.json'), moneyIssue)
   const onbJson = readClientJson(folder, 'onboarding.json', moneyIssue, fileIssue)
-  if (keyJson === undefined || onbJson === undefined) throw new TestWorldLoadError(id, issues)
+  if (onbJson === undefined) throw new TestWorldLoadError(id, issues)
   const keyResult = RawKey.safeParse(keyJson)
   const onbResult = RawOnboarding.safeParse(onbJson)
   if (!keyResult.success) for (const i of keyResult.error.issues) schemaIssue(`answer-key.json ${i.path.join('.')}`, i.message)
@@ -342,7 +343,7 @@ function guardFiles(folder: string): GuardFile[] {
     for (const e of readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
       const full = join(dir, e.name)
       if (e.isDirectory()) walk(full)
-      else {
+      else if (e.isFile()) {
         // Stryker disable next-line StringLiteral: only the json and csv kinds are told apart later; md and an empty kind are scanned the same way
         const kind = e.name.endsWith('.json') ? 'json' : e.name.endsWith('.csv') ? 'csv' : e.name.endsWith('.md') ? 'md' : undefined
         if (kind !== undefined) out.push({ file: relative(folder, full).split(sep).join('/'), kind, text: readFileSync(full, 'utf8') })

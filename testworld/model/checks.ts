@@ -91,14 +91,10 @@ type Marker = NonNullable<FaultEntry['marker']>
 
 /** The months of a fiscal year, YYYY-MM from the start's month to the end's, in order. */
 function yearMonths(start: string, end: string): string[] {
+  const index = (d: string): number => Number(d.slice(0, 4)) * 12 + Number(d.slice(5, 7)) - 1
   const out: string[] = []
-  for (let m = start.slice(0, 7); m <= end.slice(0, 7); m = nextMonth(m)) out.push(m)
+  for (let i = index(start); i <= index(end); i++) out.push(`${String(Math.floor(i / 12))}-${String((i % 12) + 1).padStart(2, '0')}`)
   return out
-}
-const nextMonth = (ym: string): string => {
-  const y = Number(ym.slice(0, 4))
-  const m = Number(ym.slice(5, 7))
-  return m === 12 ? `${String(y + 1)}-01` : `${String(y)}-${String(m + 1).padStart(2, '0')}`
 }
 
 /**
@@ -107,10 +103,10 @@ const nextMonth = (ym: string): string => {
  */
 function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void {
   const mine = catalogue.filter((f) => f.client === c.id)
-  const waivers = mine.filter((f) => f.roll !== undefined)
-  const markers = mine.filter((f) => f.marker !== undefined)
+  const waivers = mine.flatMap((f) => (f.roll === undefined ? [] : [{ id: f.id, ...f.roll }]))
+  const markers = mine.flatMap((f) => (f.marker === undefined ? [] : [{ id: f.id, marker: f.marker, flagId: f.flagId, isRoll: f.roll !== undefined }]))
   const year = yearMonths(c.corporation.yearStart, c.corporation.yearEnd)
-  const covered = new Set(markers.filter((f) => f.flagId !== undefined).map((f) => markerKey(f.marker as Marker)))
+  const covered = new Set(markers.filter((f) => f.flagId !== undefined).map((f) => markerKey(f.marker)))
 
   for (const a of c.accounts) {
     const months = a.months
@@ -119,13 +115,10 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
     if (months.length === 0) {
       if (own.length > 0) add('roll', a.key, 'it has transactions but no statement balances, so there is nothing to roll')
     } else {
-      const seen = new Set<string>()
       for (const [i, m] of months.entries()) {
         const where = `${a.key} ${m.month}`
         const prev = months[i - 1]
-        if (seen.has(m.month)) add('roll', where, 'the month is listed twice')
-        else if (prev !== undefined && m.month < prev.month) add('roll', where, 'the months are out of order')
-        seen.add(m.month)
+        if (prev !== undefined && m.month <= prev.month) add('roll', where, m.month === prev.month ? 'the month is listed twice' : 'the months are out of order')
         if (!year.includes(m.month)) add('roll', where, `the month is outside the fiscal year ${c.corporation.yearStart} to ${c.corporation.yearEnd}`)
         if (prev !== undefined && prev.closingCents !== m.openingCents) {
           add('roll', where, `it opens at ${usd(m.openingCents)} but the month before closed at ${usd(prev.closingCents)}`)
@@ -138,13 +131,13 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
           add('roll', where, `the statement roll: opening ${usd(m.openingCents)} with the month's rows gives ${usd(statement)}, not the closing ${usd(m.closingCents)}; a fault marker never excuses it`)
         }
         const gap = m.closingCents - (m.openingCents + sign * total(inMonth.filter((t) => !t.missingFromExport)))
-        const waiver = waivers.find((f) => f.roll?.account === a.key && f.roll.month === m.month)
+        const waiver = waivers.find((f) => f.account === a.key && f.month === m.month)
         if (gap === 0) {
           if (waiver !== undefined) add('roll', where, 'the fault catalogue lists it as a planted fault but the month rolls')
         } else if (waiver === undefined) {
           add('roll', where, `the export gives ${usd(m.closingCents - gap)}, not the closing ${usd(m.closingCents)}, and the fault catalogue lists no planted fault for it`)
         } else {
-          const cause = waiver.roll?.cause
+          const cause = waiver.cause
           const explained =
             cause === 'missing'
               ? gap === sign * total(inMonth.filter((t) => t.missingFromExport))
@@ -154,7 +147,9 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
       }
       const first = months[0]
       const last = months[months.length - 1]
+      // Stryker disable next-line ConditionalExpression: months is not empty in this branch, so first is always defined
       if (first !== undefined && first.openingCents !== a.openingCents) add('roll', `${a.key} ${first.month}`, `the first month opens at ${usd(first.openingCents)} but the account opens at ${usd(a.openingCents)}`)
+      // Stryker disable next-line ConditionalExpression: months is not empty in this branch, so last is always defined
       if (last !== undefined && last.closingCents !== a.closingCents) add('roll', `${a.key} ${last.month}`, `the last month closes at ${usd(last.closingCents)} but the account closes at ${usd(a.closingCents)}`)
       const listed = new Set(months.map((m) => m.month))
       for (const m of year) if (!listed.has(m)) add('roll', `${a.key} ${m}`, 'the month of the fiscal year has no statement balances')
@@ -167,8 +162,8 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
   }
 
   for (const f of waivers) {
-    const month = c.accounts.find((a) => a.key === f.roll?.account)?.months.some((m) => m.month === f.roll?.month)
-    if (month !== true) add('fault-catalogue', f.id, `the catalogue waives ${String(f.roll?.account)} ${String(f.roll?.month)}, which this client does not have`)
+    const month = c.accounts.find((a) => a.key === f.account)?.months.some((m) => m.month === f.month)
+    if (month !== true) add('fault-catalogue', f.id, `the catalogue waives ${f.account} ${f.month}, which this client does not have`)
   }
 
   const carried = new Set<string>()
@@ -184,9 +179,9 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
     }
   }
   for (const f of markers) {
-    if (f.roll !== undefined) add('fault-catalogue', f.id, 'a roll entry is not a marker entry')
+    if (f.isRoll) add('fault-catalogue', f.id, 'a roll entry is not a marker entry')
     if (f.flagId === undefined) add('fault-catalogue', f.id, 'a marker entry must be on the entry of the flag the planted fault raises')
-    if (!carried.has(markerKey(f.marker as Marker))) add('fault-catalogue', f.id, `no transaction carries its marker ${markerKey(f.marker as Marker)}`)
+    if (!carried.has(markerKey(f.marker))) add('fault-catalogue', f.id, `no transaction carries its marker ${markerKey(f.marker)}`)
   }
 }
 const markerKey = (m: Marker): string => `${m.field} ${m.account} ${m.month}`
