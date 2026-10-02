@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 08:35Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 09:10Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,15 +13,17 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 08:35Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Queue after TH landed (toolchain moved, so refit specs first): F01, F03R, DG, F09A, D00, D01, W00, E03; then their builds (DG, F03R, F09A builds reopened by the Lead) | 6 cloud runs | cloud | 2 Oct 08:35Z | claude/<card> |
+| Train: F03R, D01 | train check | cloud | 2 Oct 09:10Z | claude/train |
+| W00 check (will meet the taxprep test helper; then W00 spec reopen per card) | cloud run | cloud | 2 Oct 08:52Z | claude/W00 |
+| Queue: F09B spec (split from F09A, A349), D00 build (premise fixed, A350), DG build, E03 build, F01 build | cloud runs | cloud | 2 Oct 09:10Z | claude/<card> |
 
-No local helpers running. No train open (TH landed 2f8b329).
+No local helpers running.
 
 ## Next, in order
 
-1. Poll claims; board every PASS (scope, GitHub checks, Opus read for core): F09A, DG, F03R, then D00, D01, W00. After a spec fix reports, reopen the held build (`update <card> build reopened --worker lead`) or the queue stays empty. One train at a time via plan/train.json; land by MERGING main into the train, code-diff guard, ff main; record only after the push.
+1. Poll claims; board every PASS (scope, GitHub checks, Opus read for core): DG, W00, D00, F09B, E03, F01. After a spec fix reports, reopen the held build (`update <card> build reopened --worker lead`) or the queue stays empty. One train at a time via plan/train.json; land by MERGING main into the train, code-diff guard, ff main; record only after the push.
 2. F03R round 3 is its last (card "Round 3"): fail only on B3 lands B1+B2; fail on B1 parks F03R and S00.
-3. After F09A lands: F04 build, A01 build round 2, F01 build; then I00, E01, A07, W20, SK0.
+3. After F09B lands (F09A parked, A349): F04 build, A01 build round 2; then I00, E01, A07, W20, SK0.
 4. W00 check 8 CRLF: decided A347 (W00 build owns .gitattributes line and the taxprep CSVs).
 5. Taxprep: day 6 Sun 4 Oct (changes after lock, check export, roll forward, copy one full diagnostics panel); day 4 Zo Sat 3 Oct.
 6. Designs: Zo's sitting answers (Q1 to Q7) into decisions and fix cards; then D00, D01, D05.
