@@ -300,3 +300,24 @@
 {"ts":"2026-10-02T14:58:14.241Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W00 findings review round 2","allowed":true}
 {"ts":"2026-10-02T14:58:16.562Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 3","allowed":true}
 {"ts":"2026-10-02T14:58:18.779Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 4","allowed":true}
+{"ts":"2026-10-02T15:00:30.401Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 5","allowed":true}
+{"ts":"2026-10-02T15:01:01.625Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Draft six cards for queue depth","allowed":true}
+{"ts":"2026-10-02T15:07:32.375Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Opus read of E03A for boarding","allowed":true}
+{"ts":"2026-10-02T15:07:33.435Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:07:34.084Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:07:34.571Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:08:40.059Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:11:48.727Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 6","allowed":true}
+{"ts":"2026-10-02T15:20:26.509Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:20:27.159Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:20:27.637Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:42:53.541Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:42:54.146Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T15:42:54.697Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T16:07:15.616Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T16:07:16.253Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T16:07:16.741Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T16:30:15.921Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T16:30:15.960Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T16:45:48.440Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T16:51:26.494Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}

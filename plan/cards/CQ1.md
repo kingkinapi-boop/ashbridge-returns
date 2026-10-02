@@ -5,7 +5,7 @@ Tags: none (build tooling).
 Paths: tools/claim.mjs, tools/next.mjs, tools/status.mjs, tools/test/claim.test.mjs, tools/test/__fixtures__/claims/**
 Clauses: ARC-15
 Read: `reviews/REVIEW.md` (2 Oct 14:40Z, findings 3 to 5), `.claude/skills/dispatch/SKILL.md`, `plan/AMBER.md` A352, A354.
-Spec commit: (spec-writer fills)
+Spec commit: 69eefb4 on claude/CQ1 (local-c54956, validated on main 849b810; 14 tests)
 
 ## Goal
 Since 02:20Z the queue made 72 releases against 136 reports: it re-offered G12 7 times, U00 6 and D02 5 (cards that must not start), and offered F04's build again after F04 passed and landed. Each wasted pickup costs a cloud run.
@@ -21,3 +21,6 @@ The four rules in claim.mjs, next.mjs and status.mjs; the worker orders say to r
 
 ## Check
 A checker who did neither: the claim tests, `npm test`, and one dry run of `node tools/next.mjs 12` on main showing no done or design-lane card.
+
+## Follow-up found 2 Oct 15:20Z (next queue card, not this round)
+A check released for a build (state released, `for` = that build) blocks every later offer of that check; the Lead had to re-stamp F01C's build. A released check must be re-offered to a different worker.

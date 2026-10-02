@@ -21,3 +21,7 @@
 {"card":"F09B","closed":"2026-10-02","mode":"turbo","rounds":2,"check_fails":0,"train_fails":0,"jobs":9,"amber":0,"red":0,"accepted":true}
 {"card":"E03","closed":"2026-10-02","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":12,"amber":1,"red":0,"accepted":true}
 {"card":"F04","closed":"2026-10-02","mode":"turbo","rounds":2,"check_fails":0,"train_fails":0,"jobs":11,"amber":0,"red":0,"accepted":true}
+{"card":"FX1","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":3,"amber":0,"red":0,"accepted":true}
+{"card":"G01","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":5,"amber":0,"red":0,"accepted":true}
+{"card":"D00L","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":2,"amber":0,"red":0,"accepted":true}
+{"card":"CQ1","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":3,"amber":0,"red":0,"accepted":true}
