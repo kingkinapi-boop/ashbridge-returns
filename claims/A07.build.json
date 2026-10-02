@@ -1,12 +1,10 @@
 {
  "card": "A07",
  "role": "build",
- "round": 1,
- "spec": "cf84ea2",
- "worker": "cloud-e945f9",
- "state": "reopened",
- "at": "2026-10-02T14:26:57.287Z",
- "mode": "turbo",
- "beat": "2026-10-02T13:05:24.842Z",
- "note": "spec round reported; build per card"
+ "round": 2,
+ "spec": "b47d477",
+ "worker": "cloud-575f8d",
+ "state": "working",
+ "at": "2026-10-02T14:27:38.783Z",
+ "mode": "turbo"
 }
