@@ -4,7 +4,8 @@
  "round": 17,
  "spec": "62f6c18",
  "worker": "cloud-e72c49",
- "state": "working",
- "at": "2026-10-02T18:23:42.976Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T18:24:34.877Z",
+ "mode": "turbo",
+ "note": "same 7 rule failures, owners' defects; nothing to build in SC paths"
 }
