@@ -1,11 +1,9 @@
 {
  "card": "W00a",
  "role": "spec",
- "worker": "cloud-91dc0c",
- "state": "reported",
- "at": "2026-10-02T15:32:37.464Z",
- "mode": "turbo",
- "note": "663 tests (644 fail for right reason, 19 sanity pass); 4 old roll tests retired; amber: roll.cause+marker on catalogue, checks 'file'/'roll'/'fault-catalogue'/'adjusting-entry'",
- "commit": "bd30c58",
- "validated": "aa35ac9"
+ "note": "toolchain refit",
+ "worker": "cloud-f96f12",
+ "state": "working",
+ "at": "2026-10-02T16:08:16.069Z",
+ "mode": "turbo"
 }
