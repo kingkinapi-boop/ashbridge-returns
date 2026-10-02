@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 50,
+ "round": 51,
  "spec": "ee0255d",
  "worker": "cloud-c29b25",
- "state": "released",
- "at": "2026-10-02T21:34:33.337Z",
- "mode": "turbo",
- "note": "needs spec refit: R34 and R47 for ocr/recorded (test-file edits), see reports/SC-build.md"
+ "state": "working",
+ "at": "2026-10-02T21:34:36.016Z",
+ "mode": "turbo"
 }
