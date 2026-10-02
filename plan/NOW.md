@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:40Z by the Lead at handover (Zo's `handover`). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (decision 0022); its notes stay on the laptop (reference/taxprep/2026-10-04-day4/, git-excluded) until Zo answers to-do #1. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,9 +13,9 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:40Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| W00a build (long; 663 spec tests) | cloud run | cloud | 2 Oct 15:50Z | claude/W00a |
-| A07C check (core, Opus read) | cloud run | cloud | 2 Oct 17:32Z | claude/A07C |
-| Queue, builds reopened by the Lead at 17:36Z after F01D landed: F02, F06, F07, A06, A01 (round 3), BL0; E03A build (re-run gitleaks over HEAD after Zo's edit, then check) | 4 cloud runs fired at handover | cloud | 2 Oct 17:42Z | claude/<card> |
+| W00a check, F06 check | cloud runs | cloud | 2 Oct 17:50Z | claude/<card> |
+| A06 build, A07C build (round 2), F07 check (Paths fixed, A369), W00b spec (branch pushed from W00a) | 4 cloud runs | cloud | 2 Oct 18:15Z | claude/<card> |
+| Train: E03A, BL0, A01, F02 (all PASS) | Lead | worktree | 2 Oct 18:15Z | train |
 
 ## Next, in order
 
