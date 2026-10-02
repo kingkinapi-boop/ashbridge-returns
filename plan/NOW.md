@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:30Z by the Lead (turbo on). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:12Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,10 +13,12 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:30Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Queue: F01C check (core), FX1 spec, A07 check (round 2), E03A check (core), CQ1 spec | 6 cloud runs | cloud | 2 Oct 15:35Z | claude/<card> |
-| 2 local workers (non-core jobs) | worker | laptop worktrees | 2 Oct 15:35Z | claude/<card> |
-| W00 findings review round 2 (Opus, local helper; Lead records reports/findings-W00-r2.md) | helper | laptop | 2 Oct 15:35Z | - |
-| Train: red-held (G01 flake, A361); re-board G01 and D00L with FX1 | train | - | 2 Oct 14:30Z | claude/train |
+| FX1 spec; F02, F07, A06 specs; CQ1 spec (local) | cloud and laptop | | 2 Oct 14:58Z | claude/<card> |
+| Queue: F01C check (core), W00a spec (A364), A07B spec (A366), F06 build | 3 cloud runs | cloud | 2 Oct 15:12Z | claude/<card> |
+| E03A Opus read for boarding (its check's Opus read was refused by the budget hook) | helper | laptop | 2 Oct 15:12Z | - |
+| Train: red-held (G01 flake, A361); re-board G01, D00L with FX1, then F01C, E03A | train | - | 2 Oct 14:30Z | claude/train |
+
+Splits today (third failures or last rounds): F09A to F09B (landed), F01 to F01C, W00 to W00a and W00b, A07 to A07B. G12 to G17 parked until E03A lands.
 
 ## Ready for the next runs (in this order once dispatch is allowed)
 
