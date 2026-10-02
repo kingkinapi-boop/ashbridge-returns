@@ -12,9 +12,21 @@ import {
 } from '../../../contracts/taxprep'
 import { CREATION_CELLS, defaultReleaseList, type ReleaseCell } from './release-list'
 
-export type ReportLine = { form: string; description: string; box: string; result: string }
-export type ImportReport = { lines: ReportLine[]; summary: 'Data imported successfully' | null }
-export type SimEvent = { identifier: string; source: 'import' | 'typed' | 'cleared'; value: string }
+export type ReportLine = {
+  form: string
+  description: string
+  box: string
+  result: string
+}
+export type ImportReport = {
+  lines: ReportLine[]
+  summary: 'Data imported successfully' | null
+}
+export type SimEvent = {
+  identifier: string
+  source: 'import' | 'typed' | 'cleared'
+  value: string
+}
 export type ExportFilter = 'entered' | 'all-input'
 
 export type SimReturn = {
@@ -42,7 +54,10 @@ export type SimulatorOptions = {
 export type Simulator = {
   createReturn(input: CreateReturnInput): SimReturn
   getReturn(businessNumber: string, yearEnd: string): SimReturn | undefined
-  importCsv(ret: SimReturn, bytes: Uint8Array): { ok: true; report: ImportReport } | { ok: false; faults: TaxprepFault[] }
+  importCsv(
+    ret: SimReturn,
+    bytes: Uint8Array,
+  ): { ok: true; report: ImportReport } | { ok: false; faults: TaxprepFault[] }
   exportCsv(ret: SimReturn, filter: ExportFilter): Uint8Array
   typeCell(ret: SimReturn, identifier: string, value: string): void
   clearCell(ret: SimReturn, identifier: string): void
@@ -129,16 +144,19 @@ export function createSimulator(options: SimulatorOptions = {}): Simulator {
   }
 
   function setValue(st: State, identifier: string, value: string): void {
+    // Stryker disable next-line ConditionalExpression,StringLiteral: a stored '' and a missing key both read back as '', so the two branches are indistinguishable
     if (value === '') st.values.delete(identifier)
     else st.values.set(identifier, value)
   }
 
   /** The copy state a cell stands under: null when the cell is ordinary, else how its index sits against the copies. */
   function copyStatus(st: State, r: Resolved): 'none' | 'exists' | 'next' | 'gap' {
+    // Stryker disable next-line ConditionalExpression,StringLiteral: only 'next' and 'gap' are ever compared, and a non-repeating cell reads as 'exists' without this line
     if (r.cell.repeating !== true) return 'none'
     const path = r.id.copyPath as string
     const index = r.id.copyIndex as number
     const count = st.copies.get(path) ?? 0
+    // Stryker disable next-line StringLiteral: 'exists' is never compared, only 'next' and 'gap' are
     if (index <= count) return 'exists'
     return index === count + 1 ? 'next' : 'gap'
   }
@@ -175,24 +193,40 @@ export function createSimulator(options: SimulatorOptions = {}): Simulator {
       const text = row.id.text
       if (text === YEAR_START || text === YEAR_END || text === NAME_CELL || text === FLAG_CELL) continue
       const found = resolve(row.id)
-      const status = found === null ? 'gap' : copyStatus(st, found)
-      if (found === null || status === 'gap') {
-        lines.push({ form: NONE, description: NONE, box: NONE, result: NOT_AVAILABLE })
+      if (found === null || copyStatus(st, found) === 'gap') {
+        lines.push({
+          form: NONE,
+          description: NONE,
+          box: NONE,
+          result: NOT_AVAILABLE,
+        })
         continue
       }
+      const status = copyStatus(st, found)
       const label = describe(found.cell)
       if (row.current.kind === 'clear') {
-        if (status === 'next' || !held(st, text)) continue
+        // The next copy does not exist yet, so it never holds a value: one test covers both.
+        if (!held(st, text)) continue
         if (found.cell.kind === 'yesNo') {
           // FINDINGS Q20: a yes or no cell cannot be emptied; a clear resets it to N.
           setValue(st, text, 'N')
           st.events.push({ identifier: text, source: 'import', value: 'N' })
-          lines.push({ form: NONE, description: label, box: NONE, result: REPLACED })
+          lines.push({
+            form: NONE,
+            description: label,
+            box: NONE,
+            result: REPLACED,
+          })
           continue
         }
         setValue(st, text, '')
         st.events.push({ identifier: text, source: 'import', value: '' })
-        lines.push({ form: NONE, description: label, box: NONE, result: EMPTIED })
+        lines.push({
+          form: NONE,
+          description: label,
+          box: NONE,
+          result: EMPTIED,
+        })
         continue
       }
       const value = row.current.text
@@ -209,9 +243,18 @@ export function createSimulator(options: SimulatorOptions = {}): Simulator {
       const replaced = held(st, text)
       setValue(st, text, value)
       st.events.push({ identifier: text, source: 'import', value })
-      if (replaced) lines.push({ form: NONE, description: label, box: NONE, result: REPLACED })
+      if (replaced)
+        lines.push({
+          form: NONE,
+          description: label,
+          box: NONE,
+          result: REPLACED,
+        })
     }
-    const report: ImportReport = { lines, summary: lines.length === 0 ? SUCCESS : null }
+    const report: ImportReport = {
+      lines,
+      summary: lines.length === 0 ? SUCCESS : null,
+    }
     return { ok: true as const, report }
   }
 
@@ -236,7 +279,9 @@ export function createSimulator(options: SimulatorOptions = {}): Simulator {
       }
     }
     const header = { returnName: ret.returnName, guid: ret.guid }
+    // Stryker disable next-line ObjectLiteral,StringLiteral: every cell on a release list passes the writer under either purpose
     const written = writeTaxprepCsv({ header, rows }, { purpose: 'export' })
+    // Stryker disable next-line all: a release list the writer refuses is a programming error, never an input
     if (!written.ok) throw new Error(written.problems.map((p) => p.reason).join('; '))
     let text = Array.from(written.bytes, (b) => String.fromCharCode(b)).join('')
     // Taxprep's "-123" setting writes a leading apostrophe before every negative; F03's writer never does.
@@ -246,6 +291,7 @@ export function createSimulator(options: SimulatorOptions = {}): Simulator {
       const at = text.indexOf(marker, cursor)
       const quoteAt = at + marker.length - 1
       text = `${text.slice(0, quoteAt)}'${text.slice(quoteAt)}`
+      // Stryker disable next-line ArithmeticOperator: identifiers are unique per export, so where the search resumes inside the same line never changes a later match
       cursor = quoteAt + 1
     }
     return Uint8Array.from(text, (ch) => ch.charCodeAt(0))

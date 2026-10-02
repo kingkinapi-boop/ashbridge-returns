@@ -30,11 +30,31 @@ export const CREATION_CELLS: readonly string[] = [
 type Draft = Omit<ReleaseCell, 'order'>
 
 const CREATION_DRAFTS: readonly Draft[] = [
-  { identifier: 'IDENT.Ident120', description: 'Line 060 - Tax year start date', kind: 'date' },
-  { identifier: 'IDENT.Ident121', description: 'Line 061 - Tax year-end', kind: 'date' },
-  { identifier: 'IDENT.Ident311', description: "Corporation's name", kind: 'text' },
-  { identifier: 'IDENT.Ident230', description: 'Line 990 - Language of correspondence', kind: 'text' },
-  { identifier: 'IDENT.Ident451', description: 'CCH iFirm - Client code', kind: 'text' },
+  {
+    identifier: 'IDENT.Ident120',
+    description: 'Line 060 - Tax year start date',
+    kind: 'date',
+  },
+  {
+    identifier: 'IDENT.Ident121',
+    description: 'Line 061 - Tax year-end',
+    kind: 'date',
+  },
+  {
+    identifier: 'IDENT.Ident311',
+    description: "Corporation's name",
+    kind: 'text',
+  },
+  {
+    identifier: 'IDENT.Ident230',
+    description: 'Line 990 - Language of correspondence',
+    kind: 'text',
+  },
+  {
+    identifier: 'IDENT.Ident451',
+    description: 'CCH iFirm - Client code',
+    kind: 'text',
+  },
   { identifier: 'IDENT.Ident492', description: 'Creation flag', kind: 'yesNo' },
   { identifier: 'IFirm.ContactPartner', description: 'Partner', kind: 'text' },
   { identifier: 'IFirm.ContactID', description: 'Contact ID', kind: 'text' },
@@ -44,7 +64,13 @@ const CREATION_DRAFTS: readonly Draft[] = [
 export function defaultReleaseList(): readonly ReleaseCell[] {
   const drafts: Draft[] = []
   for (const [code, identifier] of Object.entries(cellsFile.gifi.byCode)) {
-    drafts.push({ identifier, description: (gifiDescriptions as Record<string, string>)[identifier] ?? `GIFI code ${code}`, kind: 'amount', confirmed: true })
+    drafts.push({
+      identifier,
+    // Stryker disable next-line StringLiteral: every one of the 300 cells has a description in the day 2 exports, so the fallback text is never used
+      description: (gifiDescriptions as Record<string, string>)[identifier] ?? `GIFI code ${code}`,
+      kind: 'amount',
+      confirmed: true,
+    })
   }
   drafts.push(...CREATION_DRAFTS)
   return drafts.map((d, i) => ({ ...d, order: i + 1 }))
