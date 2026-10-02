@@ -1,11 +1,10 @@
 {
  "card": "A07C",
  "role": "build",
- "round": 6,
+ "round": 7,
  "spec": "ba50f80",
- "worker": "cloud-dec020",
- "state": "released",
- "at": "2026-10-02T20:35:07.070Z",
- "mode": "turbo",
- "note": "re-offered immediately; Lead must mark A07C build done (landing at b80c251, A07D split)"
+ "worker": "cloud-ef21b9",
+ "state": "working",
+ "at": "2026-10-02T20:44:00.486Z",
+ "mode": "turbo"
 }
