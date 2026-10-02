@@ -1,9 +1,11 @@
 {
  "card": "A07C",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit only: 25 round-2 tests fail as designed, typecheck+lint green on main 6d8efd6",
  "worker": "cloud-85bb68",
- "state": "working",
- "at": "2026-10-02T19:24:36.117Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:28:11.663Z",
+ "mode": "turbo",
+ "commit": "ba50f80",
+ "validated": "6d8efd6690d03d0bae82db06f4c6f5ddd617ae6b"
 }
