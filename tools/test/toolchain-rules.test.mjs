@@ -248,3 +248,29 @@ describe('TH gitleaks scan scope and allowlist (A05)', () => {
     expect(allowed('"key": "AKIAIOSFODNN7EXAMPLE"')).toBe(false)
   })
 })
+
+// E03 round 3 (A355): a test that reads reference/sample-clients takes its expected client count
+// from the directory (or a manifest), never a literal: the sample set grows (10 to 15 on 2 Oct).
+const SAMPLE_COUNT_LITERAL = /(sample|client)[^\n]*\.(toHaveLength|toBe|toEqual|toBeGreaterThanOrEqual)\(\s*\d+\s*\)/i
+function sampleCountProblems(files, readFile = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8')) {
+  const problems = []
+  for (const f of files.filter((x) => /\.test\.(ts|tsx|mjs)(\.txt)?$/.test(x))) {
+    const src = readFile(f)
+    if (!src.includes('sample-clients')) continue
+    src.split('\n').forEach((line, i) => {
+      if (SAMPLE_COUNT_LITERAL.test(line)) problems.push(`${f}:${String(i + 1)} asserts a literal sample client count`)
+    })
+  }
+  return problems
+}
+
+describe('E03 round 3 sample-count rule (EV-5, A355)', () => {
+  test('EV-5 rule: a planted test asserting toHaveLength(10) over reference/sample-clients is caught', () => {
+    const f = 'tools/test/__fixtures__/planted-sample-count.test.ts.txt'
+    const found = sampleCountProblems([f])
+    expect(found).toHaveLength(1)
+  })
+  test('EV-5 no test that reads reference/sample-clients asserts a literal client count', () => {
+    expect(sampleCountProblems(repoFiles())).toEqual([])
+  })
+})
