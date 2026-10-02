@@ -1,0 +1,24 @@
+{
+  "jobId": "c01-clean",
+  "output": {
+    "citations": [
+      {
+        "recordId": "txn-c01-bcd-0042",
+        "recordKind": "transaction",
+        "source": "ledger"
+      }
+    ],
+    "findingType": "issue",
+    "outcome": "answer",
+    "summary": "Meals on the business card total $1,850.00; the ledger records the same amount (Test)."
+  },
+  "stamp": {
+    "inputHash": "02d18dea583c9aba36d0b6f27055612e7b36838c4f186a4622a989b99c11f83b",
+    "mappingRelease": "mapping-2026.10-test",
+    "modelId": "claude-opus-5-5",
+    "ocrEngine": "ocr-stand-in",
+    "ocrEngineVersion": "0.0.0-test",
+    "promptHash": "233badf62ff5af0fea71b892f3821b07be411e0bcc815f9224aa0190de398538",
+    "promptVersion": "finding-a08-test"
+  }
+}
