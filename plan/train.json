@@ -1,11 +1,9 @@
 {
-  "status": "landed",
+  "status": "requested",
   "branch": "claude/train",
-  "head": "f937407",
-  "cards": [
-    "DG"
-  ],
-  "requested_at": "2026-10-02T02:08:29Z",
-  "by": "cloud-708ce4",
-  "report": "reports/train-20261002-0212.md"
+  "head": "c2d209a",
+  "cards": ["queue-repair-3"],
+  "requested_at": "2026-10-02T03:01:44Z",
+  "by": null,
+  "report": null
 }
