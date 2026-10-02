@@ -1,11 +1,9 @@
 {
  "card": "F06",
  "role": "spec",
- "worker": "cloud-b4ebfa",
- "state": "reported",
- "at": "2026-10-02T11:28:47.851Z",
- "mode": "turbo",
- "note": "31 tests (26 db, 5 unit); validated with F01 branch merged; see reports/F06-spec.md",
- "commit": "a175026f70423a7bdb2f653dc373dadef3c7ff33",
- "validated": "8e8fba1c6253c09a67ca3d4a857d650cb352a660"
+ "note": "toolchain refit",
+ "worker": "cloud-091587",
+ "state": "working",
+ "at": "2026-10-02T14:58:29.327Z",
+ "mode": "turbo"
 }
