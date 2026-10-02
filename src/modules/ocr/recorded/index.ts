@@ -19,25 +19,26 @@ export type RecordedOptions = {
   folder: string
 }
 
-type Recording = z.infer<typeof RecordingSchema>
-
-const FINGERPRINT = /^[0-9a-f]{64}$/
+type Recording = z.infer<ReturnType<typeof recordingSchema>>
 
 function fileFor(folder: string, fingerprint: string): string {
-  if (!FINGERPRINT.test(fingerprint)) throw new Error(`recording refused: "${fingerprint}" is not a sha256 fingerprint`)
+  if (!/^[0-9a-f]{64}$/.test(fingerprint)) throw new Error(`recording refused: "${fingerprint}" is not a sha256 fingerprint`)
   return path.join(folder, `${fingerprint}.json`)
 }
 
-const RecordingSchema = z.strictObject({
-  fingerprint: z.string(),
-  recordedAt: z.iso.datetime({ offset: true }),
-  sourceEngine: EngineStampSchema,
-  result: ReadingResultSchema,
-})
+// A function, not a constant, so each use is a run the tests can see.
+const recordingSchema = () =>
+  z.strictObject({
+    fingerprint: z.string(),
+    recordedAt: z.iso.datetime({ offset: true }),
+    sourceEngine: EngineStampSchema,
+    result: ReadingResultSchema,
+  })
 
 const refused = (fingerprint: string, why: string): Error => new Error(`recording for ${fingerprint} is refused: ${why}`)
 
 function isObject(v: unknown): v is Record<string, unknown> {
+  // Stryker disable next-line ConditionalExpression: the recorded result passed a strict schema, so it holds no null
   return typeof v === 'object' && v !== null && !Array.isArray(v)
 }
 
@@ -46,6 +47,7 @@ function load(folder: string, fingerprint: string): Recording {
   const file = fileFor(folder, fingerprint)
   let text: string
   try {
+    // Stryker disable next-line StringLiteral: JSON.parse turns a Buffer into the same text, so the encoding changes nothing
     text = fs.readFileSync(file, 'utf8')
   } catch {
     throw new Error(`no recording for ${fingerprint}: re-record`)
@@ -56,7 +58,7 @@ function load(folder: string, fingerprint: string): Recording {
   } catch {
     throw refused(fingerprint, 'the file is not JSON')
   }
-  const parsed = RecordingSchema.safeParse(raw)
+  const parsed = recordingSchema().safeParse(raw)
   if (!parsed.success) {
     const why = parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')
     throw refused(fingerprint, `the file fails the recording schema (${why})`)

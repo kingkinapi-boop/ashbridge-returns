@@ -4,6 +4,7 @@ import path from 'node:path'
 import { describe, expect, test } from 'vitest'
 import { fixedClock, getClock, setClock } from '../../../core/clock'
 import type { ReadingEngine } from '../../../contracts/reading'
+import { createReadingAdapter } from '../index'
 import { createRecordedEngine, record } from './index'
 import { RECORDED_AT, RECORDINGS_DIR } from './__fixtures__/make-fixtures'
 import { failure, snapshot, tempDir } from '../textlayer/__fixtures__/harness'
@@ -64,6 +65,15 @@ describe('ARC-16 recorded engine: each refusal says why', () => {
     for (const sourceEngine of [{ name: ' ', version: '1' }, { name: 'x', version: '' }]) {
       expect((await readFrom({ ...committed(), sourceEngine }))?.message).toContain('sourceEngine')
     }
+  })
+
+  test('ARC-16 every schema problem is listed as path: reason, joined by semicolons', async () => {
+    const msg = (await readFrom({ ...committed(), recordedAt: 'yesterday', sourceEngine: { name: ' ', version: '1' } }))?.message ?? ''
+    const inside = /\((.*)\)$/.exec(msg)?.[1] ?? ''
+    const parts = inside.split('; ')
+    expect(parts).toHaveLength(2)
+    expect(parts[0]).toMatch(/^recordedAt: .+/)
+    expect(parts[1]).toMatch(/^sourceEngine\.name: .+/)
   })
 
   test('ARC-16 a recordedAt that is not a date-time is refused', async () => {
@@ -150,5 +160,11 @@ describe('SEC-11 ARC-16 record: refusals write nothing', () => {
       setClock(saved)
       t.cleanup()
     }
+  })
+})
+
+describe('ARC-16 the adapter switch needs a folder', () => {
+  test('ARC-16 recorded with no recordings folder says what is missing', () => {
+    expect(() => createReadingAdapter({ env: { OCR_ENGINE: 'recorded' } })).toThrow('the recorded engine needs a recordings folder: pass recordingsDir')
   })
 })
