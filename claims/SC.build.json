@@ -1,12 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 19,
+ "round": 20,
  "spec": "62f6c18",
  "worker": "cloud-2c4bc3",
- "state": "released",
- "at": "2026-10-02T18:41:52.589Z",
- "mode": "turbo",
- "beat": "2026-10-02T18:40:12.227Z",
- "note": "7 rule tests fail on other cards' defects (F01 TRUNCATE/status check/FUTURE_POINTERS, records.ts strictness, gaps @mutate and trim, ai.ts trim); see reports/SC-build.md"
+ "state": "working",
+ "at": "2026-10-02T18:41:55.086Z",
+ "mode": "turbo"
 }
