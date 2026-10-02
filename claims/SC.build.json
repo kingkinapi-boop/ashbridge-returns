@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 14,
+ "round": 15,
  "spec": "62f6c18",
- "worker": "cloud-f10790",
- "state": "released",
- "at": "2026-10-02T18:02:13.351Z",
- "mode": "turbo",
- "note": "same 7 rule failures, owners named in reports/SC-build.md; nothing to build in SC's paths"
+ "worker": "cloud-ca47ab",
+ "state": "working",
+ "at": "2026-10-02T18:12:44.348Z",
+ "mode": "turbo"
 }
