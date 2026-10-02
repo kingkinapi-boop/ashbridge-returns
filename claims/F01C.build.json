@@ -5,7 +5,7 @@
  "spec": "3c54b09",
  "worker": "cloud-0b4981",
  "state": "reported",
- "at": "2026-10-02T14:30:19.833Z",
+ "at": "2026-10-02T15:20:08.119Z",
  "mode": "turbo",
- "note": "acceptance all pass; db 295; 1 unrelated unit fail (F03 taxprep RT-9 property); mutation 100"
+ "note": "re-stamped by the Lead so the check re-offers (a released check blocked it); acceptance all pass; db 295; mutation 100"
 }
