@@ -1,11 +1,10 @@
 {
  "card": "A04",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "383857c",
- "worker": "cloud-eea9f9",
- "state": "released",
- "at": "2026-10-02T19:56:31.798Z",
- "mode": "turbo",
- "note": "golden inbox-finding-c01.json still has 14 stale minLength lines; spec needs a regenerate round, see reports/A04-build.md"
+ "worker": "cloud-18d04e",
+ "state": "working",
+ "at": "2026-10-02T19:57:15.420Z",
+ "mode": "turbo"
 }
