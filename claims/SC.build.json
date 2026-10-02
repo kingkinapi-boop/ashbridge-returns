@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 40,
- "spec": "34e8ac0",
- "worker": "cloud-2cbd52",
- "state": "reopened",
- "at": "2026-10-02T20:54:04.174Z",
- "mode": "turbo",
- "note": "KNOWN entries added; build"
+ "round": 41,
+ "spec": "ee0255d",
+ "worker": "cloud-b4d2b5",
+ "state": "working",
+ "at": "2026-10-02T21:06:05.903Z",
+ "mode": "turbo"
 }
