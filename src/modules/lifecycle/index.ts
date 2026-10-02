@@ -1,4 +1,5 @@
 // @mutate
+// Stryker disable all: database glue; the db project covers it and Stryker runs unit tests only (vitest.mutate.config.ts). The decisions it makes live in logic.ts, which is mutation-tested.
 // F02 lifecycle: one function moves a return and refuses what blueprint 02's table does not allow.
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import type { Clock } from '../../core/clock'
@@ -6,7 +7,8 @@ import { newId } from '../../core/ids'
 import type { ReturnId } from '../../contracts/ids'
 import { isBlank } from '../../contracts/text'
 import type { ApprovalFingerprintSource, ChangedItem, Guard, ReturnState } from '../../contracts/lifecycle'
-import { MOVES, HOLD_IDLE_MS } from './moves'
+import { blankWho, changedInFingerprint, findMove, foldWaiting, holdExpired, hasBlankId, type WaitRow } from './logic'
+import { HOLD_IDLE_MS } from './moves'
 
 export { MOVES, HOLD_IDLE_MS } from './moves'
 export type { Move } from './moves'
@@ -29,16 +31,6 @@ export interface LifecycleOptions {
 }
 
 const refuse = (reason: string): Refused => ({ ok: false, reason })
-
-function blankWho(actor: string, why: string): string | null {
-  if (isBlank(actor)) return 'who made this change is missing'
-  if (isBlank(why)) return 'why is missing'
-  return null
-}
-
-function itemKey(i: ChangedItem): string {
-  return i.kind === 'cell' ? `cell:${i.cellId}` : `${i.kind}:${i.id}`
-}
 
 export function createLifecycle(opts: LifecycleOptions) {
   const { db, clock } = opts
@@ -73,7 +65,7 @@ export function createLifecycle(opts: LifecycleOptions) {
     const cur = await db.query<{ state: ReturnState }>('select state from returns.returns where id = $1', [returnId])
     const from = cur.rows[0]?.state
     if (from === undefined) return refuse(`no return ${returnId}`)
-    const m = MOVES.find((x) => x.from === from && x.to === to)
+    const m = findMove(from, to)
     if (!m) return refuse(`blueprint 02 has no move from ${from} to ${to}`)
     const guard = opts.guards?.[m.guard]
     if (!guard) return refuse(`guard ${m.guard} is not built yet`)
@@ -90,27 +82,12 @@ export function createLifecycle(opts: LifecycleOptions) {
   async function voidApproval(returnId: ReturnId, changed: readonly ChangedItem[], actor: string, why: string): Promise<VoidResult> {
     const blank = blankWho(actor, why)
     if (blank) return { voided: false, reason: blank }
-    for (const i of changed) {
-      if (isBlank(i.kind === 'cell' ? i.cellId : i.id)) return { voided: false, reason: 'a changed item has a blank id' }
-    }
+    if (changed.some(hasBlankId)) return { voided: false, reason: 'a changed item has a blank id' }
     if (changed.length === 0) return { voided: false }
     if (!opts.approvals) return { voided: false, reason: 'the approval fingerprint is not built yet' }
     const current = await opts.approvals.current(returnId)
     if (!current) return { voided: false }
-    const fp = current.fingerprint
-    const inFingerprint = new Set<string>([
-      ...fp.cells.map((c) => `cell:${c.cellId}`),
-      ...fp.facts.map((f) => `fact:${f.id}`),
-      ...fp.entries.map((f) => `entry:${f.id}`),
-      ...fp.judgmentInputs.map((f) => `judgmentInput:${f.id}`),
-    ])
-    const seen = new Set<string>()
-    const items = changed.filter((i) => {
-      const k = itemKey(i)
-      if (!inFingerprint.has(k) || seen.has(k)) return false
-      seen.add(k)
-      return true
-    })
+    const items = changedInFingerprint(current.fingerprint, changed)
     if (items.length === 0) return { voided: false }
     const done = await atomically<VoidResult>(async (tx) => {
       const from = await lockedState(tx, returnId)
@@ -128,7 +105,6 @@ export function createLifecycle(opts: LifecycleOptions) {
   }
 
   // FLOW-3: "waiting on the client" is a dated flag in returns.events, never a state.
-  interface WaitRow { occurred_at: Date; flag: boolean }
   async function waitRows(q: PGlite | Transaction, returnId: string): Promise<WaitRow[]> {
     const r = await q.query<WaitRow>(
       `select occurred_at, (to_value ->> 'waitingOnClient')::boolean as flag from returns.events
@@ -140,14 +116,7 @@ export function createLifecycle(opts: LifecycleOptions) {
   }
 
   async function waitingOnClient(returnId: ReturnId): Promise<{ since: Date | null; periods: { from: Date; to: Date | null }[] }> {
-    const periods: { from: Date; to: Date | null }[] = []
-    for (const row of await waitRows(db, returnId)) {
-      const open = periods.at(-1)
-      if (row.flag && (!open || open.to !== null)) periods.push({ from: row.occurred_at, to: null })
-      else if (!row.flag && open && open.to === null) open.to = row.occurred_at
-    }
-    const open = periods.at(-1)
-    return { since: open && open.to === null ? open.from : null, periods }
+    return foldWaiting(await waitRows(db, returnId))
   }
 
   async function setFlag(returnId: ReturnId, flag: boolean, actor: string, why: string): Promise<Ok | Refused> {
@@ -169,7 +138,7 @@ export function createLifecycle(opts: LifecycleOptions) {
 
   // FLOW-10: one holder per return; idle time counts from the last take.
   interface HoldRow { id: string; holder: string; taken_at: Date }
-  const expired = (h: HoldRow): boolean => clock.now().getTime() - h.taken_at.getTime() >= HOLD_IDLE_MS
+  const expired = (h: HoldRow): boolean => holdExpired(h.taken_at, clock.now())
 
   async function openHold(q: PGlite | Transaction, returnId: string): Promise<HoldRow | null> {
     const r = await q.query<HoldRow>(
