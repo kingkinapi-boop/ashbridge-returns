@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "7145c18",
  "worker": "cloud-3620d3",
- "state": "working",
- "at": "2026-10-02T05:06:13.206Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T05:13:16.067Z",
+ "mode": "turbo",
+ "note": "272 of 272 acceptance tests pass, mutation 100"
 }
