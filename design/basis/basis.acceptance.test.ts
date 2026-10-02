@@ -8,11 +8,10 @@
 //   build.mjs run as a script: `node design/basis/build.mjs --out <dir>` does the same and exits 0.
 //   design/basis/settings.scss : colours as #rrggbb hex literals inside $govuk-functional-colours.
 //   design/basis/parts.md      : every app- class that may appear, written in backticks, e.g. `app-width-container--wide`.
-// Needs: sass, govuk-frontend, @ministryofjustice/frontend, nunjucks, axe-core, playwright (chromium) from the build job.
+// Needs: sass, govuk-frontend, @ministryofjustice/frontend, nunjucks, axe-core, (axe runs in e2e/design-basis-axe.spec.ts).
 // Vitest: runs in the shared unit project (design/**/*.test.ts, tools/test-homes.json).
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdtempSync, readFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -21,7 +20,6 @@ import { BAD_PAGE, contrast, listedAppClasses, unlistedClasses } from './d00-hel
 
 const root = path.resolve(import.meta.dirname, '../..')
 const basis = path.join(root, 'design/basis')
-const require = createRequire(import.meta.url)
 
 type Built = { cssPath: string; samplePath: string }
 let built: Built
@@ -104,32 +102,7 @@ describe('RV-54 contrast of every colour in settings.scss', () => {
   })
 })
 
-describe('RV-54 axe on the sample page', () => {
-  async function axeViolations(url: string): Promise<string[]> {
-    const { chromium } = await import('playwright')
-    const browser = await chromium.launch()
-    try {
-      const page = await browser.newPage()
-      await page.goto(url)
-      await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') })
-      const res: unknown = await page.evaluate(
-        `axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa'] } })`,
-      )
-      return (res as { violations: { id: string }[] }).violations.map((v) => v.id)
-    } finally {
-      await browser.close()
-    }
-  }
-  test('RV-54 axe (WCAG 2.2 AA tags) finds no violation on the sample page', async () => {
-    expect(await axeViolations(pathToFileURL(built.samplePath).href)).toEqual([])
-  }, 60_000)
-  test('RV-54 planted fault: axe flags a page with an image without alt text', async () => {
-    const f = path.join(outDir, 'bad.html')
-    const { writeFileSync } = await import('node:fs')
-    writeFileSync(f, BAD_PAGE)
-    expect(await axeViolations(pathToFileURL(f).href)).toContain('image-alt')
-  }, 60_000)
-})
+// The two RV-54 axe tests launch a browser, so they live in e2e/design-basis-axe.spec.ts (A351; no unit test launches a browser).
 
 describe('RV-52 classes on the sample page', () => {
   test('RV-52 every class is govuk-, moj- or a listed app- class', () => {
