@@ -4,8 +4,8 @@
  "round": 6,
  "spec": "f1c8095",
  "worker": "cloud-e1c409",
- "state": "released",
- "at": "2026-10-02T01:03:23.526Z",
+ "state": "reopened",
+ "at": "2026-10-02T02:07:45.915Z",
  "mode": "turbo",
  "note": "re-offered; still needs spec refit (reference in SKIP_DIRS, A287), not a build job"
 }
