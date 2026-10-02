@@ -1,11 +1,8 @@
 {
  "card": "A06",
  "role": "spec",
- "worker": "cloud-c7ae52",
- "state": "reopened",
- "at": "2026-10-02T19:46:12.938Z",
- "mode": "turbo",
- "note": "ROUND 2, not a refit: write the six acceptance tests under 'Acceptance tests to add' in reports/A06-findings.md (auth.acceptance.db.test.ts; races assert an invariant; clock pinned) and the new line 7 of the card; see the card's Round 2 section",
- "commit": "8af6557",
- "validated": "6ac92e8f"
+ "worker": "cloud-ae6ed2",
+ "state": "working",
+ "at": "2026-10-02T19:48:00.044Z",
+ "mode": "turbo"
 }
