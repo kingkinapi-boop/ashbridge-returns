@@ -1,10 +1,9 @@
 {
  "card": "D01",
  "role": "check",
- "for": "2026-10-01T22:58:31.006Z",
- "worker": "cloud-451039",
- "state": "failed",
- "at": "2026-10-01T23:26:08.481Z",
- "mode": "turbo",
- "note": "FAIL: design/map tests not in vitest include or lint project, see reports/D01-check.md"
+ "for": "2026-10-02T08:35:23.872Z",
+ "worker": "cloud-d26ada",
+ "state": "working",
+ "at": "2026-10-02T08:37:25.949Z",
+ "mode": "turbo"
 }
