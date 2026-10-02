@@ -1,14 +1,13 @@
 {
-  "status": "checking",
+  "status": "landed",
   "branch": "claude/train",
-  "head": "474512d",
+  "head": "0a37d63",
   "cards": [
-    "FX1",
-    "G01",
-    "D00L",
-    "CQ1"
+    "F01D",
+    "G10",
+    "G11"
   ],
-  "requested_at": "2026-10-02T15:42:33Z",
-  "by": "cloud-1d7697",
-  "report": ""
+  "requested_at": "2026-10-02T17:12:48Z",
+  "by": "cloud-a0486a",
+  "report": "reports/train-20261002-1722.md"
 }

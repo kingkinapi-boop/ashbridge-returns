@@ -184,7 +184,7 @@
       "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first. Parked 2 Oct after round 3 (A359): split into F01C, which lands its work."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -230,7 +230,58 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "Branch claude/F01C from claude/F01 round 3 head; lands F01 work (A359)."
+      "note": "Branch claude/F01C from claude/F01 round 3 head; lands F01 work (A359). Parked 2 Oct after its last round (A367): split into F01D, which lands F01 and F01C work."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09"
+      ],
+      "paths": [
+        "db/schema/00_schema.sql",
+        "db/schema/10_documents.sql",
+        "db/schema/20_ledger.sql",
+        "db/schema/30_books.sql",
+        "db/schema/40_figures.sql",
+        "db/schema/50_returns.sql",
+        "db/schema/60_versions.sql",
+        "db/schema/70_checks.sql",
+        "db/schema/90_learning.sql",
+        "src/contracts/records.ts",
+        "src/contracts/ids.ts",
+        "src/contracts/index.ts",
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts",
+        "src/contracts/value-columns.db.test.ts"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "EV-14",
+        "FLOW-4",
+        "TB-1",
+        "TB-2",
+        "TB-3",
+        "FLOW-1",
+        "SEC-6",
+        "SEC-7",
+        "ARC-2",
+        "ARC-3",
+        "ARC-10"
+      ],
+      "id": "F01D",
+      "title": "Records and schema: closing repairs (F01C split)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/F01D from claude/F01C round head (A367).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -317,7 +368,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "F04",
         "F05M"
       ],
@@ -590,7 +641,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "F09",
         "F09B",
         "F05M"
@@ -857,7 +908,7 @@
         "F00",
         "F09",
         "F09B",
-        "F01C"
+        "F01D"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
@@ -881,7 +932,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "F00T",
         "W00a"
       ],
@@ -908,7 +959,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "F03",
         "F04",
         "F05",
@@ -940,7 +991,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C"
+        "F01D"
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
@@ -966,7 +1017,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "F00T"
       ],
       "paths": [
@@ -1017,7 +1068,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "P01"
       ],
       "paths": [
@@ -1950,7 +2001,7 @@
       "spec": null,
       "deps": [
         "F00",
-        "F01C",
+        "F01D",
         "F00T"
       ],
       "paths": [
@@ -2003,7 +2054,7 @@
       "note": " Parked 2 Oct after round 2 (A366): split into A07B, which lands its work."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -2028,7 +2079,35 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "Branch claude/A07B from claude/A07 93ab657 (A366)."
+      "note": "Branch claude/A07B from claude/A07 93ab657 (A366). Parked 2 Oct after its last round (A368): split into A07C."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09",
+        "F09B"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts",
+        "package.json",
+        "package-lock.json"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "A07C",
+      "title": "Spreadsheet reader: closing repairs (A07B split)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/A07C from claude/A07B round head (A368)."
     },
     {
       "status": "carded",
@@ -2090,7 +2169,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": "n/a",
       "deps": [
         "D00"
@@ -2106,7 +2185,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "Decision 0020 Z20-8."
+      "note": "Decision 0020 Z20-8.",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -2288,7 +2368,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "F02",
         "F04",
         "SK0"
@@ -2346,14 +2426,14 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "F06",
         "F09",
         "F10",
         "A01",
         "A02",
         "A05",
-        "A07B",
+        "A07C",
         "SK0"
       ],
       "paths": [
@@ -2446,7 +2526,8 @@
         "data/facts/catalogue.json",
         "src/contracts/facts.test.ts",
         "src/contracts/__fixtures__/fact-catalogue.ts",
-        "src/contracts/facts-askable.acceptance.test.ts"
+        "src/contracts/facts-askable.acceptance.test.ts",
+        ".gitleaks.toml"
       ],
       "clauses": [
         "AI-12",
@@ -2460,7 +2541,7 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From the G12 spec release (A362)."
+      "note": "From the G12 spec release (A362). Parked 2 Oct 16:30Z waiting on Zo to-do #1 (one gitleaks allowlist line). Unparked 2 Oct: Zo approved the allowlist line (decision 0021). Re-parked 17:20Z: Zo makes the gitleaks edit by hand (to-do #1). Unparked 17:35Z: Zo made the decision 0021 edit on claude/E03A (0462739)."
     },
     {
       "status": "carded",
@@ -2471,7 +2552,7 @@
         "E03",
         "L00",
         "A04",
-        "A07B",
+        "A07C",
         "F10",
         "F09B"
       ],
@@ -2602,7 +2683,7 @@
       "deps": [
         "E01",
         "W25",
-        "A07B"
+        "A07C"
       ],
       "paths": [
         "src/modules/extraction/tb-sheet/**"
@@ -2915,7 +2996,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01C",
+        "F01D",
         "A05",
         "F00T",
         "W00a"
@@ -2986,7 +3067,7 @@
       "deps": [
         "B05",
         "A05",
-        "A07B"
+        "A07C"
       ],
       "paths": [
         "src/modules/books/gifi/**",
@@ -3116,7 +3197,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -3132,10 +3213,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From the red G01 train (A361)."
+      "note": "From the red G01 train (A361).",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -3153,10 +3235,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From the Reviewer SLOW of 2 Oct 14:40Z."
+      "note": "From the Reviewer SLOW of 2 Oct 14:40Z.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -3176,7 +3259,8 @@
       "id": "G01",
       "title": "Question bank format (ids, slots, answer shapes)",
       "phase": 1,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -3207,7 +3291,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01"
@@ -3228,10 +3312,11 @@
       "family": "question",
       "params": {
         "topic": "revenue"
-      }
+      },
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01"
@@ -3252,7 +3337,8 @@
       "family": "question",
       "params": {
         "topic": "expenses"
-      }
+      },
+      "done": "2026-10-02"
     },
     {
       "status": "parked",
@@ -5242,7 +5328,7 @@
         "T04",
         "T01",
         "L00",
-        "F01C"
+        "F01D"
       ],
       "paths": [
         "src/modules/learning/versions/**",
