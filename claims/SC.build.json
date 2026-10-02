@@ -4,7 +4,8 @@
  "round": 25,
  "spec": "62f6c18",
  "worker": "cloud-dea37c",
- "state": "working",
- "at": "2026-10-02T19:04:29.323Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:04:37.028Z",
+ "mode": "turbo",
+ "note": "re-offered at once after my release; same 4 unit + 3 db failures in other cards' files, see reports/SC-build.md; needs Lead (add defects to owning cards)"
 }
