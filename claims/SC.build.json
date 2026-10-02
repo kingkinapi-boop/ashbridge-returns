@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 41,
+ "round": 42,
  "spec": "ee0255d",
  "worker": "cloud-b4d2b5",
- "state": "released",
- "at": "2026-10-02T21:07:51.384Z",
- "mode": "turbo",
- "note": "2 failures new on main (ocr/recorded): R34 BINARY_FIXTURES and R47 READERS need spec refit entries"
+ "state": "working",
+ "at": "2026-10-02T21:07:53.973Z",
+ "mode": "turbo"
 }
