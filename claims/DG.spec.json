@@ -2,7 +2,8 @@
  "card": "DG",
  "role": "spec",
  "worker": "cloud-708ce4",
- "state": "working",
- "at": "2026-10-02T02:13:23.237Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T02:13:30.842Z",
+ "mode": "turbo",
+ "note": "Queue bug: re-offers DG spec after every release though spec 8a722d5, build and check PASS exist and DG is on green train. Stopping; Lead to hold DG spec"
 }
