@@ -71,3 +71,4 @@ R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden fi
 - R53 sequences (joins R44): every month or version sequence is complete and each closing links to the next opening.
 - R54 (A07 round 2 check): every reader refuses a wrong-kind container with a reason and never throws (A01, A07, E00 intake); no reason carries a library message or URL; number-to-text rules are tested with large-magnitude noise.
 - R55 (F01D check, A367 landing rule): every finiteness bound shared by SQL and JS is tested at the double's round-up midpoint (1.797693134862315807937e308), not only at 1e400; 1e-400 and integers above 2^53 in stamps are refused or read back unchanged, the same in SQL and JS.
+- R56 (A07C check): any regex over raw sheet XML handles self-closed elements; any snap tolerance is relative to magnitude, never absolute. R54 adds gzip, %PDF, MZ and spanned-zip bytes under a .csv name.
