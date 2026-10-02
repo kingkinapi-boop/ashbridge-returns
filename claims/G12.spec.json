@@ -1,9 +1,8 @@
 {
  "card": "G12",
  "role": "spec",
- "worker": "cloud-76f46b",
- "state": "released",
- "at": "2026-10-02T13:56:39.230Z",
- "mode": "turbo",
- "note": "no client-askable assets-cca facts in the catalogue, see reports/G12-spec.md"
+ "worker": "cloud-2a9ed7",
+ "state": "working",
+ "at": "2026-10-02T13:59:16.201Z",
+ "mode": "turbo"
 }
