@@ -1,12 +1,8 @@
 {
  "card": "A07C",
  "role": "spec",
- "worker": "cloud-f96f12",
- "state": "reopened",
- "at": "2026-10-02T17:39:07.715Z",
- "mode": "turbo",
- "beat": "2026-10-02T16:13:17.494Z",
- "note": "round 2 (card): self-closed shared formula, ulp-relative snap, empty cache",
- "commit": "4ce0d83",
- "validated": "0a45ea9"
+ "worker": "cloud-22a0fc",
+ "state": "working",
+ "at": "2026-10-02T17:40:23.175Z",
+ "mode": "turbo"
 }
