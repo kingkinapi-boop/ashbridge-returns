@@ -1,22 +1,13 @@
-# SC build released again (cloud-658451, 2 Oct 17:50Z)
-Branch claude/SC, main merged in. SC's paths hold only tests, so there is no product code to build. 58 of 65 pass, 7 fail (unit 4, db 3), unchanged from the earlier release:
-- R12: `returns.returns` refuses UPDATE or DELETE but not TRUNCATE (db/schema, F01/F01D).
-- R15 (file and db): `returns.exceptions.status` has no CHECK list; `ExceptionRecordSchema.status` is not a records.ts enum.
-- R18: `src/modules/gaps/index.ts` lacks `// @mutate` (G10/G11).
-- R23: records.ts schemas accept a stray key; R23_SAMPLES needs FactRecord, AdjustingEntry, Figure, CheckResult samples (spec job).
-- R41: `src/contracts/ai.ts` is fixed by BL0 (claude/BL0, build reported, not yet on main); `src/modules/gaps/bank/index.ts` (G11) still uses `.trim()` / `min(1)`.
-- R43: FUTURE_POINTERS names no card for 19 unbuilt-table ids (spec job).
-Lead: add the defects to the owning cards, land BL0, reopen a spec job to extend R23_SAMPLES and FUTURE_POINTERS, then re-offer SC build.
-Ambers: none. Permission gaps: none. Model: Sonnet 5.5.
+# SC build (released, cloud-2c4bc3, 2 Oct)
 
-## Re-check (cloud-80fece, 2 Oct, main 2de6057)
-Re-ran both SC files after merging main: the same 7 fail (R12, R15 x2, R18, R23, R41, R43), same owners as above. Nothing in SC's paths to change. Released again; the queue re-offers it before the owners' fixes land.
+Branch claude/SC (spec 90899c5 plus main 433c2c0 merged). No product code was written: SC is rules only, the tests cannot be edited by the builder, and the 7 failing tests (58 of 65 pass) fail on defects in files other cards own ("added to that card, never fixed here").
 
-## Re-check (cloud-bb208a, 2 Oct, main ccca7ec)
-Unit file re-run after merging main: 4 fail (R15 file side, R18, R23, R41), 44 pass. The ones named above remain; SC's paths hold only tests, so nothing to build. F02 and F01D have since landed or reported without touching these. Released again. Permission gaps: none. Model: Sonnet 5.5.
+Failing now, by owner (the KNOWN list in the test file has no entry for any of these):
+- F01 (db/schema): R12 `returns.returns` refuses UPDATE or DELETE but not TRUNCATE. R15 `returns.exceptions.status` has no CHECK list. R43 twenty `*_id` columns point at tables not built yet and FUTURE_POINTERS names no card (accounts, adjusting_entries, check_results, differences, entry_lines, events.record_id, facts.source_*, figures, judgment_inputs, links, version_cells).
+- F09 or F01 (records.ts): R15 one state/status field not an enum equal to a list. R23 stray keys accepted at top level in 20 schemas of records.ts (use `.strict()`), plus 4 with no valid sample in R23_SAMPLES (FactRecordSchema, AdjustingEntryRecordSchema, FigureRecordSchema, CheckResultRecordSchema; the sample list is in the test file, so the spec job must add them).
+- Owner of src/modules/gaps: R18 gaps/index.ts lacks `// @mutate`. R41 gaps/bank/index.ts uses `.trim()` and `z.string().min(1)`.
+- Owner of src/contracts/ai.ts: R41 `.trim()` and `z.string().min(1)`.
 
-## Re-check (cloud-f10790, 2 Oct, main 2de6057+)
-Merged main; same 7 fail (unit 4: R15 file, R18, R23, R41; db 3: R12, R15, R43), same owners. SC's paths hold only tests; nothing to build. Released. Note for the Lead: F07 (claude/F07) adds tables client_refs, bridge_ops_items, client_handoff, bridge_returns; R12, R43 should be re-run once it lands (it has no return_id FK gaps and refuses truncate). Permission gaps: none. Model: Sonnet 5.5.
+Needed from the Lead: add each defect to its owning card (or add KNOWN entries with owners through a spec job), then re-offer the SC build.
 
-## Re-check (cloud-e72c49, 2 Oct, main with decision 0023)
-Merged main; the same 7 fail (db: R12, R15, R43; unit: R15 file, R18, R23, R41), same owners. SC's paths hold only tests; nothing to build. Released. Not re-offering will help until the owners' fixes land (returns.returns TRUNCATE, exceptions.status CHECK, gaps `// @mutate` and trim, records.ts strict keys, FUTURE_POINTERS and R23_SAMPLES by a spec job). Permission gaps: none. Model: Sonnet 5.5.
+Amber: none. Permission gaps: none. Model: Sonnet 5.5.
