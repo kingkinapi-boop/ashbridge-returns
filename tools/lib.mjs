@@ -60,6 +60,11 @@ export function depGate(card, role, status, reportedBuilds) {
   return waiting.length ? { ok: false, why: role === 'spec' ? 'deps unbuilt' : 'deps unmerged', waiting } : { ok: true }
 }
 
+// Files whose change on main can break a spec written earlier (findings W14-D01, RC1): the test,
+// type and lint config, the manifest, and the toolchain rule tests.
+const TOOLCHAIN_FILES = ['vitest.config.ts', 'tsconfig.json', 'eslint.config.mjs', 'package.json']
+export const toolchainChanged = (files) => files.some((f) => TOOLCHAIN_FILES.includes(f) || /^tools\/test\/[^/]*-rules\.test\.mjs$/.test(f))
+
 export function todayUtc() {
   return new Date().toISOString().slice(0, 10)
 }

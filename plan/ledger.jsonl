@@ -165,3 +165,10 @@
 {"ts":"2026-10-02T02:02:39.322Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":"sonnet","where":"worktree","desc":"Local queue worker 1, retry","allowed":true}
 {"ts":"2026-10-02T02:02:42.736Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":"sonnet","where":"worktree","desc":"Local queue worker 2, retry","allowed":true}
 {"ts":"2026-10-02T02:06:08.079Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"W14 round 3 spec","allowed":true}
+{"ts":"2026-10-02T02:08:35.605Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T02:36:49.103Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T02:36:49.119Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T02:48:46.390Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"claude-code-guide","model":null,"where":"local","desc":"Claude Code context and cache facts","allowed":true}
+{"ts":"2026-10-02T02:52:30.326Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"local","desc":"After day 5: compare and fold findings","allowed":true}
+{"ts":"2026-10-02T03:00:41.006Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Clauses and cards from day 5","allowed":true}
+{"ts":"2026-10-02T03:02:42.331Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
