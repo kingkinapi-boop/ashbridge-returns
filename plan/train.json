@@ -1,12 +1,12 @@
 {
   "status": "landed",
   "branch": "claude/train",
-  "head": "da59ba0",
+  "head": "eb3ab9c",
   "cards": [
-    "F00"
+    "W15",
+    "DG"
   ],
-  "requested_at": "2026-10-02T01:50:00Z",
-  "by": "cloud-a33104",
-  "report": "reports/train-20261001-2255.md",
-  "landed": "5a70f12"
+  "requested_at": "2026-10-02T05:26:16Z",
+  "by": "cloud-12a4d8",
+  "report": "reports/train-20261002-0529.md"
 }

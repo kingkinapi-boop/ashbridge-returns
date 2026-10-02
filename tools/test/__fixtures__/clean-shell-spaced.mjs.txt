@@ -1,0 +1,6 @@
+// clean (Test): shell is false, with and without spacing
+import { spawnSync } from 'node:child_process'
+
+spawnSync(process.execPath, ['a.js'], { shell: false })
+spawnSync(process.execPath, ['b.js'], { shell:false })
+spawnSync(process.execPath, ['c.js'], { shell :  false, stdio: 'inherit' })
