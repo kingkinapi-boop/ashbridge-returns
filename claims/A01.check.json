@@ -1,10 +1,9 @@
 {
  "card": "A01",
  "role": "check",
- "for": "2026-10-02T12:23:50.792Z",
- "worker": "cloud-20e77a",
- "state": "failed",
- "at": "2026-10-02T12:52:32.971Z",
- "mode": "turbo",
- "note": "FAIL: blank-item trim() differs from WordSchema (NEL/Cf throws ZodError), see reports/A01-check.md"
+ "for": "2026-10-02T17:45:45.459Z",
+ "worker": "cloud-4cdd51",
+ "state": "working",
+ "at": "2026-10-02T17:45:53.819Z",
+ "mode": "turbo"
 }
