@@ -36,6 +36,7 @@ export function modelIssues(c: Client, catalogue: readonly FaultEntry[]): LoadIs
 
   const waivers = catalogue.filter((f) => f.client === c.id && f.roll !== undefined)
   const waived = (account: string, month: string): boolean =>
+    // Stryker disable next-line OptionalChaining: the waivers are filtered to entries that have a roll, so f.roll is never undefined here
     waivers.some((f) => f.roll?.account === account && f.roll.month === month)
   for (const a of c.accounts) {
     if (a.months.length === 0 && c.transactions.some((t) => t.accountKey === a.key)) {
@@ -56,7 +57,9 @@ export function modelIssues(c: Client, catalogue: readonly FaultEntry[]): LoadIs
     }
   }
   for (const f of waivers) {
+    // Stryker disable next-line OptionalChaining: the waivers are filtered to entries that have a roll, so f.roll is never undefined here
     const month = c.accounts.find((a) => a.key === f.roll?.account)?.months.some((m) => m.month === f.roll?.month)
+    // Stryker disable next-line OptionalChaining: the waivers are filtered to entries that have a roll, so f.roll is never undefined here
     if (month !== true) add('fault-catalogue', f.id, `the catalogue waives ${String(f.roll?.account)} ${String(f.roll?.month)}, which this client does not have`)
   }
 
@@ -77,10 +80,12 @@ export function modelIssues(c: Client, catalogue: readonly FaultEntry[]): LoadIs
     } else if (!/^\d{4}$/.test(String(l.gifi))) add('gifi', l.account, `the GIFI code ${String(l.gifi)} is not four digits`)
   }
 
+  // Stryker disable next-line ConditionalExpression: an undefined flag id kept in the set is skipped by the guard in the loop below, so the filter test is redundant
   const listed = new Set(catalogue.filter((f) => f.client === c.id && f.flagId !== undefined).map((f) => f.flagId))
   const real = new Set(c.flags.map((f) => f.id))
   for (const id of real) if (!listed.has(id)) add('fault-catalogue', id, 'the answer key has this flag and the fault catalogue does not list it')
   for (const id of listed) {
+    // Stryker disable next-line ConditionalExpression: the set is built without undefined ids (see its filter), so the guard cannot change a result
     if (id !== undefined && !real.has(id)) add('fault-catalogue', id, 'the fault catalogue lists this flag and the answer key does not have it')
   }
   return issues
