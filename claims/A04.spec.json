@@ -1,9 +1,11 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "46 tests, golden regenerated, 493 unit tests green on main",
  "worker": "cloud-fb94ff",
- "state": "working",
- "at": "2026-10-02T20:56:39.779Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T21:09:43.773Z",
+ "mode": "turbo",
+ "commit": "ea5d29d",
+ "validated": "33badd3"
 }
