@@ -1,11 +1,10 @@
 {
  "card": "TH",
  "role": "build",
- "round": 7,
+ "round": 8,
  "spec": "0299b2e",
- "worker": "cloud-0a2392",
- "state": "reopened",
- "at": "2026-10-02T06:41:21.894Z",
- "mode": "turbo",
- "note": "round 2: gitleaks 1 leak on own branch, see card"
+ "worker": "cloud-5d8906",
+ "state": "working",
+ "at": "2026-10-02T06:50:31.395Z",
+ "mode": "turbo"
 }
