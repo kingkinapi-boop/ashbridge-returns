@@ -1,11 +1,9 @@
 {
  "card": "F06",
  "role": "spec",
- "note": "refit: 31 tests; only card's own missing modules fail",
- "worker": "cloud-091587",
- "state": "reported",
- "at": "2026-10-02T15:01:26.810Z",
- "mode": "turbo",
- "commit": "4e35802",
- "validated": "31ee347"
+ "note": "toolchain refit",
+ "worker": "cloud-f10790",
+ "state": "working",
+ "at": "2026-10-02T17:39:46.618Z",
+ "mode": "turbo"
 }
