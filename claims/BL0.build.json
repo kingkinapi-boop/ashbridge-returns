@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "428bad0",
  "worker": "cloud-658451",
- "state": "reported",
- "at": "2026-10-02T17:42:51.172Z",
+ "state": "released",
+ "at": "2026-10-02T19:22:46.304Z",
  "mode": "turbo",
- "note": "18 of 18 acceptance tests pass"
+ "note": "merged"
 }
