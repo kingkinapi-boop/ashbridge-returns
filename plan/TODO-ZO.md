@@ -6,6 +6,6 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 Nothing. Thank you: the Auto-fill notes are in the repo and the test return is gone.
 
-## 2. What the Lead is doing now (2 Oct, 19:35 UTC)
+## 2. What the Lead is doing now (2 Oct, 20:50 UTC)
 
-Turbo. 32 cards are on main: the train with the scanner fix, the blank rule, the PDF reader, and due dates and holds just landed. Next train: the jobs table, the client-app bridge and sign-in, after a security review of the last two. The test world failed its check a third time, so its fixes moved to a new card (W00c) with five new rules, rather than landing with gaps. About ten cloud workers are running. Plan use this week: 49%.
+Turbo. 39 cards are on main; this evening added the jobs table, the client-app bridge and five question-bank topics. The spreadsheet reader is landing now; its last three edge cases moved to a new card with a firm limit (if one fails again, that feature is removed, not retried). Sign-in is in a second round after its security review. Three queue jams that were wasting cloud runs are fixed. Plan use this week: 50%.
