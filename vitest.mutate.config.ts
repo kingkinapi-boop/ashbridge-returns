@@ -12,7 +12,7 @@ process.env['TZ'] = 'America/Toronto'
 export default defineConfig({
   test: {
     name: 'unit',
-    include: homes.unit.include.filter((g) => g.startsWith('src/')),
+    include: homes.unit.include.filter((g) => g.startsWith('src/') || g.startsWith('testworld/')),
     exclude: homes.unit.exclude,
     setupFiles: ['src/core/test-no-network.ts'],
     env: { TZ: 'America/Toronto' },

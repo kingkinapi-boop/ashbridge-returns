@@ -1,0 +1,18 @@
+// Ashbridge Tax brand, entering GOV.UK Frontend only through its own settings (RV-55).
+// Colours are in reference/design-basis.md; the two failing client colours are never used (RV-54).
+// The wide container is the one app- exception to the 960 px page width (see parts.md).
+@forward "pkg:govuk-frontend" with (
+  $govuk-font-family: (Roboto, arial, sans-serif),
+  $govuk-suppressed-warnings: ("govuk-text-colour"),
+  $govuk-functional-colours: (
+    brand: #355b7d,
+    link: #355b7d,
+    link-hover: #4d7092,
+    text: #15283b,
+    secondary-text: #627283,
+    error: #b3413a,
+    success: #1f6e50,
+    focus: #f5c94c,
+    focus-text: #15283b
+  )
+);
