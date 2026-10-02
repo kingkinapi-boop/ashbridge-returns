@@ -2,11 +2,11 @@
  "card": "A07C",
  "role": "spec",
  "worker": "cloud-f96f12",
- "state": "reported",
- "at": "2026-10-02T16:25:45.149Z",
+ "state": "reopened",
+ "at": "2026-10-02T17:39:07.715Z",
  "mode": "turbo",
  "beat": "2026-10-02T16:13:17.494Z",
- "note": "117 tests (58 fail for the right reason); builder must read sheet XML itself (ExcelJS drops hyperlinked formulas)",
+ "note": "round 2 (card): self-closed shared formula, ulp-relative snap, empty cache",
  "commit": "4ce0d83",
  "validated": "0a45ea9"
 }
