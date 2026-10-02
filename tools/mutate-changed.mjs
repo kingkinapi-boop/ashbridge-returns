@@ -1,5 +1,6 @@
-// npm run mutate:changed -- <card> [base]: mutation-test the changed src/**/*.ts files marked `// @mutate` in their first 5 lines.
-// On a core card (its card file's Tags line starts with `core`) a changed src file inside the card's Paths with no marker fails first.
+// npm run mutate:changed -- <card> [base]: mutation-test the changed src/**/*.ts and testworld/**/*.ts files marked `// @mutate` in their first 5 lines.
+// On a core card (its card file's Tags line starts with `core`) a changed file inside the card's Paths with no marker fails first,
+// and so does a card with no marked target inside its Paths (never "no mutation targets").
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -32,9 +33,11 @@ if (diff.status !== 0) {
 }
 const changed = diff.stdout
   .split('\n')
-  .filter((f) => /^src\/.*\.ts$/.test(f) && !/\.(test|acceptance)\.ts$|\.db\.test\.ts$|\.eval\.test\.ts$/.test(f))
+  .filter((f) => /^(src|testworld)\/.*\.ts$/.test(f) && !/\.(test|acceptance)\.ts$|\.db\.test\.ts$|\.eval\.test\.ts$/.test(f))
   .filter((f) => !/(^|\/)(__fixtures__|__golden__)\//.test(f)) // spec-owned test data, not product code
   .filter((f) => fs.existsSync(f))
+// A spec commit that only adds test data (fixtures, goldens) has nothing to score.
+const specDataOnly = changed.length === 0 && diff.stdout.split('\n').some((f) => /^(src|testworld)\/.*(^|\/)(__fixtures__|__golden__)\//.test(f))
 const marked = (f) => fs.readFileSync(f, 'utf8').split('\n').slice(0, 5).some((l) => l.includes('// @mutate'))
 
 if (core) {
@@ -42,6 +45,10 @@ if (core) {
   const missing = changed.filter((f) => inPaths.some((re) => re.test(f)) && !marked(f))
   if (missing.length > 0) {
     console.error(`core file without @mutate (first 5 lines): ${missing.join(', ')}`)
+    process.exit(1)
+  }
+  if (!specDataOnly && !changed.some((f) => inPaths.some((re) => re.test(f)) && marked(f))) {
+    console.error(`core card ${id} has no marked mutation target inside its Paths (changed: ${changed.join(', ') || 'none'})`)
     process.exit(1)
   }
 }
@@ -52,7 +59,7 @@ if (changed.length === 0) {
 }
 const targets = changed.filter(marked)
 if (targets.length === 0) {
-  console.log('no marked mutation targets among the changed src files')
+  console.log('no marked mutation targets among the changed files')
   process.exit(0)
 }
 const bad = targets.filter((f) => !/^[\w./-]+$/.test(f))
