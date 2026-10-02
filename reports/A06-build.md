@@ -1,14 +1,10 @@
-# A06 build report (cloud-e72c49, 2 Oct 2026)
+# A06 build, round 2 (cloud-c29b25)
 
-- Branch claude/A06, code commit 144ec0b (main merged in first). Node 24.21.
-- Files: db/schema/15_auth.sql, src/contracts/auth.ts, src/modules/auth/{index,totp,testing}.ts, testusers/{engine,credentials}.ts, live/index.ts; also src/core/env.ts (AUTH_ENGINE) and src/core/env.settings.test.ts.
-- Acceptance: 73 of 73 pass (3 A06 files) plus 2 unit tests of mine (env.settings.test.ts). Full suite green on Node 24.21 (unit and db). typecheck, lint, deps:check clean. Mutation on env.ts (@mutate): 22 killed, 0 survived.
-- scope.mjs FAILS: src/core/env.ts and src/core/env.settings.test.ts are outside the card's paths. The spec's own tests require AUTH_ENGINE in env.ts (contracts/auth.acceptance.test.ts), so the card's paths need env.ts and its test added (Lead).
-- Ambers: (1) ids for events and sessions are crypto UUIDs, not newId hex, so the planted-code scan cannot match a digit run in an id by chance; (2) lock and used one-time code steps are read from sign_in_events (extra columns seq, code_step), no fourth table; (3) challenges are held in memory, single use, 5 minutes; (4) no time window on the five failures (a success resets the count, expiry of a lock resets it); (5) refused events also written for unknown user and bad challenge (reasons "unknown user", "bad challenge"); (6) removed the Stryker disable comment in env.ts (a second setting now exists) and tested the two-name message.
-- Worker note: bash calls do not keep `nvm use`; each call must source nvm and use 24 or Node 22 gives a false red on the windows-1252 test.
-
-## Permission gaps
-None.
-
-## Model
-Sonnet 5.5 (security card, not core).
+Branch claude/A06, main merged in. Fixes 1 to 5 of reports/A06-findings.md; fix 6 (card wording) is the Lead's.
+- index.ts: production with AUTH_ENGINE unset or blank is refused naming it; testusers refuses to start (no row written) when staff_users holds an is_test = false row.
+- engine.ts: startSignIn and finishSignIn run in db.transaction under `for update` on the user row; success event written before the session (unique index backstop, 23505 becomes `code reused`); one scrypt per attempt (dummy hash for unknown and non-test users); unknown user: null user_id, no userId in the log.
+- 15_auth.sql: unique index sign_in_events_code_once; foreign key on sign_in_events.user_id.
+Files: 3 product files, no test edited. Acceptance: src/modules/auth 73 of 73 pass (PGlite); src/contracts + src/core 1730 pass; typecheck, lint, deps:check clean; scope OK (16 files).
+Not run: Postgres 16 parity (the cloud check runs it), full suite, fresh /security-review (Lead's next step, card says before boarding).
+Amber: none. Permission gaps: none. Model: Sonnet 5.5.
+Note for V00 and GL1: staff users are never deleted now (foreign key); switch them off instead. Journeys that start the server in production must set AUTH_ENGINE.

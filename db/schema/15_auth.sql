@@ -32,7 +32,8 @@ create table returns.sign_in_events (
   created_at timestamptz not null default now(),
   is_test boolean not null default true,
   seq bigint generated always as identity,
-  user_id text,
+  -- null for an unknown user: typed text never lands here (SEC-10)
+  user_id text references returns.staff_users (id),
   outcome text not null,
   reason text not null,
   -- the one-time code step a success used (a step is accepted once per user); never the code
@@ -41,6 +42,9 @@ create table returns.sign_in_events (
   constraint sign_in_events_reason check (not returns.is_blank(reason))
 );
 create index sign_in_events_user on returns.sign_in_events (user_id, seq);
+-- SEC-1: a one-time code step is accepted once per user, whatever the interleaving of calls.
+create unique index sign_in_events_code_once on returns.sign_in_events (user_id, code_step)
+  where outcome = 'success' and code_step is not null;
 
 -- SEC-7: sign-in events are never changed or removed.
 create trigger sign_in_events_append_only before update or delete on returns.sign_in_events

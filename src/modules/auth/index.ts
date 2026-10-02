@@ -13,9 +13,13 @@ export interface AuthOptions {
   sink?: (line: string) => void
 }
 
-/** The engine comes from AUTH_ENGINE read by name (unset means testusers); live is off and refuses. */
+/** The engine comes from AUTH_ENGINE read by name (unset means testusers outside production; in production it must be set); live is off and refuses. */
 export async function createAuth(opts: AuthOptions): Promise<AuthAdapter> {
-  const engine = readSettings(opts.env ?? process.env).AUTH_ENGINE ?? 'testusers'
+  const settings = readSettings(opts.env ?? process.env)
+  if (settings.NODE_ENV === 'production' && settings.AUTH_ENGINE === undefined) {
+    throw new Error('AUTH_ENGINE must be set in production')
+  }
+  const engine = settings.AUTH_ENGINE ?? 'testusers'
   if (engine === 'live') return createLiveAuth()
   return createTestUsersAuth({ db: opts.db, clock: opts.clock ?? getClock(), ...(opts.sink ? { sink: opts.sink } : {}) })
 }
