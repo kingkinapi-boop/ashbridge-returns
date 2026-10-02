@@ -30,7 +30,7 @@ export const ApprovalFingerprintSchema = z.object({
 })
 export type ApprovalFingerprint = z.infer<typeof ApprovalFingerprintSchema>
 
-export const ChangedItemSchema = z.discriminatedUnion('kind', [
+export const ChangedItemSchema = z.union([
   z.object({ kind: z.literal('cell'), cellId: z.string() }),
   z.object({ kind: z.literal('fact'), id: z.string() }),
   z.object({ kind: z.literal('entry'), id: z.string() }),
