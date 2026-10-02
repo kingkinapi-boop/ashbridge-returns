@@ -10,3 +10,6 @@ Branch claude/SC with main 3df2e9b merged. No product code written: SC is rules 
 Needed from the Lead: add each defect to its owning card (or KNOWN entries with owners via a spec job), then re-offer the SC build. Re-offering without that gives the same result.
 
 Amber: none. Permission gaps: none. Model: Sonnet 5.5.
+
+## Re-run 2 Oct (cloud-dea37c), main 3df2e9b merged
+Unchanged: unit 4 of 48 fail (R15, R18, R23, R41), same files and owners as above (records.ts, gaps/index.ts, gaps/bank, ai.ts, F01 schema for the db three). Released again; nothing for a builder to do until the owning cards carry the defects.
