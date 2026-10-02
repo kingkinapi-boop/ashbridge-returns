@@ -402,7 +402,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -424,7 +424,8 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "Fix round 3 from reports/findings-F09-r2.md (A296, A297): a new spec worker adds checks 17 (no -0) and 18 (non-finite converter input throws RangeError); build the -0 fix and finite guard only; the grammar moved to F09A; lands before F01."
+      "note": "Fix round 3 from reports/findings-F09-r2.md (A296, A297): a new spec worker adds checks 17 (no -0) and 18 (non-finite converter input throws RangeError); build the -0 fix and finite guard only; the grammar moved to F09A; lands before F01.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
