@@ -4,7 +4,8 @@
  "round": 21,
  "spec": "62f6c18",
  "worker": "cloud-a03a3e",
- "state": "working",
- "at": "2026-10-02T18:43:26.159Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T18:45:05.401Z",
+ "mode": "turbo",
+ "note": "7 rule failures belong to F01, records.ts, gaps and ai.ts owners; see reports/SC-build.md"
 }
