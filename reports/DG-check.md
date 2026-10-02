@@ -1,13 +1,4 @@
-# DG check (round 2), cloud-8c63c8
-
-PASS. Head 647c7e6 on claude/DG, Node 24.21.
-
-- typecheck, lint, deps:check clean.
-- `npm test`: 15 files, 191 tests pass; done-gate.test.mjs 27 of 27 (R22 included).
-- Spec diff (spec(DG) commits' files, b903b9c to HEAD): empty.
-- `node tools/scope.mjs DG origin/main`: OK.
-- `mutate:canary` 100. `mutate:changed -- DG`: no src changed.
-- Build touched only tools/mutate-changed.mjs, as the card says. No flake run (no DB/schema/vitest.config change).
-
-Permission gaps: none. Node 24 not preinstalled in nvm; `nvm install 24` was needed.
-Model: Sonnet 5.5.
+# DG check (round 3): PASS
+Worker cloud-8a9d55, 2 Oct, on claude/DG a3a0866 (main 1812262 merged in by the branch).
+Typecheck, lint, deps:check clean; npm test 735 unit + 2 db pass; test:flake 5 of 5; mutate:canary 100; e2e 1 of 1 on the production build; scope DG (and --board) clean; spec(DG) files (read-own-source.acceptance.test.ts, done-gate.test.mjs) unchanged since 85a2e83; diff matches the card (fixtures and goldens skipped in mutate-changed, readOwnSource, no config change). Non-core, no screens, not security.
+Permission gaps: none. Model: Sonnet 5.5.
