@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "ebb2054",
  "worker": "cloud-37afbb",
- "state": "hold-findings",
- "at": "2026-10-02T19:39:14.749Z",
+ "state": "reopened",
+ "at": "2026-10-02T19:46:22.376Z",
  "mode": "turbo",
  "beat": "2026-10-02T19:33:25.595Z",
- "note": "FAIL: builder test payroll-bonuses.test.ts missing, see reports/G14-check.md"
+ "note": "round 2 (single cause, A306): add the missing builder test payroll-bonuses.test.ts the card asks for; see reports/G14-check.md"
 }
