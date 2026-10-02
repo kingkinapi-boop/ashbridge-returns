@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T08:39:07.703Z",
  "worker": "cloud-3703a0",
- "state": "working",
- "at": "2026-10-02T08:44:03.051Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T08:50:48.656Z",
+ "mode": "turbo",
+ "note": "FAIL: adjacent() joins a word left of or overlapping the previous (amount-grammar.ts:81), see reports/F09A-check.md"
 }
