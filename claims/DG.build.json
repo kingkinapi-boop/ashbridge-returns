@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "8a722d5",
  "worker": "cloud-4a59ee",
- "state": "reported",
- "at": "2026-10-02T01:56:41.510Z",
+ "state": "released",
+ "at": "2026-10-02T02:35:50.682Z",
  "mode": "normal",
- "note": "21 of 21 pass; Lead to update package.json script and agent docs at landing"
+ "note": "merged"
 }
