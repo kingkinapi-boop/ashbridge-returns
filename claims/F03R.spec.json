@@ -1,9 +1,11 @@
 {
  "card": "F03R",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit only; 63 own tests fail, rest green; typecheck, lint clean",
  "worker": "cloud-e43f36",
- "state": "working",
- "at": "2026-10-02T08:29:01.355Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T08:31:06.363Z",
+ "mode": "turbo",
+ "commit": "579659a",
+ "validated": "7dd2c02a511607dfd78053eae5e40a510f95b03b"
 }
