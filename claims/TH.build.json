@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "f1c8095",
  "worker": "cloud-a4e82b",
- "state": "working",
- "at": "2026-10-02T00:41:10.613Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T00:41:17.780Z",
+ "mode": "turbo",
+ "note": "Same blocker, no change: R1 needs the Lead's choice on reference/taxprep/tools/strip-values.test.mjs (node:test, no home); see reports/TH-build.md"
 }
