@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 10,
+ "round": 11,
  "spec": "62f6c18",
- "worker": "cloud-bc1db8",
- "state": "released",
- "at": "2026-10-02T17:49:34.249Z",
- "mode": "turbo",
- "note": "released again; the queue re-offers SC at once, Lead must hold it until BL0 lands and the SC spec refit"
+ "worker": "cloud-f2e775",
+ "state": "working",
+ "at": "2026-10-02T17:50:36.364Z",
+ "mode": "turbo"
 }
