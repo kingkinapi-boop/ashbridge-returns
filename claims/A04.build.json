@@ -1,11 +1,10 @@
 {
  "card": "A04",
  "role": "build",
- "round": 4,
+ "round": 5,
  "spec": "383857c",
- "worker": "cloud-18d04e",
- "state": "released",
- "at": "2026-10-02T19:58:37.136Z",
- "mode": "turbo",
- "note": "unchanged blocker: ARC-22 inbox golden has 14 stale minLength lines; a spec job must regenerate it, Lead must hold build, see reports/A04-build.md"
+ "worker": "cloud-1fe112",
+ "state": "working",
+ "at": "2026-10-02T20:09:28.221Z",
+ "mode": "turbo"
 }
