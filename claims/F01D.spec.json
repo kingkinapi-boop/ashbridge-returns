@@ -2,7 +2,10 @@
  "card": "F01D",
  "role": "spec",
  "worker": "cloud-390404",
- "state": "working",
- "at": "2026-10-02T16:07:47.288Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T16:30:16.646Z",
+ "mode": "turbo",
+ "note": "56 tests; amber: facts.status/adjusting_entries.explained kept, non-string stamps read as non-finite only, -1e400 added, refusal says append-only",
+ "commit": "f245308",
+ "validated": "0a45ea9"
 }
