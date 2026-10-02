@@ -2,10 +2,10 @@
  "card": "F09",
  "role": "spec",
  "worker": "cloud-f60439",
- "state": "reported",
- "at": "2026-10-02T03:14:29.538Z",
+ "state": "reopened",
+ "at": "2026-10-02T03:42:18.217Z",
  "mode": "turbo",
- "note": "refit: typecheck, lint, npm test green (264 unit + 2 db)",
+ "note": "round 4: mutation survivors per card Fix round 4 (Stryker JSON, classify, clause tests); not a refit",
  "commit": "6b127d3",
  "validated": "3b28533269a7f999ce144a6ab8fee0d697589fb1"
 }
