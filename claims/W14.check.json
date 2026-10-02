@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T01:34:01.592Z",
  "worker": "cloud-4a59ee",
- "state": "working",
- "at": "2026-10-02T01:44:42.840Z",
+ "state": "failed",
+ "at": "2026-10-02T01:48:52.949Z",
  "mode": "turbo",
- "beat": "2026-10-02T01:46:53.922Z"
+ "beat": "2026-10-02T01:46:53.922Z",
+ "note": "FAIL: prior-year taxable income ignores amortization and CCA; GIFI 2680 twice, see reports/W14-check.md"
 }

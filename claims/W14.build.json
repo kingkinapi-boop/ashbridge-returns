@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "a8a100e",
  "worker": "cloud-85862e",
- "state": "reported",
- "at": "2026-10-02T01:34:01.592Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T01:48:52.949Z",
  "mode": "turbo",
- "note": "375 pass, 5 known (W16), 0 fail; round 2 built"
+ "note": "FAIL: prior-year taxable income ignores amortization and CCA; GIFI 2680 twice, see reports/W14-check.md"
 }
