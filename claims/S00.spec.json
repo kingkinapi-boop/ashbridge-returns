@@ -2,8 +2,11 @@
  "card": "S00",
  "role": "spec",
  "worker": "cloud-3620d3",
- "state": "working",
- "at": "2026-10-02T04:58:51.808Z",
+ "state": "reported",
+ "at": "2026-10-02T05:06:10.546Z",
  "mode": "turbo",
- "beat": "2026-10-02T05:01:07.139Z"
+ "beat": "2026-10-02T05:01:07.139Z",
+ "note": "71 tests (3 fail on round-1 build for the right reason)",
+ "commit": "5f74392",
+ "validated": "35dadb2"
 }
