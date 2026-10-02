@@ -4,9 +4,9 @@
  "round": 8,
  "spec": "71ddd70",
  "worker": "cloud-d26ada",
- "state": "reported",
- "at": "2026-10-02T09:05:02.934Z",
+ "state": "released",
+ "at": "2026-10-02T10:06:33.959Z",
  "mode": "turbo",
  "beat": "2026-10-02T09:03:57.841Z",
- "note": "all DG tests pass (38 of 38 in done-gate and read-own-source); unit 735 green, flake 5 of 5"
+ "note": "merged"
 }
