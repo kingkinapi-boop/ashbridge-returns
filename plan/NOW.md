@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 |---|---|---|---|---|
 | Cloud queue: builds F09, A05, W14, TH (reopened after refit specs); specs F03, E03 (fix round 2); new DG, F05M | up to 3 cloud runs | cloud | 2 Oct 07:00Z | claude/<card> |
 | Design fix round 2: source viewer (uses design/parts/cite-or-reason/) | designer | local worktree | 2 Oct 06:30Z | claude/design-source-viewer-2 |
-| Queue repair 3 build (+ toolchain-refit gate) | builder | local worktree | 2 Oct 03:00Z | claude/queue-repair-3 |
+| Queue repair 3: built (486eec1), check running | checker | local worktree | 2 Oct 07:30Z | claude/queue-repair-3 |
 
 Design round 2 done: queues-record 4acc091, workbench 637215d (A286), cpa-review V1 fc3515f. Landed: F00, F05, F08. Findings reports: findings-W14-D01, findings-F01-F09, findings-E03-F03, A05-security.
 
