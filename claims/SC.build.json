@@ -4,7 +4,8 @@
  "round": 28,
  "spec": "62f6c18",
  "worker": "cloud-14c055",
- "state": "working",
- "at": "2026-10-02T19:09:13.773Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:09:37.407Z",
+ "mode": "turbo",
+ "note": "unchanged: 7 failures on other cards' defects, see reports/SC-build.md"
 }
