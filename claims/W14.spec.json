@@ -2,9 +2,9 @@
  "card": "W14",
  "role": "spec",
  "worker": "cloud-4ab7b4",
- "state": "reported",
- "at": "2026-10-02T00:43:36.689Z",
+ "state": "reopened",
+ "at": "2026-10-02T02:04:25.056Z",
  "mode": "turbo",
- "note": "validated on main 2cb2159; 5 KNOWN (R8 on 03,04,07,08,10), propose card W16; see reports/W14-spec.md",
+ "note": "fix round 3: prior-year engine",
  "commit": "a8a100e"
 }
