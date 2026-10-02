@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 21:10Z by the Lead. Critic proposals of 2 Oct evening approved and applied (0024: compaction at 200k with reload hook, CQ2 item 6, layouts before W21; A387). Auto-fill notes in (0023); next fold O8 into FINDINGS.md, CK-12 and RT-14. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 21:27Z by the Lead. Critic proposals of 2 Oct evening approved and applied (0024: compaction at 200k with reload hook, CQ2 item 6, layouts before W21; A387). Auto-fill notes in (0023); next fold O8 into FINDINGS.md, CK-12 and RT-14. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,9 +13,8 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 21:10Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| SC, A04: spec refits running, then builds (SC KNOWN owner FX3; A04 golden regenerated) | queue | cloud | 2 Oct 20:56Z | claude/<card> |
-| A06 round 2 spec (directive at the top of its card) | queue | cloud | 2 Oct 20:45Z | claude/A06 |
-| W00c spec; then A07D, CQ2, FX2 specs as the queue offers | queue | cloud | 2 Oct 20:45Z | claude/<card> |
+| W00c spec, A07D spec, A08 spec | queue | cloud | 2 Oct 21:05Z | claude/<card> |
+| A06 round 2 build (8 new tests; then fresh security review), SC build, CQ2 build, A04 check | 4 cloud runs | cloud | 2 Oct 21:27Z | claude/<card> |
 
 ## Next, in order
 
