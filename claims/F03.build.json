@@ -4,8 +4,9 @@
  "round": 6,
  "spec": "2cdf2f2",
  "worker": "local-98ddb8",
- "state": "working",
- "at": "2026-10-02T02:03:01.580Z",
+ "state": "reported",
+ "at": "2026-10-02T03:44:53.167Z",
  "mode": "turbo",
- "beat": "2026-10-02T03:01:27.321Z"
+ "beat": "2026-10-02T03:01:27.321Z",
+ "note": "98+64 acceptance and 327 contract tests pass; mutation 100 on taxprep.ts; typecheck, lint, deps, scope clean"
 }
