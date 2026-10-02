@@ -1,11 +1,10 @@
 {
  "card": "W15",
  "role": "build",
- "round": 5,
- "spec": "435acc2",
- "worker": "local-98ddb8",
- "state": "released",
- "at": "2026-10-02T03:59:21.707Z",
- "mode": "turbo",
- "note": "premise wrong: fix-round-1 re-spec not done and verify.mjs conflicts with main; see reports/W15-build.md"
+ "round": 6,
+ "spec": "ec7733c",
+ "worker": "cloud-662626",
+ "state": "working",
+ "at": "2026-10-02T04:30:38.411Z",
+ "mode": "turbo"
 }
