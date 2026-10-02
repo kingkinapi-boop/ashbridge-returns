@@ -2,7 +2,10 @@
  "card": "A01",
  "role": "spec",
  "worker": "cloud-662626",
- "state": "working",
- "at": "2026-10-02T04:40:45.050Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T04:53:17.892Z",
+ "mode": "turbo",
+ "note": "31 tests; needs F09 reading.ts on main to typecheck",
+ "commit": "dce0009",
+ "validated": "e91389f"
 }
