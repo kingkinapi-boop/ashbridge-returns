@@ -1,11 +1,10 @@
 {
  "card": "S00",
  "role": "build",
- "round": 1,
- "spec": "9ec2e0f550e0a4513b0b0ced1ac4acb40c3eaeb1",
- "worker": "local-ed6f16",
- "state": "reopened",
- "at": "2026-10-02T05:25:48.197Z",
- "mode": "turbo",
- "note": "code done, 58/58 pass; mutate gate blocked by spec defects (harness.ts lacks @mutate; ARC-15 test reads line 1 but Stryker prepends @ts-nocheck), see reports/S00-build.md"
+ "round": 2,
+ "spec": "5f74392",
+ "worker": "cloud-3d81d3",
+ "state": "working",
+ "at": "2026-10-02T05:31:43.168Z",
+ "mode": "turbo"
 }
