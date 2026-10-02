@@ -27,11 +27,11 @@ When due (mode table: every 3 green cards in normal, 6 or hourly in turbo): fire
 ```
 W=.claude/worktrees/train; H=$(jq -r .head plan/train.json)   # the checked train commit
 git fetch -q origin && git -C $W checkout -q -B train origin/claude/train
-git -C $W rebase -q --rebase-merges origin/main
+git -C $W merge -q --no-ff origin/main -m "Train: bring in main before landing"   # never rebase: it replays card history
 git -C $W diff --name-only $H train -- . ':!plan' ':!reports' ':!reference' ':!decisions' ':!blueprint' ':!reviews' ':!.claude' ':!CLAUDE.md' ':!README.md'   # must print nothing
 git pull -q --ff-only && git merge -q --ff-only train && git push -q origin main
 ```
-  If the guard prints any path, main gained code since the check: request a new train check instead. Then for each card: `node tools/metrics.mjs <card>` appends its metrics line; `plan/slices.json` status done with the date; `node tools/claim.mjs update <card> build released --worker lead --note merged`; `node tools/matrix.mjs`. Rewrite NOW.md. Commit these on main and push. Delete merged card branches, and delete the train (`git push origin --delete claude/train`) so the next one starts from the new main.
+  If the guard prints any path, main gained code since the check: request a new train check instead. Record done, release claims and delete branches only after the push to main succeeded. Then for each card: `node tools/metrics.mjs <card>` appends its metrics line; `plan/slices.json` status done with the date; `node tools/claim.mjs update <card> build released --worker lead --note merged`; `node tools/matrix.mjs`. Rewrite NOW.md. Commit these on main and push. Delete merged card branches, and delete the train (`git push origin --delete claude/train`) so the next one starts from the new main.
 - Red: the report names the failing journey or test and module. Rebuild the train from main without the card that owns that module and re-run. If two cards interact and removing one does not help, halve the boarded cards, land the green half, and run the pair one after the other. Then a findings review (CLAUDE.md loop 4) before the card's next round. Never land a red train; never fix on the train itself.
 
 Metrics line (never leave a field empty; 0 is a value):
