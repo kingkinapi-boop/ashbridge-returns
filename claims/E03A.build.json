@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "ab2a22d",
  "worker": "local-cc7d7a",
- "state": "working",
- "at": "2026-10-02T14:36:57.116Z",
- "mode": "normal"
+ "state": "reported",
+ "at": "2026-10-02T14:39:25.305Z",
+ "mode": "normal",
+ "note": "22 of 22 acceptance tests pass"
 }
