@@ -4,7 +4,8 @@
  "round": 12,
  "spec": "62f6c18",
  "worker": "cloud-bb208a",
- "state": "working",
- "at": "2026-10-02T17:52:57.969Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T17:53:40.584Z",
+ "mode": "turbo",
+ "note": "same failures, owners named in reports/SC-build.md; needs owners' fixes and a spec job for R23_SAMPLES and FUTURE_POINTERS"
 }
