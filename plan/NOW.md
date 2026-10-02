@@ -1,20 +1,22 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 10:45Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 11:50Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, decision 0018). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 07:15Z: 5h 1% (new window), week 31%.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`), up to 6 runs. Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup ~30 min). Laptop: up to 2 local workers (0018); they have no subagent tool, so core specs and checks go to the cloud (A331). None running now.
 - **Zo:** to-do #1 design sitting at http://localhost:8765/ (python http.server from the session scratchpad `sitting` folder; if it is down after a reboot, the bundle must be rebuilt: designer helper from the four `claude/design-*-2` branches, see reports/findings-designs-2.md "For Zo"). Day 4 (Auto-fill, Zo) Sat 3 Oct. Decisions 0016 to 0019 today; blueprint v1.2 (0019: preparer pastes the diagnostics list).
-- **Landed (16 done):** DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
+- **Landed (18 done):** DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Train: DG2, D00 | train check | cloud | 2 Oct 10:45Z | claude/train |
-| Queue: W00 build round 2 (after DG2 lands), F09B spec round 2, F01 build round 2, E03 build round 2, A01 build round 2, A07 build | cloud runs | cloud | 2 Oct 10:45Z | claude/<card> |
+| Train: F09B (lands F09A work) | train check | cloud | 2 Oct 11:50Z | claude/train |
+| W00 build round 2 | cloud run | cloud | 2 Oct 11:21Z | claude/W00 |
+| F01 findings review round 2 (Opus, local helper; Lead records reports/findings-F01-r2.md) | helper | laptop | 2 Oct 11:50Z | - |
+| Queue: E03 build round 3, F04, F06, F02, A07 builds and A01 build round 2 (after F09B or F01 land), F07 spec | cloud runs | cloud | 2 Oct 11:50Z | claude/<card> |
 
 S00 build waits on W00 (A354); U00 and D02 to D13 parked until Zo's sitting.
 
