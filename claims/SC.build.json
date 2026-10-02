@@ -4,7 +4,8 @@
  "round": 6,
  "spec": "62f6c18",
  "worker": "cloud-4cdd51",
- "state": "working",
- "at": "2026-10-02T17:45:43.376Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T17:45:50.822Z",
+ "mode": "turbo",
+ "note": "same as reports/SC-build.md: needs Lead to fix owning cards or spec lists first"
 }
