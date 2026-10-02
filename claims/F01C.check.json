@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T15:20:08.119Z",
  "worker": "cloud-e592ae",
- "state": "working",
- "at": "2026-10-02T15:20:46.872Z",
+ "state": "failed",
+ "at": "2026-10-02T15:45:05.324Z",
  "mode": "turbo",
- "beat": "2026-10-02T15:35:19.549Z"
+ "beat": "2026-10-02T15:35:19.549Z",
+ "note": "FAIL: gifi_mappings delete/truncate, zod int4 bound, scope, see reports/F01C-check.md"
 }

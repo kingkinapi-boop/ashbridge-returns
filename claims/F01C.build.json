@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "3c54b09",
  "worker": "cloud-0b4981",
- "state": "reported",
- "at": "2026-10-02T15:20:08.119Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T15:45:05.324Z",
  "mode": "turbo",
- "note": "re-stamped by the Lead so the check re-offers (a released check blocked it); acceptance all pass; db 295; mutation 100"
+ "note": "FAIL: gifi_mappings delete/truncate, zod int4 bound, scope, see reports/F01C-check.md"
 }
