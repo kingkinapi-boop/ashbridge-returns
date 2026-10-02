@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "87b5390",
  "worker": "cloud-f135fc",
- "state": "hold-findings",
- "at": "2026-10-02T09:01:38.400Z",
+ "state": "reopened",
+ "at": "2026-10-02T11:10:44.395Z",
  "mode": "turbo",
- "note": "FAIL: F03 taxprep CRLF test red (A347 clash), no @mutate on core files, SEC-11 guard gaps, see reports/W00-check.md"
+ "note": "round 2 spec reported; DG2 landed"
 }
