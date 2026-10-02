@@ -365,7 +365,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F01D",
@@ -388,7 +388,8 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "From F01 r2 findings and the F04, A01 checks (A357)."
+      "note": "From F01 r2 findings and the F04, A01 checks (A357).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -902,7 +903,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -926,7 +927,8 @@
       "title": "Reading PDFs: text layer with word boxes",
       "phase": 0,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -988,7 +990,7 @@
       "hard": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F01D"
@@ -1011,7 +1013,8 @@
       "title": "Lifecycle, due dates and holds",
       "phase": 1,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -2520,7 +2523,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "E03"
@@ -2544,7 +2547,8 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From the G12 spec release (A362). Parked 2 Oct 16:30Z waiting on Zo to-do #1 (one gitleaks allowlist line). Unparked 2 Oct: Zo approved the allowlist line (decision 0021). Re-parked 17:20Z: Zo makes the gitleaks edit by hand (to-do #1). Unparked 17:35Z: Zo made the decision 0021 edit on claude/E03A (0462739)."
+      "note": "From the G12 spec release (A362). Parked 2 Oct 16:30Z waiting on Zo to-do #1 (one gitleaks allowlist line). Unparked 2 Oct: Zo approved the allowlist line (decision 0021). Re-parked 17:20Z: Zo makes the gitleaks edit by hand (to-do #1). Unparked 17:35Z: Zo made the decision 0021 edit on claude/E03A (0462739).",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -3344,7 +3348,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "G01",
@@ -3370,7 +3374,7 @@
       "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "G01",
@@ -3396,7 +3400,7 @@
       "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "G01",
@@ -3422,7 +3426,7 @@
       "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "G01",
@@ -3448,7 +3452,7 @@
       "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "G01",
@@ -3474,7 +3478,7 @@
       "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "G01",
