@@ -13,8 +13,8 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| W00a check, F06 check | cloud runs | cloud | 2 Oct 17:50Z | claude/<card> |
-| A06 build, A07C build (round 2), F07 check (Paths fixed, A369), W00b spec (branch pushed from W00a) | 4 cloud runs | cloud | 2 Oct 18:15Z | claude/<card> |
+| W00a check (F06 PASS), F07 check, W00b spec | cloud runs | cloud | 2 Oct 18:15Z | claude/<card> |
+| A07C build (round 2), A06 check (Paths fixed) | 2 cloud runs | cloud | 2 Oct 18:40Z | claude/<card> |
 | Train 3ccdd3a: E03A, BL0, A01, F02 (all PASS; A370 gitleaks note) | train check, 1 cloud run | cloud | 2 Oct 18:30Z | claude/train |
 
 ## Next, in order
