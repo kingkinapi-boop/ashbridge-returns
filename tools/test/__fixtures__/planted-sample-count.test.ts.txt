@@ -1,0 +1,5 @@
+// Planted for the sample-count rule (E03 round 3, A355): a literal client count over reference/sample-clients.
+const SAMPLES = path.join(ROOT, 'reference', 'sample-clients')
+test('EV-5 the lists read from the repo are the ones expected', () => {
+  expect(sampleClientDirs()).toHaveLength(10)
+})

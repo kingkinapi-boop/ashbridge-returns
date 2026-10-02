@@ -312,7 +312,7 @@ function sampleClientDirs(): string[] {
     .sort()
 }
 
-/** Every onboarding field named in the ten answer keys' flags (flags[].evidence.onboarding). */
+/** Every onboarding field named in the sample clients' answer keys' flags (flags[].evidence.onboarding). */
 function answerKeyOnboardingFields(): string[] {
   const out = new Set<string>()
   for (const dir of sampleClientDirs()) {
@@ -412,6 +412,21 @@ function citeFindings(entries: readonly FixtureEntry[], fields: Map<string, Set<
 }
 
 /** The committed catalogue with one cite added to its first entry. */
+/** answer_key cites whose field no sample client holds (top-level field or an id the flags rely on). */
+function answerKeyCiteFindings(entries: FixtureEntry[]): string[] {
+  const top = sampleTopLevelFields()
+  const flagged = new Set(answerKeyOnboardingFields())
+  const out: string[] = []
+  for (const e of entries) {
+    for (const c of e['cites'] as Cite[]) {
+      if (c.kind !== 'answer_key') continue
+      const head = c.ref.split(/[.[]/)[0] as string
+      if (!top.has(head) && !flagged.has(c.ref)) out.push(`${e['key'] as string} cites ${c.ref}`)
+    }
+  }
+  return out
+}
+
 function committedWithCite(cite: Cite): { entries: FixtureEntry[]; key: string } {
   const raw = clone(committedRaw())
   const first = raw.entries[0] as FixtureEntry
@@ -504,7 +519,17 @@ describe('EV-5 every cite names a real source: a contract field or a CRA form li
 describe('EV-5 every fact the sample clients and the bridge rely on is in the catalogue', () => {
   test('EV-5 the lists read from the repo are the ones expected (guard against a silent empty read)', () => {
     const flagFields = answerKeyOnboardingFields()
-    expect(sampleClientDirs()).toHaveLength(10)
+    // Round 3 (A355): the client count comes from the directory, never a literal. The folders are
+    // numbered 01 to N without gaps, so N (the highest number) is the count and each holds an answer key.
+    const numbered = fs
+      .readdirSync(SAMPLES, { withFileTypes: true })
+      .filter((d) => d.isDirectory() && /^\d\d-/.test(d.name))
+      .map((d) => Number(d.name.slice(0, 2)))
+    expect(numbered.length, 'no NN-* sample client folders read').toBeGreaterThan(0)
+    const highest = Math.max(...numbered)
+    expect([...numbered].sort((a, b) => a - b)).toEqual(Array.from({ length: highest }, (_, i) => i + 1))
+    expect(sampleClientDirs()).toHaveLength(highest)
+    for (const dir of sampleClientDirs()) expect(fs.existsSync(path.join(dir, 'answer-key.json')), dir).toBe(true)
     for (const f of ['client_notes', 'owners', 'home_office', 'declared_dividends', 'vehicle']) {
       expect(flagFields).toContain(f)
     }
@@ -531,15 +556,18 @@ describe('EV-5 every fact the sample clients and the bridge rely on is in the ca
     }
   })
 
-  test('EV-5 every answer_key citation names a field the sample clients really hold', () => {
-    const top = sampleTopLevelFields()
-    for (const e of committedRaw().entries) {
-      for (const c of e['cites'] as Cite[]) {
-        if (c.kind !== 'answer_key') continue
-        const head = c.ref.split(/[.[]/)[0] as string
-        expect(top.has(head), `${e['key'] as string} cites ${c.ref}`).toBe(true)
-      }
-    }
+  // Round 3 (A355): clients 11 to 15 flag answer ids (BQ2.earn, FL:96, YE1.vkm ...) that the card's
+  // round 3 build cites as answer_key refs; such an id is a field the sample clients really hold.
+  test('EV-5 every answer_key citation names a field the sample clients really hold (a top-level field or an id their flags rely on)', () => {
+    const found = answerKeyCiteFindings(committedRaw().entries)
+    expect(found, found.join('\n')).toEqual([])
+  })
+
+  test('EV-5 planted fault: an answer_key cite naming a field no sample client holds is caught; a flagged answer id is not', () => {
+    const bad = committedWithCite({ kind: 'answer_key', ref: 'ZZ9.nope_test' })
+    expect(answerKeyCiteFindings(bad.entries).filter((f) => f.includes('ZZ9.nope_test'))).toHaveLength(1)
+    const ok = committedWithCite({ kind: 'answer_key', ref: 'YE1.vkm' })
+    expect(answerKeyCiteFindings(ok.entries).filter((f) => f.includes('YE1.vkm'))).toEqual([])
   })
 
   test.each(answerKeyOnboardingFields())(

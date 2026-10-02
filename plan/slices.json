@@ -153,7 +153,9 @@
         "src/contracts/ids.ts",
         "src/contracts/index.ts",
         "src/contracts/records.test.ts",
-        "src/contracts/records.acceptance.db.test.ts"
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts"
       ],
       "clauses": [
         "EV-1",
@@ -483,7 +485,7 @@
       "note": "Split from F09 (A297): owns normaliseAmount, amountGroups, AMOUNT_FORMATS and checks 14 to 16, 19, 20; the grammar table and dash rule (A296); F09 findings 1 to 3 stay on main with no consumer until this lands. Parked 2 Oct after its third failed check (A349): split into F09B, which lands its work."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F09"
@@ -505,7 +507,8 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "Branch claude/F09B starts from claude/F09A fc17ad4; lands F09A work plus the round 3 fixes (A349)."
+      "note": "Branch claude/F09B starts from claude/F09A fc17ad4; lands F09A work plus the round 3 fixes (A349).",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -2205,7 +2208,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2227,7 +2230,8 @@
       "title": "Fact catalogue: fact keys, value types, sensitive keys",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
