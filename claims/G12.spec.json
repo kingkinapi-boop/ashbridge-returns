@@ -2,7 +2,8 @@
  "card": "G12",
  "role": "spec",
  "worker": "local-87abf9",
- "state": "working",
- "at": "2026-10-02T14:59:12.005Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T14:59:40.005Z",
+ "mode": "turbo",
+ "note": "still no askable asset/CCA fact in catalogue (see reports/G12-spec.md); Lead must add facts first; also G01 not on main"
 }
