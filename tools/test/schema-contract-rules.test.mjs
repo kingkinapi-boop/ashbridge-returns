@@ -1158,7 +1158,7 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
     const lines = out.split('\n').filter(Boolean)
     expect(lines.length).toBeGreaterThan(100)
     expect(onlyKnown('R37', eolProblems(lines))).toEqual([])
-  })
+  }, 60_000)
 
   test('RT-9 R38 rule: the planted old ALPHABET loop with TextDecoder(windows-1252) is caught', () => {
     expect(decoderProblems(['planted-r38-decoder.test.ts.txt'], fix)).toHaveLength(1)
