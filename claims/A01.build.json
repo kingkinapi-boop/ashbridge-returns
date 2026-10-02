@@ -5,7 +5,7 @@
  "spec": "dce0009",
  "worker": "cloud-3d81d3",
  "state": "reopened",
- "at": "2026-10-02T06:09:26.263Z",
+ "at": "2026-10-02T11:42:30.367Z",
  "mode": "turbo",
- "note": "31 of 31 acceptance tests pass, mutation 91.6"
+ "note": "spec refit reported; waits F09B land"
 }
