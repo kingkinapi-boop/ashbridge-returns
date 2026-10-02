@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "d082015",
  "worker": "cloud-790b0c",
- "state": "reported",
- "at": "2026-10-02T08:35:23.872Z",
+ "state": "released",
+ "at": "2026-10-02T09:33:51.387Z",
  "mode": "turbo",
- "note": "19 of 19 acceptance tests pass on main 7dd2c02, no content change"
+ "note": "merged"
 }
