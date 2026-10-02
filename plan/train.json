@@ -1,5 +1,5 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "3ccdd3a",
   "cards": [
@@ -9,5 +9,6 @@
     "F02"
   ],
   "requested_at": "2026-10-02T18:16:46Z",
-  "note": "BL0, A01, F02 GitHub checks stopped at gitleaks only (their branches lack E03A's 0021 allowlist line); the train carries it. Run gitleaks over HEAD as part of the check."
+  "note": "BL0, A01, F02 GitHub checks stopped at gitleaks only (their branches lack E03A's 0021 allowlist line); the train carries it. Run gitleaks over HEAD as part of the check.",
+  "by": "cloud-c520ec"
 }
