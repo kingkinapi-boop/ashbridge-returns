@@ -4,7 +4,8 @@
  "round": 10,
  "spec": "ba50f80",
  "worker": "cloud-f765fb",
- "state": "working",
- "at": "2026-10-02T20:45:52.294Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:45:59.347Z",
+ "mode": "turbo",
+ "note": "Re-offered after release; not built, see previous note. Lead must restamp or reopen as A07D."
 }
