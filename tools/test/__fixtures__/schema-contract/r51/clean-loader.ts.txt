@@ -1,0 +1,7 @@
+// Clean (SC R51): the loader goes through guardFolder before it reads.
+import fs from 'node:fs'
+import { guardFolder } from './guard'
+export function loadClient(dir: string): unknown {
+  guardFolder(dir)
+  return JSON.parse(fs.readFileSync(`${dir}/answer-key.json`, 'utf8'))
+}

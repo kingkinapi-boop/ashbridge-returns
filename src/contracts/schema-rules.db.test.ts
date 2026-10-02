@@ -46,7 +46,14 @@ function stringLists(mod: Module): Record<string, readonly string[]> {
 }
 
 // ---------- known defects on main (validated 2 Oct), each owned by another card (none for the database rules yet) ----------
-const KNOWN: readonly { rule: string; match: RegExp; owner: string }[] = []
+const KNOWN: readonly { rule: string; match: RegExp; owner: string }[] = [
+  // Found when the spec was refitted on main 6d8efd6 (2 Oct, cloud-18d04e); each is added to its owner card.
+  { rule: 'R12', match: /^returns\.returns: refuses UPDATE or DELETE but not TRUNCATE$/, owner: 'F01 family (50_returns.sql: the returns table has no truncate refusal)' },
+  { rule: 'R15', match: /^returns\.exceptions\.status: no CHECK with a list of values$/, owner: 'F01 family (70_checks.sql and records.ts: exceptions.status has no list)' },
+  { rule: 'R43', match: /^returns\.[a-z_]+\.[a-z_]+_id: points at no built table and FUTURE_POINTERS does not name the card that builds it$/, owner: 'F01 family (ids.ts exports no FUTURE_POINTERS; each pointer to an unbuilt table names its card)' },
+  { rule: 'R55', match: /^(version_stamp|sources): -?1\.797693134862315807937e308 is refused by SQL and accepted by JS$/, owner: 'F01 family (A367 landing rule: 00_schema.sql is_finite_number and records.ts disagree at the midpoint)' },
+  { rule: 'R55', match: /^(version_stamp|sources): (1e-400|9007199254740993) is accepted, but JS reads it back as /, owner: 'F01 family (A367 landing rule: 1e-400 and integers above 2^53 must be refused or read back unchanged)' },
+]
 function onlyKnown(rule: string, problems: readonly string[]): string[] {
   const known = KNOWN.filter((k) => k.rule === rule)
   const unknown = problems.filter((p) => !known.some((k) => k.match.test(p)))
@@ -356,6 +363,56 @@ function guardProblems(cat: Catalog): { checked: number; problems: string[] } {
   return { checked: identity.length + versions.length, problems }
 }
 
+// ---------- R55: a finiteness bound shared by SQL and JS agrees at the double's edge ----------
+// The double's round-up midpoint (just under it rounds to MAX_VALUE in JS, while numeric compares it exactly),
+// 1e-400 (JS reads 0) and an integer above 2^53 (JS reads its neighbour): each is refused by both sides, or accepted
+// by both and read back unchanged.
+const R55_NUMBERS = [
+  '1', '1.7976931348623157e308', '1.797693134862315807937e308', '-1.797693134862315807937e308', '1e400', '1e-400',
+  '9007199254740993',
+]
+/** A decimal as sign, digits and exponent with no leading or trailing zeros, so two spellings of one number agree. */
+function canonDecimal(text: string): string {
+  const m = /^(-?)(\d*)(?:\.(\d*))?(?:[eE]([+-]?\d+))?$/.exec(text.trim())
+  if (m === null) return `not a decimal: ${text}`
+  const intPart = m[2] ?? ''
+  const frac = m[3] ?? ''
+  let digits = `${intPart}${frac}`
+  let exp = Number(m[4] ?? '0') - frac.length
+  const lead = /^0*/.exec(digits)?.[0].length ?? 0
+  digits = digits.slice(lead)
+  if (digits === '') return '0'
+  const trail = /0*$/.exec(digits)?.[0].length ?? 0
+  digits = digits.slice(0, digits.length - trail)
+  exp += trail
+  return `${m[1] ?? ''}${digits}e${String(exp)}`
+}
+type BoundPair = { label: string; sql: (n: string) => string; wrap: (n: string) => string; js: (v: unknown) => boolean; read: (v: unknown) => unknown }
+async function boundProblems(db: PGlite, pairs: readonly BoundPair[], numbers: readonly string[]): Promise<string[]> {
+  const problems: string[] = []
+  for (const p of pairs) {
+    for (const n of numbers) {
+      const text = p.wrap(n)
+      const sqlOk = (await db.query<{ ok: boolean | null }>(`select ${p.sql('$1::jsonb')} as ok`, [text])).rows[0]?.ok === true
+      const parsed: unknown = JSON.parse(text)
+      const jsOk = p.js(parsed)
+      if (sqlOk !== jsOk) {
+        problems.push(`${p.label}: ${n} is ${sqlOk ? 'accepted' : 'refused'} by SQL and ${jsOk ? 'accepted' : 'refused'} by JS`)
+        continue
+      }
+      if (!jsOk) continue
+      const back = p.read(parsed)
+      const jsBack = typeof back === 'number' ? String(back) : 'not a number'
+      if (canonDecimal(jsBack) !== canonDecimal(n)) problems.push(`${p.label}: ${n} is accepted, but JS reads it back as ${jsBack}`)
+      const sqlBack = (await db.query<{ t: string | null }>(`select ($1::jsonb #>> '{x}') as t`, [stampWrap(n)])).rows[0]?.t ?? ''
+      if (canonDecimal(sqlBack) !== canonDecimal(n)) problems.push(`${p.label}: ${n} is accepted, but SQL reads it back as ${sqlBack}`)
+    }
+  }
+  return problems
+}
+const stampWrap = (n: string): string => `{"x":${n}}`
+const firstX = (v: unknown): unknown => (v !== null && typeof v === 'object' ? (v as Record<string, unknown>)['x'] : undefined)
+
 async function plantedCatalog(sqlFile: string): Promise<{ db: PGlite; cat: Catalog; all: Catalog }> {
   const db = await cloneTestDb()
   await db.exec(plant(sqlFile))
@@ -514,5 +571,38 @@ describe('SC R41 to R44: blanks, parity, pointers and sequences (EV-1, FLOW-1, F
     const r = guardProblems(cat)
     expect(r.checked, 'nothing to check: no identity or version column').toBeGreaterThan(0)
     expect(onlyKnown('R44', r.problems)).toEqual([])
+  })
+})
+
+describe('SC R55: finiteness bounds shared by SQL and JS (ARC-10)', () => {
+  test('ARC-10 R55 rule: a planted SQL stamp check with no bound disagrees with its zod twin at 1e400 and is caught', async () => {
+    const db = await cloneTestDb()
+    await db.exec(plant('r55-bound.sql'))
+    const twin = z.record(z.string(), z.union([z.string(), z.number()]))
+    const problems = await boundProblems(db, [
+      { label: 'planted', sql: (x) => `returns.planted_is_stamp(${x})`, wrap: stampWrap, js: (v) => twin.safeParse(v).success, read: firstX },
+    ], ['1', '1e400'])
+    expect(problems).toEqual(['planted: 1e400 is accepted by SQL and refused by JS'])
+    expect(canonDecimal('1.50e2')).toBe(canonDecimal('150'))
+    expect(canonDecimal('0.0001')).toBe(canonDecimal('1e-4'))
+  })
+  test('ARC-10 R55 every finiteness bound shared by SQL and JS agrees at the round-up midpoint, 1e-400 and integers above 2^53 (refused, or read back unchanged)', async () => {
+    const db = await cloneTestDb()
+    const records = await loadContract('records.ts')
+    const stamp = records?.['VersionStampSchema'] as z.ZodType | undefined
+    const sources = records?.['sourcesAreReal'] as ((s: readonly unknown[]) => boolean) | undefined
+    expect(stamp, 'src/contracts/records.ts exports no VersionStampSchema').toBeDefined()
+    expect(typeof sources, 'src/contracts/records.ts exports no sourcesAreReal').toBe('function')
+    const pairs: BoundPair[] = [
+      { label: 'version_stamp', sql: (x) => `returns.is_version_stamp(${x})`, wrap: stampWrap, js: (v) => stamp?.safeParse(v).success === true, read: firstX },
+      {
+        label: 'sources',
+        sql: (x) => `returns.sources_are_real(${x})`,
+        wrap: (n) => `[{"x":${n}}]`,
+        js: (v) => Array.isArray(v) && sources?.(v) === true,
+        read: (v) => (Array.isArray(v) ? firstX(v[0]) : undefined),
+      },
+    ]
+    expect(onlyKnown('R55', await boundProblems(db, pairs, R55_NUMBERS))).toEqual([])
   })
 })

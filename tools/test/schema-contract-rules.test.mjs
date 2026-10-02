@@ -9,10 +9,12 @@
 // failure"): on main before F01 lands, the rules that need records.ts fail by name for that reason.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
+import { luhnValid } from '../../reference/sample-clients/lib/util.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const FIX_REL = 'tools/test/__fixtures__/schema-contract'
@@ -38,10 +40,19 @@ const KNOWN = [
   { rule: 'R38', match: /^src\/contracts\/taxprep\.acceptance\.test\.ts: /, owner: 'F03R (spec refit; findings W00 r1)' },
   { rule: 'R38', match: /^no Vitest setup file refuses a Node major below 24/, owner: 'TH (was TH R6)' },
   { rule: 'R39', match: /^amountGroups joins words from two pages/, owner: 'F09B' },
-  { rule: 'R40', match: /^src\/contracts\/reading\.ts#WordSchema accepts /, owner: 'F09B' },
   { rule: 'R41', match: /^src\/contracts\/(reading|facts|checks|taxprep|amount-grammar)\.ts: /, owner: 'the file owner (F09B reading, E03 facts, F05M checks, F03R taxprep, F09A amount-grammar); F01 brings text.ts' },
   { rule: 'R45', match: /^sensitiveKindForKey\("[^"]+"\) is "none"/, owner: 'E03' },
   { rule: 'R45-enum', match: /^loadFactCatalogue accepts duplicate enum options/, owner: 'E03' },
+  // Found when the spec was refitted on main 6d8efd6 (2 Oct, cloud-18d04e); each is added to its owner card.
+  { rule: 'R15', match: /^src\/contracts\/records\.ts#ExceptionRecordSchema\.status: /, owner: 'F01 family (records.ts and 70_checks.sql: exceptions.status has no list)' },
+  { rule: 'R16', match: /^src\/modules\/lifecycle\/index\.ts: "order by occurred_at, id/, owner: 'F02 (order waits by the events identity seq)' },
+  { rule: 'R18', match: /^src\/modules\/gaps\/index\.ts: /, owner: 'G00 or G02 (core cards that list gaps/index.ts; G01 landed it unmarked)' },
+  { rule: 'R23', match: /^src\/contracts\/records\.ts#\w+RecordSchema: a stray key is accepted at \(top\)$/, owner: 'F01 family (records.ts record schemas use plain z.object)' },
+  { rule: 'R23', match: /^src\/contracts\/lifecycle\.ts#(ApprovalFingerprintSchema|ChangedItemSchema): a stray key is accepted at /, owner: 'F02' },
+  { rule: 'R41', match: /^src\/modules\/gaps\/bank\/index\.ts: /, owner: 'G01 (.trim() and z.string().min(1) in the question bank loader)' },
+  { rule: 'R49', match: /^src\/contracts\/reading\.ts: a z\.string\(\)\.trim\(\) transform/, owner: 'F09B (engine name and version, reading.ts:48-49)' },
+  { rule: 'R45-cite', match: /^loadFactCatalogue accepts a cra_form cite that is free text/, owner: 'E03 (the loader does not enforce the cite patterns; only tests do)' },
+  { rule: 'R54', match: /^A01: a zero-size MediaBox under statement \(Test\)\.pdf was not refused with a reason/, owner: 'A01 successor (A01-check-r3 note: a raw ZodError from ReadingResultSchema)' },
 ]
 
 function onlyKnown(rule, problems) {
@@ -285,7 +296,30 @@ const contractFiles = () => productTs(['src/contracts']).filter((f) => !f.endsWi
 
 // ---------- R23: every contract refuses a stray key at every depth ----------
 // Samples are generated from each schema; a schema whose objects the generator cannot reach gets a sample here.
+const AT = new Date(Date.UTC(2026, 9, 2, 16))
+const RECORD = { created_at: AT, is_test: true, return_id: 'r-1' }
 const R23_SAMPLES = {
+  'src/contracts/records.ts#FactRecordSchema': [
+    {
+      id: 'f-1', ...RECORD, fact_key: 'corp.identity.legal_name', version_no: 1, value: 'Riverdale Rentals Inc. (Test)',
+      source_document_id: 'd-1', source_page: 1, source_box: { left: 0.1, top: 0.1, width: 0.2, height: 0.02 },
+      source_sheet: null, source_row: null, source_column: null, source_qbo_snapshot_id: null, source_qbo_account_id: null,
+      source_qbo_txn_id: null, source_client_answer_id: null, source_cra_capture_id: null, source_prior_return_id: null,
+      source_reason: null, origin: 'third_party', method: null, status: 'proposed', version_stamp: { catalogue: 'v1' },
+    },
+  ],
+  'src/contracts/records.ts#AdjustingEntryRecordSchema': [
+    {
+      id: 'a-1', ...RECORD, qbo_snapshot_id: 's-1', qbo_txn_id: 't-1', entry_type: 'reclass', reason: 'reclass (Test)',
+      sources: ['statement page 1 (Test)'], author: 'preparer (Test)', explained: true, version_no: 1,
+    },
+  ],
+  'src/contracts/records.ts#FigureRecordSchema': [
+    { id: 'g-1', ...RECORD, figure_key: 'net_income', cell_id: null, value: '1', version_stamp: { catalogue: 'v1' } },
+  ],
+  'src/contracts/records.ts#CheckResultRecordSchema': [
+    { id: 'c-1', ...RECORD, check_id: 'CK-1', outcome: 'pass', version_stamp: { catalogue: 'v1' } },
+  ],
   'src/contracts/facts.ts#factEntrySchema': [
     {
       key: 'corp.identity.legal_name',
@@ -787,24 +821,21 @@ function apostropheProblems(parse, inputs) {
 }
 
 // ---------- R34: no real-looking personal data in test data (SEC-11) ----------
-const luhn = (digits) =>
-  [...digits].reverse().reduce((sum, c, i) => {
-    let d = Number(c)
-    if (i % 2 === 1) {
-      d *= 2
-      if (d > 9) d -= 9
-    }
-    return sum + d
-  }, 0) %
-    10 ===
-  0
+// One Luhn (R50): the check digit comes from reference/sample-clients/lib/util.mjs, never a copy here.
+const SEP = '[ \\-.\\u00A0\\u2009\\u202F\\u2010-\\u2015]?'
+const NINE_DIGITS = new RegExp(`(?<![\\w-])(?<!\\d[.,])(\\d{3})${SEP}(\\d{3})${SEP}(\\d{3})(?:\\s?RT\\s?\\d{4})?(?![\\w-])(?![.,]\\d)`, 'g')
+const NINE_EXPONENT = /(?<![\w.])(\d)\.(\d{1,8})[eE]\+?8(?![\w.])/g
 const RESERVED_DOMAIN = /(^|\.)(example\.(com|net|org)|example|test|invalid|localhost)$/i
-function piiProblems(file, text) {
+function piiProblems(file, text, check = luhnValid) {
   const problems = []
-  for (const m of text.matchAll(/(?<![\w-])(\d{3})([ -]?)(\d{3})\2(\d{3})(?:\s?RT\s?\d{4})?(?![\w-])/g)) {
-    const digits = m[1] + m[3] + m[4]
+  for (const m of text.matchAll(NINE_DIGITS)) {
+    const digits = m[1] + m[2] + m[3]
     if (/^0+$/.test(digits)) continue
-    if (luhn(digits)) problems.push(`${file}: a Luhn-valid nine-digit number ${JSON.stringify(m[0])} (a SIN or business number shape)`)
+    if (check(digits)) problems.push(`${file}: a Luhn-valid nine-digit number ${JSON.stringify(m[0])} (a SIN or business number shape)`)
+  }
+  for (const m of text.matchAll(NINE_EXPONENT)) {
+    const digits = m[1] + m[2].padEnd(8, '0')
+    if (check(digits)) problems.push(`${file}: a Luhn-valid nine-digit number in exponent form ${JSON.stringify(m[0])}`)
   }
   for (const m of text.matchAll(/[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g)) {
     if (!RESERVED_DOMAIN.test(m[1])) problems.push(`${file}: an e-mail outside the reserved domains ${JSON.stringify(m[0])}`)
@@ -815,12 +846,35 @@ function piiProblems(file, text) {
   return problems
 }
 const TEXT_EXT = /\.(csv|json|md|txt|ts|tsx|mjs|js|sql|yml|yaml|html|xml|tsv)$/i
+// Binary fixtures are allowed only on this reasoned list (findings W00 r2); they are still scanned as Latin-1 text.
+const BINARY_FIXTURES = [
+  { match: /^src\/modules\/ocr\/textlayer\/__fixtures__\/[a-z-]+\.pdf$/, reason: 'A01: PDFs written by make-fixtures.ts in raw PDF syntax from made-up lines' },
+  { match: /^src\/modules\/storage\/__fixtures__\/drive-[a-z0-9-]+\/.+\.pdf$/, reason: 'A05: placeholder PDFs of under 100 bytes holding one made-up comment line' },
+]
 function testDataFiles() {
   return [
     ...walk('reference/sample-clients'),
     ...walk('testworld'),
     ...walk('').filter((f) => isFixture(f) && !f.startsWith('reference/sample-clients/')),
-  ].filter((f) => TEXT_EXT.test(f) && !f.startsWith(`${FIX_REL}/`))
+  ].filter((f) => !f.startsWith(`${FIX_REL}/`))
+}
+function binaryListProblems(files) {
+  return files
+    .filter((f) => !TEXT_EXT.test(f) && !BINARY_FIXTURES.some((b) => b.match.test(f)))
+    .map((f) => `${f}: a binary test-data file not on the reasoned BINARY_FIXTURES list`)
+}
+const readLatin1 = (rel) => fs.readFileSync(path.join(ROOT, rel), 'latin1')
+const dataText = (f) => (TEXT_EXT.test(f) ? read(f) : readLatin1(f))
+/** R34 widened: W00b's guardFolder, once it is on main, refuses each folder of test data. */
+function guardOutcome(guardFolder, absDir) {
+  try {
+    const r = guardFolder(absDir)
+    if (Array.isArray(r)) return r.length === 0 ? null : JSON.stringify(r).slice(0, 300)
+    if (r && typeof r === 'object' && r.ok === false) return JSON.stringify(r).slice(0, 300)
+    return null
+  } catch (e) {
+    return String(e?.message ?? e).slice(0, 300)
+  }
 }
 
 // ---------- R36: money is read from text ----------
@@ -874,6 +928,367 @@ function blankRuleProblems(files, readFile) {
     const src = readFile(f)
     if (/\.trim\(\)/.test(src)) problems.push(`${f}: a .trim() blank rule (non-blank goes through src/contracts/text.ts)`)
     if (/z\s*\.\s*string\(\)(?:\s*\.\s*\w+\([^)]*\))*?\s*\.\s*min\(\s*1\s*[,)]/.test(src)) problems.push(`${f}: a z.string().min(1) non-blank rule (use NonBlankSchema)`)
+  }
+  return problems
+}
+
+// ---------- subjects not on main yet (R35: "nothing to check" unless declared) ----------
+// A rule whose subject is not built yet is declared here with the card that brings it. When the subject lands the
+// rule runs on it at once (the entry then has no effect and the Lead may drop it); a missing subject with no entry
+// fails with "nothing to check".
+const PENDING = [
+  { rule: 'R34-guard', subject: 'testworld/model/guard.ts', owner: 'W00b (guardFolder, guardValue)' },
+  { rule: 'R35', subject: 'testworld/model/checks.ts', owner: 'W00c (the model checks)' },
+  { rule: 'R50-guard', subject: 'testworld/model/guard.ts', owner: 'W00b (the guard Luhn)' },
+  { rule: 'R51', subject: 'testworld', owner: 'W00c and W00b (the test-world loaders)' },
+  { rule: 'R52-catalogue', subject: 'testworld/model/faults.ts', owner: 'W00c (the fault catalogue)' },
+  { rule: 'R47', subject: 'src/modules/ocr/tesseract', owner: 'A02' },
+  { rule: 'R47', subject: 'src/modules/ocr/recorded', owner: 'A03' },
+  { rule: 'R47', subject: 'src/modules/sheets', owner: 'A07 (A07C)' },
+  { rule: 'R47', subject: 'src/modules/qbo', owner: 'B04' },
+  { rule: 'R54', subject: 'src/modules/sheets', owner: 'A07 (A07C: gzip, %PDF, MZ and spanned zip under a .csv name; large-magnitude number noise)' },
+  { rule: 'R54', subject: 'src/modules/documents/intake', owner: 'E00' },
+]
+function pendingOrNothing(rule, subject) {
+  const p = PENDING.find((x) => x.rule === rule && x.subject === subject)
+  return p === undefined ? `nothing to check: ${subject} is not on main and PENDING declares no card for ${rule}` : null
+}
+
+// ---------- R35: every model or kind check has a planted failing test, and says "nothing to check" when empty ----------
+function exportedFunctionNames(src) {
+  return [...src.matchAll(/export\s+(?:async\s+)?function\s+([A-Za-z_$][\w$]*)|export\s+const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>/g)].map(
+    (m) => m[1] ?? m[2],
+  )
+}
+/** Test blocks: [{ title, body }] from test( or it( calls. */
+function testBlocks(text) {
+  const out = []
+  const re = /\b(?:test|it)(?:\.each\([^)]*\))?\(\s*(['"`])((?:(?!\1)[^\\]|\\.)*)\1/g
+  const starts = [...text.matchAll(re)]
+  starts.forEach((m, i) => out.push({ title: m[2], body: text.slice(m.index, starts[i + 1]?.index ?? text.length) }))
+  return out
+}
+async function checkCoverageProblems(where, mod, src, testTexts) {
+  const problems = []
+  const names = exportedFunctionNames(src).filter((n) => typeof mod[n] === 'function')
+  const declared = Array.isArray(mod.EMPTY_IS_FINE) ? mod.EMPTY_IS_FINE : []
+  for (const name of names) {
+    const call = new RegExp(`\\b${name}\\s*\\(`)
+    const planted = testTexts.some((t) => testBlocks(t).some((b) => /plant/i.test(b.title) && call.test(b.body)))
+    if (!planted) problems.push(`${where}#${name}: no test titled "planted ..." calls it (every model or kind check has a planted failing test)`)
+    if (declared.includes(name)) continue
+    let said
+    try {
+      said = JSON.stringify(await mod[name]([]))
+    } catch (e) {
+      said = String(e?.message ?? e)
+    }
+    if (!/nothing to check/i.test(said ?? '')) problems.push(`${where}#${name}: over an empty collection it does not say "nothing to check" (got ${String(said).slice(0, 80)}); declare it in EMPTY_IS_FINE if that is meant`)
+  }
+  return { checked: names.length, problems }
+}
+
+// ---------- R46: library values become text through a typed switch, never .text or String(x) ----------
+const LIB_VALUE = '(?:cell|c|v|value|raw|item|node)'
+function libraryTextProblems(files, readFile) {
+  const problems = []
+  for (const f of files) {
+    const src = readFile(f)
+    const libs = [...src.matchAll(/^\s*import\s[^'"]*['"]([^'"]+)['"]/gm)].map((m) => m[1]).filter((s) => !/^(\.|node:|zod$|@\/)/.test(s))
+    if (libs.length === 0) continue
+    if (new RegExp(`\\b${LIB_VALUE}\\.text\\b`).test(src)) problems.push(`${f}: reads a library value's display text (.text); build the text from the typed value`)
+    const typedSwitch = /switch\s*\(\s*typeof\b/.test(src) || /switch\s*\(\s*[\w.]+\.(type|kind)\s*\)/.test(src)
+    const untyped = new RegExp(`String\\(\\s*${LIB_VALUE}(?:\\.\\w+)*\\s*\\)|\\$\\{\\s*${LIB_VALUE}(?:\\.\\w+)*\\s*\\}`).exec(src)
+    if (untyped && !typedSwitch) problems.push(`${f}: turns a library value into text with ${untyped[0]} and no typed switch`)
+  }
+  return problems
+}
+
+// ---------- R47, R48, R54: reader adapters ----------
+const outcomeOf = async (fn) => {
+  try {
+    return { value: await fn() }
+  } catch (e) {
+    return { threw: e }
+  }
+}
+const textOf = (o) => (o.threw !== undefined ? `${o.threw?.name ?? ''}: ${String(o.threw?.message ?? o.threw)}` : JSON.stringify(o.value))
+function mutateDeep(v, depth = 0) {
+  if (depth > 6 || v === null || typeof v !== 'object') return
+  if (Array.isArray(v)) {
+    v.forEach((x) => mutateDeep(x, depth + 1))
+    v.push('mutated (Test)')
+    return
+  }
+  for (const k of Object.keys(v)) {
+    if (typeof v[k] === 'string') v[k] = 'mutated (Test)'
+    else if (typeof v[k] === 'number') v[k] = -12345
+    else mutateDeep(v[k], depth + 1)
+  }
+  v.mutatedTest = true
+}
+/** R47: the cache returns a copy, its key covers every input the result depends on, and no reason names the file. */
+async function cacheProblems(label, makeReader, bytes, names, routes) {
+  const problems = []
+  const fp = `r47-${label} (Test)`
+  const named = await makeReader()
+  const outcomes = []
+  for (const name of names) outcomes.push([name, textOf(await outcomeOf(() => named.read({ fingerprint: fp, fileName: name, bytes })))])
+  for (const [name, t] of outcomes) {
+    for (const n of names) if (t.includes(n)) problems.push(`${label}: read as ${name}, the outcome names the file ${n}`)
+    if (t !== outcomes[0][1] && routes.length === 0) problems.push(`${label}: the same bytes read as ${name} gave a different outcome from ${names[0]} with no route between them`)
+  }
+  const reader = await makeReader()
+  const first = await outcomeOf(() => reader.read({ fingerprint: fp, fileName: names[0], bytes }))
+  const before = textOf(first)
+  if (first.value !== undefined) mutateDeep(first.value)
+  const again = await outcomeOf(() => reader.read({ fingerprint: fp, fileName: names[0], bytes }))
+  if (textOf(again) !== before) problems.push(`${label}: changing a returned result changed the next read (the cache hands out its own object)`)
+  for (const [a, b] of routes) {
+    const r = await makeReader()
+    const oa = textOf(await outcomeOf(() => r.read({ fingerprint: `${fp}-route`, fileName: a, bytes })))
+    const ob = textOf(await outcomeOf(() => r.read({ fingerprint: `${fp}-route`, fileName: b, bytes })))
+    const fresh = textOf(await outcomeOf(async () => (await makeReader()).read({ fingerprint: `${fp}-route`, fileName: b, bytes })))
+    if (ob !== fresh) problems.push(`${label}: read as ${a} then ${b}, the second outcome came from the cache of the first (the key misses the route)`)
+    if (oa === ob) problems.push(`${label}: ${a} and ${b} take different routes but gave the same outcome`)
+  }
+  return problems
+}
+/** R48: an empty instance (a blank page, an empty hidden row or column) is kept, never dropped. */
+async function emptyInstanceProblems(label, makeReader, bytes, keeps) {
+  const reader = await makeReader()
+  const o = await outcomeOf(() => reader.read({ fingerprint: `r48-${label} (Test)`, fileName: 'blank (Test).pdf', bytes }))
+  if (o.threw !== undefined) return [`${label}: the empty instance was refused: ${textOf(o)}`]
+  const why = keeps(o.value)
+  return why === null ? [] : [`${label}: ${why}`]
+}
+/** R54: a wrong-kind container is refused with a reason that carries no library message or URL, and never throws raw. */
+const LIBRARY_TRACE = /https?:|node_modules|\bat \S+ \(|Exception\b|ZodError|TypeError|RangeError|pdf\.js|pdfjs|exceljs|unzip|inflate|\[object /i
+async function wrongKindProblems(label, makeReader, cases, refusalReason) {
+  const problems = []
+  for (const [what, name, bytes] of cases) {
+    const reader = await makeReader()
+    const o = await outcomeOf(() => reader.read({ fingerprint: `r54-${label}-${what} (Test)`, fileName: name, bytes }))
+    const reason = refusalReason(o)
+    if (reason === null) {
+      problems.push(`${label}: ${what} under ${name} was not refused with a reason (${textOf(o).slice(0, 120)})`)
+      continue
+    }
+    if (LIBRARY_TRACE.test(reason)) problems.push(`${label}: ${what}: the reason carries a library message or URL (${reason.slice(0, 120)})`)
+    if (reason.includes(name)) problems.push(`${label}: ${what}: the reason names the file`)
+  }
+  return problems
+}
+const bytesOf = (s) => Uint8Array.from(Buffer.from(s, 'latin1'))
+const WRONG_KIND = {
+  gzip: bytesOf('\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x03made up (Test)'),
+  mz: bytesOf('MZ\x90\x00\x03\x00\x00\x00made up (Test)'),
+  zip: bytesOf('PK\x03\x04\x14\x00\x00\x00\x08\x00made up (Test)'),
+  spannedZip: bytesOf('PK\x07\x08PK\x03\x04\x14\x00made up (Test)'),
+  csv: bytesOf('Date,Description,Amount\r\n2025-01-02,SALE (Test),10.00\r\n'),
+  pdf: bytesOf('%PDF-1.4\n%made up (Test)\n'),
+  empty: new Uint8Array(0),
+}
+/** A small PDF in raw syntax: one page of Courier text per entry (null: an empty page), offsets exact. */
+function rawPdf(pages, mediaBox = [0, 0, 612, 792]) {
+  const objs = []
+  const kids = pages.map((_, i) => `${String(4 + i * 2)} 0 R`).join(' ')
+  objs.push('<< /Type /Catalog /Pages 2 0 R >>')
+  objs.push(`<< /Type /Pages /Kids [${kids}] /Count ${String(pages.length)} >>`)
+  objs.push('<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>')
+  pages.forEach((text, i) => {
+    const content = text === null ? '' : `BT /F1 12 Tf 72 700 Td (${text}) Tj ET`
+    objs.push(`<< /Type /Page /Parent 2 0 R /MediaBox [${mediaBox.join(' ')}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${String(5 + i * 2)} 0 R >>`)
+    objs.push(`<< /Length ${String(content.length)} >>\nstream\n${content}\nendstream`)
+  })
+  let out = '%PDF-1.4\n'
+  const offsets = []
+  objs.forEach((o, i) => {
+    offsets.push(out.length)
+    out += `${String(i + 1)} 0 obj\n${o}\nendobj\n`
+  })
+  const xref = out.length
+  out += `xref\n0 ${String(objs.length + 1)}\n0000000000 65535 f \n${offsets.map((n) => `${String(n).padStart(10, '0')} 00000 n \n`).join('')}`
+  out += `trailer\n<< /Size ${String(objs.length + 1)} /Root 1 0 R >>\nstartxref\n${String(xref)}\n%%EOF\n`
+  return bytesOf(out)
+}
+/** The A01 reading contract signals a refusal by rejecting with its own "Reading refused: ..." error (amber, SC spec). */
+const a01Refusal = (o) => (o.threw instanceof Error && o.threw.constructor === Error && /^Reading refused: /.test(o.threw.message) ? o.threw.message : null)
+const READERS = {
+  A01: {
+    dir: 'src/modules/ocr/textlayer',
+    make: async () => (await load('src/modules/ocr/textlayer/index.ts')).createTextLayerEngine(),
+    good: () => fs.readFileSync(path.join(ROOT, 'src/modules/ocr/textlayer/__fixtures__/one-page.pdf')),
+    names: ['statement (Test).pdf', 'statement (Test).doc'],
+    routes: [],
+    blank: () => rawPdf(['SALE 10.00 (Test)', null]),
+    keeps: (r) =>
+      r.pageCount !== 2 || r.pages.length !== 2
+        ? `a blank page was dropped: ${String(r.pages.length)} pages of ${String(r.pageCount)}`
+        : r.pages[1].hasTextLayer !== false
+          ? 'the blank page is not reported as having no text layer'
+          : null,
+    wrongKind: [
+      ['gzip bytes', 'statement (Test).pdf', WRONG_KIND.gzip],
+      ['MZ bytes', 'statement (Test).pdf', WRONG_KIND.mz],
+      ['zip bytes', 'statement (Test).pdf', WRONG_KIND.zip],
+      ['spanned-zip bytes', 'statement (Test).pdf', WRONG_KIND.spannedZip],
+      ['CSV text', 'statement (Test).pdf', WRONG_KIND.csv],
+      ['empty bytes', 'statement (Test).pdf', WRONG_KIND.empty],
+      ['a PDF header and nothing else', 'statement (Test).pdf', WRONG_KIND.pdf],
+      ['a zero-size MediaBox', 'statement (Test).pdf', rawPdf(['SALE (Test)'], [0, 0, 0, 0])],
+    ],
+    refusal: a01Refusal,
+  },
+}
+const READER_DIRS = ['src/modules/ocr/textlayer', 'src/modules/ocr/tesseract', 'src/modules/ocr/recorded', 'src/modules/sheets', 'src/modules/qbo']
+
+// ---------- R49: no zod .trim() transform ----------
+function trimTransformProblems(files, readFile) {
+  return files
+    .filter((f) => /z\s*\.\s*string\(\)(?:\s*\.\s*\w+\([^()]*\))*?\s*\.\s*trim\(\)/.test(readFile(f)))
+    .map((f) => `${f}: a z.string().trim() transform rewrites the stored value (non-blank goes through text.ts)`)
+}
+
+// ---------- R50: one Luhn ----------
+const LUHN_HOMES = ['testworld/model/guard.ts', 'reference/sample-clients/lib/util.mjs']
+const LUHN_SHAPE = /\*=?\s*2\b[\s\S]{0,120}?>\s*9\b[\s\S]{0,120}?(?:-=?\s*9\b|%\s*10\b)|\bfunction\s+\w*luhn\w*\s*\(|\b(?:const|let)\s+\w*luhn\w*\s*=\s*(?:\(|function|async|[A-Za-z_$][\w$]*\s*=>)/i
+function oneCheckDigitProblems(files, readFile) {
+  return files.filter((f) => !LUHN_HOMES.includes(f) && LUHN_SHAPE.test(readFile(f))).map((f) => `${f}: its own Luhn check (one Luhn: guard.ts and lib/util.mjs)`)
+}
+const codeFiles = () =>
+  ['src', 'testworld', 'e2e', 'tools', 'reference/sample-clients', 'design', 'db']
+    .flatMap((d) => walk(d))
+    .filter((f) => /\.(ts|tsx|mts|mjs|js|cjs)$/.test(f) && !f.startsWith(`${FIX_REL}/`))
+
+// ---------- R51: every test-world loader is guarded ----------
+const READS_DATA = /\b(readFileSync|readFile|readdirSync|readdir|createReadStream|opendir)\s*\(/
+function loaderProblems(files, readFile) {
+  return files
+    .filter((f) => !/\/guard(-fields)?\.ts$/.test(f))
+    .filter((f) => READS_DATA.test(readFile(f)) && !/\bguard(Folder|Value)\s*\(/.test(readFile(f)))
+    .map((f) => `${f}: reads data files without guardFolder or guardValue (SEC-11)`)
+}
+
+// ---------- R52 and R53: fault markers and statement sequences in the answer keys ----------
+class Num {
+  constructor(src) {
+    this.src = src
+  }
+}
+const parseKey = (text) => JSON.parse(text, (_k, v, ctx) => (typeof v === 'number' ? new Num(ctx.source) : v))
+/** Cents from the number's own text (R36: money from text only); NaN when it is not a plain amount. */
+function centsOfText(src) {
+  const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(src)
+  if (!m) return Number.NaN
+  const c = Number(m[2]) * 100 + Number((m[3] ?? '').padEnd(2, '0'))
+  return m[1] === '-' ? -c : c
+}
+const BASE_TX_FIELDS = new Set([
+  'id', 'acct', 'date', 'description', 'amount', 'currency', 'kind', 'line', 'qboLine', 'account', 'accountNo', 'gifi',
+  'gifiStatus', 'post', 'flags', 'notes', 'hstItc', 'hstCollected', 'pair', 'mirror', 'postedVia', 'personal', 'external',
+  'business', 'suggestedPost', 'payroll', 'parts',
+])
+// The marker catalogue until W00c's testworld/model/faults.ts lands (then each marker must also be named there).
+const MARKER_CATALOGUE = {
+  dupOf: 'a second copy of an export line: its original is in the key with the same account, date, words and amount; post nothing',
+  priorYear: "last year's row mixed into the export: dated before the year starts; post nothing",
+  missingFromExport: 'a real row the export lacks: counted in the account rowsMissingFromExport, and in the statement roll',
+}
+const sign = (account) => (/owing/i.test(account.balanceMeaning ?? '') ? -1 : 1)
+function markerProblems(where, key, catalogue) {
+  const problems = []
+  const tx = key.transactions ?? []
+  const byId = new Map(tx.map((t) => [t.id, t]))
+  for (const t of tx) {
+    for (const f of Object.keys(t)) {
+      if (!BASE_TX_FIELDS.has(f) && !(f in catalogue)) problems.push(`${where}: ${t.id} carries the field ${f}, which no catalogue entry names`)
+    }
+    if (t.dupOf !== undefined) {
+      const o = byId.get(t.dupOf)
+      if (o === undefined) problems.push(`${where}: ${t.id} is dupOf ${t.dupOf}, which is not in the key`)
+      else if (o.acct !== t.acct || o.date !== t.date || o.description !== t.description || o.amount?.src !== t.amount?.src || o.dupOf !== undefined) {
+        problems.push(`${where}: ${t.id} is dupOf ${t.dupOf}, but the two differ (account, date, words or amount) or the original is itself a copy`)
+      }
+    }
+    if (t.priorYear !== undefined && !(t.priorYear === true && t.date < key.fiscalYear.start)) problems.push(`${where}: ${t.id} is marked priorYear but is dated ${t.date}, inside the year`)
+    if (t.missingFromExport !== undefined && t.missingFromExport !== true) problems.push(`${where}: ${t.id} has missingFromExport ${JSON.stringify(t.missingFromExport)}`)
+  }
+  for (const a of key.accounts ?? []) {
+    const rows = tx.filter((t) => t.acct === a.key)
+    const missing = rows.filter((t) => t.missingFromExport === true).length
+    if (missing !== Number(a.rowsMissingFromExport?.src)) problems.push(`${where}: ${a.key} has ${String(missing)} rows marked missingFromExport, the account says ${String(a.rowsMissingFromExport?.src)}`)
+    if (rows.length - missing !== Number(a.rowsInExport?.src)) problems.push(`${where}: ${a.key} has ${String(rows.length - missing)} rows in the export, the account says ${String(a.rowsInExport?.src)}`)
+    for (const m of key.statementBalances?.[a.key] ?? []) {
+      const activity = rows
+        .filter((t) => t.date.startsWith(m.month) && t.dupOf === undefined && t.priorYear === undefined)
+        .reduce((s, t) => s + centsOfText(t.amount.src), 0)
+      const open = centsOfText(m.opening.src)
+      const close = centsOfText(m.closing.src)
+      if (!(open + sign(a) * activity === close)) problems.push(`${where}: ${a.key} ${m.month} does not roll: ${m.opening.src} and the month's rows (copies and last year's rows left out) do not make ${m.closing.src}`)
+    }
+  }
+  return problems
+}
+const monthAfter = (ym) => {
+  const [y, m] = ym.split('-').map(Number)
+  return m === 12 ? `${String(y + 1)}-01` : `${String(y)}-${String(m + 1).padStart(2, '0')}`
+}
+function sequenceProblems(where, key) {
+  const problems = []
+  for (const a of key.accounts ?? []) {
+    const months = key.statementBalances?.[a.key]
+    if (months === undefined || months.length === 0) continue
+    if (months[0].month !== key.fiscalYear.start.slice(0, 7)) problems.push(`${where}: ${a.key} starts at ${months[0].month}, not the first month of the year`)
+    if (months.at(-1).month !== key.fiscalYear.end.slice(0, 7)) problems.push(`${where}: ${a.key} ends at ${months.at(-1).month}, not the last month of the year`)
+    if (months[0].opening.src !== a.openingBalance?.src) problems.push(`${where}: ${a.key} opens at ${months[0].opening.src}, the account says ${String(a.openingBalance?.src)}`)
+    if (months.at(-1).closing.src !== a.closingBalance?.src) problems.push(`${where}: ${a.key} closes at ${months.at(-1).closing.src}, the account says ${String(a.closingBalance?.src)}`)
+    for (let i = 1; i < months.length; i++) {
+      if (months[i].month !== monthAfter(months[i - 1].month)) problems.push(`${where}: ${a.key} goes from ${months[i - 1].month} to ${months[i].month} (a gap or a repeat)`)
+      if (months[i].opening.src !== months[i - 1].closing.src) problems.push(`${where}: ${a.key} ${months[i].month} opens at ${months[i].opening.src}, but ${months[i - 1].month} closed at ${months[i - 1].closing.src}`)
+    }
+  }
+  return problems
+}
+/** A client kept over two years (folders NN-name-YYYY): each account's last closing is the next year's first opening. */
+function yearLinkProblems(keys) {
+  const problems = []
+  for (const [dir, key] of keys) {
+    const m = /^(\d\d)-(.+)-(\d{4})$/.exec(dir)
+    if (!m) continue
+    const next = keys.find(([d]) => new RegExp(`^\\d\\d-${m[2]}-${String(Number(m[3]) + 1)}$`).test(d))
+    if (!next) continue
+    for (const a of key.accounts ?? []) {
+      const b = (next[1].accounts ?? []).find((x) => x.key === a.key)
+      if (b === undefined) problems.push(`${dir}: account ${a.key} does not continue into ${next[0]}`)
+      else if (a.closingBalance?.src !== b.openingBalance?.src) problems.push(`${dir}: ${a.key} closes at ${String(a.closingBalance?.src)}, ${next[0]} opens at ${String(b.openingBalance?.src)}`)
+    }
+  }
+  return problems
+}
+const answerKeys = () =>
+  fs
+    .readdirSync(path.join(ROOT, 'reference/sample-clients'))
+    .filter((d) => /^\d\d-/.test(d) && exists(`reference/sample-clients/${d}/answer-key.json`))
+    .map((d) => [d, parseKey(read(`reference/sample-clients/${d}/answer-key.json`))])
+
+// ---------- R56: raw-XML regexes handle self-closed elements; tolerances scale with magnitude ----------
+function xmlAndToleranceProblems(files, readFile) {
+  const problems = []
+  for (const f of files) {
+    const src = readFile(f)
+    for (const m of src.matchAll(/\/((?:[^/\\\n]|\\.)*<\/?(?:c|row|col|sheet|cell|v|f|is|si|t)\b(?:[^/\\\n]|\\.)*)\/[dgimsuy]*/g)) {
+      const body = m[1]
+      if (/<\\?\/(?:c|row|sheet|cell|v|si|is|t)\b/.test(body) && !/\\?\/>/.test(body.replace(/<\\?\/\w+/g, ''))) {
+        problems.push(`${f}: a regex over raw XML that misses a self-closed element (${body.slice(0, 50)})`)
+      }
+    }
+    const consts = new Map([...src.matchAll(/\bconst\s+([A-Za-z_$][\w$]*)\s*=\s*([\d.]+(?:e-?\d+)?|Number\.EPSILON)\s*$/gm)].map((m) => [m[1], m[2]]))
+    for (const m of src.matchAll(/Math\.abs\(((?:[^()]|\([^()]*\))*)\)\s*<=?\s*([^\n;,)]+)/g)) {
+      const bound = m[2].trim()
+      const absolute = /^[\d.]+(?:e-?\d+)?$|^Number\.EPSILON$/.test(bound) || (consts.has(bound) && !/\*/.test(bound))
+      if (absolute) problems.push(`${f}: an absolute tolerance (Math.abs(...) < ${bound}); scale it with the magnitude`)
+    }
   }
   return problems
 }
@@ -1133,8 +1548,46 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
   test('SEC-11 R34 sample clients, testworld, fixtures and goldens hold no Luhn-valid nine digits, real e-mail or real phone', () => {
     const files = testDataFiles()
     expect(files.length).toBeGreaterThan(50)
-    expect(onlyKnown('R34', files.flatMap((f) => piiProblems(f, read(f))))).toEqual([])
+    expect(onlyKnown('R34', [...files.flatMap((f) => piiProblems(f, dataText(f))), ...binaryListProblems(files)])).toEqual([])
   })
+  test('SEC-11 R34 rule (widened): a SIN as a JSON number, in exponent form, with mixed, dotted or no-break separators is caught; box fractions and money are not', () => {
+    const json = piiProblems('planted.json', fix('planted-r34-pii.json'))
+    expect(json).toEqual([
+      'planted.json: a Luhn-valid nine-digit number "271000002" (a SIN or business number shape)',
+      'planted.json: a Luhn-valid nine-digit number "271 000-002" (a SIN or business number shape)',
+      'planted.json: a Luhn-valid nine-digit number in exponent form "2.71000002e8"',
+    ])
+    const txt = piiProblems('planted.txt', fix('planted-r34-pii-dotted.txt'))
+    expect(txt).toEqual([
+      'planted.txt: a Luhn-valid nine-digit number "271.000.002" (a SIN or business number shape)',
+      'planted.txt: a Luhn-valid nine-digit number "271\u00a0000\u00a0002" (a SIN or business number shape)',
+    ])
+  })
+  test('SEC-11 R34 rule (widened): a binary test-data file off the reasoned list is caught; the A01 PDFs are on it', () => {
+    expect(binaryListProblems(['testworld/clients/c01/statement.xlsx', 'src/modules/ocr/textlayer/__fixtures__/one-page.pdf'])).toEqual([
+      'testworld/clients/c01/statement.xlsx: a binary test-data file not on the reasoned BINARY_FIXTURES list',
+    ])
+    expect(BINARY_FIXTURES.every((b) => b.reason.trim().length > 20)).toBe(true)
+  })
+  test('SEC-11 R34 (widened) W00b guardFolder refuses the planted folder and passes sample clients, testworld, every __fixtures__ and __golden__', async () => {
+    const subject = 'testworld/model/guard.ts'
+    if (!exists(subject)) {
+      expect(pendingOrNothing('R34-guard', subject)).toBeNull()
+      return
+    }
+    const { guardFolder } = await load(subject)
+    expect(typeof guardFolder, 'guard.ts exports no guardFolder').toBe('function')
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sc-r34-'))
+    try {
+      fs.copyFileSync(path.join(FIX, 'planted-r34-pii.json'), path.join(tmp, 'planted.json'))
+      expect(guardOutcome(guardFolder, tmp), 'guardFolder passed a folder holding a Luhn-valid SIN').not.toBeNull()
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true })
+    }
+    const dirs = [...new Set(['reference/sample-clients', 'testworld', ...testDataFiles().filter(isFixture).map((f) => f.replace(/(__fixtures__|__golden__)\/.*$/, '$1'))])]
+    const problems = dirs.map((d) => [d, guardOutcome(guardFolder, path.join(ROOT, d))]).filter(([, o]) => o !== null).map(([d, o]) => `${d}: ${String(o)}`)
+    expect(onlyKnown('R34-guard', problems)).toEqual([])
+  }, 60_000)
 
   test('EV-6 R36 rule: a planted dollarsToCents(number) with Math.round(x * 100) is caught', () => {
     expect(moneyFromNumberProblems(['planted-r36-money.ts.txt'], fix)).toHaveLength(2)
@@ -1225,5 +1678,228 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
     expect(loadFactCatalogue({ entries: [{ ...entry, options: ['en', 'fr'] }] }).ok).toBe(true)
     const problems = loadFactCatalogue({ entries: [entry] }).ok ? ['loadFactCatalogue accepts duplicate enum options'] : []
     expect(onlyKnown('R45-enum', problems)).toEqual([])
+  })
+})
+
+describe('SC R35, R45 and R50 to R53: test-world checks, cites, one Luhn, loaders, markers and sequences (ARC-8, SEC-11, EV-5, END-2)', () => {
+  test('ARC-8 R35 rule: a check with no planted test and a silent pass over an empty collection is caught; the other is not', async () => {
+    const mod = await import(pathToFileURL(path.join(FIX, 'planted-r35-checks.mjs')).href)
+    const r = await checkCoverageProblems('planted', mod, fix('planted-r35-checks.mjs'), [fix('r35/planted-r35-checks.test.mjs.txt')])
+    expect(r.checked).toBe(2)
+    expect(r.problems).toEqual([
+      'planted#checkMarkers: no test titled "planted ..." calls it (every model or kind check has a planted failing test)',
+      'planted#checkMarkers: over an empty collection it does not say "nothing to check" (got {"ok":true,"issues":[]}); declare it in EMPTY_IS_FINE if that is meant',
+    ])
+  })
+  test('ARC-8 R35 every exported model or kind check has a planted failing test and says "nothing to check" over an empty collection unless declared', async () => {
+    const subject = 'testworld/model/checks.ts'
+    if (!exists(subject)) {
+      expect(pendingOrNothing('R35', subject)).toBeNull()
+      return
+    }
+    const tests = walk('testworld').filter(isTest).map(read)
+    const files = productTs(['testworld']).filter((f) => /(^|\/)checks?\.ts$|\/kinds?\//.test(f))
+    const problems = []
+    let checked = 0
+    for (const f of files) {
+      const r = await checkCoverageProblems(f, await load(f), read(f), tests)
+      checked += r.checked
+      problems.push(...r.problems)
+    }
+    expect(checked, 'nothing to check: no exported check in testworld').toBeGreaterThan(0)
+    expect(onlyKnown('R35', problems)).toEqual([])
+  })
+
+  test('EV-5 R45 the fact catalogue loader refuses a cra_form cite that is free text (each key\'s cite pattern)', async () => {
+    const { loadFactCatalogue } = await load('src/contracts/facts.ts')
+    const base = R23_SAMPLES['src/contracts/facts.ts#factEntrySchema'][0]
+    const good = { ...base, key: 'corp.tax.net_income', valueType: 'money', cites: [{ kind: 'cra_form', ref: 'Schedule 125 line 9999' }] }
+    expect(loadFactCatalogue({ entries: [good] }).ok).toBe(true)
+    const bad = { ...good, cites: [{ kind: 'cra_form', ref: 'the net income line (Test)' }] }
+    const problems = loadFactCatalogue({ entries: [bad] }).ok ? ['loadFactCatalogue accepts a cra_form cite that is free text'] : []
+    expect(onlyKnown('R45-cite', problems)).toEqual([])
+  })
+
+  test('SEC-11 R50 rule: a planted second Luhn is caught; the two homes are not', () => {
+    const files = ['tools/planted/check-digit.mjs', 'reference/sample-clients/lib/util.mjs']
+    const text = (f) => (f === 'tools/planted/check-digit.mjs' ? fix('planted-r50-luhn.mjs.txt') : read(f))
+    expect(oneCheckDigitProblems(files, text)).toEqual(['tools/planted/check-digit.mjs: its own Luhn check (one Luhn: guard.ts and lib/util.mjs)'])
+  })
+  test('SEC-11 R50 one Luhn: no Luhn check outside guard.ts and reference/sample-clients/lib/util.mjs', () => {
+    const files = codeFiles()
+    expect(files.length).toBeGreaterThan(100)
+    expect(onlyKnown('R50', oneCheckDigitProblems(files, read))).toEqual([])
+  }, 60_000)
+  test('SEC-11 R50 the guard Luhn and lib/util.mjs agree on every nine-digit shape (fixed seed)', async () => {
+    const subject = 'testworld/model/guard.ts'
+    if (!exists(subject)) {
+      expect(pendingOrNothing('R50-guard', subject)).toBeNull()
+      return
+    }
+    const guard = await load(subject)
+    const name = Object.keys(guard).find((k) => /luhn/i.test(k) && typeof guard[k] === 'function')
+    expect(name, 'guard.ts exports no Luhn check').toBeDefined()
+    const digits = fc.stringMatching(/^\d{9}$/)
+    fc.assert(fc.property(digits, (d) => Boolean(guard[name](d)) === luhnValid(d)), { seed: SEED, numRuns: 2000 })
+  })
+
+  test('SEC-11 ARC-8 R51 rule: a planted loader that reads data files without the guard is caught; the guarded one is not', () => {
+    const files = ['testworld/planted/loader.ts', 'testworld/planted/clean.ts']
+    const text = (f) => fix(f.endsWith('loader.ts') ? 'r51/planted-loader.ts.txt' : 'r51/clean-loader.ts.txt')
+    expect(loaderProblems(files, text)).toEqual(['testworld/planted/loader.ts: reads data files without guardFolder or guardValue (SEC-11)'])
+  })
+  test('SEC-11 ARC-8 R51 every module in testworld and e2e/_harness that reads data files goes through guardFolder or guardValue', () => {
+    const files = [...productTs(['testworld']), ...walk('e2e/_harness').filter((f) => /\.[cm]?[jt]sx?$/.test(f) && !isTest(f))]
+    const readers = files.filter((f) => READS_DATA.test(read(f)))
+    if (readers.length === 0) {
+      expect(pendingOrNothing('R51', 'testworld')).toBeNull()
+      return
+    }
+    expect(onlyKnown('R51', loaderProblems(files, read))).toEqual([])
+  })
+
+  test('ARC-8 END-2 R52 rule: an uncatalogued marker, a duplicate of nothing, a last-year row inside the year, a wrong missing count and a month that does not roll are caught', () => {
+    const problems = markerProblems('planted', parseKey(fix('planted-r52-r53-key.json')), MARKER_CATALOGUE)
+    expect(problems).toEqual([
+      'planted: T-3 is dupOf T-9, which is not in the key',
+      'planted: T-4 is marked priorYear but is dated 2025-04-03, inside the year',
+      'planted: T-6 carries the field fudged, which no catalogue entry names',
+      'planted: CHQ has 1 rows marked missingFromExport, the account says 0',
+      'planted: CHQ has 5 rows in the export, the account says 4',
+      'planted: CHQ 2025-04 does not roll: 125.00 and the month\'s rows (copies and last year\'s rows left out) do not make 140.00',
+    ])
+    expect(markerProblems('clean', parseKey(fix('clean-r52-r53-key.json')), MARKER_CATALOGUE)).toEqual([])
+  })
+  test('ARC-8 END-2 R52 every fault-marker field in every answer key has a catalogue entry and its arithmetic proof holds', async () => {
+    const keys = answerKeys()
+    expect(keys.length).toBeGreaterThanOrEqual(10)
+    const marked = keys.flatMap(([, k]) => (k.transactions ?? []).filter((t) => Object.keys(MARKER_CATALOGUE).some((m) => m in t)))
+    expect(marked.length, 'nothing to check: no marked row in any answer key').toBeGreaterThan(0)
+    const problems = keys.flatMap(([d, k]) => markerProblems(d, k, MARKER_CATALOGUE))
+    const faults = 'testworld/model/faults.ts'
+    if (exists(faults)) {
+      const text = read(faults)
+      for (const m of Object.keys(MARKER_CATALOGUE)) if (!text.includes(m)) problems.push(`${faults}: the fault catalogue does not name the marker ${m}`)
+    } else expect(pendingOrNothing('R52-catalogue', faults)).toBeNull()
+    expect(onlyKnown('R52', problems)).toEqual([])
+  })
+
+  test('ARC-8 R53 rule: a missing month and a month that does not open at the last closing are caught', () => {
+    expect(sequenceProblems('planted', parseKey(fix('planted-r52-r53-key.json')))).toEqual([
+      'planted: CHQ goes from 2025-02 to 2025-04 (a gap or a repeat)',
+      'planted: CHQ 2025-04 opens at 125.00, but 2025-02 closed at 120.00',
+    ])
+    expect(sequenceProblems('clean', parseKey(fix('clean-r52-r53-key.json')))).toEqual([])
+    const k = parseKey(fix('clean-r52-r53-key.json'))
+    const next = parseKey(fix('clean-r52-r53-key.json').replace('"openingBalance": 100.00', '"openingBalance": 135.01').replace('"openingBalance": 50.00', '"openingBalance": 40.00'))
+    expect(yearLinkProblems([['98-planted-2024', k], ['99-planted-2025', next]])).toEqual(['98-planted-2024: CHQ closes at 135.00, 99-planted-2025 opens at 135.01'])
+  })
+  test('ARC-8 R53 every month sequence in every answer key is complete, each closing is the next opening, and a two-year client links its years', () => {
+    const keys = answerKeys()
+    const withMonths = keys.filter(([, k]) => Object.keys(k.statementBalances ?? {}).length > 0)
+    expect(withMonths.length, 'nothing to check: no statement months').toBeGreaterThan(5)
+    expect(onlyKnown('R53', [...keys.flatMap(([d, k]) => sequenceProblems(d, k)), ...yearLinkProblems(keys)])).toEqual([])
+  })
+})
+
+describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong kinds and raw XML (EV-14, ARC-11, ARC-6, EV-1)', () => {
+  test('EV-14 R46 rule: a planted cell.text and String(cell.value) are caught; a typed switch is not', () => {
+    expect(libraryTextProblems(['planted-r46-reader.ts.txt'], fix)).toEqual([
+      "planted-r46-reader.ts.txt: reads a library value's display text (.text); build the text from the typed value",
+      'planted-r46-reader.ts.txt: turns a library value into text with String(cell.value) and no typed switch',
+    ])
+    expect(libraryTextProblems(['clean-r46-reader.ts.txt'], fix)).toEqual([])
+  })
+  test('EV-14 R46 no module turns a library value into text through .text, String(x) or a template without a typed switch', () => {
+    const files = productTs(['src/modules'])
+    expect(files.length).toBeGreaterThan(0)
+    expect(onlyKnown('R46', libraryTextProblems(files, read))).toEqual([])
+  })
+
+  test('ARC-11 R47 rule: a cache keyed on the fingerprint alone that hands out its own object and names the file is caught', async () => {
+    const { createPlantedReader } = await import(pathToFileURL(path.join(FIX, 'planted-r47-reader.mjs')).href)
+    const problems = await cacheProblems('planted', createPlantedReader, WRONG_KIND.csv, ['b (Test).pdf', 'a (Test).csv'], [['a (Test).csv', 'b (Test).pdf']])
+    expect(problems).toContain('planted: changing a returned result changed the next read (the cache hands out its own object)')
+    expect(problems).toContain('planted: read as b (Test).pdf, the outcome names the file b (Test).pdf')
+    expect(problems).toContain('planted: read as a (Test).csv then b (Test).pdf, the second outcome came from the cache of the first (the key misses the route)')
+  })
+  test('ARC-11 R47 every reader adapter keys its cache on every input its result depends on and returns a copy (A01 now; A02, A03, A07, B04 as they land)', async () => {
+    const problems = []
+    for (const dir of READER_DIRS) {
+      const entry = Object.entries(READERS).find(([, r]) => r.dir === dir)
+      if (!exists(dir)) {
+        const p = pendingOrNothing('R47', dir)
+        if (p !== null && entry === undefined && dir !== 'src/modules/ocr/textlayer') problems.push(p)
+        continue
+      }
+      if (entry === undefined) {
+        problems.push(`${dir}: a reader adapter with no entry in the SC READERS registry (a spec job adds it)`)
+        continue
+      }
+      const [label, r] = entry
+      problems.push(...(await cacheProblems(label, r.make, r.good(), r.names, r.routes)))
+    }
+    expect(Object.keys(READERS).length).toBeGreaterThan(0)
+    expect(onlyKnown('R47', problems)).toEqual([])
+  }, 60_000)
+
+  test('EV-14 ARC-6 R48 rule: a reader that drops an empty page is caught', async () => {
+    const { createDroppingReader } = await import(pathToFileURL(path.join(FIX, 'planted-r47-reader.mjs')).href)
+    expect(await emptyInstanceProblems('planted', createDroppingReader, new Uint8Array(0), READERS.A01.keeps)).toEqual(['planted: a blank page was dropped: 1 pages of 2'])
+  })
+  test('EV-14 ARC-6 R48 every reader whose contract says hidden or never dropped keeps an empty instance (a blank page, an empty hidden row or column)', async () => {
+    const problems = []
+    for (const [label, r] of Object.entries(READERS)) {
+      if (r.blank === undefined) {
+        problems.push(`${label}: no empty instance in the SC READERS registry`)
+        continue
+      }
+      problems.push(...(await emptyInstanceProblems(label, r.make, r.blank(), r.keeps)))
+    }
+    for (const dir of READER_DIRS.filter(exists)) {
+      const says = productTs([dir]).some((f) => /\bhidden\b|never dropped|without a text layer/i.test(read(f)))
+      if (says && !Object.values(READERS).some((r) => r.dir === dir && r.blank !== undefined)) problems.push(`${dir}: its contract says hidden or never dropped, and no empty instance tests it`)
+    }
+    expect(onlyKnown('R48', problems)).toEqual([])
+  }, 60_000)
+
+  test('EV-1 EV-14 R49 rule: a planted z.string().trim() transform is caught', () => {
+    expect(trimTransformProblems(['planted-r49-trim.ts.txt'], fix)).toEqual([
+      'planted-r49-trim.ts.txt: a z.string().trim() transform rewrites the stored value (non-blank goes through text.ts)',
+    ])
+  })
+  test('EV-1 EV-14 R49 no z.string().trim() transform in src/contracts or src/modules', () => {
+    expect(onlyKnown('R49', trimTransformProblems(CONTRACT_AND_MODULE_FILES(), read))).toEqual([])
+  })
+
+  test('ARC-6 EV-14 R54 rule: a reader that lets a library error out with its URL is caught', async () => {
+    const { createThrowingReader } = await import(pathToFileURL(path.join(FIX, 'planted-r47-reader.mjs')).href)
+    const problems = await wrongKindProblems('planted', createThrowingReader, [['gzip bytes', 'data (Test).csv', WRONG_KIND.gzip]], a01Refusal)
+    expect(problems).toEqual(['planted: gzip bytes under data (Test).csv was not refused with a reason (TypeError: InvalidPDFException: Invalid PDF structure, see https://example.com/pdfjs (Test))'])
+    const lax = await wrongKindProblems('lax', createThrowingReader, [['gzip bytes', 'data (Test).csv', WRONG_KIND.gzip]], (o) => String(o.threw.message))
+    expect(lax).toEqual(['lax: gzip bytes: the reason carries a library message or URL (InvalidPDFException: Invalid PDF structure, see https://example.com/pdfjs (Test))'])
+  })
+  test('ARC-6 EV-14 R54 every reader refuses a wrong-kind container (gzip, MZ, zip, spanned zip, CSV, empty, a bare header, a zero-size page) with a reason and never throws raw', async () => {
+    const problems = []
+    for (const [label, r] of Object.entries(READERS)) problems.push(...(await wrongKindProblems(label, r.make, r.wrongKind, r.refusal)))
+    for (const dir of ['src/modules/sheets', 'src/modules/documents/intake']) {
+      if (exists(dir) && !Object.values(READERS).some((r) => r.dir === dir)) problems.push(`${dir}: a reader with no entry in the SC READERS registry (R54)`)
+      else if (!exists(dir)) {
+        const p = pendingOrNothing('R54', dir)
+        if (p !== null) problems.push(p)
+      }
+    }
+    expect(onlyKnown('R54', problems)).toEqual([])
+  }, 60_000)
+
+  test('EV-14 R56 rule: a raw-XML regex that misses a self-closed element and an absolute snap tolerance are caught; the clean versions are not', () => {
+    expect(xmlAndToleranceProblems(['planted-r56-xml.ts.txt'], fix)).toEqual([
+      'planted-r56-xml.ts.txt: a regex over raw XML that misses a self-closed element (<c r="([A-Z]+\\d+)"[^>]*>(.*?)<\\/c>)',
+      'planted-r56-xml.ts.txt: an absolute tolerance (Math.abs(...) < SNAP); scale it with the magnitude',
+    ])
+    expect(xmlAndToleranceProblems(['clean-r56-xml.ts.txt'], fix)).toEqual([])
+  })
+  test('EV-14 R56 every regex over raw sheet XML handles self-closed elements and every snap tolerance is relative to magnitude', () => {
+    expect(onlyKnown('R56', xmlAndToleranceProblems(CONTRACT_AND_MODULE_FILES(), read))).toEqual([])
   })
 })
