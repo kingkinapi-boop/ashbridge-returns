@@ -4,7 +4,8 @@
  "round": 27,
  "spec": "62f6c18",
  "worker": "cloud-43b472",
- "state": "working",
- "at": "2026-10-02T19:05:09.326Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:05:15.671Z",
+ "mode": "turbo",
+ "note": "Re-offered at once after release; same 7 failures, nothing for a builder to do. Lead: park SC build until owner cards carry the defects."
 }
