@@ -1,11 +1,8 @@
 {
  "card": "F03R",
  "role": "spec",
- "worker": "cloud-f684f9",
- "state": "reopened",
- "at": "2026-10-02T07:15:18.521Z",
- "mode": "turbo",
- "note": "round 3 per card (last)",
- "commit": "af234ce",
- "validated": "30986dd"
+ "worker": "cloud-34faae",
+ "state": "working",
+ "at": "2026-10-02T07:21:12.824Z",
+ "mode": "turbo"
 }
