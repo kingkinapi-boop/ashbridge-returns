@@ -4,8 +4,8 @@
  "round": 4,
  "spec": "981d672",
  "worker": "cloud-662626",
- "state": "reported",
- "at": "2026-10-02T04:19:45.042Z",
+ "state": "released",
+ "at": "2026-10-02T05:25:37.295Z",
  "mode": "turbo",
- "note": "round 4: reading.ts mutation 100, 363 tests pass, see reports/F09-build.md"
+ "note": "merged"
 }
