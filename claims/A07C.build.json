@@ -1,11 +1,10 @@
 {
  "card": "A07C",
  "role": "build",
- "round": 9,
+ "round": 10,
  "spec": "ba50f80",
  "worker": "cloud-f765fb",
- "state": "released",
- "at": "2026-10-02T20:45:49.684Z",
- "mode": "turbo",
- "note": "Not started: card lands at b80c251 with D1 to D3 moved to A07D (card Landing section, train 727cd06 checking); a build round would collide with the train. Lead: restamp the build reported or open A07D."
+ "state": "working",
+ "at": "2026-10-02T20:45:52.294Z",
+ "mode": "turbo"
 }
