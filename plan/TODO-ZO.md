@@ -4,7 +4,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. Critic proposals of 2 Oct:** proposal 2 (no waits over 4.5 minutes, no reviving big helpers) you approved on 2 Oct; the Lead applies it. Proposal 1 still needs your word: reply `critic ok 1` (sessions compact at 200k tokens, about a third fewer tokens), `critic ok 1 at 300k` (half as many compactions, about a quarter fewer) or `critic no 1`. At 200k, 94 of 125 helpers would never compact and the Lead would compact about every 2 to 3 busy hours. Details in `reviews\CRITIC.md`. Nothing else waits on it.
+**1. Critic proposals of 2 Oct:** both approved by you on 2 Oct (1: sessions compact at 200k tokens; 2: no waits over 4.5 minutes, no reviving big helpers). The Lead applies them and records your yes as a decision; nothing needed from you. Details in `reviewsCRITIC.md`.
 
 **Before you sleep (no answer needed):** leave the laptop on and plugged in, with sleep off, and leave the "Ashbridge Test" Chrome full size and in front, not covered or minimised. The walkers use it overnight for the .GFI and the day 5 Taxprep exports. If it drops, they stop and pick up again in the morning; nothing breaks.
 

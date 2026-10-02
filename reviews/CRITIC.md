@@ -42,16 +42,16 @@ In chat say only `Critic written: reviews/CRITIC.md. Waiting on to-do #N.` and t
 **2 Oct 2026, 02:50Z** (since 29 Sep).
 
 1. Token leakage, yes: sessions carry 300k to 780k tokens and re-read them every step. No secret leaked.
-2. Two cheap fixes should make the same allowance do about a third more work.
+2. Two cheap fixes, both approved, should do about a third more work per token.
 3. At today's pace, 9 Oct ends with phase 0 and part of phase 1 built, not a usable system.
 
 ### Proposals
 
-**1. Compact every session at about 200k tokens.** [verified numbers; saving inferred]
+**1. Compact every session at about 200k tokens.** [verified numbers; saving inferred] Zo approved at 200k, 2 Oct.
 - Problem: nothing compacts before about 650k (the watcher's 65% of a 1M window).
 - Evidence: laptop logs since 29 Sep: 1,043M tokens read. Lead peaks up to 781k; 14 helpers above 320k; two design fix rounds 177M. Replayed with a 200k limit: Lead 50 to 58% less, helpers 27 to 32% less (research file).
 - Change: `.claude/settings.json` env `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "20"` (reaches helpers). The watcher stays as backstop. New evidence on Z9-8, shown once.
-- Cost: one line. 94 of 125 helpers never reach 200k; the Lead compacts about every 2 to 3 busy hours. Risk: a builder loses a detail (watch rounds per card).
+- Cost: one line. 94 of 125 helpers never reach 200k; the Lead compacts about every 2 to 3 busy hours. Risk: a builder loses a detail.
 - Undo: delete the line.
 
 **2. No wait over 4.5 minutes; never revive a big helper.** [verified] Zo approved, 2 Oct.
@@ -67,4 +67,4 @@ In chat say only `Critic written: reviews/CRITIC.md. Waiting on to-do #N.` and t
 2. Cloud is unmeasured [verified]: 49 runs, no local log; metrics tokens read 0 or "unknown". Research file: `reference/research/2026-10-02-token-use.md`.
 3. Secrets [verified]: none in files or logs; the one history hit is TH's planted fake key (f1c8095); `.env` is ignored.
 
-E to G: no model change, so no canary; nothing to subtract yet.
+E to G: no model change, no canary, nothing to subtract.
