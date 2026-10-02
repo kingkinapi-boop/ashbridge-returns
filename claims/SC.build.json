@@ -4,7 +4,8 @@
  "round": 20,
  "spec": "62f6c18",
  "worker": "cloud-2c4bc3",
- "state": "working",
- "at": "2026-10-02T18:41:55.086Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T18:42:00.797Z",
+ "mode": "turbo",
+ "note": "re-offered after release; see reports/SC-build.md, needs Lead (owners' defects)"
 }
