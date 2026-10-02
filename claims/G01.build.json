@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "b575ce1",
  "worker": "cloud-47e70d",
- "state": "working",
- "at": "2026-10-02T13:00:43.145Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T13:03:35.233Z",
+ "mode": "turbo",
+ "note": "59 of 59 acceptance pass; full suite 1401 green"
 }
