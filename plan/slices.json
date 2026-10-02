@@ -9574,6 +9574,38 @@
       "size": "S",
       "core": true,
       "note": "From reports/A07C-findings.md."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC"
+      ],
+      "paths": [
+        "db/schema/**",
+        "src/contracts/records.ts",
+        "src/contracts/jobs.ts",
+        "src/contracts/ai.ts",
+        "src/modules/gaps/index.ts",
+        "src/modules/gaps/bank/index.ts",
+        "src/modules/jobs/queue.ts",
+        "src/modules/bridge/run.ts",
+        "tools/test/__fixtures__/schema-contract/known.json"
+      ],
+      "clauses": [
+        "SEC-7",
+        "EV-1",
+        "ARC-10",
+        "EV-5",
+        "FLOW-1",
+        "ARC-15"
+      ],
+      "id": "FX3",
+      "title": "Rule defects in landed code (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-build.md, 2 Oct."
     }
   ]
 }
