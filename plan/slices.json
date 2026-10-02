@@ -313,7 +313,7 @@
       "title": "Done gate: scope and mutation agree with how jobs make files",
       "phase": 0,
       "size": "S",
-      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead)."
+      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW)."
     },
     {
       "status": "carded",
