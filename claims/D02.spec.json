@@ -2,8 +2,7 @@
  "card": "D02",
  "role": "spec",
  "worker": "cloud-055342",
- "state": "released",
- "at": "2026-10-02T09:11:06.835Z",
- "mode": "turbo",
- "note": "design card: no approved pages or verify rules on main, see reports/D02-spec.md (on claude/D00)"
+ "state": "working",
+ "at": "2026-10-02T09:11:12.903Z",
+ "mode": "turbo"
 }
