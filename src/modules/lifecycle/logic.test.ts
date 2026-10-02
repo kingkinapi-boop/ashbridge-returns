@@ -57,6 +57,7 @@ describe('F02 logic', () => {
     const d = (n: number): Date => new Date(2026, 0, n)
     expect(foldWaiting([])).toEqual({ since: null, periods: [] })
     expect(foldWaiting([{ occurred_at: d(1), flag: false }])).toEqual({ since: null, periods: [] })
+    expect(foldWaiting([{ occurred_at: d(1), flag: true }, { occurred_at: d(2), flag: false }])).toEqual({ since: null, periods: [{ from: d(1), to: d(2) }] })
     expect(foldWaiting([{ occurred_at: d(1), flag: true }])).toEqual({ since: d(1), periods: [{ from: d(1), to: null }] })
     expect(foldWaiting([{ occurred_at: d(1), flag: true }, { occurred_at: d(2), flag: true }])).toEqual({ since: d(1), periods: [{ from: d(1), to: null }] })
     expect(
@@ -86,7 +87,8 @@ describe('F02 dates details', () => {
 
   test('FLOW-12 30-day months end on the 30th; day 0 and month 0 are refused; text around the date is refused', () => {
     expect(dueDates('2026-04-30', { ccpcConditionsMet: false }).filing).toBe('2026-10-31')
-    expect(() => dueDates('2026-04-31', { ccpcConditionsMet: false })).toThrow()
+    expect(() => dueDates('2026-04-31', { ccpcConditionsMet: false })).toThrow(/calendar date/)
+    expect(() => dueDates('nope', { ccpcConditionsMet: false })).toThrow(/YYYY-MM-DD/)
     expect(() => dueDates('2026-00-10', { ccpcConditionsMet: false })).toThrow()
     expect(() => dueDates('2026-01-00', { ccpcConditionsMet: false })).toThrow()
     expect(() => dueDates(' 2026-01-10', { ccpcConditionsMet: false })).toThrow()

@@ -16,7 +16,8 @@ describe('F02 contracts', () => {
   test('FLOW-5 a changed item has a kind and its id', () => {
     expect(ChangedItemSchema.parse({ kind: 'cell', cellId: 'A.1' })).toEqual({ kind: 'cell', cellId: 'A.1' })
     for (const kind of ['fact', 'entry', 'judgmentInput'] as const) {
-      expect(ChangedItemSchema.safeParse({ kind, id: 'x' }).success).toBe(true)
+      expect(ChangedItemSchema.parse({ kind, id: 'x' })).toEqual({ kind, id: 'x' })
+      expect(ChangedItemSchema.safeParse({ kind, cellId: 'x' }).success).toBe(false)
       expect(ChangedItemSchema.safeParse({ kind }).success).toBe(false)
     }
     expect(ChangedItemSchema.safeParse({ kind: 'cell', id: 'x' }).success).toBe(false)
