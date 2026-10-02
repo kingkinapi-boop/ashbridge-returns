@@ -1,12 +1,10 @@
 {
  "card": "A01",
  "role": "build",
- "round": 2,
- "spec": "f4144b9cdfe350f846a90a257426cedcd8d8e2ed",
- "worker": "cloud-ff757e",
- "state": "reopened",
- "at": "2026-10-02T17:36:48.387Z",
- "mode": "turbo",
- "beat": "2026-10-02T12:20:48.326Z",
- "note": "F01D landed; spec current"
+ "round": 3,
+ "spec": "2f0b92b",
+ "worker": "cloud-8ec957",
+ "state": "working",
+ "at": "2026-10-02T17:38:54.817Z",
+ "mode": "turbo"
 }
