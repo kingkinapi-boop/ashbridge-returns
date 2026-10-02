@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "79893e4",
  "worker": "cloud-e1c409",
- "state": "reported",
- "at": "2026-10-02T01:02:22.309Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T01:13:05.653Z",
  "mode": "turbo",
- "note": "53 of 53 acceptance tests pass, stryker 76.49, flake 5 of 5"
+ "note": "FAIL: '-' between two amounts breaks grouping, one-digit decimals join, see reports/F09-check.md"
 }

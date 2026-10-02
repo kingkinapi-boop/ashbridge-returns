@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T01:02:22.309Z",
  "worker": "cloud-327258",
- "state": "working",
- "at": "2026-10-02T01:06:13.030Z",
+ "state": "failed",
+ "at": "2026-10-02T01:13:05.653Z",
  "mode": "turbo",
- "beat": "2026-10-02T01:09:37.552Z"
+ "beat": "2026-10-02T01:09:37.552Z",
+ "note": "FAIL: '-' between two amounts breaks grouping, one-digit decimals join, see reports/F09-check.md"
 }
