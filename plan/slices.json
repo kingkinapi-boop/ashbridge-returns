@@ -955,7 +955,8 @@
       "title": "Journey harness: load a kind, run the pipeline",
       "phase": 0,
       "size": "M",
-      "security": true
+      "security": true,
+      "note": "Journeys run next start (production mode): the harness sets every *_ENGINE explicitly (A06 findings, R62)."
     },
     {
       "status": "carded",
@@ -9246,7 +9247,8 @@
       "title": "Live adapters, switched off, no keys",
       "phase": 4,
       "size": "M",
-      "security": true
+      "security": true,
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch)."
     },
     {
       "status": "todo",
@@ -9463,6 +9465,59 @@
       "size": "S",
       "core": true,
       "note": "From reports/W00a-findings.md."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06",
+        "FX2"
+      ],
+      "paths": [
+        "tools/test/security-rules.test.mjs",
+        "src/contracts/security-rules.db.test.ts",
+        "tools/test/__fixtures__/security-rules/**"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-6",
+        "ARC-20",
+        "FLOW-1",
+        "ARC-15"
+      ],
+      "id": "SC3",
+      "title": "Security rules R62 to R66",
+      "phase": 0,
+      "size": "M",
+      "core": false,
+      "security": true,
+      "note": "From reports/A06-findings.md, 2 Oct."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06"
+      ],
+      "paths": [
+        "src/core/env.ts",
+        "src/modules/ocr/index.ts",
+        "src/modules/storage/index.ts",
+        "src/modules/ocr/engine-setting.test.ts",
+        "src/modules/storage/engine-setting.test.ts"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-6",
+        "ARC-20"
+      ],
+      "id": "FX2",
+      "title": "Stand-ins refuse to start in production when their setting is unset (A01, A05)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/A06-findings.md, 2 Oct."
     }
   ]
 }
