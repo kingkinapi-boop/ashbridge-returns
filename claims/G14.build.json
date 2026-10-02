@@ -1,12 +1,10 @@
 {
  "card": "G14",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "ebb2054",
- "worker": "cloud-37afbb",
- "state": "reopened",
- "at": "2026-10-02T19:46:22.376Z",
- "mode": "turbo",
- "beat": "2026-10-02T19:33:25.595Z",
- "note": "round 2 (single cause, A306): add the missing builder test payroll-bonuses.test.ts the card asks for; see reports/G14-check.md"
+ "worker": "cloud-eea9f9",
+ "state": "working",
+ "at": "2026-10-02T19:47:21.182Z",
+ "mode": "turbo"
 }
