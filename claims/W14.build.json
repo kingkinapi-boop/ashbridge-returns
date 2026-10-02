@@ -1,11 +1,10 @@
 {
  "card": "W14",
  "role": "build",
- "round": 2,
- "spec": "a8a100e",
- "worker": "cloud-85862e",
- "state": "reopened",
- "at": "2026-10-02T02:36:30.658Z",
- "mode": "turbo",
- "note": "FAIL: prior-year taxable income ignores amortization and CCA; GIFI 2680 twice, see reports/W14-check.md"
+ "round": 3,
+ "spec": "0751e5e",
+ "worker": "cloud-db88d1",
+ "state": "working",
+ "at": "2026-10-02T02:40:11.413Z",
+ "mode": "turbo"
 }
