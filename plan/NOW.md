@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 21:27Z by the Lead. Critic proposals of 2 Oct evening approved and applied (0024: compaction at 200k with reload hook, CQ2 item 6, layouts before W21; A387). Auto-fill notes in (0023); next fold O8 into FINDINGS.md, CK-12 and RT-14. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 21:43Z by the Lead. Critic proposals of 2 Oct evening approved and applied (0024: compaction at 200k with reload hook, CQ2 item 6, layouts before W21; A387). Auto-fill notes in (0023); next fold O8 into FINDINGS.md, CK-12 and RT-14. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,8 +13,9 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 21:27Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| W00c spec, A07D spec, A08 spec | queue | cloud | 2 Oct 21:05Z | claude/<card> |
-| A06 round 2 build (8 new tests; then fresh security review), SC build, CQ2 build, A04 check | 4 cloud runs | cloud | 2 Oct 21:27Z | claude/<card> |
+| W00c spec, A08 spec, CQ2 check, A06 check (then fresh security review) | queue | cloud | 2 Oct 21:05Z to 21:35Z | claude/<card> |
+| A04: check FAIL (mutation scores, process.env); findings review by an Opus helper, build held | local helper | laptop | 2 Oct 21:42Z | reports/A04-findings.md |
+| SC spec round (A03's ocr/recorded R34, R47; build held), A07D build, W16 spec | 3 cloud runs | cloud | 2 Oct 21:43Z | claude/<card> |
 
 ## Next, in order
 
@@ -22,7 +23,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 21:27Z by the Lea
 2. After a spec reports, reopen the held build (`update <card> build reopened --worker lead`); after a released check, re-stamp the build (`update <card> build reported --worker <builder>`) until the CQ1 follow-up lands.
 3. W00c (split from W00a, A379, A380): spec, build, check; after it lands merge it into claude/W00b and re-run W00b's 242 tests, then W00b build. S00, B04, JH0, SK0, W01 to W13, W20, I40 now wait on W00c; SC2 (rules R57 to R61) after W00c.
 4. A06 round 2: spec reopened, then build, then a fresh security review before boarding. New cards: SC3 (security rules R62 to R66, after A06 and FX2), FX2 (A01 and A05 refuse unset engines in production).
-5. CQ2 carded (the CQ1 follow-up, items 1 to 6). Write the W16 card, then T08, Q00, Q01, I01, I30, I40.
+5. CQ2 carded (the CQ1 follow-up, items 1 to 6). W16, T08, Q00, Q01, I01, I30, I40 carded (A389, A390); phase 3 cards get an independent card review before their first spec.
 6. Designs: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions, then D02 to D13 copy them into design/screens/ (design lane, A352; claim.mjs now honours `lane: "design"`).
 7. Taxprep: day 4 Zo Sat 3 Oct (Auto-fill); day 6 Sun 4 Oct.
 8. Critic about every two days from Sat 3 Oct; Reviewer daily.
