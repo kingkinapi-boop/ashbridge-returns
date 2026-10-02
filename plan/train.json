@@ -1,11 +1,12 @@
 {
   "status": "checking",
   "branch": "claude/train",
-  "head": "727cd06",
+  "head": "3c3de19",
   "cards": [
-    "A07C"
+    "A03",
+    "G17"
   ],
-  "requested_at": "2026-10-02T20:30:31Z",
-  "note": "A07C lands with known defects D1 to D3 (A384, reports/A07C-findings.md); A07C's own D1 to D3 tests may fail by design: list them, do not count them red. Everything else must be green. Run gitleaks over HEAD.",
-  "by": "cloud-197c89"
+  "requested_at": "2026-10-02T20:55:43Z",
+  "note": "A03 core (Opus read in its check). Run gitleaks over HEAD.",
+  "by": "cloud-0c9d3d"
 }
