@@ -265,7 +265,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F05"
+        "F05",
+        "F00T"
       ],
       "paths": [
         "src/contracts/checks.ts",
@@ -313,6 +314,42 @@
       "phase": 0,
       "size": "S",
       "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00"
+      ],
+      "paths": [
+        "src/core/money.ts",
+        "src/core/ids.ts",
+        "src/core/clock.ts",
+        "src/core/env.ts",
+        "src/core/log.ts",
+        "src/core/core.test.ts",
+        "src/core/money.test.ts",
+        "src/core/ids.test.ts",
+        "src/core/clock.test.ts",
+        "src/core/env.test.ts",
+        "src/core/log.test.ts",
+        "src/core/__fixtures__/core/**"
+      ],
+      "clauses": [
+        "ARC-1",
+        "ARC-7",
+        "ARC-13",
+        "ARC-15",
+        "ARC-16",
+        "ARC-17",
+        "ARC-18",
+        "ARC-21"
+      ],
+      "id": "F00T",
+      "title": "Core tests by a spec job",
+      "phase": 0,
+      "size": "S",
+      "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it)."
     },
     {
       "status": "done",
@@ -432,7 +469,8 @@
         "tools/test/toolchain-rules.test.mjs",
         "tools/test/__fixtures__/**",
         ".github/workflows/checks.yml",
-        ".gitleaks.toml"
+        ".gitleaks.toml",
+        "src/core/egress-rules.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-17",
@@ -608,7 +646,8 @@
       "spec": null,
       "deps": [
         "W00",
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "e2e/_harness/**",
@@ -690,7 +729,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "src/modules/jobs/**",
@@ -1656,7 +1696,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "src/modules/auth/**",
@@ -2537,7 +2578,8 @@
       "deps": [
         "F01",
         "W00",
-        "A05"
+        "A05",
+        "F00T"
       ],
       "paths": [
         "src/modules/qbo/**",
@@ -2572,7 +2614,8 @@
         "L00",
         "SK0",
         "F10",
-        "F07"
+        "F07",
+        "F00T"
       ],
       "paths": [
         "src/modules/books/read/**",
@@ -3041,7 +3084,8 @@
         "F02",
         "D01",
         "E03",
-        "JH0"
+        "JH0",
+        "F00T"
       ],
       "paths": [
         "src/ui/behaviour/**",
@@ -3071,7 +3115,8 @@
         "A06",
         "F02",
         "D01",
-        "D13"
+        "D13",
+        "F00T"
       ],
       "paths": [
         "src/app/(staff)/layout.tsx",
@@ -4006,7 +4051,8 @@
         "S02",
         "S03",
         "F10",
-        "B01"
+        "B01",
+        "F00T"
       ],
       "paths": [
         "src/modules/mapping/core/**",
