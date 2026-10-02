@@ -8,3 +8,6 @@ Branch claude/SC, main merged in. SC's paths hold only tests, so there is no pro
 - R43: FUTURE_POINTERS names no card for 19 unbuilt-table ids (spec job).
 Lead: add the defects to the owning cards, land BL0, reopen a spec job to extend R23_SAMPLES and FUTURE_POINTERS, then re-offer SC build.
 Ambers: none. Permission gaps: none. Model: Sonnet 5.5.
+
+## Re-check (cloud-80fece, 2 Oct, main 2de6057)
+Re-ran both SC files after merging main: the same 7 fail (R12, R15 x2, R18, R23, R41, R43), same owners as above. Nothing in SC's paths to change. Released again; the queue re-offers it before the owners' fixes land.
