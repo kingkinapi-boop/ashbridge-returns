@@ -1,10 +1,9 @@
 {
  "card": "F01C",
  "role": "check",
- "for": "2026-10-02T14:30:19.833Z",
- "worker": "local-cc7d7a",
- "state": "released",
- "at": "2026-10-02T14:36:48.522Z",
- "mode": "normal",
- "note": "core: cloud"
+ "for": "2026-10-02T15:20:08.119Z",
+ "worker": "cloud-e592ae",
+ "state": "working",
+ "at": "2026-10-02T15:20:46.872Z",
+ "mode": "turbo"
 }
