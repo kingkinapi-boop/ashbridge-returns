@@ -69,6 +69,8 @@ import {
   type WriteRow,
   type WriteValue,
 } from './taxprep'
+// F03R check 8 reads ALWAYS_EXPORTED through the module object, so the spec typechecks before the build adds it.
+import * as taxprepModule from './taxprep'
 
 const SEED = 20261002
 
@@ -1663,5 +1665,244 @@ describe('F03R check 4: the writer re-validates every row identifier (RT-21, RT-
     expect(asText(writeOk(PROBE, rows, 'import'))).toBe(
       `${HEADER_LINE}GFGBA.Ttwgba64,"7693","",""\r\nGFBGII[1].GFGIJ.Ttwgij121,"-1299","",""\r\n`,
     )
+  })
+})
+
+// =====================================================================================================================
+// F03R spec round 2 (findings review wave 2, reports/findings-wave2.md RC3, fix 1d and 4; RC4 for check 8).
+// The writer re-reads every value it writes through its own parser; extremes are generated, not assumed away.
+// =====================================================================================================================
+
+/** One row holding `value` in the given column (the other column a clear). */
+function oneValueRow(cell: string, value: WriteValue, column: 'current' | 'last'): WriteRow {
+  return column === 'current'
+    ? { id: id(cell), current: value }
+    : { id: id(cell), current: { kind: 'clear' }, last: value }
+}
+
+describe('F03R check 5: a rate too large to write in full is refused, never written (RT-3)', () => {
+  const CELL = 'CCACat.FD08C[1].FED.Ttw08cA2'
+
+  for (const column of ['current', 'last'] as const) {
+    test.each([1e21, 1e300])(
+      `RT-3 planted fault: the rate %s in the ${column} column is refused by the writer with a reason naming the row`,
+      (rate) => {
+        for (const purpose of ['import', 'export'] as const) {
+          const rows = [oneValueRow(CELL, { kind: 'rate', rate }, column)]
+          const w = writeTaxprepCsv({ header: PROBE, rows }, { purpose })
+          expect(w.ok, w.ok ? `${purpose}: it wrote ${JSON.stringify(asText(w.bytes))}` : '').toBe(false)
+          if (w.ok) continue
+          expect(w.problems).toHaveLength(1)
+          const p = must(w.problems[0], 'problem')
+          expect(p).toMatchObject({ index: 0, identifier: CELL })
+          expect(p.reason).toContain(CELL)
+          expect(p.reason.replace(CELL, '').trim().length).toBeGreaterThan(10)
+        }
+      },
+    )
+  }
+})
+
+describe("F03R check 6: a minus then an apostrophe is refused like -'12 (RT-3, RT-9)", () => {
+  for (const column of ['current', 'last'] as const) {
+    test.each(["-'1.5", "-'1,234", "-'", "-'12"])(
+      `RT-3 planted fault: %j in the ${column} column is refused with an apostrophe fault naming row 3`,
+      (value) => {
+        const faults = faultsOf(apostropheFile(value, column))
+        const hit = faults.find((f) => f.line === 3 && f.code === 'apostrophe')
+        expect(hit, `faults seen: ${JSON.stringify(faults)}`).toBeDefined()
+        expect(must(hit, 'fault').reason).toContain('FDONE.Ttwone66')
+      },
+    )
+  }
+
+  test("RT-3 property (fixed seed): any value starting with -' is refused with an apostrophe fault on its row", () => {
+    const tail = fc
+      .array(fc.constantFrom(..."0123456789-.,'abcXE ".split('')), { maxLength: 8 })
+      .map((cs) => cs.join(''))
+    fc.assert(
+      fc.property(tail, fc.constantFrom('current' as const, 'last' as const), (t, column) => {
+        const r = parseTaxprepCsv(apostropheFile(`-'${t}`, column))
+        expect(r.ok, r.ok ? `-'${t} was read: ${JSON.stringify(r.file.rows[1])}` : '').toBe(false)
+        if (r.ok) return
+        expect(r.faults.some((f) => f.line === 3 && f.code === 'apostrophe')).toBe(true)
+      }),
+      { seed: SEED, numRuns: 300 },
+    )
+  })
+})
+
+describe('F03R check 7: every kind survives write then parse, extremes included (RT-3, ARC-14)', () => {
+  const CELL = 'GFGBA.Ttwgba64'
+
+  /** `must`: the writer has to write it; otherwise it may refuse (naming the row), never write what reads back different. */
+  type Probe = { value: WriteValue; must: boolean }
+  const yes = (value: WriteValue): Probe => ({ value, must: true })
+  const either = (value: WriteValue): Probe => ({ value, must: false })
+  const amount = (n: number): WriteValue => ({ kind: 'amount', amount: n })
+  const rate = (r: number): WriteValue => ({ kind: 'rate', rate: r })
+
+  const textWithApostrophe = fc
+    .tuple(fc.constantFrom(...UPPER), fc.array(fc.constantFrom(...TEXT_CHARS, "'"), { maxLength: 30 }))
+    .map(([first, rest]) => first + rest.join(''))
+
+  const probeArb: fc.Arbitrary<Probe> = fc.oneof(
+    // amounts: every safe whole number must be written; -0 is written and read as 0
+    fc.constantFrom(Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER, 0, -0, 1, -1).map((n) => yes(amount(n))),
+    fc.integer({ min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER }).map((n) => yes(amount(n))),
+    fc.constantFrom(1e21, -1e21, 2 ** 53, 1e300, Number.MAX_VALUE).map((n) => either(amount(n))),
+    fc.double({ noNaN: true, noDefaultInfinity: true }).map((n) => either(amount(n))),
+    // rates: every 4-decimal rate from 0 to 100 must be written; 1e21, 1e300 and any other double may be refused
+    fc.constantFrom(0, -0, 0.0001, 1, 99.9999).map((r) => yes(rate(r))),
+    fc.integer({ min: 0, max: 1_000_000 }).map((n) => yes(rate(n / 10_000))),
+    fc.constantFrom(1e20, 1e21, 1e300, Number.MAX_VALUE, 2 ** 53 + 0.5).map((r) => either(rate(r))),
+    fc.double({ min: 0, noNaN: true, noDefaultInfinity: true }).map((r) => either(rate(r))),
+    // text with an apostrophe inside (never leading), dates, yes or no, and the clear
+    textWithApostrophe.map((t) => yes({ kind: 'text', text: t })),
+    fc
+      .constantFrom("O'Brien Holdings (Test)", "Lot 12 O'Neil (Test)", "A'", "Z '-12")
+      .map((t) => yes({ kind: 'text', text: t })),
+    dateArb.map((d) => yes({ kind: 'date', date: d })),
+    fc.boolean().map((b) => yes({ kind: 'yesNo', yes: b })),
+    fc.constant(yes({ kind: 'clear' })),
+  )
+
+  /** JSON drops the sign of -0; show it. */
+  const describeValue = (v: WriteValue): string =>
+    JSON.stringify(v, (_k, x: unknown) => (typeof x === 'number' && Object.is(x, -0) ? '-0' : x))
+
+  /** The parser must hand back the value given (an amount or rate of -0 as 0). */
+  function expectReadBack(given: WriteValue, back: CellValue): void {
+    if (given.kind === 'clear') {
+      expect(back).toEqual({ kind: 'clear' })
+      return
+    }
+    expect(back.kind, `a ${given.kind} value was read back as a clear`).toBe('value')
+    if (back.kind !== 'value') return
+    switch (given.kind) {
+      case 'amount':
+        expect(back.text).toBe(String(given.amount)) // String(-0) is '0'
+        expect(Number(back.text)).toBe(given.amount === 0 ? 0 : given.amount)
+        return
+      case 'rate':
+        expect(back.text).toMatch(/^\d+\.\d{4}$/)
+        expect(Number(back.text)).toBe(given.rate === 0 ? 0 : given.rate)
+        return
+      case 'text':
+        expect(back.text).toBe(given.text)
+        return
+      case 'date':
+        expect(back.text).toBe(given.date)
+        return
+      case 'yesNo':
+        expect(back.text).toBe(given.yes ? 'Y' : 'N')
+        return
+    }
+  }
+
+  function check(probe: Probe, column: 'current' | 'last', purpose: 'import' | 'export'): void {
+    const shown = `${describeValue(probe.value)} in ${column}, ${purpose}`
+    const w = writeTaxprepCsv({ header: PROBE, rows: [oneValueRow(CELL, probe.value, column)] }, { purpose })
+    if (!w.ok) {
+      expect(probe.must, `the writer refused ${shown}: ${JSON.stringify(w.problems)}`).toBe(false)
+      expect(w.problems).toHaveLength(1)
+      expect(w.problems[0]).toMatchObject({ index: 0, identifier: CELL })
+      return
+    }
+    const r = parseTaxprepCsv(w.bytes)
+    const why = r.ok
+      ? ''
+      : `the writer wrote ${JSON.stringify(asText(w.bytes))} for ${shown}; its parser refused it: ${JSON.stringify(r.faults)}`
+    expect(r.ok, why).toBe(true)
+    if (!r.ok) return
+    const back = must(r.file.rows[0], 'row')
+    expect(back.apostrophe).toBe(false)
+    expectReadBack(probe.value, must(column === 'current' ? back.current : back.last, 'read-back value'))
+  }
+
+  test('RT-3 ARC-14 property (fixed seed): for every kind, write then parse returns the value given, or the writer refuses it naming the row', () => {
+    fc.assert(
+      fc.property(
+        probeArb,
+        fc.constantFrom('current' as const, 'last' as const),
+        fc.constantFrom('import' as const, 'export' as const),
+        (probe, column, purpose) => {
+          check(probe, column, purpose)
+        },
+      ),
+      { seed: SEED, numRuns: 1000 },
+    )
+  })
+
+  test.each([
+    ['the amount Number.MAX_SAFE_INTEGER', amount(Number.MAX_SAFE_INTEGER), '9007199254740991'],
+    ['the amount Number.MIN_SAFE_INTEGER', amount(Number.MIN_SAFE_INTEGER), '-9007199254740991'],
+    ['the amount -0', amount(-0), '0'],
+    ['the rate -0', rate(-0), '0.0000'],
+    ['the rate 0.0001', rate(0.0001), '0.0001'],
+    ['the rate 99.9999', rate(99.9999), '99.9999'],
+    ["the text O'Brien Holdings (Test)", { kind: 'text', text: "O'Brien Holdings (Test)" } as const, "O'Brien Holdings (Test)"],
+  ])('RT-3 ARC-14 extreme: %s is written as %j and read back unchanged, either column', (_what, value, text) => {
+    for (const column of ['current', 'last'] as const) {
+      const out = writeOk(PROBE, [oneValueRow(CELL, value, column)], 'import')
+      const back = must(parseOk(out).rows[0], 'row')
+      expect(column === 'current' ? back.current : back.last).toEqual({ kind: 'value', text })
+    }
+  })
+
+  test.each([
+    ['the rate 1e21', rate(1e21)],
+    ['the rate 1e300', rate(1e300)],
+    ['the rate Number.MAX_VALUE', rate(Number.MAX_VALUE)],
+    ['the amount 1e21', amount(1e21)],
+  ])('RT-3 planted fault: %s is refused by the writer naming the row, never written', (_what, value) => {
+    for (const column of ['current', 'last'] as const) {
+      const problems = writeRefused(PROBE, [oneValueRow(CELL, value, column)], 'export')
+      expect(problems).toHaveLength(1)
+      expect(problems[0]).toMatchObject({ index: 0, identifier: CELL })
+    }
+  })
+})
+
+describe('F03R check 8: the cells the "entered" export lists even when empty are one constant (RT-23, RT-13)', () => {
+  const EIGHT = [
+    'IDENT.Ident120',
+    'IDENT.Ident121',
+    'IDENT.Ident311',
+    'IDENT.Ident230',
+    'IDENT.Ident451',
+    'IDENT.Ident492',
+    'IFirm.ContactPartner',
+    'IFirm.ContactID',
+  ]
+  type Entry = { identifier?: unknown; finding?: unknown }
+  /** ALWAYS_EXPORTED, read through the module object (it does not exist before the build). */
+  function alwaysExported(): Entry[] {
+    const list = (taxprepModule as Record<string, unknown>)['ALWAYS_EXPORTED']
+    expect(Array.isArray(list), 'ALWAYS_EXPORTED is not exported from taxprep.ts as a list').toBe(true)
+    return Array.isArray(list) ? (list as Entry[]) : []
+  }
+
+  test('RT-23 taxprep.ts exports ALWAYS_EXPORTED: exactly the eight creation and contact cells of FINDINGS.md', () => {
+    const identifiers = alwaysExported().map((e) => e.identifier)
+    expect([...identifiers].sort()).toEqual([...EIGHT].sort())
+    expect(new Set(identifiers).size).toBe(identifiers.length)
+  })
+
+  test('RT-23 each entry carries the finding it rests on, like IGNORED_ON_IMPORT, and an identifier the grammar accepts', () => {
+    const list = alwaysExported()
+    expect(list.length).toBeGreaterThan(0)
+    for (const e of list) {
+      expect(typeof e.identifier).toBe('string')
+      expect(typeof e.finding, `${String(e.identifier)} has no finding`).toBe('string')
+      expect(String(e.finding)).toContain('FINDINGS.md')
+      expect(String(e.finding).trim().length).toBeGreaterThan(20)
+      expect(parseCellId(String(e.identifier)).ok).toBe(true)
+    }
+  })
+
+  test('RT-23 RT-13 every cell skipped on import is one the "entered" export lists (the year dates, the name, Ident492)', () => {
+    const identifiers = new Set(alwaysExported().map((e) => e.identifier))
+    for (const e of IGNORED_ON_IMPORT) expect(identifiers.has(e.identifier), e.identifier).toBe(true)
   })
 })

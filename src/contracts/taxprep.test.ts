@@ -557,10 +557,11 @@ describe('F03R unit: writer refusals say why', () => {
 })
 
 describe('F03R unit: only a leading apostrophe is refused', () => {
-  test.each(["A-'12", "-'12x", "x-'12"])('RT-3 text %s with an apostrophe inside is accepted', (t) => {
+  test.each(["A-'12", "x-'12"])('RT-3 text %s with an apostrophe inside is accepted', (t) => {
     const r = parseTaxprepCsv(bytes(head + `IFirm.ContactPartner,"${t}","",""\r\n`))
     expect(r.ok).toBe(true)
   })
+  // "-'12x" retired from the accepted list above: F03R check 6 (spec round 2) refuses every value starting with -'
   test("RT-3 -'12 is refused as an apostrophe fault", () => {
     const r = parseTaxprepCsv(bytes(head + `IFirm.ContactPartner,"-'12","",""\r\n`))
     expect(r.ok).toBe(false)
