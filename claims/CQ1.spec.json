@@ -2,7 +2,10 @@
  "card": "CQ1",
  "role": "spec",
  "worker": "local-c54956",
- "state": "working",
- "at": "2026-10-02T14:58:56.913Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T15:11:03.562Z",
+ "mode": "turbo",
+ "note": "14 tests, 13 fail for the right reason",
+ "commit": "69eefb4",
+ "validated": "849b8105fef3b97d3ecffb31a6d3eb200cdf9ec7"
 }
