@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "ab2a22d",
  "worker": "local-cc7d7a",
- "state": "reported",
- "at": "2026-10-02T14:39:25.305Z",
+ "state": "reopened",
+ "at": "2026-10-02T15:19:24.456Z",
  "mode": "normal",
- "note": "22 of 22 acceptance tests pass"
+ "note": "round 2 spec reported"
 }
