@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "11df325",
  "worker": "cloud-2f8ae4",
- "state": "reported",
- "at": "2026-10-02T21:30:48.090Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T21:38:12.780Z",
  "mode": "turbo",
- "note": "223 of 223 tools tests pass; scope gap: new test file and merge SKILL outside Paths, see report"
+ "note": "FAIL: scope (2 files outside Paths, one a builder-written rule 6 test file); no code defect, see reports/CQ2-check.md"
 }
