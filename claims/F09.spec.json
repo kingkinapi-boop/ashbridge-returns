@@ -2,10 +2,10 @@
  "card": "F09",
  "role": "spec",
  "worker": "cloud-85862e",
- "state": "reported",
- "at": "2026-10-02T01:42:31.981Z",
+ "state": "reopened",
+ "at": "2026-10-02T03:09:52.381Z",
  "mode": "turbo",
  "beat": "2026-10-02T01:40:45.432Z",
- "note": "round 3: 5 tests (checks 17, 18) fail on current build; validated on main deab596",
+ "note": "round 4: mutation survivors",
  "commit": "6b127d3"
 }
