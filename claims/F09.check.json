@@ -1,10 +1,9 @@
 {
  "card": "F09",
  "role": "check",
- "for": "2026-10-02T02:54:04.740Z",
- "worker": "cloud-ee27ff",
- "state": "failed",
- "at": "2026-10-02T02:57:16.309Z",
- "mode": "turbo",
- "note": "FAIL: reading.ts mutation 76.29 (110 survived, 9 no cov), per-file 100 rule; see reports/F09-check.md on claude/F09-check"
+ "for": "2026-10-02T04:19:45.042Z",
+ "worker": "local-4e012b",
+ "state": "working",
+ "at": "2026-10-02T04:26:48.743Z",
+ "mode": "turbo"
 }
