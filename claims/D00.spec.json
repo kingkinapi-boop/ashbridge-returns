@@ -2,10 +2,10 @@
  "card": "D00",
  "role": "spec",
  "worker": "cloud-790b0c",
- "state": "reported",
- "at": "2026-10-02T08:34:26.724Z",
+ "state": "reopened",
+ "at": "2026-10-02T09:34:26.424Z",
  "mode": "turbo",
- "note": "refit, 15 tests, fail for build.mjs missing; build must add govuk-frontend/MOJ/sass/nunjucks/axe-core to package.json",
+ "note": "move axe tests out of unit project (card Spec fix, A351)",
  "commit": "82aeffe",
  "validated": "7dd2c02"
 }
