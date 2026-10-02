@@ -1,11 +1,9 @@
 {
  "card": "F07",
  "role": "spec",
- "worker": "cloud-746946",
- "state": "reported",
- "at": "2026-10-02T15:12:52.403Z",
- "mode": "turbo",
- "note": "47 tests (12 unit, 14 db files... 35 db); stub run green; see reports/F07-spec.md",
- "commit": "49d1183",
- "validated": "31ee347"
+ "note": "toolchain refit",
+ "worker": "cloud-e33daa",
+ "state": "working",
+ "at": "2026-10-02T17:39:48.910Z",
+ "mode": "turbo"
 }
