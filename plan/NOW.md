@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 07:30Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 08:00Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,11 +13,11 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 07:30Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| F09A check (build round 2: mutation 100 both files) | cloud run | cloud | 2 Oct 07:12Z | claude/F09A |
-| F04 spec round 2 (page citation, strict schemas) | cloud run | cloud | 2 Oct 07:12Z | claude/F04 |
-| Queue: TH check (re-check of round 2), DG spec fix (card "Round 3 spec fix"), F03R spec round 3 (last), F01 build, D01 build; then W00, D00 (wait TH), A01 (waits F09A), S00 (waits F03R, DG) | 4 cloud runs fired | cloud | 2 Oct 07:3xZ | claude/<card> |
+| Train: TH alone (fixes gitleaks; unblocks W00, D00, D01) | train check | cloud | 2 Oct 08:0xZ | claude/train |
+| Queue: DG build (spec fixed), F03R build round 3 (last; also the Windows-1252 property test), F04 build (waits F09A), F01 build, D01 build, E03 build | cloud runs | cloud | 2 Oct | claude/<card> |
+| F09A: check FAIL round 2 (dash look-ahead, reports/F09A-check.md); on hold-findings, single cause, back to build with the card note | lead | - | 2 Oct | claude/F09A |
 
-No local helpers running. Stale worktrees under .claude/worktrees (agent-*): check `git worktree list`; remove clean ones (junction first with node fs.rmdirSync).
+No local helpers running.
 
 ## Next, in order
 
