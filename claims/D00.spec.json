@@ -1,11 +1,8 @@
 {
  "card": "D00",
  "role": "spec",
- "worker": "cloud-790b0c",
- "state": "reopened",
- "at": "2026-10-02T09:34:26.424Z",
- "mode": "turbo",
- "note": "move axe tests out of unit project (card Spec fix, A351)",
- "commit": "82aeffe",
- "validated": "7dd2c02"
+ "worker": "cloud-2a2f0f",
+ "state": "working",
+ "at": "2026-10-02T09:36:11.390Z",
+ "mode": "turbo"
 }
