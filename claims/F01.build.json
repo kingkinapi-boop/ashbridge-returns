@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "ea1e06ef122a9776cd17e5abe1abf9dc211b2525",
  "worker": "cloud-173eff",
- "state": "hold-findings",
- "at": "2026-10-01T23:59:33.419Z",
+ "state": "reopened",
+ "at": "2026-10-02T10:38:37.052Z",
  "mode": "turbo",
- "note": "FAIL: npm test red (spec PGlite rule) plus 7 schema gaps (TRUNCATE, blank sources, versions), see reports/F01-check.md"
+ "note": "round 2 spec reported; build per card fix list"
 }
