@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "412463f",
  "worker": "cloud-bb208a",
- "state": "reported",
- "at": "2026-10-02T17:52:49.845Z",
+ "state": "released",
+ "at": "2026-10-02T19:22:56.155Z",
  "mode": "turbo",
  "beat": "2026-10-02T17:43:52.622Z",
- "note": "102 of 102 acceptance tests pass, mutation 100"
+ "note": "merged"
 }
