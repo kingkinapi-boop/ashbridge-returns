@@ -2,7 +2,9 @@
  "card": "F05M",
  "role": "spec",
  "worker": "cloud-85862e",
- "state": "working",
- "at": "2026-10-02T01:34:07.104Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T01:34:23.648Z",
+ "mode": "turbo",
+ "note": "0 tests (card adds survivor unit tests only); validated on main cfc8d79",
+ "commit": "cfc8d79"
 }
