@@ -1,3 +1,4 @@
+// @mutate
 // The fact catalogue contract (E03): one entry per fact key, with its value type and whether it is
 // sensitive. Pure: no I/O. The data lives in data/facts/catalogue.json (EV-5, EV-10, SEC-4, AI-9).
 import { createHash } from 'node:crypto'
@@ -38,7 +39,7 @@ export type SensitiveKind = (typeof SENSITIVE_KINDS)[number]
 const KEY_PATTERN = /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$/
 const MAX_LABEL = 60
 
-const sources: ReadonlySet<string> = new Set<string>([...DOCUMENT_KINDS, ...NON_DOCUMENT_SOURCES])
+const sources: ReadonlySet<unknown> = new Set<unknown>([...DOCUMENT_KINDS, ...NON_DOCUMENT_SOURCES])
 
 /** The kind a key's own name demands (SEC-4): a SIN, a birth date or an account or card number. */
 export function sensitiveKindForKey(key: string): SensitiveKind {
@@ -74,14 +75,14 @@ const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object
 // One entry. Shape problems and rule problems alike come out as messages that name the field.
 export const factEntrySchema = z.looseObject({ key: z.string() }).superRefine((raw, ctx) => {
   const bad = (message: string): void => {
-    ctx.addIssue({ code: 'custom', message })
+    ctx.addIssue(message)
   }
   const e = raw as Record<string, unknown>
   const key = e['key'] as string
   if (!KEY_PATTERN.test(key)) bad(`key "${key}" is not in the dotted pattern <area>.<subject>.<measure>`)
 
   const vt = e['valueType']
-  if (typeof vt !== 'string' || !(VALUE_TYPES as readonly string[]).includes(vt)) {
+  if (!(VALUE_TYPES as readonly unknown[]).includes(vt)) {
     bad(`unknown value type "${String(vt)}"`)
   } else if (vt === 'enum') {
     const o = e['options']
@@ -101,12 +102,12 @@ export const factEntrySchema = z.looseObject({ key: z.string() }).superRefine((r
   }
 
   const s = e['sensitive']
-  if (typeof s !== 'string' || !(SENSITIVE_KINDS as readonly string[]).includes(s)) {
+  if (!(SENSITIVE_KINDS as readonly unknown[]).includes(s)) {
     bad(`unknown sensitive kind "${String(s)}"`)
   } else {
     const wanted = sensitiveKindForKey(key)
     if (wanted !== 'none' && s !== wanted) {
-      bad(`sensitive must be "${wanted}" because the key name says so (found "${s}")`)
+      bad(`sensitive must be "${wanted}" because the key name says so (found "${String(s)}")`)
     }
   }
 
@@ -115,14 +116,14 @@ export const factEntrySchema = z.looseObject({ key: z.string() }).superRefine((r
     bad('suppliedBy needs at least one source')
   } else {
     for (const b of by) {
-      if (typeof b !== 'string' || !sources.has(b)) bad(`suppliedBy source "${String(b)}" is not a document kind or a named source`)
+      if (!sources.has(b)) bad(`suppliedBy source "${String(b)}" is not a document kind or a named source`)
     }
   }
 
   const label = e['label']
   if (typeof label !== 'string' || label.trim() === '') bad('label is empty')
   else {
-    if (label.length > MAX_LABEL) bad(`label is ${label.length} characters, more than ${MAX_LABEL}`)
+    if (label.length > MAX_LABEL) bad(`label is ${String(label.length)} characters, more than ${String(MAX_LABEL)}`)
     if (label.endsWith('.')) bad('label ends in a full stop')
   }
 
@@ -140,21 +141,16 @@ export const factEntrySchema = z.looseObject({ key: z.string() }).superRefine((r
   }
 })
 
+/** JSON with the keys of every object in sorted order, so the layout of the file never matters. */
 function canonical(v: unknown): string {
-  if (Array.isArray(v)) return `[${v.map(canonical).join(',')}]`
-  if (isObj(v)) {
-    return `{${Object.keys(v)
-      .sort()
-      .map((k) => `${JSON.stringify(k)}:${canonical(v[k])}`)
-      .join(',')}}`
-  }
-  return JSON.stringify(v)
+  return JSON.stringify(v, (_k, x: unknown) =>
+    isObj(x) ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, x[k]])) : x,
+  )
 }
 
 /** The catalogue version: a hash of the content, not of how the file is laid out. */
 export function catalogueVersion(entries: readonly unknown[]): string {
-  const sorted = [...entries].sort((a, b) => ((a as FactEntry).key < (b as FactEntry).key ? -1 : 1))
-  return createHash('sha256').update(canonical(sorted)).digest('hex')
+  return createHash('sha256').update(JSON.stringify(entries.map(canonical).sort())).digest('hex')
 }
 
 export function loadFactCatalogue(json: unknown): LoadResult {
@@ -166,7 +162,7 @@ export function loadFactCatalogue(json: unknown): LoadResult {
   const good: FactEntry[] = []
   for (const [i, raw] of (json['entries'] as unknown[]).entries()) {
     const parsed = factEntrySchema.safeParse(raw)
-    const key = isObj(raw) && typeof raw['key'] === 'string' ? raw['key'] : `entry ${i}`
+    const key = isObj(raw) && typeof raw['key'] === 'string' ? raw['key'] : `entry ${String(i)}`
     if (!parsed.success) {
       for (const issue of parsed.error.issues) reasons.push(`${key}: ${issue.message}`)
       continue

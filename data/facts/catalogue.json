@@ -643,8 +643,8 @@
       "label": "Financial statement line amount",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "Schedules 100 and 125"
+          "kind": "answer_key",
+          "ref": "trialBalance"
         }
       ]
     },
@@ -738,7 +738,7 @@
       "cites": [
         {
           "kind": "cra_form",
-          "ref": "T2 page 1 line 061"
+          "ref": "T2 line 061"
         }
       ]
     },
@@ -756,7 +756,7 @@
       "cites": [
         {
           "kind": "cra_form",
-          "ref": "T2 Schedule 1 line 300"
+          "ref": "Schedule 1 line 300"
         }
       ]
     },
@@ -828,7 +828,7 @@
       "cites": [
         {
           "kind": "cra_form",
-          "ref": "T2 Schedule 23 line 410"
+          "ref": "Schedule 23 line 410"
         },
         {
           "kind": "answer_key",
@@ -992,8 +992,8 @@
       "label": "Notice of assessment date",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "Notice of assessment, date of notice"
+          "kind": "answer_key",
+          "ref": "t2Inputs"
         }
       ]
     },
@@ -1009,8 +1009,8 @@
       "label": "Notice of assessment year end",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "Notice of assessment, tax year"
+          "kind": "answer_key",
+          "ref": "t2Inputs"
         }
       ]
     },
@@ -1026,8 +1026,8 @@
       "label": "Notice of assessment taxable income",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "Notice of assessment, taxable income"
+          "kind": "answer_key",
+          "ref": "t2Inputs"
         }
       ]
     },
@@ -1043,8 +1043,8 @@
       "label": "Notice of assessment balance",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "Notice of assessment, balance"
+          "kind": "answer_key",
+          "ref": "t2Inputs"
         }
       ]
     },
@@ -1059,10 +1059,6 @@
       ],
       "label": "Notice of assessment business limit",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "Notice of assessment, business limit"
-        },
         {
           "kind": "answer_key",
           "ref": "business_limit"
@@ -1080,10 +1076,6 @@
       ],
       "label": "Notice of assessment GRIP",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "Notice of assessment, GRIP"
-        },
         {
           "kind": "answer_key",
           "ref": "grip"
@@ -1268,10 +1260,6 @@
       "label": "HST return net tax",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "GST34 line 109"
-        },
-        {
           "kind": "answer_key",
           "ref": "hst"
         }
@@ -1290,10 +1278,6 @@
       ],
       "label": "HST return total sales and revenue",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "GST34 line 101"
-        },
         {
           "kind": "answer_key",
           "ref": "hst"
@@ -1314,10 +1298,6 @@
       "label": "HST return tax collected",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "GST34 line 103"
-        },
-        {
           "kind": "answer_key",
           "ref": "hst"
         }
@@ -1336,10 +1316,6 @@
       ],
       "label": "HST return input tax credits",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "GST34 line 106"
-        },
         {
           "kind": "answer_key",
           "ref": "hst"
@@ -1360,10 +1336,6 @@
       "label": "HST return period end",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "GST34 reporting period"
-        },
-        {
           "kind": "answer_key",
           "ref": "hst"
         }
@@ -1383,10 +1355,6 @@
       "label": "HST payment made with the return",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "GST34 line 114"
-        },
-        {
           "kind": "answer_key",
           "ref": "hst"
         }
@@ -1403,10 +1371,6 @@
       ],
       "label": "T4 summary total employment income",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "T4 Summary box 14"
-        },
         {
           "kind": "answer_key",
           "ref": "payroll"
@@ -1425,10 +1389,6 @@
       "label": "T4 summary total CPP deducted",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "T4 Summary box 16"
-        },
-        {
           "kind": "answer_key",
           "ref": "payroll"
         }
@@ -1445,10 +1405,6 @@
       ],
       "label": "T4 summary total EI deducted",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "T4 Summary box 18"
-        },
         {
           "kind": "answer_key",
           "ref": "payroll"
@@ -1467,10 +1423,6 @@
       "label": "T4 summary total income tax deducted",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "T4 Summary box 22"
-        },
-        {
           "kind": "answer_key",
           "ref": "payroll"
         }
@@ -1487,10 +1439,6 @@
       ],
       "label": "T4 summary number of slips",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "T4 Summary box 88"
-        },
         {
           "kind": "answer_key",
           "ref": "payroll"
@@ -1511,10 +1459,6 @@
       "label": "T4 slip employment income",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "T4 box 14"
-        },
-        {
           "kind": "answer_key",
           "ref": "owner_bonus"
         }
@@ -1534,8 +1478,8 @@
       "label": "T4 slip employee SIN",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "T4 box 12"
+          "kind": "answer_key",
+          "ref": "payroll"
         }
       ]
     },
@@ -1552,10 +1496,6 @@
       ],
       "label": "T4 slip employee name",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "T4 employee name"
-        },
         {
           "kind": "answer_key",
           "ref": "payroll"
@@ -1574,10 +1514,6 @@
       "label": "T5 summary total eligible dividends",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "T5 Summary box 25"
-        },
-        {
           "kind": "answer_key",
           "ref": "declared_dividends"
         }
@@ -1594,10 +1530,6 @@
       ],
       "label": "T5 summary total other than eligible dividends",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "T5 Summary box 10"
-        },
         {
           "kind": "answer_key",
           "ref": "declared_dividends"
@@ -1616,8 +1548,8 @@
       "label": "T5 summary total interest from Canadian sources",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "T5 Summary box 13"
+          "kind": "answer_key",
+          "ref": "t2Inputs"
         }
       ]
     },
@@ -1633,8 +1565,8 @@
       "label": "T5 summary number of slips",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "T5 Summary box 88"
+          "kind": "answer_key",
+          "ref": "declared_dividends"
         }
       ]
     },
@@ -1651,10 +1583,6 @@
       ],
       "label": "T5 slip eligible dividends",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "T5 box 25"
-        },
         {
           "kind": "answer_key",
           "ref": "declared_dividends"
@@ -1675,10 +1603,6 @@
       "label": "T5 slip other than eligible dividends",
       "cites": [
         {
-          "kind": "cra_form",
-          "ref": "T5 box 10"
-        },
-        {
           "kind": "answer_key",
           "ref": "declared_dividends"
         }
@@ -1697,10 +1621,6 @@
       ],
       "label": "T5 slip recipient name",
       "cites": [
-        {
-          "kind": "cra_form",
-          "ref": "T5 recipient name"
-        },
         {
           "kind": "answer_key",
           "ref": "shares"
@@ -1723,6 +1643,10 @@
         {
           "kind": "answer_key",
           "ref": "transactions"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "ohip_remittance_advice"
         }
       ]
     },
@@ -1742,6 +1666,10 @@
         {
           "kind": "answer_key",
           "ref": "transactions"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "ohip_remittance_advice"
         }
       ]
     },
@@ -1761,6 +1689,10 @@
         {
           "kind": "answer_key",
           "ref": "transactions"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "ohip_remittance_advice"
         }
       ]
     },
@@ -2047,6 +1979,10 @@
         {
           "kind": "onboarding_contract",
           "ref": "corporations.financial_year_end"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "corporation.financial_year_end"
         }
       ]
     },
@@ -2120,6 +2056,10 @@
         {
           "kind": "onboarding_contract",
           "ref": "corporations.all_prior_years_filed"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "corporation.all_prior_years_filed"
         }
       ]
     },
@@ -2137,6 +2077,33 @@
         {
           "kind": "onboarding_contract",
           "ref": "corporations.outstanding_years"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "corporation.outstanding_years"
+        }
+      ]
+    },
+    {
+      "key": "onboarding.engagement.tax_year",
+      "valueType": "count",
+      "period": "instant",
+      "repeating": {
+        "rowKey": "engagement"
+      },
+      "sensitive": "none",
+      "suppliedBy": [
+        "onboarding"
+      ],
+      "label": "Engagement tax year",
+      "cites": [
+        {
+          "kind": "onboarding_contract",
+          "ref": "engagements.tax_year"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "engagements"
         }
       ]
     },
@@ -2994,7 +2961,7 @@
       "cites": [
         {
           "kind": "cra_form",
-          "ref": "T2 page 1 lines 071 to 076, amalgamation and wind-up"
+          "ref": "T2 line 071"
         }
       ]
     },
@@ -3011,7 +2978,7 @@
       "cites": [
         {
           "kind": "cra_form",
-          "ref": "T2 page 1 line 076"
+          "ref": "T2 line 076"
         }
       ]
     },
