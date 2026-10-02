@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "6504c0db",
  "worker": "cloud-85bb68",
- "state": "reported",
- "at": "2026-10-02T20:31:33.171Z",
+ "state": "released",
+ "at": "2026-10-02T21:04:41.923Z",
  "mode": "turbo",
- "note": "re-stamped by Lead so its check is offered again (check released at a job limit)"
+ "note": "merged"
 }
