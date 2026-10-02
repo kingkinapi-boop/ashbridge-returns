@@ -11,8 +11,8 @@
   },
   "cards": [
     {
-      "status": "carded",
-      "spec": "n/a",
+      "status": "done",
+      "spec": null,
       "deps": [],
       "paths": [
         "package.json",
@@ -33,7 +33,14 @@
         "src/app/layout.tsx",
         "src/app/page.tsx",
         "src/core/**",
-        "e2e/smoke/**"
+        "e2e/smoke/**",
+        "tools/test-flake.mjs",
+        "tools/mutate-changed.mjs",
+        "tools/test/db-rules.test.mjs",
+        "tools/test/toolchain-rules.test.mjs",
+        "tools/test/__fixtures__/**",
+        "vitest.mutate.config.ts",
+        "tools/run-next.mjs"
       ],
       "clauses": [
         "ARC-1",
@@ -52,7 +59,8 @@
       "title": "Scaffold: app, tests, CI, database helper",
       "phase": 0,
       "size": "M",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -128,7 +136,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "F09"
       ],
       "paths": [
         "db/schema/00_schema.sql",
@@ -143,13 +152,16 @@
         "src/contracts/records.ts",
         "src/contracts/ids.ts",
         "src/contracts/index.ts",
-        "src/contracts/records.test.ts"
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts"
       ],
       "clauses": [
         "EV-1",
         "EV-5",
         "EV-8",
         "EV-10",
+        "EV-14",
+        "FLOW-4",
         "TB-1",
         "TB-2",
         "TB-3",
@@ -166,10 +178,11 @@
       "size": "L",
       "hard": true,
       "security": true,
-      "core": true
+      "core": true,
+      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first."
     },
     {
-      "status": "parked",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F00"
@@ -181,10 +194,13 @@
       "clauses": [
         "RT-3",
         "RT-7",
+        "RT-8",
         "RT-9",
         "RT-12",
         "RT-13",
         "RT-14",
+        "RT-21",
+        "RT-25",
         "ARC-14"
       ],
       "id": "F03",
@@ -193,7 +209,7 @@
       "size": "M",
       "hard": true,
       "core": true,
-      "note": "Held by the Lead 1 Oct: trial day 1 shows RT-3 header, RT-9 settings and cell ids differ (reference/taxprep/day1-findings.md). Re-spec after trial day 2 and the RT clause update; then unpark."
+      "note": "Re-carded 1 Oct from the trial findings (reference/taxprep/FINDINGS.md; amber clause changes to RT-3, RT-7, RT-8, RT-9, RT-12, RT-13, RT-21, RT-25): needs a fresh spec; any earlier spec is void."
     },
     {
       "status": "carded",
@@ -220,7 +236,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -242,10 +258,11 @@
       "title": "Check contract",
       "phase": 0,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -265,7 +282,8 @@
       "id": "F08",
       "title": "Tests for the build tools (queue, scope, matrix, next)",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -281,6 +299,7 @@
       "clauses": [
         "ARC-6",
         "ARC-10",
+        "ARC-15",
         "EV-5",
         "EV-6"
       ],
@@ -288,6 +307,35 @@
       "title": "Reading contract: normalised words and boxes for every engine",
       "phase": 0,
       "size": "S",
+      "core": true,
+      "note": "Fix round 2 from reports/findings-F01-F09.md: spec (a) to (f), then build round 2; the re-check waits for both; lands before F01."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F01",
+        "F09"
+      ],
+      "paths": [
+        "tools/test/schema-contract-rules.test.mjs",
+        "src/contracts/schema-rules.db.test.ts",
+        "tools/test/__fixtures__/schema-contract/**"
+      ],
+      "clauses": [
+        "SEC-7",
+        "EV-1",
+        "ARC-10",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "FLOW-1",
+        "ARC-15"
+      ],
+      "id": "SC",
+      "title": "Schema and contract rules",
+      "phase": 0,
+      "size": "M",
       "core": true
     },
     {
@@ -295,6 +343,33 @@
       "spec": null,
       "deps": [
         "F00"
+      ],
+      "paths": [
+        "vitest.config.ts",
+        "vitest.mutate.config.ts",
+        "tsconfig.json",
+        "tools/test-homes.json",
+        "tools/test/toolchain-rules.test.mjs",
+        "tools/test/__fixtures__/**",
+        ".github/workflows/checks.yml",
+        ".gitleaks.toml"
+      ],
+      "clauses": [
+        "ARC-17",
+        "ARC-9",
+        "ARC-4"
+      ],
+      "id": "TH",
+      "title": "Test homes: every test runs, every file is typed and linted",
+      "phase": 0,
+      "size": "S"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "TH"
       ],
       "paths": [
         "testworld/model/**",
@@ -329,18 +404,22 @@
       ],
       "clauses": [
         "RT-3",
+        "RT-8",
         "RT-12",
         "RT-13",
         "RT-23",
-        "ARC-14",
-        "RT-2"
+        "RT-25",
+        "RT-26",
+        "RT-2",
+        "ARC-14"
       ],
       "id": "S00",
       "title": "Taxprep simulator: import, export, report",
       "phase": 0,
       "size": "L",
       "hard": true,
-      "core": true
+      "core": true,
+      "note": "Card changed 1 Oct to the trial's import behaviour (blank clears, header not read, report lists only cells that held a value): re-spec; any earlier spec is void."
     },
     {
       "status": "carded",
@@ -378,7 +457,8 @@
       "clauses": [
         "RT-22",
         "RT-21",
-        "RT-23"
+        "RT-23",
+        "RT-4"
       ],
       "id": "S02",
       "title": "Taxprep simulator: release identifier lists",
@@ -408,7 +488,9 @@
         "RT-9",
         "RT-10",
         "RT-17",
-        "RT-24"
+        "RT-24",
+        "RT-7",
+        "RT-4"
       ],
       "id": "S03",
       "title": "Taxprep simulator: apply the trial findings (cell map, token cell, roll-forward, diagnostics, export settings)",
@@ -589,7 +671,8 @@
         "END-1",
         "ARC-2",
         "FLOW-11",
-        "OUT-6"
+        "OUT-6",
+        "RT-5"
       ],
       "id": "F07",
       "title": "Client-app bridge on made-up data",
@@ -919,6 +1002,7 @@
         "reference/sample-clients/generate.mjs",
         "reference/sample-clients/make-csv.mjs",
         "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/contract-ids.json",
         "reference/sample-clients/README.md"
       ],
       "clauses": [
@@ -951,6 +1035,7 @@
         "reference/sample-clients/generate.mjs",
         "reference/sample-clients/make-csv.mjs",
         "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/contract-ids.json",
         "reference/sample-clients/README.md"
       ],
       "clauses": [
@@ -1576,7 +1661,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "TH"
       ],
       "paths": [
         "design/basis/**"
@@ -1594,7 +1680,9 @@
     {
       "status": "carded",
       "spec": null,
-      "deps": [],
+      "deps": [
+        "TH"
+      ],
       "paths": [
         "design/map/**"
       ],
@@ -1788,7 +1876,8 @@
       "phase": 1,
       "size": "L",
       "hard": true,
-      "core": true
+      "core": true,
+      "note": "F00 check: src/core/ids.ts scores 36% mutation (7 survivors at ids.ts 9, 11, 17, 18); L00, the first card to use ids, adds tests that kill them."
     },
     {
       "status": "carded",
@@ -2371,6 +2460,7 @@
       "clauses": [
         "TB-1",
         "TB-10",
+        "TB-13",
         "EV-5",
         "ARC-6",
         "ARC-20",
@@ -3745,7 +3835,7 @@
       "params": {
         "screen": "roundtrip"
       },
-      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1)."
+      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1). Also (review-phase2): the Ready button on the lock step (T12 markReady), and the \"Taxprep still holds\" list with its clear action and reason box (T01 stillHeld, requestClear)."
     },
     {
       "status": "parked",
@@ -3820,16 +3910,23 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F03",
         "S02",
         "S03",
-        "F10"
+        "F10",
+        "B01"
       ],
       "paths": [
         "src/modules/mapping/core/**",
+        "src/modules/mapping/index.ts",
+        "src/contracts/mapping.ts",
+        "data/taxprep/map/_format.md",
+        "data/taxprep/map/gifi.json",
+        "data/taxprep/rollforward/**",
+        "data/taxprep/tax-choices/**",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
         "e2e/steps/skeleton-*.ts"
@@ -3838,12 +3935,23 @@
         "RT-21",
         "RT-22",
         "RT-7",
-        "RT-24"
+        "RT-24",
+        "RT-25",
+        "RT-4",
+        "RT-13",
+        "ARC-13",
+        "ARC-10",
+        "TB-6",
+        "ARC-7",
+        "CK-11"
       ],
       "id": "M00",
       "title": "Mapping framework and identifier drift check",
       "phase": 2,
-      "size": "M"
+      "size": "L",
+      "note": "Carded 2 Oct (reports/cards-phase2.md): mapping format, GIFI rows read from the release descriptions, copy lookup by natural key, whole-dollar rounding with the Schedule 100 plug, drift check, roll-forward map and tax-choice cells as data. Trial-dependent points marked in the card. Review phase 2 red 1 settled as amber A245 (RT-25 plug on largest liability line, 3680 from rounded S125); roundGifi unheld.",
+      "hard": true,
+      "core": true
     },
     {
       "status": "carded",
@@ -3859,7 +3967,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M10",
       "title": "Mapping and simulator cells: T2 identification and main lines",
@@ -3884,7 +3995,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M11",
       "title": "Mapping and simulator cells: Schedule 100 balance sheet (GIFI)",
@@ -3909,7 +4023,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M12",
       "title": "Mapping and simulator cells: Schedule 125 income statement (GIFI)",
@@ -3934,7 +4051,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M13",
       "title": "Mapping and simulator cells: Schedule 1 net income for tax",
@@ -3954,12 +4074,16 @@
       "paths": [
         "data/taxprep/placeholder/s8.json",
         "data/taxprep/map/s8.json",
-        "src/modules/mapping/schedules/s8.test.ts"
+        "src/modules/mapping/schedules/s8.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M14",
       "title": "Mapping and simulator cells: Schedule 8 CCA",
@@ -3979,12 +4103,16 @@
       "paths": [
         "data/taxprep/placeholder/s50.json",
         "data/taxprep/map/s50.json",
-        "src/modules/mapping/schedules/s50.test.ts"
+        "src/modules/mapping/schedules/s50.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M15",
       "title": "Mapping and simulator cells: Schedule 50 shareholders",
@@ -4004,12 +4132,16 @@
       "paths": [
         "data/taxprep/placeholder/s3.json",
         "data/taxprep/map/s3.json",
-        "src/modules/mapping/schedules/s3.test.ts"
+        "src/modules/mapping/schedules/s3.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M16",
       "title": "Mapping and simulator cells: Schedule 3 dividends",
@@ -4029,12 +4161,16 @@
       "paths": [
         "data/taxprep/placeholder/s9-s23.json",
         "data/taxprep/map/s9-s23.json",
-        "src/modules/mapping/schedules/s9-s23.test.ts"
+        "src/modules/mapping/schedules/s9-s23.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M17",
       "title": "Mapping and simulator cells: Schedules 9 and 23 (related, associated, business limit)",
@@ -4054,12 +4190,16 @@
       "paths": [
         "data/taxprep/placeholder/s7.json",
         "data/taxprep/map/s7.json",
-        "src/modules/mapping/schedules/s7.test.ts"
+        "src/modules/mapping/schedules/s7.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M18",
       "title": "Mapping and simulator cells: Schedule 7 investment income",
@@ -4079,12 +4219,16 @@
       "paths": [
         "data/taxprep/placeholder/s4.json",
         "data/taxprep/map/s4.json",
-        "src/modules/mapping/schedules/s4.test.ts"
+        "src/modules/mapping/schedules/s4.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M19",
       "title": "Mapping and simulator cells: Schedule 4 losses",
@@ -4104,12 +4248,16 @@
       "paths": [
         "data/taxprep/placeholder/s2.json",
         "data/taxprep/map/s2.json",
-        "src/modules/mapping/schedules/s2.test.ts"
+        "src/modules/mapping/schedules/s2.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M20",
       "title": "Mapping and simulator cells: Schedule 2 donations",
@@ -4129,12 +4277,16 @@
       "paths": [
         "data/taxprep/placeholder/s53.json",
         "data/taxprep/map/s53.json",
-        "src/modules/mapping/schedules/s53.test.ts"
+        "src/modules/mapping/schedules/s53.test.ts",
+        "data/taxprep/tax-choices/**"
       ],
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M21",
       "title": "Mapping and simulator cells: Schedule 53 GRIP",
@@ -4159,7 +4311,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M22",
       "title": "Mapping and simulator cells: Schedule 141 notes checklist",
@@ -4184,7 +4339,10 @@
       "clauses": [
         "RT-21",
         "RT-7",
-        "RT-3"
+        "RT-3",
+        "RT-4",
+        "RT-13",
+        "TB-6"
       ],
       "id": "M23",
       "title": "Mapping and simulator cells: Ontario schedules",
@@ -4196,17 +4354,27 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "M00",
+        "T02",
         "B05",
         "B01",
+        "L00",
+        "F07",
+        "A05",
         "SK0",
-        "F10"
+        "F10",
+        "F02"
       ],
       "paths": [
+        "src/modules/roundtrip/figures/**",
         "src/modules/roundtrip/import/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/40_figures.sql",
+        "db/schema/45_roundtrip.sql",
         "src/pipeline/steps/figures.ts",
         "src/pipeline/steps/import.ts",
         "e2e/skeleton/stubs.ts",
@@ -4219,33 +4387,60 @@
         "RT-3",
         "RT-4",
         "RT-5",
+        "RT-7",
         "RT-8",
         "RT-12",
-        "RT-13"
+        "RT-13",
+        "RT-25",
+        "TB-9",
+        "ARC-10",
+        "ARC-14",
+        "RT-22",
+        "FLOW-2",
+        "AI-7"
       ],
       "id": "T01",
       "title": "Import writer: AI draft and changed-cell re-imports",
       "phase": 2,
-      "size": "M"
+      "size": "L",
+      "hard": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "M00",
-        "SK0"
+        "SK0",
+        "A05",
+        "F02",
+        "S01"
       ],
       "paths": [
-        "src/modules/roundtrip/export/**"
+        "src/modules/roundtrip/export/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/45_roundtrip.sql"
       ],
       "clauses": [
         "RT-1",
-        "RT-9"
+        "RT-2",
+        "RT-9",
+        "RT-20",
+        "RT-22",
+        "ARC-14",
+        "EV-1",
+        "EV-2",
+        "RT-7",
+        "RT-14"
       ],
       "id": "T02",
       "title": "Export reader and identity checks",
       "phase": 2,
-      "size": "M"
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true
     },
     {
       "status": "parked",
@@ -4265,16 +4460,21 @@
       "note": "Removed by v1.1: the receipt export and RT-6 are dropped; a partial import shows as \"dropped\" cells in the trace (amber A30). Replaced by T04 (dropped class)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T01",
         "T02",
         "M00",
+        "L00",
         "F10"
       ],
       "paths": [
         "src/modules/roundtrip/trace/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/45_roundtrip.sql",
+        "data/taxprep/allowed-typing/**",
         "src/pipeline/steps/trace.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
@@ -4283,76 +4483,167 @@
       "clauses": [
         "RT-14",
         "RT-15",
-        "RT-16",
-        "RT-18",
         "RT-20",
-        "RT-24"
+        "RT-24",
+        "RT-26",
+        "RT-8",
+        "TB-6",
+        "EV-5",
+        "ARC-10",
+        "RT-2",
+        "RT-7",
+        "EV-1"
       ],
       "id": "T04",
       "title": "Trace: traced, overridden, dropped, rolled forward (roll-forward map), orphan, calculated",
       "phase": 2,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "E00"
+        "E00",
+        "T07",
+        "F02"
       ],
       "paths": [
-        "src/modules/diagnostics/**"
+        "src/modules/diagnostics/**",
+        "src/contracts/diagnostics.ts",
+        "db/schema/47_diagnostics.sql",
+        "data/taxprep/diagnostics/**"
       ],
       "clauses": [
-        "RT-17"
+        "RT-17",
+        "RULE-2",
+        "EV-1",
+        "ARC-10",
+        "AI-7"
       ],
       "id": "T05",
       "title": "Diagnostics from the printed return",
       "phase": 2,
-      "size": "S"
+      "size": "M",
+      "hard": false,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "T02"
+        "T02",
+        "M00",
+        "E00",
+        "W20",
+        "A05"
       ],
       "paths": [
-        "src/modules/roundtrip/reviewlines/**"
+        "src/modules/roundtrip/reviewlines/**",
+        "src/modules/roundtrip/printed/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/45_roundtrip.sql",
+        "data/taxprep/review-lines/**",
+        "testworld/taxprep/printed/**"
       ],
       "clauses": [
         "RT-10",
-        "RT-11"
+        "RT-11",
+        "RT-22",
+        "EV-2",
+        "ARC-11",
+        "ARC-10",
+        "SEC-11"
       ],
       "id": "T07",
       "title": "Review lines in the lock export, and the printed return",
       "phase": 2,
-      "size": "S"
+      "size": "M",
+      "hard": false,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "T04",
+        "T05",
+        "N00",
+        "L00",
+        "L01",
+        "F02"
+      ],
+      "paths": [
+        "src/modules/roundtrip/resolve/**",
+        "src/modules/roundtrip/index.ts",
+        "src/contracts/roundtrip.ts",
+        "db/schema/45_roundtrip.sql"
+      ],
+      "clauses": [
+        "RT-16",
+        "RT-18",
+        "TB-6",
+        "RT-14",
+        "RT-17",
+        "EV-5",
+        "AI-7",
+        "FLOW-2",
+        "EV-1"
+      ],
+      "id": "T12",
+      "title": "Trace resolutions: the cite, override reasons, dropped cells and the sign-off gate",
+      "phase": 2,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "note": "Split from T04 on 2 Oct (reports/cards-phase2.md): T04 classes the cells, T12 resolves them and holds the sign-off gate."
+    },
+    {
+      "status": "carded",
       "spec": null,
       "deps": [
         "V05",
-        "T04",
         "D05",
-        "U02"
+        "U01",
+        "U02",
+        "B01",
+        "T01",
+        "T02",
+        "T04",
+        "T05",
+        "T07",
+        "T12",
+        "F02"
       ],
       "paths": [
-        "src/app/(staff)/prepare/roundtrip/**"
+        "src/app/(staff)/prepare/roundtrip/**",
+        "e2e/staff/roundtrip.spec.ts"
       ],
       "clauses": [
         "RV-21",
+        "TB-3",
+        "RT-1",
+        "RT-5",
+        "RT-26",
+        "RT-11",
+        "RT-17",
+        "RT-18",
+        "FLOW-2",
+        "FLOW-10",
+        "SEC-2",
         "RV-53",
         "RV-54"
       ],
       "id": "V06",
       "title": "Preparer round-trip checklist",
       "phase": 2,
-      "size": "M",
+      "size": "L",
       "screens": true,
       "hard": false,
-      "note": "Owns the .GFI upload screen on top of B01 importGfi (review-phase1)."
+      "note": "Owns the .GFI upload screen on top of B01 importGfi (review-phase1).",
+      "security": true
     },
     {
       "status": "parked",
@@ -4381,22 +4672,30 @@
       "note": "Removed by v1.1: no judgment input sheet in our app; tax choices are typed in Taxprep and sourced with the cite button (amber A32). Replaced by V12."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V05",
-        "T04",
+        "V01",
         "D12",
-        "U02"
+        "U01",
+        "U02",
+        "T04",
+        "T12"
       ],
       "paths": [
-        "src/app/(staff)/prepare/cite/**"
+        "src/app/(staff)/prepare/cite/**",
+        "e2e/staff/cite.spec.ts"
       ],
       "clauses": [
         "RV-22",
+        "RV-24",
         "TB-6",
+        "RT-14",
         "RT-16",
         "RT-18",
+        "AI-7",
+        "SEC-2",
         "RV-53",
         "RV-54"
       ],
@@ -4408,22 +4707,34 @@
       "hard": false
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "T04"
+        "T04",
+        "T01",
+        "L00",
+        "F01"
       ],
       "paths": [
-        "src/modules/learning/versions/**"
+        "src/modules/learning/versions/**",
+        "src/modules/learning/index.ts",
+        "src/contracts/versions.ts",
+        "db/schema/60_versions.sql",
+        "src/pipeline/steps/import.ts"
       ],
       "clauses": [
         "LL-1",
-        "LL-2"
+        "LL-2",
+        "LL-3",
+        "EV-1",
+        "SEC-7",
+        "ARC-10"
       ],
       "id": "N00",
       "title": "Versions and cell owners",
       "phase": 2,
-      "size": "M"
+      "size": "M",
+      "hard": false
     },
     {
       "status": "carded",
@@ -4437,6 +4748,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4484,6 +4796,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4531,6 +4844,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4578,6 +4892,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4625,6 +4940,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4672,6 +4988,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4719,6 +5036,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4766,6 +5084,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4813,6 +5132,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4860,6 +5180,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4907,6 +5228,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -4954,6 +5276,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",
@@ -5001,6 +5324,7 @@
         "S01",
         "S03",
         "N00",
+        "T12",
         "M10",
         "M11",
         "M12",

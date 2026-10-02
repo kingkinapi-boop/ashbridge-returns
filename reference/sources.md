@@ -3,7 +3,7 @@
 Every tax rule in a check cites one of these, or another CRA or statute page (CK-1). A rule with no source is built as a flag, never as a pass or fail. Checked 28 Sep 2026.
 
 ## CCH iFirm Taxprep
-- CSV syntax (header `[name|return id|language]`; columns identifier, this year, prior year; copies `FORM[n].CELL`; blank not imported; "0" imports zero; dates YYYY-MM-DD): https://support.cchifirm.ca/en/content/cch_ifirm/tax/tax_-_csv_syntax.htm
+- CSV syntax (the Taxprep trial of 1 Oct 2026 differs on the header and on blanks: `reference/taxprep/FINDINGS.md` wins) (header `[name|return id|language]`; columns identifier, this year, prior year; copies `FORM[n].CELL`; blank not imported; "0" imports zero; dates YYYY-MM-DD): https://support.cchifirm.ca/en/content/cch_ifirm/tax/tax_-_csv_syntax.htm
 - Import a CSV file (Retrieve tab; separators chosen at import; a report lists modified cells and errors; T2 year-start and year-end cells ignored): https://support.cchifirm.ca/en/content/cch_ifirm/tax/tax_-_import_csv.htm
 - Export data (a filter decides what is exported; separators and number formats are settings): https://support.cchifirm.ca/en/content/cch_ifirm/tax/tax_-_export_data.htm
 - Custom filters: https://support.cchifirm.ca/en/content/cch_ifirm/tax/tax_-_create_filter.htm

@@ -73,6 +73,7 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 - Screens: the GOV.UK look, built for repeat desk work on a laptop with two monitors; as many screens as the work needs, each with one job, in a logical top-to-bottom order, separate tabs for separate things, search everywhere; designed first and approved by Zo; built to match; axe-clean.
 - Tests: written first by another worker, named with clause IDs, fail before the build, never edited by the builder; money and tax arithmetic property-tested; clocks and seeds pinned; a flaky test is a failure (`.claude/rules/testing.md`).
 - AI never clears, closes or approves anything, never talks to clients, and every AI output carries citations that code checks.
+- Never kill processes by name (`taskkill /IM`, `pkill`, `killall`): only process IDs you started yourself. Zo's browsers and apps share the laptop.
 - Never read or print `.env` or any secret. Print names or booleans only.
 - Stage files by name; never `git add -A` or `git add .`; never force-push. Code reaches main only through a green train (a hook refuses other code pushes; plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md and .claude/ may go straight to main).
 - Status files are rewritten, never appended; only `metrics.jsonl`, `ledger.jsonl` and `AMBER.md` rows are added to.

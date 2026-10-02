@@ -10,7 +10,13 @@ import { ROOT } from './lib.mjs'
 
 const PREFIXES = ['END', 'RULE', 'FLOW', 'EV', 'TB', 'RT', 'CK', 'AI', 'EX', 'RV', 'LL', 'SEC', 'ARC', 'LIVE', 'OUT']
 const NOT_TESTED_BY_CODE = new Set(['RULE', 'OUT', 'LIVE'])
-const ID = new RegExp(`\\b((?:${PREFIXES.join('|')})-\\d+)\\b`, 'g')
+const CLAUSE = `(?:${PREFIXES.join('|')})-\\d+`
+const ID = new RegExp(`\\b(${CLAUSE})\\b`, 'g')
+// A test, it or describe call whose name is a string literal; not preceded by a word, dot or quote
+// character, so test code quoted inside another string is not read as a test.
+const OPENER = /(?<![\w.'"`])(test|it|describe)(?:\.\w+)*\s*\(\s*(['"`])((?:\\.|(?!\2)[^\\])*)\2/g
+// ARC-9: only the clause IDs a name opens with count (a comment or the middle of a name does not).
+const LEADING = new RegExp(`^\\s*((?:${CLAUSE})(?:[\\s,]+(?:${CLAUSE}))*)\\b`)
 
 const clauses = new Map() // id -> blueprint file
 const bpDir = path.join(ROOT, 'blueprint')
@@ -23,6 +29,7 @@ for (const f of fs.readdirSync(bpDir).filter((f) => /^\d\d-.*\.md$/.test(f)).sor
 
 const covered = new Map() // id -> Set of test files
 const unknown = new Set()
+const unnamed = [] // ARC-12: tests in acceptance files whose name opens with no clause ID
 const SKIP = new Set(['node_modules', '.next', '.git', 'playwright-report', 'test-results'])
 function walk(dir) {
   let entries = []
@@ -37,9 +44,17 @@ function walk(dir) {
     if (e.isDirectory()) walk(p)
     else if (/\.(test|spec)\.[cm]?[jt]sx?$/.test(e.name)) {
       const rel = path.relative(ROOT, p).split(path.sep).join('/')
-      for (const m of fs.readFileSync(p, 'utf8').matchAll(ID)) {
-        if (!clauses.has(m[1])) unknown.add(m[1])
-        else (covered.get(m[1]) || covered.set(m[1], new Set()).get(m[1])).add(rel)
+      const acceptance = /\.acceptance\.test\./.test(e.name)
+      for (const o of fs.readFileSync(p, 'utf8').matchAll(OPENER)) {
+        const lead = o[3].match(LEADING)
+        if (!lead) {
+          if (acceptance && o[1] !== 'describe') unnamed.push(`${rel}: ${o[3]}`)
+          continue
+        }
+        for (const m of lead[1].matchAll(ID)) {
+          if (!clauses.has(m[1])) unknown.add(m[1])
+          else (covered.get(m[1]) || covered.set(m[1], new Set()).get(m[1])).add(rel)
+        }
       }
     }
   }
@@ -51,6 +66,7 @@ const done = testable.filter((id) => covered.has(id))
 const pct = testable.length ? Math.round((100 * done.length) / testable.length) : 0
 const summary = `Clauses ${testable.length} testable, ${done.length} with tests (${pct}%)`
 console.log(summary + (unknown.size ? ` | unknown IDs in tests: ${[...unknown].sort().join(' ')}` : ''))
+if (unnamed.length) console.log(`Acceptance tests with no clause ID in the name (${unnamed.length}):\n  ${unnamed.join('\n  ')}`)
 
 if (!process.argv.includes('--summary')) {
   const out = [
@@ -71,6 +87,7 @@ if (!process.argv.includes('--summary')) {
     out.push(`| ${f} | ${ids.length - missing.length}/${ids.length} | ${missing.join(' ') || 'none'} |`)
   }
   if (unknown.size) out.push('', `Unknown clause IDs named in tests: ${[...unknown].sort().join(' ')}`)
+  if (unnamed.length) out.push('', 'Acceptance tests whose name opens with no clause ID:', ...unnamed.map((u) => `- ${u}`))
   fs.writeFileSync(path.join(ROOT, 'plan', 'MATRIX.md'), out.join('\n') + '\n')
 }
 
