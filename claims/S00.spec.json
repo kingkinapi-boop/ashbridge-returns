@@ -1,11 +1,8 @@
 {
  "card": "S00",
  "role": "spec",
- "worker": "local-948a53",
- "state": "reopened",
- "at": "2026-10-02T04:51:38.709Z",
- "mode": "turbo",
- "note": "round 2 per card (Opus review); core: cloud Opus spec writer",
- "commit": "9ec2e0f550e0a4513b0b0ced1ac4acb40c3eaeb1",
- "validated": "d500408a26e1eeb7190f29e9a4edf63bdd24b3d8"
+ "worker": "local-ed6f16",
+ "state": "working",
+ "at": "2026-10-02T04:55:19.816Z",
+ "mode": "turbo"
 }
