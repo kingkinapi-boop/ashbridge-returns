@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "435acc2",
  "worker": "cloud-46fb22",
- "state": "working",
- "at": "2026-10-02T03:43:06.094Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T03:43:19.544Z",
+ "mode": "turbo",
+ "note": "premise wrong: W15 spec is pre fix-round-1 (answerId check still present, no 14-to-15 tie check, W14 rules 7-13 not on 13-15); needs a fresh spec worker (not cloud-f60439) to re-spec first"
 }
