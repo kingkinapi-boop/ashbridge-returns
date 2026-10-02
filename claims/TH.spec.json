@@ -1,10 +1,8 @@
 {
  "card": "TH",
  "role": "spec",
- "worker": "cloud-4ab7b4",
- "state": "reopened",
- "at": "2026-10-02T01:28:39.566Z",
- "mode": "turbo",
- "note": "refit: R1 skips reference/ (A287)",
- "commit": "f1c8095"
+ "worker": "cloud-d1020a",
+ "state": "working",
+ "at": "2026-10-02T02:04:09.330Z",
+ "mode": "turbo"
 }
