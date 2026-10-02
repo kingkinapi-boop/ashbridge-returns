@@ -63,6 +63,6 @@ console.log(`mutating: ${targets.join(', ')}`)
 const stryker = 'node_modules/@stryker-mutator/core/bin/stryker.js'
 const r = spawnSync(process.execPath, [stryker, 'run', '--incremental', '--mutate', targets.join(',')], {
   stdio: 'inherit',
-  shell: false,
+  shell:false,
 })
 process.exit(r.status ?? 1)
