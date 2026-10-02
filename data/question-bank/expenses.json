@@ -1,0 +1,130 @@
+{
+  "items": [
+    {
+      "id": "Q-EXP-001",
+      "type": "CONFIRM",
+      "resolves": "onboarding.expense.personal_card_business_items",
+      "slots": [],
+      "answer": {
+        "shape": "yes_no"
+      },
+      "label": "Business items on a personal card",
+      "topic": "expenses",
+      "retired": false
+    },
+    {
+      "id": "Q-EXP-002",
+      "type": "CONFIRM",
+      "resolves": "onboarding.home_office.claimed",
+      "slots": [],
+      "answer": {
+        "shape": "yes_no"
+      },
+      "label": "Home office claimed",
+      "topic": "expenses",
+      "retired": false
+    },
+    {
+      "id": "Q-EXP-003",
+      "type": "CONFIRM",
+      "resolves": "onboarding.vehicle.business_use",
+      "slots": [],
+      "answer": {
+        "shape": "yes_no"
+      },
+      "label": "Vehicle used for business",
+      "topic": "expenses",
+      "retired": false
+    },
+    {
+      "id": "Q-EXP-004",
+      "type": "ASK",
+      "resolves": "qa.home.personal_costs",
+      "slots": [
+        {
+          "name": "home_costs",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Total home costs for the year",
+      "topic": "expenses",
+      "retired": false
+    },
+    {
+      "id": "Q-EXP-005",
+      "type": "ASK",
+      "resolves": "qa.home.business_use_share",
+      "slots": [
+        {
+          "name": "business_share",
+          "type": "percent",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "number"
+      },
+      "label": "Home business use share",
+      "topic": "expenses",
+      "retired": false
+    },
+    {
+      "id": "Q-EXP-006",
+      "type": "ASK",
+      "resolves": "qa.vehicle.business_km",
+      "slots": [
+        {
+          "name": "business_km",
+          "type": "count",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "number"
+      },
+      "label": "Business kilometres driven",
+      "topic": "expenses",
+      "retired": false
+    },
+    {
+      "id": "Q-EXP-007",
+      "type": "ASK",
+      "resolves": "qa.vehicle.total_km",
+      "slots": [
+        {
+          "name": "total_km",
+          "type": "count",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "number"
+      },
+      "label": "Total kilometres driven",
+      "topic": "expenses",
+      "retired": false
+    },
+    {
+      "id": "Q-EXP-008",
+      "type": "ASK",
+      "resolves": "qa.vehicle.cost",
+      "slots": [
+        {
+          "name": "vehicle_cost",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Vehicle running costs for the year",
+      "topic": "expenses",
+      "retired": false
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "id": "Q-DIV-002",
+      "type": "ASK",
+      "resolves": "onboarding.dividend.declared_on",
+      "slots": [
+        {
+          "name": "declared_on",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "date"
+      },
+      "label": "Dividend date",
+      "topic": "dividends",
+      "retired": false
+    }
+  ]
+}

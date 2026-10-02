@@ -1,0 +1,7 @@
+# 0022: The Lead runs the Auto-fill test with Zo; the to-do holds only what needs Zo (2 October 2026)
+
+Status: in force. Authority: Zo, 2 Oct 2026, about 18:00Z. Quotes are his words. Never edit: supersede.
+
+- **Z22-1 Turbo:** "turbo on" (it was already on; no change).
+- **Z22-2 Auto-fill driven by the Lead:** "open a tab in chrome, I will drop in the signed in cchifrm session. Then I need you to do the autofill and create a document of exactly what information it pulls and what the process is. I can put in details wherever needed." This replaces the trial plan's "Zo does it himself, no AI in the browser" for day 4. Z8-7 still holds: the Lead sees the real corporation on screen, but only structure is written anywhere (screens, steps, forms, cell ids, which year column, formats); never names, numbers, amounts or the business number. Zo types every password, CRA credential and identifier; the Lead never types them. The Lead still stops at any payment, licence, EFILE or transmit screen. Raw exports stay outside the repo and are deleted after `strip-values.mjs`. The document is `reference/taxprep/2026-10-04-day4/notes.md`.
+- **Z22-3 The to-do:** "clean up the to do to only include what the lead is doing section or something that is needed from me." `plan/TODO-ZO.md` now has two parts: 1 Needs you, 2 What the Lead is doing now. "Coming up" items appear only when they need Zo; the phase table moves to `plan/PHASES.md` (the Lead keeps it; phase gates and sign-offs read it there). Supersedes the three-section format of decision 0009 and CLAUDE.md.

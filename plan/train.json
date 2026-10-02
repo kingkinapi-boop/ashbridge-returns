@@ -1,11 +1,14 @@
 {
-  "status": "landed",
+  "status": "checking",
   "branch": "claude/train",
-  "head": "942323b",
+  "head": "3ccdd3a",
   "cards": [
-    "E03"
+    "E03A",
+    "BL0",
+    "A01",
+    "F02"
   ],
-  "requested_at": "2026-10-02T12:15:00Z",
-  "by": "cloud-8b2502",
-  "report": "reports/train-20261002-1218.md"
+  "requested_at": "2026-10-02T18:16:46Z",
+  "note": "BL0, A01, F02 GitHub checks stopped at gitleaks only (their branches lack E03A's 0021 allowlist line); the train carries it. Run gitleaks over HEAD as part of the check.",
+  "by": "cloud-c520ec"
 }

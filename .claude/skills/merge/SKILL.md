@@ -36,9 +36,10 @@ git pull -q --ff-only && git merge -q --ff-only train && git push -q origin main
 
 Metrics line (never leave a field empty; 0 is a value):
 `{"card":"F03","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":3,"tokens":0,"minutes":0,"amber":1,"red":0,"accepted":true}`
+`rounds` is build rounds (builds reported in the claims history), not jobs; `minutes` runs from the first claim to the landing push; `jobs` counts every claim including refits and releases (Review 2 Oct).
 
 ## Phase gate
-A phase is done when all its cards are merged, its gate (`plan/TODO-ZO.md` section 3) is met, its journeys pass on main, and a cold sign-off (`.claude/agents/signoff.md`, fresh Opus, no history) says SIGNED OFF.
+A phase is done when all its cards are merged, its gate (`plan/PHASES.md`) is met, its journeys pass on main, and a cold sign-off (`.claude/agents/signoff.md`, fresh Opus, no history) says SIGNED OFF.
 - Refresh the progress page: `reports/progress.html`, published with the Artifact tool to the same URL every time: in plain words what works now and what it is for, 3 to 6 screenshots from the last journey run (made-up data), clause coverage, open ambers, what is next and why.
-- One line in TODO-ZO section 2: "Optional look: <link>. Nothing waits on it."
+- One line in TODO-ZO part 2 (What the Lead is doing now): "Optional look: <link>. Nothing waits on it."
 - Zo's comments: each becomes a test that runs on every screen or every kind, plus a fix card; a blueprint-altering one becomes red. No follow-up questions.

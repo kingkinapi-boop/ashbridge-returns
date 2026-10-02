@@ -1,0 +1,6 @@
+# G11 spec (cloud-76f46b, 2 Oct 2026)
+Branch claude/G11 = claude/G01 (build reported, not on main) plus main e999a0f. Validated on main e999a0f: with a throwaway stub expenses.json (not committed) all 16 tests pass and the bank folder's 84 pass; typecheck and lint clean; without it only the 14 file-dependent tests fail ("file missing"). 6b sweep: no other test fails; none retired.
+- 16 tests in src/modules/gaps/bank/expenses.acceptance.test.ts (mirrors G10). Clauses ARC-2, AI-12, RULE-19, END-7. Not core (Sonnet).
+- Amber: the topic's client-askable facts are fixed in the test as 8 keys (onboarding.expense.personal_card_business_items, onboarding.home_office.claimed, onboarding.vehicle.business_use, qa.home.personal_costs, qa.home.business_use_share, qa.vehicle.business_km, qa.vehicle.total_km, qa.vehicle.cost); "every test-world gap" read as each key having a live item (G00 absent). File data/question-bank/expenses.json, ids Q-EXP-<nnn>. Yes or no facts get yes_no; money facts a required money_cents slot and money answer; share a percent slot; km a required count slot and number answer. Reverse: edit the test.
+- Builder: create data/question-bank/expenses.json and src/modules/gaps/bank/expenses.test.ts; needs G01 on main first.
+- Permission gaps: none. Model: Sonnet 5.5.

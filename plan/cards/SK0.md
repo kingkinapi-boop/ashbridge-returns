@@ -28,3 +28,6 @@ From the first week, one thin path runs end to end for sample client C01: a docu
 
 ## Not in this card
 Real extraction, books or checks. Any screen.
+
+## Trial day 4 (Auto-fill), 2 Oct 2026
+Taxprep's T2 Auto-fill fills 75 cells (all Current Year) that the "Imported" export filter returns, and no others. Consequence: none for the walking skeleton; any Auto-filled cell that appears is classed as imported from CRA, not an orphan. Source: `reference/taxprep/FINDINGS.md` O8 (one corporation only; structure only). Note only: this card's Paths, Clauses and acceptance tests are unchanged.
