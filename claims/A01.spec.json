@@ -1,11 +1,9 @@
 {
  "card": "A01",
  "role": "spec",
- "worker": "cloud-662626",
- "state": "reported",
- "at": "2026-10-02T04:53:17.892Z",
- "mode": "turbo",
- "note": "31 tests; needs F09 reading.ts on main to typecheck",
- "commit": "dce0009",
- "validated": "e91389f"
+ "note": "toolchain refit",
+ "worker": "cloud-1452fe",
+ "state": "working",
+ "at": "2026-10-02T09:48:30.690Z",
+ "mode": "turbo"
 }
