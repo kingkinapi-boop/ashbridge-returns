@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "5f74392",
  "worker": "cloud-3d81d3",
- "state": "hold-findings",
- "at": "2026-10-02T05:46:47.208Z",
+ "state": "reopened",
+ "at": "2026-10-02T10:06:52.313Z",
  "mode": "turbo",
- "note": "FAIL: invented descriptions, local ignore list, mutate tool stops on harness.ts, see reports/S00-check.md"
+ "note": "deps landed (DG, F03R); spec current"
 }
