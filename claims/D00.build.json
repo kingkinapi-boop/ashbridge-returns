@@ -1,11 +1,10 @@
 {
  "card": "D00",
  "role": "build",
- "round": 7,
- "spec": "82aeffe",
- "worker": "cloud-055342",
- "state": "reopened",
- "at": "2026-10-02T10:06:48.396Z",
- "mode": "turbo",
- "note": "deps landed (DG, F03R); spec current"
+ "round": 8,
+ "spec": "f127cdd",
+ "worker": "cloud-e6b5e3",
+ "state": "working",
+ "at": "2026-10-02T10:07:59.661Z",
+ "mode": "turbo"
 }
