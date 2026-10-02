@@ -7,7 +7,7 @@ const cents = z.number().int()
 const gifi = z.number().int().nullable()
 
 const PostingSchema = z.object({ account: z.string(), debitCents: cents, creditCents: cents })
-const LineSchema = z.object({ account: z.string(), gifi, debitCents: cents, creditCents: cents })
+const LineSchema = z.object({ account: z.string(), gifi, gifiStatus: z.string().nullable(), debitCents: cents, creditCents: cents })
 const TrialBalanceSchema = z.object({
   rows: z.array(LineSchema),
   totalDebitCents: cents,
@@ -84,7 +84,16 @@ export type ClientId = `C${string}`
 export type TrialBalanceName = 'opening' | 'unadjusted' | 'adjusted'
 
 export type LoadCheck =
-  'schema' | 'nets-to-zero' | 'trial-balance' | 'roll' | 'transaction-account' | 'gifi' | 'adjusting-entry' | 'made-up-data'
+  | 'schema'
+  | 'nets-to-zero'
+  | 'trial-balance'
+  | 'roll'
+  | 'transaction-account'
+  | 'gifi'
+  | 'adjusting-entry'
+  | 'fault-catalogue'
+  | 'money'
+  | 'made-up-data'
 
 export type LoadIssue = { client: ClientId; check: LoadCheck; record: string; reason: string }
 

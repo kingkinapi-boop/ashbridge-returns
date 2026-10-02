@@ -1,18 +1,26 @@
 // Loads one sample client from reference/sample-clients/ in place (never copied or rewritten) into the model (ARC-8).
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
-import { dollarsToCents } from '../model/money'
-import { guardIssues, type GuardInput } from '../model/guard'
+import { decimalToCents } from '../../src/core/money'
+import { faults, type FaultEntry } from '../model/faults'
+import { guardIssues, type GuardFile } from '../model/guard'
 import { modelIssues } from '../model/checks'
 import { CLIENT_ID, ClientSchema, TestWorldLoadError, type Client, type ClientId, type LoadIssue } from '../model/schema'
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 export const SAMPLE_ROOT = join(REPO_ROOT, 'reference', 'sample-clients')
 
+// Amounts arrive as integer cents: readJson turns each money field's text into cents, never through a float (ARC-13).
 const dollars = z.number()
-const line = z.object({ account: z.string(), gifi: z.number().int().nullish(), debit: dollars, credit: dollars })
+const line = z.object({
+  account: z.string(),
+  gifi: z.number().int().nullish(),
+  gifiStatus: z.string().nullish(),
+  debit: dollars,
+  credit: dollars,
+})
 const tb = z.object({ rows: z.array(line) })
 
 const RawKey = z.object({
@@ -56,7 +64,7 @@ const RawKey = z.object({
   flags: z.array(
     z.object({ id: z.string(), rule: z.string(), detail: z.string(), severity: z.string().optional(), action: z.string().optional() }),
   ),
-  parties: z.array(z.object({ name: z.string() })),
+  parties: z.array(z.object({ name: z.string(), kind: z.string().optional() })),
   t2Inputs: z
     .object({
       schedule50: z.array(z.object({ name: z.string(), sin: z.string().optional(), businessNumber: z.string().optional() })).optional(),
@@ -75,6 +83,9 @@ const RawOnboarding = z.object({
   cra_program_accounts: z.array(z.object({ account_number: z.string() })).optional(),
   owners: z.array(z.object({ name: z.string() })),
   related_entities: z.array(z.object({ entity_name: z.string() })).optional(),
+  shares: z.object({ holders: z.array(z.object({ name: z.string() })).optional() }).optional(),
+  shareholder_loans: z.array(z.object({ lender: z.string().optional() })).optional(),
+  spouse: z.object({ name: z.string().optional() }).optional(),
 })
 
 /** The numbered folders of a sample-clients root, as client ids (C01 upward), in order. */
@@ -87,8 +98,32 @@ export function clientFolders(root: string = SAMPLE_ROOT): Map<ClientId, string>
   return found
 }
 
-function readJson(path: string): unknown {
-  return JSON.parse(readFileSync(path, 'utf8')) as unknown
+const AMOUNT_KEYS = new Set(['amount', 'debit', 'credit', 'dr', 'cr', 'opening', 'closing', 'openingBalance', 'closingBalance'])
+
+/** Is this number a money field the loader reads? Decided by the shape of the object that holds it, so rates never match. */
+function isMoneyField(key: string, holder: unknown): boolean {
+  if (!AMOUNT_KEYS.has(key) || holder === null || typeof holder !== 'object') return false
+  const h = holder as Record<string, unknown>
+  if (key === 'amount') return 'acct' in h && 'date' in h
+  if (key === 'debit' || key === 'credit') return 'account' in h
+  if (key === 'dr' || key === 'cr') return 'a' in h
+  if (key === 'opening' || key === 'closing') return 'month' in h
+  return 'glAccount' in h
+}
+
+type Reviver = (this: unknown, key: string, value: unknown, context: { source?: string }) => unknown
+
+/** Reads a JSON file; every money field becomes integer cents straight from its written text (no float on the way). */
+function readJson(path: string, moneyIssue?: (record: string, reason: string) => void): unknown {
+  const reviver: Reviver = function (key, value, context) {
+    if (typeof value !== 'number' || context.source === undefined || !isMoneyField(key, this)) return value
+    const r = decimalToCents(context.source)
+    if (r.ok) return r.cents
+    const id = (this as { id?: unknown }).id
+    moneyIssue?.(`${basename(path)} ${typeof id === 'string' ? `${id} ` : ''}${key}`, r.reason)
+    return 0
+  }
+  return JSON.parse(readFileSync(path, 'utf8'), reviver as Parameters<typeof JSON.parse>[1]) as unknown
 }
 
 /** Data rows of an account CSV: every non-blank line after the header. */
@@ -100,43 +135,34 @@ function csvRows(path: string): number {
   )
 }
 
-function strings(v: unknown, out: string[] = []): string[] {
-  if (typeof v === 'string') out.push(v)
-  else if (Array.isArray(v)) for (const x of v) strings(x, out)
-  else if (v !== null && typeof v === 'object') for (const x of Object.values(v)) strings(x, out)
-  return out
-}
-
 /** Loads a client, or throws a TestWorldLoadError listing every check it fails. Deterministic: no clock, no randomness. */
-export function loadClient(id: ClientId, opts: { root?: string } = {}): Client {
+export function loadClient(id: ClientId, opts: { root?: string; faults?: readonly FaultEntry[] } = {}): Client {
   const folder = CLIENT_ID.test(id) ? clientFolders(opts.root).get(id) : undefined
   if (folder === undefined) throw new Error(`test-world client ${id} has no folder in ${opts.root ?? SAMPLE_ROOT}`)
   const issues: LoadIssue[] = []
   const schemaIssue = (record: string, reason: string): void => {
     issues.push({ client: id, check: 'schema', record, reason })
   }
-  const keyResult = RawKey.safeParse(readJson(join(folder, 'answer-key.json')))
-  const onbResult = RawOnboarding.safeParse(readJson(join(folder, 'onboarding.json')))
+  const moneyIssue = (record: string, reason: string): void => {
+    issues.push({ client: id, check: 'money', record, reason })
+  }
+  const keyResult = RawKey.safeParse(readJson(join(folder, 'answer-key.json'), moneyIssue))
+  const onbResult = RawOnboarding.safeParse(readJson(join(folder, 'onboarding.json'), moneyIssue))
   if (!keyResult.success) for (const i of keyResult.error.issues) schemaIssue(`answer-key.json ${i.path.join('.')}`, i.message)
   if (!onbResult.success) for (const i of onbResult.error.issues) schemaIssue(`onboarding.json ${i.path.join('.')}`, i.message)
   if (!keyResult.success || !onbResult.success) throw new TestWorldLoadError(id, issues)
   const key = keyResult.data
   const onb = onbResult.data
 
-  const cents = (x: number, where: string): number => {
-    const r = dollarsToCents(x)
-    if (r.ok) return r.cents
-    schemaIssue(where, r.reason)
-    return 0
-  }
-  const toLine = (l: z.infer<typeof line>, where: string) => ({
+  const toLine = (l: z.infer<typeof line>) => ({
     account: l.account,
     gifi: l.gifi ?? null,
-    debitCents: cents(l.debit, `${where} debit`),
-    creditCents: cents(l.credit, `${where} credit`),
+    gifiStatus: l.gifiStatus ?? null,
+    debitCents: l.debit,
+    creditCents: l.credit,
   })
-  const toTb = (name: string, t: z.infer<typeof tb>) => {
-    const rows = t.rows.map((r) => toLine(r, `${name} ${r.account}`))
+  const toTb = (t: z.infer<typeof tb>) => {
+    const rows = t.rows.map(toLine)
     return {
       rows,
       totalDebitCents: rows.reduce((s, r) => s + r.debitCents, 0),
@@ -148,34 +174,28 @@ export function loadClient(id: ClientId, opts: { root?: string } = {}): Client {
     id: t.id,
     accountKey: t.acct,
     date: t.date,
-    amountCents: cents(t.amount, t.id),
+    amountCents: t.amount,
     account: t.account,
     glAccount: t.accountNo ?? '',
     missingFromExport: t.missingFromExport === true,
-    postings: (t.post ?? []).map((p) => ({
-      account: p.a,
-      debitCents: cents(p.dr ?? 0, `${t.id} ${p.a}`),
-      creditCents: cents(p.cr ?? 0, `${t.id} ${p.a}`),
-    })),
+    postings: (t.post ?? []).map((p) => ({ account: p.a, debitCents: p.dr ?? 0, creditCents: p.cr ?? 0 })),
   }))
 
   const accounts = key.accounts.map((a) => {
-    const months = (key.statementBalances[a.key] ?? []).map((m) => ({
-      month: m.month,
-      openingCents: cents(m.opening, `${a.key} ${m.month} opening`),
-      closingCents: cents(m.closing, `${a.key} ${m.month} closing`),
-      activityCents: transactions
+    const months = (key.statementBalances[a.key] ?? []).map((m) => {
+      const activityCents = transactions
         .filter((t) => t.accountKey === a.key && t.date.startsWith(m.month) && !t.missingFromExport)
-        .reduce((s, t) => s + t.amountCents, 0),
-      rolls: m.rolls,
-    }))
+        .reduce((s, t) => s + t.amountCents, 0)
+      const net = a.role === 'card' || a.role === 'pcard' ? m.opening - activityCents : m.opening + activityCents
+      return { month: m.month, openingCents: m.opening, closingCents: m.closing, activityCents, rolls: net === m.closing }
+    })
     return {
       key: a.key,
       role: a.role,
       currency: a.currency,
       glAccount: a.glAccount,
-      openingCents: cents(a.openingBalance, `${a.key} opening`),
-      closingCents: cents(a.closingBalance, `${a.key} closing`),
+      openingCents: a.openingBalance,
+      closingCents: a.closingBalance,
       exportRows: csvRows(join(folder, a.file)),
       qboRows: csvRows(join(folder, a.qboFile)),
       months,
@@ -195,7 +215,7 @@ export function loadClient(id: ClientId, opts: { root?: string } = {}): Client {
             : 'from-transactions',
       reason: j.reason,
       sources,
-      lines: j.lines.map((l) => toLine(l, j.id)),
+      lines: j.lines.map(toLine),
     }
   })
 
@@ -212,9 +232,9 @@ export function loadClient(id: ClientId, opts: { root?: string } = {}): Client {
     transactions,
     adjustingEntries,
     trialBalance: {
-      opening: toTb('opening', key.trialBalance.opening),
-      unadjusted: toTb('unadjusted', key.trialBalance.unadjusted),
-      adjusted: toTb('adjusted', key.trialBalance.adjusted),
+      opening: toTb(key.trialBalance.opening),
+      unadjusted: toTb(key.trialBalance.unadjusted),
+      adjusted: toTb(key.trialBalance.adjusted),
     },
     flags: key.flags.map((f) => ({ id: f.id, rule: f.rule, detail: f.detail, severity: f.severity ?? null, action: f.action ?? null })),
     priorYear: key.prior_year ?? null,
@@ -226,35 +246,33 @@ export function loadClient(id: ClientId, opts: { root?: string } = {}): Client {
     throw new TestWorldLoadError(id, issues)
   }
 
-  const guard: GuardInput = {
-    names: [
-      { where: 'corporation', name: onb.corporation.legal_name },
-      { where: 'corporation', name: key.name },
-      ...onb.owners.map((o) => ({ where: 'owner', name: o.name })),
-      ...(onb.related_entities ?? []).map((r) => ({ where: 'related entity', name: r.entity_name })),
-      ...key.parties.map((p) => ({ where: 'party', name: p.name })),
-      ...(key.t2Inputs?.schedule50 ?? []).map((s) => ({ where: 'schedule 50 holder', name: s.name })),
-    ],
-    numbers: [
-      { where: 'corporation business number', value: onb.corporation.business_number, kind: 'business number' },
-      ...(onb.cra_program_accounts ?? []).map((a) => ({
-        where: 'CRA program account',
-        value: a.account_number.slice(0, 9),
-        kind: 'business number' as const,
-      })),
-      ...(key.t2Inputs?.schedule50 ?? []).flatMap((s) => [
-        ...(s.sin === undefined ? [] : [{ where: `schedule 50 ${s.name}`, value: s.sin, kind: 'SIN' as const }]),
-        ...(s.businessNumber === undefined
-          ? []
-          : [{ where: `schedule 50 ${s.name}`, value: s.businessNumber, kind: 'business number' as const }]),
-      ]),
-    ],
-    text: [
-      { where: 'onboarding.json', text: strings(readJson(join(folder, 'onboarding.json'))).join('\n') },
-      { where: 'profile.md', text: readFileSync(join(folder, 'profile.md'), 'utf8') },
-    ],
-  }
-  issues.push(...guardIssues(id, guard), ...modelIssues(parsed.data))
+  // The guard reads every file of the folder, not a field list (SEC-11).
+  const files: GuardFile[] = [...guardFiles(folder)]
+  const people = [
+    ...onb.owners.map((o) => o.name),
+    ...(onb.shares?.holders ?? []).map((h) => h.name),
+    ...(onb.shareholder_loans ?? []).flatMap((l) => (l.lender === undefined ? [] : [l.lender])),
+    ...(onb.spouse?.name === undefined ? [] : [onb.spouse.name]),
+    ...key.parties.filter((p) => p.kind === 'person').map((p) => p.name),
+  ]
+  issues.push(...guardIssues(id, files, people), ...modelIssues(parsed.data, opts.faults ?? faults()))
   if (issues.length > 0) throw new TestWorldLoadError(id, issues)
   return parsed.data
+}
+
+/** Every text file of a client folder the guard reads: the JSON files, the profile, the account and QBO CSVs. */
+function guardFiles(folder: string): GuardFile[] {
+  const out: GuardFile[] = []
+  const walk = (dir: string): void => {
+    for (const e of readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+      const full = join(dir, e.name)
+      if (e.isDirectory()) walk(full)
+      else {
+        const kind = e.name.endsWith('.json') ? 'json' : e.name.endsWith('.csv') ? 'csv' : e.name.endsWith('.md') ? 'md' : undefined
+        if (kind !== undefined) out.push({ file: relative(folder, full).split(sep).join('/'), kind, text: readFileSync(full, 'utf8') })
+      }
+    }
+  }
+  walk(folder)
+  return out
 }
