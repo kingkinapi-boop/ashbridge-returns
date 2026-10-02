@@ -1,11 +1,8 @@
 {
  "card": "F03R",
  "role": "spec",
- "worker": "cloud-18c550",
- "state": "reopened",
- "at": "2026-10-02T06:09:14.100Z",
- "mode": "turbo",
- "note": "round per card (reports/findings-wave2.md)",
- "commit": "7145c18",
- "validated": "86ebd54"
+ "worker": "cloud-f684f9",
+ "state": "working",
+ "at": "2026-10-02T06:09:52.628Z",
+ "mode": "turbo"
 }
