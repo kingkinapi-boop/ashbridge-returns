@@ -1,12 +1,8 @@
 {
  "card": "F01",
  "role": "spec",
- "note": "round 3 last (card, findings-F01-r2)",
- "worker": "cloud-b4ebfa",
- "state": "reopened",
- "at": "2026-10-02T11:48:20.606Z",
- "mode": "turbo",
- "beat": "2026-10-02T11:13:48.048Z",
- "commit": "559610587f3a723270f90a98f532b4e1fdab375a",
- "validated": "8e8fba1c6253c09a67ca3d4a857d650cb352a660"
+ "worker": "cloud-01cf18",
+ "state": "working",
+ "at": "2026-10-02T11:49:00.811Z",
+ "mode": "turbo"
 }
