@@ -38,3 +38,7 @@ Same seven or more failures, same owners (F01 schema, records.ts, gaps, ai.ts, F
 ## Run 2 Oct 20:2xZ (cloud-1fe112), main 0d4448e merged
 Unit 3 of 75 fail, the same three as the 19:58Z run: R16 (F06 queue.ts), R23 (F06 jobs.ts and others), R41 (F07 run.ts). Rules only; nothing for a builder to change. Released; do not re-offer until those defects sit on F06/F07/F01/records.ts/gaps/ai.ts cards or in KNOWN via a spec refit.
 Permission gaps: none. Model: Sonnet 5.5.
+
+## Run 2 Oct 20:2xZ (cloud-2cbd52), main e7abd12
+No product code on main changed since cloud-1fe112 (only plan/train and reports); same failures and owners. Not re-run; released. Re-offer only after the owning cards carry the defects or a spec refit adds KNOWN entries.
+Permission gaps: none. Model: Sonnet 5.5.
