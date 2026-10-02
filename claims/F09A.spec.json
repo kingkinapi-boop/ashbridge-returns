@@ -2,7 +2,10 @@
  "card": "F09A",
  "role": "spec",
  "worker": "cloud-df251e",
- "state": "working",
- "at": "2026-10-02T06:13:29.475Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T06:20:26.738Z",
+ "mode": "turbo",
+ "note": "24 new + 1 rewritten tests (spec round 2)",
+ "commit": "41d00d7",
+ "validated": "30986dd"
 }
