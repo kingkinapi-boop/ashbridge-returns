@@ -3,9 +3,10 @@
 // Public API this file fixes:
 //
 // testworld/index.ts
-//   loadClient(id: ClientId, opts?: { root?: string }): Client | Promise<Client>
+//   loadClient(id: ClientId, opts?: { root?: string; faults?: readonly FaultEntry[] }): Client | Promise<Client>
 //     ClientId is 'C01' upward, one per numbered folder (C01 to C15 today). root is the sample-clients folder
-//     (default reference/sample-clients/); the client is read from <root>/<NN-name>/ (answer-key.json,
+//     (default reference/sample-clients/); faults is the fault catalogue the client is checked against (default
+//     faults(), the hand-written catalogue in testworld/model/faults.ts; round 2, A353). The client is read from <root>/<NN-name>/ (answer-key.json,
 //     onboarding.json, profile.md, accounts/*.csv, qbo/*.csv) in place, never copied or rewritten. The tests
 //     always await the result, so the loader may be sync or async. A client that fails any model check or the
 //     made-up-data guard is refused: the call throws (or rejects with) a TestWorldLoadError.
@@ -17,11 +18,24 @@
 //     | 'schema'               the file does not fit the zod schema
 //     | 'nets-to-zero'         an adjusting entry's debits differ from its credits      record: the entry id ("01-AJE-01")
 //     | 'trial-balance'        a trial balance's debits differ from its credits         record: names the balance ("adjusted")
-//     | 'roll'                 an account's month does not roll and no planted fault says so
-//                                                                                       record: "<account key> <YYYY-MM>" ("CHQ 2025-03")
-//     | 'transaction-account'  a transaction has a blank account                       record: the transaction id
-//     | 'gifi'                 a GIFI code that is not four digits                      record: names the GL account ("1010")
-//     | 'adjusting-entry'      an adjusting entry without a type, a reason or a source  record: the entry id
+//     | 'roll'                 an account's month does not roll and the catalogue has no roll entry for that client,
+//                              account and month (the client's own rolls: false never waives it); also an account
+//                              that has transactions but no statement balances (nothing to roll is not a pass)
+//                                                                                       record: "<account key> <YYYY-MM>" ("CHQ 2025-03"),
+//                                                                                       or the account key when it has no balances
+//     | 'transaction-account'  a transaction has a blank account, or its acct is not one of the client's declared
+//                              accounts                                                 record: the transaction id
+//     | 'gifi'                 a GIFI code that is not four digits, or a trial balance line with no GIFI code that is
+//                              not marked gifiStatus "confirm" (a person decides it, as C09 and C10's suspense 1390)
+//                                                                                       record: names the GL account ("1010")
+//     | 'adjusting-entry'      an adjusting entry with no lines, no reason or no source record: the entry id
+//                              (its type is derived, builder amber 1, so "has a type" is not a check; round 2)
+//     | 'fault-catalogue'      an answer-key flag the catalogue does not list for this client, or a catalogue entry
+//                              for this client naming a flag its answer key does not have
+//                                                                                       record: the flag id ("01-F99")
+//     | 'money'                an amount written with more than two decimals ("-282.500"), read from the file's text,
+//                              never through a JavaScript number; rates and percentages are not money
+//                                                                                       record or reason: the field or its text
 //     | 'made-up-data'         the SEC-11 guard: a name without "(Test)" (reason contains "(Test)"), a business
 //                              number or SIN that passes its check digit (reason contains "check digit"), an e-mail
 //                              outside a reserved test domain (reason contains "e-mail"), a phone number outside
@@ -41,11 +55,15 @@
 //                   debitCents: number; creditCents: number }>; totalDebitCents: number; totalCreditCents: number }>
 //     flags: Array<{ id: string; rule: string }>
 //     priorYear: the answer key's prior_year block when it has one (11, 15), otherwise null or absent
-//   Money is integer cents everywhere (ARC-13).
+//   Money is integer cents everywhere (ARC-13), read from the answer key's text so no amount passes through a
+//   float: a 16-digit amount ("90000000000000.99") loads as exactly 9000000000000099 cents (sums with
+//   any sample balance stay safe integers).
 //
-// The fault that lets a month not roll is read from the client's own data: the answer key's statement
-// balance for that month says rolls: false (C10's March duplicates and missing May). Flip it to true and
-// the loader must refuse the client.
+// Round 2 (findings W00 r1 RC3, RC4; A353): the waiver that lets a month not roll is read from the fault
+// catalogue (an entry with client, roll.account and roll.month), never from the client's own data. C10's March
+// duplicates and missing May load because the catalogue lists them; take the May entry out of the catalogue
+// passed to the loader and C10 is refused, and a month the client's own data marks rolls: false is refused when
+// the catalogue does not list it.
 import { afterAll, describe, expect, test, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -116,8 +134,10 @@ interface LoadedClient {
   priorYear?: unknown;
 }
 interface FaultView {
+  id?: string;
   client?: string;
   flagId?: string;
+  roll?: { account: string; month: string };
 }
 type Issue = { client: string; check: string; record: string; reason: string };
 
@@ -133,11 +153,15 @@ function must<T>(v: T | undefined, what: string): T {
   return v;
 }
 
-/** Expects the loader to refuse the client; returns the issues it gave. */
-async function refusal(id: FixtureClientId, root: string): Promise<Issue[]> {
+type Catalogue = Awaited<ReturnType<typeof faults>>;
+
+/** Expects the loader to refuse the client; returns the issues it gave. `withFaults` is the catalogue to pass in. */
+async function refusal(id: FixtureClientId, root: string, withFaults?: Catalogue): Promise<Issue[]> {
   let caught: unknown;
+  // root is always given, so the options object overlaps the loader's options type even before it takes faults.
+  const opts = withFaults === undefined ? { root } : { root, faults: withFaults };
   try {
-    await Promise.resolve(loadClient(id, { root }));
+    await Promise.resolve(loadClient(id, opts));
   } catch (e) {
     caught = e;
   }
@@ -306,18 +330,48 @@ describe('W00 the roll check (card check 4)', () => {
     expect(listed).toEqual(expect.arrayContaining(['10-F01']));
   });
 
-  test('ARC-8 C10 with the missing May no longer listed as a planted fault is refused for CHQ 2025-05', async () => {
-    const root = copySamples();
-    editKey(root, 'C10', (j) => {
-      const m = must(
-        j.statementBalances['CHQ']?.find((s) => s.month === '2025-05'),
-        'C10 May statement balance',
-      );
-      m.rolls = true;
-      delete m.note;
-    });
-    const issues = await refusal('C10', root);
+  test('ARC-8 C10 with its CHQ 2025-05 roll entry taken out of the catalogue passed in is refused for CHQ 2025-05', async () => {
+    const all = await Promise.resolve(faults());
+    const view = (f: unknown): FaultView => f as FaultView;
+    const isMay = (f: unknown): boolean =>
+      view(f).client === 'C10' && view(f).roll?.account === 'CHQ' && view(f).roll?.month === '2025-05';
+    expect(all.filter(isMay), 'the catalogue lists C10 CHQ 2025-05 once').toHaveLength(1);
+    const without = all.filter((f) => !isMay(f));
+    const issues = await refusal('C10', SAMPLE_ROOT, without);
     expect(issues).toEqual(expect.arrayContaining([issue('roll', 'C10', 'CHQ', '2025-05')]));
+    expect(issues.filter((i) => i.check === 'roll').every((i) => i.record.includes('2025-05'))).toBe(true);
+  });
+
+  test("ARC-8 a month the client's own data marks rolls: false is refused when the catalogue has no entry for it (C01 CHQ 2025-03)", async () => {
+    const root = copySamples();
+    editKey(root, 'C01', (j) => {
+      const months = must(j.statementBalances['CHQ'], 'C01 CHQ statement balances');
+      const mar = must(
+        months.find((m) => m.month === '2025-03'),
+        'C01 March',
+      );
+      const apr = must(
+        months.find((m) => m.month === '2025-04'),
+        'C01 April',
+      );
+      // March closes one cent high and April opens from it, so only March fails to roll.
+      mar.closing = Math.round(mar.closing * 100 + 1) / 100;
+      apr.opening = mar.closing;
+      mar.rolls = false;
+      mar.note = 'planted (Test): March does not roll';
+    });
+    const issues = await refusal('C01', root);
+    expect(issues).toEqual(expect.arrayContaining([issue('roll', 'C01', 'CHQ', '2025-03')]));
+  });
+
+  test('ARC-8 an account with transactions but no statement balances is refused, naming the account (no vacuous roll pass)', async () => {
+    const root = copySamples();
+    editKey(root, 'C01', (j) => {
+      expect(j.transactions.some((t) => t.acct === 'BCD')).toBe(true);
+      delete j.statementBalances['BCD'];
+    });
+    const issues = await refusal('C01', root);
+    expect(issues).toEqual(expect.arrayContaining([issue('roll', 'C01', 'BCD')]));
   });
 
   test.each(CLIENT_IDS.filter((id) => id !== 'C10'))('ARC-8 %s has no planted roll fault: every month of every account rolls', async (id) => {
@@ -385,6 +439,131 @@ describe('W00 each model check catches its planted fault', () => {
       must(j.adjustingEntries[0], 'C01 first adjusting entry').source = { transactions: [], onboarding: [] };
     });
     expect(await refusal('C01', root)).toEqual(expect.arrayContaining([issue('adjusting-entry', 'C01', '01-AJE-01')]));
+  });
+});
+
+describe('W00 round 2: the model checks have no vacuous passes (findings W00 r1 RC4, S4)', () => {
+  test('ARC-8 a transaction on an account the client does not declare is refused, naming the transaction', async () => {
+    const root = copySamples();
+    editKey(root, 'C01', (j) => {
+      must(j.transactions[0], 'C01 first transaction').acct = 'ZZZ';
+    });
+    expect(await refusal('C01', root)).toEqual(expect.arrayContaining([issue('transaction-account', 'C01', '01-CHQ-2025-01-0001')]));
+  });
+
+  test('ARC-8 an adjusting entry with no lines is refused (an empty entry does not net to zero by default)', async () => {
+    const root = copySamples();
+    editKey(root, 'C01', (j) => {
+      must(j.adjustingEntries[0], 'C01 first adjusting entry').lines = [];
+    });
+    expect(await refusal('C01', root)).toEqual(expect.arrayContaining([issue('adjusting-entry', 'C01', '01-AJE-01')]));
+  });
+
+  test('ARC-8 a trial balance line with no GIFI code is refused, naming the account', async () => {
+    const root = copySamples();
+    editKey(root, 'C01', (j) => {
+      const r = must(
+        j.trialBalance.adjusted.rows.find((x) => x.account === '1010'),
+        'C01 adjusted 1010 row',
+      );
+      expect(r.gifiStatus).toBe('settled');
+      r.gifi = null;
+    });
+    expect(await refusal('C01', root)).toEqual(expect.arrayContaining([issue('gifi', 'C01', '1010')]));
+  });
+
+  test('ARC-8 a suspense line with no GIFI code passes only while it is marked "confirm": C09 1390 marked settled is refused', async () => {
+    const root = copySamples();
+    editKey(root, 'C09', (j) => {
+      const r = must(
+        j.trialBalance.adjusted.rows.find((x) => x.account === '1390'),
+        'C09 adjusted 1390 row',
+      );
+      expect([r.gifi, r.gifiStatus]).toEqual([null, 'confirm']);
+      r.gifiStatus = 'settled';
+    });
+    expect(await refusal('C09', root)).toEqual(expect.arrayContaining([issue('gifi', 'C09', '1390')]));
+  });
+
+  test('ARC-8 an answer-key flag the fault catalogue does not list is refused, naming the flag', async () => {
+    const root = copySamples();
+    editKey(root, 'C01', (j) => {
+      j.flags.push({ id: '01-F99', rule: 'planted (Test): a flag nobody catalogued', detail: 'planted (Test)' });
+    });
+    expect(await refusal('C01', root)).toEqual(expect.arrayContaining([issue('fault-catalogue', 'C01', '01-F99')]));
+  });
+
+  test('ARC-8 a catalogue entry naming a flag the answer key no longer has is refused, naming the flag', async () => {
+    const root = copySamples();
+    const first = must(readKey(root, 'C01').flags[0], 'C01 first flag').id;
+    editKey(root, 'C01', (j) => {
+      j.flags = j.flags.filter((f) => f.id !== first);
+    });
+    expect(await refusal('C01', root)).toEqual(expect.arrayContaining([issue('fault-catalogue', 'C01', first)]));
+  });
+});
+
+describe('W00 round 2: money is read from the text, never through a float (findings W00 r1 RC3, S3)', () => {
+  test('ARC-13 an answer-key amount written with three decimals ("-282.500") is refused with the reason', async () => {
+    const root = copySamples();
+    const before = '"amount":-282.5,';
+    expect(readFileSync(join(root, FOLDERS.C01, 'answer-key.json'), 'utf8')).toContain(before);
+    editText(root, 'C01', 'answer-key.json', (t) => t.replace(before, '"amount":-282.500,'));
+    const issues = await refusal('C01', root);
+    expect(issues.some((i) => /282\.500|01-CHQ-2025-01-0001/.test(`${i.record} ${i.reason}`)), JSON.stringify(issues)).toBe(true);
+  });
+
+  test('ARC-13 a 16-digit amount loads as exact cents (no float on the way: 90000000000000.99 and .85)', async () => {
+    const root = copySamples();
+    const big: Record<string, string> = { '01-AJE-98': '90000000000000.99', '01-AJE-99': '90000000000000.85' };
+    editKey(root, 'C01', (j) => {
+      const model = must(j.adjustingEntries[0], 'C01 first adjusting entry');
+      for (const id of Object.keys(big)) {
+        const marker = `__${id}__` as unknown as number;
+        // A copy of the first entry (its date, amount and sources) with two lines on the chequing account.
+        j.adjustingEntries.push({
+          ...model,
+          id,
+          reason: 'planted (Test): a large entry that nets to zero on one account',
+          lines: [
+            { account: '1010', gifi: 1002, debit: marker, credit: 0 },
+            { account: '1010', gifi: 1002, debit: 0, credit: marker },
+          ],
+        });
+      }
+    });
+    editText(root, 'C01', 'answer-key.json', (t) =>
+      Object.entries(big).reduce((acc, [id, amount]) => acc.split(`"__${id}__"`).join(amount), t),
+    );
+    const c = await load('C01', root);
+    const lines = (id: string) => must(c.adjustingEntries.find((j) => j.id === id), id).lines;
+    expect(lines('01-AJE-98').map((l) => [l.debitCents, l.creditCents])).toEqual([
+      [9000000000000099, 0],
+      [0, 9000000000000099],
+    ]);
+    expect(lines('01-AJE-99').map((l) => [l.debitCents, l.creditCents])).toEqual([
+      [9000000000000085, 0],
+      [0, 9000000000000085],
+    ]);
+  });
+
+  test.each([
+    ['C02', 'onboarding.json', '"annual_rate": 0.085'],
+    ['C04', 'onboarding.json', '"value": 0.088'],
+    ['C06', 'answer-key.json', '"priorYearEnd": 1.438'],
+    ['C07', 'onboarding.json', '"annual_rate": 0.0465'],
+  ] as const)('ARC-13 %s loads: a rate with more than two decimals (%s %s) is not money', async (id, file, text) => {
+    expect(readFileSync(join(SAMPLE_ROOT, FOLDERS[id], file), 'utf8')).toContain(text);
+    const c = await load(id);
+    expect(c.id).toBe(id);
+  });
+
+  test('ARC-13 a planted four-decimal exchange rate in C06 still loads (rates are never read as money)', async () => {
+    const root = copySamples();
+    editText(root, 'C06', 'answer-key.json', (t) => t.replace('"rate":1.44,', '"rate":1.4412,'));
+    expect(readFileSync(join(root, FOLDERS.C06, 'answer-key.json'), 'utf8')).toContain('"rate":1.4412,');
+    const c = await load('C06', root);
+    expect(c.id).toBe('C06');
   });
 });
 

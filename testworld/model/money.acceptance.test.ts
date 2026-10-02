@@ -1,6 +1,7 @@
 // W00 acceptance tests: money in integer cents (ARC-13, check 2), plus the schema keeping money integral.
 //
-// Public API this file fixes (exported from testworld/model, i.e. testworld/model/index.ts):
+// Public API this file fixes (round 2, A353: exported from src/core/money.ts, the one strict converter; testworld/model
+// may re-export it but must not hold a second one):
 //   decimalToCents(s: string): { ok: true; cents: number } | { ok: false; reason: string }
 //     Turns a decimal string of dollars ("-1234.5", "0.29", "12") into integer cents without floating point.
 //     Accepts an optional leading "-", digits, and at most two decimals. Refuses, with a non-empty reason,
@@ -11,7 +12,8 @@
 //   ClientSchema: the zod schema of a loaded client (see testworld/clients/clients.acceptance.test.ts).
 import { describe, expect, test } from 'vitest';
 import fc from 'fast-check';
-import { centsToDecimal, decimalToCents } from './index';
+import { centsToDecimal, decimalToCents } from '../../src/core/money';
+import * as model from './index';
 
 const SEED = 20261001;
 const RUNS = 1000;
@@ -124,5 +126,13 @@ describe('W00 money converter', () => {
 
   test.each([1.5, Number.NaN, Number.MAX_SAFE_INTEGER + 2])('ARC-13 centsToDecimal refuses %s (not a safe integer of cents)', (c) => {
     expect(() => centsToDecimal(c)).toThrow();
+  });
+
+  test('ARC-13 there is one strict converter: testworld/model re-exports the one in src/core/money.ts or none', () => {
+    const m = model as Record<string, unknown>;
+    for (const name of ['decimalToCents', 'centsToDecimal', 'dollarsToCents']) {
+      if (m[name] === undefined) continue;
+      expect(m[name], name).toBe(name === 'centsToDecimal' ? centsToDecimal : decimalToCents);
+    }
   });
 });

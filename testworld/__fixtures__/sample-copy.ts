@@ -49,10 +49,13 @@ export interface RawKey {
   adjustingEntries: {
     id: string;
     reason: string;
-    lines: { account: string; debit: number; credit: number }[];
+    lines: { account: string; gifi?: number | null; debit: number; credit: number }[];
     source: { transactions: string[]; onboarding: string[] };
   }[];
-  trialBalance: Record<'opening' | 'unadjusted' | 'adjusted', { rows: { account: string; gifi: number | null; debit: number; credit: number }[] }>;
+  trialBalance: Record<
+    'opening' | 'unadjusted' | 'adjusted',
+    { rows: { account: string; gifi: number | null; gifiStatus?: string; debit: number; credit: number }[] }
+  >;
   flags: { id: string; rule: string; detail: string }[];
   prior_year?: unknown;
 }
@@ -106,6 +109,46 @@ export function editOnboarding(root: string, id: FixtureClientId, edit: (j: RawO
 export function editText(root: string, id: FixtureClientId, file: string, edit: (t: string) => string): void {
   const p = join(root, FOLDERS[id], file);
   writeFileSync(p, edit(readFileSync(p, 'utf8')));
+}
+
+/** Any JSON value, for the table-driven plants that reach a field by its path. */
+type Json = null | boolean | number | string | Json[] | { [k: string]: Json };
+export type JsonPath = readonly (string | number)[];
+
+function at(j: Json, path: JsonPath, what: string): Json {
+  let cur: Json = j;
+  for (const k of path) {
+    const next: Json | undefined =
+      typeof k === 'number' ? (Array.isArray(cur) ? cur[k] : undefined) : cur !== null && typeof cur === 'object' && !Array.isArray(cur) ? cur[k] : undefined;
+    if (next === undefined) throw new Error(`fixture: ${what} has no ${path.join('.')}`);
+    cur = next;
+  }
+  return cur;
+}
+
+/** Reads one field of a client's JSON file (answer-key.json or onboarding.json) by its path; throws when it is missing. */
+export function readJsonAt(root: string, id: FixtureClientId, file: string, path: JsonPath): unknown {
+  return at(JSON.parse(readFileSync(jsonPath(root, id, file), 'utf8')) as Json, path, `${id} ${file}`);
+}
+
+/** Sets one existing field of a client's JSON file in the temp copy (the field must already be there). */
+export function setJsonAt(root: string, id: FixtureClientId, file: string, path: JsonPath, value: string): void {
+  const j = JSON.parse(readFileSync(jsonPath(root, id, file), 'utf8')) as Json;
+  const last = path[path.length - 1];
+  if (last === undefined) throw new Error('fixture: empty path');
+  const parent = at(j, path.slice(0, -1), `${id} ${file}`);
+  at(j, path, `${id} ${file}`);
+  if (Array.isArray(parent) && typeof last === 'number') parent[last] = value;
+  else if (parent !== null && typeof parent === 'object' && !Array.isArray(parent) && typeof last === 'string') parent[last] = value;
+  else throw new Error(`fixture: cannot set ${path.join('.')}`);
+  writeFileSync(jsonPath(root, id, file), JSON.stringify(j, null, 2) + '\n');
+}
+
+/** A nine-digit number that passes the Luhn check digit (what a real business number or SIN does), from eight digits. */
+export function luhnPassing(first8: string): string {
+  const d = Array.from({ length: 10 }, (_, k) => first8 + String(k)).find((x) => luhnValid(x));
+  if (d === undefined) throw new Error('fixture: no check digit found');
+  return d;
 }
 
 /** Independent Luhn check (the business-number and SIN check digit), written here on purpose. */

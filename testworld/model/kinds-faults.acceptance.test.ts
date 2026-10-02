@@ -11,15 +11,21 @@
 //     message containing the id for an id that is not K01 to K13. It never returns undefined or a stub.
 //   faults(): FaultEntry[]
 //     FaultEntry = { id: string; client?: ClientId; kind?: KindId; flagId?: string; planted: string;
-//                    expected: string; clause?: string }
+//                    expected: string; clause?: string; roll?: { account: string; month: string } }
 //     Each entry has a client or a kind. Every flag in each sample client's answer key appears once, with
 //     flagId equal to the answer key's flag id and client equal to that client; planted and expected are
 //     non-empty (expected is the exact flag or exception the fault must raise). Ids are unique.
+//     Round 2 (findings W00 r1 RC4, A353): the catalogue is a hand-written typed list in
+//     testworld/model/faults.ts (W01 to W13 add theirs through testworld/kinds/<kind>/faults.ts). It is never
+//     built from the answer keys or the loader, so comparing it with the answer keys (both ways) is not circular.
+//     An entry with roll is the waiver that lets that client's account and month not roll (YYYY-MM); the
+//     sample clients have exactly two: C10 CHQ 2025-03 (duplicates) and C10 CHQ 2025-05 (the missing May).
 import { describe, expect, test } from 'vitest';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { faults, listKinds, loadKind } from '../index';
 import { CLIENT_IDS, REPO_ROOT, SAMPLE_ROOT, readKey } from '../__fixtures__/sample-copy';
+import { readOwnSource } from '../../src/core/testing/read-own-source';
 
 // The fields of the register and the catalogue these tests read (the shapes in the header above).
 interface KindView {
@@ -35,6 +41,7 @@ interface FaultView {
   planted?: unknown;
   expected?: unknown;
   clause?: string;
+  roll?: { account?: unknown; month?: unknown };
 }
 async function kindsNow(): Promise<KindView[]> {
   const k: unknown = await Promise.resolve(listKinds());
@@ -118,5 +125,27 @@ describe('W00 fault catalogue (card check 7)', () => {
     }
     expect(new Set(all.map((f) => f.id)).size).toBe(all.length);
     expect(all.length).toBeGreaterThanOrEqual(real.size);
+  });
+
+  test('ARC-8 the catalogue holds the roll waivers by client, account and month: exactly C10 CHQ 2025-03 and 2025-05', async () => {
+    const rolls = (await faultsNow()).filter((f) => f.roll !== undefined);
+    expect(rolls.map((f) => `${text(f.client)} ${text(f.roll?.account)} ${text(f.roll?.month)}`).sort()).toEqual([
+      'C10 CHQ 2025-03',
+      'C10 CHQ 2025-05',
+    ]);
+    for (const f of rolls) {
+      expect(text(f.expected).trim().length, f.id).toBeGreaterThan(0);
+      expect(text(f.planted).trim().length, f.id).toBeGreaterThan(0);
+    }
+  });
+
+  test('ARC-8 the catalogue is hand-written: testworld/model/faults.ts never reads the answer keys or the loader', () => {
+    const src = readOwnSource('testworld/model/faults.ts');
+    expect(src.length).toBeGreaterThan(0);
+    for (const banned of ['answer-key', 'sample-clients', 'loadClient', 'clientFolders', '../clients', 'readFileSync', 'JSON.parse']) {
+      expect(src.includes(banned), `faults.ts mentions ${banned}`).toBe(false);
+    }
+    // Every sample-client flag id is written out in the file itself.
+    for (const id of CLIENT_IDS) for (const f of readKey(SAMPLE_ROOT, id).flags) expect(src.includes(`'${f.id}'`) || src.includes(`"${f.id}"`), f.id).toBe(true);
   });
 });
