@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "cebbb2a",
  "worker": "cloud-e33daa",
- "state": "working",
- "at": "2026-10-02T17:45:58.163Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T17:51:49.458Z",
+ "mode": "turbo",
+ "note": "31 of 31 acceptance tests pass"
 }
