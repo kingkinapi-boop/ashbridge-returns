@@ -1,0 +1,6 @@
+@use "settings";
+@use "pkg:@ministryofjustice/frontend/moj/all" as moj;
+
+.app-width-container--wide {
+  max-width: 1600px;
+}

@@ -133,7 +133,7 @@
       "closed": "2026-10-01"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -153,7 +153,9 @@
         "src/contracts/ids.ts",
         "src/contracts/index.ts",
         "src/contracts/records.test.ts",
-        "src/contracts/records.acceptance.db.test.ts"
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts"
       ],
       "clauses": [
         "EV-1",
@@ -179,7 +181,56 @@
       "hard": true,
       "security": true,
       "core": true,
-      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first."
+      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first. Parked 2 Oct after round 3 (A359): split into F01C, which lands its work."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09"
+      ],
+      "paths": [
+        "db/schema/00_schema.sql",
+        "db/schema/10_documents.sql",
+        "db/schema/20_ledger.sql",
+        "db/schema/30_books.sql",
+        "db/schema/40_figures.sql",
+        "db/schema/50_returns.sql",
+        "db/schema/60_versions.sql",
+        "db/schema/70_checks.sql",
+        "db/schema/90_learning.sql",
+        "src/contracts/records.ts",
+        "src/contracts/ids.ts",
+        "src/contracts/index.ts",
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "EV-14",
+        "FLOW-4",
+        "TB-1",
+        "TB-2",
+        "TB-3",
+        "FLOW-1",
+        "SEC-6",
+        "SEC-7",
+        "ARC-2",
+        "ARC-3",
+        "ARC-10"
+      ],
+      "id": "F01C",
+      "title": "Records and schema: the last narrow repairs (F01 split)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/F01C from claude/F01 round 3 head; lands F01 work (A359)."
     },
     {
       "status": "done",
@@ -213,7 +264,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F03"
@@ -233,10 +284,11 @@
       "id": "F03R",
       "title": "Taxprep CSV contract: apostrophe and writer repairs",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -258,7 +310,34 @@
       "title": "AI output contract (schemas and citations)",
       "phase": 0,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F01C",
+        "F04",
+        "F05M"
+      ],
+      "paths": [
+        "src/contracts/ai.ts",
+        "src/contracts/ai.test.ts",
+        "src/contracts/checks.ts",
+        "src/contracts/checks.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts"
+      ],
+      "clauses": [
+        "AI-5",
+        "ARC-8"
+      ],
+      "id": "BL0",
+      "title": "One blank rule everywhere",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From F01 r2 findings and the F04, A01 checks (A357)."
     },
     {
       "status": "done",
@@ -316,7 +395,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -342,7 +421,32 @@
       "title": "Done gate: scope and mutation agree with how jobs make files",
       "phase": 0,
       "size": "S",
-      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW). Round 2 landed 2 Oct; round 3 (skip __fixtures__ for the marker) open."
+      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW). Round 2 landed 2 Oct; round 3 (skip __fixtures__ for the marker) open.",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "DG"
+      ],
+      "paths": [
+        "tools/mutate-changed.mjs",
+        "vitest.mutate.config.ts",
+        "stryker.config.mjs",
+        "tools/test/done-gate.test.mjs",
+        "tools/test/__fixtures__/done-gate/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "DG2",
+      "title": "Mutation gate covers testworld and every core card",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From findings W00 r1 RC2 (A353).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -457,7 +561,7 @@
       "note": "Split from F09 (A297): owns normaliseAmount, amountGroups, AMOUNT_FORMATS and checks 14 to 16, 19, 20; the grammar table and dash rule (A296); F09 findings 1 to 3 stay on main with no consumer until this lands. Parked 2 Oct after its third failed check (A349): split into F09B, which lands its work."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F09"
@@ -479,13 +583,14 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "Branch claude/F09B starts from claude/F09A fc17ad4; lands F09A work plus the round 3 fixes (A349)."
+      "note": "Branch claude/F09B starts from claude/F09A fc17ad4; lands F09A work plus the round 3 fixes (A349).",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F09",
         "F09B",
         "F05M"
@@ -544,7 +649,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "TH"
+        "TH",
+        "DG2"
       ],
       "paths": [
         "testworld/model/**",
@@ -553,7 +659,9 @@
         "testworld/clients/**",
         "reference/sample-clients/**/taxprep/*.csv",
         ".gitattributes",
-        "src/contracts/taxprep.acceptance.test.ts"
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/core/money.ts",
+        "src/contracts/__fixtures__/taxprep-bytes.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -575,7 +683,8 @@
       "spec": null,
       "deps": [
         "F03",
-        "F03R"
+        "F03R",
+        "W00"
       ],
       "paths": [
         "src/modules/taxprep-sim/core/**",
@@ -685,13 +794,15 @@
       "deps": [
         "F00",
         "F09",
-        "F09B"
+        "F09B",
+        "F01C"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
         "src/modules/ocr/index.ts",
         "package.json",
-        "package-lock.json"
+        "package-lock.json",
+        "src/contracts/reading.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -709,7 +820,7 @@
       "spec": null,
       "deps": [
         "W00",
-        "F01",
+        "F01C",
         "F00T"
       ],
       "paths": [
@@ -735,7 +846,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F03",
         "F04",
         "F05",
@@ -766,7 +877,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01"
+        "F01C"
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
@@ -792,7 +903,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F00T"
       ],
       "paths": [
@@ -843,7 +954,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "P01"
       ],
       "paths": [
@@ -1762,7 +1873,7 @@
       "spec": null,
       "deps": [
         "F00",
-        "F01",
+        "F01C",
         "F00T"
       ],
       "paths": [
@@ -1850,7 +1961,7 @@
       "security": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -1869,10 +1980,30 @@
       "id": "D00",
       "title": "Design basis: GOV.UK and MOJ components, Ashbridge brand",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
+      "spec": "n/a",
+      "deps": [
+        "D00"
+      ],
+      "paths": [
+        "design/basis/**"
+      ],
+      "clauses": [
+        "RV-55"
+      ],
+      "id": "D00L",
+      "title": "Design basis uses Zo's logo",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Decision 0020 Z20-8."
+    },
+    {
+      "status": "done",
       "spec": null,
       "deps": [
         "TH"
@@ -1892,10 +2023,11 @@
       "id": "D01",
       "title": "Staff screen map and navigation",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1921,10 +2053,11 @@
       "family": "design",
       "params": {
         "screen": "cpa-review"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1944,10 +2077,11 @@
       "family": "design",
       "params": {
         "screen": "source-viewer"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1967,10 +2101,11 @@
       "family": "design",
       "params": {
         "screen": "queue"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1990,10 +2125,11 @@
       "family": "design",
       "params": {
         "screen": "gaps"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -2014,10 +2150,11 @@
       "family": "design",
       "params": {
         "screen": "shell"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -2038,13 +2175,14 @@
       "title": "Staff component library (GOV.UK and MOJ in React)",
       "phase": 1,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "note": "Parked 2 Oct (A354): starts only after Zo approves D00 at a design sitting (card \"When it starts\"); the queue offered it early."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F02",
         "F04",
         "SK0"
@@ -2102,7 +2240,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F06",
         "F09",
         "F10",
@@ -2167,7 +2305,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2189,7 +2327,8 @@
       "title": "Fact catalogue: fact keys, value types, sensitive keys",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -2644,7 +2783,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "W00",
         "A05",
         "F00T"
@@ -4016,7 +4155,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -4037,7 +4176,7 @@
       "params": {
         "screen": "roundtrip"
       },
-      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1). Also (review-phase2): the Ready button on the lock step (T12 markReady), and the \"Taxprep still holds\" list with its clear action and reason box (T01 stillHeld, requestClear)."
+      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1). Also (review-phase2): the Ready button on the lock step (T12 markReady), and the \"Taxprep still holds\" list with its clear action and reason box (T01 stillHeld, requestClear). Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "parked",
@@ -4064,7 +4203,7 @@
       "note": "Removed by v1.1: no judgment input sheet in our app (amber A32). Replaced by D12."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -4085,10 +4224,11 @@
       "family": "design",
       "params": {
         "screen": "exceptions"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -4109,7 +4249,8 @@
       "family": "design",
       "params": {
         "screen": "cite"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "carded",
@@ -4917,7 +5058,7 @@
         "T04",
         "T01",
         "L00",
-        "F01"
+        "F01C"
       ],
       "paths": [
         "src/modules/learning/versions/**",
@@ -8299,7 +8440,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -8319,10 +8460,11 @@
       "family": "design",
       "params": {
         "screen": "ops"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -8342,7 +8484,8 @@
       "family": "design",
       "params": {
         "screen": "board"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "todo",
