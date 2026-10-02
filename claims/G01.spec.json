@@ -1,9 +1,11 @@
 {
  "card": "G01",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: no assertion changed; only own failures (module missing) plus E03's stale 10 (fixed on claude/E03 r3)",
  "worker": "cloud-87fd26",
- "state": "working",
- "at": "2026-10-02T11:46:03.274Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T11:47:58.715Z",
+ "mode": "turbo",
+ "commit": "b575ce19929bcd67dd6a1a14fa5a63e7e8f59107",
+ "validated": "e4d6083db744556e5964d4e594e2b44f039a3165"
 }
