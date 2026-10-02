@@ -190,3 +190,5 @@
 {"ts":"2026-10-02T04:14:00.140Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T04:14:00.776Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T04:47:30.587Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T04:47:49.115Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T04:48:26.614Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"local","desc":"Opus adversarial read F09 and F03","allowed":true}
