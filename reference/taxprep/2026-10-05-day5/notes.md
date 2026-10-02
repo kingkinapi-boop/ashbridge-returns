@@ -111,3 +111,8 @@ Start: 15 days left, 97 PDFs left (floor 85). Browser 1 (8f110f0a) drawn althoug
 ## End of run 5A/5B partial
 - Trial 15 days left; PDFs left 96 (start 97). Release not read. Done: imports of 01 to 07 (all "Data imported successfully" or the replaced-rows list), diagnostics counts 01 to 05. Not done: exports (bell empty), print file, diagnostics code lists, "Cells with diagnostics" on 01, 08 to 10 (create plus import), print of 10.
 - Left open: 02 Halton open on the ID form with the diagnostics panel open; no throwaway tabs.
+
+# Run 5 exports retry (walker, Sonnet 5.5)
+- Browser 1 (8f110f0a) selected; new tab opened on the returns list. document.visibilityState = "hidden" (window covered or not in front).
+- The page redirected to the iFirm Login page (/2/login/?return_url=...returnsList). Per the rules: stopped, no password typed. Nothing imported, exported or printed. PDFs left: unchanged (96 at last note).
+- Needs Zo: sign in to iFirm in the Ashbridge Test window and put the window on screen. QBO tabs left alone. A new tab (iFirm login) was left open.

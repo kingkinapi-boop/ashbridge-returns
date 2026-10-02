@@ -1,6 +1,6 @@
 # Zo's to-do (Ashbridge Returns)
 
-The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number. Answered items are deleted at once; the numbers below are today's only (earlier answers are recorded in decisions 0010 to 0017; only big questions come here). Chats say only one line; everything they need from you is here. If you do not answer, they keep going on other work. What each chat does: `README.md` in this folder.
+The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. Answer in the Lead chat with the item number. Answered items are deleted at once; the numbers below are today's only (earlier answers are recorded in decisions 0010 to 0018; only big questions come here). Chats say only one line; everything they need from you is here. If you do not answer, they keep going on other work. What each chat does: `README.md` in this folder.
 
 ## 1. Needs you now
 
@@ -8,7 +8,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 **Coming soon from you, Sat 3 Oct (about 30 minutes):** day 4 of the trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". No walker runs that day. Any other day suits too; days 5 and 6 do not wait for it. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
 
-**What the Lead is doing now:** the empty app (F00) is on main, the first card through the whole loop; a fresh reviewer is signing off the loop before more cloud workers start; three cloud workers are building the next cards; three screen designs are in their last fix round for your sitting about 3 Oct; Taxprep day 5 waits on item 2, the .GFI on item 1.
+**What the Lead is doing now:** turbo is on again on your word. The Reviewer slowed things at 01:50Z and named four fixes; I am doing them first: the empty app's core tests get rewritten by a separate test writer, every core file must kill all its mutants, and the reading card and the test-homes card go ahead of the rest. Also running: two workers on this laptop and three in the cloud; the .GFI is done; Taxprep day 5 is running in the test Chrome; the last screen design is in its final fix round for your sitting about 3 Oct.
 The Reviewer slowed the build to normal (reviews/REVIEW.md): the Lead first fixes the first card's core tests, the mutation gate and the two cards that block the queue; then type `turbo on`.
 
 ## 2. Coming up (no action yet)
