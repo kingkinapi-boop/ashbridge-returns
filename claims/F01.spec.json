@@ -2,8 +2,11 @@
  "card": "F01",
  "role": "spec",
  "worker": "cloud-662626",
- "state": "working",
- "at": "2026-10-02T04:19:50.374Z",
+ "state": "reported",
+ "at": "2026-10-02T04:30:33.002Z",
  "mode": "turbo",
- "beat": "2026-10-02T04:22:38.451Z"
+ "beat": "2026-10-02T04:22:38.451Z",
+ "note": "103 tests added (checks 13-19), 92 fail by name; needs F09 reading.ts on main for typecheck",
+ "commit": "8d503f9",
+ "validated": "7ef8830"
 }
