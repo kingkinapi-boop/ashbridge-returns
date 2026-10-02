@@ -1,10 +1,9 @@
 {
  "card": "F03R",
  "role": "check",
- "for": "2026-10-02T05:13:16.067Z",
- "worker": "cloud-d2cfdd",
- "state": "failed",
- "at": "2026-10-02T05:34:47.232Z",
- "mode": "turbo",
- "note": "FAIL: rate 1e21 writes 1e+21 the parser refuses, see reports/F03R-check.md"
+ "for": "2026-10-02T06:48:03.171Z",
+ "worker": "cloud-e81ab0",
+ "state": "working",
+ "at": "2026-10-02T07:01:56.896Z",
+ "mode": "turbo"
 }
