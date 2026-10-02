@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "046f8d4",
  "worker": "cloud-839492",
- "state": "working",
- "at": "2026-10-01T23:56:35.075Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T00:00:47.724Z",
+ "mode": "turbo",
+ "note": "109 of 109 acceptance tests pass; full suite 203 pass; scope flags spec fixture file only"
 }
