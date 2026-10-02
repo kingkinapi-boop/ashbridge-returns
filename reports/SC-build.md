@@ -19,3 +19,12 @@ Unchanged: unit 4 of 48 fail (R15, R18, R23, R41), db 3 of 17 fail (R12, R15, R4
 
 ## Re-run 2 Oct 19:40Z (cloud-14c055), main 50608a1 merged
 No code changed on main since the last run (plan/ and reports/ only). Same 7 failures, same owners; not re-run. Released; re-offer only after the owning cards carry the defects or a spec job adds KNOWN entries.
+
+## Run 2 Oct 19:58Z (cloud-7c1598), main fae1588 merged, spec 34e8ac0 (94 rule tests)
+No product code written (rules only). Unit 3 of 75 fail, db 5 of 19 fail; db reasons not itemised (R13, R15, R42, R43, R44, same F01 schema owners as above).
+New since the spec was validated on 6d8efd6: F06 and F07 landed and are not in KNOWN:
+- R16 src/modules/jobs/queue.ts (F06): two `order by created_at, id` queries with no identity seq first.
+- R23 src/contracts/jobs.ts (F06): JobSchema accepts a stray key at the top.
+- R41 src/modules/bridge/run.ts (F07): a `.trim()` blank rule (go through src/contracts/text.ts).
+Needed from the Lead: add these to F06 and F07 (or KNOWN via a spec refit), and the older F01/records.ts/gaps/ai.ts defects to their cards; re-offer only then.
+Permission gaps: none. Model: Sonnet 5.5.
