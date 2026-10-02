@@ -131,3 +131,5 @@
 {"ts":"2026-10-01T23:44:35.486Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T23:49:30.650Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card changes from W14/D01 findings","allowed":true}
 {"ts":"2026-10-01T23:56:15.932Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T00:15:44.758Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"A05 security review and gitleaks","allowed":true}
+{"ts":"2026-10-02T00:15:49.930Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Findings review F01 and F09","allowed":true}
