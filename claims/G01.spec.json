@@ -2,7 +2,10 @@
  "card": "G01",
  "role": "spec",
  "worker": "cloud-c1cb2b",
- "state": "working",
- "at": "2026-10-02T10:50:16.676Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T10:54:25.865Z",
+ "mode": "turbo",
+ "note": "59 tests, ambers in reports/G01-spec.md",
+ "commit": "b575ce1",
+ "validated": "0f31dc5"
 }
