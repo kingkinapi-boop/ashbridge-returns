@@ -1,10 +1,10 @@
 {
  "card": "E03",
  "role": "spec",
- "note": "toolchain refit: merged main, typecheck green, 3 lint errors only in facts.ts (build round 2 fix 8), 16 spec tests fail pending build",
+ "note": "round 3: count from directory (card Round 3); build adds 9 keys",
  "worker": "cloud-550660",
- "state": "reported",
- "at": "2026-10-02T08:34:22.239Z",
+ "state": "reopened",
+ "at": "2026-10-02T11:11:07.043Z",
  "mode": "turbo",
  "commit": "0786eca",
  "validated": "7dd2c02a511607dfd78053eae5e40a510f95b03b"
