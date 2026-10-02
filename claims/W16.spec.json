@@ -2,8 +2,11 @@
  "card": "W16",
  "role": "spec",
  "worker": "cloud-abfeb2",
- "state": "working",
- "at": "2026-10-02T21:37:26.166Z",
+ "state": "reported",
+ "at": "2026-10-02T21:45:18.203Z",
  "mode": "turbo",
- "beat": "2026-10-02T21:37:48.726Z"
+ "beat": "2026-10-02T21:37:48.726Z",
+ "note": "0 new tests; 5 R8 checks fail by name (verify.mjs KNOWN emptied)",
+ "commit": "78a9fba1",
+ "validated": "b9d2f580"
 }
