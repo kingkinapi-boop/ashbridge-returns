@@ -1,11 +1,10 @@
 {
  "card": "D00",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "82aeffe",
  "worker": "cloud-550660",
- "state": "released",
- "at": "2026-10-02T08:35:03.447Z",
- "mode": "turbo",
- "note": "package.json lacks govuk-frontend, MOJ, sass, nunjucks, axe-core; logo not in repo; see reports/D00-build.md"
+ "state": "working",
+ "at": "2026-10-02T08:35:05.944Z",
+ "mode": "turbo"
 }
