@@ -4,7 +4,8 @@
  "round": 5,
  "spec": "ba50f80",
  "worker": "cloud-dec020",
- "state": "working",
- "at": "2026-10-02T20:34:33.107Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:34:57.262Z",
+ "mode": "turbo",
+ "note": "card already landing at b80c251 (A07D split) on train 727cd06; see reports/A07C-build-released.md on claude/A07C-rel"
 }
