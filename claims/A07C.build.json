@@ -4,7 +4,8 @@
  "round": 8,
  "spec": "ba50f80",
  "worker": "cloud-ef21b9",
- "state": "working",
- "at": "2026-10-02T20:44:21.774Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:44:29.018Z",
+ "mode": "turbo",
+ "note": "Stale offer re-offered at once; the Lead must re-stamp (update A07C build reported) or close it. Stopping to avoid a loop."
 }
