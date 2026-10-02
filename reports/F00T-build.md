@@ -1,11 +1,8 @@
-# F00T build (local-4e140f), RELEASED unfinished: log.ts at 93.04, not 100
+# F00T build (round 2, local-98ddb8): reported
 
-Branch claude/F00T. Done: money.ts (addCents sums exactly in BigInt, refuses an unsafe exact total; roundCentsToDollars no -0 via `Math.sign(c) * dollars + 0`), ids.ts (injectable random: setIdRandom/resetIdRandom, no static initialiser mutants), `// @mutate` on clock.ts and env.ts, env.ts names the failing key with a Stryker disable on the one equivalent separator, new src/core/ids.test.ts (2 unit tests). Gate: `npx vitest run src/core` 94 of 94; typecheck, lint, deps:check clean; scope OK.
-Stryker per file (run on the five files, incremental): clock 100, env 100, ids 100, money 100, log 93.04 (8 survivors).
-Not done: the log.ts survivors. My edit that removed the three redundant kinds (log.ts:28-30 'access token', 'refresh token', 'token hash'), dropped the `.filter` at 43, changed the regex at 41 and 42 was refused by the permission classifier ("Security Weaken"), so I left it and did only the pure refactors (hasRun by joined string, ancestors as a Set). Survivors left: log.ts 28, 29, 30 (redundant kinds), 39 and 43 (filter), 41 (regex), 42 (split `+`). A worker (or Zo's approval) must finish them: remove the three kinds (the kind 'token' already matches any key with that word part) and the empty-part filter, use `([A-Z])([A-Z][a-z])`, and rerun Stryker; or add `// Stryker disable` with reasons from reports/F00T-mutants.md. Not run: full suite, flake, e2e (cloud checker).
-Amber: the id injection names are the spec's (setIdRandom, resetIdRandom).
-
-## Permission gaps
-Main checkout has no node_modules (junction dangles); used `npm ci` in the worktree. Classifier refused the log.ts redaction-list edit (above).
-## Model
-Sonnet 5.5.
+Branch claude/F00T (pushed from a local branch f00t-local; the old worktree agent-afd0152e599a39c80 still holds the branch name and should be removed by the Lead). Builds on local-4e140f's work (money, ids, clock, env; all at 100).
+Done now: log.ts survivors closed without touching redaction (A329). `wordParts` split into statements so each reasoned `// Stryker disable next-line` sits before its statement: the acronym-run regex, the `+` of the split and the empty-part filter are classed equivalent with reasons (the filter and all kinds stay). The three compound kinds ('access token', 'refresh token', 'token hash') are killed by a test, not removed: a mutant that blanks one matches the empty key, so `redact({'': ..., '__': ...})` must leave those keys alone. New src/core/log.test.ts (3 unit tests: empty key, every kind in snake and camel case, compound credential kinds).
+Gate: Stryker per file on the five core files: clock 100, env 100, ids 100, money 100, log 100 (0 survivors; 4 reasoned disables; run with a temporary config limited to src/core because the laptop cannot run the A05 symlink test, EPERM). src/core 95 of 95 tests, 5 runs in a row (flake). typecheck, lint, deps:check clean; scope OK (17 files). Not run here: full `npm test` (the A05 symlink test fails on Windows without symlink rights), `npm run e2e`, `mutate:canary` (cloud checker).
+Ambers: (1) The log.ts equivalents are classed by reasoned disables, per A329; reverse by removing the comments. (2) Mutation was run through a throwaway config (deleted), not `mutate:changed`, for the reason above.
+Permission gaps: main checkout has no node_modules, so `npm ci` ran in the worktree through heavy.mjs; the worktree guard refuses compound shell lines that mention paths containing "GitHub" with redirects or heredocs.
+Model: Sonnet 5.5.
