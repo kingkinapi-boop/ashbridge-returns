@@ -4,7 +4,8 @@
  "round": 13,
  "spec": "62f6c18",
  "worker": "cloud-bb208a",
- "state": "working",
- "at": "2026-10-02T17:53:43.260Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T17:53:54.250Z",
+ "mode": "turbo",
+ "note": "re-offered at once; same 7 failures, owners' fixes and R23_SAMPLES/FUTURE_POINTERS spec job needed first (CQ1 follow-up: a released build must not be re-offered unchanged)"
 }
