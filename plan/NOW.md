@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 07:16Z by the Lead at handover (Zo's `handover`). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 07:30Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 07:16Z by the Lea
 |---|---|---|---|---|
 | F09A check (build round 2: mutation 100 both files) | cloud run | cloud | 2 Oct 07:12Z | claude/F09A |
 | F04 spec round 2 (page citation, strict schemas) | cloud run | cloud | 2 Oct 07:12Z | claude/F04 |
-| Queue: TH check (round 2 build, gitleaks clean), F03R spec round 3 (last), DG build round 3, D01 build, W00 and D00 builds, A01 build round 2, S00 build round 3 (waits F03R and DG), F01 build | cloud queue | cloud | 2 Oct | claude/<card> |
+| Queue: TH check (re-check of round 2), DG spec fix (card "Round 3 spec fix"), F03R spec round 3 (last), F01 build, D01 build; then W00, D00 (wait TH), A01 (waits F09A), S00 (waits F03R, DG) | 4 cloud runs fired | cloud | 2 Oct 07:3xZ | claude/<card> |
 
 No local helpers running. Stale worktrees under .claude/worktrees (agent-*): check `git worktree list`; remove clean ones (junction first with node fs.rmdirSync).
 
@@ -24,7 +24,7 @@ No local helpers running. Stale worktrees under .claude/worktrees (agent-*): che
 1. Poll claims; board every PASS (scope, GitHub checks, Opus read for core): TH first (it fixes the gitleaks red step, A312 ends), then F09A, DG round 3. One train at a time via plan/train.json; land by MERGING main into the train, code-diff guard, ff main; record only after the push.
 2. F03R round 3 is its last (card "Round 3"): fail only on B3 lands B1+B2; fail on B1 parks F03R and S00.
 3. After F09A lands: F04 build, A01 build round 2, F01 build; then I00, E01, A07, W20, SK0.
-4. W00 spec says check 8 needs a CRLF gitattributes fix: read reports/W00-spec.md on claude/W00 and decide (amber).
+4. W00 check 8 CRLF: decided A347 (W00 build owns .gitattributes line and the taxprep CSVs).
 5. Taxprep: day 6 Sun 4 Oct (changes after lock, check export, roll forward, copy one full diagnostics panel); day 4 Zo Sat 3 Oct.
 6. Designs: Zo's sitting answers (Q1 to Q7) into decisions and fix cards; then D00, D01, D05.
 7. B01 spec (reference/qbo/gfi-file.md, A305). W16 card to write (W14 KNOWN R8 fails on 03, 04, 07, 08, 10). SC grows: R23 to R31 (reports/findings-wave2.md, findings-F03R-r2.md).
