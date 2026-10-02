@@ -2,7 +2,8 @@
  "card": "S02",
  "role": "spec",
  "worker": "cloud-b4a9c0",
- "state": "working",
- "at": "2026-10-02T14:28:12.158Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T14:28:25.312Z",
+ "mode": "turbo",
+ "note": "Dep S00 not merged: no src/ or data/taxprep on main, so no code base to write or validate tests against. Re-offer after S00 lands."
 }
