@@ -2,8 +2,11 @@
  "card": "W00c",
  "role": "spec",
  "worker": "cloud-76c2f7",
- "state": "working",
- "at": "2026-10-02T21:06:08.988Z",
+ "state": "reported",
+ "at": "2026-10-02T21:44:45.013Z",
  "mode": "turbo",
- "beat": "2026-10-02T21:44:30.406Z"
+ "beat": "2026-10-02T21:44:30.406Z",
+ "note": "1312 tests; scope: checks.test.ts and faults.test.ts need listing in Paths",
+ "commit": "1b555abb",
+ "validated": "7b5d6c94"
 }
