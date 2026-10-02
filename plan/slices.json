@@ -2208,7 +2208,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2230,7 +2230,8 @@
       "title": "Fact catalogue: fact keys, value types, sensitive keys",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
