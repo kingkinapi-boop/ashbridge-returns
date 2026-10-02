@@ -2,8 +2,7 @@
  "card": "G12",
  "role": "spec",
  "worker": "cloud-2a9ed7",
- "state": "released",
- "at": "2026-10-02T13:59:35.641Z",
- "mode": "turbo",
- "note": "dep G01 not merged to main (train red on an F00T timing flake, reports/train-20261002-1359.md); no src/modules/gaps/bank or data/question-bank/_schema.json on main to spec against"
+ "state": "working",
+ "at": "2026-10-02T13:59:38.525Z",
+ "mode": "turbo"
 }
