@@ -347,7 +347,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "DG"
@@ -367,7 +367,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From findings W00 r1 RC2 (A353)."
+      "note": "From findings W00 r1 RC2 (A353).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -1879,7 +1880,7 @@
       "security": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -1898,7 +1899,8 @@
       "id": "D00",
       "title": "Design basis: GOV.UK and MOJ components, Ashbridge brand",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
