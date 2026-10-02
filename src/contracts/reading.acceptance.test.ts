@@ -757,3 +757,117 @@ describe('mutation testing marker (round 2)', () => {
     expect(head.some((l) => l.includes('// @mutate'))).toBe(true)
   })
 })
+
+// ---------- Round 3 (findings F09 round 2, RC-B; checks 17 and 18) ----------
+//   normaliseAmount never returns -0: an amount of zero is 0 whatever its sign mark (amber A296 list).
+//   pointsToBox and pixelsToBox throw RangeError (never ZodError, never a box) when any numeric
+//   input (rect x, y, width, height, page width, page height) is NaN, Infinity or -Infinity.
+//   amountGroups is not exported, so the groups are observed through normaliseAmount on the group
+//   text valueInBox builds (sign words joined onto the amount) and through valueInBox itself.
+
+describe('no amount returns -0 (round 3, check 17)', () => {
+  test('EV-6 check 17 normaliseAmount reads "(0.00)", "-0", "-0.00", "0.00-" and "0.00 CR" as 0, never -0', () => {
+    for (const text of ['(0.00)', '-0', '-0.00', '0.00-', '0.00 CR']) {
+      const got = normaliseAmount(text)
+      expect(got, text).toEqual({ ok: true, cents: 0 })
+      const cents = got.ok ? got.cents : Number.NaN
+      expect(Object.is(cents, 0), `${text} gave ${Object.is(cents, -0) ? '-0' : String(cents)}`).toBe(true)
+    }
+  })
+
+  test('EV-6 check 17 the matching amount groups give 0, never -0, and still match the value zero', () => {
+    // The group texts valueInBox builds when sign words join a zero amount.
+    for (const group of ['(0.00)', '$(0.00)', '-$0.00', '$-0.00', '-0.00', '0.00-', '0.00DR', '0.00CR', '-0']) {
+      const got = normaliseAmount(group)
+      const cents = got.ok ? got.cents : Number.NaN
+      expect(Object.is(cents, 0), `group ${group}`).toBe(true)
+    }
+    // The same zero amounts as separate words in a box match the value zero, with or without a sign.
+    const splits: string[][] = [['(', '0.00', ')'], ['-', '0.00'], ['0.00', '-'], ['0.00', 'DR'], ['0.00', 'CR'], ['$', '-0.00']]
+    for (const words of splits) {
+      const result = makeResult(line(words))
+      expect(valueInBox(result, amountBox, '0.00'), words.join(' ')).toEqual({ ok: true })
+      expect(valueInBox(result, amountBox, '-0.00'), words.join(' ')).toEqual({ ok: true })
+    }
+  })
+
+  test('EV-6 check 17 property: no input text yields -0 from normaliseAmount', () => {
+    const zero = fc.constantFrom('0', '0.0', '0.00', '$0.00', '0.', '00')
+    const lead = fc.constantFrom('', '-', '$-', '-$', '(', '$(', ' - ')
+    const trail = fc.constantFrom('', '-', ' CR', ' DR', 'CR', 'DR', ')', ' -')
+    const shaped = fc.tuple(lead, zero, trail).map(([a, b, c]) => (a.includes('(') ? `${a}${b})` : `${a}${b}${c}`))
+    const amountish = fc.string({ unit: fc.constantFrom('0', '1', '-', '(', ')', '$', '.', ',', ' ', 'C', 'R', 'D') })
+    fc.assert(
+      fc.property(fc.oneof(shaped, amountish, fc.string()), (text) => {
+        const got = normaliseAmount(text)
+        if (got.ok) expect(Object.is(got.cents, -0), `"${text}" gave -0`).toBe(false)
+      }),
+      { seed: SEED, numRuns: 2000 },
+    )
+  })
+})
+
+describe('converters refuse non-finite input (round 3, check 18)', () => {
+  type Field = 'x' | 'y' | 'width' | 'height' | 'pageWidth' | 'pageHeight'
+  const FIELDS: readonly Field[] = ['x', 'y', 'width', 'height', 'pageWidth', 'pageHeight']
+  const NON_FINITE: readonly number[] = [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]
+  type Inputs = { x: number; y: number; width: number; height: number; pageWidth: number; pageHeight: number }
+  const CONVERTERS = {
+    points: (i: Inputs) => pointsToBox(1, { x: i.x, y: i.y, width: i.width, height: i.height }, i.pageWidth, i.pageHeight),
+    pixels: (i: Inputs) => pixelsToBox(1, { x: i.x, y: i.y, width: i.width, height: i.height }, i.pageWidth, i.pageHeight),
+  } as const
+
+  function outcome(fn: () => unknown): string {
+    let value: unknown
+    try {
+      value = fn()
+    } catch (e) {
+      if (e instanceof RangeError) return 'RangeError'
+      return e instanceof Error ? e.name : 'non-error throw'
+    }
+    return `returned ${JSON.stringify(value)}`
+  }
+
+  test('EV-5 check 18 NaN, Infinity or -Infinity in any field of either converter throws RangeError, never ZodError or a box', () => {
+    const valid: Inputs = { x: 72, y: 100, width: 144, height: 20, pageWidth: 612, pageHeight: 792 }
+    // The valid rect converts, so each failure below is caused by the one non-finite field.
+    expect(outcome(() => CONVERTERS.points(valid))).toMatch(/^returned /)
+    expect(outcome(() => CONVERTERS.pixels(valid))).toMatch(/^returned /)
+    const wrong: string[] = []
+    for (const [name, convert] of Object.entries(CONVERTERS)) {
+      for (const field of FIELDS) {
+        for (const bad of NON_FINITE) {
+          const got = outcome(() => convert({ ...valid, [field]: bad }))
+          if (got !== 'RangeError') wrong.push(`${name} ${field}=${String(bad)}: ${got}`)
+        }
+      }
+    }
+    expect(wrong).toEqual([])
+  })
+
+  test('EV-5 check 18 property: over every converter, field and non-finite value, any valid rect throws RangeError', () => {
+    const inputs = fc.record({
+      x: fc.integer({ min: 0, max: 300 }),
+      y: fc.integer({ min: 0, max: 300 }),
+      width: fc.integer({ min: 1, max: 300 }),
+      height: fc.integer({ min: 1, max: 300 }),
+      pageWidth: fc.constant(612),
+      pageHeight: fc.constant(792),
+    })
+    fc.assert(
+      fc.property(
+        inputs,
+        fc.constantFrom('points' as const, 'pixels' as const),
+        fc.constantFrom(...FIELDS),
+        fc.constantFrom(...NON_FINITE),
+        (valid, name, field, bad) => {
+          expect(outcome(() => CONVERTERS[name](valid))).toMatch(/^returned /)
+          expect(outcome(() => CONVERTERS[name]({ ...valid, [field]: bad })), `${name} ${field}=${String(bad)}`).toBe(
+            'RangeError',
+          )
+        },
+      ),
+      { seed: SEED, numRuns: 500 },
+    )
+  })
+})
