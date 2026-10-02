@@ -5,7 +5,7 @@ Tags: core (permissions and citations: the rules keep every later table and box 
 Paths: tools/test/schema-contract-rules.test.mjs, src/contracts/schema-rules.db.test.ts, tools/test/__fixtures__/schema-contract/**
 Clauses: SEC-7, EV-1, ARC-10, EV-5, EV-8, EV-10, FLOW-1, ARC-15
 Read: `reports/findings-F01-F09.md` (rule tests R12 to R18, risks), `reports/findings-F09-r2.md` ("Rule tests": its R19 to R21, numbered R26 to R28 here), `reports/findings-wave2.md` (fix 8: R23 to R25; fix 1g: the renumbering), `plan/cards/F01.md`, `plan/cards/F09.md`, `plan/cards/F09A.md`, blueprint 03 (EV-1, EV-5, EV-8, EV-10), 02 (FLOW-1), 08 (SEC-7), 09 (ARC-10, ARC-15), `.claude/rules/testing.md`, `tools/test/db-rules.test.mjs` (the pattern).
-Spec commit: (spec-writer fills)
+Spec commit: 0cc0b2b (validated on main bc97984; 65 rule tests; on main the 10 that need F01 fail by name "nothing to check"; R35 not covered)
 
 ## Goal
 The faults the F01 and F09 checks found (RC1 to RC5) can come back in every table and contract later cards add. SC turns each into a rule that runs over every table in schema `returns` and every file under `src/contracts` and `src/modules`, so the next card that forgets a TRUNCATE trigger, a non-blank check or the one Box shape fails on main, not at a check.
