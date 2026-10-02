@@ -94,6 +94,7 @@ export function clientFolders(root: string = SAMPLE_ROOT): Map<ClientId, string>
   const found = new Map<ClientId, string>()
   for (const name of readdirSync(root).sort()) {
     const m = /^(\d\d)-/.exec(name)
+    // Stryker disable next-line StringLiteral: m[1] always exists once the pattern has matched; the fallback only satisfies noUncheckedIndexedAccess
     if (m !== null && existsSync(join(root, name, 'answer-key.json'))) found.set(`C${m[1] ?? ''}`, join(root, name))
   }
   return found
@@ -103,6 +104,7 @@ const AMOUNT_KEYS = new Set(['amount', 'debit', 'credit', 'dr', 'cr', 'opening',
 
 /** Is this number a money field the loader reads? Decided by the shape of the object that holds it, so rates never match. */
 function isMoneyField(key: string, holder: unknown): boolean {
+  // Stryker disable next-line ConditionalExpression: JSON.parse always hands the reviver an object as holder, so the null and typeof tests never decide
   if (!AMOUNT_KEYS.has(key) || holder === null || typeof holder !== 'object') return false
   const h = holder as Record<string, unknown>
   if (key === 'amount') return 'acct' in h && 'date' in h
@@ -117,10 +119,12 @@ type Reviver = (this: unknown, key: string, value: unknown, context: { source?: 
 /** Reads a JSON file; every money field becomes integer cents straight from its written text (no float on the way). */
 function readJson(path: string, moneyIssue?: (record: string, reason: string) => void): unknown {
   const reviver: Reviver = function (key, value, context) {
+    // Stryker disable next-line ConditionalExpression: a parsed number always has its source text in Node 24, so the undefined test never decides
     if (typeof value !== 'number' || context.source === undefined || !isMoneyField(key, this)) return value
     const r = decimalToCents(context.source)
     if (r.ok) return r.cents
     const id = (this as { id?: unknown }).id
+    // Stryker disable next-line OptionalChaining: both callers pass moneyIssue, so the optional call and the plain call behave the same
     moneyIssue?.(`${basename(path)} ${typeof id === 'string' ? `${id} ` : ''}${key}`, r.reason)
     return 0
   }
@@ -252,6 +256,7 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   const people = [
     ...onb.owners.map((o) => o.name),
     ...(onb.shares?.holders ?? []).map((h) => h.name),
+    // Stryker disable next-line ArrayDeclaration: a stand-in item has no lender, so flatMap drops it exactly as it drops the empty list
     ...(onb.shareholder_loans ?? []).flatMap((l) => (l.lender === undefined ? [] : [l.lender])),
     ...(onb.spouse?.name === undefined ? [] : [onb.spouse.name]),
     ...key.parties.filter((p) => p.kind === 'person').map((p) => p.name),
@@ -269,6 +274,7 @@ function guardFiles(folder: string): GuardFile[] {
       const full = join(dir, e.name)
       if (e.isDirectory()) walk(full)
       else {
+        // Stryker disable next-line StringLiteral: only the json and csv kinds are told apart later; md and an empty kind are scanned the same way
         const kind = e.name.endsWith('.json') ? 'json' : e.name.endsWith('.csv') ? 'csv' : e.name.endsWith('.md') ? 'md' : undefined
         if (kind !== undefined) out.push({ file: relative(folder, full).split(sep).join('/'), kind, text: readFileSync(full, 'utf8') })
       }
