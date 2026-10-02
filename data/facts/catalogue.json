@@ -3019,6 +3019,159 @@
           "ref": "accounts"
         }
       ]
+    },
+    {
+      "key": "qa.revenue.annual_sales",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Sales for the year, as the client states them",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "BQ2.earn"
+        }
+      ]
+    },
+    {
+      "key": "qa.cash.deposits_balance_cad",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Canadian bank deposits at year end, as stated",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "FL:96"
+        }
+      ]
+    },
+    {
+      "key": "qa.cash.deposits_balance_other",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Second deposit balance at year end, as stated",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "FL:97"
+        }
+      ]
+    },
+    {
+      "key": "qa.shareholder.loan_balance",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Due to shareholders at year end, as stated",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "FL:104"
+        }
+      ]
+    },
+    {
+      "key": "qa.home.personal_costs",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Home costs paid personally",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "YE1.pcost"
+        }
+      ]
+    },
+    {
+      "key": "qa.home.business_use_share",
+      "valueType": "percent",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Business-use share of the home",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "YE1.puse"
+        }
+      ]
+    },
+    {
+      "key": "qa.vehicle.business_km",
+      "valueType": "count",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Business kilometres driven",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "YE1.vbkm"
+        }
+      ]
+    },
+    {
+      "key": "qa.vehicle.total_km",
+      "valueType": "count",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Total kilometres driven",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "YE1.vkm"
+        }
+      ]
+    },
+    {
+      "key": "qa.vehicle.cost",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Vehicle cost, as stated",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "YE1.vehicle"
+        }
+      ]
     }
   ]
 }
