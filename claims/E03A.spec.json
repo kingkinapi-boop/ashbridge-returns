@@ -2,7 +2,10 @@
  "card": "E03A",
  "role": "spec",
  "worker": "cloud-b37146",
- "state": "working",
- "at": "2026-10-02T14:28:19.738Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T14:36:16.473Z",
+ "mode": "turbo",
+ "note": "22 tests, 10 fail by name until keys added; G11/G16 split may need card note",
+ "commit": "ab2a22d",
+ "validated": "6835b1d"
 }
