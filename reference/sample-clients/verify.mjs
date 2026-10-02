@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 // Checks the generated sample clients against the README: one PASS or FAIL line per check.
 // Usage: node verify.mjs      (it regenerates twice itself for the ARC-16 check: generate.mjs, then make-csv.mjs)
+// Rule checks R5 to R11 (findings review W14-D01) run on every folder; each first proves it catches its planted fault on a
+// sample-copy (a copy of a real folder in a temp folder, one fault planted). A rule failing on 01 to 10 prints KNOWN only when
+// the KNOWN table below names the folder and its fix card; anything else is a FAIL, and a KNOWN entry that passes is a FAIL too.
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
@@ -52,7 +56,9 @@ const PLANTED = {
   '10': [['CHQ', '2025-02-18', -286.55, /PENALTY/, 1], ['CHQ', '2025-10-21', -143.1, /PENALTY/, 1], ['CHQ', '2025-07-07', -1450, /LAKEFRONT KIDS CAMP TEST/, 1], ['CHQ', '2025-03-12', -81360, /PLAINS AUTO GROUP TEST/, 1], ['CHQ', null, -2000, /CARLOS FERREIRA TEST/, 25]],
   '11': [['CHQ', null, 6780, /BAYVIEW ANALYTICS TEST INC/, 12], ['CHQ', null, 3955, /CEDARVALE CLINICS TEST LTD/, 12], ['CHQ', null, 2486, /PORTLANDS MEDIA TEST INC/, 12],
     ['CHQ', null, null, /NADIA PETROV TEST/, 26], ['CHQ', null, null, /CRA PAYROLL DEDUCTIONS/, 12], ['CHQ', null, null, /CRA GST\/HST PAYMENT/, 4], ['CHQ', '2025-01-31', null, /CRA GST\/HST PAYMENT/, 1], ['CHQ', '2025-04-30', null, /CRA GST\/HST PAYMENT/, 1], ['CHQ', '2025-07-31', null, /CRA GST\/HST PAYMENT/, 1], ['CHQ', '2025-10-31', null, /CRA GST\/HST PAYMENT/, 1],
-    ['BCD', '2025-03-18', -3275.87, /BEST BUY/, 1], ['CHQ', null, null, /ELLIOT BARROW TEST/, 0]],
+    ['BCD', '2025-03-18', -3275.87, /BEST BUY/, 1], ['CHQ', null, null, /ELLIOT BARROW TEST/, 0],
+    // W14 fix round 1: 2024's tax is over $3,000, so 2025 has quarterly instalments (prior-year option), due the last day of each quarter.
+    ['CHQ', null, null, /CORP TAX INSTALMENT/, 4], ['CHQ', '2025-03-31', null, /CORP TAX INSTALMENT/, 1], ['CHQ', '2025-06-30', null, /CORP TAX INSTALMENT/, 1], ['CHQ', '2025-09-30', null, /CORP TAX INSTALMENT/, 1], ['CHQ', '2025-12-31', null, /CORP TAX INSTALMENT/, 1]],
 };
 // Client 12 has no account files: its planted issues are the onboarding answers, as the client app stores them (README).
 const PLANTED_ANSWERS = {
@@ -76,7 +82,9 @@ const MUST = {
 const MONEY_RE = /^-?[0-9]{1,3}(,[0-9]{3})*\.[0-9]{2}$/;
 const answerCents = (s) => Math.round(parseFloat(s.replace(/,/g, '')) * 100);
 const answerNumber = (s) => parseFloat(String(s).replace(/[,%\s]/g, ''));
-const answerId = (a) => String(a.question_asked ?? '').split(':')[0].trim();
+// question_asked holds the id alone (R6, RULE-19): a contract question id or, for a fact with no screen id, the fact id (FL:<row>).
+const answerId = (a) => String(a.question_asked ?? '').trim();
+const QID_RE = /^[A-Z][A-Z0-9]*\.[A-Za-z0-9_]+$/, FACT_RE = /^FL:[0-9]+$/;
 
 // ---------- parsing ----------
 const kindOf = (layout) => (layout.startsWith('A:') ? 'A' : layout.startsWith('B:') ? 'B' : layout.startsWith('C:') ? 'C' : layout.startsWith('Aurora') ? 'CARD' : 'BROKER');
@@ -140,17 +148,25 @@ const CLIENT_CHECKS = {
     K(num, 'END-2 prior_year UCC by class equals this year\'s opening UCC (Schedule 8) and onboarding', Array.isArray(py.ucc) && sameMap(u1, u2) && sameMap(u1, u3), `${u1.size} classes`);
     const judged = key.flags.filter((f) => f.severity !== 'info' || f.judgement).map((f) => f.id);
     K(num, 'END-2 the control client: flags hold no judgement item (info items only)', key.flags.length > 0 && judged.length === 0, first(judged) || `${key.flags.length} info flags`);
+    // W14 fix round 1: the prior-year option, a quarter of 2024's tax each, booked to one instalments account.
+    const pyTax = cd(py.rv2?.federal_tax ?? NaN) + cd(py.rv2?.ontario_tax ?? NaN), inst = key.transactions.filter((t) => t.kind === 'tax-instalment');
+    const instBad = inst.filter((t) => Math.abs(-cd(t.amount) - pyTax / 4) > 1 || t.date < spec.start || t.date > spec.end).map((t) => `${t.id} ${t.amount}`);
+    K(num, 'END-2 instalments: four in the year, each a quarter of last year\'s tax (federal plus Ontario, the prior-year option), all booked to one account', Number.isFinite(pyTax) && pyTax > 300000 && inst.length === 4 && instBad.length === 0 && new Set(inst.map((t) => t.accountNo)).size === 1, first(instBad) || `${inst.length} instalments against last year's tax ${pyTax} cents`);
   },
   '12': (c) => {
     const { num, spec, key, onb } = c;
     sec11(c);
     K(num, `ARC-16 generated from the fixed seed ${spec.seed}`, key.generator?.seed === spec.seed, `seed ${key.generator?.seed}`);
     const ans = Array.isArray(onb.answers) ? onb.answers : [], byId = new Map(ans.map((a) => [answerId(a), a]));
-    const shapeBad = ans.filter((a) => !/^[A-Z][A-Z0-9]*\.[A-Za-z0-9_.]+$/.test(answerId(a)) || !/: \S/.test(a.question_asked ?? '') || typeof a.answer_verbatim !== 'string' || !a.what_it_resolves || !['screen', 'conversation', 'internal'].includes(a.channel)).map((a) => a.question_asked ?? JSON.stringify(a).slice(0, 40));
-    K(num, 'END-6 onboarding answers in the client app\'s shape (question_asked "<id>: <label>", answer_verbatim text, what_it_resolves, channel), ids unique', ans.length > 0 && shapeBad.length === 0 && byId.size === ans.length, first(shapeBad) || `${ans.length} answers`);
-    // A line traces to one answer: { source: { kind: 'client answer', answer: '<question id>' } }.
-    const trace = (label, v, src, unit = 'money') => {
+    // Fix round 1: the "<id>: <label>" shape is gone (RULE-19); ids and wording are checked by R5 and R6 on every folder.
+    const shapeBad = ans.filter((a) => !answerId(a) || typeof a.answer_verbatim !== 'string' || !a.what_it_resolves || !['screen', 'conversation', 'internal'].includes(a.channel)).map((a) => a.question_asked ?? JSON.stringify(a).slice(0, 40));
+    K(num, 'END-6 onboarding answers in the client app\'s shape (question_asked, answer_verbatim text, what_it_resolves, channel), one current answer per id', ans.length > 0 && shapeBad.length === 0 && byId.size === ans.length, first(shapeBad) || `${ans.length} answers`);
+    // A line traces to one answer: { source: { kind: 'client answer', answer: '<question id or fact id>' } }.
+    // Retained earnings (GIFI 3600) may instead be the balancing figure: { kind: 'client answer', balancing: true, answers: [ids] }.
+    let balancing = 0;
+    const trace = (label, v, src, unit = 'money', row = null) => {
       if (src?.kind !== 'client answer') return `${label}: source kind ${src?.kind} is not "client answer"`;
+      if (src.balancing === true) { balancing++; if (row?.gifi !== 3600) return `${label}: only retained earnings (GIFI 3600) may be the balancing figure`; const miss = (src.answers ?? []).filter((id) => !byId.has(id)); return !Array.isArray(src.answers) || !src.answers.length || miss.length ? `${label}: balancing figure names answers not in onboarding.json (${miss.join(' ') || 'none named'})` : null; }
       const a = byId.get(src.answer); if (!a) return `${label}: answer ${src.answer} not in onboarding.json`;
       const t = String(a.answer_verbatim);
       if (unit === 'money') { if (!MONEY_RE.test(t)) return `${label}: answer ${src.answer} "${t}" is not 1,234.56 text`; if (answerCents(t) !== cd(v)) return `${label}: ${cd(v)} cents against answer ${src.answer} "${t}"`; }
@@ -158,8 +174,15 @@ const CLIENT_CHECKS = {
       return null;
     };
     const tbRows = key.trialBalance.adjusted.rows, money = new Set();
-    const tbBad = tbRows.map((r) => { money.add(r.source?.answer); return trace(`TB ${r.account}`, Math.abs(netCents(r)) / 100, r.source); }).filter(Boolean);
-    K(num, 'END-6 every trial balance line names an onboarding answer that exists and whose text parses to the same cents (source kind client answer, so every dot is amber)', tbRows.length > 0 && tbBad.length === 0, first(tbBad) || `${tbRows.length} lines`);
+    const tbBad = tbRows.map((r) => { money.add(r.source?.answer); return trace(`TB ${r.account}`, Math.abs(netCents(r)) / 100, r.source, 'money', r); }).filter(Boolean);
+    const balAdj = balancing; balancing = 0;
+    K(num, 'END-6 every trial balance line names an onboarding answer that exists and whose text parses to the same cents (source kind client answer, so every dot is amber)', tbRows.length > 0 && tbBad.length === 0 && balAdj <= 1, first(tbBad) || (balAdj > 1 ? `${balAdj} balancing lines` : `${tbRows.length} lines`));
+    // Fix round 1: all prior years were filed by another firm, so the 31 Dec 2024 closing balances come from the client's answers,
+    // each a conversation answer keyed by its fact id (contract line 83), retained earnings the balancing figure.
+    const pyRows = onb.prior_year_closing_balances?.accounts ?? [], openRows = key.trialBalance.opening.rows;
+    const pyBad = [...pyRows.map((r) => trace(`prior ${r.account}`, Math.abs(netCents(r)) / 100, r.source, 'money', r)), ...openRows.map((r) => trace(`opening ${r.account}`, Math.abs(netCents(r)) / 100, r.source, 'money', r))].filter(Boolean);
+    const convBad = [...pyRows, ...openRows].filter((r) => !r.source?.balancing).map((r) => byId.get(r.source?.answer)).filter((a) => a && (a.channel !== 'conversation' || !FACT_RE.test(answerId(a)) || a.what_it_resolves !== answerId(a))).map((a) => answerId(a));
+    K(num, 'END-6 the prior closing balances (and the opening trial balance) trace to the client\'s answers: fact-keyed conversation answers, retained earnings the balancing figure', pyRows.length > 0 && openRows.length > 0 && pyBad.length === 0 && convBad.length === 0 && balancing <= 2, first([...pyBad, ...convBad]) || `${pyRows.length} prior balances`);
     const lines = Array.isArray(key.t2Inputs.lines) ? key.t2Inputs.lines : [];
     const t2Bad = lines.map((l) => { const u = l.unit ?? 'money'; if (u === 'money') money.add(l.source?.answer); return ['money', 'percent', 'km'].includes(u) ? trace(`T2 ${l.input}`, l.amount, l.source, u) : `T2 ${l.input}: unit ${u}`; }).filter(Boolean);
     K(num, 'END-6 every T2 input (t2Inputs.lines) names an onboarding answer that exists and parses to the same value (cents for money; percent and km as numbers)', lines.length > 0 && lines.some((l) => l.unit === 'percent') && lines.some((l) => l.unit === 'km') && t2Bad.length === 0, first(t2Bad) || `${lines.length} inputs`);
@@ -193,6 +216,7 @@ try { regen.h1 = regenerate(); regen.h2 = regenerate(); } catch (e) { regen.err 
 const dirs = fs.readdirSync(root).filter((d) => /^\d\d-/.test(d)).sort();
 line(dirs.map((d) => d.slice(0, 2)).join() === specNums.join(), `ARC-8 one client folder for each SPEC entry, ${specNums[0]} to ${specNums[specNums.length - 1]} (found ${dirs.length}: ${dirs.join(', ')})`);
 const allText = [];
+const generated = { clients: 0, accounts: 0, rows: 0 }; // R11: what the README's counts must equal
 
 for (const num of specNums) {
   const d = folderOf(num), spec = SPEC[num];
@@ -211,6 +235,7 @@ for (const num of specNums) {
   const accts = {};
   if (!answersOnly) for (const a of key.accounts) accts[a.key] = { ...a, kind: kindOf(a.layout), rows: parseAccount(kindOf(a.layout), read(path.join(dir, a.file))), qbo: parseQbo(read(path.join(dir, a.qboFile))) };
   const keys = Object.keys(accts);
+  generated.accounts += keys.length; generated.rows += keys.reduce((s, k) => s + accts[k].rows.length, 0); // R11
   if (!answersOnly) K(num, 'account files, QBO files and layouts as the README says', keys.join() === Object.keys(spec.layouts).join() && keys.every((k) => accts[k].kind === spec.layouts[k]) && key.accounts.every((a) => fs.existsSync(path.join(dir, a.qboFile))), keys.map((k) => `${k} ${accts[k].rows.length} rows`).join(', '));
   else { const af = files.map((f) => path.relative(dir, f)).filter((f) => /^(accounts|qbo)[\\/]/.test(f)); K(num, 'END-6 onboarding answers only: no accounts/ or qbo/ files, and no account in the key points at one', af.length === 0 && (key.accounts ?? []).every((a) => !a.file && !a.qboFile), first(af) || `${(key.accounts ?? []).length} accounts in the key`); }
   K(num, 'company name and fiscal year match the README', key.name === spec.name && onb.corporation.legal_name === spec.name && onb.corporation.financial_year_end === spec.end && key.fiscalYear.end === spec.end && key.fiscalYear.start === spec.start && onb.corporation.fiscal_year_start === spec.start, `${spec.start} to ${spec.end}`);
@@ -372,6 +397,248 @@ for (const num of specNums) {
   } catch (e) { K(num, 'checks ran to the end without an error', false, e.message.split('\n')[0]); }
 }
 
+// ---------- rule checks R5 to R11 on every folder (findings review W14-D01; card W14 acceptance checks 7 to 13) ----------
+// A rule takes one folder's context { num, spec, key, onb } and returns { bad: [problems], note }. It reads only that context,
+// so the same function runs on a real folder and on a sample-copy with one fault planted.
+const CONTRACT_PATH = path.join(root, '..', 'onboarding-contract.md'), IDS_PATH = path.join(root, 'contract-ids.json');
+const contractLines = fs.existsSync(CONTRACT_PATH) ? read(CONTRACT_PATH).split('\n') : [];
+const loadIds = (p) => { try { return JSON.parse(read(p)); } catch (e) { return { error: e.message }; } };
+const idIndex = (ids) => ({ q: new Map((ids.questions ?? []).map((q) => [q.id, q])), f: new Map((ids.facts ?? []).map((f) => [f.id, f])) });
+const expandFl = (text) => { const s = new Set(); for (const m of String(text).matchAll(/FL:([0-9][0-9,-]*)/g)) for (const p of m[1].split(',')) { if (!p) continue; const [a, b] = p.split('-').map(Number); for (let n = a; n <= (Number.isFinite(b) ? b : a); n++) s.add(`FL:${n}`); } return s; };
+const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// contract-ids.json itself: every id is named on the contract line it cites (slash shorthand such as BQ1.bn/date counts); no family ids.
+function contractIdsBad(ids, lines) {
+  if (ids.error) return [`contract-ids.json does not parse: ${ids.error}`];
+  const bad = [], seen = new Set(), facts = new Set((ids.facts ?? []).map((f) => f.id));
+  if (!(ids.questions ?? []).length || !facts.size) bad.push('contract-ids.json lists no questions or no facts');
+  for (const q of ids.questions ?? []) {
+    if (seen.has(q.id)) bad.push(`${q.id} listed twice`); seen.add(q.id);
+    if (!QID_RE.test(q.id ?? '')) { bad.push(`${q.id} is not a single question id (families such as ARB.* are left out)`); continue; }
+    const [pre, suf] = q.id.split('.'), text = lines[(q.line ?? 0) - 1] ?? '';
+    if (!new RegExp(`(?<![A-Za-z0-9])${escRe(pre)}\\.(?:[A-Za-z0-9_]+/)*${escRe(suf)}(?![A-Za-z0-9_])`).test(text)) bad.push(`${q.id}: contract line ${q.line} does not name it`);
+    for (const f of q.facts ?? []) if (!facts.has(f)) bad.push(`${q.id}: fact ${f} is not in the facts list`);
+  }
+  for (const f of ids.facts ?? []) {
+    if (seen.has(f.id)) bad.push(`${f.id} listed twice`); seen.add(f.id);
+    if (!FACT_RE.test(f.id ?? '') || !(f.lines ?? []).length) bad.push(`${f.id}: not a fact id with its lines`);
+    for (const l of f.lines ?? []) if (!expandFl(lines[l - 1] ?? '').has(f.id)) bad.push(`${f.id}: contract line ${l} does not name it`);
+  }
+  return bad;
+}
+const IDS = loadIds(IDS_PATH);
+let IDX = idIndex(IDS);
+// R5, END-6: every answer id is in contract-ids.json, and what_it_resolves is a fact its contract row maps it to.
+function R5({ onb }) {
+  const ans = Array.isArray(onb.answers) ? onb.answers : [], bad = [];
+  for (const a of ans) {
+    const id = answerId(a), wr = a.what_it_resolves, q = IDX.q.get(id);
+    if (q) {
+      if ((q.facts ?? []).length ? !q.facts.includes(wr) : wr !== id) bad.push(`${id}: what_it_resolves "${String(wr).slice(0, 40)}" is not a fact its contract line ${q.line} maps it to`);
+      if (a.channel === 'conversation') bad.push(`${id}: a screen or internal id on channel conversation`);
+    } else if (IDX.f.has(id)) {
+      if (a.channel !== 'conversation' || wr !== id) bad.push(`${id}: a fact-keyed answer is channel conversation with what_it_resolves the same fact id (contract line 83)`);
+    } else bad.push(`${id.slice(0, 50)} is not in contract-ids.json`);
+  }
+  return { bad, note: ans.length ? `${ans.length} answers` : 'no onboarding answers' };
+}
+// R6, END-6: question_asked holds the id only, and what_it_resolves the fact id only: no wording in this repo (RULE-19).
+function R6({ onb }) {
+  const ans = Array.isArray(onb.answers) ? onb.answers : [], bad = [];
+  for (const a of ans) {
+    const q = String(a.question_asked ?? ''), wr = String(a.what_it_resolves ?? '');
+    if (!QID_RE.test(q) && !FACT_RE.test(q)) bad.push(`question_asked "${q.slice(0, 50)}" holds more than an id`);
+    if (!QID_RE.test(wr) && !FACT_RE.test(wr)) bad.push(`what_it_resolves "${wr.slice(0, 50)}" holds more than an id`);
+  }
+  return { bad, note: ans.length ? `${ans.length} answers, ids only` : 'no onboarding answers' };
+}
+const isoAdd = (iso, days = 0, years = 0) => { const d = new Date(iso + 'T00:00:00Z'); if (years) d.setUTCFullYear(d.getUTCFullYear() + years); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0, 10); };
+const netByAcct = (rows) => { const m = new Map(); for (const r of rows ?? []) m.set(String(r.account), (m.get(String(r.account)) ?? 0) + netCents(r)); return m; };
+const mapDiff = (a, b) => [...new Set([...a.keys(), ...b.keys()])].filter((k) => (a.get(k) ?? 0) !== (b.get(k) ?? 0)).map((k) => `${k} ${a.get(k) ?? 0} against ${b.get(k) ?? 0}`);
+// R7, END-2: the prior year rolls into this one.
+function R7({ key, onb }) {
+  const bad = [], notes = [], start = key.fiscalYear.start, end = key.fiscalYear.end, pycb = onb.prior_year_closing_balances ?? {}, pa = pycb.accounts ?? [];
+  if (pa.length) {
+    if (pycb.as_of !== isoAdd(start, -1)) bad.push(`prior_year_closing_balances as_of ${pycb.as_of}, the day before the year is ${isoAdd(start, -1)}`);
+    const d = mapDiff(netByAcct(pa), netByAcct(key.trialBalance.opening.rows));
+    if (d.length) bad.push(`opening trial balance differs from the prior closing balances by account (cents): ${first(d)}`);
+    notes.push(`${pa.length} prior closing balances equal the opening trial balance`);
+  }
+  const py = key.prior_year;
+  if (!py) { notes.push('no prior_year in the key, so the movement is not stated'); return { bad, note: notes.join('; ') }; }
+  const rv = py.rv2 ?? {}, re = py.retainedEarnings ?? {}, is = py.incomeStatement ?? {};
+  const v = { reO: re.opening, div: re.dividends, reC: re.closing, nib: is.netIncomeBeforeTax, tax: is.incomeTax, nia: is.netIncomeAfterTax, fed: rv.federal_tax, ont: rv.ontario_tax, inst: rv.instalments, owing: rv.balance_or_refund };
+  const missing = Object.entries(v).filter(([, x]) => !Number.isFinite(x)).map(([k]) => k);
+  if (missing.length) { bad.push(`prior_year needs retainedEarnings { opening, dividends, closing }, incomeStatement { netIncomeBeforeTax, incomeTax, netIncomeAfterTax } and rv2 numbers: missing ${missing.join(' ')}`); return { bad }; }
+  const c = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, cd(x)]));
+  const reOpen = -(byGifi(key.trialBalance.opening.rows).get(3600) ?? NaN);
+  if (c.reC !== cd(py.retainedEarnings3849 ?? NaN) || c.reC !== reOpen) bad.push(`prior closing retained earnings ${c.reC}, 3849 ${cd(py.retainedEarnings3849 ?? NaN)}, opening retained earnings (GIFI 3600) ${reOpen}: all three must be equal`);
+  if (c.nia !== c.nib - c.tax) bad.push(`after-tax income ${c.nia} is not income before tax ${c.nib} less tax ${c.tax}`);
+  if (c.tax !== c.fed + c.ont) bad.push(`income tax ${c.tax} is not federal ${c.fed} plus Ontario ${c.ont}`);
+  if (c.reC - c.reO !== c.nia - c.div) bad.push(`retained earnings moved ${c.reC - c.reO} but after-tax income less dividends is ${c.nia - c.div}`);
+  if (c.owing !== c.fed + c.ont - c.inst) bad.push(`balance owing ${c.owing} is not tax ${c.fed + c.ont} less instalments ${c.inst}`);
+  if (c.owing !== 0) {
+    const bo = py.balanceOwing, acct = String(bo?.account ?? ''), side = -Math.sign(c.owing);
+    if (!bo || cd(bo.amount ?? NaN) !== c.owing) bad.push(`a prior balance ${c.owing} needs prior_year.balanceOwing { amount, account, paidBy } with the same amount`);
+    else {
+      if (side * (netByAcct(pa).get(acct) ?? 0) < Math.abs(c.owing)) bad.push(`the prior balance ${c.owing} is not on the prior closing balance sheet (account ${acct})`);
+      const paid = (bo.paidBy ?? []).map((id) => key.transactions.find((t) => t.id === id));
+      if (paid.length) {
+        if (paid.some((t) => !t || t.date < start || t.date > end)) bad.push(`balanceOwing.paidBy names a transaction that is missing or outside the year`);
+        else { const s = paid.reduce((x, t) => x + (t.post ?? []).filter((l) => String(l.a) === acct).reduce((y, l) => y + cd(l.dr ?? 0) - cd(l.cr ?? 0), 0), 0); if (s !== c.owing) bad.push(`the payments post ${s} to ${acct}, the prior balance is ${c.owing}`); }
+      } else if (side * (netByAcct(key.trialBalance.adjusted.rows).get(acct) ?? 0) < Math.abs(c.owing)) bad.push(`the prior balance ${c.owing} is neither paid in the year (paidBy) nor carried (still in the adjusted trial balance on ${acct})`);
+    }
+  }
+  notes.push(`prior closing retained earnings ${c.reC} = ${c.reO} + ${c.nia} - ${c.div}`);
+  return { bad, note: notes.join('; ') };
+}
+// R8, END-2: opening amortization and UCC recompute from each asset's cost, date, method, the class rate and the first-year rule.
+// The register is the answer key's "assets": [{ description, glAccount, accumAccount, class, cost, availableForUse,
+//   book: { method: 'straight-line', years, convention: 'monthly' | 'half-year', residual? } | { method: 'declining-balance', rate, convention },
+//   cca: { firstYear: 'half-year' | 'aii' } }]. 'aii' is the accelerated investment incentive: 1.5 before 2024, 1.0 from 2024 to 2027.
+// Each year's CCA and amortization is rounded to the cent, so a tolerance of one cent per year is allowed (amber, W14 spec).
+const CCA_RATE = { 1: 0.04, 6: 0.1, 8: 0.2, 10: 0.3, '10.1': 0.3, 12: 1, '14.1': 0.05, 16: 0.4, 17: 0.08, 43: 0.3, 46: 0.3, 50: 0.55, 53: 0.5 };
+const firstYearFactor = (rule, d) => (rule === 'half-year' ? 0.5 : rule === 'aii' ? (d <= '2018-11-20' ? 0.5 : d < '2024-01-01' ? 1.5 : d <= '2027-12-31' ? 1 : 0.5) : NaN);
+const monthsIncl = (a, b) => (Number(b.slice(0, 4)) - Number(a.slice(0, 4))) * 12 + Number(b.slice(5, 7)) - Number(a.slice(5, 7)) + 1;
+function taxYears(from, lastEnd, inc) {
+  const ys = []; let e = lastEnd;
+  for (let i = 0; i < 80 && e >= from; i++) { const s = isoAdd(isoAdd(e, 0, -1), 1); ys.unshift([inc && inc > s ? inc : s, e]); e = isoAdd(e, 0, -1); }
+  return ys;
+}
+function bookAccum(a, ys) {
+  const b = a.book ?? {}, base = cd(a.cost) - cd(b.residual ?? 0), mine = ys.filter(([, e]) => e >= a.availableForUse), E = ys[ys.length - 1][1];
+  if (b.method === 'straight-line' && b.years > 0 && b.convention === 'monthly') return Math.min(base, Math.round((base * Math.max(0, monthsIncl(a.availableForUse, E))) / (b.years * 12)));
+  if (b.method === 'straight-line' && b.years > 0 && b.convention === 'half-year') return Math.min(base, Math.round((base / b.years) * (mine.length - 0.5)));
+  if (b.method === 'declining-balance' && b.rate > 0 && b.rate <= 1 && ['monthly', 'half-year'].includes(b.convention)) {
+    let nbv = cd(a.cost), acc = 0;
+    mine.forEach(([, e], i) => { const f = i ? 1 : b.convention === 'half-year' ? 0.5 : monthsIncl(a.availableForUse, e) / 12; const x = Math.round(nbv * b.rate * f); acc += x; nbv -= x; });
+    return acc;
+  }
+  return NaN;
+}
+function R8({ key, onb }) {
+  const bad = [], start = key.fiscalYear.start, E = isoAdd(start, -1), pycb = onb.prior_year_closing_balances ?? {};
+  const s8 = uccMap(key.t2Inputs?.schedule8?.openingUcc), pu = uccMap(pycb.ucc), open = key.trialBalance.opening.rows;
+  if (!sameMap(s8, pu)) bad.push('Schedule 8 opening UCC differs from onboarding prior_year_closing_balances.ucc');
+  if (key.prior_year && !sameMap(uccMap(key.prior_year.ucc), s8)) bad.push('prior_year.ucc differs from Schedule 8 opening UCC');
+  const accumRows = open.filter((r) => /accumulated amorti[sz]ation/i.test(`${r.name ?? ''} ${r.gifiName ?? ''}`));
+  if (!accumRows.length && !s8.size) return { bad, note: 'no capital assets at the start of the year' };
+  const assets = (Array.isArray(key.assets) ? key.assets : []).filter((a) => String(a.availableForUse ?? '') < start);
+  if (!assets.length) { bad.push(`opening accumulated amortization (${accumRows.map((r) => `${r.account} ${netCents(r)}`).join(', ') || 'none'}) and UCC (${[...s8].map(([k, x]) => `class ${k} ${x}`).join(', ') || 'none'}) with no asset register (answer key "assets": cost, date, book method, class)`); return { bad }; }
+  const fieldBad = assets.filter((a) => !(a.cost > 0) || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(a.availableForUse ?? '') || !a.glAccount || !(String(a.class) in CCA_RATE) || !Number.isFinite(firstYearFactor(a.cca?.firstYear, a.availableForUse)) || (a.cca?.rate !== undefined && a.cca.rate !== CCA_RATE[String(a.class)]));
+  if (fieldBad.length) { bad.push(`asset fields (cost, availableForUse, glAccount, a class in the rate table at its class rate, cca.firstYear half-year or aii): ${first(fieldBad.map((a) => a.description ?? a.glAccount))}`); return { bad }; }
+  const ys = taxYears(assets.map((a) => a.availableForUse).sort()[0], E, onb.corporation?.incorporation_date), tol = ys.length, openNet = netByAcct(open);
+  const want = new Map(), add = (k, x) => want.set(k, (want.get(k) ?? 0) + x);
+  for (const a of assets) { add(`cost ${a.glAccount}`, cd(a.cost)); if (a.accumAccount) add(`accum ${a.accumAccount}`, bookAccum(a, ys)); }
+  for (const r of accumRows) if (!want.has(`accum ${r.account}`)) bad.push(`accumulated amortization ${r.account} has no asset in the register`);
+  for (const [k, x] of want) {
+    const [kind, acct] = k.split(' '), got = kind === 'cost' ? openNet.get(acct) ?? 0 : -(openNet.get(acct) ?? 0);
+    if (!Number.isFinite(x)) bad.push(`${k}: the book method does not recompute (straight-line monthly or half-year, declining-balance)`);
+    else if (Math.abs(got - x) > (kind === 'cost' ? 0 : tol)) bad.push(`${kind === 'cost' ? 'cost' : 'opening accumulated amortization'} ${acct}: ${got} in the opening trial balance, ${x} recomputed`);
+  }
+  for (const cls of new Set([...assets.map((a) => String(a.class)), ...s8.keys()])) {
+    const mine = assets.filter((a) => String(a.class) === cls), rate = CCA_RATE[cls]; let ucc = 0;
+    for (const [s, e] of ys) {
+      const adds = mine.filter((a) => a.availableForUse >= s && a.availableForUse <= e), days = Math.round((Date.parse(e) - Date.parse(s)) / 86400000) + 1;
+      const base = ucc + adds.reduce((x, a) => x + firstYearFactor(a.cca.firstYear, a.availableForUse) * cd(a.cost), 0);
+      const cca = Math.round(rate * base * (days < 365 ? days / 365 : 1));
+      ucc += adds.reduce((x, a) => x + cd(a.cost), 0) - cca;
+    }
+    if (!mine.length) bad.push(`class ${cls} opening UCC ${s8.get(cls)} has no asset in the register`);
+    else if (Math.abs((s8.get(cls) ?? 0) - ucc) > tol) bad.push(`class ${cls} opening UCC ${s8.get(cls) ?? 0} in Schedule 8, ${ucc} recomputed`);
+  }
+  return { bad, note: `${assets.length} assets over ${ys.length} prior years recompute` };
+}
+// R9, END-2: prior-year tax over $3,000 means instalments in the year or a judgement flag about them.
+function R9({ key }) {
+  const py = key.prior_year;
+  if (!py) return { bad: [], note: 'no prior-year tax in the key (prior_year absent)' };
+  const tax = cd(py.rv2?.federal_tax ?? NaN) + cd(py.rv2?.ontario_tax ?? NaN);
+  if (!Number.isFinite(tax)) return { bad: ['prior_year.rv2 federal_tax and ontario_tax are needed'] };
+  if (tax <= 300000) return { bad: [], note: `prior-year tax ${tax} cents, not over $3,000` };
+  const inst = key.transactions.filter((t) => t.kind === 'tax-instalment' && t.date >= key.fiscalYear.start && t.date <= key.fiscalYear.end);
+  const judged = key.flags.filter((f) => (f.severity !== 'info' || f.judgement) && /instal/i.test(`${f.rule} ${f.detail}`));
+  if (inst.length || judged.length) return { bad: [], note: `prior-year tax ${tax} cents: ${inst.length} instalments, ${judged.length} judgement flags` };
+  return { bad: [`prior-year tax ${tax} cents is over $3,000, but the year has no tax-instalment transaction and no judgement flag about instalments`] };
+}
+// R10, END-9: all_prior_years_filed "yes" means the prior closing balances are present, unless incorporated in the year.
+function R10({ key, onb }) {
+  const corp = onb.corporation ?? {}, filed = corp.all_prior_years_filed, n = (onb.prior_year_closing_balances?.accounts ?? []).length;
+  if (filed !== 'yes') return { bad: [], note: `all_prior_years_filed ${filed}` };
+  if ((corp.incorporation_date ?? '') >= key.fiscalYear.start) return { bad: [], note: 'incorporated in the year' };
+  return n ? { bad: [], note: `${n} prior closing balances` } : { bad: [`all_prior_years_filed "yes" and incorporated ${corp.incorporation_date}, before the year, but prior_year_closing_balances holds no accounts`] };
+}
+// R11, ARC-8: the README's counts equal the generated data (clients in the table, accounts, rows to the nearest hundred, passes, known).
+function R11(text, g, passes, known) {
+  const bad = [], num = (s) => Number(String(s).replace(/,/g, ''));
+  const rows = (text.match(/^\| [0-9]{2} \|/gm) ?? []).length; if (rows !== g.clients) bad.push(`the client table has ${rows} rows, ${g.clients} folders generated`);
+  const a = text.match(/across ([0-9,]+) accounts/); if (!a || num(a[1]) !== g.accounts) bad.push(`README says ${a ? a[1] : 'no'} accounts, ${g.accounts} generated`);
+  const r = text.match(/About ([0-9,]+) rows/); if (!r || Math.abs(num(r[1]) - g.rows) > 50) bad.push(`README says about ${r ? r[1] : 'no'} rows, ${g.rows} generated`);
+  const p = text.match(/gives ([0-9,]+) passes/); if (!p || num(p[1]) !== passes) bad.push(`README says ${p ? p[1] : 'no'} passes, this run gives ${passes}`);
+  const k = text.match(/([0-9]+) known/); if ((k ? num(k[1]) : 0) !== known) bad.push(`README says ${k ? k[1] : 'no'} known, this run has ${known}`);
+  return bad;
+}
+const RULES = [
+  { id: 'R5', clause: 'END-6', name: 'every answer id is in contract-ids.json and resolves a fact its contract line maps it to', fn: R5 },
+  { id: 'R6', clause: 'END-6', name: 'question_asked and what_it_resolves hold the id only, no wording', fn: R6 },
+  { id: 'R7', clause: 'END-2', name: 'the prior year rolls: prior closing balances equal the opening, retained earnings move by after-tax income less dividends, a prior balance owing is paid or carried', fn: R7 },
+  { id: 'R8', clause: 'END-2', name: 'opening amortization and UCC recompute from cost, date, method, class rate and the first-year rule', fn: R8 },
+  { id: 'R9', clause: 'END-2', name: 'prior-year tax over $3,000 means instalments in the year or a judgement flag', fn: R9 },
+  { id: 'R10', clause: 'END-9', name: 'all_prior_years_filed yes means prior closing balances are present, unless incorporated in the year', fn: R10 },
+];
+// Known failures on 01 to 10 (W14 changes nothing there): each names the fix card the Lead cards. Never for 11 onward.
+const FIX_CARDS = { W16: 'proposed: asset registers for sample clients 03, 04, 07, 08 and 10 (cost, date, book method, CCA class and first-year rule in the answer key), regenerated so opening amortization and UCC recompute (R8)' };
+const KNOWN = { R8: { '03': 'W16', '04': 'W16', '07': 'W16', '08': 'W16', '10': 'W16' } };
+let nKnown = 0;
+const known = (msg) => { console.log('KNOWN ' + msg); nKnown++; };
+// The sample-copy fixture: a real folder copied into a temp folder, one fault planted in its JSON, read back from the copy.
+const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'sample-copy-'));
+const ctxOf = (num, dir) => ({ num, spec: SPEC[num], dir, key: JSON.parse(read(path.join(dir, 'answer-key.json'))), onb: JSON.parse(read(path.join(dir, 'onboarding.json'))) });
+function sampleCopy(num, plant) {
+  const d = folderOf(num), to = fs.mkdtempSync(path.join(tmpRoot, `${num}-`));
+  fs.cpSync(path.join(root, d), to, { recursive: true });
+  if (plant) { const c = ctxOf(num, to); plant(c); fs.writeFileSync(path.join(to, 'answer-key.json'), JSON.stringify(c.key)); fs.writeFileSync(path.join(to, 'onboarding.json'), JSON.stringify(c.onb)); }
+  return ctxOf(num, to);
+}
+const firstAnswer = (c, re) => (c.onb.answers ?? []).find((a) => re.test(answerId(a)) && a.channel === 'screen') ?? (c.onb.answers ?? [])[0] ?? {};
+const PLANTS = [
+  ['R5', '12', 'YE2.phone as a screen answer', (c) => { const a = firstAnswer(c, /^YE1\./); a.question_asked = 'YE2.phone'; }],
+  ['R6', '12', 'BQ2.earn: What the business sold', (c) => { const a = firstAnswer(c, /^BQ2\.earn$/); a.question_asked = 'BQ2.earn: What the business sold'; }],
+  ['R7', '11', 'last year\'s income before tax doubled', (c) => { const is = c.key.prior_year?.incomeStatement; if (is) is.netIncomeBeforeTax *= 2; }],
+  ['R7', '11', 'the prior balance owing neither paid nor carried', (c) => { const py = c.key.prior_year, rv = py?.rv2; if (!rv) return; if (py.balanceOwing) { py.balanceOwing.paidBy = []; for (const r of c.key.trialBalance.adjusted.rows) if (String(r.account) === String(py.balanceOwing.account)) { r.debit = 0; r.credit = 0; } } else if (!rv.balance_or_refund) { rv.instalments -= 1000; rv.balance_or_refund += 1000; } }],
+  ['R8', '11', 'opening amortization 2,600 and UCC 1,480', (c) => { const acc = (c.key.assets ?? [])[0]?.accumAccount, row = c.key.trialBalance.opening.rows.find((r) => r.account === acc); if (row) { row.debit = 0; row.credit = 2600; } for (const u of [c.key.t2Inputs.schedule8?.openingUcc, c.onb.prior_year_closing_balances?.ucc, c.key.prior_year?.ucc]) for (const x of u ?? []) x.ucc = 1480; }],
+  ['R9', '11', 'the 2025 instalments removed', (c) => { c.key.transactions = c.key.transactions.filter((t) => t.kind !== 'tax-instalment'); }],
+  ['R10', '11', 'prior closing balances emptied', (c) => { c.onb.prior_year_closing_balances.accounts = []; }],
+];
+// Each rule first proves it catches its plant: the unchanged copy passes and the planted copy fails.
+for (const [id, num, label, plant] of PLANTS) {
+  const rule = RULES.find((r) => r.id === id);
+  if (!folderOf(num)) { line(false, `${id} ${rule.clause} catches its planted fault on a sample-copy of ${num} (${label}): folder ${num} missing`); continue; }
+  try {
+    const b = rule.fn(sampleCopy(num, null)).bad, p = rule.fn(sampleCopy(num, plant)).bad;
+    line(b.length === 0 && p.length > 0, `${id} ${rule.clause} catches its planted fault on a sample-copy of ${num} (${label})` + (b.length ? `: the unchanged copy fails first: ${first(b, 1)}` : p.length ? '' : ': the planted copy passes'));
+  } catch (e) { line(false, `${id} ${rule.clause} catches its planted fault on a sample-copy of ${num} (${label}): ${e.message.split('\n')[0]}`); }
+}
+{ // contract-ids.json: every id named on the contract line it cites; then its plant, YE2.phone cited at line 56.
+  const b = contractIdsBad(IDS, contractLines);
+  line(b.length === 0, `R5 END-6 contract-ids.json: ${(IDS.questions ?? []).length} question ids and ${(IDS.facts ?? []).length} fact ids, each named on the contract line it cites, no family ids` + (b.length ? `: ${first(b)}` : ''));
+  const copy = path.join(tmpRoot, 'contract-ids.json'); const planted = loadIds(IDS_PATH); planted.questions?.push({ id: 'YE2.phone', line: 56, facts: ['FL:92'] }); fs.writeFileSync(copy, JSON.stringify(planted));
+  const p = contractIdsBad(loadIds(copy), contractLines);
+  line(b.length === 0 && p.length > 0, 'R5 END-6 contract-ids.json check catches its planted fault on a copy (YE2.phone cited at contract line 56)' + (p.length ? '' : ': the planted copy passes'));
+}
+for (const num of specNums) {
+  const d = folderOf(num);
+  if (!d || !fs.existsSync(path.join(root, d, 'answer-key.json')) || !fs.existsSync(path.join(root, d, 'onboarding.json'))) { line(false, `${num} R5 to R10 rule checks: folder or files missing`); continue; }
+  let c; try { c = ctxOf(num, path.join(root, d)); } catch (e) { line(false, `${num} R5 to R10 rule checks: ${e.message.split('\n')[0]}`); continue; }
+  for (const rule of RULES) {
+    let r; try { r = rule.fn(c); } catch (e) { r = { bad: [`threw ${e.message.split('\n')[0]}`] }; }
+    const card = KNOWN[rule.id]?.[num], label = `${num} ${rule.id} ${rule.clause} ${rule.name}`;
+    if (card && num > '10') line(false, `${label}: KNOWN is never allowed from 11 onward`);
+    else if (r.bad.length && card) known(`${label}: ${first(r.bad, 2)} (fix card ${card}, listed at the end)`);
+    else if (card) line(false, `${label}: passes, so remove its KNOWN entry`);
+    else line(r.bad.length === 0, label + (r.bad.length ? `: ${first(r.bad, 2)}` : r.note ? ` (${r.note})` : ''));
+  }
+}
+
 // ---------- the associated pair (05 owns 06) ----------
 {
   const j = (p) => JSON.parse(read(path.join(root, p)));
@@ -403,5 +670,18 @@ line(fs.existsSync(path.join(root, 'generate.mjs')), 'generate.mjs is next to ve
   const noCsv = specNums.filter((n) => { const d = folderOf(n); return !d || !fs.existsSync(path.join(root, d, 'taxprep', 'import.csv')); });
   line(mc.status === 0 && noCsv.length === 0, `ARC-8 make-csv.mjs --check passes for all ${specNums.length} folders (every row equals the answer key, Schedule 100 balances, no blank cells)` + (noCsv.length ? `: no taxprep/import.csv for ${noCsv.join(', ')}` : '') + (mc.status !== 0 ? `: ${(mc.stdout || mc.stderr || '').trim().split('\n').slice(-1)[0]}` : ''));
 }
-console.log(`\n${nPass} passed, ${nFail} failed`);
+// ---------- R11, ARC-8: the README's counts equal the generated data (last, so the pass count is final) ----------
+{
+  generated.clients = specNums.filter((n) => folderOf(n)).length;
+  const text = read(path.join(root, 'README.md')), copy = path.join(tmpRoot, 'README.md');
+  // Plant first: a sample-copy of the README with the accounts count two short (the "23 accounts" fault). Two passes still to come.
+  fs.writeFileSync(copy, text.replace(/across ([0-9,]+) accounts/, (m, n) => `across ${Number(n.replace(/,/g, '')) - 2} accounts`));
+  const b = R11(text, generated, nPass + 2, nKnown), p = R11(read(copy), generated, nPass + 2, nKnown);
+  line(b.length === 0 && p.length > 0, 'R11 ARC-8 catches its planted fault on a sample-copy of README.md (accounts count two short)' + (b.length ? `: the unchanged copy fails first: ${first(b, 1)}` : p.length ? '' : ': the planted copy passes'));
+  const bad = R11(text, generated, nPass + 1, nKnown);
+  line(bad.length === 0, `R11 ARC-8 the README's counts equal the generated data (${generated.clients} clients, ${generated.accounts} accounts, about ${generated.rows} rows, ${nPass + 1} passes, ${nKnown} known)` + (bad.length ? `: ${first(bad, 5)}` : ''));
+}
+fs.rmSync(tmpRoot, { recursive: true, force: true });
+for (const [card, what] of Object.entries(FIX_CARDS)) if (Object.values(KNOWN).some((m) => Object.values(m).includes(card))) console.log(`KNOWN fix card ${card}: ${what}`);
+console.log(`\n${nPass} passed, ${nKnown} known, ${nFail} failed`);
 process.exit(nFail ? 1 : 0);
