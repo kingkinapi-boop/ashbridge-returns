@@ -1,7 +1,7 @@
 // @mutate
 // Loads one sample client from reference/sample-clients/ in place (never copied or rewritten) into the model (ARC-8).
 import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs'
-import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 import { decimalToCents } from '../../src/core/money'
