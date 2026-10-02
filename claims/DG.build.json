@@ -1,12 +1,10 @@
 {
  "card": "DG",
  "role": "build",
- "round": 2,
- "spec": "b903b9c",
- "worker": "cloud-ee27ff",
- "state": "reopened",
- "at": "2026-10-02T06:40:26.431Z",
- "mode": "turbo",
- "beat": "2026-10-02T02:41:36.656Z",
- "note": "merged"
+ "round": 3,
+ "spec": "8f165c2a9170288b9d68627cb42ad6445f824c5f",
+ "worker": "cloud-32295d",
+ "state": "working",
+ "at": "2026-10-02T06:41:51.404Z",
+ "mode": "turbo"
 }
