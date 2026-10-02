@@ -2,7 +2,8 @@
  "card": "G12",
  "role": "spec",
  "worker": "local-87abf9",
- "state": "working",
- "at": "2026-10-02T14:59:52.033Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T15:00:00.591Z",
+ "mode": "turbo",
+ "note": "same: catalogue has no askable asset fact; queue re-offers it, Lead to fix card"
 }
