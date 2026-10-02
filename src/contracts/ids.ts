@@ -1,9 +1,10 @@
 // @mutate
 // Id kinds for every record in schema returns (F01). Ids are text; each kind is branded so a
 // fact id cannot be passed where a return id is wanted.
-import { z } from 'zod'
+import { NonBlankSchema } from './text'
+import type { z } from 'zod'
 
-const id = z.string().min(1)
+const id = NonBlankSchema
 
 // Stryker disable MethodExpression: .brand() changes only the TypeScript type, never the parsed value
 export const ReturnIdSchema = id.brand<'ReturnId'>()

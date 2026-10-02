@@ -26,12 +26,13 @@ import {
   VersionCellIdSchema,
   VersionIdSchema,
 } from './ids'
+import { NonBlankSchema } from './text'
 
 const common = { created_at: z.date(), is_test: z.boolean() }
 const cents = z.number().int()
 /** ARC-10: the versions that made a derived record; never empty, values are non-blank strings or numbers. */
 export const VersionStampSchema = z
-  .record(z.string(), z.union([z.string().refine((s) => s.trim() !== ''), z.number()]))
+  .record(z.string(), z.union([NonBlankSchema, z.number()]))
   .refine((v) => Object.keys(v).length > 0)
 
 /** Blueprint 02: the states of a return (FLOW-1). */
@@ -52,14 +53,14 @@ export const EntryTypeSchema = z.enum(ENTRY_TYPES)
 
 export const ReturnRecordSchema = z.object({
   id: ReturnIdSchema, ...common,
-  entity_name: z.string(), year_end: z.date(), state: ReturnStateSchema,
+  entity_name: NonBlankSchema, year_end: z.date(), state: ReturnStateSchema,
   current_state_event_id: StateEventIdSchema.nullable(),
 })
 export type ReturnRecord = z.infer<typeof ReturnRecordSchema>
 
 export const DocumentRecordSchema = z.object({
   id: DocumentIdSchema, ...common,
-  return_id: ReturnIdSchema, fingerprint: z.string(), file_name: z.string(),
+  return_id: ReturnIdSchema, fingerprint: NonBlankSchema, file_name: NonBlankSchema,
 })
 export type DocumentRecord = z.infer<typeof DocumentRecordSchema>
 
@@ -70,21 +71,21 @@ export type VersionRecord = z.infer<typeof VersionRecordSchema>
 
 export const VersionCellRecordSchema = z.object({
   id: VersionCellIdSchema, ...common,
-  version_id: VersionIdSchema, cell_id: z.string(), value: z.string().nullable(),
+  version_id: VersionIdSchema, cell_id: NonBlankSchema, value: z.string().nullable(),
 })
 export type VersionCellRecord = z.infer<typeof VersionCellRecordSchema>
 
 export const ApprovalRecordSchema = z.object({
   id: ApprovalIdSchema, ...common,
   return_id: ReturnIdSchema, version_id: VersionIdSchema,
-  approved_by: z.string(), fingerprint: z.string(),
+  approved_by: NonBlankSchema, fingerprint: NonBlankSchema,
 })
 export type ApprovalRecord = z.infer<typeof ApprovalRecordSchema>
 
 export const EventRecordSchema = z.object({
   id: EventIdSchema, ...common,
-  record_table: z.string(), record_id: z.string(), actor: z.string(), occurred_at: z.date(),
-  from_value: z.unknown().nullable(), to_value: z.unknown().nullable(), reason: z.string(),
+  record_table: NonBlankSchema, record_id: NonBlankSchema, actor: NonBlankSchema, occurred_at: z.date(),
+  from_value: z.unknown().nullable(), to_value: z.unknown().nullable(), reason: NonBlankSchema,
 })
 export type EventRecord = z.infer<typeof EventRecordSchema>
 
@@ -94,72 +95,72 @@ export const SourceBoxSchema = z
   .refine((b) => BoxSchema.safeParse({ page: 1, ...b }).success, { message: 'box runs off the page' })
 export const FactRecordSchema = z.object({
   id: FactIdSchema, ...common,
-  return_id: ReturnIdSchema, fact_key: z.string(), version_no: z.number().int(), value: z.string().nullable(),
+  return_id: ReturnIdSchema, fact_key: NonBlankSchema, version_no: z.number().int(), value: z.string().nullable(),
   // EV-5: exactly one of these six pointers is set
   // a document pointer is (page and box) or (sheet, row and column); a QBO pointer is the snapshot
   // and the account, and the transaction where there is one
   source_document_id: DocumentIdSchema.nullable(),
   source_page: z.number().int().nullable(),
   source_box: SourceBoxSchema.nullable(),
-  source_sheet: z.string().nullable(),
+  source_sheet: NonBlankSchema.nullable(),
   source_row: z.number().int().nullable(),
-  source_column: z.string().nullable(),
-  source_qbo_snapshot_id: z.string().nullable(),
-  source_qbo_account_id: z.string().nullable(),
-  source_qbo_txn_id: z.string().nullable(),
-  source_client_answer_id: z.string().nullable(),
-  source_cra_capture_id: z.string().nullable(),
-  source_prior_return_id: z.string().nullable(),
-  source_reason: z.string().nullable(),
-  origin: OriginSchema, method: z.string().nullable(), status: FactStatusSchema,
+  source_column: NonBlankSchema.nullable(),
+  source_qbo_snapshot_id: NonBlankSchema.nullable(),
+  source_qbo_account_id: NonBlankSchema.nullable(),
+  source_qbo_txn_id: NonBlankSchema.nullable(),
+  source_client_answer_id: NonBlankSchema.nullable(),
+  source_cra_capture_id: NonBlankSchema.nullable(),
+  source_prior_return_id: NonBlankSchema.nullable(),
+  source_reason: NonBlankSchema.nullable(),
+  origin: OriginSchema, method: NonBlankSchema.nullable(), status: FactStatusSchema,
   version_stamp: VersionStampSchema,
 })
 export type FactRecord = z.infer<typeof FactRecordSchema>
 
 export const LinkRecordSchema = z.object({
   id: LinkIdSchema, ...common,
-  kind: z.string(), from_table: z.string(), from_id: z.string(), to_table: z.string(), to_id: z.string(),
+  kind: NonBlankSchema, from_table: NonBlankSchema, from_id: NonBlankSchema, to_table: NonBlankSchema, to_id: NonBlankSchema,
 })
 export type LinkRecord = z.infer<typeof LinkRecordSchema>
 
 export const AccountRecordSchema = z.object({
   id: AccountIdSchema, ...common,
-  return_id: ReturnIdSchema, qbo_snapshot_id: z.string(), qbo_account_id: z.string(),
-  name: z.string(), balance_cents: cents.nullable(),
+  return_id: ReturnIdSchema, qbo_snapshot_id: NonBlankSchema, qbo_account_id: NonBlankSchema,
+  name: NonBlankSchema, balance_cents: cents.nullable(),
 })
 export type AccountRecord = z.infer<typeof AccountRecordSchema>
 
 export const GifiMappingRecordSchema = z.object({
   id: GifiMappingIdSchema, ...common,
-  return_id: ReturnIdSchema, account_id: AccountIdSchema, mapping_version: z.number().int(), gifi_code: z.string(),
+  return_id: ReturnIdSchema, account_id: AccountIdSchema, mapping_version: z.number().int(), gifi_code: NonBlankSchema,
 })
 export type GifiMappingRecord = z.infer<typeof GifiMappingRecordSchema>
 
 export const AdjustingEntryRecordSchema = z.object({
   id: AdjustingEntryIdSchema, ...common,
-  return_id: ReturnIdSchema, qbo_snapshot_id: z.string(), qbo_txn_id: z.string(),
-  entry_type: EntryTypeSchema.nullable(), reason: z.string().nullable(),
-  sources: z.array(z.unknown()), author: z.string().nullable(), explained: z.boolean(),
+  return_id: ReturnIdSchema, qbo_snapshot_id: NonBlankSchema, qbo_txn_id: NonBlankSchema,
+  entry_type: EntryTypeSchema.nullable(), reason: NonBlankSchema.nullable(),
+  sources: z.array(z.unknown()), author: NonBlankSchema.nullable(), explained: z.boolean(),
   version_no: z.number().int(),
 })
 export type AdjustingEntryRecord = z.infer<typeof AdjustingEntryRecordSchema>
 
 export const EntryLineRecordSchema = z.object({
   id: EntryLineIdSchema, ...common,
-  entry_id: AdjustingEntryIdSchema, qbo_account_id: z.string(), amount_cents: cents,
+  entry_id: AdjustingEntryIdSchema, qbo_account_id: NonBlankSchema, amount_cents: cents,
 })
 export type EntryLineRecord = z.infer<typeof EntryLineRecordSchema>
 
 export const JudgmentInputRecordSchema = z.object({
   id: JudgmentInputIdSchema, ...common,
-  return_id: ReturnIdSchema, cell_id: z.string(), value: z.string().nullable(),
-  author: z.string(), reason: z.string(), version_no: z.number().int(),
+  return_id: ReturnIdSchema, cell_id: NonBlankSchema, value: z.string().nullable(),
+  author: NonBlankSchema, reason: NonBlankSchema, version_no: z.number().int(),
 })
 export type JudgmentInputRecord = z.infer<typeof JudgmentInputRecordSchema>
 
 export const FigureRecordSchema = z.object({
   id: FigureIdSchema, ...common,
-  return_id: ReturnIdSchema, figure_key: z.string(), cell_id: z.string().nullable(),
+  return_id: ReturnIdSchema, figure_key: NonBlankSchema, cell_id: NonBlankSchema.nullable(),
   value: z.string().nullable(), version_stamp: VersionStampSchema,
 })
 export type FigureRecord = z.infer<typeof FigureRecordSchema>
@@ -169,20 +170,20 @@ export const StateEventRecordSchema = z.object({
   // FLOW-1: the order of events; set by the database, never by the caller
   seq: z.union([z.number().int(), z.bigint()]),
   return_id: ReturnIdSchema, from_state: ReturnStateSchema, to_state: ReturnStateSchema,
-  actor: z.string(), occurred_at: z.date(), reason: z.string(),
+  actor: NonBlankSchema, occurred_at: z.date(), reason: NonBlankSchema,
 })
 export type StateEventRecord = z.infer<typeof StateEventRecordSchema>
 
 export const HoldRecordSchema = z.object({
   id: HoldIdSchema, ...common,
-  return_id: ReturnIdSchema, holder: z.string(), taken_at: z.date(),
-  released_at: z.date().nullable(), reason: z.string().nullable(),
+  return_id: ReturnIdSchema, holder: NonBlankSchema, taken_at: z.date(),
+  released_at: z.date().nullable(), reason: NonBlankSchema.nullable(),
 })
 export type HoldRecord = z.infer<typeof HoldRecordSchema>
 
 export const CheckResultRecordSchema = z.object({
   id: CheckResultIdSchema, ...common,
-  return_id: ReturnIdSchema, check_id: z.string(), outcome: z.enum(['pass', 'fail', 'flag']),
+  return_id: ReturnIdSchema, check_id: NonBlankSchema, outcome: z.enum(['pass', 'fail', 'flag']),
   version_stamp: VersionStampSchema,
 })
 export type CheckResultRecord = z.infer<typeof CheckResultRecordSchema>
@@ -190,24 +191,24 @@ export type CheckResultRecord = z.infer<typeof CheckResultRecordSchema>
 export const ExceptionRecordSchema = z.object({
   id: ExceptionIdSchema, ...common,
   return_id: ReturnIdSchema, check_result_id: CheckResultIdSchema,
-  amount_cents: cents.nullable(), tax_effect_cents: cents.nullable(), status: z.string(),
+  amount_cents: cents.nullable(), tax_effect_cents: cents.nullable(), status: NonBlankSchema,
 })
 export type ExceptionRecord = z.infer<typeof ExceptionRecordSchema>
 
 export const AnswerRecordSchema = z.object({
   id: AnswerIdSchema, ...common,
-  exception_id: ExceptionIdSchema, author: z.string(), answer: z.string(),
+  exception_id: ExceptionIdSchema, author: NonBlankSchema, answer: NonBlankSchema,
 })
 export type AnswerRecord = z.infer<typeof AnswerRecordSchema>
 
 export const DifferenceRecordSchema = z.object({
   id: DifferenceIdSchema, ...common,
-  return_id: ReturnIdSchema, cell_id: z.string(),
+  return_id: ReturnIdSchema, cell_id: NonBlankSchema,
   before_value: z.string().nullable(), after_value: z.string().nullable(),
 })
 export type DifferenceRecord = z.infer<typeof DifferenceRecordSchema>
 
 export const LessonRecordSchema = z.object({
-  id: LessonIdSchema, ...common, difference_id: DifferenceIdSchema, summary: z.string(),
+  id: LessonIdSchema, ...common, difference_id: DifferenceIdSchema, summary: NonBlankSchema,
 })
 export type LessonRecord = z.infer<typeof LessonRecordSchema>

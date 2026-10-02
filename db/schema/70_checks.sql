@@ -26,8 +26,7 @@ create table returns.answers (
   is_test boolean not null default true,
   exception_id text not null references returns.exceptions (id),
   author text not null,
-  answer text not null,
-  constraint answers_author check (btrim(author) <> '')
+  answer text not null
 );
 alter table returns.check_results enable row level security;
 alter table returns.exceptions enable row level security;

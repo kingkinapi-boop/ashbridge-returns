@@ -29,7 +29,7 @@ create table returns.facts (
   constraint facts_one_source check (
     num_nonnulls(
       source_document_id, source_qbo_snapshot_id, source_client_answer_id,
-      source_cra_capture_id, source_prior_return_id, nullif(btrim(source_reason), '')
+      source_cra_capture_id, source_prior_return_id, source_reason
     ) = 1
   ),
   -- EV-5, EV-14: a document pointer is exactly one of (page and box) or (sheet, row and column);
@@ -47,8 +47,6 @@ create table returns.facts (
   constraint facts_pointer_values check (
     (source_page is null or source_page >= 1)
     and (source_row is null or source_row >= 1)
-    and (source_sheet is null or btrim(source_sheet) <> '')
-    and (source_column is null or btrim(source_column) <> '')
   ),
   constraint facts_qbo_pointer check (
     case
@@ -66,6 +64,9 @@ create table returns.facts (
   -- ARC-10
   constraint facts_version_stamp check (returns.is_version_stamp(version_stamp))
 );
+
+create trigger facts_next_version before insert on returns.facts
+  for each row execute function returns.next_version_guard('version_no', 'return_id', 'fact_key');
 
 create table returns.links (
   id text primary key,
@@ -89,9 +90,7 @@ create table returns.events (
   occurred_at timestamptz not null,
   from_value jsonb,
   to_value jsonb,
-  reason text not null,
-  constraint events_actor check (btrim(actor) <> ''),
-  constraint events_reason check (btrim(reason) <> '')
+  reason text not null
 );
 create trigger events_append_only before update or delete on returns.events
   for each row execute function returns.refuse_change();
