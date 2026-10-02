@@ -4,8 +4,8 @@
  "round": 7,
  "spec": "5acfe13",
  "worker": "cloud-d34b3d",
- "state": "released",
- "at": "2026-10-02T16:08:33.425Z",
+ "state": "reopened",
+ "at": "2026-10-02T16:45:36.028Z",
  "mode": "turbo",
- "note": "gitleaks allowlist edit refused by permission classifier; see reports/E03A-build-r4.md"
+ "note": "round 3: decision 0021 approves the one allowlist line"
 }
