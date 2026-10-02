@@ -1,10 +1,8 @@
 {
  "card": "F01",
  "role": "spec",
- "worker": "cloud-839492",
- "state": "reopened",
- "at": "2026-10-02T00:25:12.689Z",
- "mode": "turbo",
- "note": "refit: no PGlite, validated on main 7a6038d, flake 5 of 5",
- "commit": "e8acadc"
+ "worker": "cloud-662626",
+ "state": "working",
+ "at": "2026-10-02T04:19:50.374Z",
+ "mode": "turbo"
 }
