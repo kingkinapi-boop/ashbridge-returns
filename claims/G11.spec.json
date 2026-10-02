@@ -1,11 +1,9 @@
 {
  "card": "G11",
  "role": "spec",
- "worker": "cloud-76f46b",
- "state": "reported",
- "at": "2026-10-02T13:26:49.448Z",
- "mode": "turbo",
- "note": "16 tests; stub run green; based on claude/G01",
- "commit": "a5a348b",
- "validated": "e999a0f94d4f6f7559dc8c93c6cfedde12a9977f"
+ "note": "toolchain refit",
+ "worker": "cloud-f96f12",
+ "state": "working",
+ "at": "2026-10-02T16:29:13.185Z",
+ "mode": "turbo"
 }
