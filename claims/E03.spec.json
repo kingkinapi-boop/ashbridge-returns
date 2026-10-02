@@ -2,8 +2,11 @@
  "card": "E03",
  "role": "spec",
  "worker": "cloud-71b41d",
- "state": "working",
- "at": "2026-10-02T07:22:24.919Z",
+ "state": "reported",
+ "at": "2026-10-02T07:28:04.167Z",
  "mode": "turbo",
- "beat": "2026-10-02T07:24:49.079Z"
+ "beat": "2026-10-02T07:24:49.079Z",
+ "note": "29 tests; 15 older E03 tests fail on main (10->15 sample clients, answer_key cite contradiction), see reports/E03-spec-r2.md",
+ "commit": "6e5e86b",
+ "validated": "ba4505f"
 }
