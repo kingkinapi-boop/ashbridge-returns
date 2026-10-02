@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "6c1bbb4",
  "worker": "cloud-47e70d",
- "state": "reported",
- "at": "2026-10-02T13:00:40.414Z",
+ "state": "released",
+ "at": "2026-10-02T13:52:43.305Z",
  "mode": "turbo",
- "note": "80 of 80 acceptance pass; mutation 100 on ai.ts; full suite 1424 green"
+ "note": "merged"
 }
