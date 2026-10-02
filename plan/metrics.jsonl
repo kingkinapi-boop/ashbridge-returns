@@ -2,3 +2,4 @@
 {"card":"F00","closed":"2026-10-02","mode":"turbo","rounds":6,"check_fails":1,"train_fails":0,"jobs":14,"amber":3,"red":0,"accepted":true,"tokens":0,"minutes":0}
 {"card":"F05","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":3,"amber":0,"red":0,"accepted":true,"tokens":0,"minutes":0}
 {"card":"F08","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":5,"amber":0,"red":0,"accepted":true,"tokens":0,"minutes":0}
+{"card":"DG","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":6,"amber":0,"red":0,"accepted":true,"tokens":"unknown","minutes":120}

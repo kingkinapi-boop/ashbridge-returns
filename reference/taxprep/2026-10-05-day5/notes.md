@@ -116,3 +116,18 @@ Start: 15 days left, 97 PDFs left (floor 85). Browser 1 (8f110f0a) drawn althoug
 - Browser 1 (8f110f0a) selected; new tab opened on the returns list. document.visibilityState = "hidden" (window covered or not in front).
 - The page redirected to the iFirm Login page (/2/login/?return_url=...returnsList). Per the rules: stopped, no password typed. Nothing imported, exported or printed. PDFs left: unchanged (96 at last note).
 - Needs Zo: sign in to iFirm in the Ashbridge Test window and put the window on screen. QBO tabs left alone. A new tab (iFirm login) was left open.
+
+# Run 5 exports retry 2 (walker, Sonnet 5.5)
+- Start: 15 days left, 96 PDFs left. Browser 1 (8f110f0a). iFirm was signed in (Zo signed in). document.visibilityState was "hidden" at start; waited, then it flipped to "visible" for stretches (a stalled 45 s JS call seems to coincide with it) and hidden again at other times. KEY FINDING: while the window is hidden the bell stays empty ("No notifications found") and no export or print arrives; while visible, exports arrive in about 8 s. The bell is firm-wide (one list for all returns, newest first), and exports queued while hidden (day 5 run 5A) were still in it, delivered later once visible.
+- Download mechanics now: bell (1452,95), click the top notification, click the Download link (1436,214), then wait 3 s; the notification list shows the newest two exports; back arrow (1086,134). Pacing needs 1 to 3 s waits between clicks (first click after a page load or a menu open is often lost). Export dialog: Actions (1516,131), Export item (1340,445), Filter dropdown (663,406), type "d3", pick the option (590,447), Export to CSV (897,445). Check the dialog shows "d3 all cells" before exporting (on 09 the pick was lost once and Export stayed greyed).
+## 5A step 3 exports (done 01 to 07; also 08, 09, 10)
+- All twenty files copied to the inbox as d5-<nn>-entered.csv and d5-<nn>-s1.csv. Entered-this-year line counts: 01 24, 02 25, 03 28, 04 29, 05 39, 06 103, 07 22 (08 31, 09 22, 10 22); each s1 file ("d3 all cells") 351 lines. Note: the three first export attempts on 01 (earlier run, 3 identical files) were all the default filter: the d3 pick had not taken then. Raw files only in the inbox (never in the repo).
+- 02 Halton print file (earlier run, counter 97 to 96) arrived from the bell once visible: inbox d5-02-office.pdf (494,669 bytes, file name says 6-T2-2026 Halton ... Office).
+## 5B 08, 09, 10 created and imported (script staging on iframe input, names end "(Test)", BN left blank as before)
+- 08 Queen West Design Studio Inc. (Test) 2024-10-01 to 2025-09-30, client code 9: "Data imported successfully" 10:11 p.m.; net income 151,847; taxable 151,847; Part I tax 22,747.
+- 09 Scarborough Robotics Labs Inc. (Test) 2025-04-15 to 2025-12-31 (typing the end date needed select-all first: the dialog autofilled 2026-04-14), client code 10: "Data imported successfully" 10:13 p.m.; net loss -28,940; Part I tax 0.
+- 10 Danforth Cleaning Co. Ltd. (Test) 2025-01-01 to 2025-12-31, client code 11: "Data imported successfully" 10:14 p.m.; net income 228,538; taxable 228,538; Part I tax 34,283.
+- No import went to a wrong return (name shown in Taxpayer selection each time).
+## 5B step 4 diagnostics counts (panel tabs; General / Filing / Custom; the panel has no Error or Warning split)
+- 06 Eglinton Retail: All 25 (12 General, 13 Filing, 0 Custom). 07 Riverdale: 20 (8, 12, 0). 08 Queen West: 22 (10, 12, 0). 09 Scarborough: 23 (11, 12, 0). 10 Danforth: 22 (10, 12, 0). Code lists not read (virtual list).
+## 5B print of 10 (Office copy only; Government copy unticked): counter 96 to 95, file arrived at once (window visible): inbox d5-10-office.pdf (496,035 bytes). PDFs this run: 1.
