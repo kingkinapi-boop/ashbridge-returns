@@ -2,7 +2,10 @@
  "card": "A07B",
  "role": "spec",
  "worker": "cloud-62e50a",
- "state": "working",
- "at": "2026-10-02T15:08:01.436Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T15:26:53.038Z",
+ "mode": "turbo",
+ "note": "28 tests (24 fail for the right reason)",
+ "commit": "7d641b0",
+ "validated": "7c9bc60"
 }
