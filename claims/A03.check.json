@@ -1,10 +1,9 @@
 {
  "card": "A03",
  "role": "check",
- "for": "2026-10-02T19:42:59.027Z",
- "worker": "cloud-d6217c",
- "state": "released",
- "at": "2026-10-02T19:44:12.915Z",
- "mode": "turbo",
- "note": "worker reached its 4-job limit; not started"
+ "for": "2026-10-02T20:31:33.171Z",
+ "worker": "cloud-f765fb",
+ "state": "working",
+ "at": "2026-10-02T20:32:26.643Z",
+ "mode": "turbo"
 }
