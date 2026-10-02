@@ -1,11 +1,9 @@
 {
  "card": "F09B",
  "role": "spec",
- "worker": "cloud-87cb2a",
- "state": "reported",
- "at": "2026-10-02T10:51:54.241Z",
- "mode": "turbo",
- "note": "round 2: decimal boundary rows (adjacent, sameLine), rule, exact 50000 runs with join count, U+0085; retired none",
- "commit": "c4d24b9",
- "validated": "0f31dc5"
+ "note": "toolchain refit",
+ "worker": "cloud-40b1f5",
+ "state": "working",
+ "at": "2026-10-02T11:11:55.653Z",
+ "mode": "turbo"
 }
