@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 20,
+ "round": 21,
  "spec": "62f6c18",
- "worker": "cloud-2c4bc3",
- "state": "released",
- "at": "2026-10-02T18:42:00.797Z",
- "mode": "turbo",
- "note": "re-offered after release; see reports/SC-build.md, needs Lead (owners' defects)"
+ "worker": "cloud-a03a3e",
+ "state": "working",
+ "at": "2026-10-02T18:43:26.159Z",
+ "mode": "turbo"
 }
