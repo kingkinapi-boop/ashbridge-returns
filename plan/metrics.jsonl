@@ -32,3 +32,5 @@
 {"card":"BL0","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":9,"amber":0,"red":0,"accepted":true}
 {"card":"A01","closed":"2026-10-02","mode":"turbo","rounds":6,"check_fails":0,"train_fails":0,"jobs":16,"amber":0,"red":0,"accepted":true}
 {"card":"F02","closed":"2026-10-02","mode":"turbo","rounds":2,"check_fails":0,"train_fails":0,"jobs":11,"amber":0,"red":0,"accepted":true}
+{"card":"F06","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":5,"amber":0,"red":0,"accepted":true}
+{"card":"F07","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":5,"amber":0,"red":0,"accepted":true}
