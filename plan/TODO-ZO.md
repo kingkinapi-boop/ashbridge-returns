@@ -12,7 +12,7 @@ Nothing. Your answers of this morning are in. All seven design recommendations a
 
 **What the Lead is doing now (2 Oct, 14:00 UTC):** turbo, building in the cloud. 20 of 296 cards are on main. In flight: the records schema (its last round), the test world generator, the PDF reader, the AI output contract, the spreadsheet reader and two check cards. Next: your approved screen designs go into the design cards, and your logo goes onto the design basis. Plan use this week: 37%.
 
-**Reviewer, 2 Oct 14:40 UTC:** mode lowered from turbo to normal (too much rework, one flaky test, too few cards ready). Details in `reviews\REVIEW.md`. Type `turbo on` in the Lead chat to have turbo back.
+**Reviewer, 2 Oct 14:40 UTC:** mode lowered from turbo to normal (too much rework, one flaky test, too few cards ready). Details in `reviews\REVIEW.md`. Your answer: turbo comes back by itself when FX1 and F01C land; nothing needed from you.
 
 ## 2. Coming up (no action yet)
 
