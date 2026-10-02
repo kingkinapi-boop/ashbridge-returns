@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "41d00d7",
  "worker": "cloud-e81ab0",
- "state": "working",
- "at": "2026-10-02T06:41:55.402Z",
+ "state": "reported",
+ "at": "2026-10-02T07:01:49.916Z",
  "mode": "turbo",
- "beat": "2026-10-02T06:48:58.489Z"
+ "beat": "2026-10-02T06:48:58.489Z",
+ "note": "all acceptance + 843 tests pass, mutation 100 on both files, flake 5/5"
 }
