@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "ebb2054",
  "worker": "cloud-37afbb",
- "state": "working",
- "at": "2026-10-02T19:31:51.966Z",
+ "state": "reported",
+ "at": "2026-10-02T19:33:32.107Z",
  "mode": "turbo",
- "beat": "2026-10-02T19:33:25.595Z"
+ "beat": "2026-10-02T19:33:25.595Z",
+ "note": "16 of 16 acceptance tests pass"
 }
