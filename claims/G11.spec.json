@@ -1,9 +1,11 @@
 {
  "card": "G11",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit only: validated on main 0a45ea9 (typecheck, lint green; only the 16 G11 acceptance tests fail), no assertion changed",
  "worker": "cloud-f96f12",
- "state": "working",
- "at": "2026-10-02T16:29:13.185Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T16:30:51.997Z",
+ "mode": "turbo",
+ "commit": "a5a348b",
+ "validated": "0a45ea9"
 }
