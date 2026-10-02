@@ -1,15 +1,15 @@
-# F00 check (cloud-d367f7)
+# F00 check, round 3 (cloud-c4f1c0, Sonnet, Node 24.21, cloud)
 
-FAIL (stopped at step 3; steps 1-2 pass)
+Branch `claude/F00` at fd36cd4. **PASS** (notes below, none blocking).
 
-- Step 2 PASS: typecheck, lint, deps:check clean. `npm audit --audit-level=high` exit 0 (2 moderate only). Scope OK (27 files).
-- Step 3 FAIL: `npm test` 22 of 23 pass; `src/core/db/db.db.test.ts` "ARC-4 a database is created from the schema folder and cloned per test" times out at the 5000 ms default. Ran `npx vitest run --project db` 3 more times: 2 timeouts, 1 pass. A flaky test is a failure (testing.md). Cause is likely PGlite cold start (WASM boot plus schema load) inside the first test with no testTimeout / hook timeout set in vitest.config.ts.
-- Not run (check stops at step 3): e2e, mutation, diff-vs-spec (card has no spec).
+- typecheck, lint, deps:check: pass. `npm test`: unit 89 of 89, db 2 of 2. `test:flake`: 5 of 5, slowest boot 2620 ms. `npm run e2e` (production build): 1 passed. `npm audit --audit-level=high`: exit 0 (2 moderate, typed-rest-client/qs).
+- Canary: `mutate:canary` 100 (10 killed). `mutate:changed`: 74.43 total, break 70 met. Per file: ids.ts 36.36 (7 survivors), log.ts 75.19, money.ts 83.33 (6 survivors). ids.ts alone is below 70; the aggregate passes. Survivors are missing tests (ids same-ms counter and padStart; money sign guard `c < 0` vs `<= 0` at money.ts:29). Not rerun twice for score stability (upstream 6073).
+- Security read (SEC-10): actions pinned by 40-hex SHA, persist-credentials false, gitleaks download checked by sha256sum -c, NEXT_TELEMETRY_DISABLED set, no shell in tools (except heavy.mjs), no next/font/google, no Stryker dashboard reporter, network guard blocks non-loopback fetch and sockets. No finding medium or higher.
+- Scope vs origin/main: only `plan/ledger.jsonl` outside Paths (merge=union line from main; Lead-owned, as the build report says). Treat as clean.
 
-Rule candidate: any db-project test or shared DB setup must load PGlite once in a beforeAll with an explicit generous timeout (e.g. 60 s), so no test body pays the cold start; set `testTimeout`/`hookTimeout` for the `db` project.
+## Notes for the Lead
+1. Step 5: acceptance tests under `src/**` are unchanged since spec 5446295. The builder did edit spec-job fixtures `tools/test/__fixtures__/mutation-canary/*` (sign(n) swap, A250 gap, disclosed in the build report). Accepted as a spec gap; the planted-regex defect (`shellProblems` shell:false spacing, build amber 2) still wants a spec fix.
+2. Acceptance 7 (CRLF on the laptop), Dependabot alerts, laptop timings: Lead checks, not done here.
+3. Second security review of changed files and GitHub workflow run on the branch: not run in this check (no GitHub CI access).
 
-## Permission gaps
-None refused. Default node was 22; installed Node 24 and npm 11 via nvm to satisfy engine-strict.
-
-## Model
-claude-sonnet-5-5
+Permission gaps: none. Model: sonnet.

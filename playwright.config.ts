@@ -16,7 +16,8 @@ export default defineConfig({
     launchOptions: { executablePath },
   },
   webServer: {
-    command: 'npx next start -p 3100',
+    command: 'node tools/run-next.mjs start -p 3100',
+    env: { NEXT_TELEMETRY_DISABLED: '1' },
     url: 'http://localhost:3100',
     reuseExistingServer: false,
   },

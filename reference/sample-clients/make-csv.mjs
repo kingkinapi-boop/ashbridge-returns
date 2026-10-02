@@ -1,60 +1,64 @@
-// node reference/sample-clients/make-csv.mjs [--check]
-// Writes <nn-name>/taxprep/import.csv for each client from answer-key.json, then verifies
-// the files on disk. With --check it only verifies.
+// node reference/sample-clients/make-csv.mjs [--check] [--list]
+// Writes <nn-name>/taxprep/import.csv for each client from answer-key.json (Windows-1252,
+// CRLF), then verifies the files on disk. With --check it only verifies; --list also prints
+// the codes left out of each import (no confirmed cell yet).
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { toCsv, gifiAmounts, buildRows, loadCells, money } from './lib/taxprep-csv.mjs';
+import { toCsvBuffer, wholeAmounts, buildRows, loadCells } from './lib/taxprep-csv.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const dirs = readdirSync(root).filter((d) => /^\d\d-/.test(d)).sort();
 const cells = loadCells();
 const check = process.argv.includes('--check');
+const list = process.argv.includes('--list');
 let fails = 0, passes = 0;
 const ok = (c, m) => { if (c) passes++; else { fails++; console.log('FAIL', m); } };
+const idOf = new Map(Object.entries(cells.gifi.byCode).map(([c, id]) => [id, c]));
 
 for (const d of dirs) {
   const key = JSON.parse(readFileSync(join(root, d, 'answer-key.json'), 'utf8'));
   const file = join(root, d, 'taxprep', 'import.csv');
-  if (!check) { mkdirSync(dirname(file), { recursive: true }); writeFileSync(file, toCsv(key, cells)); }
-  const lines = readFileSync(file, 'utf8').split('\r\n').filter(Boolean);
-  ok(/^\[.+\|.+\|.+\]$/.test(lines[0]), `${d} header`);
+  if (!check) { mkdirSync(dirname(file), { recursive: true }); writeFileSync(file, toCsvBuffer(key, cells)); }
+  const raw = readFileSync(file);
+  const text = raw.toString('latin1');
+  ok(!(raw[0] === 0xef && raw[1] === 0xbb), `${d} no BOM`);
+  ok(!/[^\r]\n/.test(text) && text.endsWith('\r\n'), `${d} CRLF on every line`);
+  const lines = text.split('\r\n').filter(Boolean);
+  ok(/^\[.+\|0\|0\|[0-9a-f-]{36}\],"Current Year","Last Year",""$/.test(lines[0]), `${d} header`);
   const map = new Map();
   for (const l of lines.slice(1)) {
-    const m = l.match(/^([^,]+),(.+)$/);
-    ok(!!m && m[2].trim() !== '' && !/,\s*$/.test(l), `${d} no blank cell: ${l}`); // RT-12
+    const m = l.match(/^([^,"]+),"(-?\d+)","",""$/);
+    ok(!!m, `${d} row shape (id,"whole dollars","",""): ${l}`); // RT-12, whole dollars, quoted
     ok(!/YEAR(START|END)/i.test(l), `${d} no year start or end (RT-13)`);
-    if (m) map.set(m[1], m[2]);
+    if (m) { ok(!map.has(m[1]), `${d} duplicate id ${m[1]}`); map.set(m[1], parseInt(m[2], 10)); ok(idOf.has(m[1]), `${d} unconfirmed id ${m[1]}`); }
   }
-  // Every GIFI figure in the answer key appears with the same value.
-  const { s100, s125 } = gifiAmounts(key);
-  for (const [tpl, m] of [[cells.gifi.schedule100.cell, s100], [cells.gifi.schedule125.cell, s125]])
+  ok(![...map.keys()].some((k) => /^(S1\.|S8\[|S50\[|S100\.|S125\.)/.test(k)), `${d} no guessed ids`);
+  // Every mapped GIFI figure is the answer key's figure in whole dollars (plus the plug).
+  const { w100, w125, plug, ni, contra } = wholeAmounts(key);
+  const info = {}; const rows = buildRows(key, cells, info);
+  for (const m of [w100, w125])
     for (const [code, v] of m) {
-      if (v === 0) continue;
-      const id = tpl.replace('{code}', code);
-      ok(map.get(id) === (v / 100).toFixed(2), `${d} ${id} expected ${(v / 100).toFixed(2)} got ${map.get(id)}`);
+      const id = cells.gifi.byCode[String(code)];
+      if (!id || v === 0) continue;
+      ok(map.get(id) === v, `${d} ${id} (GIFI ${code}) expected ${v} got ${map.get(id)}`);
     }
-  const t = key.t2Inputs;
-  ok(map.get(cells.schedule1.netIncomePerBooks.cell) === money(t.netIncomeLossPerBooksBeforeTax), `${d} net income`);
-  t.schedule1.addBacks.forEach((a, k) => ok(map.get(`S1.ADD[${k + 1}].AMT`) === money(a.amount), `${d} addback ${k + 1}`));
-  t.schedule1.deductions.forEach((a, k) => ok(map.get(`S1.DED[${k + 1}].AMT`) === money(a.amount), `${d} deduction ${k + 1}`));
-  const adds = t.schedule8.classes.reduce((s, c) => s + c.additions.reduce((x, a) => x + a.capitalCost, 0), 0);
-  let fileAdds = 0;
-  for (const [k, v] of map) if (/^S8\[\d+\]\.ADDITIONS$/.test(k)) fileAdds += parseFloat(v);
-  ok(Math.abs(fileAdds - adds) < 0.005, `${d} schedule 8 additions ${fileAdds} vs ${adds}`);
-  t.schedule50.forEach((s, k) => ok(map.get(`S50[${k + 1}].COMMONPCT`) === money(s.percentCommonShares), `${d} s50 ${k + 1}`));
-  ok(lines.length - 1 === buildRows(key, cells).length, `${d} row count`);
-  // Schedule 100 balances: assets (contra included in the net) = liabilities + equity + net income per books.
-  let assets = 0, liabEq = 0;
+  ok(lines.length - 1 === rows.length, `${d} row count`);
+  ok(!plug || Math.abs(plug.amount) <= 20, `${d} rounding plug ${plug && plug.amount} is small`);
+  // Schedule 100 balances in cents (the key) and in whole dollars (what we write).
+  let assets = 0, liabEq = 0, niC = 0;
   for (const r of key.trialBalance.adjusted.rows) {
-    if (r.gifi >= 4000) continue;
-    const net = Math.round(r.debit * 100) - Math.round(r.credit * 100);
-    if (r.gifi < 2600) assets += net; else liabEq -= net;
+    const c = r.gifi, net = Math.round(r.debit * 100) - Math.round(r.credit * 100);
+    if (c !== null && c >= 4000) niC -= net; // revenue less expenses = credits less debits
+    else if (c === null || c < 2600) assets += net; else liabEq -= net;
   }
-  const ni = [...s125].reduce((s, [c, v]) => s + (c < 8300 ? v : -v), 0);
-  ok(assets === liabEq + ni, `${d} schedule 100 balances: assets ${assets} vs ${liabEq + ni}`);
-  ok(Math.abs(ni / 100 - t.netIncomeLossPerBooksBeforeTax) < 0.005, `${d} schedule 125 net income ${ni / 100} vs key ${t.netIncomeLossPerBooksBeforeTax}`);
-  ok([...map.keys()].some((k) => k.startsWith('S100.')), `${d} has S100 rows`);
+  ok(assets === liabEq + niC, `${d} cents schedule 100 balances: assets ${assets} vs ${liabEq + niC}`);
+  let wa = 0, wl = 0;
+  for (const [c, v] of w100) { if (c === null || c < 2600) wa += contra.has(c) ? -v : v; else wl += v; }
+  ok(wa === wl + ni, `${d} whole-dollar schedule 100 balances: assets ${wa} vs ${wl + ni}`);
+  ok(Math.abs(ni - key.t2Inputs.netIncomeLossPerBooksBeforeTax) <= 20, `${d} schedule 125 net income ${ni} vs key ${key.t2Inputs.netIncomeLossPerBooksBeforeTax}`);
+  ok(map.size > 0, `${d} has GIFI rows`);
+  if (list) console.log(d, 'left out (unmapped):', info.unmapped.map((u) => (u.code === null ? 'suspense' : u.code)).join(' ') || 'none', plug ? `plug ${plug.amount} on ${plug.code}` : '');
 }
 console.log(`${passes} passes, ${fails} failures`);
 process.exit(fails ? 1 : 0);

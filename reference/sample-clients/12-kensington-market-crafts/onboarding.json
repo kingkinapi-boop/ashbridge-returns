@@ -1,0 +1,112 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Kensington Market Crafts Inc. (Test)",
+    "business_number": "445500509",
+    "financial_year_end": "2025-12-31",
+    "fiscal_year_start": "2025-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "yes",
+    "incorporation_date": "2023-08-14",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": null,
+    "hst_basis": null,
+    "books_kept_by": "owner, no software"
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "445500509RC0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Tamsin Reyes (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [],
+  "services": ["t2"],
+  "related_entities": [],
+  "staff": {
+    "employees": 0,
+    "note": "The owner works alone."
+  },
+  "hst": {
+    "registered": false,
+    "note": "Sales under $30,000: a small supplier."
+  },
+  "answers": [
+    {"question_asked":"BQ2.earn","answer_verbatim":"28,640.00","what_it_resolves":"FL:106","channel":"screen"},
+    {"question_asked":"FL:107","answer_verbatim":"11,480.00","what_it_resolves":"FL:107","channel":"conversation"},
+    {"question_asked":"FL:205","answer_verbatim":"4,350.00","what_it_resolves":"FL:205","channel":"conversation"},
+    {"question_asked":"FL:206","answer_verbatim":"960.00","what_it_resolves":"FL:206","channel":"conversation"},
+    {"question_asked":"FL:209","answer_verbatim":"2,214.20","what_it_resolves":"FL:209","channel":"conversation"},
+    {"question_asked":"FL:213","answer_verbatim":"1,140.00","what_it_resolves":"FL:213","channel":"conversation"},
+    {"question_asked":"FL:214","answer_verbatim":"980.00","what_it_resolves":"FL:214","channel":"conversation"},
+    {"question_asked":"YE1.vehicle","answer_verbatim":"3,900.00","what_it_resolves":"FL:91","channel":"screen"},
+    {"question_asked":"FL:96","answer_verbatim":"6,215.80","what_it_resolves":"FL:96","channel":"conversation"},
+    {"question_asked":"FL:97","answer_verbatim":"2,600.00","what_it_resolves":"FL:97","channel":"conversation"},
+    {"question_asked":"FL:104","answer_verbatim":"2,500.00","what_it_resolves":"FL:104","channel":"conversation"},
+    {"question_asked":"FL:98","answer_verbatim":"100.00","what_it_resolves":"FL:98","channel":"conversation"},
+    {"question_asked":"YE1.pcost","answer_verbatim":"16,800.00","what_it_resolves":"FL:92","channel":"screen"},
+    {"question_asked":"YE1.puse","answer_verbatim":"10","what_it_resolves":"FL:93","channel":"screen"},
+    {"question_asked":"YE1.vkm","answer_verbatim":"12,400","what_it_resolves":"FL:95","channel":"screen"},
+    {"question_asked":"YE1.vbkm","answer_verbatim":"4,100","what_it_resolves":"FL:95","channel":"screen"}
+  ],
+  "client_notes": ["I sell at markets and online. I do not have bank statements for the company; the balance is what the app showed on 31 December.", "I lent the company $2,500 when I started."],
+  "prior_year_closing_balances": {
+    "as_of": "2024-12-31",
+    "accounts": [
+      {
+        "account": "1010",
+        "name": "Chequing (CAD)",
+        "gifi": 1002,
+        "gifiName": "Deposits in Canadian banks and institutions - Canadian currency",
+        "gifiStatus": "settled",
+        "source": {
+          "kind": "client answer",
+          "answer": "FL:97"
+        },
+        "debit": 2600,
+        "credit": 0
+      },
+      {
+        "account": "2080",
+        "name": "Due to shareholders (loans)",
+        "gifi": 2781,
+        "gifiName": "Due to individual shareholder(s)",
+        "gifiStatus": "confirm",
+        "note": "current (2781) or long-term (3261) depends on terms",
+        "source": {
+          "kind": "client answer",
+          "answer": "FL:104"
+        },
+        "debit": 0,
+        "credit": 2500
+      },
+      {
+        "account": "3010",
+        "name": "Common shares",
+        "gifi": 3500,
+        "gifiName": "Common shares",
+        "gifiStatus": "settled",
+        "source": {
+          "kind": "client answer",
+          "answer": "FL:98"
+        },
+        "debit": 0,
+        "credit": 100
+      }
+    ],
+    "ucc": []
+  }
+}

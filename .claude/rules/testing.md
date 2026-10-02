@@ -31,9 +31,9 @@ paths:
 
 ## What must be tested, and how
 - Money and tax arithmetic: fast-check property tests as well as examples (entries net to zero; allocations and prorations sum exactly; cents stay safe integers; rounded statements still tie or carry a recorded rounding item). A counterexample found once becomes a fixed example.
-- Taxprep CSV: golden files for every file written or read, per return kind, plus the fault set (other separators, scientific notation, lost leading zeros, reformatted dates, a BOM, CRLF, Windows-1252 accents, blank versus "0"), each refused with a reason.
+- Taxprep CSV: golden files for every file written or read, per return kind, plus the fault set of RT-9 as the Taxprep trial set it (a BOM, LF-only line ends, other separators, unquoted values, (123) negatives, thousands separators, a decimal comma, scientific notation, lost leading zeros, reformatted dates, UTF-8 accents), each refused with a reason; an empty value is a clear and "0" is zero (RT-12), and both are tested.
 - Every tie, reconciliation and flag: a planted fault that must be caught, and no false alarm on any clean kind.
-- Mutation testing (StrykerJS, Vitest runner, `--incremental`) on changed money, tax, CSV and citation-check files; the break threshold (70 now, raised at the phase 3 gate) fails the check. Not on screens.
+- Mutation testing (StrykerJS, Vitest runner, `--incremental`) on changed money, tax, CSV and citation-check files; every file marked `// @mutate` must score 100 (ARC-15: one surviving core mutant fails; equivalents removed by rewrite or a reasoned disable comment), checked per file by `mutate-changed.mjs` (card DG); the overall break of 70 stays as a floor for unmarked files. Not on screens.
 - Screens: ARIA snapshots for structure (section order, Approve appearing only when every section is reviewed), axe on every journey (WCAG 2.2 AA tags) through one shared fixture, keyboard-only walks, and pixel screenshots only for a few dense screens, with baselines made on the cloud Linux runner, never the laptop.
 - RV-4 timing: the app marks click and source paint (`performance.mark`); the journey fails above 1000 ms on the largest test-world return.
 - Every journey runs against the production build (`next build`, then `next start`), never the development server.

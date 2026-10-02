@@ -1,0 +1,8 @@
+import { makeLogger } from '../../../src/core/log'
+
+const log = makeLogger()
+const client = { name: 'Maple Ridge (Test)', sin: '046454286' }
+log.info(`loaded client ${client.sin}`)
+log.warn('client ' + client.name)
+log.error(client.name + ' failed')
+log.info('constant message is fine', { client })

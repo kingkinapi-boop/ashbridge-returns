@@ -13,13 +13,13 @@ You are a worker. You take one job at a time from the queue and do it exactly by
 2. Pick a worker name: `cloud-<short date and time>` in the cloud, `local-<n>` on the laptop.
 
 ## The loop
-1. `node tools/claim.mjs next --worker <name>`.
+1. `node tools/claim.mjs next --worker <name>`. The queue offers a spec only when every dep has a reported build, and a build only when every dep is merged and done; a card waiting on deps is never offered, so `NOTHING` is normal. Do not work around the gate.
    - `NOTHING`: say "Queue empty." and stop.
    - `PAUSED <mode>`: say "Paused by mode <mode>." and stop. Only Zo raises the mode.
    - `CLAIMED <card> <role>`: do the job below.
 2. Read the card: `plan/cards/<card>.md`, or for a card with a `family` in `plan/slices.json`, `plan/cards/families/<family>.md` with that card's `params` filled in. Then only the blueprint files and code it names.
 3. Do the job by its orders, on branch `claude/<card>` (fetch it first if it exists: `git fetch origin claude/<card>`):
-   - **spec:** `.claude/agents/spec-writer.md`. A card tagged `core` (money, tax, CSV, citations, permissions): hand the spec to a `spec-writer` subagent, which runs on Opus 5.5 (decision 0009). Then `node tools/claim.mjs update <card> spec reported --worker <name> --commit <spec commit> --note "<n> tests"`.
+   - **spec:** `.claude/agents/spec-writer.md`. A card tagged `core` (money, tax, CSV, citations, permissions): hand the spec to a `spec-writer` subagent, which runs on Opus 5.5 (decision 0009). Then `node tools/claim.mjs update <card> spec reported --worker <name> --commit <spec commit> --validated <origin/main sha the toolchain run used> --note "<n> tests"` (without `--validated` the job is re-offered as a toolchain refit).
    - **build:** `.claude/agents/builder.md`. Then `node tools/claim.mjs update <card> build reported --worker <name> --note "<n> of <m> acceptance tests pass"`.
    - **check:** `.claude/agents/checker.md`, the full version (cloud), plus `.claude/agents/tester.md` if the card has `screens`. A `core` card also gets one adversarial read of the diff against its clauses by an Opus subagent. PASS: `node tools/claim.mjs update <card> check reported --worker <name> --note PASS`. FAIL: `node tools/claim.mjs update <card> check failed --worker <name> --note "FAIL: <one line>, see reports/<card>-check.md"`. That one command records the check and puts the build on `hold-findings`; only the Lead reopens it after a findings review (CLAUDE.md loop 4).
    - While working, run `node tools/claim.mjs beat <card> <role> --worker <name>` after each commit and at least every 30 minutes; a job with no beat and no commit for 90 minutes is released as stale.

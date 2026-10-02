@@ -7,7 +7,9 @@
 // The working tree and HEAD are never touched (git plumbing only).
 //
 // Jobs, in priority order: check (a reported build needs an independent
-// check), build (a card with its spec commit), spec (a card with no spec yet).
+// check), build (a card with its spec commit, every dep done), spec (a card with no spec
+// yet, every dep done or with a reported build). Parked cards and cards with a parked dep
+// are never offered a build or a spec. Checks are not gated by deps.
 // A worker never checks a card it built or spec'd.
 //
 // Usage:
@@ -21,8 +23,14 @@
 //        FAILS a card (`update <card> check failed`) writes the check and puts the
 //        build on `hold-findings` in ONE push; the queue does not reopen the build
 //        until the Lead runs `update <card> build reopened --worker lead` after the
+//        (`update <card> spec reopened --worker lead` likewise reopens a spec once the
+//        findings review has added tests; no other worker or role may reopen)
 //        findings review. After 3 failed builds a card is not handed out again until
 //        the Lead parks or re-cards it.
+//        A spec-writer reports with --validated <sha of origin/main its toolchain run used>. A reported
+//        spec with no sha, an unknown sha, or a change since that sha to vitest.config.ts, tsconfig.json,
+//        eslint.config.mjs, package.json or tools/test/*-rules.test.mjs is offered again as a spec job
+//        with the note "toolchain refit", and its build waits (listed as "(toolchain refit)").
 //   node tools/claim.mjs beat <card> <role> --worker <name>
 //        heartbeat: refreshes the claim's timestamp. A working claim with no beat
 //        and no update for 90 minutes is stale and can be taken again.
@@ -33,7 +41,7 @@ import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { ROOT, pathsOverlap } from './lib.mjs'
+import { ROOT, pathsOverlap, depGate, toolchainChanged } from './lib.mjs'
 
 const BRANCH = 'claude/claims'
 const REMOTE = process.env.CLAIMS_REMOTE || 'origin'
@@ -103,6 +111,16 @@ function readClaims(tip) {
     pos = nl + 1 + n + 1
   }
   return claims
+}
+
+// A reported spec was validated on a main (--validated <sha> at report time). It must be redone
+// ("toolchain refit") when it has no sha, git does not know the sha, or the toolchain files
+// changed on main since (findings W14-D01, RC1).
+function specNeedsRefit(s) {
+  if (!s || s.role !== 'spec' || s.state !== 'reported') return false
+  if (!s.validated) return true
+  const files = tryGit(['diff', '--name-only', s.validated, mainRef()])
+  return files === null || toolchainChanged(files.split('\n').filter(Boolean))
 }
 
 // Last sign of life: the later of the claim's write time and its heartbeat.
@@ -178,7 +196,7 @@ function next() {
     if (active.filter((c) => c.state === 'working').length >= cap) return out(`PAUSED ${mode.mode} (cap ${cap} reached)`, 3)
 
     const status = Object.fromEntries(cards.map((c) => [c.id, c.status]))
-    const depsDone = (c) => (c.deps || []).every((d) => status[d] === 'done')
+    const reportedBuilds = new Set(claims.filter((c) => c.role === 'build' && c.state === 'reported').map((c) => c.card))
     const claimFor = (id, role) => claims.find((c) => c.card === id && c.role === role)
     // Paths are held by working specs and by builds until the Lead merges them; a card never blocks itself.
     const holds = (c) => c.role === 'build' || (c.role === 'spec' && c.state === 'working')
@@ -196,7 +214,9 @@ function next() {
           const b = claimFor(c.id, 'build')
           const ck = claimFor(c.id, 'check')
           if (!b || b.state !== 'reported' || b.worker === worker) continue
-          if (ck && (isActive(ck) || ck.for === b.at)) continue
+          // A check blocks a re-offer only while it is working, or when it was for this very build
+          // (a passed check on an older build does not cover a reopened, rebuilt one).
+          if (ck && ((ck.state === 'working' && !isStale(ck)) || ck.for === b.at)) continue
           const s = claimFor(c.id, 'spec')
           if (s && s.worker === worker) continue
           pick = { card: c.id, role, for: b.at }
@@ -204,22 +224,25 @@ function next() {
         }
         if (role === 'build') {
           const s = claimFor(c.id, 'spec')
-          const specReady = c.spec || (s && s.state === 'reported' && s.commit)
-          if (!specReady || !depsDone(c)) continue
+          const reopened = s && s.state === 'reopened'
+          const specReady = (c.spec && !reopened) || (s && s.state === 'reported' && s.commit && !specNeedsRefit(s))
+          if (!specReady || !depGate(c, 'build', status, reportedBuilds).ok) continue
           const b = claimFor(c.id, 'build')
           if (b && isActive(b)) continue
           if (b && b.state === 'hold-findings') continue // waits for the Lead's findings review
           if (b && b.state === 'failed' && (b.round || 1) >= MAX_ROUNDS) continue
           if (s && s.worker === worker && c.spec !== 'n/a') continue
           if (pathsOverlap(c.paths || [], busyFor(c.id))) continue
-          pick = { card: c.id, role, round: (b?.round || 0) + 1, spec: c.spec || s.commit }
+          pick = { card: c.id, role, round: (b?.round || 0) + 1, spec: (reopened ? s.commit : c.spec) || s.commit }
           break
         }
         if (role === 'spec') {
-          if (c.spec) continue
           const s = claimFor(c.id, 'spec')
-          if (s && (isActive(s) || s.state === 'reported')) continue
-          pick = { card: c.id, role }
+          if (c.spec && !(s && s.state === 'reopened')) continue
+          if (!depGate(c, 'spec', status, reportedBuilds).ok) continue
+          const refit = specNeedsRefit(s)
+          if (s && ((s.state === 'working' && !isStale(s)) || (s.state === 'reported' && !refit))) continue
+          pick = refit ? { card: c.id, role, note: 'toolchain refit' } : { card: c.id, role }
           break
         }
       }
@@ -243,7 +266,7 @@ function update() {
   const [, card, role, state] = args
   if (!card || !role || !STATES.includes(state)) return out('usage: update <card> <role> <working|reported|failed|released|reopened> --worker <name>', 2)
   const worker = opt('worker', 'unknown')
-  if (state === 'reopened' && (worker !== 'lead' || role !== 'build')) return out('REFUSED: only --worker lead may reopen a build', 6)
+  if (state === 'reopened' && (worker !== 'lead' || !['build', 'spec'].includes(role))) return out('REFUSED: only --worker lead may reopen a build or a spec', 6)
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     fetchAll()
     const claims = readClaims(claimsTip())
@@ -252,7 +275,7 @@ function update() {
     if (prev.worker && prev.worker !== worker && worker !== 'lead') return out(`REFUSED: ${card} ${role} is held by ${prev.worker}, not ${worker}`, 6)
     const at = new Date(nowMs()).toISOString()
     // The Lead updating someone else's claim leaves the holder's name on it.
-    const obj = { ...prev, card, role, state, worker: prev.worker || worker, at, note: opt('note', prev.note), commit: opt('commit', prev.commit) }
+    const obj = { ...prev, card, role, state, worker: prev.worker || worker, at, note: opt('note', prev.note), commit: opt('commit', prev.commit), validated: opt('validated', prev.validated) }
     const files = { [`${card}.${role}.json`]: obj }
     // A check FAIL: one push writes the failed check and holds the build for the findings review.
     const held = role === 'check' && state === 'failed' ? find('build') : null
@@ -289,7 +312,7 @@ function list() {
   if (!claims.length) return out('no claims', 0)
   for (const c of claims.sort((a, b) => a.at.localeCompare(b.at))) {
     const age = Math.round((nowMs() - lastSeen(c)) / 60000)
-    const tag = isStale(c) ? ' (stale)' : isActive(c) || c.state === 'hold-findings' ? '' : ' (inactive)'
+    const tag = specNeedsRefit(c) ? ' (toolchain refit)' : isStale(c) ? ' (stale)' : isActive(c) || c.state === 'hold-findings' ? '' : ' (inactive)'
     console.log(`${c.card} ${c.role} ${c.state}${tag} | ${c.worker} | ${age} min since last beat${c.note ? ' | ' + c.note : ''}`)
   }
   return 0

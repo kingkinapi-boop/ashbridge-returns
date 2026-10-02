@@ -34,8 +34,8 @@ Agent tool, `run_in_background: true`, `subagent_type: worker`, `isolation: work
 Research and design helpers can run as cloud sessions too: `claude --cloud "<the helper's orders file and its question>"`.
 
 ## After a job is reported
-- spec reported: the build job opens by itself.
+- spec reported (`update <card> spec reported --worker <name> --commit <sha> --validated <origin/main sha>`): the build job opens by itself. Without `--validated`, or when the toolchain changed since that sha, the queue re-offers it as a "toolchain refit" spec job.
 - build reported: a check job opens by itself for a different worker.
 - check PASS: the card joins the next train (skill `merge`).
-- check FAIL or tester findings: the Lead runs a findings review first (CLAUDE.md loop 4). Its consolidated fix list goes into the card; tests it asks for go through a spec job; only then does the build reopen. After a third failed round the queue stops handing it out: the Lead parks the card (reason on the card, amber row) or re-cards it smaller.
+- check FAIL or tester findings: the Lead runs a findings review first (CLAUDE.md loop 4). Its consolidated fix list goes into the card; tests it asks for go through a spec job (`node tools/claim.mjs update <card> spec reopened --worker lead`); only then does the build reopen (`update <card> build reopened --worker lead`). After a third failed round the queue stops handing it out: the Lead parks the card (reason on the card, amber row) or re-cards it smaller.
 - A job "working" for 90 minutes with no new commit: `node tools/claim.mjs update <card> <role> released --worker lead --note stale`.

@@ -8,16 +8,18 @@
     "npm": ">=11"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "node tools/run-next.mjs dev",
     "dev:testworld": "node -e \"console.log('test world not loaded yet')\"",
-    "build": "next build",
+    "build": "node tools/run-next.mjs build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "deps:check": "depcruise src --config .dependency-cruiser.cjs",
-    "test": "vitest run --project unit --project db",
-    "test:changed": "vitest run --changed --project unit --project db",
-    "e2e": "next build && playwright test",
-    "mutate:changed": "stryker run --incremental"
+    "test": "vitest run --project unit && vitest run --project db",
+    "test:changed": "vitest run --changed --project unit && vitest run --changed --project db --passWithNoTests",
+    "test:flake": "node tools/test-flake.mjs",
+    "e2e": "node tools/run-next.mjs build && playwright test",
+    "mutate:changed": "node tools/mutate-changed.mjs",
+    "mutate:canary": "stryker run tools/test/__fixtures__/mutation-canary/stryker.canary.config.mjs"
   },
   "dependencies": {
     "fast-check": "4.10.2",
@@ -35,11 +37,11 @@
     "@types/node": "26.6.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@vitest/coverage-v8": "5.0.1",
+    "@vitest/coverage-v8": "4.1.11",
     "dependency-cruiser": "18.4.0",
     "eslint": "10.11.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.70.1",
-    "vitest": "5.0.1"
+    "vitest": "4.1.11"
   }
 }
