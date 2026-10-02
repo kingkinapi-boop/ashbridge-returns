@@ -2,8 +2,11 @@
  "card": "G12",
  "role": "spec",
  "worker": "cloud-37afbb",
- "state": "working",
- "at": "2026-10-02T19:25:26.380Z",
+ "state": "reported",
+ "at": "2026-10-02T19:31:34.305Z",
  "mode": "turbo",
- "beat": "2026-10-02T19:31:31.850Z"
+ "beat": "2026-10-02T19:31:31.850Z",
+ "note": "20 tests",
+ "commit": "b8ec2300",
+ "validated": "6d8efd66"
 }
