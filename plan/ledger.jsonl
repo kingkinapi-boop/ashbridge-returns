@@ -172,3 +172,4 @@
 {"ts":"2026-10-02T02:52:30.326Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"local","desc":"After day 5: compare and fold findings","allowed":true}
 {"ts":"2026-10-02T03:00:41.006Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Clauses and cards from day 5","allowed":true}
 {"ts":"2026-10-02T03:02:42.331Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T03:13:03.390Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"F00T core spec (Opus)","allowed":true}
