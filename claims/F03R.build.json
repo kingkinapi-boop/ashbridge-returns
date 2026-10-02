@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "af234ce",
  "worker": "cloud-5d8906",
- "state": "hold-findings",
- "at": "2026-10-02T07:07:05.668Z",
+ "state": "reopened",
+ "at": "2026-10-02T08:28:05.446Z",
  "mode": "turbo",
- "note": "FAIL: 3 defects (apostrophe-inside regression, read-back compare, ALWAYS_EXPORTED citations), see reports/F03R-check.md"
+ "note": "spec fix reported; build next (refit first if toolchain moved)"
 }
