@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Checks the generated sample clients against the README: one PASS or FAIL line per check.
 // Usage: node verify.mjs      (it regenerates twice itself for the ARC-16 check: generate.mjs, then make-csv.mjs)
-// Rule checks R5 to R11 (findings review W14-D01) run on every folder; each first proves it catches its planted fault on a
+// Rule checks R5 to R11 (findings review W14-D01) and R12, R13 (findings review W14 round 2) run on every folder; each first proves it catches its planted fault on a
 // sample-copy (a copy of a real folder in a temp folder, one fault planted). A rule failing on 01 to 10 prints KNOWN only when
 // the KNOWN table below names the folder and its fix card; anything else is a FAIL, and a KNOWN entry that passes is a FAIL too.
 import fs from 'node:fs';
@@ -140,8 +140,9 @@ const CLIENT_CHECKS = {
     if (!noa || noa.assessedAsFiled !== true || !/^2025-[0-9]{2}-[0-9]{2}$/.test(noa.date ?? '')) pyBad.push('noticeOfAssessment assessed as filed, dated in 2025');
     const rvMiss = RV2.filter((k) => !Number.isFinite(py.rv2?.[k])); if (rvMiss.length) pyBad.push('rv2 missing ' + rvMiss.join(' '));
     K(num, 'END-2 prior_year is last year\'s return as the firm filed it: CPA-final, assessed as filed, no losses, no dividend accounts, the six RV-2 numbers', pyBad.length === 0, first(pyBad));
-    const pycb = onb.prior_year_closing_balances ?? {}, a = byGifi(py.balanceSheet), b = byGifi(pycb.accounts);
-    K(num, 'END-2 prior_year GIFI balance sheet at 31 Dec 2024 equals prior_year_closing_balances line for line (by GIFI code, in cents)', pycb.as_of === '2024-12-31' && a.size > 0 && sameMap(a, b), `${a.size} GIFI lines against ${b.size}`);
+    // Fix round 3 (findings W14 r2, RC-B): the balance sheet's rows are read as they stand, never summed, so a code split over two rows fails.
+    const pycb = onb.prior_year_closing_balances ?? {}, bsRows = Array.isArray(py.balanceSheet) ? py.balanceSheet : [], a = new Map(bsRows.map((r) => [r.gifi, netCents(r)])), b = byGifi(pycb.accounts);
+    K(num, 'END-2 prior_year GIFI balance sheet at 31 Dec 2024 has one line per code, each equal to prior_year_closing_balances summed by code (in cents)', pycb.as_of === '2024-12-31' && a.size > 0 && a.size === bsRows.length && sameMap(a, b), `${bsRows.length} GIFI lines (${a.size} codes) against ${b.size} codes`);
     const re = cd(py.retainedEarnings3849 ?? NaN), reOpen = -(byGifi(key.trialBalance.opening.rows).get(3600) ?? NaN), reOnb = -(b.get(3600) ?? NaN);
     K(num, 'END-2 prior_year 3849 retained earnings equals the opening retained earnings (opening trial balance and onboarding, GIFI 3600)', Number.isFinite(re) && re === reOpen && re === reOnb, `3849 ${re}, opening ${reOpen}, onboarding ${reOnb}`);
     const u1 = uccMap(py.ucc), u2 = uccMap(key.t2Inputs.schedule8?.openingUcc), u3 = uccMap(pycb.ucc);
@@ -397,7 +398,7 @@ for (const num of specNums) {
   } catch (e) { K(num, 'checks ran to the end without an error', false, e.message.split('\n')[0]); }
 }
 
-// ---------- rule checks R5 to R11 on every folder (findings review W14-D01; card W14 acceptance checks 7 to 13) ----------
+// ---------- rule checks R5 to R13 on every folder (findings reviews W14-D01 and W14 round 2; card W14 acceptance checks 7 to 13, fix round 3) ----------
 // A rule takes one folder's context { num, spec, key, onb } and returns { bad: [problems], note }. It reads only that context,
 // so the same function runs on a real folder and on a sample-copy with one fault planted.
 const CONTRACT_PATH = path.join(root, '..', 'onboarding-contract.md'), IDS_PATH = path.join(root, 'contract-ids.json');
@@ -515,6 +516,17 @@ function bookAccum(a, ys) {
   }
   return NaN;
 }
+// One class's UCC run over the tax years: each year's CCA (rate x (UCC + first-year factor x additions), prorated for a short year).
+function uccRun(mine, rate, ys) {
+  let ucc = 0; const ccas = [];
+  for (const [s, e] of ys) {
+    const adds = mine.filter((a) => a.availableForUse >= s && a.availableForUse <= e), days = Math.round((Date.parse(e) - Date.parse(s)) / 86400000) + 1;
+    const base = ucc + adds.reduce((x, a) => x + firstYearFactor(a.cca.firstYear, a.availableForUse) * cd(a.cost), 0);
+    const cca = Math.round(rate * base * (days < 365 ? days / 365 : 1));
+    ucc += adds.reduce((x, a) => x + cd(a.cost), 0) - cca; ccas.push(cca);
+  }
+  return { ucc, ccas };
+}
 function R8({ key, onb }) {
   const bad = [], start = key.fiscalYear.start, E = isoAdd(start, -1), pycb = onb.prior_year_closing_balances ?? {};
   const s8 = uccMap(key.t2Inputs?.schedule8?.openingUcc), pu = uccMap(pycb.ucc), open = key.trialBalance.opening.rows;
@@ -536,13 +548,7 @@ function R8({ key, onb }) {
     else if (Math.abs(got - x) > (kind === 'cost' ? 0 : tol)) bad.push(`${kind === 'cost' ? 'cost' : 'opening accumulated amortization'} ${acct}: ${got} in the opening trial balance, ${x} recomputed`);
   }
   for (const cls of new Set([...assets.map((a) => String(a.class)), ...s8.keys()])) {
-    const mine = assets.filter((a) => String(a.class) === cls), rate = CCA_RATE[cls]; let ucc = 0;
-    for (const [s, e] of ys) {
-      const adds = mine.filter((a) => a.availableForUse >= s && a.availableForUse <= e), days = Math.round((Date.parse(e) - Date.parse(s)) / 86400000) + 1;
-      const base = ucc + adds.reduce((x, a) => x + firstYearFactor(a.cca.firstYear, a.availableForUse) * cd(a.cost), 0);
-      const cca = Math.round(rate * base * (days < 365 ? days / 365 : 1));
-      ucc += adds.reduce((x, a) => x + cd(a.cost), 0) - cca;
-    }
+    const mine = assets.filter((a) => String(a.class) === cls), { ucc } = uccRun(mine, CCA_RATE[cls], ys);
     if (!mine.length) bad.push(`class ${cls} opening UCC ${s8.get(cls)} has no asset in the register`);
     else if (Math.abs((s8.get(cls) ?? 0) - ucc) > tol) bad.push(`class ${cls} opening UCC ${s8.get(cls) ?? 0} in Schedule 8, ${ucc} recomputed`);
   }
@@ -567,6 +573,67 @@ function R10({ key, onb }) {
   if ((corp.incorporation_date ?? '') >= key.fiscalYear.start) return { bad: [], note: 'incorporated in the year' };
   return n ? { bad: [], note: `${n} prior closing balances` } : { bad: [`all_prior_years_filed "yes" and incorporated ${corp.incorporation_date}, before the year, but prior_year_closing_balances holds no accounts`] };
 }
+// R12, END-2 (findings review W14 round 2, RC-A): last year's tax is recomputed here, never trusted. Taxable income = net income
+// before tax + amortization + other add-backs - CCA from prior_year.schedule1 { amortization, otherAddBacks, cca } (CK-15); a
+// negative is a non-capital loss in prior_year.losses.nonCapital; each tax = its small-business rate x taxable income, half away
+// from zero, in cents; income tax = federal + Ontario; balance owing = tax - instalments. Schedule 1 itself ties to the asset
+// register (the prior year's amortization and CCA, one cent per class or asset of rounding). verify keeps its own rates and never
+// imports the generator's prior-year engine.
+// Small-business rates by the calendar year the prior year ends in. Sources: federal small business deduction, ITA 125(1.1), 9% from
+// 1 Jan 2019 (CRA, T2 Corporation Income Tax Guide, chapter 4); Ontario small business rate 3.2% from 1 Jan 2020 (Ontario Ministry of
+// Finance, corporate income tax rates). Business limit $500,000 (ITA 125(2)); above it the general rate applies, which R12 does not hold.
+const SBD_RATES = { 2024: { federal: 0.09, ontario: 0.032 } };
+const SBD_LIMIT = 50000000;
+const rateOf = (centsAmt, rate) => { const b = Math.round(rate * 10000); return Math.sign(centsAmt) * Math.floor((2 * Math.abs(centsAmt) * b + 10000) / 20000); };
+function R12({ key, onb }) {
+  const py = key.prior_year;
+  if (!py) return { bad: [], note: 'no prior_year in the key, so no prior-year tax to recompute' };
+  const bad = [], s1 = py.schedule1 ?? {}, rv = py.rv2 ?? {}, yr = String(py.fiscalYear?.end ?? '').slice(0, 4), rates = SBD_RATES[yr];
+  const v = { nib: py.incomeStatement?.netIncomeBeforeTax, amortization: s1.amortization, otherAddBacks: s1.otherAddBacks, cca: s1.cca, taxable: rv.taxable_income, fed: rv.federal_tax, ont: rv.ontario_tax, tax: py.incomeStatement?.incomeTax, inst: rv.instalments, owing: rv.balance_or_refund };
+  const missing = Object.entries(v).filter(([, x]) => !Number.isFinite(x)).map(([k]) => k);
+  if (missing.length) return { bad: [`prior_year needs schedule1 { amortization, otherAddBacks, cca }, incomeStatement { netIncomeBeforeTax, incomeTax } and rv2 { taxable_income, federal_tax, ontario_tax, instalments, balance_or_refund }: missing ${missing.join(' ')}`] };
+  if (!rates) return { bad: [`no small-business rates held for a prior year ending in ${yr || 'an unknown year'} (SBD_RATES in verify.mjs)`] };
+  const c = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, cd(x)]));
+  const x = c.nib + c.amortization + c.otherAddBacks - c.cca, wantTaxable = Math.max(0, x), loss = Math.max(0, -x);
+  if (c.taxable !== wantTaxable) bad.push(`taxable income ${c.taxable} is not net income before tax ${c.nib} + amortization ${c.amortization} + other add-backs ${c.otherAddBacks} - CCA ${c.cca} = ${x}${x < 0 ? ' (a loss: taxable 0)' : ''}`);
+  if (loss && !(py.losses?.nonCapital ?? []).some((l) => cd(l?.amount ?? NaN) === loss)) bad.push(`the tax loss ${loss} is not in prior_year.losses.nonCapital (an entry with that amount)`);
+  if (wantTaxable > SBD_LIMIT) bad.push(`taxable income ${wantTaxable} is over the $500,000 business limit: R12 holds only the small-business rates`);
+  const fed = rateOf(wantTaxable, rates.federal), ont = rateOf(wantTaxable, rates.ontario);
+  if (c.fed !== fed) bad.push(`federal tax ${c.fed} is not ${rates.federal} x ${wantTaxable} = ${fed}`);
+  if (c.ont !== ont) bad.push(`Ontario tax ${c.ont} is not ${rates.ontario} x ${wantTaxable} = ${ont}`);
+  if (c.tax !== c.fed + c.ont) bad.push(`income tax ${c.tax} is not federal ${c.fed} plus Ontario ${c.ont}`);
+  if (c.owing !== c.tax - c.inst) bad.push(`balance owing ${c.owing} is not tax ${c.tax} less instalments ${c.inst}`);
+  // Schedule 1 against the asset register: the prior year's book amortization and CCA, recomputed as R8 does.
+  const start = key.fiscalYear.start, assets = (Array.isArray(key.assets) ? key.assets : []).filter((a) => String(a.availableForUse ?? '') < start);
+  if (!assets.length) { if (c.amortization || c.cca) bad.push(`schedule1 amortization ${c.amortization} and CCA ${c.cca} with no asset in use before ${start} in the register`); }
+  else if (assets.some((a) => !(a.cost > 0) || !(String(a.class) in CCA_RATE) || !Number.isFinite(firstYearFactor(a.cca?.firstYear, a.availableForUse)))) bad.push('the asset register is incomplete (R8 names the fields)');
+  else {
+    const ys = taxYears(assets.map((a) => a.availableForUse).sort()[0], isoAdd(start, -1), onb.corporation?.incorporation_date);
+    const prev = ys.slice(0, -1), last = ys[ys.length - 1];
+    const amort = assets.reduce((s, a) => s + bookAccum(a, ys) - (prev.length && prev[prev.length - 1][1] >= a.availableForUse ? bookAccum(a, prev) : 0), 0);
+    const classes = [...new Set(assets.map((a) => String(a.class)))];
+    const cca = classes.reduce((s, cls) => { const r = uccRun(assets.filter((a) => String(a.class) === cls), CCA_RATE[cls], ys); return s + r.ccas[r.ccas.length - 1]; }, 0);
+    if (!Number.isFinite(amort) || Math.abs(c.amortization - amort) > assets.length) bad.push(`schedule1 amortization ${c.amortization}, the register gives ${amort} for the year to ${last[1]}`);
+    if (!Number.isFinite(cca) || Math.abs(c.cca - cca) > classes.length) bad.push(`schedule1 CCA ${c.cca}, the register gives ${cca} for the year to ${last[1]}`);
+  }
+  return { bad, note: `taxable ${wantTaxable} = ${c.nib} + ${c.amortization} + ${c.otherAddBacks} - ${c.cca}; tax ${c.fed} + ${c.ont}` };
+}
+// R13, END-2 (findings review W14 round 2, RC-B): a GIFI-keyed statement (an array whose rows carry a gifi code and no account) holds
+// each code once. Account lists (rows that carry an account: trial balances, prior closing balances, entries) are exempt.
+function R13({ key, onb }) {
+  const bad = [], found = [];
+  const walk = (v, p) => {
+    if (Array.isArray(v)) {
+      if (v.length && v.every((r) => r && typeof r === 'object' && !Array.isArray(r) && 'gifi' in r) && v.every((r) => !('account' in r))) {
+        found.push(p); const n = new Map(); for (const r of v) n.set(r.gifi, (n.get(r.gifi) ?? 0) + 1);
+        for (const [g, k] of n) if (k > 1) bad.push(`${p} holds GIFI ${g} ${k} times`);
+      }
+      v.forEach((r, i) => walk(r, `${p}[${i}]`));
+    } else if (v && typeof v === 'object') for (const [k, r] of Object.entries(v)) walk(r, `${p}.${k}`);
+  };
+  walk(key, 'answer-key'); walk(onb, 'onboarding');
+  return { bad, note: found.length ? `${found.length} GIFI-keyed statements (${first(found)}), each code once; account lists exempt` : 'no GIFI-keyed statement; account lists exempt' };
+}
 // R11, ARC-8: the README's counts equal the generated data (clients in the table, accounts, rows to the nearest hundred, passes, known).
 function R11(text, g, passes, known) {
   const bad = [], num = (s) => Number(String(s).replace(/,/g, ''));
@@ -584,6 +651,8 @@ const RULES = [
   { id: 'R8', clause: 'END-2', name: 'opening amortization and UCC recompute from cost, date, method, class rate and the first-year rule', fn: R8 },
   { id: 'R9', clause: 'END-2', name: 'prior-year tax over $3,000 means instalments in the year or a judgement flag', fn: R9 },
   { id: 'R10', clause: 'END-9', name: 'all_prior_years_filed yes means prior closing balances are present, unless incorporated in the year', fn: R10 },
+  { id: 'R12', clause: 'END-2', name: 'last year\'s tax recomputes: taxable = net income + amortization + other add-backs - CCA, tax = rate x taxable, balance owing = tax - instalments', fn: R12 },
+  { id: 'R13', clause: 'END-2', name: 'a GIFI-keyed statement holds each code once (account lists exempt)', fn: R13 },
 ];
 // Known failures on 01 to 10 (W14 changes nothing there): each names the fix card the Lead cards. Never for 11 onward.
 const FIX_CARDS = { W16: 'proposed: asset registers for sample clients 03, 04, 07, 08 and 10 (cost, date, book method, CCA class and first-year rule in the answer key), regenerated so opening amortization and UCC recompute (R8)' };
@@ -608,6 +677,14 @@ const PLANTS = [
   ['R8', '11', 'opening amortization 2,600 and UCC 1,480', (c) => { const acc = (c.key.assets ?? [])[0]?.accumAccount, row = c.key.trialBalance.opening.rows.find((r) => r.account === acc); if (row) { row.debit = 0; row.credit = 2600; } for (const u of [c.key.t2Inputs.schedule8?.openingUcc, c.onb.prior_year_closing_balances?.ucc, c.key.prior_year?.ucc]) for (const x of u ?? []) x.ucc = 1480; }],
   ['R9', '11', 'the 2025 instalments removed', (c) => { c.key.transactions = c.key.transactions.filter((t) => t.kind !== 'tax-instalment'); }],
   ['R10', '11', 'prior closing balances emptied', (c) => { c.onb.prior_year_closing_balances.accounts = []; }],
+  // Fix round 3: the round 2 faults themselves, planted back on a copy of 11.
+  ['R12', '11', 'taxable income typed as net income before tax', (c) => { const py = c.key.prior_year; if (py?.rv2) py.rv2.taxable_income = py.incomeStatement?.netIncomeBeforeTax ?? py.rv2.net_income; }],
+  ['R13', '11', 'GIFI 2680 split over two balance sheet rows (HST and income tax)', (c) => {
+    const bs = c.key.prior_year?.balanceSheet; if (!Array.isArray(bs) || !bs.length) return;
+    const i = Math.max(0, bs.findIndex((r) => r.gifi === 2680)), r = bs[i], n = netCents(r), h = Math.trunc(n / 2);
+    const row = (x) => ({ ...r, debit: x > 0 ? x / 100 : 0, credit: x < 0 ? -x / 100 : 0 });
+    bs.splice(i, 1, row(h), row(n - h));
+  }],
 ];
 // Each rule first proves it catches its plant: the unchanged copy passes and the planted copy fails.
 for (const [id, num, label, plant] of PLANTS) {
@@ -627,8 +704,8 @@ for (const [id, num, label, plant] of PLANTS) {
 }
 for (const num of specNums) {
   const d = folderOf(num);
-  if (!d || !fs.existsSync(path.join(root, d, 'answer-key.json')) || !fs.existsSync(path.join(root, d, 'onboarding.json'))) { line(false, `${num} R5 to R10 rule checks: folder or files missing`); continue; }
-  let c; try { c = ctxOf(num, path.join(root, d)); } catch (e) { line(false, `${num} R5 to R10 rule checks: ${e.message.split('\n')[0]}`); continue; }
+  if (!d || !fs.existsSync(path.join(root, d, 'answer-key.json')) || !fs.existsSync(path.join(root, d, 'onboarding.json'))) { line(false, `${num} R5 to R13 rule checks: folder or files missing`); continue; }
+  let c; try { c = ctxOf(num, path.join(root, d)); } catch (e) { line(false, `${num} R5 to R13 rule checks: ${e.message.split('\n')[0]}`); continue; }
   for (const rule of RULES) {
     let r; try { r = rule.fn(c); } catch (e) { r = { bad: [`threw ${e.message.split('\n')[0]}`] }; }
     const card = KNOWN[rule.id]?.[num], label = `${num} ${rule.id} ${rule.clause} ${rule.name}`;
