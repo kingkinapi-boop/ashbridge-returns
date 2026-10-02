@@ -1,0 +1,11 @@
+# A07C build (cloud-390404)
+Branch claude/A07C. Head: see `git log -1` on the branch (last commit before this report: "A07C: reasoned mutant disable in zip reader").
+Files: src/modules/sheets/index.ts (routing), xlsx/index.ts, new xlsx/raw.ts and xlsx/zip.ts (core, `// @mutate`), tests xlsx/a07c.test.ts, sums.test.ts, load.test.ts; a07b.test.ts and typed.test.ts edited for the hyperlink-number rule.
+Acceptance: a07c.acceptance 117/117 pass; whole sheets folder 301 pass. Full suite 1806 passed, 1 skipped, 62 files (Node 24.21.0).
+typecheck clean; lint clean; deps:check 0 violations; scope.mjs A07C: one file outside, plan/cards/A07B.md, put there by the Lead's A07B spec-commit line (not mine); mutation (`mutate:changed -- A07C`): 100.00 on index.ts, raw.ts, zip.ts, csv, contracts, sheets index.
+Design: a small zip reader (node:zlib) reads the sheet XML so the build sees each cell's stored text and formula; ExcelJS stays the main reader. A <v> that is not one whole number literal reads as error "#NUM!"; hyperlinked cells recurse into their value, and a hyperlinked formula takes its formula from the sheet XML; SUM(range) of number cells whose cache lies within the sum's own rounding bound (capped below half a cent) reads as the exact cent total; bytes with a zip signature are a workbook under every name (no CSV fallback).
+Amber 1: non-literal number reads as an error cell, not text (both allowed by the spec; reverse in notALiteral). Amber 2: "PK" text under a non-CSV name still says "not a workbook" (keeps route.test.ts). Amber 3: a workbook whose parts the small zip reader cannot read is refused, never read leniently.
+Amber 4: route labels are now numbers, so the A07B route-label mutant is gone by rewrite. Four `Stryker disable` lines carry reasons (equivalent mutants in catch and guard lines).
+Permission gaps: node_modules lacked exceljs (ran `npm ci`, worked); `source nvm.sh` and compound commands with `;` or heredocs were refused by the classifier, so I used PATH=/opt/nvm/versions/node/v24.21.0/bin and single commands.
+Model: Sonnet 5.5 (claude-sonnet-5-5).
+Unfinished: nothing. Note: Stryker's incremental file served stale survivors; delete reports/mutation/stryker-incremental.json before trusting a mutation run.
