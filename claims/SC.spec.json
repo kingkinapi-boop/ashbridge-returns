@@ -1,11 +1,9 @@
 {
  "card": "SC",
  "role": "spec",
- "note": "refit: fixed one cold-tool timeout (R37 test, 60 s); typecheck and lint green; the rest fail by name until F01 lands (13 rules incl. db ones)",
- "worker": "cloud-1d0d85",
- "state": "reported",
- "at": "2026-10-02T17:00:54.624Z",
- "mode": "turbo",
- "commit": "62f6c18",
- "validated": "c882d40"
+ "note": "toolchain refit",
+ "worker": "cloud-18d04e",
+ "state": "working",
+ "at": "2026-10-02T19:24:23.833Z",
+ "mode": "turbo"
 }
