@@ -1,23 +1,24 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 14:00Z by the Lead (Zo's answers). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 14:10Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, decision 0018). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 07:15Z: 5h 1% (new window), week 31%.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`), up to 6 runs. Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup ~30 min). Laptop: up to 2 local workers (0018); they have no subagent tool, so core specs and checks go to the cloud (A331). None running now.
 - **Zo:** to-do #1 design sitting at http://localhost:8765/ (python http.server from the session scratchpad `sitting` folder; if it is down after a reboot, the bundle must be rebuilt: designer helper from the four `claude/design-*-2` branches, see reports/findings-designs-2.md "For Zo"). Day 4 (Auto-fill, Zo) Sat 3 Oct. Decisions 0016 to 0019 today; blueprint v1.2 (0019: preparer pastes the diagnostics list).
-- **Landed (20 done):** E03, F09B (with F09A's work), DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
+- **Landed (21 done):** F04, E03, F09B (with F09A's work), DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Train: F04 | train check | cloud | 2 Oct 13:25Z | claude/train |
-| W00 build round 2; F01 build round 3 (last) | cloud runs | cloud | 2 Oct 12:19Z, 13:09Z | claude/W00, claude/F01 |
-| Queue: G01 check, A07 check, A03 build, G10 build, A01 spec round 3 (waits F01, A357) | cloud runs | cloud | 2 Oct 13:25Z | claude/<card> |
+| Train: G01 | train check | cloud | 2 Oct 14:10Z | claude/train |
+| W00 build round 2; D00L build; SC spec; A01 spec round 3 | cloud runs | cloud | 2 Oct | claude/<card> |
+| A07 findings review (Opus, local; Lead records reports/findings-A07-r1.md) | helper | laptop | 2 Oct 14:10Z | - |
+| Queue: F01C spec then build (F01 split, A359; 13 cards wait on it), BL0 build (waits F01C), G10, G11 builds (wait G01), A03 build | cloud runs | cloud | 2 Oct 14:10Z | claude/<card> |
 
-S00 build waits on W00 (A354); BL0 (one blank rule) waits on F01 and F04; U00 and D02 to D13 parked until Zo's sitting. CRA walks: originals in Assets/ stay out of git (excluded, 0003); a helper writes data-free copies to reference/cra/.
+S00 build waits on W00 (A354); U00 and D02 to D13 in the design lane (A352). CRA walk copies on main in reference/cra/ (originals off git).
 
 ## Next, in order
 

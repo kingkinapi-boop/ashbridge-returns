@@ -133,7 +133,7 @@
       "closed": "2026-10-01"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -181,7 +181,56 @@
       "hard": true,
       "security": true,
       "core": true,
-      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first."
+      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first. Parked 2 Oct after round 3 (A359): split into F01C, which lands its work."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09"
+      ],
+      "paths": [
+        "db/schema/00_schema.sql",
+        "db/schema/10_documents.sql",
+        "db/schema/20_ledger.sql",
+        "db/schema/30_books.sql",
+        "db/schema/40_figures.sql",
+        "db/schema/50_returns.sql",
+        "db/schema/60_versions.sql",
+        "db/schema/70_checks.sql",
+        "db/schema/90_learning.sql",
+        "src/contracts/records.ts",
+        "src/contracts/ids.ts",
+        "src/contracts/index.ts",
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "EV-14",
+        "FLOW-4",
+        "TB-1",
+        "TB-2",
+        "TB-3",
+        "FLOW-1",
+        "SEC-6",
+        "SEC-7",
+        "ARC-2",
+        "ARC-3",
+        "ARC-10"
+      ],
+      "id": "F01C",
+      "title": "Records and schema: the last narrow repairs (F01 split)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/F01C from claude/F01 round 3 head; lands F01 work (A359)."
     },
     {
       "status": "done",
@@ -239,7 +288,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -261,13 +310,14 @@
       "title": "AI output contract (schemas and citations)",
       "phase": 0,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F04",
         "F05M"
       ],
@@ -540,7 +590,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F09",
         "F09B",
         "F05M"
@@ -745,7 +795,7 @@
         "F00",
         "F09",
         "F09B",
-        "F01"
+        "F01C"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
@@ -770,7 +820,7 @@
       "spec": null,
       "deps": [
         "W00",
-        "F01",
+        "F01C",
         "F00T"
       ],
       "paths": [
@@ -796,7 +846,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F03",
         "F04",
         "F05",
@@ -827,7 +877,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01"
+        "F01C"
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
@@ -853,7 +903,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F00T"
       ],
       "paths": [
@@ -904,7 +954,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "P01"
       ],
       "paths": [
@@ -1823,7 +1873,7 @@
       "spec": null,
       "deps": [
         "F00",
-        "F01",
+        "F01C",
         "F00T"
       ],
       "paths": [
@@ -2132,7 +2182,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F02",
         "F04",
         "SK0"
@@ -2190,7 +2240,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "F06",
         "F09",
         "F10",
@@ -2733,7 +2783,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01C",
         "W00",
         "A05",
         "F00T"
@@ -5008,7 +5058,7 @@
         "T04",
         "T01",
         "L00",
-        "F01"
+        "F01C"
       ],
       "paths": [
         "src/modules/learning/versions/**",
