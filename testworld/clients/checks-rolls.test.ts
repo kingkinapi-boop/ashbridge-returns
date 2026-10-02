@@ -237,7 +237,7 @@ describe('ARC-8 W00a markers', () => {
   it('a roll entry that is also a marker entry is refused', () => {
     const c = dupClient()
     const both = entry({ id: 'B1', flagId: 'B1', marker: dupMarker, roll: { account: 'CHQ', month: '2025-02', cause: 'duplicate' } })
-    expect(run(c, [both]).filter((i) => i.record === 'B1' && i.reason === 'a roll entry is not a marker entry')).toHaveLength(1)
+    expect(run(c, [both]).filter((i) => i.record === 'B1' && i.reason === 'a roll entry is not a marker entry')).toEqual([issue('fault-catalogue', 'B1', 'a roll entry is not a marker entry')])
   })
   it('a priorYear row outside every month passes only when its marker is listed for its own account and month', () => {
     const c = clean()
