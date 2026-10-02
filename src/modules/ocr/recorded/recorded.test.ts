@@ -98,6 +98,10 @@ describe('ARC-16 recorded engine: each refusal says why', () => {
     )
   })
 
+  test('ARC-16 a recordedAt written with a UTC offset is accepted', async () => {
+    expect(await readFrom({ ...committed(), recordedAt: '2026-10-01T12:00:00-04:00' })).toBeUndefined()
+  })
+
   test('ARC-16 a clean copy of the committed recording is accepted', async () => {
     expect(await readFrom(committed())).toBeUndefined()
   })
