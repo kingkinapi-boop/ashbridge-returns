@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "2f0b92b",
  "worker": "cloud-8ec957",
- "state": "reported",
- "at": "2026-10-02T17:45:45.459Z",
+ "state": "released",
+ "at": "2026-10-02T19:22:51.231Z",
  "mode": "turbo",
- "note": "round 3: isBlank in reader and WordSchema; 221 ocr+reading tests pass, mutate 100"
+ "note": "merged"
 }
