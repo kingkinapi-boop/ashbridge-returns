@@ -1,5 +1,7 @@
 # .GFI file from QBO Accountant Workpapers (walker attempt 2, 1 Oct 2026)
 
+Attempt 3 (1 Oct 2026, authority Z17-1 in decision 0017: "1: yes"): NOT RUN. Browser 8f110f0a was reachable but its QBO session was signed out (qbo.intuit.com redirected to the Intuit sign-in page, which offers only the remembered account tile). Signing in is Zo's step; nothing was changed in the books, no file copied. Needed: Zo signs in to QBO Accountant in that Chrome, then re-run.
+
 Status: PARTIAL. The click path and the file header are known. No account lines are known yet, because no data could be put in the books (see "Why it stopped").
 
 ## Click path (confirmed)

@@ -361,7 +361,32 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "Fix round 2 from reports/findings-F01-F09.md: spec (a) to (f), then build round 2; the re-check waits for both; lands before F01."
+      "note": "Fix round 3 from reports/findings-F09-r2.md (A296, A297): a new spec worker adds checks 17 (no -0) and 18 (non-finite converter input throws RangeError); build the -0 fix and finite guard only; the grammar moved to F09A; lands before F01."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F09"
+      ],
+      "paths": [
+        "src/contracts/amount-grammar.ts",
+        "src/contracts/amount-grammar.test.ts",
+        "src/contracts/amount-grammar.acceptance.test.ts",
+        "src/contracts/reading.ts"
+      ],
+      "clauses": [
+        "EV-6",
+        "EV-5",
+        "ARC-8",
+        "ARC-15"
+      ],
+      "id": "F09A",
+      "title": "Amount grammar: one table for every amount read or printed",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Split from F09 (A297): owns normaliseAmount, amountGroups, AMOUNT_FORMATS and checks 14 to 16, 19, 20; the grammar table and dash rule (A296); F09 findings 1 to 3 stay on main with no consumer until this lands."
     },
     {
       "status": "carded",
@@ -369,6 +394,7 @@
       "deps": [
         "F01",
         "F09",
+        "F09A",
         "F05M"
       ],
       "paths": [
@@ -615,7 +641,8 @@
         "S00",
         "A01",
         "JH0",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "e2e/skeleton/**",
@@ -1114,6 +1141,7 @@
       "deps": [
         "W00",
         "F09",
+        "F09A",
         "A01"
       ],
       "paths": [
@@ -1654,7 +1682,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "src/modules/sheets/**",
@@ -2061,7 +2090,8 @@
         "L00",
         "A04",
         "A07",
-        "F10"
+        "F10",
+        "F09A"
       ],
       "paths": [
         "src/modules/extraction/_core/**",
@@ -2952,7 +2982,8 @@
         "A08",
         "E01",
         "E03",
-        "L00"
+        "L00",
+        "F09A"
       ],
       "paths": [
         "src/modules/ai/grounding/**",

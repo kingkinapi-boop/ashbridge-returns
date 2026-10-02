@@ -149,3 +149,7 @@
 {"ts":"2026-10-02T01:28:42.833Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T01:28:42.849Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T01:28:42.862Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T01:31:59.344Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card side of F09 split","allowed":true}
+{"ts":"2026-10-02T01:40:36.675Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"QBO .GFI walker, made-up entries","allowed":true}
+{"ts":"2026-10-02T01:42:50.383Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Audit merged cards F00 F05 F08","allowed":true}
+{"ts":"2026-10-02T01:44:19.340Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"QBO .GFI walker, attempt 4","allowed":true}
