@@ -1,12 +1,9 @@
 {
  "card": "F01",
  "role": "spec",
- "note": "refit: typecheck, lint, unit 727 green; db: only round-2 checks 13-19 fail (92)",
- "worker": "cloud-d26ada",
- "state": "reported",
- "at": "2026-10-02T08:37:21.309Z",
- "mode": "turbo",
- "beat": "2026-10-02T08:30:05.722Z",
- "commit": "ee1fa1d",
- "validated": "7dd2c02a511607dfd78053eae5e40a510f95b03b"
+ "note": "toolchain refit",
+ "worker": "cloud-b4ebfa",
+ "state": "working",
+ "at": "2026-10-02T11:11:51.679Z",
+ "mode": "turbo"
 }
