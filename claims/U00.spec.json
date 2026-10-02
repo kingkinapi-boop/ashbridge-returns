@@ -1,9 +1,8 @@
 {
  "card": "U00",
  "role": "spec",
- "worker": "cloud-08ac79",
- "state": "released",
- "at": "2026-10-02T09:39:01.487Z",
- "mode": "turbo",
- "note": "queue re-offers U00 spec though D00 is not merged or done (design/basis absent on main); gate needs D00 done: Lead hold U00"
+ "worker": "cloud-2a2f0f",
+ "state": "working",
+ "at": "2026-10-02T09:39:37.614Z",
+ "mode": "turbo"
 }
