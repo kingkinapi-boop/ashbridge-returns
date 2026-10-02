@@ -231,7 +231,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -253,10 +253,11 @@
       "title": "Check contract",
       "phase": 0,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -276,7 +277,8 @@
       "id": "F08",
       "title": "Tests for the build tools (queue, scope, matrix, next)",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
