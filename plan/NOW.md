@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 02:45Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 02:37Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
