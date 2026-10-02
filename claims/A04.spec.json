@@ -1,11 +1,8 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "regenerate the stale golden inbox-finding-c01.json (14 minLength lines); see reports/A04-build.md",
- "worker": "cloud-ae6ed2",
- "state": "reopened",
- "at": "2026-10-02T20:31:37.597Z",
- "mode": "turbo",
- "commit": "383857c",
- "validated": "5bc19df"
+ "worker": "cloud-197c89",
+ "state": "working",
+ "at": "2026-10-02T20:45:46.734Z",
+ "mode": "turbo"
 }
