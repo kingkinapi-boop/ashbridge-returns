@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:40Z by the Lead at handover (Zo's `handover`). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:47Z by the Lead at handover (Zo's `handover`). Times are UTC from `date -u`.
 
 ## State
 
@@ -14,8 +14,8 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:40Z by the Lea
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | W00a build (long; 663 spec tests) | cloud run | cloud | 2 Oct 15:50Z | claude/W00a |
-| A07C check (core, Opus read) | cloud run | cloud | 2 Oct 17:32Z | claude/A07C |
-| Queue, builds reopened by the Lead at 17:36Z after F01D landed: F02, F06, F07, A06, A01 (round 3), BL0; E03A build (re-run gitleaks over HEAD after Zo's edit, then check) | 4 cloud runs fired at handover | cloud | 2 Oct 17:42Z | claude/<card> |
+| A07C round 2 (check found two defects inside its classes: self-closed shared formula, absolute 1e-9 snap; card Round 2, SC R56): spec reopened | queue | cloud | 2 Oct 17:42Z | claude/A07C |
+| Queue, builds reopened by the Lead at 17:36Z after F01D landed: F02, F06, F07, A06, A01 (round 3), BL0; E03A build (re-run gitleaks over HEAD after Zo's edit, then check) | 8 cloud runs fired 17:40Z to 17:45Z | cloud | 2 Oct 17:42Z | claude/<card> |
 
 ## Next, in order
 
