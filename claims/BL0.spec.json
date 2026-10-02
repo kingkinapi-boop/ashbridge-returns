@@ -2,7 +2,8 @@
  "card": "BL0",
  "role": "spec",
  "worker": "cloud-8ee837",
- "state": "working",
- "at": "2026-10-02T13:26:34.558Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T13:26:41.637Z",
+ "mode": "turbo",
+ "note": "no code base: text.ts and ai.ts not on main; waits on F01 and F04 landing (queue keeps re-offering; gate should require merged deps for a spec on contracts)"
 }
