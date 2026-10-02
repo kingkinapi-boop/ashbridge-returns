@@ -2,7 +2,8 @@
  "card": "W01",
  "role": "spec",
  "worker": "cloud-b4a9c0",
- "state": "working",
- "at": "2026-10-02T14:27:42.449Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T14:28:09.145Z",
+ "mode": "turbo",
+ "note": "W00 model (testworld/index) not on main yet (W00 check in progress); draft spec aa40774 on claude/W01 cannot be validated or 6b-swept without it. Re-offer after W00 lands."
 }
