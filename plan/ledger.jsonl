@@ -168,3 +168,4 @@
 {"ts":"2026-10-02T02:08:35.605Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T02:36:49.103Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T02:36:49.119Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T02:48:46.390Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"claude-code-guide","model":null,"where":"local","desc":"Claude Code context and cache facts","allowed":true}
