@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T12:23:50.792Z",
  "worker": "cloud-20e77a",
- "state": "working",
- "at": "2026-10-02T12:47:33.785Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T12:52:32.971Z",
+ "mode": "turbo",
+ "note": "FAIL: blank-item trim() differs from WordSchema (NEL/Cf throws ZodError), see reports/A01-check.md"
 }

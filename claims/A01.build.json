@@ -4,9 +4,9 @@
  "round": 2,
  "spec": "f4144b9cdfe350f846a90a257426cedcd8d8e2ed",
  "worker": "cloud-ff757e",
- "state": "reported",
- "at": "2026-10-02T12:23:50.792Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T12:52:32.971Z",
  "mode": "turbo",
  "beat": "2026-10-02T12:20:48.326Z",
- "note": "31 of 31 acceptance pass on strict schemas; mutation 100 per file; 46 unit tests in ocr"
+ "note": "FAIL: blank-item trim() differs from WordSchema (NEL/Cf throws ZodError), see reports/A01-check.md"
 }
