@@ -1,10 +1,12 @@
 {
  "card": "A03",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "37 tests, refit; R46-R48 section not covered, needs new spec round",
  "worker": "cloud-c7ae52",
- "state": "working",
- "at": "2026-10-02T19:24:27.642Z",
+ "state": "reported",
+ "at": "2026-10-02T19:30:35.622Z",
  "mode": "turbo",
- "beat": "2026-10-02T19:25:14.470Z"
+ "beat": "2026-10-02T19:25:14.470Z",
+ "commit": "6504c0db",
+ "validated": "6d8efd66"
 }
