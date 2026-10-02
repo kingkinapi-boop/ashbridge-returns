@@ -17,7 +17,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 02:37Z by the Lea
 | Local queue workers: F03 build (r2), F09 build (r3) | 2 workers (0018) | local worktrees | 2 Oct 02:05Z | claude/F03, claude/F09 |
 | Clauses and cards from day 5 (RULE-2, RT-1, RT-2, RT-7, RT-14/15, RT-17; F03 apostrophe on inputs) | Opus helper | local worktree | 2 Oct 03:20Z | claude/clauses-day5 |
 | Queue repair 3: gap fixed (b8d5847); checker re-verifying, then local train | checker | local worktree | 2 Oct 02:30Z | claude/queue-repair-3 |
-| Zo design sitting bundle (four families round 2 done; six questions; A251 A286 A328) | designer | local | 2 Oct 03:40Z | scratchpad/sitting, then Artifact (private) |
+| Design sitting served at http://localhost:8765/ (python http.server from scratchpad/sitting, started by the bundle helper; restart with `python -m http.server 8765` in that folder) | none | local | 2 Oct 03:45Z | to-do #1 |
 
 F05M check PASS but waits on F00T (Reviewer HOLD). F00T queued.
 
