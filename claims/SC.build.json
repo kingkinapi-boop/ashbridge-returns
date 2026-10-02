@@ -4,7 +4,8 @@
  "round": 31,
  "spec": "34e8ac0",
  "worker": "cloud-7c1598",
- "state": "working",
- "at": "2026-10-02T19:57:30.257Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:57:37.079Z",
+ "mode": "turbo",
+ "note": "re-offered at once, nothing changed: same owner defects, see reports/SC-build.md"
 }
