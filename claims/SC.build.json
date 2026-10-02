@@ -4,7 +4,8 @@
  "round": 26,
  "spec": "62f6c18",
  "worker": "cloud-43b472",
- "state": "working",
- "at": "2026-10-02T19:04:39.937Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T19:05:06.739Z",
+ "mode": "turbo",
+ "note": "No code on main changed since the last release (3df2e9b to f86ad4d: plan only); same 7 failures in other cards' files, see reports/SC-build.md. Needs the defects on owner cards or KNOWN entries first."
 }
