@@ -17,3 +17,6 @@ Step 6b sweep: no existing test retired; the stub broke none.
 None.
 ## Model
 Sonnet 5.5 (card is not core).
+
+## Refit (2 Oct, cloud-f10790)
+Old validated sha 31ee347; new: validated on main 2de6057. Merged main; typecheck and lint errors are only the missing ./jobs and ./index modules; unit 1685 and db 350 green apart from the two F06 acceptance files (fail for the missing module). No assertion changed.
