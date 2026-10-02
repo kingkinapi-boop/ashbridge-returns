@@ -2,7 +2,8 @@
  "card": "U00",
  "role": "spec",
  "worker": "cloud-2a2f0f",
- "state": "working",
- "at": "2026-10-02T09:39:47.055Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T09:39:51.950Z",
+ "mode": "turbo",
+ "note": "Queue bug: re-offered after release; U00 must wait for Zo's approval of D00 (card 'When it starts'). Stopping."
 }
