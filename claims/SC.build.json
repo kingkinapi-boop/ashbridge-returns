@@ -4,7 +4,8 @@
  "round": 43,
  "spec": "ee0255d",
  "worker": "cloud-0c9d3d",
- "state": "working",
- "at": "2026-10-02T21:09:22.705Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T21:10:06.156Z",
+ "mode": "turbo",
+ "note": "2 rule tests (R34, R47) fail on A03's ocr/recorded; test-file edits needed, spec refit first; see reports/SC-build.md"
 }
