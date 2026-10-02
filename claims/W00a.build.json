@@ -4,9 +4,10 @@
  "round": 1,
  "spec": "bd30c58",
  "worker": "cloud-f2e775",
- "state": "hold-findings",
- "at": "2026-10-02T18:38:25.894Z",
+ "state": "released",
+ "at": "2026-10-02T19:08:24.589Z",
  "mode": "turbo",
  "beat": "2026-10-02T16:40:35.517Z",
- "note": "FAIL: scope (9 W00 files) and six classes from the Opus read, see reports/W00a-check.md"
+ "note": "wait: parked, split to W00c (A379)",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
 }
