@@ -1,11 +1,11 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "77f886f",
   "cards": [
     "TH"
   ],
   "requested_at": "2026-10-02T07:54:32Z",
-  "by": "lead",
+  "by": "cloud-107253",
   "report": ""
 }
