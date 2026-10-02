@@ -1,9 +1,11 @@
 {
  "card": "A06",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: only A06's own files fail (missing modules); 1685 other tests green on main 2de6057",
  "worker": "cloud-80fece",
- "state": "working",
- "at": "2026-10-02T17:39:51.287Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T17:44:13.386Z",
+ "mode": "turbo",
+ "commit": "2e596ab",
+ "validated": "2de6057"
 }
