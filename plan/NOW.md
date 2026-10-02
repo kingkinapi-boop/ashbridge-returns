@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 02:37Z by the Lea
 |---|---|---|---|---|
 | Cloud queue: builds TH, W14 (r3), DG (r2, R22), A05 check (r2, released by hand) | 2 cloud runs | cloud | 2 Oct 02:40Z | claude/<card> |
 | Local queue workers: F03 build (r2), F09 build (r3) | 2 workers (0018) | local worktrees | 2 Oct 02:05Z | claude/F03, claude/F09 |
-| Taxprep day 5 exports retry 2 (exports arriving; settings files committed) | Sonnet walker, Chrome 8f110f0a | local | 2 Oct 01:55Z | notes uncommitted |
+| Clauses and cards from day 5 (RULE-2, RT-1, RT-2, RT-7, RT-14/15, RT-17; F03 apostrophe on inputs) | Opus helper | local worktree | 2 Oct 03:20Z | claude/clauses-day5 |
 | Queue repair 3: gap fixed (b8d5847); checker re-verifying, then local train | checker | local worktree | 2 Oct 02:30Z | claude/queue-repair-3 |
 | Design fix round 2: source viewer | designer | local worktree | 2 Oct 00:45Z | claude/design-source-viewer-2 |
 
@@ -27,7 +27,7 @@ F05M check PASS but waits on F00T (Reviewer HOLD). F00T queued.
 2. Queue repair 3: after the gap fix, local train (skill merge: rebuild on main, code-diff guard), land, then widen to 6 cloud runs.
 3. Checks and trains: board each PASS card (scope, GitHub checks, security review if tagged) into a train via plan/train.json; E03 boards only after TH (gitleaks).
 4. Findings: W14 round 2 report, then cards. F01 waits on F09; F09A after F09.
-5. Taxprep: day 5 retry 2 report; then the "After day 5" helper; day 6 Sun 4 Oct; day 4 Zo Sat 3 Oct.
+5. Taxprep: day 5 DONE (159 of 159 cells back, 156 exact, 3 apostrophe negatives; no diagnostics page; no token cell; import adds copies; FINDINGS interim 979363f). Next: day 6 Sun 4 Oct (changes after lock, check export, roll forward); day 4 Zo Sat 3 Oct. Chrome is free tonight.
 6. Designs: source viewer round 2 report, then the sitting page for Zo (Artifact, private) with the six questions (reports/findings-designs.md d) and the "For Zo" list (reports/findings-designs-2.md); about 3 Oct. Then D00, D01, D05.
 7. B01 can be specced (reference/qbo/gfi-file.md, A305). W16 card to write (W14 KNOWN R8 fails on 03, 04, 07, 08, 10).
 
