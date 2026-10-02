@@ -3,6 +3,7 @@
 // Rounding to whole dollars uses the one rule in src/core/money.ts.
 import { z } from 'zod'
 import { cents, roundCentsToDollars, type Cents } from '../core/money'
+import { isBlank } from './text'
 
 export const CHECK_KINDS = ['tie', 'reconciliation', 'flag', 'ai'] as const
 export type CheckKind = (typeof CHECK_KINDS)[number]
@@ -18,7 +19,7 @@ function validate(schema: z.ZodType, x: unknown): Validation {
   return { ok: false, reason }
 }
 
-const nonBlank = z.string().refine((s) => s.trim().length > 0, 'must not be blank')
+const nonBlank = z.string().refine((s) => !isBlank(s), 'must not be blank')
 const centsSchema = z.number().int()
 
 // ---- CK-1 the check record ----
