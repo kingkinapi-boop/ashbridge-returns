@@ -1,11 +1,10 @@
 {
  "card": "A07C",
  "role": "build",
- "round": 4,
+ "round": 5,
  "spec": "ba50f80",
- "worker": "cloud-d8bb50",
- "state": "released",
- "at": "2026-10-02T20:33:12.852Z",
- "mode": "turbo",
- "note": "re-offered at once after release; not building (lands as-is per A384). Lead: re-stamp build reported"
+ "worker": "cloud-dec020",
+ "state": "working",
+ "at": "2026-10-02T20:34:33.107Z",
+ "mode": "turbo"
 }
