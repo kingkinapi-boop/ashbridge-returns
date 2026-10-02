@@ -313,7 +313,9 @@
         "tsconfig.json",
         "tools/test-homes.json",
         "tools/test/toolchain-rules.test.mjs",
-        "tools/test/__fixtures__/**"
+        "tools/test/__fixtures__/**",
+        ".github/workflows/checks.yml",
+        ".gitleaks.toml"
       ],
       "clauses": [
         "ARC-17",
