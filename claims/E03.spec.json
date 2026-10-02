@@ -2,7 +2,10 @@
  "card": "E03",
  "role": "spec",
  "worker": "cloud-b4ebfa",
- "state": "working",
- "at": "2026-10-02T11:33:24.521Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T11:42:04.803Z",
+ "mode": "turbo",
+ "note": "round 3: count derived from sample-clients dir; 9 tests fail for 9 missing keys; see reports/E03-spec-r3.md",
+ "commit": "b009cc79dc0c54367b4d4e0237e3bf7b691da37f",
+ "validated": "8e8fba1c6253c09a67ca3d4a857d650cb352a660"
 }
