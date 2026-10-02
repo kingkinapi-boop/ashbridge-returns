@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-02T19:47:34.667Z",
  "worker": "cloud-de3dc1",
- "state": "working",
- "at": "2026-10-02T19:49:03.241Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-02T20:02:20.871Z",
+ "mode": "turbo",
+ "note": "FAIL: 3 defects inside the classes (shared-formula slide, 1e21+ number text, nested SUM order), see reports/A07C-check-r3.md"
 }

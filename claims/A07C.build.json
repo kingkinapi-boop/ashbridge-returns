@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "ba50f80",
  "worker": "cloud-ae6ed2",
- "state": "reported",
- "at": "2026-10-02T19:47:34.667Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T20:02:20.871Z",
  "mode": "turbo",
- "note": "331 of 331 sheet tests pass; full suite green; mutation 100; see reports/A07C-build.md"
+ "note": "FAIL: 3 defects inside the classes (shared-formula slide, 1e21+ number text, nested SUM order), see reports/A07C-check-r3.md"
 }
