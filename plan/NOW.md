@@ -13,8 +13,10 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:30Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| A07 build round 2 (A360) | cloud run | cloud | 2 Oct 14:58Z | claude/A07 |
-| Train: red-held (G01 failed only on the SEC-5 timing flake, A361); re-board G01 and D00L (both PASS) with FX1 | train | - | 2 Oct 14:30Z | claude/train |
+| Queue: F01C check (core), FX1 spec, A07 check (round 2), E03A check (core), CQ1 spec | 6 cloud runs | cloud | 2 Oct 15:35Z | claude/<card> |
+| 2 local workers (non-core jobs) | worker | laptop worktrees | 2 Oct 15:35Z | claude/<card> |
+| W00 findings review round 2 (Opus, local helper; Lead records reports/findings-W00-r2.md) | helper | laptop | 2 Oct 15:35Z | - |
+| Train: red-held (G01 flake, A361); re-board G01 and D00L with FX1 | train | - | 2 Oct 14:30Z | claude/train |
 
 ## Ready for the next runs (in this order once dispatch is allowed)
 
