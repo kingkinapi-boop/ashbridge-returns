@@ -44,3 +44,11 @@ R1 covers the product and build tree only: `reference/**` is out of scope (its h
 Two tests in `src/core/egress-rules.acceptance.test.ts` pass with the feature deleted; the TH spec job rewrites both (Paths gain the file), each first shown failing on a planted bad example under `tools/test/__fixtures__/egress/`:
 - line 292, "SEC-5 ESLint refuses console and interpolated logger messages": reads config strings and lints nothing. Rewrite: run ESLint (`lintText` with a `src/` file path) on a planted file holding a `console.log` and an interpolated logger message, and assert both errors by rule id; a clean file gives none.
 - line 216, "SEC-10 every checkout sets persist-credentials: false": passes when there is no checkout step. Rewrite: assert at least one `actions/checkout` step is found in `checks.yml`, and a planted workflow whose checkout lacks the setting fails.
+
+## Also (2 Oct): flaky egress test
+
+`src/core/egress-rules.acceptance.test.ts` SEC-5 ESLint case times out under whole-suite load and passes alone (local worker report, S00 spec). A flaky test is a failure (testing.md): TH's egress rewrite gives that case its own timeout budget or runs ESLint once per suite, and the flake run covers it.
+
+## Build round 2 (2 Oct, A306 single cause)
+
+The check passed, but the branch's own GitHub run still fails gitleaks with `--log-opts="HEAD"`: 1 leak in the branch history (402 commits). Run gitleaks with `-v --redact` (the CI step may add `-v`) to name the rule, file and line; never print a value. A planted test value (TH's own "planted secret still fails" case, or A05's `PLANTED-`/`k-test-` values) gets a regex allowlist entry scoped to that pattern; anything that looks like a real secret: stop, release with the rule and file, and the Lead decides. TH boards only with every GitHub step green.

@@ -59,10 +59,46 @@ if (bad.length > 0) {
   console.error(`refusing mutation target with unsafe characters: ${bad.join(', ')}`)
   process.exit(1)
 }
+
+// A Stryker disable comment must say why: `// Stryker disable next-line <mutators>: <reason>`.
+const noReason = []
+for (const f of targets) {
+  fs.readFileSync(f, 'utf8').split('\n').forEach((l, i) => {
+    const m = l.match(/\/\/\s*Stryker disable\b[^:]*(?::(.*))?$/)
+    if (m && !(m[1] ?? '').trim()) noReason.push(`${f}:${i + 1}`)
+  })
+}
+if (noReason.length > 0) {
+  console.error(`Stryker disable comment with no reason: ${noReason.join(', ')}`)
+  process.exit(1)
+}
 console.log(`mutating: ${targets.join(', ')}`)
 const stryker = 'node_modules/@stryker-mutator/core/bin/stryker.js'
+const reportFile = path.join('reports', 'mutation', 'mutation.json')
+fs.rmSync(reportFile, { force: true })
 const r = spawnSync(process.execPath, [stryker, 'run', '--incremental', '--mutate', targets.join(',')], {
   stdio: 'inherit',
   shell:false,
 })
-process.exit(r.status ?? 1)
+if (!fs.existsSync(reportFile)) {
+  console.error(`Stryker wrote no ${reportFile} (exit ${r.status ?? 'none'})`)
+  process.exit(1)
+}
+
+// Per-file break (ARC-15): every marked file scores 100; survived and no-coverage both count against it.
+// The overall break in the Stryker config no longer decides a pass.
+const report = JSON.parse(fs.readFileSync(reportFile, 'utf8'))
+const below = []
+for (const f of targets) {
+  const mutants = (report.files?.[f]?.mutants ?? []).filter((m) => ['Killed', 'Timeout', 'Survived', 'NoCoverage'].includes(m.status))
+  const survivors = mutants.filter((m) => m.status === 'Survived' || m.status === 'NoCoverage')
+  if (survivors.length === 0) continue
+  const score = Math.round(((mutants.length - survivors.length) / mutants.length) * 10000) / 100
+  const list = survivors.map((m) => `line ${m.location?.start?.line} ${m.mutatorName} (${m.status})`).join('; ')
+  below.push(`${f}: score ${score}, must be 100; survivors: ${list}`)
+}
+if (below.length > 0) {
+  console.error(`mutation score below 100 per file:\n${below.join('\n')}`)
+  process.exit(1)
+}
+process.exit(0)
