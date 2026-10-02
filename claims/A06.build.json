@@ -5,8 +5,8 @@
  "spec": "2e596ab",
  "worker": "cloud-e72c49",
  "state": "reported",
- "at": "2026-10-02T18:23:36.815Z",
+ "at": "2026-10-02T18:38:40.782Z",
  "mode": "turbo",
  "beat": "2026-10-02T18:23:09.797Z",
- "note": "73 of 73 acceptance tests pass; scope: env.ts outside paths (spec requires it)"
+ "note": "Paths fixed by Lead (A378); ready for check"
 }
