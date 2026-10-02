@@ -21,6 +21,7 @@
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import { RETURN_STATES } from '../../contracts/records'
+import { isBlank } from '../../contracts/text'
 import { BLUEPRINT_MOVES } from './__fixtures__/blueprint-moves'
 import { HOLD_IDLE_MS, MOVES, dueDates } from './index'
 
@@ -35,7 +36,7 @@ describe('F02 the move table (FLOW-2)', () => {
 
   test('FLOW-2 each move has its own named guard (non-blank, no two moves share one)', () => {
     const names = MOVES.map((m) => m.guard)
-    for (const n of names) expect(n.trim(), 'a blank guard name').not.toBe('')
+    for (const n of names) expect(isBlank(n), `a blank guard name ${JSON.stringify(n)}`).toBe(false)
     expect(new Set(names).size).toBe(MOVES.length)
   })
 

@@ -15,24 +15,31 @@
 // - src/modules/lifecycle/index.ts: createLifecycle({ db, clock, guards?, approvals? }) returning
 //   - move(returnId, to, actor, why) -> { ok: true } | { ok: false; reason } (FLOW-1, FLOW-2).
 //     guards is keyed by MOVES[i].guard; a guard not passed in is "not built yet" and refuses.
-//     A refused move writes nothing.
-//   - voidApproval(returnId, changedItems) -> { voided: true; items: ChangedItem[] } | { voided:
-//     false } (FLOW-5): items are the changed items that were in the fingerprint; the return goes
-//     to trace with one state event, and one row in returns.events names the approval
-//     (record_table 'approvals', record_id the approval id). Guards do not apply (FLOW-5 is not a
-//     table move).
-//   - setWaiting / clearWaiting(returnId, actor, why) and waitingOnClient(returnId) -> { since:
-//     Date | null; periods: { from: Date; to: Date | null }[] } (FLOW-3): one returns.events row
-//     each, no state event, no state change.
+//     A refused move writes nothing. The state event and the return update are one transaction:
+//     if either fails, neither is kept and no pending event is left behind.
+//   - voidApproval(returnId, changedItems, actor, why) -> { voided: true; items: ChangedItem[] } |
+//     { voided: false } (nothing fingerprinted changed) | { voided: false; reason } (refused)
+//     (FLOW-5): items are the changed items that were in the fingerprint; the return goes to trace
+//     with one state event (who = actor, why = why), and one row in returns.events names the
+//     approval (record_table 'approvals', record_id the approval id), all in one transaction.
+//     Guards do not apply (FLOW-5 is not a table move).
+//   - setWaiting / clearWaiting(returnId, actor, why) -> { ok: true } | { ok: false; reason } and
+//     waitingOnClient(returnId) -> { since: Date | null; periods: { from: Date; to: Date | null }[] }
+//     (FLOW-3): one returns.events row each, no state event, no state change.
 //   - takeHold(returnId, holder) -> { ok: true } | { ok: false; reason; heldBy };
 //     releaseHold(returnId, holder) -> { ok: boolean }; holder(returnId) -> string | null
 //     (FLOW-10). Idle time counts from the last take; the holder taking it again renews it.
+// Findings F01 round 2 (reports/findings-F01-r2.md, "F02:"): actor, why and holder are checked
+// with isBlank (src/contracts/text.ts, the one definition of blank) and a blank one returns
+// { ok: false } (or { voided: false; reason }) before anything is written, never a throw.
 import type { PGlite } from '@electric-sql/pglite'
+import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import type { Clock } from '../../core/clock'
 import { cloneTestDb } from '../../core/db'
 import { ReturnIdSchema, type ReturnId } from '../../contracts/ids'
 import { RETURN_STATES } from '../../contracts/records'
+import { BLANK_RANGES, isBlank } from '../../contracts/text'
 import {
   ApprovalFingerprintSchema,
   type ApprovalFingerprint,
@@ -49,6 +56,19 @@ const PREPARER = 'Pat Preparer (Test)'
 const OTHER = 'Robin Second (Test)'
 const OPS = 'Ops Desk (Test)'
 const HOUR = 60 * 60 * 1000
+
+/**
+ * The blank class (findings F01 round 2, RC1): the eight blanks of S2 plus the ones the old
+ * definitions missed (Cc, NEL, U+034F, U+3164, U+2800 and mixes). Every one is blank by isBlank.
+ */
+const BLANKS = [
+  '', ' ', '\t', '\n', ' ', '​', '　', '⠀',
+  '\u0007', '\u0085', '­', '͏', 'ㅤ', '﻿', '\u{E0001}', ' ​\t　⠀',
+] as const
+/** Any string made only of blank code points (U+0000 included: it is refused before any write). */
+const anyBlank = fc
+  .array(fc.constantFrom(...BLANK_RANGES).chain(([lo, hi]) => fc.integer({ min: lo, max: hi })), { maxLength: 6 })
+  .map((cps) => String.fromCodePoint(...cps))
 
 /** A clock the test moves forward by hand. */
 function steppingClock(iso: string): Clock & { advance(ms: number): void; set(iso: string): void } {
@@ -156,7 +176,7 @@ describe('F02 moves (FLOW-2)', () => {
         if (allowed.has(to)) continue
         const r = await lc.move(id, to, PREPARER, 'planted: a move the table does not hold')
         expect(r.ok, `${from}->${to} must be refused`).toBe(false)
-        if (!r.ok) expect(r.reason.trim(), `${from}->${to} needs a reason`).not.toBe('')
+        if (!r.ok) expect(isBlank(r.reason), `${from}->${to} needs a reason`).toBe(false)
         expect(await stateOf(db, id)).toBe(from)
       }
       expect(await eventCount(db, id)).toBe(before)
@@ -238,16 +258,95 @@ describe('F02 events (FLOW-1)', () => {
     expect(await stateOf(db, id)).toBe('closed')
   })
 
-  test('FLOW-1 a move with no who or no why is refused and writes nothing', async () => {
+  test('FLOW-1 a move with a blank who or a blank why (every blank of the class) returns ok:false with a reason before any guard or write, never throws, and writes nothing', async () => {
+    const db = await cloneTestDb()
+    const asked: string[] = []
+    const spy: Guard = (ctx) => {
+      asked.push(ctx.actor)
+      return { ok: true }
+    }
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: { ...allPass(), [guardOf('intake', 'evidence')]: spy } })
+    const id = await newReturn(db)
+    for (const b of BLANKS) {
+      for (const [actor, why] of [[b, 'created'], [PREPARER, b]] as const) {
+        const r = await lc.move(id, 'evidence', actor, why)
+        expect(r.ok, `actor ${JSON.stringify(actor)} why ${JSON.stringify(why)}`).toBe(false)
+        if (!r.ok) expect(isBlank(r.reason), 'the refusal says why').toBe(false)
+      }
+    }
+    expect(asked, 'no guard is asked about a move with a blank who or why').toEqual([])
+    expect(await stateOf(db, id)).toBe('intake')
+    expect(await eventCount(db, id)).toBe(0)
+    // nothing pending was left behind: the next proper move goes through with exactly one event
+    expect(await lc.move(id, 'evidence', PREPARER, 'created')).toMatchObject({ ok: true })
+    expect(await stateEvents(db, id)).toHaveLength(1)
+  })
+
+  test('FLOW-1 property (seed 20261005): any who or why made only of blank code points is refused before anything is written', async () => {
+    const db = await cloneTestDb()
+    let asked = 0
+    const spy: Guard = () => {
+      asked += 1
+      return { ok: true }
+    }
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: { ...allPass(), [guardOf('intake', 'evidence')]: spy } })
+    const id = await newReturn(db)
+    await fc.assert(
+      fc.asyncProperty(anyBlank, fc.boolean(), async (b, blankActor) => {
+        const r = await lc.move(id, 'evidence', blankActor ? b : PREPARER, blankActor ? 'created' : b)
+        expect(r.ok).toBe(false)
+      }),
+      { seed: 20261005, numRuns: 100 },
+    )
+    expect(asked, 'no guard is asked').toBe(0)
+    expect(await stateOf(db, id)).toBe('intake')
+    expect(await eventCount(db, id)).toBe(0)
+  })
+
+  test('FLOW-1 a who or why with one visible character among blanks is not blank, and is kept exactly as given', async () => {
     const db = await cloneTestDb()
     const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass() })
     const id = await newReturn(db)
-    for (const [actor, why] of [['', 'created'], ['   ', 'created'], [PREPARER, ''], [PREPARER, '  ']] as const) {
-      const r = await lc.move(id, 'evidence', actor, why)
-      expect(r.ok, `actor ${JSON.stringify(actor)} why ${JSON.stringify(why)}`).toBe(false)
-    }
-    expect(await stateOf(db, id)).toBe('intake')
-    expect(await eventCount(db, id)).toBe(0)
+    const actor = ' Pat Preparer (Test)​'
+    const why = '　é\t'
+    expect(await lc.move(id, 'evidence', actor, why)).toMatchObject({ ok: true })
+    expect((await stateEvents(db, id)).at(-1)).toMatchObject({ actor, reason: why })
+  })
+
+  test('FLOW-1 planted fault: the return update fails after the state event is written; the move is refused, the event is rolled back and no pending event blocks the next move', async () => {
+    const db = await cloneTestDb()
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass() })
+    const id = await returnIn(db, lc, 'prepare')
+    const before = await stateEvents(db, id)
+    await db.exec(`
+      create function returns.f02_planted_refuse() returns trigger language plpgsql as $$
+      begin raise exception 'planted: the return update fails'; end $$;
+      create trigger f02_planted before update on returns.returns
+        for each row when (new.state = 'trace') execute function returns.f02_planted_refuse();
+    `)
+    const r = await lc.move(id, 'trace', PREPARER, 'Ready pressed').catch((e: unknown) => ({ ok: false as const, reason: String(e) }))
+    expect(r.ok).toBe(false)
+    expect(await stateOf(db, id)).toBe('prepare')
+    expect(await stateEvents(db, id), 'the event of the failed move is rolled back').toEqual(before)
+    await db.exec('drop trigger f02_planted on returns.returns')
+    expect(await lc.move(id, 'trace', PREPARER, 'Ready pressed again')).toMatchObject({ ok: true })
+    expect(await stateOf(db, id)).toBe('trace')
+    expect(await stateEvents(db, id)).toHaveLength(before.length + 1)
+  })
+
+  test('FLOW-1 FLOW-2 a refused guard leaves no pending event: once the guard passes, the move writes exactly one event', async () => {
+    const db = await cloneTestDb()
+    let open = false
+    const gate: Guard = () => (open ? { ok: true } : { ok: false, reason: 'planted: not yet' })
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: { ...allPass(), [guardOf('build', 'prepare')]: gate } })
+    const id = await returnIn(db, lc, 'build')
+    const before = (await stateEvents(db, id)).length
+    for (let i = 0; i < 3; i += 1) expect((await lc.move(id, 'prepare', PREPARER, 'try')).ok).toBe(false)
+    open = true
+    expect(await lc.move(id, 'prepare', PREPARER, 'built')).toMatchObject({ ok: true })
+    const events = await stateEvents(db, id)
+    expect(events).toHaveLength(before + 1)
+    expect(events.at(-1)).toMatchObject({ from_state: 'build', to_state: 'prepare', reason: 'built' })
   })
 })
 
@@ -266,6 +365,7 @@ const FINGERPRINT: ApprovalFingerprint = {
   judgmentInputs: [{ id: 'judgment-f02-cca', version: 1 }],
 }
 const APPROVAL_ID = 'approval-f02-1'
+const VOID_WHY = 'planted: the late bank statement changed the closing balance'
 const fixtureApprovals: ApprovalFingerprintSource = {
   current: () => Promise.resolve({ approvalId: APPROVAL_ID, fingerprint: FINGERPRINT }),
 }
@@ -279,6 +379,26 @@ describe('F02 voiding approval (FLOW-4, FLOW-5)', () => {
     }
     const noVersion = { ...FINGERPRINT, facts: [{ id: 'fact-f02-bank-close' }] }
     expect(ApprovalFingerprintSchema.safeParse(noVersion).success).toBe(false)
+  })
+
+  test('FLOW-4 a fingerprint with a blank cell id or item id (every blank of the class) or a version below 1 or not whole is refused', () => {
+    for (const b of BLANKS) {
+      const variants = [
+        { ...FINGERPRINT, cells: [{ cellId: b, value: '1' }] },
+        { ...FINGERPRINT, facts: [{ id: b, version: 1 }] },
+        { ...FINGERPRINT, entries: [{ id: b, version: 1 }] },
+        { ...FINGERPRINT, judgmentInputs: [{ id: b, version: 1 }] },
+      ]
+      for (const v of variants) expect(ApprovalFingerprintSchema.safeParse(v).success, JSON.stringify(v)).toBe(false)
+    }
+    for (const version of [0, -1, 1.5]) {
+      for (const part of ['facts', 'entries', 'judgmentInputs'] as const) {
+        const v = { ...FINGERPRINT, [part]: [{ id: 'item-f02-x', version }] }
+        expect(ApprovalFingerprintSchema.safeParse(v).success, `${part} version ${String(version)}`).toBe(false)
+      }
+    }
+    // a cell exported empty is a value (RT-12), not a blank id: '' and null values stay allowed
+    expect(ApprovalFingerprintSchema.safeParse({ ...FINGERPRINT, cells: [{ cellId: 'GIFI100.Gifi2620', value: '' }] }).success).toBe(true)
   })
 
   const fingerprinted: readonly [string, ChangedItem][] = [
@@ -298,16 +418,16 @@ describe('F02 voiding approval (FLOW-4, FLOW-5)', () => {
         const id = await returnIn(db, lc, from)
         clock.advance(HOUR)
         const before = (await stateEvents(db, id)).length
-        const r = await lc.voidApproval(id, [item])
+        const r = await lc.voidApproval(id, [item], PREPARER, VOID_WHY)
         expect(r).toEqual({ voided: true, items: [item] })
         expect(await stateOf(db, id)).toBe('trace')
         const events = await stateEvents(db, id)
         expect(events.length).toBe(before + 1)
-        expect(events.at(-1)).toMatchObject({ from_state: from, to_state: 'trace', occurred_at: clock.now() })
-        expect(events.at(-1)?.reason.trim()).not.toBe('')
+        expect(events.at(-1)).toEqual({ from_state: from, to_state: 'trace', actor: PREPARER, occurred_at: clock.now(), reason: VOID_WHY })
         const voids = await genericEvents(db, APPROVAL_ID)
         expect(voids).toHaveLength(1)
-        expect(voids[0]).toMatchObject({ record_table: 'approvals', record_id: APPROVAL_ID, occurred_at: clock.now() })
+        expect(voids[0]).toMatchObject({ record_table: 'approvals', record_id: APPROVAL_ID, actor: PREPARER, occurred_at: clock.now() })
+        expect(isBlank(voids[0]?.reason ?? '')).toBe(false)
       })
     }
   }
@@ -326,7 +446,7 @@ describe('F02 voiding approval (FLOW-4, FLOW-5)', () => {
       const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass(), approvals: fixtureApprovals })
       const id = await returnIn(db, lc, 'approved')
       const before = await eventCount(db, id)
-      const r = await lc.voidApproval(id, [item])
+      const r = await lc.voidApproval(id, [item], PREPARER, VOID_WHY)
       expect(r).toEqual({ voided: false })
       expect(await stateOf(db, id)).toBe('approved')
       expect(await eventCount(db, id)).toBe(before)
@@ -340,7 +460,7 @@ describe('F02 voiding approval (FLOW-4, FLOW-5)', () => {
     const id = await returnIn(db, lc, 'approved')
     const related: ChangedItem = { kind: 'cell', cellId: 'FDONE.Ttwone66' }
     const relatedFact: ChangedItem = { kind: 'fact', id: 'fact-f02-bank-close' }
-    const r = await lc.voidApproval(id, [{ kind: 'cell', cellId: 'GIFI100.Gifi9999' }, related, { kind: 'fact', id: 'fact-f02-unlinked' }, relatedFact])
+    const r = await lc.voidApproval(id, [{ kind: 'cell', cellId: 'GIFI100.Gifi9999' }, related, { kind: 'fact', id: 'fact-f02-unlinked' }, relatedFact], PREPARER, VOID_WHY)
     expect(r.voided).toBe(true)
     if (r.voided) expect(r.items).toEqual([related, relatedFact])
     expect(await stateOf(db, id)).toBe('trace')
@@ -351,8 +471,66 @@ describe('F02 voiding approval (FLOW-4, FLOW-5)', () => {
     const db = await cloneTestDb()
     const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass(), approvals: fixtureApprovals })
     const id = await returnIn(db, lc, 'approved')
-    expect(await lc.voidApproval(id, [])).toEqual({ voided: false })
+    expect(await lc.voidApproval(id, [], PREPARER, VOID_WHY)).toEqual({ voided: false })
     expect(await stateOf(db, id)).toBe('approved')
+  })
+
+  test('FLOW-5 FLOW-1 a void with a blank who or why (every blank of the class) is refused with a reason before anything is written, even for a fingerprinted change', async () => {
+    const db = await cloneTestDb()
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass(), approvals: fixtureApprovals })
+    const id = await returnIn(db, lc, 'approved')
+    const before = await eventCount(db, id)
+    const item: ChangedItem = { kind: 'cell', cellId: 'GIFI100.Gifi1000' }
+    for (const b of BLANKS) {
+      for (const [actor, why] of [[b, VOID_WHY], [PREPARER, b]] as const) {
+        const r = await lc.voidApproval(id, [item], actor, why)
+        expect(r.voided, `actor ${JSON.stringify(actor)} why ${JSON.stringify(why)}`).toBe(false)
+        expect('reason' in r && typeof r.reason === 'string' && !isBlank(r.reason), 'the refusal says why').toBe(true)
+      }
+    }
+    expect(await stateOf(db, id)).toBe('approved')
+    expect(await eventCount(db, id)).toBe(before)
+    expect(await genericEvents(db, APPROVAL_ID)).toEqual([])
+  })
+
+  test('FLOW-5 a changed item with a blank id or cell id is refused with a reason before anything is written, even beside a fingerprinted change', async () => {
+    const db = await cloneTestDb()
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass(), approvals: fixtureApprovals })
+    const id = await returnIn(db, lc, 'approved')
+    const before = await eventCount(db, id)
+    const real: ChangedItem = { kind: 'fact', id: 'fact-f02-bank-close' }
+    for (const b of BLANKS) {
+      const junks: ChangedItem[] = [{ kind: 'cell', cellId: b }, { kind: 'fact', id: b }, { kind: 'entry', id: b }, { kind: 'judgmentInput', id: b }]
+      for (const junk of junks) {
+        const r = await lc.voidApproval(id, [real, junk], PREPARER, VOID_WHY)
+        expect(r.voided, JSON.stringify(junk)).toBe(false)
+        expect('reason' in r && typeof r.reason === 'string' && !isBlank(r.reason), 'the refusal says why').toBe(true)
+      }
+    }
+    expect(await stateOf(db, id)).toBe('approved')
+    expect(await eventCount(db, id)).toBe(before)
+  })
+
+  test('FLOW-5 planted fault: the approval event cannot be written; the void is refused, the state stays approved and no state event is kept', async () => {
+    const db = await cloneTestDb()
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass(), approvals: fixtureApprovals })
+    const id = await returnIn(db, lc, 'approved')
+    const before = await stateEvents(db, id)
+    await db.exec(`
+      create function returns.f02_planted_refuse() returns trigger language plpgsql as $$
+      begin raise exception 'planted: the approval event fails'; end $$;
+      create trigger f02_planted before insert on returns.events
+        for each row when (new.record_table = 'approvals') execute function returns.f02_planted_refuse();
+    `)
+    const item: ChangedItem = { kind: 'cell', cellId: 'GIFI100.Gifi1000' }
+    const r = await lc.voidApproval(id, [item], PREPARER, VOID_WHY).catch((e: unknown) => ({ voided: false as const, reason: String(e) }))
+    expect(r.voided).toBe(false)
+    expect(await stateOf(db, id)).toBe('approved')
+    expect(await stateEvents(db, id), 'the state event of the failed void is rolled back').toEqual(before)
+    await db.exec('drop trigger f02_planted on returns.events')
+    expect(await lc.voidApproval(id, [item], PREPARER, VOID_WHY)).toEqual({ voided: true, items: [item] })
+    expect(await stateOf(db, id)).toBe('trace')
+    expect(await stateEvents(db, id)).toHaveLength(before.length + 1)
   })
 })
 
@@ -411,6 +589,32 @@ describe('F02 waiting on the client (FLOW-3)', () => {
     expect((await genericEvents(db, id)).map((e) => e.occurred_at)).toEqual([d1, d2, d3, d4])
   })
 
+  test('FLOW-3 setting or clearing the flag with a blank who or why (every blank of the class) returns ok:false with a reason and writes nothing', async () => {
+    const db = await cloneTestDb()
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass() })
+    const id = await returnIn(db, lc, 'qa')
+    const before = await eventCount(db, id)
+    for (const b of BLANKS) {
+      for (const [actor, why] of [[b, 'questions sent'], [PREPARER, b]] as const) {
+        const r = await lc.setWaiting(id, actor, why)
+        expect(r.ok, `set: actor ${JSON.stringify(actor)} why ${JSON.stringify(why)}`).toBe(false)
+        if (!r.ok) expect(isBlank(r.reason)).toBe(false)
+      }
+    }
+    expect(await eventCount(db, id)).toBe(before)
+    expect(await lc.waitingOnClient(id)).toEqual({ since: null, periods: [] })
+    expect(await lc.setWaiting(id, PREPARER, 'questions sent')).toMatchObject({ ok: true })
+    const set = await eventCount(db, id)
+    for (const b of BLANKS) {
+      for (const [actor, why] of [[b, 'answered'], [PREPARER, b]] as const) {
+        const r = await lc.clearWaiting(id, actor, why)
+        expect(r.ok, `clear: actor ${JSON.stringify(actor)} why ${JSON.stringify(why)}`).toBe(false)
+      }
+    }
+    expect(await eventCount(db, id)).toBe(set)
+    expect((await lc.waitingOnClient(id)).since).toEqual(new Date(T0))
+  })
+
   test('FLOW-3 a return never flagged is not waiting', async () => {
     const db = await cloneTestDb()
     const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass() })
@@ -432,7 +636,7 @@ describe('F02 holds (FLOW-10)', () => {
     clock.advance(4 * HOUR - 60_000)
     const r = await lc.takeHold(id, OTHER)
     expect(r).toMatchObject({ ok: false, heldBy: PREPARER })
-    if (!r.ok) expect(r.reason.trim()).not.toBe('')
+    if (!r.ok) expect(isBlank(r.reason)).toBe(false)
     expect(await lc.holder(id)).toBe(PREPARER)
   })
 
@@ -474,6 +678,26 @@ describe('F02 holds (FLOW-10)', () => {
     expect(await lc.holder(id)).toBeNull()
     expect(await lc.takeHold(id, OTHER)).toMatchObject({ ok: true })
     expect(await lc.holder(id)).toBe(OTHER)
+  })
+
+  test('FLOW-10 a blank holder (every blank of the class) cannot take or release a hold: ok:false with a reason, nothing written', async () => {
+    const db = await cloneTestDb()
+    const lc = createLifecycle({ db, clock: steppingClock(T0), guards: allPass() })
+    const id = await returnIn(db, lc, 'prepare')
+    const holdRows = async (): Promise<number> =>
+      (await db.query<{ n: number }>('select count(*)::int as n from returns.holds where return_id = $1', [id])).rows[0]?.n ?? -1
+    for (const b of BLANKS) {
+      const r = await lc.takeHold(id, b)
+      expect(r.ok, `take ${JSON.stringify(b)}`).toBe(false)
+      if (!r.ok) expect(isBlank(r.reason)).toBe(false)
+    }
+    expect(await holdRows()).toBe(0)
+    expect(await lc.holder(id)).toBeNull()
+    expect(await lc.takeHold(id, PREPARER)).toMatchObject({ ok: true })
+    const held = await holdRows()
+    for (const b of BLANKS) expect((await lc.releaseHold(id, b)).ok, `release ${JSON.stringify(b)}`).toBe(false)
+    expect(await holdRows()).toBe(held)
+    expect(await lc.holder(id)).toBe(PREPARER)
   })
 
   test('FLOW-10 holds of different returns are independent', async () => {
