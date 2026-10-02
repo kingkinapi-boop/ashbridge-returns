@@ -1,5 +1,5 @@
 {
-  "status": "checking",
+  "status": "green",
   "branch": "claude/train",
   "head": "3c3de19",
   "cards": [
@@ -8,5 +8,6 @@
   ],
   "requested_at": "2026-10-02T20:55:43Z",
   "note": "A03 core (Opus read in its check). Run gitleaks over HEAD.",
-  "by": "cloud-0c9d3d"
+  "by": "cloud-0c9d3d",
+  "report": "reports/train-20261002-2105.md"
 }
