@@ -4,6 +4,7 @@ Dated research, newest first. Each file marks claims as fact (with a source), in
 
 | Date | File | Question it answers |
 |---|---|---|
+| 2 Oct 2026 | 2026-10-02-token-use.md | Where the tokens went 29 Sep to 2 Oct (local logs), what leaks (big contexts, cache re-writes after long waits, revived helpers), how to repeat the count; no secret leaked |
 | 1 Oct 2026 | 2026-10-01-qbo-reconciled.md (from qbo-a, qbo-b) | Which QBO data gives the trace; GIFI mapping lives only in QBOA Workpapers (.GFI file, no API); first sandbox calls to make |
 | 1 Oct 2026 | 2026-10-01-ties-reconciled.md (from ties-a, ties-b) | Ties CK-10 to CK-19: settled rules and GIFI lines, seven clause rewrites proposed, open items for the trial |
 | 1 Oct 2026 | 2026-10-01-f9-reconciled.md (from f9-a, f9-b) | T2 review checklist (the review order), owner-manager issues (AI-2), TB-to-GIFI mapping checked on RC4088, iFirm diagnostics policy |

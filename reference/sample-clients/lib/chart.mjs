@@ -126,6 +126,7 @@ export const GL = {
   '2060': g('Deferred income (customer deposits)', 2770, C, { note: '2961 Deposits received is also worded for contract deposits' }),
   '2070': g('Tips payable', 2620, C, { note: 'no tips code' }),
   '2080': g('Due to shareholders (loans)', 2781, C, { note: 'current (2781) or long-term (3261) depends on terms' }),
+  '2085': g('Income tax payable', 2680),
   '2090': g('Equipment loan (Lakeview Equipment Finance (Test))', 3140, C, { note: 'heading code for all long-term debt; no code for a finance company; current portion not split' }),
   '2095': g('Mortgage payable', 3141),
   // equity

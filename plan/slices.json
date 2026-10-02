@@ -11,7 +11,7 @@
   },
   "cards": [
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -59,7 +59,8 @@
       "title": "Scaffold: app, tests, CI, database helper",
       "phase": 0,
       "size": "M",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -135,7 +136,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "F09"
       ],
       "paths": [
         "db/schema/00_schema.sql",
@@ -150,13 +152,16 @@
         "src/contracts/records.ts",
         "src/contracts/ids.ts",
         "src/contracts/index.ts",
-        "src/contracts/records.test.ts"
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts"
       ],
       "clauses": [
         "EV-1",
         "EV-5",
         "EV-8",
         "EV-10",
+        "EV-14",
+        "FLOW-4",
         "TB-1",
         "TB-2",
         "TB-3",
@@ -173,10 +178,11 @@
       "size": "L",
       "hard": true,
       "security": true,
-      "core": true
+      "core": true,
+      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -203,14 +209,39 @@
       "size": "M",
       "hard": true,
       "core": true,
-      "note": "Re-carded 1 Oct from the trial findings (reference/taxprep/FINDINGS.md; amber clause changes to RT-3, RT-7, RT-8, RT-9, RT-12, RT-13, RT-21, RT-25): needs a fresh spec; any earlier spec is void."
+      "note": "Re-carded 1 Oct from the trial findings (reference/taxprep/FINDINGS.md; amber clause changes to RT-3, RT-7, RT-8, RT-9, RT-12, RT-13, RT-21, RT-25): needs a fresh spec; any earlier spec is void.",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F03"
+      ],
+      "paths": [
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.test.ts",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/contracts/__golden__/**"
+      ],
+      "clauses": [
+        "RT-3",
+        "RT-9",
+        "RT-13",
+        "RT-21"
+      ],
+      "id": "F03R",
+      "title": "Taxprep CSV contract: apostrophe and writer repairs",
+      "phase": 0,
+      "size": "S"
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "src/contracts/ai.ts",
@@ -230,7 +261,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -252,10 +283,106 @@
       "title": "Check contract",
       "phase": 0,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "F05",
+        "F00T"
+      ],
+      "paths": [
+        "src/contracts/checks.ts",
+        "src/contracts/checks.test.ts"
+      ],
+      "clauses": [
+        "CK-1",
+        "CK-2",
+        "CK-3",
+        "CK-4",
+        "CK-5",
+        "CK-6",
+        "ARC-13",
+        "ARC-15"
+      ],
+      "id": "F05M",
+      "title": "Mutation on the check contract",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Fix 3 of reports/findings-E03-F03.md: marker, Stryker, survivors closed; lands before SC.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F08"
+      ],
+      "paths": [
+        "tools/scope.mjs",
+        "tools/mutate-changed.mjs",
+        ".gitattributes",
+        "tools/test/done-gate.test.mjs",
+        "tools/test/__fixtures__/done-gate/**",
+        "stryker.config.mjs",
+        "vitest.mutate.config.ts",
+        "src/core/testing/read-own-source.ts"
+      ],
+      "clauses": [
+        "ARC-12",
+        "ARC-15",
+        "ARC-19",
+        "ARC-9"
+      ],
+      "id": "DG",
+      "title": "Done gate: scope and mutation agree with how jobs make files",
+      "phase": 0,
+      "size": "S",
+      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW). Round 2 landed 2 Oct; round 3 (skip __fixtures__ for the marker) open."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "F00"
+      ],
+      "paths": [
+        "src/core/money.ts",
+        "src/core/ids.ts",
+        "src/core/clock.ts",
+        "src/core/env.ts",
+        "src/core/log.ts",
+        "src/core/core.test.ts",
+        "src/core/money.test.ts",
+        "src/core/ids.test.ts",
+        "src/core/clock.test.ts",
+        "src/core/env.test.ts",
+        "src/core/log.test.ts",
+        "src/core/__fixtures__/core/**"
+      ],
+      "clauses": [
+        "ARC-1",
+        "ARC-7",
+        "ARC-13",
+        "ARC-15",
+        "ARC-16",
+        "ARC-17",
+        "ARC-18",
+        "ARC-21"
+      ],
+      "id": "F00T",
+      "title": "Core tests by a spec job",
+      "phase": 0,
+      "size": "S",
+      "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it).",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -275,10 +402,11 @@
       "id": "F08",
       "title": "Tests for the build tools (queue, scope, matrix, next)",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -291,6 +419,7 @@
       "clauses": [
         "ARC-6",
         "ARC-10",
+        "ARC-15",
         "EV-5",
         "EV-6"
       ],
@@ -298,6 +427,63 @@
       "title": "Reading contract: normalised words and boxes for every engine",
       "phase": 0,
       "size": "S",
+      "core": true,
+      "note": "Fix round 3 from reports/findings-F09-r2.md (A296, A297): a new spec worker adds checks 17 (no -0) and 18 (non-finite converter input throws RangeError); build the -0 fix and finite guard only; the grammar moved to F09A; lands before F01.",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F09"
+      ],
+      "paths": [
+        "src/contracts/amount-grammar.ts",
+        "src/contracts/amount-grammar.test.ts",
+        "src/contracts/amount-grammar.acceptance.test.ts",
+        "src/contracts/reading.ts"
+      ],
+      "clauses": [
+        "EV-6",
+        "EV-5",
+        "ARC-8",
+        "ARC-15"
+      ],
+      "id": "F09A",
+      "title": "Amount grammar: one table for every amount read or printed",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Split from F09 (A297): owns normaliseAmount, amountGroups, AMOUNT_FORMATS and checks 14 to 16, 19, 20; the grammar table and dash rule (A296); F09 findings 1 to 3 stay on main with no consumer until this lands."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F01",
+        "F09",
+        "F09A",
+        "F05M"
+      ],
+      "paths": [
+        "tools/test/schema-contract-rules.test.mjs",
+        "src/contracts/schema-rules.db.test.ts",
+        "tools/test/__fixtures__/schema-contract/**"
+      ],
+      "clauses": [
+        "SEC-7",
+        "EV-1",
+        "ARC-10",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "FLOW-1",
+        "ARC-15"
+      ],
+      "id": "SC",
+      "title": "Schema and contract rules",
+      "phase": 0,
+      "size": "M",
       "core": true
     },
     {
@@ -305,6 +491,34 @@
       "spec": null,
       "deps": [
         "F00"
+      ],
+      "paths": [
+        "vitest.config.ts",
+        "vitest.mutate.config.ts",
+        "tsconfig.json",
+        "tools/test-homes.json",
+        "tools/test/toolchain-rules.test.mjs",
+        "tools/test/__fixtures__/**",
+        ".github/workflows/checks.yml",
+        ".gitleaks.toml",
+        "src/core/egress-rules.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-17",
+        "ARC-9",
+        "ARC-4"
+      ],
+      "id": "TH",
+      "title": "Test homes: every test runs, every file is typed and linted",
+      "phase": 0,
+      "size": "S"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F00",
+        "TH"
       ],
       "paths": [
         "testworld/model/**",
@@ -331,7 +545,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F03"
+        "F03",
+        "F03R"
       ],
       "paths": [
         "src/modules/taxprep-sim/core/**",
@@ -345,6 +560,7 @@
         "RT-23",
         "RT-25",
         "RT-26",
+        "RT-7",
         "RT-2",
         "ARC-14"
       ],
@@ -439,7 +655,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
@@ -463,7 +680,8 @@
       "spec": null,
       "deps": [
         "W00",
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "e2e/_harness/**",
@@ -496,7 +714,8 @@
         "S00",
         "A01",
         "JH0",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "e2e/skeleton/**",
@@ -544,7 +763,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "src/modules/jobs/**",
@@ -926,7 +1146,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -937,7 +1157,10 @@
         "reference/sample-clients/generate.mjs",
         "reference/sample-clients/make-csv.mjs",
         "reference/sample-clients/verify.mjs",
-        "reference/sample-clients/README.md"
+        "reference/sample-clients/contract-ids.json",
+        "reference/sample-clients/README.md",
+        "reference/sample-clients/lib/prior-year.mjs",
+        "tools/test/sample-prior-year.test.mjs"
       ],
       "clauses": [
         "ARC-8",
@@ -952,10 +1175,11 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "W14"
@@ -969,6 +1193,7 @@
         "reference/sample-clients/generate.mjs",
         "reference/sample-clients/make-csv.mjs",
         "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/contract-ids.json",
         "reference/sample-clients/README.md"
       ],
       "clauses": [
@@ -985,7 +1210,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -993,6 +1219,7 @@
       "deps": [
         "W00",
         "F09",
+        "F09A",
         "A01"
       ],
       "paths": [
@@ -1479,7 +1706,7 @@
       "security": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -1498,14 +1725,16 @@
       "title": "File storage and Drive stand-ins",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
         "F00",
-        "F01"
+        "F01",
+        "F00T"
       ],
       "paths": [
         "src/modules/auth/**",
@@ -1533,7 +1762,8 @@
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09A"
       ],
       "paths": [
         "src/modules/sheets/**",
@@ -1594,7 +1824,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "TH"
       ],
       "paths": [
         "design/basis/**"
@@ -1612,7 +1843,9 @@
     {
       "status": "carded",
       "spec": null,
-      "deps": [],
+      "deps": [
+        "TH"
+      ],
       "paths": [
         "design/map/**"
       ],
@@ -1906,12 +2139,14 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F00"
+        "F00",
+        "TH"
       ],
       "paths": [
         "data/facts/catalogue.json",
         "src/contracts/facts.ts",
-        "src/contracts/facts.test.ts"
+        "src/contracts/facts.test.ts",
+        "src/contracts/__fixtures__/fact-catalogue.ts"
       ],
       "clauses": [
         "EV-5",
@@ -1935,7 +2170,8 @@
         "L00",
         "A04",
         "A07",
-        "F10"
+        "F10",
+        "F09A"
       ],
       "paths": [
         "src/modules/extraction/_core/**",
@@ -2379,7 +2615,8 @@
       "deps": [
         "F01",
         "W00",
-        "A05"
+        "A05",
+        "F00T"
       ],
       "paths": [
         "src/modules/qbo/**",
@@ -2414,7 +2651,8 @@
         "L00",
         "SK0",
         "F10",
-        "F07"
+        "F07",
+        "F00T"
       ],
       "paths": [
         "src/modules/books/read/**",
@@ -2826,7 +3064,8 @@
         "A08",
         "E01",
         "E03",
-        "L00"
+        "L00",
+        "F09A"
       ],
       "paths": [
         "src/modules/ai/grounding/**",
@@ -2882,7 +3121,8 @@
         "F02",
         "D01",
         "E03",
-        "JH0"
+        "JH0",
+        "F00T"
       ],
       "paths": [
         "src/ui/behaviour/**",
@@ -2912,7 +3152,8 @@
         "A06",
         "F02",
         "D01",
-        "D13"
+        "D13",
+        "F00T"
       ],
       "paths": [
         "src/app/(staff)/layout.tsx",
@@ -3847,7 +4088,8 @@
         "S02",
         "S03",
         "F10",
-        "B01"
+        "B01",
+        "F00T"
       ],
       "paths": [
         "src/modules/mapping/core/**",
@@ -4453,11 +4695,12 @@
         "AI-7"
       ],
       "id": "T05",
-      "title": "Diagnostics from the printed return",
+      "title": "Diagnostics from the pasted Diagnostics panel list",
       "phase": 2,
       "size": "M",
       "hard": false,
-      "core": true
+      "core": true,
+      "note": " Paste approved (decision 0019, blueprint v1.2)."
     },
     {
       "status": "carded",

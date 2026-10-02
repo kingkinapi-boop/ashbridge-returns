@@ -23,7 +23,15 @@ A conflict: `git merge --abort`, release the card's build job with the note "reb
 When due (mode table: every 3 green cards in normal, 6 or hourly in turbo): fire a cloud check of the train (`check train full`): `npm ci`, typecheck, the full unit suite, every journey for every kind built so far, mutation tests on changed core modules. Report in `reports/train-<time>.md` on `claude/train`.
 
 ## 3. Land it
-- Green: in the main checkout (on `main`): `git pull -q --ff-only && git merge --ff-only origin/claude/train && git push -q origin main`. Then for each card: `node tools/metrics.mjs <card>` appends its metrics line; `plan/slices.json` status done with the date; `node tools/claim.mjs update <card> build released --worker lead --note merged`; `node tools/matrix.mjs`. Rewrite NOW.md. Commit these on main and push. Delete merged card branches, and delete the train (`git push origin --delete claude/train`) so the next one starts from the new main.
+- Green: main has always moved (the train checker and the Lead push docs to main), so rebuild the train on main in the train worktree and land it only if the code is the checked code:
+```
+W=.claude/worktrees/train; H=$(jq -r .head plan/train.json)   # the checked train commit
+git fetch -q origin && git -C $W checkout -q -B train origin/claude/train
+git -C $W merge -q --no-ff origin/main -m "Train: bring in main before landing"   # never rebase: it replays card history
+git -C $W diff --name-only $H train -- . ':!plan' ':!reports' ':!reference' ':!decisions' ':!blueprint' ':!reviews' ':!.claude' ':!CLAUDE.md' ':!README.md'   # must print nothing
+git pull -q --ff-only && git merge -q --ff-only train && git push -q origin main
+```
+  If the guard prints any path, main gained code since the check: request a new train check instead. Record done, release claims and delete branches only after the push to main succeeded. Then for each card: `node tools/metrics.mjs <card>` appends its metrics line; `plan/slices.json` status done with the date; `node tools/claim.mjs update <card> build released --worker lead --note merged`; `node tools/matrix.mjs`. Rewrite NOW.md. Commit these on main and push. Delete merged card branches, and delete the train (`git push origin --delete claude/train`) so the next one starts from the new main.
 - Red: the report names the failing journey or test and module. Rebuild the train from main without the card that owns that module and re-run. If two cards interact and removing one does not help, halve the boarded cards, land the green half, and run the pair one after the other. Then a findings review (CLAUDE.md loop 4) before the card's next round. Never land a red train; never fix on the train itself.
 
 Metrics line (never leave a field empty; 0 is a value):

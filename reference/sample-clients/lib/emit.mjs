@@ -77,16 +77,16 @@ export function finalize(c) {
   for (const t of c.txs) for (const l of t.post) bump(unadj, l.gl, l.dr - l.cr);
   const adj = { ...unadj };
   for (const j of c.ajes) for (const l of j.lines) bump(adj, l.gl, (l.dr ?? 0) - (l.cr ?? 0));
-  const tbRows = (m) => {
+  const tbRows = (m, srcMap = c.glSource) => {
     const rows = Object.keys(m).filter((k) => m[k] !== 0).sort().map((gl) => {
       const g = GL[gl]; const net = m[gl]; const code = gifiFor(gl, net);
-      return { account: gl, name: g.name, gifi: code ?? null, gifiName: code ? GIFI[code] : null, gifiStatus: code ? g.st : 'confirm', ...(g.st === 'confirm' && g.note ? { note: g.note } : {}), debit: net > 0 ? D(net) : 0, credit: net < 0 ? D(-net) : 0 };
+      return { account: gl, name: g.name, gifi: code ?? null, gifiName: code ? GIFI[code] : null, gifiStatus: code ? g.st : 'confirm', ...(g.st === 'confirm' && g.note ? { note: g.note } : {}), ...(srcMap?.[gl] ? { source: srcMap[gl] } : {}), debit: net > 0 ? D(net) : 0, credit: net < 0 ? D(-net) : 0 };
     });
     const dr = sum(Object.values(m).filter((v) => v > 0)), cr = -sum(Object.values(m).filter((v) => v < 0));
     if (dr !== cr) throw new Error(`${c.num}: trial balance does not balance: dr ${dr} cr ${cr}`);
     return { rows, totalDebit: D(dr), totalCredit: D(cr) };
   };
-  const fin = { open, unadj, adj, tb: { opening: tbRows(open), unadjusted: tbRows(unadj), adjusted: tbRows(adj) } };
+  const fin = { open, unadj, adj, tb: { opening: tbRows(open, c.openSource ?? c.glSource), unadjusted: tbRows(unadj, c.openSource ?? c.glSource), adjusted: tbRows(adj) } };
   fin.netIncome = -sum(Object.keys(adj).filter(isPL), (g) => adj[g]);
   // 5. HST summary
   let coll = 0, itc = 0, remit = 0;
@@ -156,7 +156,7 @@ export function buildKey(c, fin) {
       else if (t.meta.dupOf) { const o = t.meta.dupOf; gl = mainGl(o) ?? null; e.dupOf = o.id; Object.assign(e, gl ? info(gl) : { account: 'DUPLICATE', accountNo: null, gifi: null }); e.note0 = 'duplicate line: post nothing'; }
       else if (t.mirror) { gl = t.pair ? c.accts[t.pair.acct].gl : null; Object.assign(e, info(gl)); e.mirror = true; e.pair = t.pair.id; e.postedVia = t.pair.id; }
       else if (t.meta.biz) { gl = t.meta.biz.gl; Object.assign(e, info(gl)); e.business = true; e.postedVia = fin.ajeOf.get(t) ?? null; e.suggestedPost = postOut(c.reimburseLines([t], t.date)); }
-      else { gl = mainGl(t); if (gl) Object.assign(e, info(gl)); else Object.assign(e, { account: 'UNCODED', accountNo: null }); }
+      else { gl = mainGl(t) ?? (c.codeEveryRow && t.lines?.length ? t.lines[0].gl : null); if (gl) Object.assign(e, info(gl)); else Object.assign(e, { account: 'UNCODED', accountNo: null }); }
       if (t.post.length) {
         e.post = postOut(t.post);
         const h = t.post.filter((l) => l.gl === HSTGL);
@@ -178,7 +178,7 @@ export function buildKey(c, fin) {
     source: { transactions: j.tx.map(idOf), onboarding: j.onb },
   }));
   const flags = c.flagList.map((f) => ({
-    id: f.id, rule: f.rule, detail: res(f.detail, fin, c), severity: f.severity, action: f.action, judgement: f.judgement || undefined,
+    id: f.id, rule: f.rule, detail: res(f.detail, fin, c), severity: f.severity, action: f.action, judgement: f.judgement || undefined, blocking: f.blocking,
     evidence: { transactions: f.tx.map(idOf), onboarding: f.onb, adjustingEntries: f.aje },
   }));
   // Schedule 1 add-backs computed from the books, plus the client's own list
@@ -194,9 +194,9 @@ export function buildKey(c, fin) {
   const t2 = {
     netIncomeLossPerBooksBeforeTax: D(fin.netIncome),
     schedule1: { addBacks: add, deductions: c.t2.deductions ?? [], note: 'Inputs only. Taxprep computes taxable income and tax.' },
-    schedule8: { openingUcc: c.t2.openingUcc ?? [], classes: Object.values(byClass).sort((x, y) => String(x.class).localeCompare(String(y.class), undefined, { numeric: true })), note: c.ccaAdds.length || c.ccaDisposals.length ? 'Capital cost is before recoverable HST. Disposals: none unless listed.' : 'No additions or disposals in the year.' },
+    schedule8: { openingUcc: c.t2.openingUcc ?? [], ...(c.t2.closingUcc ? { closingUcc: c.t2.closingUcc } : {}), classes: Object.values(byClass).sort((x, y) => String(x.class).localeCompare(String(y.class), undefined, { numeric: true })), note: c.ccaAdds.length || c.ccaDisposals.length ? 'Capital cost is before recoverable HST. Disposals: none unless listed.' : 'No additions or disposals in the year.' },
     schedule50: c.owners.map((o) => ({ name: o.name, ...(o.corp ? { businessNumber: o.sin } : { sin: o.sin }), percentCommonShares: o.percent, percentPreferredShares: 0 })),
-    ...Object.fromEntries(Object.entries(c.t2).filter(([k]) => !['addBacks', 'deductions', 'openingUcc'].includes(k))),
+    ...Object.fromEntries(Object.entries(c.t2).filter(([k]) => !['addBacks', 'deductions', 'openingUcc', 'closingUcc'].includes(k))),
   };
   return {
     client: c.num, name: c.name, fiscalYear: { start: c.fyStart, end: c.fyEnd, days: diffDays(c.fyStart, c.fyEnd) + 1 },
@@ -209,7 +209,10 @@ export function buildKey(c, fin) {
     statementBalances: Object.fromEntries(Object.values(c.accts).map((a) => [a.key, a.statements.map((s) => ({ month: s.month, opening: D(s.opening), closing: D(s.closing), exportActivity: D(s.exportActivity), rolls: s.rolls, note: c.stmtNotes?.[`${a.key}:${s.month}`] ?? undefined }))])),
     adjustingEntries: ajes,
     trialBalance: { basis: 'debits and credits in dollars; unadjusted = opening balances plus every coded transaction; adjusted = plus the adjusting entries; income tax is not booked (Taxprep computes it)', ...fin.tb, netIncomeLossBeforeTax: D(fin.netIncome) },
+    ...(c.assets ? { assets: res(c.assets, fin, c) } : {}),
     t2Inputs: res(t2, fin, c),
+    ...(c.priorYear ? { prior_year: res(c.priorYear, fin, c) } : {}),
+    ...(c.extraKey ? res(c.extraKey, fin, c) : {}), // blocks only some clients carry (W15: client 13's OHIP reconciliation and non-OHIP income)
     hst: { ...fin.hst, ...(c.hstNote ? { note: res(c.hstNote, fin, c) } : {}) },
     flags,
     parties: c.parties,
@@ -243,13 +246,14 @@ export function buildProfile(c, fin) {
   L.push(`**Fiscal year:** ${longDate(c.fyStart)} to ${longDate(c.fyEnd)} (year end ${longDate(c.fyEnd)}).`, '');
   const R = (x) => res(x, fin, c);
   L.push('## Who they are', '', R(c.who), '');
-  L.push('## Accounts and files', '', '| Key | Institution and layout | Currency | File (accounts and qbo) | Rows | Opening | Closing |', '| --- | --- | --- | --- | --- | --- | --- |');
+  if (!accts.length) L.push('## Accounts and files', '', 'None: onboarding answers only. No account files, no QBO files and no documents.', '');
+  else L.push('## Accounts and files', '', '| Key | Institution and layout | Currency | File (accounts and qbo) | Rows | Opening | Closing |', '| --- | --- | --- | --- | --- | --- | --- |');
   for (const a of accts) L.push(`| ${a.key} | ${LAYOUT[a.kind]}${a.holder ? ', ' + a.holder : ''} | ${a.currency} | ${a.file} | ${a.export.length}${a.missing.length ? ` (+${a.missing.length} not in the export)` : ''} | ${fmt(a.opening)} | ${fmt(a.closing)} |`);
-  L.push('', 'Opening and closing are what the statements show (for a card, the amount owing). Layout B files start with two header lines (account type, masked account number) and then the column line. Card and brokerage dates are YYYY-MM-DD. The QBO files carry the same rows in the same order.', '');
+  if (accts.length) L.push('', 'Opening and closing are what the statements show (for a card, the amount owing). Layout B files start with two header lines (account type, masked account number) and then the column line. Card and brokerage dates are YYYY-MM-DD. The QBO files carry the same rows in the same order.', '');
   L.push('## Planted issues (exact amounts and dates)', '', ...c.planted.map((p) => `- ${R(p)}`), '');
   L.push('## What each check should find', '', ...c.flagList.map((f) => `- **${f.rule}** (${f.id}${f.judgement ? ', a person decides' : ''}): ${R(f.detail)}`), '');
-  L.push('## Statement balances by month (from the statements, not from the export)', '', '| Account | Month | Opening | Closing | Export activity | Rolls |', '| --- | --- | --- | --- | --- | --- |');
-  for (const a of accts) for (const s of a.statements) L.push(`| ${a.key} | ${s.month} | ${fmt(s.opening)} | ${fmt(s.closing)} | ${fmt(s.exportActivity)} | ${s.rolls ? 'yes' : 'NO' + (c.stmtNotes?.[`${a.key}:${s.month}`] ? ': ' + c.stmtNotes[`${a.key}:${s.month}`] : '')} |`);
+  if (accts.length) L.push('## Statement balances by month (from the statements, not from the export)', '', '| Account | Month | Opening | Closing | Export activity | Rolls |', '| --- | --- | --- | --- | --- | --- |');
+  if (accts.length) for (const a of accts) for (const s of a.statements) L.push(`| ${a.key} | ${s.month} | ${fmt(s.opening)} | ${fmt(s.closing)} | ${fmt(s.exportActivity)} | ${s.rolls ? 'yes' : 'NO' + (c.stmtNotes?.[`${a.key}:${s.month}`] ? ': ' + c.stmtNotes[`${a.key}:${s.month}`] : '')} |`);
   L.push('', '## Answer key and ids', '', IDRULE, '', 'answer-key.json holds the account for every row, the adjusting entries, the trial balance by GIFI code (unadjusted and adjusted), the T2 inputs and the flags. Tax payable is not in it; Taxprep computes that.', '');
   if (c.notes.length) L.push('## Notes', '', ...c.notes.map((n) => `- ${R(n)}`), '');
   return L.join('\n');
@@ -258,8 +262,8 @@ export function buildProfile(c, fin) {
 export function writeClient(c, fin, root) {
   const dir = path.join(root, c.dir);
   fs.rmSync(dir, { recursive: true, force: true });
-  fs.mkdirSync(path.join(dir, 'accounts'), { recursive: true });
-  fs.mkdirSync(path.join(dir, 'qbo'), { recursive: true });
+  fs.mkdirSync(dir, { recursive: true });
+  if (Object.keys(c.accts).length) { fs.mkdirSync(path.join(dir, 'accounts'), { recursive: true }); fs.mkdirSync(path.join(dir, 'qbo'), { recursive: true }); }
   for (const a of Object.values(c.accts)) {
     fs.writeFileSync(path.join(dir, 'accounts', a.file), accountCsv(a));
     fs.writeFileSync(path.join(dir, 'qbo', a.file), qboCsv(a));

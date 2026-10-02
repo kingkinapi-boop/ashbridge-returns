@@ -1,0 +1,7 @@
+{
+  "blueprint": "fixture",
+  "cards": [
+    { "id": "DGC", "status": "building", "spec": "abc123", "deps": [], "paths": ["src/gate/**"] },
+    { "id": "DGP", "status": "building", "spec": "abc123", "deps": [], "paths": ["src/plain/**"] }
+  ]
+}
