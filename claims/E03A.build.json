@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "5acfe13",
  "worker": "cloud-c5a0ac",
- "state": "reported",
- "at": "2026-10-02T15:23:54.706Z",
+ "state": "reopened",
+ "at": "2026-10-02T15:42:24.992Z",
  "mode": "turbo",
- "note": "round 2: 6 asset keys per asset; all acceptance tests pass"
+ "note": "GitHub gitleaks finds 1 leak on claude/E03A (run after c15ca66); FX1 with the same main passes, so it is in E03A's commits. Find it with gitleaks detect --log-opts=HEAD; fix the data or add a line-scoped allowlist regex, never a path or a rule off"
 }
