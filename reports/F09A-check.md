@@ -1,18 +1,23 @@
-# F09A check (cloud-d2cfdd, 2 Oct 2026)
+# F09A check (round 2), cloud-34faae
 
-FAIL at step 3 (tests), so by the definition of done the check stopped there: no Opus adversarial read, and mutation could not run (Stryker's dry run fails on the same test).
+FAIL: 1 medium contradiction of the dash rule (A296), 3 low notes.
 
-Passed: typecheck, lint, deps:check, scope clean, amount-grammar acceptance file unchanged since 9e3dbb4, `// @mutate` present. npm test: 801 of 802 tests pass.
+Passed: typecheck, lint, deps:check; npm test (843 unit + 2 db); test:flake 5 of 5; scope OK (9 files); acceptance tests unchanged since spec commit 41d00d7; mutate:canary; mutate:changed 100 on amount-grammar.ts and reading.ts (0 survivors). Not run: e2e (no screens; contracts only).
 
-## Failure
-1. `src/contracts/reading.acceptance.test.ts:1065` (`mutation survivors: amount groups (round 4)`, "EV-6 r4 a trailing sign closes the group"): `found(['1,234.56', '-', '7'], '-1234.56')` expects ok, gets `value not found`. Command: `npx vitest run --project unit src/contracts/reading.acceptance.test.ts`.
-   Cause: F09's round 4 spec (trailing sign closes the group: -1234.56 then 7) contradicts F09A's dash rule (A296, leading binds first), which F09A's own spec asserts at `amount-grammar.acceptance.test.ts:188` (`"1,234.56" "-" "7"` is 1234.56 and -7, `-1234.56` not found). Both tests cannot pass. The card said F09A's spec "may replace" the grammar parts of F09 checks 8 and 9 and say which; the spec did not replace this r4 test. The builder is right to follow the F09A spec and must not edit the F09 test.
-   Fix owner: a spec job (or the Lead) retires or rewrites reading.acceptance.test.ts:1063-1067 (and anything else on the same sign-binding rule) to match A296; then re-check, including mutation on amount-grammar.ts and reading.ts (break 70) and the Opus read of the table.
+## Failures
+1. MEDIUM, src/contracts/amount-grammar.ts:148. The marks-only "-" test calls `groupAt(spots, lexed, end + 1, ...)` (does a group start at the word after the dash). The rule says leading binds first only if "-" plus that word make a valid group, so it should test `groupAt(end)`. When the next amount cannot take a leading "-", the dash is dropped, not made the trailing sign of the amount on its left.
+   - "100.00" "-" "-50.00": expected -10000 and -5000; got 10000 and -5000
+   - "100.00" "-" "(50.00)": expected -10000 and -5000; got 10000 and -5000
+   - "100.00" "-" "50.00CR": expected -10000 and 5000; got 10000 and 5000
+   - Reproduce: `npx tsx /tmp/f09a/p.ts` style call of `amountGroups` over those words (same line, small gaps). No acceptance row covers these.
+2. LOW, amount-grammar.ts:148 and :180. `groupAt` recurses along a same-line run of alternating "1" "-": quadratic (2000 words 1.2 s), and 20000 words throws RangeError (stack) out of amountGroups and valueInBox.
+3. LOW, amount-grammar.ts:55-56. `trailOf` upper-cases, so "5 cr" reads 500; the table lists only CR and DR. Decide (amber) or tighten.
+4. LOW, reading.ts:29. WordSchema non-blank uses trim(), so a word of only U+200B passes (valueInBox still finds no blank value).
 
-Rule candidate: when a grammar card supersedes a rule, the spec lists every earlier test asserting the old rule (grep the old rule's inputs) and retires them in the same spec commit.
+Rule candidate: every "leading binds first" look-ahead tests the same candidate group it would form (the sign plus the next word), and every look-ahead is iterative or memoised. Add rows for 1 to the EV-6 table (checks 14, 15 generator should include a sign word before an amount that already carries its own sign mark).
 
 ## Permission gaps
 None.
 
 ## Model
-Sonnet 5.5.
+Sonnet 5.5 checker; adversarial read by an Opus subagent.
