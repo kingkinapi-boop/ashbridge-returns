@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "0e51882",
  "worker": "cloud-1452fe",
- "state": "hold-findings",
- "at": "2026-10-02T10:15:08.345Z",
+ "state": "reopened",
+ "at": "2026-10-02T11:10:48.428Z",
  "mode": "turbo",
- "note": "FAIL: adjacent float gap has no epsilon; 50000-word tests never join; see reports/F09B-check.md"
+ "note": "round 2 spec reported"
 }
