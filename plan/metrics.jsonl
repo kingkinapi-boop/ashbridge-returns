@@ -7,3 +7,5 @@
 {"card":"A05","closed":"2026-10-02","mode":"turbo","rounds":2,"check_fails":0,"train_fails":0,"jobs":7,"amber":0,"red":0,"accepted":true,"tokens":"unknown","minutes":"unknown"}
 {"card":"W14","closed":"2026-10-02","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":13,"amber":0,"red":0,"accepted":true,"tokens":"unknown","minutes":"unknown"}
 {"card":"F03","closed":"2026-10-02","mode":"turbo","rounds":10,"check_fails":0,"train_fails":0,"jobs":18,"amber":0,"red":0,"accepted":true,"tokens":"unknown","minutes":"unknown"}
+{"card":"F00T","closed":"2026-10-02","mode":"turbo","rounds":5,"check_fails":0,"train_fails":0,"jobs":10,"amber":0,"red":0,"accepted":true,"tokens":"unknown","minutes":"unknown"}
+{"card":"F05M","closed":"2026-10-02","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":5,"amber":0,"red":0,"accepted":true,"tokens":"unknown","minutes":"unknown"}

@@ -190,3 +190,9 @@
 {"ts":"2026-10-02T04:14:00.140Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T04:14:00.776Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T04:47:30.587Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T04:47:49.115Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T04:48:26.614Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"local","desc":"Opus adversarial read F09 and F03","allowed":true}
+{"ts":"2026-10-02T04:48:43.607Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"worker","model":"sonnet","where":"worktree","desc":"Local queue worker, non-core jobs","allowed":true}
+{"ts":"2026-10-02T04:49:13.123Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"local","desc":"Opus review of S00 spec","allowed":true}
+{"ts":"2026-10-02T04:54:02.019Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T04:54:02.031Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}

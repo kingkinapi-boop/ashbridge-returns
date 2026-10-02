@@ -1,0 +1,15 @@
+// Clean case for the ARC-16 seed rule: a literal seed, and a seed through a named options constant.
+const SEEDED = { seed: 20261001, numRuns: 50 }
+
+test('ARC-13 literal seed (Test)', () => {
+  fc.assert(
+    fc.property(fc.integer(), (n) => {
+      expect(n).toBe(n)
+    }),
+    { seed: 7 },
+  )
+})
+
+test('ARC-13 named seed (Test)', () => {
+  fc.assert(fc.property(fc.integer(), (n) => expect(n + 0).toBe(n)), SEEDED)
+})

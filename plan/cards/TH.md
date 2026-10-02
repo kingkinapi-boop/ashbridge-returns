@@ -44,3 +44,7 @@ R1 covers the product and build tree only: `reference/**` is out of scope (its h
 Two tests in `src/core/egress-rules.acceptance.test.ts` pass with the feature deleted; the TH spec job rewrites both (Paths gain the file), each first shown failing on a planted bad example under `tools/test/__fixtures__/egress/`:
 - line 292, "SEC-5 ESLint refuses console and interpolated logger messages": reads config strings and lints nothing. Rewrite: run ESLint (`lintText` with a `src/` file path) on a planted file holding a `console.log` and an interpolated logger message, and assert both errors by rule id; a clean file gives none.
 - line 216, "SEC-10 every checkout sets persist-credentials: false": passes when there is no checkout step. Rewrite: assert at least one `actions/checkout` step is found in `checks.yml`, and a planted workflow whose checkout lacks the setting fails.
+
+## Also (2 Oct): flaky egress test
+
+`src/core/egress-rules.acceptance.test.ts` SEC-5 ESLint case times out under whole-suite load and passes alone (local worker report, S00 spec). A flaky test is a failure (testing.md): TH's egress rewrite gives that case its own timeout budget or runs ESLint once per suite, and the flake run covers it.
