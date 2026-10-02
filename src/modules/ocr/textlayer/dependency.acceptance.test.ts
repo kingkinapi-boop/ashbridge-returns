@@ -4,11 +4,13 @@
 // package the engine reads PDFs with and its exact pinned version.
 // `npm audit --audit-level=high` needs the registry, so tests cannot run it (no network in tests): the checker runs
 // it on the build. These tests hold what can be checked offline: the pin, the lock, licences, install scripts,
-// and that the engine's own source reads no setting and names no address.
+// and that the engine's own source reads no setting and names no address. The engine's source is read through
+// readOwnSource (DG round 3), so inside Stryker's sandbox the committed text is scanned, not the instrumented copy.
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
+import { readOwnSource } from '../../../core/testing/read-own-source'
 import { TEXTLAYER_LIBRARY } from './index'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..')
@@ -109,7 +111,7 @@ describe('A01 check 8: the dependency needs no account, key or payment', () => {
   test("END-8 the text-layer engine's own source reads no setting, holds no key and names no network address", () => {
     const files = sourceFiles(HERE)
     expect(files.length, 'the engine has source files').toBeGreaterThan(0)
-    const problems = files.flatMap((f) => sourceProblems(path.relative(ROOT, f), fs.readFileSync(f, 'utf8')))
+    const problems = files.flatMap((f) => sourceProblems(path.relative(ROOT, f), readOwnSource(f)))
     expect(problems).toEqual([])
   })
 
