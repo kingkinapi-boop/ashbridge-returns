@@ -1,9 +1,11 @@
 {
  "card": "DG",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: merged main, typecheck, lint, npm test green (735 unit, 2 db); no assertions changed",
  "worker": "cloud-f135fc",
- "state": "working",
- "at": "2026-10-02T08:29:05.912Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T08:31:32.444Z",
+ "mode": "turbo",
+ "commit": "71ddd70",
+ "validated": "7dd2c02a511607dfd78053eae5e40a510f95b03b"
 }
