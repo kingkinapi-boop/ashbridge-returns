@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "9e3dbb4",
  "worker": "cloud-12a4d8",
- "state": "working",
- "at": "2026-10-02T05:29:15.854Z",
+ "state": "reported",
+ "at": "2026-10-02T05:36:25.328Z",
  "mode": "turbo",
- "beat": "2026-10-02T05:33:30.985Z"
+ "beat": "2026-10-02T05:33:30.985Z",
+ "note": "90 of 90 acceptance pass; 1 F09 r4 dash test (reading.acceptance 1063) contradicts A296, must be replaced; see reports/F09A-build.md"
 }
