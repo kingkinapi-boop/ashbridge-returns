@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "cf84ea2",
  "worker": "cloud-e945f9",
- "state": "reported",
- "at": "2026-10-02T13:14:18.900Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T13:28:38.108Z",
  "mode": "turbo",
  "beat": "2026-10-02T13:05:24.842Z",
- "note": "50 of 50 acceptance pass; mutation 100 per file; 37 own unit tests; exceljs 4.4.0"
+ "note": "FAIL: cached 0/false/error text wrong, empty hidden rows dropped, cache key misses name, see reports/A07-check.md"
 }

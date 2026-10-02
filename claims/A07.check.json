@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T13:14:18.900Z",
  "worker": "cloud-b37146",
- "state": "working",
- "at": "2026-10-02T13:21:44.083Z",
+ "state": "failed",
+ "at": "2026-10-02T13:28:38.108Z",
  "mode": "turbo",
- "beat": "2026-10-02T13:24:51.710Z"
+ "beat": "2026-10-02T13:24:51.710Z",
+ "note": "FAIL: cached 0/false/error text wrong, empty hidden rows dropped, cache key misses name, see reports/A07-check.md"
 }
