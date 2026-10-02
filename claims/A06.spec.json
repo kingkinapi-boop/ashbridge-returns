@@ -2,7 +2,10 @@
  "card": "A06",
  "role": "spec",
  "worker": "cloud-0c9d3d",
- "state": "working",
- "at": "2026-10-02T21:02:53.299Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T21:09:17.121Z",
+ "mode": "turbo",
+ "note": "8 new tests fail by name on the current build (production engine x2, real-user refusal, 2 lock-out races, code race, equal work, typed text x2 incl. FK); 49 others pass; validated on main 1a6cd1e; stub sweep 6b not run",
+ "commit": "f5c82fc",
+ "validated": "1a6cd1e"
 }
