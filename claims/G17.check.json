@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T20:34:30.231Z",
  "worker": "cloud-f765fb",
- "state": "working",
- "at": "2026-10-02T20:38:46.036Z",
+ "state": "reported",
+ "at": "2026-10-02T20:45:35.314Z",
  "mode": "turbo",
- "beat": "2026-10-02T20:41:33.258Z"
+ "beat": "2026-10-02T20:41:33.258Z",
+ "note": "PASS"
 }
