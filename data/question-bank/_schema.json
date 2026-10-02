@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^Q-[A-Z]+-\\d{3}$"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "ASK",
+        "CONFIRM",
+        "DECIDE"
+      ]
+    },
+    "resolves": {
+      "type": "string",
+      "minLength": 1
+    },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "money_cents",
+              "date",
+              "count",
+              "percent",
+              "document_ref",
+              "account_ref",
+              "fact_ref",
+              "choice"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "required"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "answer": {
+      "type": "object",
+      "properties": {
+        "shape": {
+          "type": "string",
+          "enum": [
+            "money",
+            "date",
+            "yes_no",
+            "choice",
+            "file",
+            "number"
+          ]
+        },
+        "options": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "shape"
+      ],
+      "additionalProperties": false
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "retired": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "resolves",
+    "slots",
+    "answer",
+    "label",
+    "topic",
+    "retired"
+  ],
+  "additionalProperties": false
+}

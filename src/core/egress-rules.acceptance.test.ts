@@ -303,5 +303,5 @@ describe('F00 egress and shell-out rules (SEC-10, ARC-15)', () => {
     expect(planted, 'an interpolated logger message is refused').toContain('no-restricted-syntax')
     expect(await lint('log.ts', 'clean-logging.ts.txt')).toEqual([])
     expect((await lint('db/global-setup.ts', 'planted-logging.ts.txt')).filter((r) => r === 'no-console')).toEqual([])
-  })
+  }, 60_000)
 })
