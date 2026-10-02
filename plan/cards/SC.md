@@ -32,3 +32,6 @@ The faults the F01 and F09 checks found (RC1 to RC5) can come back in every tabl
 
 ## Not in this card
 Fixing any schema or contract file (the owning card does it). Seeding helpers that reach later states through events (W00, JH0). Rules for other kinds of record beyond R12 to R18 and R23 to R28 (R19 to R22 are DG's). Adding the `@money`, `@converter` and `@writes` tags (the owning cards; F03R tags the Taxprep CSV writer first).
+
+## Also (F03R findings, 2 Oct)
+R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden file of refused inputs stays refused unless a retire list names it (plant: delete a parser branch). R30 every `@writes` module exports its read-back check and a test plants a mismatch (extends R24; plant: a check that always returns true). R31 no two exported finding lists share an entry or a finding string, and each list's findings carry that list's anchor (plant: a spread).
