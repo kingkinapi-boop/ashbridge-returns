@@ -1,13 +1,10 @@
-# F09 check (round 2 build c19481e), cloud-327258
+# F09 check (round 4, local-4e012b, laptop)
 
-FAIL. Passed: typecheck, lint, deps:check, npm test (217 + 2), test:flake 5 of 5, scope OK, spec files unchanged since 79893e4, canary OK, Stryker reading.ts 76.49 (break 70).
-Failures found by the Opus adversarial read; 1 and 2 reproduced by probe (valueInBox on one line of words):
-1. Sign grouping (card build "a separate sign word is part of the group", check 8): a "-" word attaches as a trailing sign to a preceding number. Words "100.00" "-" "50.00": value -50.00 gives "value not found", and 100.00 also "value not found" (read as "100.00-"). Same for "2" "-" "50.00". Needs a rule for a "-" that is both trailing and leading.
-2. ".dd" join (check 9): one decimal digit joins. "1" ".5" matches 1.50; "1" "234.5" matches 1234.50. Only ".dd" (two digits) or three-digit groups may join.
-3. Minor: normaliseAmount drops spaces, so the value "12 34" or "1 2 3 4" matches word "1234" (value side glues what the word side refuses).
-4. Minor: "(0.00)" and "-0" return -0 cents (Object.is fails); normalise to 0.
-5. Minor: a NaN rect coordinate throws ZodError, not the RangeError of other refusals.
-Where: src/contracts/reading.ts joinWord (about 214-221), TRAILING_SIGN/DECIMALS (206-209), normaliseAmount (152).
-Rule candidates: tests for sign-word adjacency between two amounts; "join only across exactly two decimal digits"; no negative zero in money.
-Mutation survivors: 105 (reports/mutation/mutation.json), notably OPENS_AMOUNT regex anchor.
-Permission gaps: none. Model: Sonnet checker, Opus adversarial read.
+Result: PASS
+
+Ran on origin/claude/F09 (2216375) merged with origin/main eda0bda: typecheck, lint, deps:check clean; src/contracts 131 tests pass (full vitest 363 pass); mutate:canary 100; `mutate:changed -- F09` reading.ts 100.00 (460 killed, 1 timeout, 0 survived, 0 no coverage); `// @mutate` on line 1; scope OK (8 files); reading.acceptance.test.ts identical to the last spec commit 981d672 (all four spec(F09) commits touch only it and reports/F09-mutants.md); 4 Stryker disable comments, each names the mutator and a reason (lines 12, 94 float-noise tolerance edges, 200 unreachable fallback, 214 case fold on both sides); checks 17 and 18 have passing tests.
+Not run: test:flake (no db/schema change), e2e (cloud only). The 2 failing tests on the laptop are A05's real-parent symlink tests (EPERM, Windows has no symlink right), not F09.
+Not done: no Opus adversarial subagent available to this worker; the diff read was by this Sonnet worker. Lead may add one (core card).
+
+Permission gaps: none met.
+Model: Sonnet 5.5 (claude-sonnet-5-5).
