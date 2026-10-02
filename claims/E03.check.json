@@ -1,10 +1,9 @@
 {
  "card": "E03",
  "role": "check",
- "for": "2026-10-02T10:50:14.040Z",
- "worker": "cloud-87cb2a",
- "state": "failed",
- "at": "2026-10-02T10:53:18.462Z",
- "mode": "turbo",
- "note": "FAIL: 10 acceptance tests (sample clients grew 10 to 15; 9 answer-key fields uncited), see reports/E03-check.md"
+ "for": "2026-10-02T11:45:58.118Z",
+ "worker": "cloud-f5d527",
+ "state": "working",
+ "at": "2026-10-02T11:48:53.333Z",
+ "mode": "turbo"
 }
