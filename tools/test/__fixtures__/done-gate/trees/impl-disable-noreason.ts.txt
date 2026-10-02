@@ -1,0 +1,3 @@
+// @mutate
+// Stryker disable next-line StringLiteral
+export const label = 'x'
