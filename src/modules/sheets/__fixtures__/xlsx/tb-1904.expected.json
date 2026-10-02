@@ -1,0 +1,96 @@
+{
+  "file": "tb-1904.xlsx",
+  "sheets": [
+    {
+      "name": "Dates 1904 (Test)",
+      "hidden": false
+    }
+  ],
+  "hiddenLists": [
+    {
+      "name": "Dates 1904 (Test)",
+      "hiddenRows": [],
+      "hiddenColumns": []
+    }
+  ],
+  "cells": [
+    {
+      "sheet": "Dates 1904 (Test)",
+      "row": 1,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Opened",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Dates 1904 (Test)",
+      "row": 1,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "2025-01-01",
+      "type": "date",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Dates 1904 (Test)",
+      "row": 2,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Epoch",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Dates 1904 (Test)",
+      "row": 2,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1904-01-01",
+      "type": "date",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Dates 1904 (Test)",
+      "row": 3,
+      "column": {
+        "letter": "A",
+        "number": 1
+      },
+      "text": "Next day",
+      "type": "text",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    },
+    {
+      "sheet": "Dates 1904 (Test)",
+      "row": 3,
+      "column": {
+        "letter": "B",
+        "number": 2
+      },
+      "text": "1904-01-02",
+      "type": "date",
+      "hiddenRow": false,
+      "hiddenColumn": false,
+      "merged": null
+    }
+  ]
+}
