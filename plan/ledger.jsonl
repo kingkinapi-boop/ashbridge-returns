@@ -90,6 +90,7 @@
 {"ts":"2026-10-01T19:26:47.563Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":null,"where":"worktree","desc":"Design fixes: source viewer","allowed":true}
 {"ts":"2026-10-01T19:29:18.095Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T19:30:28.810Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"checker","model":null,"where":"worktree","desc":"Check queue repair 2","allowed":true}
+{"ts":"2026-10-01T20:46:37.108Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"F00 round 3 spec tests","allowed":true}
 {"ts":"2026-10-01T19:36:14.376Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T19:36:14.506Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T19:36:32.094Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"sonnet","where":"local","desc":"QBO .GFI walker","allowed":true}
@@ -113,3 +114,24 @@
 {"ts":"2026-10-01T21:11:39.331Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"tester","model":"sonnet","where":"worktree","desc":"Re-test four design families","allowed":true}
 {"ts":"2026-10-01T21:17:23.555Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-01T21:44:33.059Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"Design re-test findings review","allowed":true}
+{"ts":"2026-10-01T21:49:33.497Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T21:49:33.514Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Shared design rule checks","allowed":true}
+{"ts":"2026-10-01T21:53:50.605Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Design fix round 2: queues","allowed":true}
+{"ts":"2026-10-01T21:53:55.858Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Design fix round 2: workbench","allowed":true}
+{"ts":"2026-10-01T21:54:00.793Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Design fix round 2: CPA review","allowed":true}
+{"ts":"2026-10-01T22:20:35.871Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T22:51:48.335Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T23:23:13.519Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T23:23:14.188Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T23:23:14.732Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T23:23:21.493Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"signoff","model":"opus","where":"local","desc":"Cold sign-off: repairs and rehearsal","allowed":true}
+{"ts":"2026-10-01T23:27:21.611Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"builder","model":"sonnet","where":"worktree","desc":"Queue repair 3 build","allowed":true}
+{"ts":"2026-10-01T23:44:21.081Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Findings review W14 and D01","allowed":true}
+{"ts":"2026-10-01T23:44:34.764Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T23:44:35.486Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-01T23:49:30.650Z","day":"2026-10-01","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card changes from W14/D01 findings","allowed":true}
+{"ts":"2026-10-01T23:56:15.932Z","day":"2026-10-01","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T00:15:44.758Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"A05 security review and gitleaks","allowed":true}
+{"ts":"2026-10-02T00:15:49.930Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Findings review F01 and F09","allowed":true}
+{"ts":"2026-10-02T00:16:31.180Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-02T00:21:39.769Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card side of F01/F09 findings","allowed":true}
