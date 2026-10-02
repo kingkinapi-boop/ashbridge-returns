@@ -1,11 +1,10 @@
 {
  "card": "E03A",
  "role": "build",
- "round": 3,
+ "round": 4,
  "spec": "5acfe13",
- "worker": "cloud-2f60ce",
- "state": "released",
- "at": "2026-10-02T15:44:48.139Z",
- "mode": "turbo",
- "note": "gitleaks hit in spec test line 526 needs .gitleaks.toml allowlist, see reports/E03A-build-r3.md"
+ "worker": "cloud-e592ae",
+ "state": "working",
+ "at": "2026-10-02T15:45:09.053Z",
+ "mode": "turbo"
 }
