@@ -2,10 +2,10 @@
  "card": "E03A",
  "role": "spec",
  "worker": "cloud-b37146",
- "state": "reported",
- "at": "2026-10-02T14:36:16.473Z",
+ "state": "reopened",
+ "at": "2026-10-02T15:08:29.634Z",
  "mode": "turbo",
- "note": "22 tests, 10 fail by name until keys added; G11/G16 split may need card note",
+ "note": "round 2: repeat per asset with class, disposal kind and cost (card)",
  "commit": "ab2a22d",
  "validated": "6835b1d"
 }
