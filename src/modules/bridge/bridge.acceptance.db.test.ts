@@ -21,6 +21,14 @@
 //   bridge sees it as a T2 company. Skipped corporations get none.
 // - returns.client_refs (corporation_id uuid, client_ref text, created_at, is_test): unique both ways,
 //   append-only, client_ref must be ASH- and at least four digits from 0001.
+// - Schema files: 05_bridge.sql (client_refs, client_handoff: nothing there needs returns.returns) and a
+//   second file sorting after 50_returns.sql (for example 55_bridge_returns.sql) for the tables that
+//   point at a return; every table of the bridge is named client_refs, client_handoff or bridge_*.
+//   The existing catalog rules apply to them (records.acceptance.db.test.ts: every table has id,
+//   created_at and is_test default true; records-repairs: a version column such as
+//   client_handoff.list_version has a BEFORE UPDATE guard). So client_refs and the other bridge tables
+//   carry an id column with a default, which the inserts below leave out; client_handoff has
+//   created_at with a default.
 // - returns.client_handoff: contract section 4 (columns named there), schema returns, row-level
 //   security on, no policies, text columns hold ids only. Hand-off rows are written by later cards;
 //   this card makes the table and the guards.

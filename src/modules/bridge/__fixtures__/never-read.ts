@@ -16,7 +16,7 @@ export function neverReadNames(): string[] {
   expect(end).toBeGreaterThan(start)
   const section = CONTRACT_MD.slice(start, end)
   const names = new Set<string>()
-  for (const m of section.matchAll(/\b([a-z]+(?:_[a-z0-9]+)*)\s+\(?M\d{4}:\d+/g)) {
+  for (const m of section.matchAll(/(?<![.\w])([a-z]+(?:_[a-z0-9]+)*)\s+\(?M\d{4}:\d+/g)) {
     if (m[1] !== undefined) names.add(m[1])
   }
   // the restricted kinds named on the first bullet (M0001:171-178) and the marker answers' kinds

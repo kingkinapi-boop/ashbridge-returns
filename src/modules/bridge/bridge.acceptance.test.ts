@@ -40,7 +40,7 @@ function shapeKeys(schema: z.ZodType): Set<string> {
     if (node === null || typeof node !== 'object') return
     for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
       if (k === 'properties' && v !== null && typeof v === 'object') {
-        for (const p of Object.keys(v as Record<string, unknown>)) keys.add(p)
+        for (const p of Object.keys(v)) keys.add(p)
       }
       walk(v)
     }
