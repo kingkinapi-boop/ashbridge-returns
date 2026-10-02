@@ -1,0 +1,10 @@
+{
+ "card": "DG2",
+ "role": "build",
+ "round": 1,
+ "spec": "e480b619108c26e341d15d1c942dfdd2473cccfc",
+ "worker": "cloud-7e91dc",
+ "state": "working",
+ "at": "2026-10-02T10:07:57.636Z",
+ "mode": "turbo"
+}
