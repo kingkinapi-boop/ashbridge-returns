@@ -1,22 +1,24 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 12:50Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 14:35Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, decision 0018). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 07:15Z: 5h 1% (new window), week 31%.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`), up to 6 runs. Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup ~30 min). Laptop: up to 2 local workers (0018); they have no subagent tool, so core specs and checks go to the cloud (A331). None running now.
 - **Zo:** to-do #1 design sitting at http://localhost:8765/ (python http.server from the session scratchpad `sitting` folder; if it is down after a reboot, the bundle must be rebuilt: designer helper from the four `claude/design-*-2` branches, see reports/findings-designs-2.md "For Zo"). Day 4 (Auto-fill, Zo) Sat 3 Oct. Decisions 0016 to 0019 today; blueprint v1.2 (0019: preparer pastes the diagnostics list).
-- **Landed (20 done):** E03, F09B (with F09A's work), DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
+- **Landed (21 done):** F04, E03, F09B (with F09A's work), DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| W00 build round 2 | cloud run | cloud | 2 Oct 12:19Z | claude/W00 |
-| Queue: A01 check, F01 build round 3 (last), F04 build round 2, refits then A07 and G01 builds, A03 build (after A01) | cloud runs | cloud | 2 Oct 12:50Z | claude/<card> |
+| Train red-held: G01 failed only on a timing flake in the SEC-5 test (A361); re-board G01 with FX1 and D00L (PASS) once FX1 passes | train | - | 2 Oct 14:30Z | claude/train |
+| W00 check; F01C build; W02, W03 specs | cloud runs | cloud | 2 Oct | claude/<card> |
+| Local worker 1 (W04 spec); npm ci in the main checkout so local workers can run vitest | laptop | worktree | 2 Oct 14:30Z | claude/W04 |
+| Queue: FX1 spec (urgent: every train can flake until it lands), E03A spec (A362), A07 build round 2, W01 spec (draft on claude/W01, needs 6b), A01 build (waits F01C), S00 build (waits W00) | cloud runs | cloud | 2 Oct 14:35Z | claude/<card> |
 
-No train open (E03 landed 9f5ec33). S00 build waits on W00 (A354); U00 and D02 to D13 parked until Zo's sitting.
+U00 and D02 to D13 in the design lane (A352); G12 to G17 wait on E03A.
 
 ## Next, in order
 
@@ -25,7 +27,7 @@ No train open (E03 landed 9f5ec33). S00 build waits on W00 (A354); U00 and D02 t
 3. F09B landed: F04, A01 round 2, A07 builds now; then I00, E01, A07, W20, SK0.
 4. W00 check 8 CRLF: decided A347 (W00 build owns .gitattributes line and the taxprep CSVs).
 5. Taxprep: day 6 Sun 4 Oct (changes after lock, check export, roll forward, copy one full diagnostics panel); day 4 Zo Sat 3 Oct.
-6. Designs: Zo's sitting answers (Q1 to Q7) into decisions and fix cards; then D00, D01, D05.
+6. Designs: sitting 1 answered (decision 0020, A358 viewer B). Next: fix cards from the retest findings (reports/design-retest-2026-10-01.md Q1 to Q8) into the approved versions, then the D cards copy the approved versions into design/screens/ (design lane, A352). D00L puts Zo's logo on the basis.
 7. B01 spec (reference/qbo/gfi-file.md, A305). W16 card to write (W14 KNOWN R8 fails on 03, 04, 07, 08, 10). SC grows: R23 to R31 (reports/findings-wave2.md, findings-F03R-r2.md).
 
 ## Watch out
