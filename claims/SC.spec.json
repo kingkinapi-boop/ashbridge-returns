@@ -1,10 +1,10 @@
 {
  "card": "SC",
  "role": "spec",
- "note": "94 tests (29 new: R34 widened, R35, R45 cite, R46 to R56); all green on main, owner defects in KNOWN, unbuilt subjects in PENDING; retired none",
+ "note": "KNOWN entries for owner FX3: see the bold paragraph in plan/cards/SC.md",
  "worker": "cloud-18d04e",
- "state": "reported",
- "at": "2026-10-02T19:55:41.279Z",
+ "state": "reopened",
+ "at": "2026-10-02T20:31:23.956Z",
  "mode": "turbo",
  "beat": "2026-10-02T19:54:14.536Z",
  "commit": "34e8ac0",
