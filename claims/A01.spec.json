@@ -2,7 +2,10 @@
  "card": "A01",
  "role": "spec",
  "worker": "cloud-e7ec6a",
- "state": "working",
- "at": "2026-10-02T10:08:02.325Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T10:12:02.015Z",
+ "mode": "turbo",
+ "note": "refit readOwnSource; 31 acceptance tests pass; Spec commit line to record on main: 40b4f1e validated e13bef5",
+ "commit": "40b4f1e",
+ "validated": "e13bef5"
 }
