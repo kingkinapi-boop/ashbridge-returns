@@ -731,7 +731,7 @@
       "note": " Parked 2 Oct before its last round (A364): split into W00a (model, loader, rolls) and W00b (guard)."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "DG2"
@@ -764,13 +764,13 @@
       "phase": 0,
       "size": "M",
       "core": true,
-      "note": "Branch claude/W00a from claude/W00 round 2 head (A364)."
+      "note": "Branch claude/W00a from claude/W00 round 2 head (A364). Parked 2 Oct: third failure of W00, split to W00c (reports/W00a-findings.md)."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a"
+        "W00c"
       ],
       "paths": [
         "testworld/model/guard.ts",
@@ -797,7 +797,7 @@
       "deps": [
         "F03",
         "F03R",
-        "W00a"
+        "W00c"
       ],
       "paths": [
         "src/modules/taxprep-sim/core/**",
@@ -934,7 +934,7 @@
       "deps": [
         "F01D",
         "F00T",
-        "W00a"
+        "W00c"
       ],
       "paths": [
         "e2e/_harness/**",
@@ -968,7 +968,7 @@
         "JH0",
         "F09",
         "F09B",
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1074,7 +1074,8 @@
       "paths": [
         "src/modules/bridge/**",
         "src/contracts/bridge.ts",
-        "db/schema/05_bridge.sql"
+        "db/schema/05_bridge.sql",
+        "db/schema/55_bridge_returns.sql"
       ],
       "clauses": [
         "END-1",
@@ -1094,7 +1095,7 @@
       "spec": null,
       "deps": [
         "W14",
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1117,7 +1118,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1140,7 +1141,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1164,7 +1165,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1188,7 +1189,7 @@
       "spec": null,
       "deps": [
         "W14",
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1213,7 +1214,7 @@
       "spec": null,
       "deps": [
         "W15",
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1236,7 +1237,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1261,7 +1262,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1287,7 +1288,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1313,7 +1314,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1338,7 +1339,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1363,7 +1364,7 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1391,7 +1392,7 @@
       "spec": null,
       "deps": [
         "W15",
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -1487,7 +1488,7 @@
         "F09",
         "F09B",
         "A01",
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -2007,7 +2008,9 @@
       "paths": [
         "src/modules/auth/**",
         "src/contracts/auth.ts",
-        "db/schema/15_auth.sql"
+        "db/schema/15_auth.sql",
+        "src/core/env.ts",
+        "src/core/env.settings.test.ts"
       ],
       "clauses": [
         "SEC-1",
@@ -2999,7 +3002,7 @@
         "F01D",
         "A05",
         "F00T",
-        "W00a"
+        "W00c"
       ],
       "paths": [
         "src/modules/qbo/**",
@@ -7175,7 +7178,7 @@
       "deps": [
         "A04",
         "A08",
-        "W00a",
+        "W00c",
         "W00b"
       ],
       "paths": [
@@ -9364,6 +9367,98 @@
       "title": "OCR benchmark on the test world (for choosing a vendor at go-live)",
       "phase": 4,
       "size": "M"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ1"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/next.mjs",
+        "tools/status.mjs",
+        "tools/scope.mjs",
+        "tools/test/claim.test.mjs",
+        "tools/test/scope.test.mjs",
+        "tools/test/__fixtures__/claims/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ2",
+      "title": "Queue: released checks re-offered, honest counts",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "CQ1 follow-up plus what the Lead saw on 2 Oct evening."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "DG2"
+      ],
+      "paths": [
+        "testworld/model/checks.ts",
+        "testworld/model/load.ts",
+        "testworld/model/faults.ts",
+        "testworld/model/money.ts",
+        "testworld/model/schema.ts",
+        "testworld/model/__fixtures__/**",
+        "testworld/index.ts",
+        "testworld/generate.ts",
+        "testworld/clients/**",
+        "reference/sample-clients/**/taxprep/*.csv",
+        ".gitattributes",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/core/money.ts",
+        "src/contracts/__fixtures__/taxprep-bytes.ts",
+        "testworld/__fixtures__/sample-copy.ts",
+        "testworld/model/generate.test.ts",
+        "testworld/model/index.ts",
+        "testworld/model/kinds.test.ts",
+        "testworld/model/money-converter.test.ts",
+        "testworld/model/schema.test.ts",
+        "testworld/model/guard.ts",
+        "testworld/model/guard.test.ts",
+        "testworld/model/kinds.ts"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16",
+        "END-9",
+        "TB-3"
+      ],
+      "id": "W00c",
+      "title": "Test world: model and loader, fix round (W00a split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Split from W00a, 2 Oct; branch from claude/W00a 239b553."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00c"
+      ],
+      "paths": [
+        "tools/test/testworld-rules.test.mjs",
+        "tools/test/__fixtures__/testworld-rules/**"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16"
+      ],
+      "id": "SC2",
+      "title": "Test-world rules R57 to R61",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/W00a-findings.md."
     }
   ]
 }
