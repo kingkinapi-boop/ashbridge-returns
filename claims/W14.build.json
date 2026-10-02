@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "0e448ae858ab4d982c947277e010602fa9dd0ec3",
  "worker": "cloud-620523",
- "state": "hold-findings",
- "at": "2026-10-01T22:28:29.290Z",
+ "state": "reopened",
+ "at": "2026-10-02T00:56:22.502Z",
  "mode": "turbo",
  "note": "FAIL: wording, contract ids, prior-year ties, see reports/W14-check.md"
 }
