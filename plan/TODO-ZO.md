@@ -9,6 +9,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 **Coming soon from you, Sat 3 Oct (about 30 minutes):** day 4 of the trial, the Auto-fill test on your chosen corporation. You do it yourself, no AI in the browser; only the shape of what Auto-fill fills is kept, never numbers or names. The nine steps are in `plan\taxprep-trial-plan.md` under "Day 4". No walker runs that day. Any other day suits too; days 5 and 6 do not wait for it. Keep the "Ashbridge Test" Chrome window on screen while walkers work.
 
 **What the Lead is doing now:** the empty app (F00) is on main, the first card through the whole loop; a fresh reviewer is signing off the loop before more cloud workers start; three cloud workers are building the next cards; three screen designs are in their last fix round for your sitting about 3 Oct; Taxprep day 5 waits on item 2, the .GFI on item 1.
+The Reviewer slowed the build to normal (reviews/REVIEW.md): the Lead first fixes the first card's core tests, the mutation gate and the two cards that block the queue; then type `turbo on`.
 
 ## 2. Coming up (no action yet)
 
