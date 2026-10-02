@@ -1,10 +1,9 @@
 {
  "card": "W00",
  "role": "spec",
- "worker": "cloud-fb8d96",
- "state": "reported",
- "at": "2026-10-01T18:42:59.143Z",
- "mode": "turbo",
- "note": "~100 tests, 4 files, fail on missing modules; ambers in agent report",
- "commit": "83c4bb5"
+ "note": "toolchain refit",
+ "worker": "cloud-0a2392",
+ "state": "working",
+ "at": "2026-10-02T06:14:23.810Z",
+ "mode": "turbo"
 }
