@@ -15,15 +15,15 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:02Z by the Lea
 |---|---|---|---|---|
 | Train 3ccdd3a: E03A, BL0, A01, F02 | train check | cloud-c520ec | 2 Oct 18:30Z | claude/train |
 | A06 check, A04 spec | cloud runs | cloud | 2 Oct 18:40Z | claude/<card> |
-| W00a findings review (check FAIL: scope, six classes) | Opus helper, local | laptop | 2 Oct 19:02Z | reports/W00a-findings.md |
+| W00c spec (W00a parked, split; branch from 239b553) | queue | cloud | 2 Oct 19:20Z | claude/W00c |
 | Waiting to board the next train: F06, F07 (both PASS, scope OK) | Lead | | | |
-| Waiting for a worker: A07C build (round 2, reopened); W00b build waits on W00a's fixes | queue | | | |
+| Waiting for a worker: A07C build (round 2, reopened); W00b build waits on W00c (then merge W00c into W00b, re-run its 242 tests) | queue | | | |
 
 ## Next, in order
 
 1. Poll claims; board every PASS: scope, GitHub checks green, Opus read for core (when a check's Opus read was refused, run one before boarding). One train at a time (plan/train.json); land by merging main into the train, code guard, push local main first so the ff works.
 2. After a spec reports, reopen the held build (`update <card> build reopened --worker lead`); after a released check, re-stamp the build (`update <card> build reported --worker <builder>`) until the CQ1 follow-up lands.
-3. W00a: when its build reports, push `claude/W00b` from `claude/W00a` (W00b's card), then W00b spec. S00, B04, JH0 wait on W00a; kinds W01 to W13, W20, SK0, I40 on W00a and W00b.
+3. W00c (split from W00a, A379, A380): spec, build, check; after it lands merge it into claude/W00b and re-run W00b's 242 tests, then W00b build. S00, B04, JH0, SK0, W01 to W13, W20, I40 now wait on W00c; SC2 (rules R57 to R61) after W00c.
 4. E03A lands, then unpark G12 to G17 (parked so the queue stops offering them).
 5. CQ2 carded (the CQ1 follow-up). Write the W16 card, then T08, Q00, Q01, I01, I30, I40.
 6. Designs: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions, then D02 to D13 copy them into design/screens/ (design lane, A352; claim.mjs now honours `lane: "design"`).
