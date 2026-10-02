@@ -4,7 +4,8 @@
  "round": 7,
  "spec": "62f6c18",
  "worker": "cloud-8ec957",
- "state": "working",
- "at": "2026-10-02T17:45:56.077Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T17:46:07.720Z",
+ "mode": "turbo",
+ "note": "no product code in SC paths; same 7 failures as reports/SC-build.md (owners: F01/F01D R12, exceptions R15, G10/G11 R18/R41, records.ts R23, R43 spec job); needs Lead to land owner fixes and a spec refit before re-offering"
 }
