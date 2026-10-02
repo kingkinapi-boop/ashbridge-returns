@@ -39,31 +39,33 @@ In chat say only `Critic written: reviews/CRITIC.md. Waiting on to-do #N.` and t
 
 ## Latest run
 
-**2 Oct 2026, 02:50Z** (since 29 Sep).
+**2 Oct 2026, 20:50Z** (since 02:50Z).
 
-1. Token leakage, yes: sessions carry 300k to 780k tokens and re-read them every step. No secret leaked.
-2. Two cheap fixes, both approved, should do about a third more work per token.
-3. At today's pace, 9 Oct ends with phase 0 and part of phase 1, not a usable system.
+1. Much faster: 31 cards landed in 18 hours; 63% of checks pass first time.
+2. Your 2 Oct yes on token savings was never carried out; about 60% of the Lead's 225M tokens since was avoidable.
+3. 238 of 276 cards left wait on one test-world card that failed three times.
 
 ### Proposals
 
-**1. Compact every session at about 200k tokens.** [verified numbers; saving inferred] Zo approved at 200k, 2 Oct.
-- Evidence: nothing compacts before about 650k; since 29 Sep 1,043M tokens read. Lead peaks up to 781k; 14 helpers above 320k. Replayed with a 200k limit: Lead 50 to 58% less, helpers 27 to 32% less (research file).
-- Change: `.claude/settings.json` env `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "20"`, switched on only with two guards: a "Compact instructions" section in CLAUDE.md (keep jobs in flight, unrecorded reports, half-done merges) and a SessionStart `compact` hook that reloads NOW.md, the claims list and the last hour of commits. New evidence on Z9-8; watcher stays.
-- Cost: small. 94 of 125 helpers never reach 200k; the Lead compacts about every 2 to 3 busy hours.
-- Undo: delete the env line; the guards can stay.
+**1. A yes given here reaches the Lead.** [verified]
+- Evidence: the to-do line "the Lead applies them" was deleted at 13:50Z (bc97984); no env line, hook or 270 s rule exists. 463 of 698 Lead turns sat above 200k; replay at 200k: 60% fewer reads [inferred] (`reference/research/2026-10-02b-token-use-since-0250.md`).
+- Change: the Lead applies the 2 Oct yes now, plus `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, which cloud sessions honour (`2026-10-02c-outside-world.md`). Then this file opens with "Approved, not applied", which loop step 1 reads and the Lead marks "Applied".
+- Cost: two lines. Undo: revert.
 
-**2. No wait over 4.5 minutes; never revive a big helper.** [verified] Zo approved, 2 Oct.
-- Problem: a helper's cache lives 5 minutes; after a longer wait the next turn re-writes the whole context at about twelve times a read.
-- Evidence: 59 full re-writes (11.2M tokens) after gaps over 5 minutes, mostly `until` loops and heavy-slot waits. Two designers revived after a handover at 442k and 152k: 207 turns, 74M read.
-- Change: `tools/heavy.mjs` gives up after 270 s with "slot busy, run again" (small card); helper and walker orders: no command waits over 270 s, poll; skill `dispatch`: never SendMessage a helper past 150k, start a fresh one from its report.
-- Cost: one small card, three lines. Saves about a tenth of helper cost [inferred].
-- Undo: revert.
+**2. The queue holds a job released twice.** [verified]
+- Evidence: 17:41Z to 20:31Z (Lead in the Auto-fill session) 22 of 35 cloud runs took the SC build and released it 41 times. CQ1 covers checks only; CQ2 omits this.
+- Change: CQ2 item 6: two releases with no new branch commit hold the job as "needs Lead" until reopened.
+- Cost: one item. Undo: drop it.
+
+**3. Real layouts before made-up documents.** [verified gap]
+- Evidence: W21 to W36 must look "like the real ones Ontario firms see" (`plan/cards/families/render.md`); nothing in the repo describes one, so readers E10 to E25 get tested on invented layouts. Bank statements: about 60% of clients.
+- Change: before W21's spec, a research pair and checker write `reference/layouts/<doc>.md` from public pages (bank statement guides and samples, CRA slips, payroll, loans): columns, formats, running balances, page carry-over. Render cards cite one; checks compare. Your own documents, structure only, need a separate yes.
+- Cost: three Sonnet helpers, no real data. Undo: delete the render.md line.
 
 ### Watch list
 
-1. Pace [verified]: 5 cards in the first 10 hours of turbo; 288 left; 6 of the last 11 checks failed. Below 60% after DG, next run proposes a spec review before core builds.
-2. Cloud is unmeasured [verified]: 49 runs, no local log; metrics tokens read 0. Method: `reference/research/2026-10-02-token-use.md`.
-3. Secrets [verified]: none; the one history hit is a planted test key (f1c8095).
+1. [verified] `design/map/navigation.md:13` gives each role its own record tabs; Z20-6 says one set for everyone. V00, U01, U02 read it. Lead: amber fix.
+2. [verified] W00c gates 238 cards (chain 17 deep) after 26 hours and 3 splits. One more failure: judge it on answer keys and failing tests only.
+3. [fact] Claude Code 2.1.288 blocks a call when a PreToolUse hook fails to match; watch "refused".
 
-E to G: no model change, no canary, nothing to subtract.
+E: no model change. F, G: nothing.
