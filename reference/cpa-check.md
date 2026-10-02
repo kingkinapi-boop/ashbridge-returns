@@ -51,3 +51,5 @@ Added 1 Oct 2026 from `reference/research/2026-10-01-ties-reconciled.md`, `2026-
 ## Added 1 Oct 2026 (evening): rounding
 
 33. **RT-25 Rounding to whole dollars.** Each GIFI code is rounded to whole dollars, half away from zero. 3680 is set to the net income of the rounded Schedule 125 codes, so 3680 equals 9999. The rounding difference that keeps Schedule 100 balanced goes on the liability line with the largest amount, never on 3600, 3849 or share capital, so 3849 still equals 3600; it shows in the trace as rounding. Source: RC4088 (whole dollars; CK-11 ties). Example: books give cash 10,000.40, receivables 5,000.40, payables 4,000.30, loan 6,000.30, share capital 100, retained earnings 4,900.20. Rounded: assets 15,000; liabilities 10,000; equity 5,000 (100 + 4,900); balanced, no plug. If rounding leaves assets 1 dollar above, the 1 dollar goes on the loan (6,001), named "rounding". Question: right, and is a liability line the right place for the dollar?
+
+Zo, 2 Oct 2026: "33: right" (decision 0023). RT-25 stands as written; the dollar goes on the largest liability line.

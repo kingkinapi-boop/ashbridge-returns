@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:43Z by the Lead (go after clear). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 18:15Z by the Lead. Auto-fill test done with Zo (0022). Zo said yes to the notes in the repo (0023), but agents cannot commit them: Zo does it by hand (to-do 1); the folder is git-excluded until then. RT-25 confirmed (0023). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,10 +13,9 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 17:43Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| E03A check (build reported 17:40Z, gitleaks clean) | 1 cloud run | cloud | 2 Oct 17:43Z | claude/E03A |
-| W00a build (long; 663 spec tests) | cloud run | cloud | 2 Oct 15:50Z | claude/W00a |
-| A07C round 2 (check found two defects inside its classes: self-closed shared formula, absolute 1e-9 snap; card Round 2, SC R56): spec reopened | queue | cloud | 2 Oct 17:42Z | claude/A07C |
-| Queue, builds reopened by the Lead at 17:36Z after F01D landed: F02, F06, F07, A06, A01 (round 3), BL0; E03A build (re-run gitleaks over HEAD after Zo's edit, then check) | 8 cloud runs fired 17:40Z to 17:45Z | cloud | 2 Oct 17:42Z | claude/<card> |
+| W00a check, F06 check | cloud runs | cloud | 2 Oct 17:50Z | claude/<card> |
+| A06 build, A07C build (round 2), F07 check (Paths fixed, A369), W00b spec (branch pushed from W00a) | 4 cloud runs | cloud | 2 Oct 18:15Z | claude/<card> |
+| Train 3ccdd3a: E03A, BL0, A01, F02 (all PASS; A370 gitleaks note) | train check, 1 cloud run | cloud | 2 Oct 18:30Z | claude/train |
 
 ## Next, in order
 
