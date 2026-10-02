@@ -39,6 +39,8 @@ In chat say only `Critic written: reviews/CRITIC.md. Waiting on to-do #N.` and t
 
 ## Latest run
 
+Approved by Zo (`critic ok`, decision 0024). Applied 2 Oct by the Lead: 1 (settings env, SessionStart hook, CLAUDE.md "Context and waits"), 2 (CQ2 item 6), 3 (render.md layouts step); watch 1 fixed as amber A387.
+
 **2 Oct 2026, 20:50Z** (since 02:50Z).
 
 1. Much faster: 31 cards landed in 18 hours; 63% of checks pass first time.
