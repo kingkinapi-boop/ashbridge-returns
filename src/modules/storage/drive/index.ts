@@ -30,7 +30,7 @@ export function createDriveStandIn(options: DriveOptions): ClientDocuments {
   const root = path.resolve(options.root)
 
   function readIndex() {
-    return Index.parse(JSON.parse(fs.readFileSync(path.join(root, 'index.json'), 'utf8'))).files
+    return Index.parse(JSON.parse(fs.readFileSync(realInside(root, path.join(root, 'index.json'), 'index'), 'utf8'))).files
   }
 
   function describe(entry: {

@@ -36,6 +36,14 @@ export function createFileStore(options: FileStoreOptions): FileStore {
     if (!fs.lstatSync(file).isFile()) throw new Error('refused: key is not a plain file')
   }
 
+  // The deepest folder of `dir` that already exists must really sit inside the root, so a write or an answer never goes through a link out.
+  function checkParent(dir: string): void {
+    let existing = dir
+    while (!fs.existsSync(existing)) existing = path.dirname(existing)
+    if (!inside(fs.realpathSync(root), fs.realpathSync(existing)) && fs.realpathSync(existing) !== fs.realpathSync(root))
+      throw new Error('refused: key resolves outside the storage root')
+  }
+
   const exists = (file: string): boolean => {
     try {
       return fs.lstatSync(file).isFile()
@@ -49,6 +57,11 @@ export function createFileStore(options: FileStoreOptions): FileStore {
       const hash = sha(bytes)
       const key = `sha256/${hash.slice(0, 2)}/${hash}`
       const file = path.join(root, key)
+      try {
+        checkParent(path.dirname(file))
+      } catch (e) {
+        return Promise.reject(e instanceof Error ? e : new Error(String(e)))
+      }
       if (exists(file)) return Promise.resolve({ key, sha256: hash })
       fs.mkdirSync(path.dirname(file), { recursive: true })
       const tmp = path.join(path.dirname(file), `.tmp-${crypto.randomUUID()}`)
@@ -74,7 +87,11 @@ export function createFileStore(options: FileStoreOptions): FileStore {
     },
 
     has(key) {
-      return Promise.resolve().then(() => exists(keyPath(key)))
+      return Promise.resolve().then(() => {
+        const file = keyPath(key)
+        checkParent(path.dirname(file))
+        return exists(file)
+      })
     },
 
     list(prefix) {
@@ -88,7 +105,7 @@ export function createFileStore(options: FileStoreOptions): FileStore {
             if (!/^[0-9a-f]{2}$/.test(d) || !fs.lstatSync(dir).isDirectory()) continue
             for (const f of fs.readdirSync(dir)) {
               const key = `sha256/${d}/${f}`
-              if (KEY.test(key) && exists(path.join(dir, f)) && key.startsWith(prefix)) out.push(key)
+              if (KEY.test(key) && inside(fs.realpathSync(root), fs.realpathSync(dir)) && exists(path.join(dir, f)) && key.startsWith(prefix)) out.push(key)
             }
           }
         }
