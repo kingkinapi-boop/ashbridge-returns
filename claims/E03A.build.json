@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "5acfe13",
  "worker": "cloud-c5a0ac",
- "state": "working",
- "at": "2026-10-02T15:20:50.560Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T15:23:54.706Z",
+ "mode": "turbo",
+ "note": "round 2: 6 asset keys per asset; all acceptance tests pass"
 }
