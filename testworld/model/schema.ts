@@ -54,6 +54,9 @@ export const ClientSchema = z.object({
       account: z.string(),
       glAccount: z.string(),
       missingFromExport: z.boolean(),
+      // Fault markers (W00a): a duplicate's original id and a row that belongs to last year; absent on a clean row.
+      dupOf: z.string().optional(),
+      priorYear: z.boolean().optional(),
       postings: z.array(PostingSchema),
     }),
   ),
@@ -94,6 +97,7 @@ export type LoadCheck =
   | 'adjusting-entry'
   | 'fault-catalogue'
   | 'money'
+  | 'file'
   | 'made-up-data'
 
 export type LoadIssue = { client: ClientId; check: LoadCheck; record: string; reason: string }

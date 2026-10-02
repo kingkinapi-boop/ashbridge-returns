@@ -1,7 +1,7 @@
 // @mutate
 // Loads one sample client from reference/sample-clients/ in place (never copied or rewritten) into the model (ARC-8).
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
-import { basename, dirname, join, relative, resolve, sep } from 'node:path'
+import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs'
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 import { decimalToCents } from '../../src/core/money'
@@ -48,6 +48,8 @@ const RawKey = z.object({
       account: z.string(),
       accountNo: z.string().nullish(),
       missingFromExport: z.boolean().optional(),
+      dupOf: z.string().optional(),
+      priorYear: z.boolean().optional(),
       post: z.array(z.object({ a: z.string(), dr: dollars.optional(), cr: dollars.optional() })).optional(),
     }),
   ),
@@ -131,6 +133,21 @@ function readJson(path: string, moneyIssue?: (record: string, reason: string) =>
   return JSON.parse(readFileSync(path, 'utf8'), reviver as Parameters<typeof JSON.parse>[1]) as unknown
 }
 
+/** Reads one JSON file of the client folder; a file that is not there is a 'file' issue and undefined, never a raw ENOENT. */
+function readClientJson(
+  folder: string,
+  name: string,
+  moneyIssue: (record: string, reason: string) => void,
+  fileIssue: (record: string, reason: string) => void,
+): unknown {
+  const path = join(folder, name)
+  if (!existsSync(path)) {
+    fileIssue(name, 'the file is not in the client folder')
+    return undefined
+  }
+  return readJson(path, moneyIssue)
+}
+
 /** Data rows of an account CSV: every non-blank line after the header. */
 function csvRows(path: string): number {
   return (
@@ -151,8 +168,14 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   const moneyIssue = (record: string, reason: string): void => {
     issues.push({ client: id, check: 'money', record, reason })
   }
-  const keyResult = RawKey.safeParse(readJson(join(folder, 'answer-key.json'), moneyIssue))
-  const onbResult = RawOnboarding.safeParse(readJson(join(folder, 'onboarding.json'), moneyIssue))
+  const fileIssue = (record: string, reason: string): void => {
+    issues.push({ client: id, check: 'file', record, reason })
+  }
+  const keyJson = readClientJson(folder, 'answer-key.json', moneyIssue, fileIssue)
+  const onbJson = readClientJson(folder, 'onboarding.json', moneyIssue, fileIssue)
+  if (keyJson === undefined || onbJson === undefined) throw new TestWorldLoadError(id, issues)
+  const keyResult = RawKey.safeParse(keyJson)
+  const onbResult = RawOnboarding.safeParse(onbJson)
   if (!keyResult.success) for (const i of keyResult.error.issues) schemaIssue(`answer-key.json ${i.path.join('.')}`, i.message)
   if (!onbResult.success) for (const i of onbResult.error.issues) schemaIssue(`onboarding.json ${i.path.join('.')}`, i.message)
   if (!keyResult.success || !onbResult.success) throw new TestWorldLoadError(id, issues)
@@ -183,8 +206,31 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
     account: t.account,
     glAccount: t.accountNo ?? '',
     missingFromExport: t.missingFromExport === true,
+    ...(t.dupOf === undefined ? {} : { dupOf: t.dupOf }),
+    ...(t.priorYear === true ? { priorYear: true } : {}),
     postings: (t.post ?? []).map((p) => ({ account: p.a, debitCents: p.dr ?? 0, creditCents: p.cr ?? 0 })),
   }))
+
+  const home = realpathSync(folder)
+  /** Rows of an account file, or 0 and a 'file' issue when it leaves the client folder or is not there. */
+  const accountFile = (account: string, field: string, name: string): number => {
+    const path = resolve(folder, name)
+    const out = relative(folder, path)
+    if (isAbsolute(name) || out === '..' || out.startsWith(`..${sep}`)) {
+      fileIssue(`${account} ${field}`, `${name} is outside the client folder`)
+      return 0
+    }
+    if (!existsSync(path)) {
+      fileIssue(`${account} ${field}`, `${name} is not in the client folder`)
+      return 0
+    }
+    const real = relative(home, realpathSync(path))
+    if (real === '..' || real.startsWith(`..${sep}`)) {
+      fileIssue(`${account} ${field}`, `${name} leads out of the client folder`)
+      return 0
+    }
+    return csvRows(path)
+  }
 
   const accounts = key.accounts.map((a) => {
     const months = (key.statementBalances[a.key] ?? []).map((m) => {
@@ -201,11 +247,34 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
       glAccount: a.glAccount,
       openingCents: a.openingBalance,
       closingCents: a.closingBalance,
-      exportRows: csvRows(join(folder, a.file)),
-      qboRows: csvRows(join(folder, a.qboFile)),
+      exportRows: accountFile(a.key, 'file', a.file),
+      qboRows: accountFile(a.key, 'qboFile', a.qboFile),
       months,
     }
   })
+
+  const declaredKeys = new Set(key.accounts.map((a) => a.key))
+  for (const k of Object.keys(key.statementBalances)) {
+    if (!declaredKeys.has(k)) issues.push({ client: id, check: 'roll', record: k, reason: 'it has statement balances but the answer key declares no such account' })
+  }
+  const txIds = new Set(key.transactions.map((t) => t.id))
+  const onbAnswers = (onbJson as { answers?: unknown }).answers
+  const onbKeys = onbJson as Record<string, unknown>
+  const resolves = (source: string): boolean => {
+    const base = source.replace(/\s*\([^)]*\)\s*$/, '')
+    return (
+      Object.hasOwn(onbKeys, base) ||
+      (Array.isArray(onbAnswers) && onbAnswers.some((x) => (x as { question_asked?: unknown }).question_asked === source))
+    )
+  }
+  for (const j of key.adjustingEntries) {
+    for (const s of j.source.transactions) {
+      if (!txIds.has(s)) issues.push({ client: id, check: 'adjusting-entry', record: j.id, reason: `its source "${s}" is not a transaction of this client` })
+    }
+    for (const s of j.source.onboarding) {
+      if (!resolves(s)) issues.push({ client: id, check: 'adjusting-entry', record: j.id, reason: `its source "${s}" is not in onboarding.json` })
+    }
+  }
 
   const adjustingEntries = key.adjustingEntries.map((j) => {
     const sources = [...j.source.transactions, ...j.source.onboarding]
