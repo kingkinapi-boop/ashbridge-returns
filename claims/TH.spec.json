@@ -2,9 +2,9 @@
  "card": "TH",
  "role": "spec",
  "worker": "cloud-4ab7b4",
- "state": "reported",
- "at": "2026-10-02T00:28:47.945Z",
+ "state": "reopened",
+ "at": "2026-10-02T01:28:39.566Z",
  "mode": "turbo",
- "note": "27 tests, 9 fail by design",
+ "note": "refit: R1 skips reference/ (A287)",
  "commit": "f1c8095"
 }
