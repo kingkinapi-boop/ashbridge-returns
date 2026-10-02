@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "fdd6b7a",
  "worker": "local-4e140f",
- "state": "working",
- "at": "2026-10-02T02:56:04.381Z",
+ "state": "released",
+ "at": "2026-10-02T03:44:12.331Z",
  "mode": "turbo",
- "beat": "2026-10-02T03:38:10.099Z"
+ "beat": "2026-10-02T03:38:10.099Z",
+ "note": "log.ts mutation 93.04: 8 survivors need a redaction-list edit the classifier refused, see reports/F00T-build.md"
 }
