@@ -2,8 +2,7 @@
  "card": "BL0",
  "role": "spec",
  "worker": "cloud-eb759f",
- "state": "released",
- "at": "2026-10-02T13:23:49.274Z",
- "mode": "turbo",
- "note": "deps F01 (text.ts) and F04 round 2 are built but not merged: no isBlank on main to import or validate against; re-offer after they land"
+ "state": "working",
+ "at": "2026-10-02T13:23:52.317Z",
+ "mode": "turbo"
 }
