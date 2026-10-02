@@ -4,8 +4,8 @@
  "round": 6,
  "spec": "5acfe13",
  "worker": "cloud-2f60ce",
- "state": "released",
- "at": "2026-10-02T15:58:56.275Z",
+ "state": "reopened",
+ "at": "2026-10-02T16:06:49.470Z",
  "mode": "turbo",
- "note": "re-offered after my release; same gitleaks blocker, needs .gitleaks.toml allowlist (reports/E03A-build-r3.md)"
+ "note": "round 3: .gitleaks.toml now in paths (card)"
 }
