@@ -4,7 +4,7 @@ The one file you read: `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TO
 
 ## 1. Needs you now
 
-**1. May the secret scanner ignore one made-up line? (one word: "yes" or "no").** The scanner that blocks passwords and keys from reaching GitHub flags a test line that compares a made-up fact name (`prior_t2.schedule_8.cca_closing_undepreciated`); it is not a secret. The fix is one narrow rule in `.gitleaks.toml` that ignores fact names in test comparisons only (no folders, no rules switched off). Claude Code's safety check refused that edit for the cloud worker because it touches a security tool, so I will not route around it. Recommendation: yes. If yes, a worker adds the one line, the scanner is run again, and the card that adds the client-askable asset facts (E03A) lands; it holds up six question-bank cards. If no, I rebuild that card's tests so the line is never written, which costs about one more round.
+Nothing. Your yes on the scanner line is recorded (decision 0021).
 
 Your answers of this morning are in: all seven design recommendations accepted (for the source viewer, which had no recommendation, I picked B, cite or write a reason; say "viewer A" or "viewer C" to change it), and your logo is in use.
 
