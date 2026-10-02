@@ -8,3 +8,6 @@ Ambers: gitleaks regexes use regexTarget "line"; mutate config keeps only the sr
 
 ## Re-run (cloud-9d2580, 2 Oct)
 Lead's choice A287 (R1 skips reference/) is not in the spec: `SKIP_DIRS` in tools/test/toolchain-rules.test.mjs lacks `reference`, so 1 of 27 still fails (strip-values.test.mjs matched by 0 projects). Build side is done and unchanged; the builder may not edit the rule test. Needs a spec job: add `reference` to the R1 walk skip list (spec reopened), then re-check only.
+
+## Re-run (cloud-e1c409, 2 Oct)
+Same state: build is complete and unchanged; 26 of 27 rule tests pass. The one failure needs `reference` in `SKIP_DIRS` (toolchain-rules.test.mjs line 82), a spec change (A287) that has not been made. Released: needs a spec job, then re-check only. Permission gaps: none (Node 24 via `nvm install 24`). Model: Sonnet 5.5.
