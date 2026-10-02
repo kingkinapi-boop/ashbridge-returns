@@ -1934,6 +1934,25 @@
       "done": "2026-10-02"
     },
     {
+      "status": "carded",
+      "spec": "n/a",
+      "deps": [
+        "D00"
+      ],
+      "paths": [
+        "design/basis/**"
+      ],
+      "clauses": [
+        "RV-55"
+      ],
+      "id": "D00L",
+      "title": "Design basis uses Zo's logo",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Decision 0020 Z20-8."
+    },
+    {
       "status": "done",
       "spec": null,
       "deps": [
