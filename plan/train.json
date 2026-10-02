@@ -1,5 +1,5 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "474512d",
   "cards": [
@@ -9,6 +9,6 @@
     "CQ1"
   ],
   "requested_at": "2026-10-02T15:42:33Z",
-  "by": "lead",
+  "by": "cloud-1d7697",
   "report": ""
 }
