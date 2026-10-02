@@ -4,10 +4,9 @@
  "round": 1,
  "spec": "2e596ab",
  "worker": "cloud-e72c49",
- "state": "released",
- "at": "2026-10-02T19:26:07.156Z",
+ "state": "reopened",
+ "at": "2026-10-02T21:25:21.249Z",
  "mode": "turbo",
  "beat": "2026-10-02T18:23:09.797Z",
- "note": "wait: security findings (M1 test-user fallback in production, L1 to L4), findings review first; see reports/A06-security.md",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"F00\",\"F00T\",\"F01D\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
+ "note": "round 2: make the 8 new spec tests pass (reports/A06-findings.md); then a fresh security review"
 }
