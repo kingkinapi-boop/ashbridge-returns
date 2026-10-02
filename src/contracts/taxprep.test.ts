@@ -534,3 +534,37 @@ describe('F03 unit round 2: write refusals say why', () => {
     expect(() => writeTaxprepCsv({ header: H, rows: [broken] }, { purpose: 'import' })).toThrow(TypeError)
   })
 })
+
+describe('F03R unit: writer refusals say why', () => {
+  test('RT-9 a text value the reader would refuse is refused with the reader reason', () => {
+    const w = writeTaxprepCsv(
+      {
+        header: H,
+        rows: [{ id: id('GFGBA.Ttwgba64'), current: { kind: 'text', text: '1,234' } }],
+      },
+      { purpose: 'import' },
+    )
+    expect(problemOf(w)[0]?.reason).toMatch(/would be refused on reading.*thousands separator/)
+  })
+  test('RT-21 a forged identifier is refused and names itself', () => {
+    const forged = { text: 'A"\r\nB' } as unknown as CellId
+    const w = writeTaxprepCsv(
+      { header: H, rows: [{ id: forged, current: { kind: 'amount', amount: 1 } }] },
+      { purpose: 'import' },
+    )
+    expect(problemOf(w)[0]?.reason).toMatch(/is not a valid cell identifier/)
+  })
+})
+
+describe('F03R unit: only a leading apostrophe is refused', () => {
+  test.each(["A-'12", "x-'12"])('RT-3 text %s with an apostrophe inside is accepted', (t) => {
+    const r = parseTaxprepCsv(bytes(head + `IFirm.ContactPartner,"${t}","",""\r\n`))
+    expect(r.ok).toBe(true)
+  })
+  // "-'12x" retired from the accepted list above: F03R check 6 (spec round 2) refuses every value starting with -'
+  test("RT-3 -'12 is refused as an apostrophe fault", () => {
+    const r = parseTaxprepCsv(bytes(head + `IFirm.ContactPartner,"-'12","",""\r\n`))
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.faults.map((f) => f.code)).toContain('apostrophe')
+  })
+})
