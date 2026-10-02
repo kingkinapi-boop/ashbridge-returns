@@ -14,7 +14,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
 | A06 round 2 spec (directive now at the top of its card; the queue drops reopen notes, CQ2 item 5) | queue | cloud | 2 Oct 20:12Z | claude/A06 |
-| Next train: A07C at b80c251 (split: lands with D1 to D3 moved to A07D, A384) | Lead | | after the G train | claude/A07C |
+| Train 727cd06: A07C at b80c251 (split, A384) | train check, 1 cloud run | cloud | 2 Oct 20:36Z | claude/train |
 | A03 check; G17 build; W00c spec | queue | cloud | 2 Oct 20:15Z | claude/<card> |
 
 ## Next, in order

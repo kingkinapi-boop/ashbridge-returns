@@ -1,15 +1,10 @@
 {
-  "status": "green",
+  "status": "requested",
   "branch": "claude/train",
-  "head": "001b94c",
+  "head": "727cd06",
   "cards": [
-    "G12",
-    "G13",
-    "G14",
-    "G15",
-    "G16"
+    "A07C"
   ],
-  "requested_at": "2026-10-02T20:08:43Z",
-  "note": "Question-bank topics; not core. Run gitleaks over HEAD as part of the check.",
-  "report": "reports/train-20261002-2016.md"
+  "requested_at": "2026-10-02T20:30:31Z",
+  "note": "A07C lands with known defects D1 to D3 (A384, reports/A07C-findings.md); A07C's own D1 to D3 tests may fail by design: list them, do not count them red. Everything else must be green. Run gitleaks over HEAD."
 }
