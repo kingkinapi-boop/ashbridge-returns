@@ -1,11 +1,10 @@
 {
  "card": "A01",
  "role": "build",
- "round": 1,
- "spec": "dce0009",
- "worker": "cloud-3d81d3",
- "state": "reopened",
- "at": "2026-10-02T11:42:30.367Z",
- "mode": "turbo",
- "note": "spec refit reported; waits F09B land"
+ "round": 2,
+ "spec": "f4144b9cdfe350f846a90a257426cedcd8d8e2ed",
+ "worker": "cloud-ff757e",
+ "state": "working",
+ "at": "2026-10-02T12:15:49.521Z",
+ "mode": "turbo"
 }
