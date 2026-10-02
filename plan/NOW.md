@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 |---|---|---|---|---|
 | Train 001b94c: G12, G13, G14, G15, G16 | train check, 1 cloud run | cloud | 2 Oct 20:15Z | claude/train |
 | A06 round 2 spec (directive now at the top of its card; the queue drops reopen notes, CQ2 item 5) | queue | cloud | 2 Oct 20:12Z | claude/A06 |
-| A07C findings review (round 2 check FAIL, family's repeated failure: split or park) | Opus helper, local | laptop | 2 Oct 20:12Z | reports/A07C-findings.md |
+| Next train: A07C at b80c251 (split: lands with D1 to D3 moved to A07D, A386) | Lead | | after the G train | claude/A07C |
 | A03 check; G17 build; W00c spec | queue | cloud | 2 Oct 20:15Z | claude/<card> |
 
 ## Next, in order
@@ -30,6 +30,8 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 8. Critic about every two days from Sat 3 Oct; Reviewer daily.
 
 ## Splits today (last rounds)
+
+Evening: W00a to W00c (A379), A07C to A07D (A386; no more rounds, fallbacks are removals); new rule cards SC2 (R57 to R61), SC3 (R62 to R66, security), SC4 (R67 to R70).
 
 F09A to F09B (landed), F01 to F01C to F01D (landed), W00 to W00a and W00b (A364), A07 to A07B to A07C (A366, A368). Each split card has a landing rule: new edge cases outside its named classes go to SC as rule tests (SC now lists rules up to R55).
 
