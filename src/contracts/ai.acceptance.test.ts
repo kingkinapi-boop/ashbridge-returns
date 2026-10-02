@@ -25,11 +25,30 @@
  *       the builder may add only optional fields.
  *
  * F09 (`src/contracts/reading.ts`) is not built yet; it exports `BoxSchema` (imported here as `boxSchema`; checked against origin/claude/F09 2216375).
+ *
+ * Spec round 2 (card items 8 to 11; findings wave 2 RC2 and RC6):
+ *   - A fourth citation kind, the page: { source: 'page', documentId: string, page: integer >= 1 }, no quote, no box.
+ *       The card writes `{ kind: 'page', ... }`; the contract discriminates on `source`, so the page kind is
+ *       `source: 'page'` (amber). The page number follows F09's box page rule (whole number from 1, amber).
+ *   - Every citation of a "missing" finding is a document box, a page or a return cell (never a ledger record);
+ *       the page kind is allowed only on a "missing" finding, never on any other finding or step type.
+ *   - Every object is strict at runtime at every depth (box, each citation kind, each step object, extraction
+ *       fields items, "I can't tell", the stamp); the box is F09's BoxSchema, strict since F09A.
+ *   - The answer shapes of the six other step types are the round-1 build's (amber, pinned here):
+ *       extraction { fields: { name, value }[] }, category_proposal { category }, gifi_mapping_proposal { gifiCode },
+ *       question_slot_fill { slot, value }, cause_tag { tag }, red_team_item { concern }; each with outcome and citations.
  */
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
-import { aiStepSchemas, aiStepTypes, citationSchema, validateAiOutput, versionStampSchema } from './ai'
+import {
+  type AiStepType,
+  aiStepSchemas,
+  aiStepTypes,
+  citationSchema,
+  validateAiOutput,
+  versionStampSchema,
+} from './ai'
 import { BoxSchema as boxSchema } from './reading'
 
 const SEED = 20261001
@@ -413,5 +432,230 @@ describe('F04 check 7: JSON Schemas for structured outputs', () => {
       })
       expect(namesCitations, `${stepType} names citations`).toBe(true)
     }
+  })
+})
+
+// ---------- spec round 2: fixtures ----------
+
+const pageCitation = { source: 'page', documentId: 'doc-t4-2025 (Test)', page: 3 } as const
+
+const missingFinding = (citations: unknown[]) => ({
+  outcome: 'answer',
+  findingType: 'missing',
+  summary: 'The T4 slip from Harbourview Dental (Test) has no box 22 amount.',
+  citations,
+})
+
+/** One clean answer per step type (round-1 build shapes, amber). */
+const answers: Record<AiStepType, Record<string, unknown>> = {
+  finding: issueFinding,
+  extraction: { outcome: 'answer', fields: [{ name: 'closing_balance', value: '1,234.56' }], citations: [documentCitation] },
+  category_proposal: { outcome: 'answer', category: 'Meals and entertainment', citations: [ledgerCitation] },
+  gifi_mapping_proposal: { outcome: 'answer', gifiCode: '8523', citations: [ledgerCitation] },
+  question_slot_fill: { outcome: 'answer', slot: 'vehicle_business_km', value: '12000', citations: [documentCitation] },
+  cause_tag: { outcome: 'answer', tag: 'wrong_account', citations: [ledgerCitation] },
+  red_team_item: { outcome: 'answer', concern: 'Shareholder loan (Test) not repaid within a year.', citations: [cellCitation] },
+}
+
+const otherStepTypes = aiStepTypes.filter((t) => t !== 'finding')
+
+type Extra = Record<string, unknown>
+
+interface DepthCase {
+  depth: string
+  stepType: AiStepType
+  raw: (x: Extra) => unknown
+  version?: (x: Extra) => unknown
+}
+
+const depthCases: DepthCase[] = [
+  ...aiStepTypes.map((t): DepthCase => ({ depth: `${t} answer object`, stepType: t, raw: (x) => ({ ...answers[t], ...x }) })),
+  ...aiStepTypes.map(
+    (t): DepthCase => ({
+      depth: `${t} "I can't tell" object`,
+      stepType: t,
+      raw: (x) => ({ ...cannotTell('The scan (Test) is too faint.'), ...x }),
+    }),
+  ),
+  ...aiStepTypes.map(
+    (t): DepthCase => ({
+      depth: `${t} ledger citation`,
+      stepType: t,
+      raw: (x) => ({ ...answers[t], citations: [{ ...ledgerCitation, ...x }] }),
+    }),
+  ),
+  {
+    depth: 'finding document citation',
+    stepType: 'finding',
+    raw: (x) => ({ ...issueFinding, citations: [{ ...documentCitation, ...x }] }),
+  },
+  {
+    depth: 'finding return cell citation',
+    stepType: 'finding',
+    raw: (x) => ({ ...issueFinding, citations: [{ ...cellCitation, ...x }] }),
+  },
+  {
+    depth: '"missing" finding page citation',
+    stepType: 'finding',
+    raw: (x) => missingFinding([{ ...pageCitation, ...x }]),
+  },
+  {
+    depth: 'box inside a finding document citation',
+    stepType: 'finding',
+    raw: (x) => ({ ...issueFinding, citations: [{ ...documentCitation, box: { ...box, ...x } }] }),
+  },
+  {
+    depth: 'box inside an extraction document citation',
+    stepType: 'extraction',
+    raw: (x) => ({ ...answers.extraction, citations: [{ ...documentCitation, box: { ...box, ...x } }] }),
+  },
+  {
+    depth: 'extraction fields item',
+    stepType: 'extraction',
+    raw: (x) => ({ ...answers.extraction, fields: [{ name: 'closing_balance', value: '1,234.56', ...x }] }),
+  },
+  {
+    depth: 'version stamp',
+    stepType: 'finding',
+    raw: () => issueFinding,
+    version: (x) => ({ ...stamp, ...x }),
+  },
+]
+
+const strays: Extra[] = [{ approved: true }, { note: 'see the margin (Test)' }]
+
+// ---------- spec round 2, item 8 ----------
+
+describe('F04 item 8: strict at runtime at every depth', () => {
+  test('AI-1 a stray key fails validateAiOutput at every depth: box, each citation kind, each step object, fields items, "I can\'t tell" and the stamp', () => {
+    expect(depthCases.length).toBe(28)
+    const leaks: string[] = []
+    for (const c of depthCases) {
+      const version = c.version ?? (() => stamp)
+      const clean = validateAiOutput(c.stepType, c.raw({}), version({}))
+      if (!clean.ok) leaks.push(`${c.depth}: the clean output was refused (${clean.problems.join(' ')})`)
+      for (const x of strays) {
+        const r = validateAiOutput(c.stepType, c.raw(x), version(x))
+        if (r.ok) leaks.push(`${c.depth}: the stray key "${Object.keys(x).join('')}" was accepted`)
+      }
+    }
+    expect(leaks).toEqual([])
+  })
+
+  test('AI-1 each citation kind with a stray key fails the citation schema itself', () => {
+    for (const c of [ledgerCitation, documentCitation, cellCitation, pageCitation]) {
+      expect(citationSchema.safeParse(c).success, `${c.source} clean`).toBe(true)
+      expect(citationSchema.safeParse({ ...c, approved: true }).success, `${c.source} with a stray key`).toBe(false)
+    }
+  })
+})
+
+// ---------- spec round 2, item 9 ----------
+
+describe('F04 item 9: what a "missing" finding cites', () => {
+  test('AI-5 a "missing" finding whose only citation is a ledger record fails with a plain reason', () => {
+    const r = validateAiOutput('finding', missingFinding([ledgerCitation]), stamp)
+    expectPlainProblemAbout(r, /citation|ledger/i)
+  })
+
+  test('AI-5 a "missing" finding citing a ledger record beside a return cell still fails', () => {
+    problemsOf(validateAiOutput('finding', missingFinding([cellCitation, ledgerCitation]), stamp))
+  })
+
+  test('AI-5 a "missing" finding citing a page, with no quote and no box, passes and is kept', () => {
+    const raw = missingFinding([pageCitation])
+    const r = validateAiOutput('finding', raw, stamp)
+    expect(r).toMatchObject({ ok: true, toPerson: false, data: { output: raw, version: stamp } })
+    if (r.ok) expect(r.data.output).toEqual(raw)
+  })
+
+  test('AI-5 a "missing" finding citing a return cell passes', () => {
+    expect(validateAiOutput('finding', missingFinding([cellCitation]), stamp)).toMatchObject({ ok: true, toPerson: false })
+  })
+
+  test('AI-5 a "missing" finding citing a page, a document box and a return cell together passes', () => {
+    const raw = missingFinding([pageCitation, documentCitation, cellCitation])
+    expect(validateAiOutput('finding', raw, stamp)).toMatchObject({ ok: true })
+  })
+
+  test('AI-5 the page citation is a citation kind of its own', () => {
+    expect(citationSchema.safeParse(pageCitation).success).toBe(true)
+  })
+
+  test('AI-5 property: a finding passes exactly when a "missing" one cites no ledger record and any other cites no page', () => {
+    const kinds = { ledger: ledgerCitation, document: documentCitation, page: pageCitation, return_cell: cellCitation }
+    fc.assert(
+      fc.property(
+        fc.constantFrom('issue', 'missing'),
+        fc.array(fc.constantFrom('ledger', 'document', 'page', 'return_cell'), { minLength: 1, maxLength: 5 }),
+        (findingType, picked) => {
+          const raw = { ...issueFinding, findingType, citations: picked.map((k) => kinds[k]) }
+          const expected = findingType === 'missing' ? !picked.includes('ledger') : !picked.includes('page')
+          expect(validateAiOutput('finding', raw, stamp).ok).toBe(expected)
+        },
+      ),
+      { seed: SEED, numRuns: RUNS },
+    )
+  })
+})
+
+// ---------- spec round 2, item 10 ----------
+
+describe('F04 item 10: the page kind belongs to "missing" findings only, and carries no quote or box', () => {
+  /** The same page citation passes on a "missing" finding, so each refusal below is for the planted fault. */
+  function expectPageCitationPassesOnMissing(): void {
+    expect(validateAiOutput('finding', missingFinding([pageCitation]), stamp).ok).toBe(true)
+  }
+
+  test('AI-5 an "issue" finding citing a page fails, alone or beside a ledger record', () => {
+    expectPageCitationPassesOnMissing()
+    problemsOf(validateAiOutput('finding', { ...issueFinding, citations: [pageCitation] }, stamp))
+    problemsOf(validateAiOutput('finding', { ...issueFinding, citations: [ledgerCitation, pageCitation] }, stamp))
+  })
+
+  test.each([...otherStepTypes])('AI-5 a %s answer citing a page fails', (stepType) => {
+    expectPageCitationPassesOnMissing()
+    const clean = validateAiOutput(stepType, answers[stepType], stamp)
+    expect(clean.ok).toBe(true)
+    problemsOf(validateAiOutput(stepType, { ...answers[stepType], citations: [pageCitation] }, stamp))
+    problemsOf(validateAiOutput(stepType, { ...answers[stepType], citations: [ledgerCitation, pageCitation] }, stamp))
+  })
+
+  test('AI-4 a page citation carrying a quote fails, in the schema and on a "missing" finding', () => {
+    expectPageCitationPassesOnMissing()
+    const c = { ...pageCitation, quote: 'Box 22' }
+    expect(citationSchema.safeParse(c).success).toBe(false)
+    problemsOf(validateAiOutput('finding', missingFinding([c]), stamp))
+  })
+
+  test('AI-4 a page citation carrying a box fails, in the schema and on a "missing" finding', () => {
+    expectPageCitationPassesOnMissing()
+    const c = { ...pageCitation, box }
+    expect(citationSchema.safeParse(c).success).toBe(false)
+    problemsOf(validateAiOutput('finding', missingFinding([c]), stamp))
+  })
+
+  test('AI-4 a page citation with neither document id nor page fails', () => {
+    expectPageCitationPassesOnMissing()
+    expect(citationSchema.safeParse(without(pageCitation, 'documentId')).success).toBe(false)
+    expect(citationSchema.safeParse(without(pageCitation, 'page')).success).toBe(false)
+    problemsOf(validateAiOutput('finding', missingFinding([without(pageCitation, 'page')]), stamp))
+  })
+
+  test.each([0, -1, 1.5, '3'])('AI-4 a page citation with page %j fails (whole number from 1, as in F09\'s box)', (page) => {
+    expectPageCitationPassesOnMissing()
+    expect(citationSchema.safeParse({ ...pageCitation, page }).success).toBe(false)
+  })
+})
+
+// ---------- spec round 2, item 11 ----------
+
+describe('F04 item 11: the document-box citation uses F09\'s strict BoxSchema', () => {
+  test('AI-4 a box with an extra key fails in F09\'s BoxSchema, in the citation schema and in validation', () => {
+    const rotated = { ...box, rotation: 90 }
+    expect(boxSchema.safeParse(rotated).success).toBe(false)
+    const c = { ...documentCitation, box: rotated }
+    expect(citationSchema.safeParse(c).success).toBe(false)
+    problemsOf(validateAiOutput('finding', { ...issueFinding, citations: [c] }, stamp))
   })
 })
