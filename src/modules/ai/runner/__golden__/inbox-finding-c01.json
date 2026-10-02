@@ -45,11 +45,9 @@
                   "additionalProperties": false,
                   "properties": {
                     "recordId": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "recordKind": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "source": {
@@ -106,11 +104,9 @@
                       "type": "object"
                     },
                     "documentId": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "quote": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "source": {
@@ -130,7 +126,6 @@
                   "additionalProperties": false,
                   "properties": {
                     "figureKey": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "source": {
@@ -148,7 +143,6 @@
                   "additionalProperties": false,
                   "properties": {
                     "documentId": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "page": {
@@ -185,7 +179,6 @@
             "type": "string"
           },
           "summary": {
-            "minLength": 1,
             "type": "string"
           }
         },
@@ -207,11 +200,9 @@
                   "additionalProperties": false,
                   "properties": {
                     "recordId": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "recordKind": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "source": {
@@ -268,11 +259,9 @@
                       "type": "object"
                     },
                     "documentId": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "quote": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "source": {
@@ -292,7 +281,6 @@
                   "additionalProperties": false,
                   "properties": {
                     "figureKey": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "source": {
@@ -310,7 +298,6 @@
                   "additionalProperties": false,
                   "properties": {
                     "documentId": {
-                      "minLength": 1,
                       "type": "string"
                     },
                     "page": {
@@ -340,7 +327,6 @@
             "type": "string"
           },
           "reason": {
-            "minLength": 1,
             "type": "string"
           }
         },
