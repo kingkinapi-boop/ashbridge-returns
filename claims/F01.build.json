@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "ee1fa1d",
  "worker": "cloud-d42547",
- "state": "hold-findings",
- "at": "2026-10-02T11:25:43.101Z",
+ "state": "reopened",
+ "at": "2026-10-02T12:46:43.559Z",
  "mode": "turbo",
- "note": "FAIL: whitespace-only blanks (tab/NBSP) pass SQL checks, blank pointer ids, caller-set seq; see reports/F01-check.md"
+ "note": "round 3 spec reported (last round)"
 }
