@@ -6,14 +6,13 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 19:30Z by the Lea
 
 - **Mode: turbo** (Zo, 15:30Z, after the Reviewer SLOW of 14:40Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 17:37Z: 5h 3% (new window), week 45%. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`); runs cannot notify, so poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core jobs only; node_modules is installed in the main checkout. None running now.
-- **Landed (34):** F00, F05, F08, DG, DG2, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, D00, D00L, F09B (with F09A), E03, F04, FX1, G01, CQ1, F01D (with F01 and F01C), G10, G11, queue repairs. E03A, BL0, A01, F02. F06, F07. Last train 3c654bb (19:50Z).
+- **Landed (39):** F00, F05, F08, DG, DG2, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, D00, D00L, F09B (with F09A), E03, F04, FX1, G01, CQ1, F01D (with F01 and F01C), G10, G11, queue repairs. E03A, BL0, A01, F02. F06, F07. G12 to G16. Last train 284ab3c (20:32Z).
 - **Zo today:** decisions 0020 (design sitting 1 accepted, viewer B by the Lead A358, his logo, CRA walks off git with data-free copies in reference/cra/) and 0021 (one gitleaks line for fact names in tests; Zo made the edit himself on claude/E03A, 0462739, because the permission system blocks agents from editing .gitleaks.toml).
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Train 001b94c: G12, G13, G14, G15, G16 | train check, 1 cloud run | cloud | 2 Oct 20:15Z | claude/train |
 | A06 round 2 spec (directive now at the top of its card; the queue drops reopen notes, CQ2 item 5) | queue | cloud | 2 Oct 20:12Z | claude/A06 |
 | Next train: A07C at b80c251 (split: lands with D1 to D3 moved to A07D, A384) | Lead | | after the G train | claude/A07C |
 | A03 check; G17 build; W00c spec | queue | cloud | 2 Oct 20:15Z | claude/<card> |

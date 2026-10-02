@@ -3351,7 +3351,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3374,10 +3374,11 @@
       "params": {
         "topic": "assets-cca"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3400,10 +3401,11 @@
       "params": {
         "topic": "shareholders-dividends"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3426,10 +3428,11 @@
       "params": {
         "topic": "payroll-bonuses"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3452,10 +3455,11 @@
       "params": {
         "topic": "shareholder-loans"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01",
@@ -3478,7 +3482,8 @@
       "params": {
         "topic": "vehicle-home-office"
       },
-      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing."
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
