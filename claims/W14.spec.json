@@ -1,11 +1,9 @@
 {
  "card": "W14",
  "role": "spec",
- "worker": "cloud-d1020a",
- "state": "reported",
- "at": "2026-10-02T02:15:29.312Z",
- "mode": "turbo",
- "beat": "2026-10-02T02:08:14.387Z",
- "note": "round 3: 25 tests (24 fail until lib/prior-year.mjs), verify R12 R13; validated on main df7eddf",
- "commit": "0751e5e"
+ "note": "toolchain refit",
+ "worker": "cloud-f60439",
+ "state": "working",
+ "at": "2026-10-02T03:14:31.900Z",
+ "mode": "turbo"
 }
