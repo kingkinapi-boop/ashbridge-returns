@@ -1,0 +1,1 @@
+export default defineConfig({ test: { projects: [{ test: { name: 'unit', include: ['src/**/*.test.ts', 'design/**/*.test.ts'] } }] } })
