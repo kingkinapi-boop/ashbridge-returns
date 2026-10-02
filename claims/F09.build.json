@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "79893e4",
  "worker": "cloud-e1c409",
- "state": "working",
- "at": "2026-10-02T00:57:20.049Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T01:02:22.309Z",
+ "mode": "turbo",
+ "note": "53 of 53 acceptance tests pass, stryker 76.49, flake 5 of 5"
 }
