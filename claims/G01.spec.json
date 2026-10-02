@@ -1,9 +1,11 @@
 {
  "card": "G01",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "30 tests; stub passes all, full suite green",
  "worker": "cloud-20e77a",
- "state": "working",
- "at": "2026-10-02T12:52:43.574Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T12:58:19.769Z",
+ "mode": "turbo",
+ "commit": "5049668",
+ "validated": "f2e97da"
 }
