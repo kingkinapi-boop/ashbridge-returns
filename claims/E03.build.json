@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "b009cc79dc0c54367b4d4e0237e3bf7b691da37f",
  "worker": "cloud-87fd26",
- "state": "reported",
- "at": "2026-10-02T11:45:58.118Z",
+ "state": "released",
+ "at": "2026-10-02T12:46:36.316Z",
  "mode": "turbo",
- "note": "round 3: 783 of 783 pass, mutation 100; scope flags plan/cards/E03.md (Lead's edit)"
+ "note": "merged"
 }
