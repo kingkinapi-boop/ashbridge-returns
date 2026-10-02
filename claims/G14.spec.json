@@ -2,7 +2,10 @@
  "card": "G14",
  "role": "spec",
  "worker": "cloud-85bb68",
- "state": "working",
- "at": "2026-10-02T19:28:21.650Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:31:40.972Z",
+ "mode": "turbo",
+ "note": "13 tests, 8 fail for file missing",
+ "commit": "ebb2054",
+ "validated": "ea8283f2e2fa955a063e584e4d85fabf1cde779e"
 }
