@@ -4,7 +4,8 @@
  "round": 6,
  "spec": "ec7733c",
  "worker": "cloud-662626",
- "state": "working",
- "at": "2026-10-02T04:30:38.411Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T04:40:39.454Z",
+ "mode": "turbo",
+ "note": "verify 534 pass, 5 known, 0 failed; see reports/W15-build.md"
 }
