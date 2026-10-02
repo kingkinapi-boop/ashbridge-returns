@@ -1,11 +1,8 @@
 {
  "card": "W15",
  "role": "spec",
- "note": "fix round 1 re-spec not done: drop answerId label check, add 14-to-15 tie, W14 rules 7-13 on 13-15; new spec worker",
- "worker": "cloud-f60439",
- "state": "reopened",
- "at": "2026-10-02T03:59:48.064Z",
- "mode": "turbo",
- "commit": "435acc2",
- "validated": "eae6b118f84ef8d3781bca0b2ff7ce971473bf55"
+ "worker": "cloud-44dfa6",
+ "state": "working",
+ "at": "2026-10-02T04:18:19.557Z",
+ "mode": "turbo"
 }
