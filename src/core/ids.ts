@@ -3,6 +3,19 @@
 import { randomBytes } from 'node:crypto'
 import { now } from './clock'
 
+type RandomSource = (byteCount: number) => Uint8Array
+
+let random: RandomSource | undefined
+
+/** Tests pin the random part of ids here (ARC-16); resetIdRandom puts the real source back. */
+export function setIdRandom(source: RandomSource): void {
+  random = source
+}
+
+export function resetIdRandom(): void {
+  random = undefined
+}
+
 let lastMs = 0
 let counter = 0
 
@@ -16,6 +29,6 @@ export function newId(): string {
   return (
     ms.toString(16).padStart(12, '0') +
     counter.toString(16).padStart(4, '0') +
-    randomBytes(4).toString('hex')
+    Buffer.from(random ? random(4) : randomBytes(4)).toString('hex')
   )
 }

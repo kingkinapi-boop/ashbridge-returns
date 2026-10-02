@@ -216,6 +216,29 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "F03"
+      ],
+      "paths": [
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.test.ts",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/contracts/__golden__/**"
+      ],
+      "clauses": [
+        "RT-3",
+        "RT-9",
+        "RT-13",
+        "RT-21"
+      ],
+      "id": "F03R",
+      "title": "Taxprep CSV contract: apostrophe and writer repairs",
+      "phase": 0,
+      "size": "S"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "F00",
         "F09"
       ],
@@ -263,7 +286,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F05",
@@ -288,7 +311,8 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "Fix 3 of reports/findings-E03-F03.md: marker, Stryker, survivors closed; lands before SC."
+      "note": "Fix 3 of reports/findings-E03-F03.md: marker, Stryker, survivors closed; lands before SC.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -317,7 +341,7 @@
       "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -350,7 +374,8 @@
       "title": "Core tests by a spec job",
       "phase": 0,
       "size": "S",
-      "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it)."
+      "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -377,7 +402,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -399,7 +424,8 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "Fix round 3 from reports/findings-F09-r2.md (A296, A297): a new spec worker adds checks 17 (no -0) and 18 (non-finite converter input throws RangeError); build the -0 fix and finite guard only; the grammar moved to F09A; lands before F01."
+      "note": "Fix round 3 from reports/findings-F09-r2.md (A296, A297): a new spec worker adds checks 17 (no -0) and 18 (non-finite converter input throws RangeError); build the -0 fix and finite guard only; the grammar moved to F09A; lands before F01.",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",

@@ -1,3 +1,4 @@
+// @mutate
 // The injectable clock (code rule: time comes from here). Tests pin it.
 export interface Clock {
   now(): Date
