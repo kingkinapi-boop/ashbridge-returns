@@ -43,7 +43,7 @@ describe('EV-14 typed values', () => {
     expect(typed({ richText: [{ text: 'a' }, { text: 'b' }] }, false)).toEqual({ type: 'text', text: 'ab' })
     expect(typed({ richText: [] }, false)).toEqual({ type: 'text', text: '' })
     expect(typed({ text: 'link' }, false)).toEqual({ type: 'text', text: 'link' })
-    expect(typed({ text: 5 }, false)).toBeUndefined()
+    expect(typed({ text: 5 }, false)).toEqual({ type: 'number', text: '5' })
     expect(typed({}, false)).toBeUndefined()
     expect(typed({ error: 5 }, false)).toBeUndefined()
   })

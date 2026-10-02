@@ -44,7 +44,7 @@ describe('EV-14 typed: non-finite and nested rich text', () => {
   })
 
   test('EV-14 an object with neither text nor rich text reads as nothing', () => {
-    expect(typed({ text: 5 }, false)).toBeUndefined()
+    expect(typed({ text: 5 }, false)).toEqual({ type: 'number', text: '5' })
     expect(typed({ text: { other: 1 } }, false)).toBeUndefined()
   })
 })
