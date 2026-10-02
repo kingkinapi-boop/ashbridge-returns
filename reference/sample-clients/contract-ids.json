@@ -1,0 +1,747 @@
+{
+  "note": "Every question id and fact id the sample clients may use, each with the line of reference/onboarding-contract.md that names it (W14 spec, findings review W14-D01 RC3). verify.mjs checks every entry against its line. Answers hold the id alone in question_asked (RULE-19: no wording in this repo). A screen answer resolves one of the facts its section 2 row lists; a fact with no screen id arrives as a conversation answer keyed by its fact id (contract line 83). W15, W01 and W05 read this file.",
+  "source": "reference/onboarding-contract.md",
+  "questions": [
+    {
+      "id": "BQ1.bn",
+      "line": 53,
+      "facts": ["FL:102", "FL:195", "FL:196", "FL:229", "FL:230", "FL:231"],
+      "note": "answer_verbatim is a fixed sentence in the client app (line 70): read as given; business number digits come only from corporations.business_number"
+    },
+    {
+      "id": "BQ1.date",
+      "line": 53,
+      "facts": ["FL:102", "FL:195", "FL:196", "FL:229", "FL:230", "FL:231"]
+    },
+    {
+      "id": "BQ1.where",
+      "line": 53,
+      "facts": ["FL:102", "FL:195", "FL:196", "FL:229", "FL:230", "FL:231"]
+    },
+    {
+      "id": "BQ1.address",
+      "line": 53,
+      "facts": ["FL:102", "FL:195", "FL:196", "FL:229", "FL:230", "FL:231"]
+    },
+    {
+      "id": "BQ2.describe",
+      "line": 53,
+      "facts": ["FL:102", "FL:195", "FL:196", "FL:229", "FL:230", "FL:231"]
+    },
+    {
+      "id": "FY1.date",
+      "line": 53,
+      "facts": ["FL:102", "FL:195", "FL:196", "FL:229", "FL:230", "FL:231"]
+    },
+    {
+      "id": "FY1.articles",
+      "line": 53,
+      "facts": ["FL:102", "FL:195", "FL:196", "FL:229", "FL:230", "FL:231"]
+    },
+    {
+      "id": "BQ5.res",
+      "line": 54,
+      "facts": ["FL:201", "FL:207", "FL:232", "FL:233"]
+    },
+    {
+      "id": "INC4.resident",
+      "line": 54,
+      "facts": ["FL:201", "FL:207", "FL:232", "FL:233"]
+    },
+    {
+      "id": "BQ3.partner",
+      "line": 54,
+      "facts": ["FL:201", "FL:207", "FL:232", "FL:233"]
+    },
+    {
+      "id": "INC6.partner",
+      "line": 54,
+      "facts": ["FL:201", "FL:207", "FL:232", "FL:233"]
+    },
+    {
+      "id": "INC4.holders",
+      "line": 55,
+      "facts": ["FL:98", "FL:101", "FL:103", "FL:105", "FL:200", "FL:202", "FL:203", "FL:204", "FL:234", "FL:260", "FL:261"]
+    },
+    {
+      "id": "FY1.more",
+      "line": 55,
+      "facts": ["FL:98", "FL:101", "FL:103", "FL:105", "FL:200", "FL:202", "FL:203", "FL:204", "FL:234", "FL:260", "FL:261"]
+    },
+    {
+      "id": "YE1.phone",
+      "line": 56,
+      "facts": ["FL:84", "FL:92", "FL:93", "FL:208", "FL:210", "FL:248", "FL:249"],
+      "also": [
+        {
+          "line": 65,
+          "fact": "FL:92",
+          "why": "v2 asks this annual fact already (QA:644)"
+        }
+      ]
+    },
+    {
+      "id": "YE1.pcost",
+      "line": 56,
+      "facts": ["FL:84", "FL:92", "FL:93", "FL:208", "FL:210", "FL:248", "FL:249"]
+    },
+    {
+      "id": "YE1.puse",
+      "line": 56,
+      "facts": ["FL:84", "FL:92", "FL:93", "FL:208", "FL:210", "FL:248", "FL:249"]
+    },
+    {
+      "id": "BQ2.operate",
+      "line": 56,
+      "facts": ["FL:84", "FL:92", "FL:93", "FL:208", "FL:210", "FL:248", "FL:249"]
+    },
+    {
+      "id": "BQ3.ins",
+      "line": 56,
+      "facts": ["FL:84", "FL:92", "FL:93", "FL:208", "FL:210", "FL:248", "FL:249"]
+    },
+    {
+      "id": "ARF.files",
+      "line": 57,
+      "facts": ["FL:96", "FL:97", "FL:106", "FL:107", "FL:205", "FL:206", "FL:209", "FL:213", "FL:214", "FL:235", "FL:236", "FL:237", "FL:238", "FL:239", "FL:240", "FL:253", "FL:254"]
+    },
+    {
+      "id": "BQ2.earn",
+      "line": 57,
+      "facts": ["FL:96", "FL:97", "FL:106", "FL:107", "FL:205", "FL:206", "FL:209", "FL:213", "FL:214", "FL:235", "FL:236", "FL:237", "FL:238", "FL:239", "FL:240", "FL:253", "FL:254"]
+    },
+    {
+      "id": "BQ2.agent",
+      "line": 57,
+      "facts": ["FL:96", "FL:97", "FL:106", "FL:107", "FL:205", "FL:206", "FL:209", "FL:213", "FL:214", "FL:235", "FL:236", "FL:237", "FL:238", "FL:239", "FL:240", "FL:253", "FL:254"]
+    },
+    {
+      "id": "BQ3.inv",
+      "line": 57,
+      "facts": ["FL:96", "FL:97", "FL:106", "FL:107", "FL:205", "FL:206", "FL:209", "FL:213", "FL:214", "FL:235", "FL:236", "FL:237", "FL:238", "FL:239", "FL:240", "FL:253", "FL:254"]
+    },
+    {
+      "id": "BQ3.invvalue",
+      "line": 57,
+      "facts": ["FL:96", "FL:97", "FL:106", "FL:107", "FL:205", "FL:206", "FL:209", "FL:213", "FL:214", "FL:235", "FL:236", "FL:237", "FL:238", "FL:239", "FL:240", "FL:253", "FL:254"],
+      "also": [
+        {
+          "line": 65,
+          "fact": "FL:106",
+          "why": "v2 asks this annual fact already (QA:644)"
+        }
+      ]
+    },
+    {
+      "id": "LR1.files",
+      "line": 58,
+      "facts": ["FL:90", "FL:91", "FL:94", "FL:95", "FL:244", "FL:245", "FL:246", "FL:247"]
+    },
+    {
+      "id": "PA3.files",
+      "line": 58,
+      "facts": ["FL:90", "FL:91", "FL:94", "FL:95", "FL:244", "FL:245", "FL:246", "FL:247"]
+    },
+    {
+      "id": "YE1.buy",
+      "line": 58,
+      "facts": ["FL:90", "FL:91", "FL:94", "FL:95", "FL:244", "FL:245", "FL:246", "FL:247"],
+      "also": [
+        {
+          "line": 65,
+          "fact": "FL:94",
+          "why": "v2 asks this annual fact already (QA:644)"
+        }
+      ]
+    },
+    {
+      "id": "YE1.bfiles",
+      "line": 58,
+      "facts": ["FL:90", "FL:91", "FL:94", "FL:95", "FL:244", "FL:245", "FL:246", "FL:247"]
+    },
+    {
+      "id": "YE1.vehicle",
+      "line": 58,
+      "facts": ["FL:90", "FL:91", "FL:94", "FL:95", "FL:244", "FL:245", "FL:246", "FL:247"],
+      "also": [
+        {
+          "line": 65,
+          "fact": "FL:90",
+          "why": "v2 asks this annual fact already (QA:644)"
+        }
+      ]
+    },
+    {
+      "id": "YE1.vkm",
+      "line": 58,
+      "facts": ["FL:90", "FL:91", "FL:94", "FL:95", "FL:244", "FL:245", "FL:246", "FL:247"]
+    },
+    {
+      "id": "YE1.vbkm",
+      "line": 58,
+      "facts": ["FL:90", "FL:91", "FL:94", "FL:95", "FL:244", "FL:245", "FL:246", "FL:247"]
+    },
+    {
+      "id": "BQ7.others",
+      "line": 59,
+      "facts": ["FL:88", "FL:99", "FL:241", "FL:242", "FL:243", "FL:255", "FL:256", "FL:257", "FL:258", "FL:259", "FL:265"],
+      "also": [
+        {
+          "line": 65,
+          "fact": "FL:88",
+          "why": "v2 asks this annual fact already (QA:644)"
+        }
+      ]
+    },
+    {
+      "id": "YE1.personal",
+      "line": 60,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"]
+    },
+    {
+      "id": "YE1.owner",
+      "line": 60,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"],
+      "also": [
+        {
+          "line": 65,
+          "fact": "FL:86",
+          "why": "v2 asks this annual fact already (QA:644)"
+        }
+      ]
+    },
+    {
+      "id": "BQ7.you",
+      "line": 60,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"],
+      "also": [
+        {
+          "line": 65,
+          "fact": "FL:87",
+          "why": "v2 asks this annual fact already (QA:644)"
+        }
+      ]
+    },
+    {
+      "id": "BQ7.name",
+      "line": 60,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"]
+    },
+    {
+      "id": "BQ7.rel",
+      "line": 60,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"]
+    },
+    {
+      "id": "BQ7.addr",
+      "line": 60,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"]
+    },
+    {
+      "id": "BQ8.hst",
+      "line": 61,
+      "facts": ["FL:239", "FL:262"]
+    },
+    {
+      "id": "ARB.type",
+      "line": 62,
+      "facts": ["FL:100", "FL:197", "FL:198", "FL:199", "FL:216", "FL:264", "FL:266", "FL:379", "FL:380", "FL:381", "FL:382", "FL:383", "FL:384", "FL:385", "FL:386"]
+    },
+    {
+      "id": "BQ5.control",
+      "line": 65,
+      "facts": ["FL:98", "FL:101", "FL:103", "FL:105", "FL:200", "FL:202", "FL:203", "FL:204", "FL:234", "FL:260", "FL:261"],
+      "note": "BQ5.* is a family on line 55; BQ5.control is named on line 65 (fact FL:101); facts from line 55"
+    },
+    {
+      "id": "CYA.submit",
+      "line": 22,
+      "facts": [],
+      "channel": "internal",
+      "note": "Check your answers submitted; no fact-list row: what_it_resolves holds the id itself"
+    },
+    {
+      "id": "CRA.confirmed",
+      "line": 40,
+      "facts": [],
+      "channel": "internal",
+      "note": "CRA access confirmed by the firm; no fact-list row: what_it_resolves holds the id itself"
+    },
+    {
+      "id": "PY3.sin",
+      "line": 70,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"],
+      "marker": true,
+      "note": "marker answer: restricted-provided only, read as given, never a value (line 70); facts from line 60 (PY1.* to PY3.*, BQ7.*)"
+    },
+    {
+      "id": "PY3.dob",
+      "line": 70,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"],
+      "marker": true,
+      "note": "marker answer: restricted-provided only, read as given, never a value (line 70); facts from line 60 (PY1.* to PY3.*, BQ7.*)"
+    },
+    {
+      "id": "PY3.bank",
+      "line": 70,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"],
+      "marker": true,
+      "note": "marker answer: restricted-provided only, read as given, never a value (line 70); facts from line 60 (PY1.* to PY3.*, BQ7.*)"
+    },
+    {
+      "id": "BQ7.sin",
+      "line": 70,
+      "facts": ["FL:85", "FL:86", "FL:87", "FL:89", "FL:104", "FL:211", "FL:212", "FL:215", "FL:250", "FL:251", "FL:252", "FL:263"],
+      "marker": true,
+      "note": "marker answer: restricted-provided only, read as given, never a value (line 70); facts from line 60 (PY1.* to PY3.*, BQ7.*)"
+    }
+  ],
+  "facts": [
+    {
+      "id": "FL:84",
+      "lines": [56, 65]
+    },
+    {
+      "id": "FL:85",
+      "lines": [60, 65]
+    },
+    {
+      "id": "FL:86",
+      "lines": [60, 65]
+    },
+    {
+      "id": "FL:87",
+      "lines": [60, 65]
+    },
+    {
+      "id": "FL:88",
+      "lines": [59, 65]
+    },
+    {
+      "id": "FL:89",
+      "lines": [60, 65]
+    },
+    {
+      "id": "FL:90",
+      "lines": [58, 65]
+    },
+    {
+      "id": "FL:91",
+      "lines": [58, 65]
+    },
+    {
+      "id": "FL:92",
+      "lines": [56, 65]
+    },
+    {
+      "id": "FL:93",
+      "lines": [56, 65]
+    },
+    {
+      "id": "FL:94",
+      "lines": [58, 65]
+    },
+    {
+      "id": "FL:95",
+      "lines": [58, 65]
+    },
+    {
+      "id": "FL:96",
+      "lines": [57, 65]
+    },
+    {
+      "id": "FL:97",
+      "lines": [57, 65]
+    },
+    {
+      "id": "FL:98",
+      "lines": [55, 65]
+    },
+    {
+      "id": "FL:99",
+      "lines": [59, 65]
+    },
+    {
+      "id": "FL:100",
+      "lines": [62, 65]
+    },
+    {
+      "id": "FL:101",
+      "lines": [55, 65]
+    },
+    {
+      "id": "FL:102",
+      "lines": [53, 65]
+    },
+    {
+      "id": "FL:103",
+      "lines": [55, 65]
+    },
+    {
+      "id": "FL:104",
+      "lines": [60, 65]
+    },
+    {
+      "id": "FL:105",
+      "lines": [55, 65]
+    },
+    {
+      "id": "FL:106",
+      "lines": [57, 65]
+    },
+    {
+      "id": "FL:107",
+      "lines": [57, 65]
+    },
+    {
+      "id": "FL:195",
+      "lines": [53]
+    },
+    {
+      "id": "FL:196",
+      "lines": [53]
+    },
+    {
+      "id": "FL:197",
+      "lines": [62]
+    },
+    {
+      "id": "FL:198",
+      "lines": [62]
+    },
+    {
+      "id": "FL:199",
+      "lines": [62]
+    },
+    {
+      "id": "FL:200",
+      "lines": [55]
+    },
+    {
+      "id": "FL:201",
+      "lines": [54]
+    },
+    {
+      "id": "FL:202",
+      "lines": [55]
+    },
+    {
+      "id": "FL:203",
+      "lines": [55]
+    },
+    {
+      "id": "FL:204",
+      "lines": [55]
+    },
+    {
+      "id": "FL:205",
+      "lines": [57]
+    },
+    {
+      "id": "FL:206",
+      "lines": [57]
+    },
+    {
+      "id": "FL:207",
+      "lines": [54]
+    },
+    {
+      "id": "FL:208",
+      "lines": [56]
+    },
+    {
+      "id": "FL:209",
+      "lines": [57]
+    },
+    {
+      "id": "FL:210",
+      "lines": [56]
+    },
+    {
+      "id": "FL:211",
+      "lines": [60]
+    },
+    {
+      "id": "FL:212",
+      "lines": [60]
+    },
+    {
+      "id": "FL:213",
+      "lines": [57]
+    },
+    {
+      "id": "FL:214",
+      "lines": [57]
+    },
+    {
+      "id": "FL:215",
+      "lines": [60]
+    },
+    {
+      "id": "FL:216",
+      "lines": [62]
+    },
+    {
+      "id": "FL:229",
+      "lines": [53]
+    },
+    {
+      "id": "FL:230",
+      "lines": [53]
+    },
+    {
+      "id": "FL:231",
+      "lines": [53]
+    },
+    {
+      "id": "FL:232",
+      "lines": [54]
+    },
+    {
+      "id": "FL:233",
+      "lines": [54]
+    },
+    {
+      "id": "FL:234",
+      "lines": [55]
+    },
+    {
+      "id": "FL:235",
+      "lines": [57]
+    },
+    {
+      "id": "FL:236",
+      "lines": [57]
+    },
+    {
+      "id": "FL:237",
+      "lines": [57]
+    },
+    {
+      "id": "FL:238",
+      "lines": [57]
+    },
+    {
+      "id": "FL:239",
+      "lines": [57, 61]
+    },
+    {
+      "id": "FL:240",
+      "lines": [57]
+    },
+    {
+      "id": "FL:241",
+      "lines": [59]
+    },
+    {
+      "id": "FL:242",
+      "lines": [59]
+    },
+    {
+      "id": "FL:243",
+      "lines": [59]
+    },
+    {
+      "id": "FL:244",
+      "lines": [58]
+    },
+    {
+      "id": "FL:245",
+      "lines": [58]
+    },
+    {
+      "id": "FL:246",
+      "lines": [58]
+    },
+    {
+      "id": "FL:247",
+      "lines": [58]
+    },
+    {
+      "id": "FL:248",
+      "lines": [56]
+    },
+    {
+      "id": "FL:249",
+      "lines": [56]
+    },
+    {
+      "id": "FL:250",
+      "lines": [60]
+    },
+    {
+      "id": "FL:251",
+      "lines": [60]
+    },
+    {
+      "id": "FL:252",
+      "lines": [60]
+    },
+    {
+      "id": "FL:253",
+      "lines": [57]
+    },
+    {
+      "id": "FL:254",
+      "lines": [57]
+    },
+    {
+      "id": "FL:255",
+      "lines": [59]
+    },
+    {
+      "id": "FL:256",
+      "lines": [59]
+    },
+    {
+      "id": "FL:257",
+      "lines": [59]
+    },
+    {
+      "id": "FL:258",
+      "lines": [59]
+    },
+    {
+      "id": "FL:259",
+      "lines": [59]
+    },
+    {
+      "id": "FL:260",
+      "lines": [55]
+    },
+    {
+      "id": "FL:261",
+      "lines": [55]
+    },
+    {
+      "id": "FL:262",
+      "lines": [61]
+    },
+    {
+      "id": "FL:263",
+      "lines": [60]
+    },
+    {
+      "id": "FL:264",
+      "lines": [62]
+    },
+    {
+      "id": "FL:265",
+      "lines": [59]
+    },
+    {
+      "id": "FL:266",
+      "lines": [62]
+    },
+    {
+      "id": "FL:379",
+      "lines": [62]
+    },
+    {
+      "id": "FL:380",
+      "lines": [62]
+    },
+    {
+      "id": "FL:381",
+      "lines": [62]
+    },
+    {
+      "id": "FL:382",
+      "lines": [62]
+    },
+    {
+      "id": "FL:383",
+      "lines": [62]
+    },
+    {
+      "id": "FL:384",
+      "lines": [62]
+    },
+    {
+      "id": "FL:385",
+      "lines": [62]
+    },
+    {
+      "id": "FL:386",
+      "lines": [62]
+    }
+  ],
+  "left_out": [
+    {
+      "id": "INC1.*",
+      "line": 53,
+      "why": "family only"
+    },
+    {
+      "id": "INC2.*",
+      "line": 53,
+      "why": "family only"
+    },
+    {
+      "id": "BQ4.*",
+      "line": 55,
+      "why": "family only"
+    },
+    {
+      "id": "BQ5.*",
+      "line": 55,
+      "why": "family only (BQ5.res line 54 and BQ5.control line 65 are listed)"
+    },
+    {
+      "id": "BQ6.*",
+      "line": 55,
+      "why": "family only"
+    },
+    {
+      "id": "INC3.*",
+      "line": 55,
+      "why": "family only"
+    },
+    {
+      "id": "ARB.*",
+      "line": 57,
+      "why": "family only (ARB.type line 62 is listed)"
+    },
+    {
+      "id": "BQ8.*",
+      "line": 59,
+      "why": "family only (BQ8.hst line 61 is listed)"
+    },
+    {
+      "id": "PY1.*",
+      "line": 60,
+      "why": "family only"
+    },
+    {
+      "id": "PY2.*",
+      "line": 60,
+      "why": "family only"
+    },
+    {
+      "id": "PY3.*",
+      "line": 60,
+      "why": "family only (the PY3 markers on line 70 are listed)"
+    },
+    {
+      "id": "HST1.*",
+      "line": 61,
+      "why": "family only"
+    },
+    {
+      "id": "PA1.*",
+      "line": 62,
+      "why": "family only"
+    },
+    {
+      "id": "ARF.*",
+      "line": 64,
+      "why": "family only (ARF.files line 57 is listed)"
+    },
+    {
+      "id": "CRAB.choice",
+      "line": 42,
+      "why": "stored as option wording, never parsed"
+    }
+  ],
+  "left_out_note": "A family id is listed only when its member is found in the client app source (read-only). The W14 spec job (2 Oct 2026) could not reach ashbridge-app from its cloud session, so no family member was added from source; add one only with its file and line there."
+}
