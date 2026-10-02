@@ -5,9 +5,9 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 02:37Z by the Lea
 ## State
 
 - **Mode: turbo** (Zo 2 Oct ~02:00Z "turbo on", decision 0018, after the Reviewer SLOW of 01:50Z, reviews/REVIEW.md). Wind-down Fri 9 Oct 18:00 Toronto. The Reviewer HOLD stands: nothing using money.ts, ids.ts or the clock lands until card F00T lands.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims, ScheduleWakeup ~30 min). Up to 3 cloud runs until queue repair 3 lands (sign-off condition), then 6. Laptop: the Lead, 2 local queue workers (0018), one Chrome walker, helpers.
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims, ScheduleWakeup ~30 min). Queue repair 3 landed 2 Oct 03:15Z: sign-off conditions met, up to 6 cloud runs. Laptop: the Lead, 2 local queue workers (0018), one Chrome walker, helpers.
 - **Zo:** to-do has no open question. Day 4 (Auto-fill, Zo) Sat 3 Oct. Decisions 0016 to 0018 today.
-- **Landed:** F00, F05, F08, DG round 1 (8512e1d, 2 Oct), queue repairs 1 and 2. Phase 2 carded and reviewed.
+- **Landed:** F00, F05, F08, DG round 1, queue repairs 1 to 3. Train A05 + W14 requested (fbe5c4b). Day 5 of the trial done; to-do #1 red (pasted diagnostics, T05 waits).
 
 ## In flight
 
