@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "c52b2f4",
  "worker": "cloud-b1776c",
- "state": "reported",
- "at": "2026-10-02T01:31:04.303Z",
+ "state": "released",
+ "at": "2026-10-02T03:42:05.577Z",
  "mode": "turbo",
- "note": "round 2: 42 of 42 storage tests, full suite 208 pass, head 6acc4b9"
+ "note": "merged"
 }
