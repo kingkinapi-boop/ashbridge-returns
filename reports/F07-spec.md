@@ -17,3 +17,7 @@ Sonnet 5.5 (card is `security`, not `core`; no Opus subagent).
 4. Associated companies: one group per connected set of associated corporations that have returns; every return links every other return in the group.
 5. Two schema files: `05_bridge.sql` (client_refs, client_handoff) and one sorting after 50 (e.g. `55_bridge_returns.sql`) for tables with a return FK. Card Paths should add it.
 6. Not tested, left to a later test-world card: a mapper from `reference/sample-clients/*/onboarding.json` to the snapshot.
+
+## Toolchain refit (2026-10-02)
+Merged origin/main 187902d into claude/F07. Typecheck, lint and both Vitest projects show failures only in the F07 acceptance files (missing src/contracts/bridge and src/modules/bridge, as intended); every other test passes (unit 1685, db 350). No assertion changed. validated on main 187902d.
+Permission gaps: none. Model: Sonnet 5.5.
