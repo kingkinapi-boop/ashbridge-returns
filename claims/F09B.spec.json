@@ -1,12 +1,8 @@
 {
  "card": "F09B",
  "role": "spec",
- "worker": "cloud-413d14",
- "state": "reopened",
- "at": "2026-10-02T10:38:33.006Z",
- "mode": "turbo",
- "beat": "2026-10-02T09:05:22.898Z",
- "note": "round 2: decimal boundary rows, exact long-run geometry, NEL (card Round 2)",
- "commit": "0e51882",
- "validated": "9f743eab98a1e52c0118e58ef3007918a9c43e79"
+ "worker": "cloud-87cb2a",
+ "state": "working",
+ "at": "2026-10-02T10:40:13.061Z",
+ "mode": "turbo"
 }
