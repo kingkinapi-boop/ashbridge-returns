@@ -1,12 +1,9 @@
 {
  "card": "SC",
  "role": "spec",
- "worker": "cloud-ef21b9",
- "state": "reported",
- "at": "2026-10-02T20:43:57.187Z",
- "mode": "turbo",
- "beat": "2026-10-02T20:33:39.986Z",
- "note": "KNOWN entries (owner FX3) added; unit 75/75, db 19/19, npm test green",
- "commit": "d7b400a",
- "validated": "b4405a4"
+ "note": "toolchain refit",
+ "worker": "cloud-186a3b",
+ "state": "working",
+ "at": "2026-10-02T20:56:25.884Z",
+ "mode": "turbo"
 }
