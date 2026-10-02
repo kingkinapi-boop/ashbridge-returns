@@ -4,7 +4,8 @@
  "round": 38,
  "spec": "34e8ac0",
  "worker": "cloud-1fe112",
- "state": "working",
- "at": "2026-10-02T20:11:15.626Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:11:22.656Z",
+ "mode": "turbo",
+ "note": "re-offered at once after release; same blocker, see reports/SC-build.md"
 }
