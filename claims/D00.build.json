@@ -1,11 +1,10 @@
 {
  "card": "D00",
  "role": "build",
- "round": 3,
+ "round": 4,
  "spec": "82aeffe",
- "worker": "cloud-f135fc",
- "state": "released",
- "at": "2026-10-02T08:38:17.454Z",
- "mode": "turbo",
- "note": "premise still wrong on main 7dd2c02: govuk-frontend, MOJ frontend, sass, nunjucks, axe-core, moment not in package.json; logo not in repo. See reports/D00-build.md. Lead must add them"
+ "worker": "cloud-e43f36",
+ "state": "working",
+ "at": "2026-10-02T08:39:13.699Z",
+ "mode": "turbo"
 }
