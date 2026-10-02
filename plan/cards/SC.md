@@ -46,3 +46,19 @@ R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden fi
 - R36 money read from text only: no `dollarsToCents(number)`, no `x*100` from JSON numbers.
 - R37 (was TH R5) byte-compared files are `-text` or `binary` and `git ls-files --eol` agrees; planted CRLF CSV under `eol=lf`.
 - R38 (was TH R6) no test builds expected bytes with a non-UTF-8 TextDecoder or TextEncoder; setup fails below Node 24.
+- R39 (F09B check note, 2 Oct): any geometry predicate over words sees one page only; planted: `amountGroups` over "1" on page 1 and "234.56" on page 2 must not join (callers other than `valueInBox` pass words from one page, or `amountGroups` splits by page).
+- R40 (F09B check note): a word made only of invisible characters (Cf, Cc, U+034F, U+3164, U+2800, whitespace) is blank everywhere WordSchema is used.
+
+## From findings F01 round 2 (2 Oct, reports/findings-F01-r2.md)
+- R13 rewritten: catalog-driven non-blank over every text column of schema returns outside the value allow-list (kept in src/contracts/text.ts with reasons), using the F01 blank sample set; planted a `btrim` check that accepts a tab, and a column with no check.
+- R41 one blank definition: no `btrim(`, `trim(`, `[[:space:]]` or `\s` in db/schema checks; no `.trim()` or `min(1)` non-blank rule in src/contracts or src/modules; non-blank goes through text.ts. Absorbs R40.
+- R42 SQL and zod parity field by field, both ways; planted a `z.string()` field over a non-blank column.
+- R43 every return_id, and every `*_id` whose target table exists, is a foreign key; pointer ids to unbuilt tables are non-blank and the allow-list names the future card.
+- R44 every identity column refuses OVERRIDING SYSTEM VALUE; every `version_no` or `*_version` column refuses a gap or a jump.
+- R45 (E03 check note, 2 Oct): the sensitive-key name rule (facts.ts:45-51) is table-driven and covers bank transit, institution and account numbers, date of birth, SIN, business number and similar; planted keys `bank_transit`, `institution_no`, `dob` must be sensitive. The loader enforces each key's cite pattern and refuses duplicate enum options.
+
+## From findings A07 round 1 (2 Oct, reports/findings-A07-r1.md)
+- R46 no module turns a library value into text through `.text`, `String(x)` or a template without a typed switch; planted `cell.text`.
+- R47 every ARC-11 cache key covers every input its result depends on and the cache returns a copy; run on each reader adapter (A01, A02, A03, A07, B04): same bytes under two names or options, then mutate a returned result and read again.
+- R48 every reader whose contract says "hidden" or "never dropped" is tested with an empty instance (empty hidden row or column, blank page).
+- R49 no `z.string().trim()` transform in src/contracts (joins R41).

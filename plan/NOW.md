@@ -1,39 +1,48 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 11:15Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 15:30Z by the Lead (turbo on). Times are UTC from `date -u`.
 
 ## State
 
-- **Mode: turbo** (Zo, decision 0018). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 07:15Z: 5h 1% (new window), week 31%.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`), up to 6 runs. Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup ~30 min). Laptop: up to 2 local workers (0018); they have no subagent tool, so core specs and checks go to the cloud (A331). None running now.
-- **Zo:** to-do #1 design sitting at http://localhost:8765/ (python http.server from the session scratchpad `sitting` folder; if it is down after a reboot, the bundle must be rebuilt: designer helper from the four `claude/design-*-2` branches, see reports/findings-designs-2.md "For Zo"). Day 4 (Auto-fill, Zo) Sat 3 Oct. Decisions 0016 to 0019 today; blueprint v1.2 (0019: preparer pastes the diagnostics list).
-- **Landed (18 done):** DG2, D00, DG, F03R, D01, TH, F00, F05, F08, DG rounds 1 and 2, A05, W14, W15, F03, F00T, F05M, F09, queue repairs 1 to 3. Reviewer HOLD lifted.
+- **Mode: turbo** (Zo, 15:30Z, to-do #1; after the Reviewer SLOW of 14:40Z). First: FX1 and F01C land, then CQ1, cards ahead, W kinds. Wind-down Fri 9 Oct 18:00 Toronto. Blueprint v1.2 (status.mjs prints v1.1 until CQ1).
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). Running now: A07 build round 2 (cloud-575f8d). Laptop: none running (2 allowed, 0018; node_modules now installed in the main checkout).
+- **Landed (21):** F00, F05, F08, DG rounds, A05, W14, W15, F03, F00T, F05M, F09, TH, F03R, D01, DG, DG2, D00, F09B (with F09A's work), E03, F04, queue repairs.
+- **Zo's answers today:** decision 0020 (design sitting 1 accepted, viewer B by the Lead A358, his logo, CRA walks off git with data-free copies in reference/cra/).
 
 ## In flight
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| F02 spec | cloud run | cloud | 2 Oct 11:02Z | claude/F02 |
-| Queue: F01 check (core, Opus read), W00 build round 2, F09B build round 2, E03 spec round 3 (A355) | cloud runs | cloud | 2 Oct 11:15Z | claude/<card> |
+| Queue: F01C check (core), FX1 spec, A07 check (round 2), E03A check (core), CQ1 spec | 6 cloud runs | cloud | 2 Oct 15:35Z | claude/<card> |
+| 2 local workers (non-core jobs) | worker | laptop worktrees | 2 Oct 15:35Z | claude/<card> |
+| W00 findings review round 2 (Opus, local helper; Lead records reports/findings-W00-r2.md) | helper | laptop | 2 Oct 15:35Z | - |
+| Train: red-held (G01 flake, A361); re-board G01 and D00L with FX1 | train | - | 2 Oct 14:30Z | claude/train |
 
-No train open (DG2, D00 landed c93b43f). S00 build waits on W00 (A354); U00 and D02 to D13 parked until Zo's sitting.
+## Ready for the next runs (in this order once dispatch is allowed)
 
-## Next, in order
+1. FX1 spec, build, check (cold-tool timeouts; every train can flake until it lands).
+2. F01C check (core, Opus read; build reported, 1 unrelated fail = the Node-22 Windows-1252 test W00 owns).
+3. Train: FX1, G01, D00L, then F01C; land; set mode turbo (Zo's rule) and write the decision.
+4. W00 round 3: check failed again (SEC-11 guard holes, roll check gaps, reports/W00-check.md on claude/W00). Findings review first (Opus); a third failure parks or splits. S00, W01 to W13, JH0 wait on W00.
+5. E03A check (core; Schedule 8 line refs 203 and 207 from memory: Opus confirms). W02 to W05 builds wait on W00.
+6. A01 build round 3 and BL0 build wait on F01C. A03, G10, G11 builds.
 
-1. Poll claims; board every PASS (scope, GitHub checks, Opus read for core): F09B, DG2, D00, E03, F01; then W00 round 2, A01, S00. After a spec fix reports, reopen the held build (`update <card> build reopened --worker lead`) or the queue stays empty. One train at a time via plan/train.json; land by MERGING main into the train, code-diff guard, ff main; record only after the push.
-2. W00 round 2 (A353): spec reopened; reopen the build after its spec reports AND DG2 lands (DG2 is new, after DG). Zo has an open question in chat on the logo copied to reference/brand (A350); keep it unless he says remove.
-3. After F09B lands (F09A parked, A349): F04 build, A01 build round 2; then I00, E01, A07, W20, SK0.
-4. W00 check 8 CRLF: decided A347 (W00 build owns .gitattributes line and the taxprep CSVs).
-5. Taxprep: day 6 Sun 4 Oct (changes after lock, check export, roll forward, copy one full diagnostics panel); day 4 Zo Sat 3 Oct.
-6. Designs: Zo's sitting answers (Q1 to Q7) into decisions and fix cards; then D00, D01, D05.
-7. B01 spec (reference/qbo/gfi-file.md, A305). W16 card to write (W14 KNOWN R8 fails on 03, 04, 07, 08, 10). SC grows: R23 to R31 (reports/findings-wave2.md, findings-F03R-r2.md).
+## Lead work that needs no dispatch
+
+- CQ1 card: claim.mjs never re-offers a build after a PASS or a landing (F04), skips cards whose deps cannot start (G12 picked 7 times, U00 6, D02 5), and status.mjs reads the blueprint version.
+- Write cards T08, Q00, Q01, I01, I30, I40 (queue depth; Reviewer).
+- Design lane: fix cards from reports/design-retest-2026-10-01.md (Q1 to Q8) into the approved versions; D cards then copy them into design/screens/ (A352).
+- Metrics lines carry tokens and minutes, and "rounds" means build rounds (merge skill).
+- scope.mjs DG flags e480b61, a DG2 commit that reached claude/DG through main: a false alarm.
 
 ## Watch out
 
-- Landing: never `rebase --rebase-merges` a train; merge main in. Pushing a train straight to main is refused.
-- Findings reports: subagents cannot write report files; record their text under reports/ yourself. Findings review before every fix round; a single-cause gap may go straight back (A306); a third failure parks or splits.
-- Never weaken redaction, permissions or security checks to pass a test (A329); never route a refused edit through another worker.
-- Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time, window visible. QBO and iFirm sign out: a walker stops at a sign-in page; ask Zo.
+- Landing: never `rebase --rebase-merges` a train; merge main in; push local main first so the ff works. Pushing a train straight to main is refused.
+- After a spec fix reports, reopen the held build (`update <card> build reopened --worker lead`) or the queue stays empty.
+- Findings reports: record helpers' text under reports/ yourself. Findings review before every fix round; a single-cause gap may go straight back (A306); a third failure parks or splits (F09A to F09B, F01 to F01C).
+- Never weaken redaction, permissions or security checks to pass a test (A329).
+- No real client data: Assets/ (Zo's CRA walks) is excluded from git (.git/info/exclude); never commit it.
+- Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time, window visible.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`. Critic and Reviewer sessions commit to main too.
 - Push guard: only plan/, reviews/, decisions/, reference/, blueprint/, reports/, CLAUDE.md, README.md, .claude/ straight to main.
 - Never kill processes by name. Another Lead works in ashbridge-app: read-only there.
