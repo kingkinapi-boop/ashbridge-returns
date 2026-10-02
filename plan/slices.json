@@ -1113,7 +1113,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -1142,7 +1142,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -1671,7 +1672,7 @@
       "security": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -1690,7 +1691,8 @@
       "title": "File storage and Drive stand-ins",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -4664,7 +4666,7 @@
       "size": "M",
       "hard": false,
       "core": true,
-      "note": " Waits on to-do (2 Oct): the pasted diagnostics list adds a preparer step to end state item 4 (red)."
+      "note": " Paste approved (decision 0019, blueprint v1.2)."
     },
     {
       "status": "carded",
