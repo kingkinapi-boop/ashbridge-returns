@@ -1,10 +1,10 @@
 {
  "card": "W00",
  "role": "spec",
- "note": "refit, validated on main 7dd2c02; finding: src/contracts/taxprep.acceptance.test.ts:280 taxprepBytes (line 84) must accept CRLF-stored file after A347, F03R spec to fix",
+ "note": "round 2 per card (findings-W00-r1); build waits DG2",
  "worker": "cloud-3703a0",
- "state": "reported",
- "at": "2026-10-02T08:38:02.647Z",
+ "state": "reopened",
+ "at": "2026-10-02T09:43:03.305Z",
  "mode": "turbo",
  "commit": "87b5390",
  "validated": "7dd2c02"
