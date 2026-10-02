@@ -1,9 +1,11 @@
 {
  "card": "W00",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit only: validated on main f2e97da (typecheck, lint, 1650 unit + 2 db green), no assertion changed",
  "worker": "cloud-e945f9",
- "state": "working",
- "at": "2026-10-02T12:47:41.823Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T12:50:22.410Z",
+ "mode": "turbo",
+ "commit": "27db925",
+ "validated": "f2e97dab8911a9781bd33ac77032849c2f9e8f43"
 }
