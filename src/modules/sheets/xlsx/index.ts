@@ -44,9 +44,6 @@ type Parts = { text: string; type: Cell['type'] }
 const EMPTY: Parts = { text: '', type: 'empty' }
 type Cached = NonNullable<Cell['cached']>
 
-/** The cent amount in plain digits: String below 1e21, every digit from there up, never exponent form. */
-const plain = (n: number): string => (Math.abs(n) < 1e21 ? String(n) : BigInt(n).toString())
-
 const FLOAT_VIEW = new DataView(new ArrayBuffer(8))
 
 /** One unit in the last place of x (the gap to the next double of larger magnitude). */
@@ -61,12 +58,17 @@ export function ulp(x: number): number {
 const MAX_BAND = 0.0025
 const ULPS_IN_BAND = 4
 
-/** A stored double as text: a value within 4 ulps (never half a cent) of a whole cent is that cent amount, anything else its shortest round-trip text. */
+/** Beyond this a double has no cents to snap to: its own shortest round-trip text, never digits written out in full. */
+const NO_CENTS_FROM = 1e21
+
+/** A stored double as text: a value within 4 ulps (never half a cent) of a whole cent is that cent amount (never zero for a nonzero value), anything else its shortest round-trip text. */
 export function numberText(x: number): string {
+  if (Math.abs(x) >= NO_CENTS_FROM) return String(x)
   const cents = Number.isInteger(x) ? x : Math.round(x * 100) / 100
+  if (cents === 0 && x !== 0) return String(x)
   const gap = Math.abs(x - cents)
   const ulpBand = Math.min(MAX_BAND, ULPS_IN_BAND * ulp(Math.max(Math.abs(x), Math.abs(cents))))
-  return gap <= ulpBand ? plain(cents) : String(x)
+  return gap <= ulpBand ? String(cents) : String(x)
 }
 
 /** The error text for a number cell that is not a finite number (the library drops the stored text, so one code stands for all). */
@@ -139,44 +141,93 @@ function toCents(cellText: string): bigint | undefined {
   return found[1] === '-' ? -cents : cents
 }
 
-/** The exact cent total of a SUM range's number terms and how far a floating-point sum of them can stray; undefined when a term is an error or not a cent amount. */
-function sumOf(byAddress: Map<string, Cell>, range: RegExpExecArray): { cents: bigint; bound: number } | undefined {
-  let cents = 0n
-  let count = 0
-  let peak = 0
+/** A SUM cell waiting to be snapped: where its terms are, what the file cached, and whether it sits in a reference cycle. */
+type SumNode = { cell: Cell; range: RegExpExecArray; original: number; terms?: Cell[]; inCycle: boolean; done: boolean }
+
+/** The cells of a SUM range that exist, in range order. */
+function termCells(byAddress: Map<string, Cell>, range: RegExpExecArray): Cell[] {
+  const found: Cell[] = []
   for (let r = Number(range[2]); r <= Number(range[4]); r++) {
     for (let c = columnNumber(range[1] as string); c <= columnNumber(range[3] as string); c++) {
       const term = byAddress.get(`${String(r)}:${String(c)}`)
-      const value = term?.type === 'formula' ? term.cached : term
-      if (value?.type === 'error') return undefined
-      if (value?.type !== 'number') continue
-      const termCents = toCents(value.text)
-      if (termCents === undefined) return undefined
-      cents += termCents
-      count++
-      peak = Math.max(peak, Math.abs(Number(value.text)))
+      if (term) found.push(term)
     }
   }
+  return found
+}
+
+/**
+ * The exact cent total of a SUM's number terms and how far its cached floating-point sum can stray; undefined when a term is
+ * an error or not a cent amount. The sum Excel stored added the cached doubles of its terms, so each snapped term's own
+ * distance from its cached double counts too.
+ */
+function sumOf(terms: Cell[], nodes: Map<Cell, SumNode>): { cents: bigint; bound: number } | undefined {
+  let cents = 0n
+  let count = 0
+  let peak = 0
+  let drift = 0
+  for (const term of terms) {
+    const value = term.type === 'formula' ? term.cached : term
+    if (value?.type === 'error') return undefined
+    if (value?.type !== 'number') continue
+    const termCents = toCents(value.text)
+    if (termCents === undefined) return undefined
+    cents += termCents
+    count++
+    peak = Math.max(peak, Math.abs(Number(value.text)))
+    const inner = nodes.get(term)
+    if (inner) drift += Math.abs(Number(value.text) - inner.original)
+  }
   // Every addition rounds by at most an ulp of the largest partial sum (at most count times the largest term), and every term is itself rounded.
-  return { cents, bound: (count + 1) * ulp(count * peak) }
+  return { cents, bound: (count + 1) * ulp(count * peak) + drift }
+}
+
+/** Snaps one SUM whose terms are all settled. */
+function snapSum(node: SumNode, nodes: Map<Cell, SumNode>): void {
+  const sum = sumOf(node.terms as Cell[], nodes)
+  if (!sum || node.inCycle) return
+  const cell = node.cell
+  const total = Number(sum.cents) / 100
+  // Stryker disable next-line EqualityOperator: a difference exactly equal to the bound cannot be built
+  if (Math.abs(node.original - total) > Math.min(HALF_CENT, sum.bound + ulp(total))) return
+  cell.cached = { type: 'number', text: String(total) }
+  cell.text = cell.cached.text
 }
 
 /**
  * A SUM over number cells whose cached value is the floating-point sum of its terms reads as the exact cent total
- * (never recalculated: a cache that disagrees by more than the sum's own rounding keeps its own text).
+ * (never recalculated: a cache that disagrees by more than the sum's own rounding keeps its own text). A SUM over other
+ * SUMs waits for them, whatever order the cells sit in; a SUM in a reference cycle keeps its own text.
  */
 function snapSums(cells: Cell[]): void {
   const byAddress = new Map<string, Cell>(cells.map((c) => [`${String(c.row)}:${String(c.column.number)}`, c]))
+  const nodes = new Map<Cell, SumNode>()
   for (const cell of cells) {
     if (cell.cached?.type !== 'number') continue
     const range = SUM_RANGE.exec(cell.formula as string)
-    const sum = range ? sumOf(byAddress, range) : undefined
-    if (!sum) continue
-    const total = Number(sum.cents) / 100
-    // Stryker disable next-line EqualityOperator: a difference exactly equal to the bound cannot be built
-    if (Math.abs(Number(cell.cached.text) - total) > Math.min(HALF_CENT, sum.bound + ulp(total))) continue
-    cell.cached = { type: 'number', text: plain(total) }
-    cell.text = cell.cached.text
+    if (range) nodes.set(cell, { cell, range, original: Number(cell.cached.text), inCycle: false, done: false })
+  }
+  // Depth first on an explicit stack (a chain of 20,000 SUMs must not overflow the call stack).
+  for (const root of nodes.values()) {
+    const stack: { node: SumNode; dependencies: SumNode[]; next: number }[] = []
+    const enter = (node: SumNode): void => {
+      node.terms = termCells(byAddress, node.range)
+      stack.push({ node, dependencies: node.terms.flatMap((t) => nodes.get(t) ?? []), next: 0 })
+    }
+    if (!root.done && root.terms === undefined) enter(root)
+    while (stack.length > 0) {
+      const top = stack[stack.length - 1] as (typeof stack)[number]
+      const dependency = top.dependencies[top.next++]
+      if (dependency === undefined) {
+        snapSum(top.node, nodes)
+        top.node.done = true
+        stack.pop()
+      } else if (dependency.terms === undefined) enter(dependency)
+      else if (!dependency.done) {
+        // Met again while still being worked on: everything from there up the stack is in the cycle.
+        for (let i = stack.findIndex((f) => f.node === dependency); i < stack.length; i++) (stack[i] as (typeof stack)[number]).node.inCycle = true
+      }
+    }
   }
 }
 

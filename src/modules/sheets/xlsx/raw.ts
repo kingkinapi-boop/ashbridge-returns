@@ -59,28 +59,106 @@ const CELL = /<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g
 const FORMULA = /<f\b([^>]*?)(?:\/>|>([\s\S]*?)<\/f>)/
 
 const columnNumber = (letters: string): number => Array.from(letters).reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0)
-/** A relative reference: not part of a longer name, not a function call, not inside a string (strings are cut out first). */
-const REFERENCE = /(?<![A-Za-z0-9_.])(\$?)([A-Z]{1,3})(\$?)(\d+)(?![A-Za-z0-9_(])/g
+const MAX_COLUMN = 16_384
+const MAX_ROW = 1_048_576
+/** What may follow a reference: not more name, not a call, not a sheet prefix or a table (then it was a name, not a reference). */
+const NOT_NAME_AFTER = '(?![A-Za-z0-9_.(!\\[])'
+const CELL_PART = '\\$?[A-Z]{1,3}\\$?\\d+'
+const COLUMN_PART = '\\$?[A-Z]{1,3}'
+const ROW_PART = '\\$?\\d+'
+const AREA = new RegExp(`${CELL_PART}(?::${CELL_PART})?${NOT_NAME_AFTER}`, 'y')
+const COLUMNS = new RegExp(`${COLUMN_PART}:${COLUMN_PART}${NOT_NAME_AFTER}`, 'y')
+const ROWS = new RegExp(`${ROW_PART}:${ROW_PART}${NOT_NAME_AFTER}`, 'y')
+const NUMBER = /\d[\d.]*(?:[eE][+-]?\d+)?[A-Za-z0-9_.]*/y
+const WORD = /[A-Za-z_\\][A-Za-z0-9_.]*/y
+const PART = /^(\$?)([A-Z]{1,3})?(\$?)(\d+)?$/
 
-/** A shared formula's text moved from its master's address to a child's: relative references slide, absolute ones stay. */
+/** One end of a reference (a cell, a column or a row) moved by (dc, dr); undefined when it falls off the grid. */
+function slidePart(part: string, columns: number, rows: number): string | undefined {
+  const [, first, col, second, row] = PART.exec(part) as unknown as [string, string, string | undefined, string, string | undefined]
+  // A row alone ("$1") has its "$" before the digits, where a cell has it between letters and digits.
+  const colAbs = col === undefined ? '' : first
+  const rowAbs = col === undefined ? first : second
+  let out = ''
+  if (col !== undefined) {
+    const c = colAbs ? columnNumber(col) : columnNumber(col) + columns
+    if (c < 1 || c > MAX_COLUMN) return undefined
+    out += `${colAbs}${columnLetter(c)}`
+  }
+  if (row !== undefined) {
+    const r = rowAbs ? Number(row) : Number(row) + rows
+    if (r < 1 || r > MAX_ROW) return undefined
+    out += `${rowAbs}${String(r)}`
+  }
+  return out
+}
+
+/** The end of a quoted name or string starting at `start` (the quote), where a doubled quote is part of it. */
+function closeQuote(formula: string, start: number): number {
+  const quote = formula[start] as string
+  let i = start + 1
+  while (i < formula.length) {
+    if (formula[i] === quote) {
+      if (formula[i + 1] === quote) i += 2
+      else return i + 1
+    } else i++
+  }
+  return formula.length
+}
+
+/** The end of a bracketed part starting at `start` (the "["), brackets nested. */
+function closeBracket(formula: string, start: number): number {
+  let depth = 0
+  for (let i = start; i < formula.length; i++) {
+    if (formula[i] === '[') depth++
+    else if (formula[i] === ']' && --depth === 0) return i + 1
+  }
+  return formula.length
+}
+
+/**
+ * A shared formula's text moved from its master's address to a child's. One tokenizer: strings, quoted sheet names,
+ * brackets (tables and external parts), names and numbers stay as they are; cell, column and row references slide on
+ * their own axes, absolute parts stay; a reference that slides off the grid reads #REF!.
+ */
 export function slide(formula: string, from: string, to: string): string {
   const a = /^([A-Z]+)(\d+)$/.exec(from)
   const b = /^([A-Z]+)(\d+)$/.exec(to)
   if (!a || !b) return formula
   const columns = columnNumber(b[1] as string) - columnNumber(a[1] as string)
   const rows = Number(b[2]) - Number(a[2])
-  return formula
-    .split(/("(?:[^"]|"")*")/)
-    .map((part, i) =>
-      i % 2 === 1
-        ? part
-        : part.replace(REFERENCE, (whole, colAbs: string, col: string, rowAbs: string, row: string) => {
-            const c = colAbs ? columnNumber(col) : columnNumber(col) + columns
-            const r = rowAbs ? Number(row) : Number(row) + rows
-            return c < 1 || r < 1 ? whole : `${colAbs}${columnLetter(c)}${rowAbs}${String(r)}`
-          }),
-    )
-    .join('')
+  let out = ''
+  let i = 0
+  const take = (re: RegExp): string | undefined => {
+    re.lastIndex = i
+    return re.exec(formula)?.[0]
+  }
+  while (i < formula.length) {
+    const ch = formula[i] as string
+    if (ch === '"' || ch === "'") {
+      const end = closeQuote(formula, i)
+      out += formula.slice(i, end)
+      i = end
+      continue
+    }
+    if (ch === '[') {
+      const end = closeBracket(formula, i)
+      out += formula.slice(i, end)
+      i = end
+      continue
+    }
+    const reference = take(ROWS) ?? take(COLUMNS) ?? take(AREA)
+    if (reference !== undefined) {
+      const slid = reference.split(':').map((part) => slidePart(part, columns, rows))
+      out += slid.includes(undefined) ? '#REF!' : slid.join(':')
+      i += reference.length
+      continue
+    }
+    const word = take(NUMBER) ?? take(WORD) ?? ch
+    out += word
+    i += word.length
+  }
+  return out
 }
 
 export function cellsOf(xml: string): Map<string, RawCell> {
