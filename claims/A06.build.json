@@ -1,12 +1,10 @@
 {
  "card": "A06",
  "role": "build",
- "round": 1,
- "spec": "2e596ab",
- "worker": "cloud-e72c49",
- "state": "reopened",
- "at": "2026-10-02T21:25:21.249Z",
- "mode": "turbo",
- "beat": "2026-10-02T18:23:09.797Z",
- "note": "round 2: make the 8 new spec tests pass (reports/A06-findings.md); then a fresh security review"
+ "round": 2,
+ "spec": "f5c82fc",
+ "worker": "cloud-c29b25",
+ "state": "working",
+ "at": "2026-10-02T21:26:22.432Z",
+ "mode": "turbo"
 }
