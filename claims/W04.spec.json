@@ -2,7 +2,10 @@
  "card": "W04",
  "role": "spec",
  "worker": "local-cc7d7a",
- "state": "working",
- "at": "2026-10-02T14:23:36.816Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T14:36:21.562Z",
+ "mode": "turbo",
+ "note": "14 tests; amber: kind module shape, faults() not changed (W00 pins 107); lint green, typecheck red only on missing kind.ts/faults.ts",
+ "commit": "1a7a0dc",
+ "validated": "159e187"
 }
