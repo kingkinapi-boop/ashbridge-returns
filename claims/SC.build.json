@@ -4,7 +4,8 @@
  "round": 39,
  "spec": "34e8ac0",
  "worker": "cloud-2cbd52",
- "state": "working",
- "at": "2026-10-02T20:16:13.257Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T20:16:37.879Z",
+ "mode": "turbo",
+ "note": "same 7+ owner defects (F01 schema, records.ts, gaps, ai.ts, F06, F07) not on their cards or in KNOWN; see reports/SC-build.md"
 }
