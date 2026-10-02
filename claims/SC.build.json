@@ -4,7 +4,8 @@
  "round": 42,
  "spec": "ee0255d",
  "worker": "cloud-b4d2b5",
- "state": "working",
- "at": "2026-10-02T21:07:53.973Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T21:08:00.627Z",
+ "mode": "turbo",
+ "note": "needs spec refit: R34 BINARY_FIXTURES, R47 READERS for ocr/recorded"
 }
