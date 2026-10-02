@@ -1,11 +1,8 @@
 {
  "card": "A06",
  "role": "spec",
- "worker": "cloud-ae6ed2",
- "state": "reopened",
- "at": "2026-10-02T20:07:48.524Z",
- "mode": "turbo",
- "note": "ROUND 2 (not a refit): see the bold paragraph at the top of plan/cards/A06.md",
- "commit": "ba71ad0",
- "validated": "e77ffc5"
+ "worker": "cloud-0c9d3d",
+ "state": "working",
+ "at": "2026-10-02T21:02:53.299Z",
+ "mode": "turbo"
 }
