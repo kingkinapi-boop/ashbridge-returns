@@ -3172,6 +3172,86 @@
           "ref": "YE1.vehicle"
         }
       ]
+    },
+    {
+      "key": "qa.assets.purchased_not_in_use",
+      "valueType": "money",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Assets bought, not available for use at year end",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 203"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "assets"
+        }
+      ]
+    },
+    {
+      "key": "qa.assets.disposed",
+      "valueType": "money",
+      "period": "duration",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Asset disposals in the year (proceeds)",
+      "cites": [
+        {
+          "kind": "cra_form",
+          "ref": "Schedule 8 line 207"
+        },
+        {
+          "kind": "answer_key",
+          "ref": "assets"
+        }
+      ]
+    },
+    {
+      "key": "qa.vehicle.ownership",
+      "valueType": "enum",
+      "options": [
+        "owned",
+        "leased"
+      ],
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Vehicle ownership: owned or leased",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "vehicle"
+        }
+      ]
+    },
+    {
+      "key": "qa.home_office.principal_place",
+      "valueType": "boolean",
+      "period": "instant",
+      "repeating": "none",
+      "sensitive": "none",
+      "suppliedBy": [
+        "qa"
+      ],
+      "label": "Home is the principal place of business",
+      "cites": [
+        {
+          "kind": "answer_key",
+          "ref": "home_office"
+        }
+      ]
     }
   ]
 }
