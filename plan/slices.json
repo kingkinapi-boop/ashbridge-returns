@@ -213,7 +213,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F03"
@@ -233,7 +233,8 @@
       "id": "F03R",
       "title": "Taxprep CSV contract: apostrophe and writer repairs",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -1872,7 +1873,7 @@
       "size": "M"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "TH"
@@ -1892,10 +1893,11 @@
       "id": "D01",
       "title": "Staff screen map and navigation",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1921,10 +1923,11 @@
       "family": "design",
       "params": {
         "screen": "cpa-review"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1944,10 +1947,11 @@
       "family": "design",
       "params": {
         "screen": "source-viewer"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1967,10 +1971,11 @@
       "family": "design",
       "params": {
         "screen": "queue"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1990,10 +1995,11 @@
       "family": "design",
       "params": {
         "screen": "gaps"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -2014,7 +2020,8 @@
       "family": "design",
       "params": {
         "screen": "shell"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "carded",
@@ -4016,7 +4023,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -4037,7 +4044,7 @@
       "params": {
         "screen": "roundtrip"
       },
-      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1). Also (review-phase2): the Ready button on the lock step (T12 markReady), and the \"Taxprep still holds\" list with its clear action and reason box (T01 stillHeld, requestClear)."
+      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1). Also (review-phase2): the Ready button on the lock step (T12 markReady), and the \"Taxprep still holds\" list with its clear action and reason box (T01 stillHeld, requestClear). Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "parked",
@@ -4064,7 +4071,7 @@
       "note": "Removed by v1.1: no judgment input sheet in our app (amber A32). Replaced by D12."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -4085,10 +4092,11 @@
       "family": "design",
       "params": {
         "screen": "exceptions"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -4109,7 +4117,8 @@
       "family": "design",
       "params": {
         "screen": "cite"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "carded",
@@ -8299,7 +8308,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -8319,10 +8328,11 @@
       "family": "design",
       "params": {
         "screen": "ops"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -8342,7 +8352,8 @@
       "family": "design",
       "params": {
         "screen": "board"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "todo",
