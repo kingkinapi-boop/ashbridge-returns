@@ -4,7 +4,7 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 ## State
 
-- **Mode: turbo** since 1 Oct (decision 0009). Wind-down Fri 9 Oct 18:00 Toronto. Plan use at 19:32Z: 5h 35%, week 9%.
+- **Mode: turbo** (Zo again 2 Oct: "turbo on"). Wind-down Fri 9 Oct 18:00 Toronto. Local: the Lead, 2 queue workers (decision 0018), one Chrome walker, helpers.
 - **Cloud workers:** fire the routine trig_01MWQ7hW5yecn8VaiMTq1xbp with RemoteTrigger `run` (decision 0010: one-off runs, never a schedule). Its prompt only points at `.claude/cloud-worker-run.md`: edit that file, not the routine. Runs cannot notify the Lead: poll `list_runs` and `node tools/claim.mjs list` (ScheduleWakeup about 30 min). Keep at most 3 runs until F00 lands through a train and a cold sign-off covers the repairs and the rehearsal.
 - **Zo:** reads only the to-do; no small questions (decision 0014). No open to-do questions (decision 0016: 1 done, 2 yes, browser not QB Desktop). Day 4 (Auto-fill, Zo) set for Sat 3 Oct, told in the to-do.
 - **Phases:** 0 and 1 carded and reviewed. Phase 2 carded 1 Oct (10 cards incl. new T12; ambers A203 to A227; reports/cards-phase2.md); all wait on S03, which waits for FINDINGS.md "final" (about 16 Oct).
@@ -13,7 +13,9 @@ True at every moment. 60 lines max. Last rewritten: 1 Oct 2026, about 20:40Z, by
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Taxprep day 5 exports retry, 08 to 10 imports, 5D | Sonnet walker, Chrome 8f110f0a | local | 2 Oct 02:45Z | notes in reference/taxprep/2026-10-05-day5/, uncommitted |
+| Taxprep day 5 exports retry 2 (Zo signed in to iFirm, Z18-3) | Sonnet walker, Chrome 8f110f0a | local | 2 Oct 02:20Z | notes in reference/taxprep/2026-10-05-day5/, uncommitted |
+| 2 local queue workers (decision 0018), up to 3 jobs each | worker | local worktrees | 2 Oct 02:20Z | claude/<card> |
+| Findings review W14 round 2 (prior-year tax not derived; GIFI 2680 twice) | Opus findings reviewer | local | 2 Oct 02:05Z | text report |
 | Cloud queue (3 runs, 01:30Z): builds A05, W14; specs TH (refit, A287), F03, E03 (round 2), F09 (round 3: checks 17, 18; amount grammar split to new card F09A, A296, A297); new DG, F05M, F09A | up to 3 cloud runs | cloud | 2 Oct 01:30Z | claude/<card> |
 | Design fix round 2: source viewer (uses design/parts/cite-or-reason/) | designer | local worktree | 2 Oct 06:30Z | claude/design-source-viewer-2 |
 | Queue repair 3: check found one gap (item 3 tested the label only); builder adds the test and worker.md --validated (A306), then local train | builder | local worktree | 2 Oct 02:45Z | claude/queue-repair-3 |
