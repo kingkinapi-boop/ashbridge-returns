@@ -111,5 +111,10 @@ describe('EV-14 snapSums: order and cycles', () => {
       ]),
     )
     expect(read.get('C1')).toBe(String(stale))
+    expect(read.get('A1')).toBe('0.3')
+  })
+
+  test('EV-14 an unterminated quote hides what follows it from the slider', () => {
+    expect(slide("'A1", 'C2', 'D3')).toBe("'A1")
   })
 })

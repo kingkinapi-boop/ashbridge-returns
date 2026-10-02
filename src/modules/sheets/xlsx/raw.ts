@@ -81,7 +81,7 @@ function slidePart(part: string, columns: number, rows: number): string | undefi
   const row = /\d+/.exec(part)?.[0]
   // The row's "$" is the second one when a column comes first ("$A$1"), the first when it stands alone ("$1").
   const rowAbs = part.includes('$', col === undefined ? 0 : 1) ? '$' : ''
-  const colAbs = col !== undefined && part.startsWith('$') ? '$' : ''
+  const colAbs = part.startsWith('$') ? '$' : ''
   let out = ''
   if (col !== undefined) {
     const c = colAbs ? columnNumber(col) : columnNumber(col) + columns
@@ -103,7 +103,7 @@ function closeBracket(formula: string, start: number): number {
   for (let i = start; i < formula.length; i++) {
     if (formula[i] === '[') depth++
     // Stryker disable next-line ArithmeticOperator: ending one character early leaves the "]" to be copied as itself
-    else if (formula[i] === ']' && --depth === 0) return i + 1
+    if (formula[i] === ']' && --depth === 0) return i + 1
   }
   return formula.length
 }

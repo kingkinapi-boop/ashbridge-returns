@@ -206,15 +206,16 @@ function snapSums(cells: Cell[]): void {
   }
   // Depth first on an explicit stack (a chain of 20,000 SUMs must not overflow the call stack).
   for (const root of nodes.values()) {
-    const stack: { node: SumNode; dependencies: SumNode[]; next: number }[] = []
+    const stack: { node: SumNode; dependencies: SumNode[] }[] = []
     const enter = (node: SumNode): void => {
       node.terms = termCells(byAddress, node.range)
-      stack.push({ node, dependencies: node.terms.flatMap((t) => nodes.get(t) ?? []), next: 0 })
+      stack.push({ node, dependencies: node.terms.flatMap((t) => nodes.get(t) ?? []) })
     }
+    // Stryker disable next-line ConditionalExpression: entering a finished root again re-snaps it to the same text
     if (root.terms === undefined) enter(root)
     while (stack.length > 0) {
       const top = stack[stack.length - 1] as (typeof stack)[number]
-      const dependency = top.dependencies[top.next++]
+      const dependency = top.dependencies.shift()
       if (dependency === undefined) {
         snapSum(top.node, nodes)
         top.node.done = true
