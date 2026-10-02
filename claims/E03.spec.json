@@ -2,8 +2,8 @@
  "card": "E03",
  "role": "spec",
  "worker": "cloud-c4f1c0",
- "state": "reported",
- "at": "2026-10-01T22:37:51.855Z",
+ "state": "reopened",
+ "at": "2026-10-02T01:05:30.576Z",
  "mode": "turbo",
  "note": "109 acceptance tests fail pre-build (no ./facts); ambers: loader shape, fixed sensitive keys, check 4 via section names",
  "commit": "046f8d4"
