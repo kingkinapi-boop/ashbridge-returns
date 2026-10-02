@@ -147,3 +147,50 @@ describe('the state, origin, status and entry type lists', () => {
     expect(schema?.safeParse({ ...row, outcome: 'other' }).success).toBe(false)
   })
 })
+
+// ---------- F01C: the zod mirrors of the SQL rules ----------
+
+describe('TB-2 sourcesAreReal mirrors returns.sources_are_real', () => {
+  const real: unknown[][] = [
+    ['Invoice 1042 (Test)'],
+    [{ document_id: 'd1' }],
+    [{ page: 3, document_id: 'd1' }],
+    ['Invoice (Test)', { row: 4 }],
+  ]
+  const notReal: unknown[][] = [
+    [], [''], [' '], [null], [{}], [{ x: '' }], [{ x: null }], [{ x: true }], [{ x: {} }], [{ x: [] }],
+    [{ x: 'ok', y: '' }], [{ ' ': 'x' }], [{ '': 'x' }], [{ '\t': 'x' }], [[]], [['Invoice']], [3], [true],
+    ['Invoice (Test)', { document_id: ' ' }],
+  ]
+  for (const s of real) test(`TB-2 ${JSON.stringify(s)} is real`, () => { expect(records.sourcesAreReal(s)).toBe(true); })
+  for (const s of notReal) test(`TB-2 ${JSON.stringify(s)} is not real`, () => { expect(records.sourcesAreReal(s)).toBe(false); })
+})
+
+describe('TB-2 an explained entry record needs real sources', () => {
+  const entry = (sources: unknown[], explained: boolean): unknown => ({
+    ...good['AdjustingEntry']?.[1], sources, explained,
+  })
+  test('TB-2 explained with no real source is refused and the issue names sources', () => {
+    const r = records.AdjustingEntryRecordSchema.safeParse(entry([], true))
+    expect(r.success).toBe(false)
+    expect(r.error?.issues[0]?.path).toEqual(['sources'])
+    expect(r.error?.issues[0]?.message).toBe('an explained entry needs real sources')
+  })
+  test('TB-2 explained with a real source parses; unexplained holds any array', () => {
+    expect(records.AdjustingEntryRecordSchema.safeParse(entry(['Invoice (Test)'], true)).success).toBe(true)
+    expect(records.AdjustingEntryRecordSchema.safeParse(entry([], false)).success).toBe(true)
+    expect(records.AdjustingEntryRecordSchema.safeParse(entry([null], false)).success).toBe(true)
+  })
+})
+
+test('ARC-10 a version stamp key is never blank', () => {
+  expect(VersionStampSchema.safeParse({ ' ': 'v1' }).success).toBe(false)
+  expect(VersionStampSchema.safeParse({ reader: 'a', '\t': 'v1' }).success).toBe(false)
+})
+
+test('TB-2 a source member value that is not a string or a finite number is refused', () => {
+  for (const v of [true, null, [1], { x: 1 }, Infinity, -Infinity, NaN, '', ' ']) {
+    expect(records.sourcesAreReal([{ a: v }]), JSON.stringify(v)).toBe(false)
+  }
+  expect(records.sourcesAreReal([{ a: 'x', b: 2 }])).toBe(true)
+})

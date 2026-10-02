@@ -233,7 +233,7 @@
       "note": "Branch claude/F01C from claude/F01 round 3 head; lands F01 work (A359). Parked 2 Oct after its last round (A367): split into F01D, which lands F01 and F01C work."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -280,7 +280,8 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "Branch claude/F01D from claude/F01C round head (A367)."
+      "note": "Branch claude/F01D from claude/F01C round head (A367).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -2540,7 +2541,7 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From the G12 spec release (A362). Parked 2 Oct 16:30Z waiting on Zo to-do #1 (one gitleaks allowlist line). Unparked 2 Oct: Zo approved the allowlist line (decision 0021)."
+      "note": "From the G12 spec release (A362). Parked 2 Oct 16:30Z waiting on Zo to-do #1 (one gitleaks allowlist line). Unparked 2 Oct: Zo approved the allowlist line (decision 0021). Re-parked 17:20Z: Zo makes the gitleaks edit by hand (to-do #1). Unparked 17:35Z: Zo made the decision 0021 edit on claude/E03A (0462739)."
     },
     {
       "status": "carded",
@@ -3290,7 +3291,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01"
@@ -3311,10 +3312,11 @@
       "family": "question",
       "params": {
         "topic": "revenue"
-      }
+      },
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01"
@@ -3335,7 +3337,8 @@
       "family": "question",
       "params": {
         "topic": "expenses"
-      }
+      },
+      "done": "2026-10-02"
     },
     {
       "status": "parked",

@@ -24,6 +24,11 @@ create table returns.gifi_mappings (
 );
 create trigger gifi_mappings_next_version before insert on returns.gifi_mappings
   for each row execute function returns.next_version_guard('mapping_version', 'account_id');
+-- TB-3: a new GIFI code or account is a new mapping version, never an edit.
+create trigger gifi_mappings_guard before update or delete on returns.gifi_mappings
+  for each row execute function returns.version_table_guard();
+create trigger gifi_mappings_no_truncate before truncate on returns.gifi_mappings
+  for each statement execute function returns.version_table_guard();
 
 create table returns.adjusting_entries (
   id text primary key,
@@ -63,22 +68,10 @@ create trigger entry_lines_no_truncate before truncate on returns.entry_lines
   for each statement execute function returns.refuse_change();
 
 -- EV-1, FLOW-4: an entry changes by a new version row; only `explained` may change in place.
-create function returns.entries_column_guard() returns trigger
-language plpgsql as $$
-begin
-  if tg_op = 'DELETE' then
-    raise exception 'append-only: DELETE on returns.adjusting_entries is refused (write a new version row)';
-  end if;
-  if (to_jsonb(new) - 'explained') is distinct from (to_jsonb(old) - 'explained') then
-    raise exception 'append-only: only explained changes in place on returns.adjusting_entries (write a new version row)';
-  end if;
-  return new;
-end
-$$;
 create trigger entries_column_guard before update or delete on returns.adjusting_entries
-  for each row execute function returns.entries_column_guard();
+  for each row execute function returns.version_table_guard('explained');
 create trigger entries_no_truncate before truncate on returns.adjusting_entries
-  for each statement execute function returns.refuse_change();
+  for each statement execute function returns.version_table_guard('explained');
 
 -- TB-2: sources are a non-empty array of members that each say something: a non-blank string or a
 -- non-empty object of non-blank strings and numbers (never null, blank text, {}, {"x":""} or a bare scalar).
@@ -92,9 +85,9 @@ language sql immutable as $$
         or (jsonb_typeof(m.value) = 'object' and m.value <> '{}'::jsonb
             and not exists (
               select 1 from jsonb_each(m.value) f
-              where not (
+              where returns.is_blank(f.key) or f.key = '__proto__' or not (
                 (jsonb_typeof(f.value) = 'string' and not returns.is_blank(f.value #>> '{}'))
-                or jsonb_typeof(f.value) = 'number'
+                or returns.is_finite_number(f.value)
               )
             ))
       )
@@ -176,12 +169,14 @@ create table returns.judgment_inputs (
 create trigger judgment_inputs_next_version before insert on returns.judgment_inputs
   for each row execute function returns.next_version_guard('version_no', 'return_id', 'cell_id');
 create trigger judgment_inputs_append_only before update or delete on returns.judgment_inputs
-  for each row execute function returns.refuse_change();
+  for each row execute function returns.version_table_guard();
 create trigger judgment_inputs_no_truncate before truncate on returns.judgment_inputs
-  for each statement execute function returns.refuse_change();
+  for each statement execute function returns.version_table_guard();
 
 alter table returns.accounts enable row level security;
 alter table returns.gifi_mappings enable row level security;
 alter table returns.adjusting_entries enable row level security;
 alter table returns.entry_lines enable row level security;
 alter table returns.judgment_inputs enable row level security;
+
+comment on column returns.judgment_inputs.value is 'VALUE_COLUMN: an empty value is a value here (RT-12); the list is text.ts VALUE_COLUMNS';
