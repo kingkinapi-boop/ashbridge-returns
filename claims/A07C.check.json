@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T17:16:37.331Z",
  "worker": "cloud-a0486a",
- "state": "working",
- "at": "2026-10-02T17:22:49.826Z",
+ "state": "failed",
+ "at": "2026-10-02T17:34:59.249Z",
  "mode": "turbo",
- "beat": "2026-10-02T17:32:20.382Z"
+ "beat": "2026-10-02T17:32:20.382Z",
+ "note": "FAIL: shared-formula hyperlink loses formula, 1e-9 over-snap, see reports/A07C-check.md"
 }

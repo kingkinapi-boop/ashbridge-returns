@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "4ce0d83",
  "worker": "cloud-390404",
- "state": "reported",
- "at": "2026-10-02T17:16:37.331Z",
+ "state": "hold-findings",
+ "at": "2026-10-02T17:34:59.249Z",
  "mode": "turbo",
- "note": "117 of 117 acceptance pass; mutation 100; scope flags plan/cards/A07B.md (pre-existing on branch); amber: non-literal number reads #NUM!"
+ "note": "FAIL: shared-formula hyperlink loses formula, 1e-9 over-snap, see reports/A07C-check.md"
 }
