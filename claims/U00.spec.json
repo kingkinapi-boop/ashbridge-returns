@@ -2,8 +2,7 @@
  "card": "U00",
  "role": "spec",
  "worker": "cloud-08ac79",
- "state": "released",
- "at": "2026-10-02T09:38:53.034Z",
- "mode": "turbo",
- "note": "deps not merged: D00 (design/basis/, parts.md, settings.scss) is not on main and D00 is not done (needs Zo approval); no code base"
+ "state": "working",
+ "at": "2026-10-02T09:38:55.516Z",
+ "mode": "turbo"
 }
