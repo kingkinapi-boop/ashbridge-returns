@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "435acc2",
  "worker": "cloud-ce4873",
- "state": "working",
- "at": "2026-10-02T03:54:28.620Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T03:54:44.172Z",
+ "mode": "turbo",
+ "note": "premise: W15 fix-round-1 re-spec (answerId removal, 14-to-15 opening tie check, W14 rules 7-13 on 13-15) not done; last spec job was refit only. Needs a new spec worker, then build."
 }
