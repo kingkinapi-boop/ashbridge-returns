@@ -1,9 +1,11 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit only: merged main 5bc19df, no assertions changed; only A04's own missing module fails (typecheck, lint, runner.acceptance); 1885 other unit tests pass",
  "worker": "cloud-ae6ed2",
- "state": "working",
- "at": "2026-10-02T19:24:31.414Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:27:50.980Z",
+ "mode": "turbo",
+ "commit": "383857c",
+ "validated": "5bc19df"
 }
