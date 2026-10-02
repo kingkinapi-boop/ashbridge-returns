@@ -24,13 +24,13 @@
  *   - A finding answer is { outcome: 'answer', findingType: 'issue' | 'missing', summary: string, citations: Citation[] (at least one) };
  *       the builder may add only optional fields.
  *
- * F09 (`src/contracts/reading.ts`) is not built yet; it will export `boxSchema` (amber assumption).
+ * F09 (`src/contracts/reading.ts`) is not built yet; it exports `BoxSchema` (imported here as `boxSchema`; checked against origin/claude/F09 2216375).
  */
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { aiStepSchemas, aiStepTypes, citationSchema, validateAiOutput, versionStampSchema } from './ai'
-import { boxSchema } from './reading'
+import { BoxSchema as boxSchema } from './reading'
 
 const SEED = 20261001
 const RUNS = 200
