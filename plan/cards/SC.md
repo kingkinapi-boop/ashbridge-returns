@@ -46,3 +46,5 @@ R29 a refusal ratchet per parser (taxprep, reading, amount-grammar): a golden fi
 - R36 money read from text only: no `dollarsToCents(number)`, no `x*100` from JSON numbers.
 - R37 (was TH R5) byte-compared files are `-text` or `binary` and `git ls-files --eol` agrees; planted CRLF CSV under `eol=lf`.
 - R38 (was TH R6) no test builds expected bytes with a non-UTF-8 TextDecoder or TextEncoder; setup fails below Node 24.
+- R39 (F09B check note, 2 Oct): any geometry predicate over words sees one page only; planted: `amountGroups` over "1" on page 1 and "234.56" on page 2 must not join (callers other than `valueInBox` pass words from one page, or `amountGroups` splits by page).
+- R40 (F09B check note): a word made only of invisible characters (Cf, Cc, U+034F, U+3164, U+2800, whitespace) is blank everywhere WordSchema is used.
