@@ -2,7 +2,10 @@
  "card": "G16",
  "role": "spec",
  "worker": "cloud-d6217c",
- "state": "working",
- "at": "2026-10-02T19:39:17.586Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-02T19:44:02.566Z",
+ "mode": "turbo",
+ "note": "13 tests, 8 fail for file missing; 2 facts not in G11 (amber)",
+ "commit": "e502f66",
+ "validated": "6ac92e8f46f96ed967eeb07c5eb14fc41353a3ff"
 }
