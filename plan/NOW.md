@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 10:15Z by the Lead (loop). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 10:45Z by the Lead (loop). Times are UTC from `date -u`.
 
 ## State
 
@@ -13,9 +13,10 @@ True at every moment. 60 lines max. Last rewritten: 2 Oct 2026 10:15Z by the Lea
 
 | Card | Role | Where | Started | Branch |
 |---|---|---|---|---|
-| Queue: F09B check, DG2 build, D00 build (axe in e2e), F01 build, E03 build, A01 spec refit (readOwnSource now on main), W00 spec round 2 | 6 cloud runs | cloud | 2 Oct 10:15Z | claude/<card> |
+| Train: DG2, D00 | train check | cloud | 2 Oct 10:45Z | claude/train |
+| Queue: W00 build round 2 (after DG2 lands), F09B spec round 2, F01 build round 2, E03 build round 2, A01 build round 2, A07 build | cloud runs | cloud | 2 Oct 10:45Z | claude/<card> |
 
-No train open (DG landed 47b06df). S00 build waits on W00 (A354); U00 and design cards D02 to D13 parked until Zo's sitting.
+S00 build waits on W00 (A354); U00 and D02 to D13 parked until Zo's sitting.
 
 ## Next, in order
 
