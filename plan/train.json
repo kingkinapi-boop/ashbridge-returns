@@ -1,15 +1,13 @@
 {
   "status": "green",
   "branch": "claude/train",
-  "head": "3ccdd3a",
+  "head": "fae1588",
   "cards": [
-    "E03A",
-    "BL0",
-    "A01",
-    "F02"
+    "F06",
+    "F07"
   ],
-  "requested_at": "2026-10-02T18:16:46Z",
-  "note": "BL0, A01, F02 GitHub checks stopped at gitleaks only (their branches lack E03A's 0021 allowlist line); the train carries it. Run gitleaks over HEAD as part of the check.",
-  "by": "cloud-c520ec",
-  "report": "reports/train-20261002-1840.md"
+  "requested_at": "2026-10-02T19:27:09Z",
+  "note": "F07 security review clean for boarding (one LOW moved to G00, A381). Run gitleaks over HEAD as part of the check.",
+  "by": "cloud-de3dc1",
+  "report": "reports/train-20261002-1944.md"
 }
