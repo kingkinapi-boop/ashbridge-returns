@@ -13,6 +13,21 @@
 //   both cite T2 Schedule 8 (CK-44's source). G16 gets qa.vehicle.ownership (enum owned, leased) and
 //   qa.home_office.principal_place (boolean), because G11 already owns every vehicle and home key.
 // - G10 and G11 key lists are copied from their specs (claude/G10, claude/G11; reports/G1x-spec.md).
+//
+// Round 2 (card E03A "Round 2", Opus boarding read: the asset keys were year totals). Amber choices:
+// - Per asset means repeating { rowKey: 'asset' }. What a row "carries" is modelled the catalogue's way
+//   (as resolution.dividend.amount / declared_on / kind share rowKey resolution_date): sibling keys with
+//   the same rowKey, one value each, all listed under the same G12 row.
+//     R27: qa.assets.purchased_not_in_use (money, the asset's cost, instant at year end)
+//          qa.assets.purchased_not_in_use_cca_class (text: "8", "10", "10.1" are classes, so not count)
+//     R28: qa.assets.disposed (money, the proceeds, duration: in the year; 0 for a write-off)
+//          qa.assets.disposed_kind (enum sold, written_off)
+//          qa.assets.disposed_original_cost (money, instant)
+//          qa.assets.disposed_cca_class (text)
+// - Cites: every R28 key cites "Schedule 8 line 207" and none cites line 203; every R27 key cites
+//   "Schedule 8 line 203" as related and none cites line 207. "The catalogue note" is a `note` on that
+//   line 203 cite (cites already pass extra fields through, so no code change), saying Schedule 8 has no
+//   line for property not yet available for use.
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -57,8 +72,10 @@ const TOPIC_ROWS: Record<Topic, { topic: string; rows: Record<string, readonly s
   G12: {
     topic: 'assets-cca',
     rows: {
-      R27: ['qa.assets.purchased_not_in_use'], // not_available_for_use: an asset bought but not yet available for use
-      R28: ['qa.assets.disposed'], // disposal: an asset sold or written off in the year
+      // not_available_for_use: an asset bought but not yet available for use (per asset, round 2)
+      R27: ['qa.assets.purchased_not_in_use', 'qa.assets.purchased_not_in_use_cca_class'],
+      // disposal: an asset sold or written off in the year (per asset, round 2)
+      R28: ['qa.assets.disposed', 'qa.assets.disposed_kind', 'qa.assets.disposed_original_cost', 'qa.assets.disposed_cca_class'],
     },
   },
   G13: {
@@ -110,7 +127,11 @@ const G11_KEYS = [
 /** The keys this card adds (card E03A Spec 2). */
 const NEW_KEYS = [
   'qa.assets.purchased_not_in_use',
+  'qa.assets.purchased_not_in_use_cca_class',
   'qa.assets.disposed',
+  'qa.assets.disposed_kind',
+  'qa.assets.disposed_original_cost',
+  'qa.assets.disposed_cca_class',
   'qa.vehicle.ownership',
   'qa.home_office.principal_place',
 ] as const
@@ -385,5 +406,185 @@ describe('END-7 the new keys hold no client sentence: their labels are staff lab
     expect('Please list assets not yet in use').toMatch(CLIENT_SENTENCE)
     expect('Assets bought, not available for use at year end').not.toMatch(CLIENT_SENTENCE)
     expect('Asset disposals in the year (proceeds)').not.toMatch(CLIENT_SENTENCE)
+  })
+})
+
+// ---------------------------------------------------------------------------------------------
+// Round 2 (card E03A "Round 2"): the asset keys repeat per asset and carry what CK-44 needs by class.
+type AssetSpec = { row: 'R27' | 'R28'; valueType: string; options?: readonly string[]; period: string }
+const ASSET_KEYS: Record<string, AssetSpec> = {
+  'qa.assets.purchased_not_in_use': { row: 'R27', valueType: 'money', period: 'instant' },
+  'qa.assets.purchased_not_in_use_cca_class': { row: 'R27', valueType: 'text', period: 'instant' },
+  'qa.assets.disposed': { row: 'R28', valueType: 'money', period: 'duration' },
+  'qa.assets.disposed_kind': { row: 'R28', valueType: 'enum', options: ['sold', 'written_off'], period: 'instant' },
+  'qa.assets.disposed_original_cost': { row: 'R28', valueType: 'money', period: 'instant' },
+  'qa.assets.disposed_cca_class': { row: 'R28', valueType: 'text', period: 'instant' },
+}
+const LINE_203 = 'Schedule 8 line 203'
+const LINE_207 = 'Schedule 8 line 207'
+/** The catalogue note on R27's related line 203 cite: Schedule 8 has no line for this property. */
+const NO_LINE_NOTE = /\bno line\b[\s\S]*\bnot (?:yet )?available for use\b/i
+
+type NotedCite = Cite & { note?: unknown }
+
+/** One finding per way an asset key breaks round 2: per asset, its type, askable, and its Schedule 8 cite. */
+function assetFindings(entries: readonly Entry[]): string[] {
+  const byKey = new Map(entries.map((e) => [e.key, e]))
+  const out: string[] = []
+  for (const [key, spec] of Object.entries(ASSET_KEYS)) {
+    const e = byKey.get(key)
+    if (e === undefined) {
+      out.push(`${key}: not in the catalogue`)
+      continue
+    }
+    const rk = typeof e.repeating === 'object' && e.repeating !== null ? (e.repeating as { rowKey?: unknown }).rowKey : undefined
+    if (rk !== 'asset') out.push(`${key}: does not repeat per asset (repeating ${JSON.stringify(e.repeating)})`)
+    if (e.valueType !== spec.valueType) out.push(`${key}: value type ${e.valueType}, wanted ${spec.valueType}`)
+    if (spec.options !== undefined && JSON.stringify([...(e.options ?? [])].sort()) !== JSON.stringify([...spec.options].sort())) {
+      out.push(`${key}: options ${JSON.stringify(e.options)}, wanted ${spec.options.join(', ')}`)
+    }
+    if (e.period !== spec.period) out.push(`${key}: period ${e.period}, wanted ${spec.period}`)
+    if (!e.suppliedBy.includes('qa')) out.push(`${key}: not asked of the client (suppliedBy ${e.suppliedBy.join(', ')})`)
+    if (e.sensitive !== 'none') out.push(`${key}: sensitive ${e.sensitive}, wanted none`)
+    const cra = (e.cites as readonly NotedCite[]).filter((c) => c.kind === 'cra_form')
+    const [want, wrong] = spec.row === 'R28' ? [LINE_207, LINE_203] : [LINE_203, LINE_207]
+    const hit = cra.find((c) => c.ref === want)
+    if (hit === undefined) out.push(`${key}: does not cite ${want}`)
+    if (cra.some((c) => c.ref === wrong)) out.push(`${key}: cites ${wrong}, which is not its line`)
+    if (spec.row === 'R27' && hit !== undefined) {
+      const note = hit.note
+      if (typeof note !== 'string' || !NO_LINE_NOTE.test(note)) {
+        out.push(`${key}: its ${LINE_203} cite lacks the note that Schedule 8 has no line for property not yet available for use`)
+      } else if (CLIENT_SENTENCE.test(note)) {
+        out.push(`${key}: its ${LINE_203} note reads as a client sentence`)
+      }
+    }
+  }
+  return out
+}
+
+/** A made-up set of asset entries that meets round 2, built from the spec table. */
+function cleanAssetEntries(): Entry[] {
+  return Object.entries(ASSET_KEYS).map(([key, spec]) => {
+    const cite: NotedCite =
+      spec.row === 'R28'
+        ? { kind: 'cra_form', ref: LINE_207 }
+        : { kind: 'cra_form', ref: LINE_203, note: 'Related line: Schedule 8 has no line for property not yet available for use (Test)' }
+    return cleanEntry({
+      key,
+      valueType: spec.valueType,
+      ...(spec.options === undefined ? {} : { options: [...spec.options] }),
+      period: spec.period,
+      repeating: { rowKey: 'asset' },
+      suppliedBy: ['qa'],
+      label: 'Asset fact (Test)',
+      cites: [cite, { kind: 'answer_key', ref: 'assets' }],
+    }) as unknown as Entry
+  })
+}
+
+describe('R27 R28 round 2: the asset keys repeat per asset and carry class, kind, cost and proceeds', () => {
+  test.each(Object.entries(ASSET_KEYS).map(([k, s]) => [s.row, k, s.valueType] as const))(
+    '%s %s repeats per asset (rowKey asset), is a %s, asked of the client, cites its Schedule 8 line',
+    (_row, key) => {
+      const entries = committedEntries().filter((e) => e.key === key)
+      expect(entries.map((e) => e.key), `${key} is not in the catalogue`).toEqual([key])
+      expect(assetFindings(committedEntries()).filter((f) => f.startsWith(`${key}:`))).toEqual([])
+    },
+  )
+
+  test('R27 R28 the committed catalogue meets round 2 for every asset key at once', () => {
+    expect(assetFindings(committedEntries())).toEqual([])
+  })
+
+  test('R28 a write-off with proceeds 0 is not "nothing disposed": the row holds its kind and original cost apart from proceeds', () => {
+    const entries = committedEntries()
+    const get = (k: string): Entry | undefined => entries.find((e) => e.key === k)
+    expect(get('qa.assets.disposed_kind')?.options ?? []).toContain('written_off')
+    expect(get('qa.assets.disposed_kind')?.options ?? []).toContain('sold')
+    expect(get('qa.assets.disposed_original_cost')?.valueType).toBe('money')
+    expect(get('qa.assets.disposed')?.valueType).toBe('money')
+    const rowKeys = Object.keys(ASSET_KEYS)
+      .filter((k) => ASSET_KEYS[k]?.row === 'R28')
+      .map((k) => JSON.stringify(get(k)?.repeating))
+    expect(new Set(rowKeys)).toEqual(new Set([JSON.stringify({ rowKey: 'asset' })]))
+  })
+
+  test('R27 R28 CK-44 can set the asset rows against Schedule 8 by class: both rows carry a cca_class key on the same per-asset row', () => {
+    const entries = committedEntries()
+    for (const [money, cls] of [
+      ['qa.assets.purchased_not_in_use', 'qa.assets.purchased_not_in_use_cca_class'],
+      ['qa.assets.disposed', 'qa.assets.disposed_cca_class'],
+    ] as const) {
+      const m = entries.find((e) => e.key === money)
+      const c = entries.find((e) => e.key === cls)
+      expect(c, `${cls} is not in the catalogue`).toBeDefined()
+      expect(JSON.stringify(c?.repeating)).toBe(JSON.stringify(m?.repeating))
+      expect(JSON.stringify(m?.repeating)).toBe(JSON.stringify({ rowKey: 'asset' }))
+    }
+    // the existing Schedule 8 key stays by class (the class is the join, not a second asset row key)
+    const prior = entries.find((e) => e.key === 'prior_t2.schedule_8.cca_closing_undepreciated')
+    expect(JSON.stringify(prior?.repeating)).toBe(JSON.stringify({ rowKey: 'cca_class' }))
+  })
+
+  test('R27 the line 203 cite is marked related: its note says Schedule 8 has no line for property not yet available for use', () => {
+    const e = committedEntries().find((x) => x.key === 'qa.assets.purchased_not_in_use')
+    const hit = (e?.cites as readonly NotedCite[] | undefined)?.find((c) => c.kind === 'cra_form' && c.ref === LINE_203)
+    expect(hit, 'qa.assets.purchased_not_in_use does not cite Schedule 8 line 203').toBeDefined()
+    expect(String(hit?.note)).toMatch(NO_LINE_NOTE)
+    expect(String(hit?.note)).not.toMatch(CLIENT_SENTENCE)
+  })
+
+  test('R27 R28 planted faults: a year total, a missing kind, a lost written_off option, a wrong line, a missing note and a class row key are each caught', () => {
+    const clean = cleanAssetEntries()
+    expect(assetFindings(clean)).toEqual([])
+    const with_ = (key: string, change: (e: Entry) => void): Entry[] => {
+      const copy = clone(clean)
+      const e = copy.find((x) => x.key === key)
+      if (e === undefined) throw new Error(`fixture lacks ${key}`)
+      change(e)
+      return copy
+    }
+
+    expect(assetFindings(with_('qa.assets.disposed', (e) => { e.repeating = 'none' }))).toEqual([
+      'qa.assets.disposed: does not repeat per asset (repeating "none")',
+    ])
+    expect(assetFindings(clean.filter((e) => e.key !== 'qa.assets.disposed_kind'))).toEqual([
+      'qa.assets.disposed_kind: not in the catalogue',
+    ])
+    const lostOption = assetFindings(with_('qa.assets.disposed_kind', (e) => { e.options = ['sold'] }))
+    expect(lostOption).toHaveLength(1)
+    expect(lostOption[0]).toMatch(/^qa\.assets\.disposed_kind: options/)
+    expect(assetFindings(with_('qa.assets.disposed', (e) => { e.cites = [{ kind: 'cra_form', ref: LINE_203 }] }))).toEqual([
+      'qa.assets.disposed: does not cite Schedule 8 line 207',
+      'qa.assets.disposed: cites Schedule 8 line 203, which is not its line',
+    ])
+    expect(assetFindings(with_('qa.assets.purchased_not_in_use', (e) => { e.cites = [{ kind: 'cra_form', ref: LINE_203 }] }))).toEqual([
+      'qa.assets.purchased_not_in_use: its Schedule 8 line 203 cite lacks the note that Schedule 8 has no line for property not yet available for use',
+    ])
+    expect(assetFindings(with_('qa.assets.disposed_cca_class', (e) => { e.repeating = { rowKey: 'cca_class' } }))).toEqual([
+      'qa.assets.disposed_cca_class: does not repeat per asset (repeating {"rowKey":"cca_class"})',
+    ])
+    expect(assetFindings(with_('qa.assets.disposed_original_cost', (e) => { e.suppliedBy = ['qbo'] }))).toEqual([
+      'qa.assets.disposed_original_cost: not asked of the client (suppliedBy qbo)',
+    ])
+    const clientNote = assetFindings(
+      with_('qa.assets.purchased_not_in_use_cca_class', (e) => {
+        e.cites = [{ kind: 'cra_form', ref: LINE_203, note: 'Did you know Schedule 8 has no line for property not yet available for use?' } as NotedCite]
+      }),
+    )
+    expect(clientNote).toEqual(['qa.assets.purchased_not_in_use_cca_class: its Schedule 8 line 203 note reads as a client sentence'])
+  })
+
+  test('R27 R28 planted fault: the round 1 shape (two year totals, no class, kind or cost) is refused', () => {
+    const round1 = [
+      cleanEntry({ key: 'qa.assets.purchased_not_in_use', suppliedBy: ['qa'], cites: [{ kind: 'cra_form', ref: LINE_203 }] }),
+      cleanEntry({ key: 'qa.assets.disposed', period: 'duration', suppliedBy: ['qa'], cites: [{ kind: 'cra_form', ref: LINE_207 }] }),
+    ] as unknown as Entry[]
+    const found = assetFindings(round1)
+    expect(found).toContain('qa.assets.disposed: does not repeat per asset (repeating "none")')
+    expect(found).toContain('qa.assets.disposed_kind: not in the catalogue')
+    expect(found).toContain('qa.assets.disposed_original_cost: not in the catalogue')
+    expect(found).toContain('qa.assets.purchased_not_in_use_cca_class: not in the catalogue')
   })
 })
