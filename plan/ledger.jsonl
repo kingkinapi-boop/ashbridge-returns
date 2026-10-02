@@ -135,3 +135,5 @@
 {"ts":"2026-10-02T00:15:49.930Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Findings review F01 and F09","allowed":true}
 {"ts":"2026-10-02T00:16:31.180Z","day":"2026-10-02","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-02T00:21:39.769Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":null,"model":"opus","where":"worktree","desc":"Card side of F01/F09 findings","allowed":true}
+{"ts":"2026-10-02T00:26:28.583Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"spec-writer","model":"opus","where":"local","desc":"F09 spec round 2","allowed":true}
+{"ts":"2026-10-02T00:35:44.314Z","day":"2026-10-02","mode":"turbo","tool":"Agent","type":"builder","model":null,"where":"local","desc":"F03 build","allowed":true}
