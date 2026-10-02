@@ -1,13 +1,11 @@
 {
-  "status": "green",
+  "status": "checking",
   "branch": "claude/train",
-  "head": "fae1588",
+  "head": "727cd06",
   "cards": [
-    "F06",
-    "F07"
+    "A07C"
   ],
-  "requested_at": "2026-10-02T19:27:09Z",
-  "note": "F07 security review clean for boarding (one LOW moved to G00, A381). Run gitleaks over HEAD as part of the check.",
-  "by": "cloud-de3dc1",
-  "report": "reports/train-20261002-1944.md"
+  "requested_at": "2026-10-02T20:30:31Z",
+  "note": "A07C lands with known defects D1 to D3 (A384, reports/A07C-findings.md); A07C's own D1 to D3 tests may fail by design: list them, do not count them red. Everything else must be green. Run gitleaks over HEAD.",
+  "by": "cloud-197c89"
 }
