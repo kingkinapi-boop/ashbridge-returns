@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
-import { readOwnSource } from './read-own-source.ts'
+import { readOwnSource } from './read-own-source'
 
 const dirs: string[] = []
 afterAll(() => {
@@ -15,7 +15,7 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-const ORIGINAL = '// @mutate\nexport const add = (a: number, b: number): number => a + b\n'
+const ORIGINAL = '// planted module\n// header line\n// @mutate\nexport const add = (a: number, b: number): number => a + b\n'
 const BROKEN = 'export const add = (a: number, b: number): number => a + b\nimport http from "node:http"\nexport { http }\n'
 const instrument = (src: string): string =>
   `// @ts-nocheck\nfunction stryNS_9fa48() { return globalThis.__stryker__ ?? (globalThis.__stryker__ = {}) }\nconst __STRYKER_ACTIVE_MUTANT__ = stryNS_9fa48().activeMutant\n${src.replace('a + b', '__STRYKER_ACTIVE_MUTANT__ === 1 ? a - b : a + b')}`
