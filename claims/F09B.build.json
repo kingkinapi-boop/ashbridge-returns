@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "8b941c9",
  "worker": "cloud-db355d",
- "state": "reported",
- "at": "2026-10-02T11:21:05.256Z",
+ "state": "released",
+ "at": "2026-10-02T12:14:34.377Z",
  "mode": "turbo",
- "note": "all acceptance pass, mutate 100, suite 1155"
+ "note": "merged"
 }
