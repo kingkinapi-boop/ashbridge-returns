@@ -1,9 +1,8 @@
 {
  "card": "S02",
  "role": "spec",
- "worker": "cloud-b4a9c0",
- "state": "released",
- "at": "2026-10-02T14:28:34.860Z",
- "mode": "turbo",
- "note": "Re-offered immediately after release (queue bug); S00 unmerged, stopping."
+ "worker": "cloud-37afbb",
+ "state": "working",
+ "at": "2026-10-02T19:09:18.333Z",
+ "mode": "turbo"
 }
