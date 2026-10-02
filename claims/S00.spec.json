@@ -2,7 +2,8 @@
  "card": "S00",
  "role": "spec",
  "worker": "local-ed6f16",
- "state": "working",
- "at": "2026-10-02T04:55:33.959Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-02T04:55:41.411Z",
+ "mode": "turbo",
+ "note": "core: needs an Opus subagent (cloud); spec fixes needed: ARC-15 test must read first 5 lines, harness.ts needs @mutate or tool must skip __fixtures__"
 }
