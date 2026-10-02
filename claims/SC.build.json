@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 33,
+ "round": 34,
  "spec": "34e8ac0",
- "worker": "cloud-3e2f84",
- "state": "released",
- "at": "2026-10-02T20:00:27.084Z",
- "mode": "turbo",
- "note": "re-offered at once after release; nothing for a builder to do until the owner defects are carded or in KNOWN (Lead: hold SC build)"
+ "worker": "cloud-de3dc1",
+ "state": "working",
+ "at": "2026-10-02T20:02:26.786Z",
+ "mode": "turbo"
 }
