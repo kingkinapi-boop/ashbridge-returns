@@ -1074,7 +1074,8 @@
       "paths": [
         "src/modules/bridge/**",
         "src/contracts/bridge.ts",
-        "db/schema/05_bridge.sql"
+        "db/schema/05_bridge.sql",
+        "db/schema/55_bridge_returns.sql"
       ],
       "clauses": [
         "END-1",
@@ -2007,7 +2008,9 @@
       "paths": [
         "src/modules/auth/**",
         "src/contracts/auth.ts",
-        "db/schema/15_auth.sql"
+        "db/schema/15_auth.sql",
+        "src/core/env.ts",
+        "src/core/env.settings.test.ts"
       ],
       "clauses": [
         "SEC-1",
