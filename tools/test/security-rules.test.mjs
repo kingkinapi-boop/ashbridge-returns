@@ -346,6 +346,25 @@ describe('R62 R63 every exported create* under src/modules is a factory, not an 
     expect(Object.keys(INVENTORY.behindFactory).sort()).toEqual(['createRecordedEngine', 'createTestUsersAuth', 'createTextLayerEngine'])
     expect(applyKnown('R62-inventory', inventoryProblems(files), KNOWN)).toEqual([])
   })
+
+  test('R62 createAiRunner (A04) is on no inventory list and each of its two KNOWN lines is needed: deleting one fails as unlisted (A504 S1)', () => {
+    const files = SRC()
+    const found = inventoryProblems(files).filter((p) => p.text.includes('createAiRunner'))
+    expect(found).toEqual([
+      { file: 'src/modules/ai/index.ts', text: AI_RUNNER_ON_NO_LIST },
+      { file: AI_RUNNER, text: AI_RUNNER_ON_NO_LIST },
+    ])
+    for (const gone of PINNED_OTHER_KNOWN) {
+      const fewer = KNOWN.filter((k) => !sameEntry(k, gone))
+      expect(fewer).toHaveLength(KNOWN.length - 1)
+      expect(applyKnown('R62-inventory', inventoryProblems(files), fewer)).toEqual([`${gone.file}: ${AI_RUNNER_ON_NO_LIST}`])
+    }
+    // and a KNOWN line whose problem is no longer produced is stale
+    const extra = [...KNOWN, { rule: 'R62-inventory', file: AI_RUNNER, owner: 'GL1', problems: ['exports createAiStepHandler, which is on no list (FACTORY, NOT_ADAPTER or BEHIND_FACTORY)'] }]
+    expect(applyKnown('R62-inventory', inventoryProblems(files), extra)).toEqual([
+      `stale KNOWN entry R62-inventory ${AI_RUNNER}: exports createAiStepHandler, which is on no list (FACTORY, NOT_ADAPTER or BEHIND_FACTORY): it no longer fails, remove it`,
+    ])
+  })
 })
 
 // ---------- R63 to R65 twins (the db file runs the same harness on a database) ----------
@@ -439,7 +458,18 @@ const PINNED_FREE_TEXT = [
   'facts.source_qbo_txn_id', 'facts.source_reason', 'facts.source_sheet', 'facts.value', 'jobs.idempotency_key', 'jobs.last_error', 'jobs.lease_holder',
   'judgment_inputs.cell_id', 'judgment_inputs.reason', 'judgment_inputs.value', 'state_events.reason', 'version_cells.cell_id', 'version_cells.value',
 ]
-const PINNED_NOT_ADAPTER = ['createJobQueue', 'createLifecycle', 'createLiveAuth', 'createRunner', 'createSheetsReader', 'createSyncRunner']
+const PINNED_NOT_ADAPTER = ['createAiStepHandler', 'createJobQueue', 'createLifecycle', 'createLiveAuth', 'createRunner', 'createSheetsReader', 'createSyncRunner']
+// A504 S1: the only KNOWN entries for a rule other than R66. createAiRunner (A04) is an ARC-6 adapter that starts on the
+// recorded stand-in, switches engine by a call and never reads the go-live setting; GL1 owns the fix in runner.ts. It is
+// never on INVENTORY.notAdapter (a silent pass, A329) and never owned by A04 or A04C.
+const AI_RUNNER = 'src/modules/ai/runner/runner.ts'
+const AI_RUNNER_ON_NO_LIST = 'exports createAiRunner, which is on no list (FACTORY, NOT_ADAPTER or BEHIND_FACTORY)'
+const PINNED_OTHER_KNOWN = [
+  { rule: 'R62-inventory', file: AI_RUNNER, owner: 'GL1', fix: AI_RUNNER, problems: [AI_RUNNER_ON_NO_LIST] },
+  { rule: 'R62-inventory', file: 'src/modules/ai/index.ts', owner: 'GL1', fix: AI_RUNNER, problems: [AI_RUNNER_ON_NO_LIST] },
+]
+const sameEntry = (a, b) =>
+  a.rule === b.rule && a.file === b.file && a.owner === b.owner && a.fix === b.fix && JSON.stringify(a.problems) === JSON.stringify(b.problems)
 const PINNED_SENTINEL = ['adjusting_entries', 'approvals', 'client_handoff', 'events', 'facts', 'gifi_mappings', 'judgment_inputs', 'sign_in_events', 'state_events', 'version_cells', 'versions']
 
 function knownPinProblems(known) {
@@ -447,7 +477,7 @@ function knownPinProblems(known) {
   for (const k of known) {
     const id = `${k.rule} ${k.file}`
     if (k.rule !== 'R66') {
-      out.push(`${id}: only R66 KNOWN entries are pinned; another rule needs a spec patch`)
+      if (!PINNED_OTHER_KNOWN.some((p) => sameEntry(p, k))) out.push(`${id}: not a pinned entry (only R66 columns and GL1's two createAiRunner entries are); another needs a spec patch`)
       continue
     }
     const pinned = PINNED_R66_OWNERS[k.owner]
@@ -624,7 +654,7 @@ describe('R66 unit twins: append-only by behaviour, per-column checks, string ty
     expect(applyKnown('R66', problems, [{ rule: 'R66', file: 'sql/20_x.sql', owner: 'L00', problems: [r66Problem('facts.fact_key')] }])).toEqual([])
   })
 
-  test('R66 every KNOWN entry is an R66 column its owner may hold (pinned here, A452 item 5 and A458), so owners can delete entries but never add them', () => {
+  test('R66 R62 every KNOWN entry is an R66 column its owner may hold or one of GL1\'s two pinned createAiRunner entries (A452 item 5, A458, A504), so owners can delete entries but never add them', () => {
     expect(knownPinProblems(KNOWN)).toEqual([])
   })
 
@@ -638,7 +668,37 @@ describe('R66 unit twins: append-only by behaviour, per-column checks, string ty
       'R66 sql/20_ledger.sql: facts.fact_key is not pinned to owner B05',
     ])
     expect(knownPinProblems([{ rule: 'R62-production', file: 'src/modules/auth/index.ts', owner: 'L00', problems: ['x'] }])).toEqual([
-      'R62-production src/modules/auth/index.ts: only R66 KNOWN entries are pinned; another rule needs a spec patch',
+      "R62-production src/modules/auth/index.ts: not a pinned entry (only R66 columns and GL1's two createAiRunner entries are); another needs a spec patch",
+    ])
+  })
+
+  test('R62 KNOWN holds exactly the two createAiRunner entries owned by GL1 besides R66 (A504 S1), and createAiStepHandler is a pinned not-an-adapter line', () => {
+    const other = KNOWN.filter((k) => k.rule !== 'R66')
+    expect(other).toHaveLength(2)
+    expect(other.map((k) => ({ ...k }))).toEqual(PINNED_OTHER_KNOWN)
+    expect(INVENTORY.notAdapter['createAiStepHandler']).toBe('the ai:<step> job handler over a runner it is given; chooses no engine')
+    expect('createAiRunner' in INVENTORY.notAdapter || 'createAiRunner' in INVENTORY.factories || 'createAiRunner' in INVENTORY.behindFactory).toBe(false)
+  })
+
+  test('R62 rule twin (A504 S1): a createAiRunner entry owned by A04C, one owned by A04, and one naming createAiStepHandler fail; GL1 deleting either entry passes', () => {
+    const [runner, index] = PINNED_OTHER_KNOWN
+    const notPinned = (k) => `${k.rule} ${k.file}: not a pinned entry (only R66 columns and GL1's two createAiRunner entries are); another needs a spec patch`
+    const a04c = { ...runner, owner: 'A04C' }
+    expect(knownPinProblems([a04c])).toEqual([notPinned(a04c)])
+    const a04 = { ...index, owner: 'A04' }
+    expect(knownPinProblems([a04])).toEqual([notPinned(a04)])
+    const handler = { ...runner, problems: ['exports createAiStepHandler, which is on no list (FACTORY, NOT_ADAPTER or BEHIND_FACTORY)'] }
+    expect(knownPinProblems([handler])).toEqual([notPinned(handler)])
+    const both = { ...runner, problems: [AI_RUNNER_ON_NO_LIST, handler.problems[0]] }
+    expect(knownPinProblems([both])).toEqual([notPinned(both)])
+    expect(knownPinProblems([runner])).toEqual([])
+    expect(knownPinProblems([index])).toEqual([])
+    expect(knownPinProblems([runner, index])).toEqual([])
+  })
+
+  test('R62 rule twin (A504 S1): createAiRunner on INVENTORY.notAdapter is a new not-an-adapter line and fails', () => {
+    expect(listPinProblems(FREE_TEXT, { ...INVENTORY.notAdapter, createAiRunner: 'chooses no engine' }, APPEND_ONLY_SENTINEL)).toEqual([
+      'INVENTORY.notAdapter createAiRunner is not pinned: a new not-an-adapter line needs a spec patch',
     ])
   })
 

@@ -351,6 +351,7 @@ export const INVENTORY: Inventory = {
     createLifecycle: 'the return lifecycle over the database; chooses no engine',
     createSheetsReader: 'the CSV and spreadsheet reader; one engine, stamped as CSV_ENGINE, nothing to choose',
     createLiveAuth: 'the live sign-in slot; off and refusing until GL1 turns it on',
+    createAiStepHandler: 'the ai:<step> job handler over a runner it is given; chooses no engine',
   },
   behindFactory: {
     createTestUsersAuth: { factory: 'createAuth', module: 'src/modules/auth' },
@@ -593,10 +594,18 @@ export const FREE_TEXT: Record<string, string> = {
 export const r66Problem = (col: string): string => `${col} is text in an append-only table with no key, list or format`
 
 const ACTOR_FIX = 'db/schema/94_actor_keys.sql'
-// KNOWN for every rule here (A407, R80 form). R62 is empty since FX2 landed (A443). R66: the deferred columns, each
+const AI_RUNNER = 'src/modules/ai/runner/runner.ts'
+const AI_RUNNER_ON_NO_LIST = 'exports createAiRunner, which is on no list (FACTORY, NOT_ADAPTER or BEHIND_FACTORY)'
+// KNOWN for every rule here (A407, R80 form). R62 was empty from FX2 (A443) until A04 landed createAiRunner (A504):
+// an adapter that starts on its recorded stand-in, switches engine by a call and never reads the go-live setting, so
+// it is on no inventory list. It is never NOT_ADAPTER (a silent pass, A329) and never A04's: GL1 owns the fix in
+// runner.ts (R62 reaches every ARC-6 adapter row; one switched by a call, or with no factory yet, is a KNOWN entry
+// owned by GL1). tools/test/security-rules.test.mjs pins these two entries exactly. R66: the deferred columns, each
 // with the open card whose Paths hold its schema file (or, for FX17, its fix file). An owner deletes its own entries
 // when it lands; tools/test/security-rules.test.mjs pins which columns each owner may hold (A458 G6).
 export const KNOWN: Known[] = [
+  { rule: 'R62-inventory', file: AI_RUNNER, owner: 'GL1', fix: AI_RUNNER, problems: [AI_RUNNER_ON_NO_LIST] },
+  { rule: 'R62-inventory', file: 'src/modules/ai/index.ts', owner: 'GL1', fix: AI_RUNNER, problems: [AI_RUNNER_ON_NO_LIST] },
   {
     rule: 'R66',
     file: 'db/schema/20_ledger.sql',

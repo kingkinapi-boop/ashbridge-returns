@@ -10,6 +10,12 @@
 //   `@once <name>`      an export that succeeds at most once however calls interleave (R64)
 //   `@limit <N> <name>` an export that lets at most N of 2N parallel attempts through (R65)
 // Each tag stands alone on its own line inside a multi-line JSDoc block; any other mention fails (A452 item 6).
+//
+// Round 3 (A504 S2, S3): PGlite runs one transaction at a time; Postgres 16 (TEST_DB=pg16) gives each transaction its
+// own pooled connection. So a twin that passes on both must hold a lock (S2: the R65 clean twin opens with
+// `select ... for update`, as A06's lockUser does), and a race inside transactions is proven in DB16's form
+// (src/core/db/pg16.acceptance.db.test.ts, the planted race): a barrier between the read and the write, `ON ? test :
+// test.fails`. Caught on Postgres 16; on PGlite the race cannot happen, a named blind spot (S3).
 import fs from 'node:fs'
 import path from 'node:path'
 import type { PGlite } from '@electric-sql/pglite'
@@ -53,6 +59,30 @@ const START = new Date('2026-10-02T10:00:05-04:00').getTime()
 const USER = listTestUsers().find((u) => u.displayName.includes('(Test)'))?.id ?? ''
 const clockAt = (ms: number): Clock => ({ now: () => new Date(ms) })
 const SOURCES = (): { name: string; text: string }[] => readSources(ROOT, path.join(ROOT, 'src'))
+const ON = process.env['TEST_DB'] === 'pg16'
+const RACE_WAIT_MS = 500
+// DB16's form: a race between transactions is proven on Postgres 16 and is a named blind spot on PGlite.
+const race = ON ? test : test.fails
+
+/**
+ * DB16's barrier: each caller waits until `expected` callers have arrived, or `waitMs` at most. On Postgres 16 the
+ * pooled transactions (4 connections) all read before any of them writes; on PGlite the first waits alone and carries on.
+ */
+function barrierFor(expected: number, waitMs: number): () => Promise<void> {
+  let arrived = 0
+  const waiting: (() => void)[] = []
+  return () =>
+    new Promise<void>((resolve) => {
+      arrived += 1
+      if (arrived >= expected) {
+        for (const w of waiting.splice(0)) w()
+        resolve()
+        return
+      }
+      waiting.push(resolve)
+      setTimeout(resolve, waitMs)
+    })
+}
 
 // ---------- harnesses (harness.ts: onceProblems, limitProblems, standinProblems; the unit twin runs them on fakes) ----------
 type Ctx = { db: PGlite } & Record<string, unknown>
@@ -76,22 +106,50 @@ const plantedOnce = (clean: boolean): Entry => ({
     return true
   },
 })
-const plantedLimit = (clean: boolean): Entry => ({
-  key: 'planted-r65#attempt',
-  setup: async (db) => {
-    await db.exec(fix('planted-r65-limit.sql'))
-    return { db }
-  },
-  call: async ({ db }, i) => {
-    const run = async (q: Pick<PGlite, 'query'>): Promise<boolean> => {
-      const seen = await q.query<{ n: number }>('select count(*)::int as n from returns.planted_attempts')
-      if (Number(seen.rows[0]?.n) >= 3) return false
-      await q.query('insert into returns.planted_attempts (who) values ($1)', [`w${String(i)}`])
-      return true
-    }
-    return clean ? db.transaction(run) : run(db)
-  },
-})
+// A504 S3: the planted read-then-insert inside a transaction, still with no unique index; a barrier between the read
+// and the write.
+const plantedOnceInTransaction = (): Entry => {
+  const barrier = barrierFor(PARALLEL, RACE_WAIT_MS)
+  return {
+    key: 'planted-r64#claim',
+    setup: async (db) => {
+      await db.exec(fix('planted-r64-once.sql'))
+      return { db }
+    },
+    call: async ({ db }, i) =>
+      db.transaction(async (tx) => {
+        const seen = await tx.query<{ n: number }>("select count(*)::int as n from returns.planted_claims where id = 'c1'")
+        if (Number(seen.rows[0]?.n) > 0) return false
+        await barrier()
+        await tx.query('insert into returns.planted_claims (id, who) values ($1, $2)', ['c1', `w${String(i)}`])
+        return true
+      }),
+  }
+}
+// 'planted': check then record, no transaction. 'transaction' (A504 S3): the same inside a transaction, no lock, a
+// barrier between the read and the write. 'locked' (A504 S2): the transaction first locks the planted_limits row
+// (`select ... for update`, as A06's lockUser does), then checks and records, with the same kind of barrier.
+const plantedLimit = (form: 'planted' | 'transaction' | 'locked'): Entry => {
+  const barrier = barrierFor(6, form === 'locked' ? 50 : RACE_WAIT_MS)
+  return {
+    key: 'planted-r65#attempt',
+    setup: async (db) => {
+      await db.exec(fix('planted-r65-limit.sql'))
+      return { db }
+    },
+    call: async ({ db }, i) => {
+      const run = async (q: Pick<PGlite, 'query'>): Promise<boolean> => {
+        if (form === 'locked') await q.query("select id from returns.planted_limits where id = 'l1' for update")
+        const seen = await q.query<{ n: number }>('select count(*)::int as n from returns.planted_attempts')
+        if (Number(seen.rows[0]?.n) >= 3) return false
+        if (form !== 'planted') await barrier()
+        await q.query('insert into returns.planted_attempts (who) values ($1)', [`w${String(i)}`])
+        return true
+      }
+      return form === 'planted' ? run(db) : db.transaction(run)
+    },
+  }
+}
 
 // ---------- the registries (first entries: A06; their keys equal harness.ts REGISTRY) ----------
 const AUTH_FILE = 'src/modules/auth/testusers/engine.ts'
@@ -281,6 +339,16 @@ describe('R64 an export tagged @once lets at most one of 8 parallel calls throug
   test('R64 rule: the unique-index twin of the planted read-then-insert lets exactly one through', async () => {
     expect(await onceProblems(plantedOnce(true), await cloneTestDb())).toEqual([])
   })
+  // A504 S3, DB16's form: caught on Postgres 16; PGlite serialises transactions, so there it is a named blind spot.
+  race(
+    'R64 rule (A504 S3): a planted read-then-insert in a transaction with no unique index, a barrier between read and write, lets many through on Postgres 16 (PGlite runs one transaction at a time: a named blind spot, test.fails there)',
+    async () => {
+      const found = await onceProblems(plantedOnceInTransaction(), await cloneTestDb())
+      expect(found).toHaveLength(1)
+      expect(found[0]).toMatch(/^planted-r64#claim: [2-8] of 8 parallel calls got through, at most 1 allowed$/)
+    },
+    RACE_WAIT_MS * 8,
+  )
   test.each(ONCE)('R64 $key', async (entry) => {
     expect(await onceProblems(entry, await cloneTestDb())).toEqual([])
   })
@@ -288,13 +356,23 @@ describe('R64 an export tagged @once lets at most one of 8 parallel calls throug
 
 describe('R65 an export tagged @limit N lets at most N of 2N parallel attempts through (SEC-1)', () => {
   test('R65 rule: a planted check-then-record counter lets all through', async () => {
-    const found = await limitProblems(plantedLimit(false), 3, await cloneTestDb())
+    const found = await limitProblems(plantedLimit('planted'), 3, await cloneTestDb())
     expect(found).toHaveLength(1)
     expect(found[0]).toMatch(/^planted-r65#attempt: ([4-6]) of 6 parallel attempts got through, at most 3 allowed$/)
   })
-  test('R65 rule: the serialised twin of the planted check-then-record counter lets exactly 3 through', async () => {
-    expect(await limitProblems(plantedLimit(true), 3, await cloneTestDb())).toEqual([])
+  test('R65 rule (A504 S2): the locked twin of the planted check-then-record counter (select ... for update first, as lockUser does) lets exactly 3 through', async () => {
+    expect(await limitProblems(plantedLimit('locked'), 3, await cloneTestDb())).toEqual([])
   })
+  // A504 S3, DB16's form: caught on Postgres 16; PGlite serialises transactions, so there it is a named blind spot.
+  race(
+    'R65 rule (A504 S3): a planted check-then-record counter in a transaction with no lock, a barrier between read and write, lets more than 3 of 6 through on Postgres 16 (PGlite runs one transaction at a time: a named blind spot, test.fails there)',
+    async () => {
+      const found = await limitProblems(plantedLimit('transaction'), 3, await cloneTestDb())
+      expect(found).toHaveLength(1)
+      expect(found[0]).toMatch(/^planted-r65#attempt: [4-6] of 6 parallel attempts got through, at most 3 allowed$/)
+    },
+    RACE_WAIT_MS * 8,
+  )
   test.each(LIMIT)('R65 $entry.key evaluates at most $n of twice as many parallel attempts', async ({ entry, n, evaluated }) => {
     const db = await cloneTestDb()
     expect(await limitProblems(entry, n, db, evaluated)).toEqual([])
