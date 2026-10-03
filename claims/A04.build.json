@@ -4,8 +4,8 @@
  "round": 9,
  "spec": "fb82b8c",
  "worker": "cloud-42f06c",
- "state": "hold-findings",
- "at": "2026-10-03T08:25:39.461Z",
+ "state": "reopened",
+ "at": "2026-10-03T10:29:02.276Z",
  "mode": "turbo",
- "note": "FAIL: 4 security findings (path traversal job id, unsafe outbox reads, unbounded poll, isTest trust), see reports/A04-check.md"
+ "note": "A456: round 5 build from the patched spec; cloud box (8 Linux-only tests, mutation 100 on engines.ts, runner.ts, schemas.ts, safe-read.ts)"
 }
