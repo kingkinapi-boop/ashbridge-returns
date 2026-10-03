@@ -1,12 +1,9 @@
 {
  "card": "FX8",
  "role": "spec",
- "worker": "local-2",
- "state": "reported",
- "at": "2026-10-03T08:18:28.191Z",
- "mode": "turbo",
- "beat": "2026-10-03T08:01:14.021Z",
- "note": "round 2 on claude/FX8-r2: 19 tests (3 fail by name: 07, 09, 14 bare names); verify red set exactly 3 SEC-11 + 2 R11 (551/5), README 556; stub sweep retires none",
- "commit": "a9dd4aa3",
- "validated": "913ded6795563e5a7adc69dc24a5b54ca3575e76"
+ "note": "toolchain refit",
+ "worker": "cloud-64f020",
+ "state": "working",
+ "at": "2026-10-03T11:18:34.165Z",
+ "mode": "turbo"
 }
