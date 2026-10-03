@@ -3,7 +3,7 @@
  "role": "build",
  "state": "released",
  "worker": "lead",
- "at": "2026-10-03T04:28:23.086Z",
- "note": "wait: W00c round 2 and FX8 land, then the round 3 spec",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"W00c\"],\"depStatus\":[\"carded\"]}"
+ "at": "2026-10-03T05:32:09.797Z",
+ "note": "wait: Opus review of spec round 3 (reports/W00b-spec-review-3.md), then W00c and FX8 land",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
 }
