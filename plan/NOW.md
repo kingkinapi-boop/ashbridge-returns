@@ -26,7 +26,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:56Z by the Lea
 | FX2 | build reported (one auth line; mutation cloud only) | check in the cloud, security review; lands before FX7 |
 | JH0 | spec reported | build after W00c lands |
 | FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
-| CQ4, CQ5, CQ6, SC10 | CQ4 findings done (A430): spec patch reopened; CQ5, CQ6, SC10 carded | CQ4 spec, build, check; it lands before the FX2, S00, DB16 checks (until then checkers read spec-commit lines by hand) |
+| CQ4, CQ5, CQ6, CQ7, SC10 | CQ4 findings done (A430): spec patch reopened; CQ5 spec written (cloud refit running); CQ6, CQ7, SC10 carded | CQ4 spec, build, check; it lands before the FX2, S00, DB16 checks (until then checkers read spec-commit lines by hand) |
 
 Cloud runs: 2 at 06:50Z, 4 at 06:56Z (W00c, A04, FX10 builds, SC check, DB16 build, CQ4 spec open). Local (Opus): local-1 (FX4 spec), local-2. FX2 check working (cloud). The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
 

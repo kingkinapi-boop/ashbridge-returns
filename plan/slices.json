@@ -9666,6 +9666,26 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ5"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-race-update.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ7",
+      "title": "claim.mjs: update and beat write on the tip they read",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/CQ5-spec.md, 3 Oct (A431)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [
