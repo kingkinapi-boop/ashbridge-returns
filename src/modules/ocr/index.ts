@@ -2,6 +2,7 @@
 // The reading adapter (A01, ARC-6): one switch over the reading engines. `textlayer` is the default;
 // `tesseract` (A02) and `recorded` (A03) slot in later. `live` is a named slot that is off: it holds no key
 // and refuses to run until go-live (END-8, GL1).
+import { readSettings } from '../../core/env'
 import type { ReadingDocument, ReadingEngine, ReadingResult } from '../../contracts/reading'
 import { createRecordedEngine } from './recorded'
 import { createTextLayerEngine } from './textlayer'
@@ -16,8 +17,9 @@ export type ReadingAdapterOptions = {
 export const LIVE_OFF_MESSAGE = 'live reading is off until go-live'
 
 export function createReadingAdapter(options: ReadingAdapterOptions = {}): ReadingEngine {
-  const env = options.env ?? process.env
-  const engine = env['OCR_ENGINE'] ?? 'textlayer'
+  const settings = readSettings(options.env)
+  if (settings.NODE_ENV === 'production' && settings.OCR_ENGINE === undefined) throw new Error('OCR_ENGINE must be set in production')
+  const engine = settings.OCR_ENGINE ?? 'textlayer'
   switch (engine) {
     case 'textlayer':
       return createTextLayerEngine(options)
