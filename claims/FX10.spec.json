@@ -4,5 +4,6 @@
  "worker": "local-2",
  "state": "working",
  "at": "2026-10-03T05:26:11.124Z",
- "mode": "turbo"
+ "mode": "turbo",
+ "beat": "2026-10-03T05:26:57.902Z"
 }
