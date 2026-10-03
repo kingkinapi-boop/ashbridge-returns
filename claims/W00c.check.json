@@ -3,11 +3,9 @@
  "role": "check",
  "for": "2026-10-03T08:21:09.951Z",
  "worker": "cloud-3014c0",
- "state": "working",
- "at": "2026-10-03T08:54:53.208Z",
+ "state": "failed",
+ "at": "2026-10-03T08:59:18.585Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "ddcccdd8cb6360552c5c571636b456521705684e"
- },
- "beat": "2026-10-03T08:56:03.237Z"
+ "beat": "2026-10-03T08:56:03.237Z",
+ "note": "FAIL: adversarial read, 6 RC2/RC4 gaps in load.ts (proto key, totals, strictness, dates, id refs), see reports/W00c-check.md"
 }
