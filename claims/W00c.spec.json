@@ -2,11 +2,11 @@
  "card": "W00c",
  "role": "spec",
  "worker": "cloud-76c2f7",
- "state": "reported",
- "at": "2026-10-02T21:44:45.013Z",
+ "state": "reopened",
+ "at": "2026-10-03T03:49:08.073Z",
  "mode": "turbo",
  "beat": "2026-10-02T21:44:30.406Z",
- "note": "1312 tests; scope: checks.test.ts and faults.test.ts need listing in Paths",
+ "note": "A403: round 2 tests from reports/W00c-findings.md; see bold directive on the card",
  "commit": "1b555abb",
  "validated": "7b5d6c94"
 }
