@@ -688,3 +688,6 @@
 {"ts":"2026-10-03T19:35:59.120Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T19:35:59.775Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T19:47:23.658Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T19:58:36.805Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"W00c findings review 4 (Opus)","allowed":true}
+{"ts":"2026-10-03T19:58:41.825Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC6 findings review 2 (Opus)","allowed":true}
+{"ts":"2026-10-03T19:58:46.687Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"FX7 spec review (Opus)","allowed":true}
