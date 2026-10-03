@@ -5,7 +5,7 @@ Tags: none (queue tooling).
 Paths: tools/mutate-changed.mjs, tools/test-homes.json, tools/test/mutate-harness.test.mjs
 Clauses: ARC-15
 Read: `reports/DB16-findings.md` on claude/DB16 (item 4), `.claude/rules/testing.md`, `tools/mutate-changed.mjs`.
-Spec commit: f5a17f0 (validated on main a4c7991)
+Spec commit: f5a17f0 (validated on main a4c7991; refit validated on main 35483b5)
 
 ## Goal
 The mutation gate demands `@mutate` on every file a core card touches, including test harness code Stryker can never reach (DB16's global-setup.ts and index.ts; FX7's test-no-network.ts). It also misses cards tagged "security, core" (B04) and gates no family card (A430).
