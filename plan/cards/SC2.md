@@ -28,3 +28,6 @@ A checker who did neither: the five rules fail on the planted copies and pass on
 - **R75** every written derived value in a test-world file equals its computed twin (a statement's `rolls`, an account's `rowsInExport`). Planted: C10 with `rolls` edited.
 - **R76** a posting with neither `dr` nor `cr` (or both) is refused, never read as 0. Planted: a C12 posting with both missing.
 - Known limit, not a rule yet: an unmarked +1/-1 cent pair in one month keeps every total; only the bank CSV rows could pin it, and no card reads those layouts yet. Revisit when one does.
+
+## KNOWN shape (3 Oct, A407)
+Every KNOWN entry names one rule, one file, the exact problem strings (no regex) and an open owner card; any problem not listed fails, and a listed string not produced fails as stale. Every file scan asserts it read at least one file and a named sentinel.

@@ -2,7 +2,7 @@
 
 Phase 0. Size M. Deps: SC. Where: cloud.
 Tags: core (permissions and citations: schemas, append-only tables, blank rules).
-Paths: db/schema/**, src/contracts/records.ts, src/contracts/jobs.ts, src/contracts/ai.ts, src/modules/gaps/index.ts, src/modules/gaps/bank/index.ts, src/modules/jobs/queue.ts, src/modules/bridge/run.ts, tools/test/__fixtures__/schema-contract/known.json
+Paths: db/schema/**, src/contracts/ids.ts, src/contracts/checks.ts, src/contracts/records.ts, src/contracts/jobs.ts, src/contracts/ai.ts, src/modules/gaps/index.ts, src/modules/gaps/bank/index.ts, src/modules/jobs/queue.ts, src/modules/bridge/run.ts, tools/test/__fixtures__/schema-contract/known.json
 Clauses: SEC-7, EV-1, ARC-10, EV-5, FLOW-1, ARC-15
 Read: `reports/SC-build.md` on claude/SC (every run), `plan/cards/SC.md`, `plan/cards/F01.md`, `plan/cards/F06.md`, `plan/cards/F07.md`, `src/contracts/text.ts` (the one blank rule, BL0).
 Spec commit: (spec-writer fills)
@@ -26,3 +26,6 @@ Fix each defect at its source; never weaken a rule or widen KNOWN (A329). A new 
 
 ## Check
 A checker who did neither: SC's rules all green with KNOWN empty of FX3 entries, `npm test`, the db suite, an Opus read of the schema changes.
+
+## SC KNOWN entries (3 Oct, A407)
+SC lands with exact KNOWN entries owned by this card (reports/SC-findings.md, fix list step 3). Each defect fixed here deletes its entry; never widen an entry or weaken a rule (A329).

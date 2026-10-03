@@ -17,7 +17,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 | W00b | refit spec reported (278 tests); Opus spec review running, build held | GO: reopen build after W00c lands |
 | W16 | round 2 spec on claude/W16-r2 reported; Opus spec review (with SC6) running, build held | GO: reopen build |
 | SC6 | spec reported; review running, build held | GO: reopen build |
-| SC | check FAIL (KNOWN too broad); Opus findings review running | fix list into card, then spec or build |
+| SC | findings done; spec reopened (A407: exact KNOWN, owners FX3 to FX7); FX7, SC7 carded | spec, build re-run, check with Opus read |
 | SC4 | spec refit on a cloud box (laptop lacks ExcelJS); KNOWN owners FX4, FX6 (A406) | build, check |
 | S00, FX5 | specs reopened for review gaps (A402); FX5 spec by local worker 2 | build after spec |
 | FX2 | spec reported (not core); build open | build, check |

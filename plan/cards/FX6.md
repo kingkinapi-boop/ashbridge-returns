@@ -1,8 +1,8 @@
 # FX6 Taxprep rate text invents digits at huge values (found by SC4)
 
-Phase 1. Size S. Deps: W00c, SC4. Where: cloud.
+Phase 1. Size S. Deps: W00c, SC4, SC. Where: cloud.
 Tags: core (Taxprep CSV figures).
-Paths: src/contracts/taxprep.ts
+Paths: src/contracts/taxprep.ts, src/contracts/taxprep.acceptance.test.ts
 Clauses: EV-5, ARC-10
 Read: `reports/SC4-spec.md` (KNOWN, R69), `plan/cards/SC4.md` (R69), `src/contracts/taxprep.ts` (the rate text near `toFixed(4)`).
 Spec commit: (spec-writer fills)
@@ -18,3 +18,6 @@ The smaller option: a rate the schema accepts has a bounded range that a Taxprep
 
 ## Check
 A checker who did neither: R69 green with no FX6 entry in KNOWN, F03's and F03R's tests unchanged and green, mutation 100 on the changed `@mutate` file.
+
+## SC KNOWN entries (3 Oct, A407)
+SC lands with exact KNOWN entries owned by this card (reports/SC-findings.md, fix list step 3). Each defect fixed here deletes its entry; never widen an entry or weaken a rule (A329).

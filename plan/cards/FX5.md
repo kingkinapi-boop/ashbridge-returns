@@ -2,7 +2,7 @@
 
 **Lead directive, 3 Oct (A402): spec round for the 7 gaps in reports/FX5-spec-review.md.** Replace the timeouts with fail-fast assertions (a wrapped database that fails any use outside the caller's transaction), add the database-error-must-throw case, exact event counts and contents, every move kind, every refusal kind. Clauses now FLOW-1 and FLOW-4. Then the build opens.
 
-Phase 3. Size S. Deps: F02. Where: cloud.
+Phase 3. Size S. Deps: F02, SC. Where: cloud.
 Tags: core (a return's state moves; approval voids).
 Paths: src/contracts/lifecycle.ts, src/modules/lifecycle/**
 Clauses: FLOW-1, FLOW-4
@@ -22,3 +22,6 @@ One optional parameter on the move; no other behaviour change. Mutation 100 on t
 
 ## Check
 A checker who did neither: the three cases above on PGlite, F02's tests unchanged and green, scope clean.
+
+## SC KNOWN entries (3 Oct, A407)
+SC lands with exact KNOWN entries owned by this card (reports/SC-findings.md, fix list step 3). Each defect fixed here deletes its entry; never widen an entry or weaken a rule (A329).

@@ -9661,7 +9661,8 @@
       "spec": null,
       "deps": [
         "A07D",
-        "SC4"
+        "SC4",
+        "SC"
       ],
       "paths": [
         "src/modules/sheets/**",
@@ -9686,10 +9687,12 @@
       "spec": null,
       "deps": [
         "W00c",
-        "SC4"
+        "SC4",
+        "SC"
       ],
       "paths": [
-        "src/contracts/taxprep.ts"
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.acceptance.test.ts"
       ],
       "clauses": [
         "EV-5",
@@ -9706,7 +9709,38 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F02"
+        "SC",
+        "W00c"
+      ],
+      "paths": [
+        "src/contracts/facts.ts",
+        "src/contracts/reading.ts",
+        "src/contracts/amount-grammar.ts",
+        "src/modules/ocr/textlayer/**",
+        "src/modules/storage/**",
+        "src/core/test-no-network.ts",
+        ".gitattributes"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "ARC-10",
+        "ARC-15",
+        "SEC-11"
+      ],
+      "id": "FX7",
+      "title": "Rule defects in landed contracts and readers (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F02",
+        "SC"
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
@@ -9772,6 +9806,32 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "SC",
+        "SC2",
+        "SC3",
+        "SC4",
+        "SC5",
+        "SC6"
+      ],
+      "paths": [
+        "tools/test/lib/known.mjs",
+        "tools/test/lib/known.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC7",
+      "title": "One shared KNOWN helper for every rules file",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "SC"
       ],
       "paths": [
@@ -9783,7 +9843,9 @@
         "src/modules/gaps/bank/index.ts",
         "src/modules/jobs/queue.ts",
         "src/modules/bridge/run.ts",
-        "tools/test/__fixtures__/schema-contract/known.json"
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/contracts/ids.ts",
+        "src/contracts/checks.ts"
       ],
       "clauses": [
         "SEC-7",
