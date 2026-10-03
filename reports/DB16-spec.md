@@ -38,5 +38,10 @@ Throwaway stub in this worktree (testDbTarget, the switch in createTemplate fail
 - The switch-off socket test and the scan pass today: they guard the default path, as the review asked.
 - The Postgres 16 path is not proven here (no cluster on the laptop): the cloud checker runs the seven points in the review's last section.
 
+## For the build round (the round 1 build d7a2a06e is merged into this branch)
+- Its url carries `postgres:postgres@` (index.ts line 46): item 7 needs no password in the url; pass it to the driver another way (PGPASSWORD, or the client config).
+- Its docs lack the identity-test line with "not skipped" (item 9): the only docs assertion failing on it (checked here).
+- Not run here: everything else against that build (the laptop has no `pg` module); the cloud build and check run it.
+
 ## Permission gaps
 - `git reset --hard` and `git log` against origin refs were refused once each by the auto-mode classifier at the start; worked around by checking out the existing branch (no reset needed). Multi-command heredoc edits were refused as "too complex"; edits went through the Edit tool.
