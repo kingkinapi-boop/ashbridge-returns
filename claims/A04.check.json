@@ -1,10 +1,9 @@
 {
  "card": "A04",
  "role": "check",
- "for": "2026-10-03T11:24:04.999Z",
- "worker": "cloud-3c9204",
- "state": "failed",
- "at": "2026-10-03T11:45:40.556Z",
- "mode": "turbo",
- "note": "FAIL: scope only, same two items as reports/A04-check.md at e4d9714f (re-ran scope.mjs, identical); code checks passed in that report; needs Lead ruling or Paths edit (add src/core/safe-read.test.ts, treat engines.build.test.ts as build-test)"
+ "for": "2026-10-03T13:43:22.625Z",
+ "worker": "cloud-39d8f1",
+ "state": "working",
+ "at": "2026-10-03T13:48:20.383Z",
+ "mode": "turbo"
 }
