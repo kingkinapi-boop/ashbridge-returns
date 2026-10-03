@@ -5,7 +5,7 @@ Tags: none (queue tooling).
 Paths: tools/scope.mjs, tools/test/scope-spec-files.test.mjs
 Clauses: ARC-15
 Read: `reports/FX8-findings.md` (root cause 2), `plan/cards/CQ2.md`, `tools/scope.mjs`.
-Spec commit: (spec-writer fills)
+Spec commit: 2986c8bf (validated on main 0f7e1cc4)
 
 ## Goal
 FX8's builder wrote the verify line and README count its own check depended on, and scope.mjs passed it, because it never looks at merge commits and does not know which files the spec owns (A417).
