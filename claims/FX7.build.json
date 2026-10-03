@@ -1,0 +1,9 @@
+{
+ "card": "FX7",
+ "role": "build",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-03T20:01:09.530Z",
+ "note": "wait: Opus spec review of FX7 (local, from 20:00Z; core) before the build",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ6\",\"FX2\",\"SC\",\"W00c\"],\"depStatus\":[\"done\",\"done\",\"done\",\"carded\"]}"
+}
