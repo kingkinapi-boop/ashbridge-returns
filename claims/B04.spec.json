@@ -2,8 +2,10 @@
  "card": "B04",
  "role": "spec",
  "worker": "cloud-e9d462",
- "state": "working",
- "at": "2026-10-03T08:26:36.385Z",
+ "state": "reported",
+ "at": "2026-10-03T09:35:54.072Z",
  "mode": "turbo",
- "beat": "2026-10-03T08:29:38.066Z"
+ "beat": "2026-10-03T08:29:38.066Z",
+ "note": "129 tests (115 unit, 14 db), validated on main c2c7db54, none retired; Paths gap: return_id FK needs file after 50_returns or 90_learning edit; see reports/B04-spec.md on claude/B04",
+ "commit": "9ba0e6a9"
 }
