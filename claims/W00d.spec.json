@@ -1,12 +1,10 @@
 {
  "card": "W00d",
  "role": "spec",
- "worker": "cloud-7d7878",
- "state": "reopened",
- "at": "2026-10-03T19:13:42.877Z",
- "mode": "turbo",
- "beat": "2026-10-03T18:02:19.779Z",
  "note": "222 tests, 147 fail by name on W00c 394db377 (RAW_SCHEMAS export missing or planted fault loads); 3 ranges.acceptance tests re-id'd (outside Paths, 6b); Paths gap: A507 adjusting-entry type not specced (needs sample data); see Lead",
- "commit": "ddece04b",
- "validated": "89be70a6"
+ "reopenedFrom": "ddece04b",
+ "worker": "cloud-8c7eee",
+ "state": "working",
+ "at": "2026-10-03T19:24:18.371Z",
+ "mode": "turbo"
 }
