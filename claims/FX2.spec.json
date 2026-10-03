@@ -2,7 +2,10 @@
  "card": "FX2",
  "role": "spec",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T05:08:10.052Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T05:18:25.329Z",
+ "mode": "turbo",
+ "note": "round 2: 23 tests, scans via readOwnSource, auth/index.ts added (1 fails for the right reason)",
+ "commit": "5ebca343",
+ "validated": "77648178"
 }
