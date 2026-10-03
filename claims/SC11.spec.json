@@ -2,10 +2,9 @@
  "card": "SC11",
  "role": "spec",
  "note": "A500 round 2: restore DB16.md from main, then spec patch S1 to S3 (R116, R117) per the Lead directive at the top of plan/cards/SC11.md; then the build reopens",
- "worker": "cloud-97b8bd",
- "state": "reopened",
- "at": "2026-10-03T16:24:04.047Z",
- "mode": "turbo",
- "commit": "b8b82f7",
- "validated": "bd5ec11"
+ "reopenedFrom": "b8b82f7",
+ "worker": "cloud-019852",
+ "state": "working",
+ "at": "2026-10-03T16:27:36.750Z",
+ "mode": "turbo"
 }
