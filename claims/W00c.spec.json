@@ -2,11 +2,11 @@
  "card": "W00c",
  "role": "spec",
  "worker": "cloud-4a3b74",
- "state": "reported",
- "at": "2026-10-03T04:40:01.071Z",
+ "state": "reopened",
+ "at": "2026-10-03T04:55:15.638Z",
  "mode": "turbo",
  "beat": "2026-10-03T03:52:53.885Z",
- "note": "2210 tests, 7 acceptance files + 18 rewritten unit tests",
+ "note": "A413: gaps in reports/W00c-spec-review-3.md; see bold directive",
  "commit": "82b19ae5",
  "validated": "0355e1e9"
 }
