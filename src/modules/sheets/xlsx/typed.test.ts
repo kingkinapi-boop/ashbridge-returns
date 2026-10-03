@@ -25,7 +25,8 @@ describe('EV-14 numberText', () => {
     // A07C round 2 R2-2 retired 1234.56 + 4e-10 reading '1234.56': no absolute 1e-9 floor (a07c.acceptance.test.ts).
     expect(numberText(1234.56 + 2e-9)).toBe(String(1234.56 + 2e-9))
     expect(numberText(0.125)).toBe('0.125')
-    expect(numberText(1e21)).toBe('1000000000000000000000')
+    // A07D D3 (findings fix 4) supersedes the whole-digit form: 1e21 and up read String(x).
+    expect(numberText(1e21)).toBe('1e+21')
     expect(numberText(999_999_999_999_999_900_000)).toBe('999999999999999900000')
     expect(numberText(1e-7)).toBe('1e-7')
     expect(numberText(1e-9)).toBe('1e-9')

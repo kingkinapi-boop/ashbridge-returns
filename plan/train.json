@@ -1,14 +1,12 @@
 {
-  "status": "landed",
+  "status": "checking",
   "branch": "claude/train",
-  "head": "3c3de19",
+  "head": "677e92f",
   "cards": [
-    "A03",
-    "G17"
+    "CQ2",
+    "SC4"
   ],
-  "requested_at": "2026-10-02T20:55:43Z",
-  "note": "A03 core (Opus read in its check). Run gitleaks over HEAD.",
-  "by": "cloud-0c9d3d",
-  "report": "reports/train-20261002-2105.md",
-  "landed_at": "2026-10-02T21:08:00Z"
+  "requested_at": "2026-10-03T05:25:26Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). SC4 is core: its Opus read is done (local-3). CQ2 changes the queue tools: run every tools test. No sample clients on board.",
+  "by": "cloud-8369bc"
 }

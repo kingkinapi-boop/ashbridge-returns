@@ -25,10 +25,12 @@ You build one card. You do not merge, deploy, change the blueprint, or grade you
 - One implementation of any shared logic; if you find a copy, use the first and report it.
 - Never patch something a later card rebuilds: name the defect in your report so the Lead adds it to that card.
 - Laptop: wrap commands in `node tools/heavy.mjs -- <cmd>` and run only related tests. Cloud: run the full suite before you report. Node 24 only.
-- Before reporting, run and paste the numbers of: `npm run typecheck`, `npm run lint`, `npm run deps:check`, `node tools/scope.mjs <card>`, and on a core card `npm run mutate:changed -- <card>` with `// @mutate` on the first lines of every core file you add or change (break 70). The checker runs the same commands; a build that would fail them is not done.
+- Before reporting, run and paste the numbers of: `npm run typecheck`, `npm run lint`, `npm run deps:check`, `node tools/scope.mjs <card>`, and on a core card `npm run mutate:changed -- <card>` with `// @mutate` on the first lines of every core file you add or change (every `@mutate` file scores 100, per file; paste the survivors if any). The checker runs the same commands; a build that would fail them is not done.
 - A choice the card does not settle: pick with the tie-breakers in CLAUDE.md and list it in your report as amber (what, why, how to reverse). Never wait for an answer.
 - Stage files by name, commit small with plain messages, push your branch.
 
 ## Report
 
 Write `reports/<card>-build.md`, at most 15 lines: branch and head commit; files changed; acceptance tests passing (count); your ambers; what you could not do and why. Commit and push it. Your final reply: the path and one line.
+
+A command in the card's Check section that is still red after your build means BLOCKED, not done (A417): report it as BLOCKED with the output, never as built.
