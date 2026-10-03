@@ -1,9 +1,11 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: 39 db tests (10 fail in npm test on missing build, 29 on pg16); typecheck, lint green",
  "worker": "cloud-f814e6",
- "state": "working",
- "at": "2026-10-03T12:47:13.471Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T12:55:11.008Z",
+ "mode": "turbo",
+ "commit": "d1db68b",
+ "validated": "5ba459ce97fcd7fb85d7ec11fe2bfdcbb5fedc75"
 }
