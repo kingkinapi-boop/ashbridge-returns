@@ -1,12 +1,10 @@
 {
  "card": "CQ6",
  "role": "build",
- "round": 1,
- "spec": "f5a17f0",
- "worker": "local-2",
- "state": "reopened",
- "at": "2026-10-03T12:11:27.881Z",
- "mode": "turbo",
- "beat": "2026-10-03T11:30:47.991Z",
- "note": "A464: round 2, drop the setup-file exemption"
+ "round": 2,
+ "spec": "538c793",
+ "worker": "cloud-c6e634",
+ "state": "working",
+ "at": "2026-10-03T12:19:29.683Z",
+ "mode": "turbo"
 }
