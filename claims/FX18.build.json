@@ -4,11 +4,8 @@
  "round": 2,
  "spec": "eb8d158c",
  "worker": "cloud-725535",
- "state": "released",
- "at": "2026-10-03T22:16:29.574Z",
+ "state": "reported",
+ "at": "2026-10-03T23:03:55.464Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "7528476201800044a5788236bf7ffef4b9bc2554"
- },
- "note": "built (51 of 51, mutation 100 on 4 files, head 75284762) but scope.mjs fails: Lead adds src/core/safe-read.test.ts and src/modules/ai/runner/exchange-limits.build.test.ts to Paths, then mark build reported; see reports/FX18-build.md"
+ "note": "A530: two builder unit test files joined Paths; build 75284762 (51 of 51, mutation 100)"
 }
