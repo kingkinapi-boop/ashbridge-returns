@@ -35,3 +35,6 @@ These are superseded by the card's "each column refuses a value that is neither 
 
 ## For the Lead
 - Where else (not in this card): answers.author (70_checks) and holds.holder are also staff ids with no key.
+
+## Refit 2026-10-03
+Toolchain refit by cloud-4b5725: merged origin/main 5ba459c; typecheck and lint clean; unit suite 2824 pass, only the 11 FX17 twins fail; db project on pg16 fails only actors.acceptance.db.test.ts (50) and R66 (KNOWN entries deleted by design). No assertion changed. Old validated sha 9fec3666, new 5ba459c. Retired tests: none. Permission gaps: none. Model: Sonnet 5.5.
