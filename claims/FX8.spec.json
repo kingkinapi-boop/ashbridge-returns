@@ -1,10 +1,9 @@
 {
  "card": "FX8",
  "role": "spec",
- "note": "waits for W16 to land (A417: README count and red set depend on it), see reports/FX8-spec.md on claude/FX8-r2-note",
  "worker": "cloud-a113b9",
- "state": "released",
- "at": "2026-10-03T06:23:04.142Z",
+ "state": "working",
+ "at": "2026-10-03T06:23:07.414Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "560e3b2e0c61c29eaec768c645fe825f2b82a5f7"
