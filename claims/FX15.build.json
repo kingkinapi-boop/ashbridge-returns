@@ -1,11 +1,10 @@
 {
  "card": "FX15",
  "role": "build",
- "round": 1,
- "spec": "46f870ed",
- "worker": "cloud-4eee2d",
- "state": "reopened",
- "at": "2026-10-03T11:16:52.369Z",
- "mode": "turbo",
- "note": "A461: round 2, @mutate on jobs/runner.ts, mutation 100"
+ "round": 2,
+ "spec": "e45532b1",
+ "worker": "cloud-64f020",
+ "state": "working",
+ "at": "2026-10-03T11:27:04.407Z",
+ "mode": "turbo"
 }
