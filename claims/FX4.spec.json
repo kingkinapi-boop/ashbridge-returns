@@ -1,9 +1,11 @@
 {
  "card": "FX4",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit 2, 40 tests unchanged; 11 SC known.json FX4 entries (R36,R41,R46,R54,R56) kept: not the 5 findings, Lead to decide; card Spec commit line stale",
  "worker": "cloud-6ca6b4",
- "state": "working",
- "at": "2026-10-03T12:26:57.022Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T12:38:31.112Z",
+ "mode": "turbo",
+ "commit": "e92df82b",
+ "validated": "b0f6ddd9"
 }
