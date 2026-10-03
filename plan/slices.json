@@ -10091,7 +10091,8 @@
       "paths": [
         "tools/test/security-rules.test.mjs",
         "src/contracts/security-rules.db.test.ts",
-        "tools/test/__fixtures__/security-rules/**"
+        "tools/test/__fixtures__/security-rules/**",
+        "src/modules/auth/testusers/engine.ts"
       ],
       "clauses": [
         "SEC-11",
@@ -10444,6 +10445,9 @@
       "deps": [],
       "paths": [
         "src/modules/jobs/queue.ts",
+        "src/modules/jobs/jobs.acceptance.db.test.ts",
+        "src/modules/jobs/runner.ts",
+        "src/contracts/jobs.ts",
         "src/modules/jobs/lease.acceptance.db.test.ts"
       ],
       "clauses": [

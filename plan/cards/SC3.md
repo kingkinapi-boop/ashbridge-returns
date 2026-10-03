@@ -4,7 +4,7 @@
 
 Phase 0. Size M. Deps: A06, FX2. Where: cloud.
 Tags: security (stand-ins in production, once-only and at-most-N rules, append-only text).
-Paths: tools/test/security-rules.test.mjs, src/contracts/security-rules.db.test.ts, tools/test/__fixtures__/security-rules/**
+Paths: tools/test/security-rules.test.mjs, src/modules/auth/testusers/engine.ts, src/contracts/security-rules.db.test.ts, tools/test/__fixtures__/security-rules/**
 Clauses: SEC-11, ARC-6, ARC-20, FLOW-1, ARC-15
 Read: `reports/A06-findings.md` ("Rule tests for everywhere", risks), `reports/A06-security.md`, `plan/cards/SC.md` (rule style, R26 registry), `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
