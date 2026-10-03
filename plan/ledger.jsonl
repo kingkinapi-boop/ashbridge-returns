@@ -433,3 +433,7 @@
 {"ts":"2026-10-03T04:50:12.012Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T04:50:12.661Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T04:50:13.253Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T05:01:49.809Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T05:01:50.493Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T05:01:50.978Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T05:05:35.467Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Findings review FX8","allowed":true}
