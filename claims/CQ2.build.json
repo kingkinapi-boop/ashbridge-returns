@@ -4,8 +4,11 @@
  "round": 2,
  "spec": "934365e",
  "worker": "local-3",
- "state": "reported",
- "at": "2026-10-03T03:52:10.549Z",
+ "state": "released",
+ "at": "2026-10-03T05:52:01.516Z",
  "mode": "turbo",
- "note": "231 of 231 tools tests pass incl. 28 spec-written rule 6 tests; no code change needed; scope OK"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "02568309fb388ecea621810b42140f6c6907c468"
+ }
 }
