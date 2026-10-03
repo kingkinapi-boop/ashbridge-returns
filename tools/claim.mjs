@@ -151,8 +151,8 @@ function buildPassed(b, ck) {
   if (b.state === 'reopened') return false
   return b.state !== 'reported' || ck.for === b.at
 }
-// CQ1 rule 2: a release with "wait:" is still held while the card's wait key is unchanged.
-const isHeld = (c, card, status) => Boolean(c && c.state === 'released' && WAIT_NOTE.test(c.note || '') && c.waitKey && card && c.waitKey === waitKey(card, status))
+// CQ3 rule 2: a release with "wait:" is held until the Lead reopens the job (which ends the released state).
+const isHeld = (c) => Boolean(c && c.state === 'released' && WAIT_NOTE.test(c.note || ''))
 // CQ2 rule 6: a release stores the card branch tip; a second release at the same tip is "needs Lead".
 const NEEDS_LEAD = (c) => Boolean(c && c.state === 'released' && c.needsLead)
 const REFIT_NOTE = /^refit/i
@@ -260,6 +260,8 @@ function next() {
         if (role === 'build') {
           const s = claimFor(c.id, 'spec')
           const reopened = s && s.state === 'reopened'
+          // CQ3 rule 1: no build while its spec is reopened or being written.
+          if (reopened || (s && s.state === 'working' && !isStale(s))) continue
           const specReady = (c.spec && !reopened) || (s && s.state === 'reported' && s.commit && !specNeedsRefit(s))
           if (!specReady || !depGate(c, 'build', status, reportedBuilds).ok) continue
           const b = claimFor(c.id, 'build')
