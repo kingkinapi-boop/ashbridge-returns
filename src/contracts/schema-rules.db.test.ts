@@ -61,6 +61,17 @@ function knownDb(): unknown[] {
 const KNOWN = knownDb() as readonly KnownEntry[]
 const KNOWN_KEYS = new Set(['rule', 'file', 'problems', 'owner', 'why'])
 const CLOSED = new Set(['done', 'parked'])
+// Only a fix card may own a KNOWN entry (spec review 3 gap 1, A415).
+const FIX_CARDS = new Set(['FX3', 'FX4', 'FX5', 'FX6', 'FX7', 'FX8', 'FX9'])
+// Plant tests pass these pinned statuses; only the real-data shape test reads plan/slices.json (spec review 3 gap 2).
+const PINNED_STATUSES = new Map<string, string>([
+  ['FX3', 'carded'], ['FX6', 'done'], ['W16', 'carded'],
+])
+/** A scan that read nothing, or missed its named sentinel (the same message shape as the file rules' scanProblems). */
+function scanProblems(label: string, items: readonly string[], sentinel: string): string[] {
+  if (items.length === 0) return [`${label}: the scan read no file`]
+  return items.includes(sentinel) ? [] : [`${label}: the scan missed its sentinel ${sentinel}`]
+}
 function cardStatuses(): Map<string, string> {
   const slices = readJson(path.join(ROOT, 'plan', 'slices.json')) as { cards: { id: string; status: string }[] }
   return new Map(slices.cards.map((c) => [c.id, c.status]))
@@ -91,6 +102,7 @@ function knownShapeProblems(entries: readonly unknown[], statuses: Map<string, s
       if (leadingSubject(p) !== file) problems.push(`${at}: the problem names another subject (${leadingSubject(p)})`)
     }
     const owner = k['owner']
+    if (typeof owner !== 'string' || !FIX_CARDS.has(owner)) problems.push(`${at}: the owner ${JSON.stringify(owner)} is not a fix card (FX3 to FX9)`)
     const status = typeof owner === 'string' ? statuses.get(owner) : undefined
     if (status === undefined) problems.push(`${at}: the owner ${JSON.stringify(owner)} is not a card in plan/slices.json`)
     else if (CLOSED.has(status)) problems.push(`${at}: the owner ${String(owner)} is ${status}, so it can never fix the defect`)
@@ -216,20 +228,20 @@ const isText = (c: Column): boolean => ['text', 'varchar', 'bpchar'].includes(c.
 const ROW_DELETE = 8
 const ROW_UPDATE = 16
 const TRUNCATE = 32
-function truncateProblems(cat: Catalog): { checked: number; problems: string[] } {
+function truncateProblems(cat: Catalog): { checked: number; seen: string[]; problems: string[] } {
   const refusing = cat.tables.filter((t) =>
     cat.triggers.some((g) => g.table === t && (g.type & (ROW_DELETE | ROW_UPDATE)) !== 0 && /raise\s+exception/i.test(g.src)),
   )
   const problems = refusing
     .filter((t) => !cat.triggers.some((g) => g.table === t && (g.type & TRUNCATE) !== 0 && /raise\s+exception/i.test(g.src)))
     .map((t) => `returns.${t}: refuses UPDATE or DELETE but not TRUNCATE`)
-  return { checked: refusing.length, problems }
+  return { checked: refusing.length, seen: refusing.map((t) => `returns.${t}`), problems }
 }
 
 // ---------- R13: every text column outside the value allow-list refuses every blank ----------
 // The blank sample set of F01 round 3 (findings F01 r2, S2) plus more of the class.
 const BLANKS = ['', ' ', '  ', '\t', '\n', '\r\n', ' ', '​', '　', '⠀', '\u0085', '͏', 'ㅤ', '﻿', '⁠', ' ​ ']
-async function blankProblems(db: PGlite, cat: Catalog, valueColumns: Record<string, string>): Promise<{ checked: number; problems: string[] }> {
+async function blankProblems(db: PGlite, cat: Catalog, valueColumns: Record<string, string>): Promise<{ checked: number; seen: string[]; problems: string[] }> {
   const problems: string[] = []
   const textCols = cat.columns.filter(isText)
   for (const [key, reason] of Object.entries(valueColumns)) {
@@ -245,18 +257,18 @@ async function blankProblems(db: PGlite, cat: Catalog, valueColumns: Record<stri
       }
     }
   }
-  return { checked: checked.length, problems }
+  return { checked: checked.length, seen: checked.map((c) => `returns.${c.table}.${c.column}`), problems }
 }
 
 // ---------- R14: every version_stamp column refuses {}, {"x":null} and {"x":""} ----------
 const STAMP_BAD = ['{}', '{"x":null}', '{"x":""}']
-async function stampProblems(db: PGlite, cat: Catalog): Promise<{ checked: number; problems: string[] }> {
+async function stampProblems(db: PGlite, cat: Catalog): Promise<{ checked: number; seen: string[]; problems: string[] }> {
   const cols = cat.columns.filter((c) => c.column === 'version_stamp')
   const problems: string[] = []
   for (const col of cols) {
     for (const v of STAMP_BAD) if (await accepts(db, cat, col, v)) problems.push(`returns.${col.table}.version_stamp accepts ${v}`)
   }
-  return { checked: cols.length, problems }
+  return { checked: cols.length, seen: cols.map((c) => `returns.${c.table}.${c.column}`), problems }
 }
 
 // ---------- R15: every state, *_state, status, origin and entry_type column has a CHECK equal to its records.ts list ----------
@@ -269,7 +281,7 @@ async function stateListProblems(
   db: PGlite,
   cat: Catalog,
   lists: Record<string, readonly string[]>,
-): Promise<{ checked: number; problems: string[] }> {
+): Promise<{ checked: number; seen: string[]; problems: string[] }> {
   const cols = cat.columns.filter((c) => STATE_COLUMN.test(c.column))
   const problems: string[] = []
   for (const col of cols) {
@@ -291,10 +303,12 @@ async function stateListProblems(
     for (const v of match[1]) if (!(await accepts(db, cat, col, v))) problems.push(`${where}: refuses ${JSON.stringify(v)} of ${match[0]}`)
     if (await accepts(db, cat, col, 'not-a-value (Test)')) problems.push(`${where}: accepts a value outside ${match[0]}`)
   }
-  return { checked: cols.length, problems }
+  return { checked: cols.length, seen: cols.map((c) => `returns.${c.table}.${c.column}`), problems }
 }
 
 // ---------- R41 (SQL side): one blank definition ----------
+/** The CHECKs R41 reads, by the label its problems lead with. */
+const checkLabels = (cat: Catalog): string[] => cat.checks.map((c) => `returns.${c.table} ${c.name}`)
 function blankDefinitionProblems(cat: Catalog): string[] {
   const defs = [...cat.checks.map((c) => ({ where: `returns.${c.table} ${c.name}`, def: c.def }))]
   for (const [type, ds] of cat.domainChecks) for (const def of ds) defs.push({ where: `domain ${type}`, def })
@@ -318,8 +332,9 @@ async function parityProblems(
   cat: Catalog,
   pairs: readonly { key: string; schema: ZodObj; table: string }[],
   valueColumns: Record<string, string>,
-): Promise<{ checked: number; problems: string[] }> {
+): Promise<{ checked: number; seen: string[]; problems: string[] }> {
   const problems: string[] = []
+  const seen: string[] = []
   let checked = 0
   for (const t of cat.tables) if (!pairs.some((p) => p.table === t)) problems.push(`returns.${t}: no record schema`)
   for (const { key, schema, table } of pairs) {
@@ -335,6 +350,7 @@ async function parityProblems(
       const field = shape[col.column]
       if (field === undefined) continue
       checked += 1
+      seen.push(`returns.${table}.${col.column}`)
       const where = `${key}.${col.column}`
       if (field.safeParse(null).success !== !col.notnull) problems.push(`${where}: nullable in ${col.notnull ? 'zod' : 'SQL'} only`)
       if (!isText(col)) continue
@@ -351,7 +367,7 @@ async function parityProblems(
       }
     }
   }
-  return { checked, problems }
+  return { checked, seen, problems }
 }
 
 // ---------- R43: ids are foreign keys; pointers to unbuilt tables are listed with their card ----------
@@ -368,7 +384,7 @@ async function pointerProblems(
   cat: Catalog,
   future: Record<string, string>,
   allTables: readonly string[],
-): Promise<{ checked: number; problems: string[] }> {
+): Promise<{ checked: number; seen: string[]; problems: string[] }> {
   const problems: string[] = []
   const cols = cat.columns.filter((c) => c.column.endsWith('_id'))
   for (const col of cols) {
@@ -386,12 +402,12 @@ async function pointerProblems(
     }
     if (await accepts(db, cat, col, ' ')) problems.push(`${where}: a pointer id that accepts a blank`)
   }
-  return { checked: cols.length, problems }
+  return { checked: cols.length, seen: cols.map((c) => `returns.${c.table}.${c.column}`), problems }
 }
 
 // ---------- R44: identity columns refuse OVERRIDING SYSTEM VALUE; version columns refuse a gap or a jump ----------
 const BEFORE_INSERT_ROW = (type: number): boolean => (type & 1) !== 0 && (type & 2) !== 0 && (type & 4) !== 0
-function guardProblems(cat: Catalog): { checked: number; problems: string[] } {
+function guardProblems(cat: Catalog): { checked: number; seen: string[]; problems: string[] } {
   const problems: string[] = []
   const guarded = (table: string, column: string): boolean =>
     cat.triggers.some((g) => g.table === table && BEFORE_INSERT_ROW(g.type) && (g.args.split(/\\000|\0/).includes(column) || new RegExp(`\\b${column}\\b`).test(g.src)))
@@ -404,7 +420,7 @@ function guardProblems(cat: Catalog): { checked: number; problems: string[] } {
   for (const c of versions) {
     if (!guarded(c.table, c.column)) problems.push(`returns.${c.table}.${c.column}: no before-insert guard refuses a gap or a jump`)
   }
-  return { checked: identity.length + versions.length, problems }
+  return { checked: identity.length + versions.length, seen: [...identity, ...versions].map((c) => `returns.${c.table}.${c.column}`), problems }
 }
 
 // ---------- R55: a finiteness bound shared by SQL and JS agrees at the double's edge ----------
@@ -468,6 +484,8 @@ async function realCatalog(): Promise<{ db: PGlite; cat: Catalog }> {
   return { db, cat: only(await catalog(db), real) }
 }
 const NOTHING = 'nothing to check: no table in schema returns (F01 brings the schema)'
+/** Every real-data rule reads a catalog that holds returns.returns (spec review 3 gap 4). */
+const catalogSentinel = (cat: Catalog): string[] => scanProblems('catalog', cat.tables.map((t) => `returns.${t}`), 'returns.returns')
 
 // =====================================================================================================
 describe('SC KNOWN on the database side: every exemption is exact, owned and alive (findings SC RC1, RC4, A407)', () => {
@@ -478,20 +496,28 @@ describe('SC KNOWN on the database side: every exemption is exact, owned and ali
       { rule: 'R43', file: 'returns.jobs', match: /^returns\.[a-z_]+\.[a-z_]+_id/, problems: ['returns.jobs: planted (Test)'], owner: 'FX3' },
       { rule: 'R13', file: 'returns.jobs.id', problems: ['returns.jobs.id accepts the blank ""', 'returns.jobs.return_id accepts the blank ""'], owner: 'FX3' },
       { rule: 'R42', file: 'returns.(jobs|client_refs)', problems: ['returns.jobs: no record schema'], owner: 'FX3' },
-      { rule: 'R44', file: 'returns.client_refs.seq', problems: ['returns.client_refs.seq: planted done owner (Test)'], owner: 'F01' },
+      { rule: 'R44', file: 'returns.client_refs.seq', problems: ['returns.client_refs.seq: planted done owner (Test)'], owner: 'FX6' },
       { rule: 'R44', file: 'returns.bridge_ops_items.seq', problems: ['returns.bridge_ops_items.seq: planted prose owner (Test)'], owner: 'F01 family' },
       { rule: 'R12', file: 'returns.returns', problems: ['returns.returns: refuses UPDATE or DELETE but not TRUNCATE'], owner: 'FX3' },
+      { rule: 'R43', file: 'returns.client_handoff.fact_id', problems: ['returns.client_handoff.fact_id: planted open non-fix owner (Test)'], owner: 'W16' },
     ]
-    expect(knownShapeProblems(planted, cardStatuses(), DB_RULES())).toEqual([
+    expect(knownShapeProblems(planted, PINNED_STATUSES, DB_RULES())).toEqual([
       'KNOWN[1] R43 returns.jobs: the key match is not one of rule, file, problems, owner, why',
       'KNOWN[2] R13 returns.jobs.id: the problem names another subject (returns.jobs.return_id)',
       'KNOWN[3] R42 returns.(jobs|client_refs): the file is not one table, table.column or label',
       'KNOWN[3] R42 returns.(jobs|client_refs): the problem names another subject (returns.jobs)',
-      'KNOWN[4] R44 returns.client_refs.seq: the owner F01 is parked, so it can never fix the defect',
+      'KNOWN[4] R44 returns.client_refs.seq: the owner FX6 is done, so it can never fix the defect',
+      'KNOWN[5] R44 returns.bridge_ops_items.seq: the owner "F01 family" is not a fix card (FX3 to FX9)',
       'KNOWN[5] R44 returns.bridge_ops_items.seq: the owner "F01 family" is not a card in plan/slices.json',
       'KNOWN[6] R12 returns.returns: the problem "returns.returns: refuses UPDATE or DELETE but not TRUNCATE" is listed twice',
+      'KNOWN[7] R43 returns.client_handoff.fact_id: the owner "W16" is not a fix card (FX3 to FX9)',
     ])
-    expect(knownShapeProblems([clean], cardStatuses(), DB_RULES())).toEqual([])
+    expect(knownShapeProblems([clean], PINNED_STATUSES, DB_RULES())).toEqual([])
+  })
+  test('ARC-15 scan rule (db): a catalog scan that read nothing, or missed its named table or column, is caught', () => {
+    expect(scanProblems('planted', [], 'returns.returns')).toEqual(['planted: the scan read no file'])
+    expect(scanProblems('planted', ['returns.facts'], 'returns.returns')).toEqual(['planted: the scan missed its sentinel returns.returns'])
+    expect(scanProblems('clean', ['returns.returns'], 'returns.returns')).toEqual([])
   })
   test('ARC-15 KNOWN rule (db): an entry cannot grow and a string the rule no longer prints is stale', () => {
     const known: KnownEntry[] = [{ rule: 'R44', file: 'returns.jobs.seq', problems: ['returns.jobs.seq: planted gone (Test)'], owner: 'FX3' }]
@@ -515,6 +541,7 @@ describe('SC R12 to R15: rules over every table in schema returns (SEC-7, EV-1, 
     expect(cat.tables.length, NOTHING).toBeGreaterThan(0)
     const r = truncateProblems(cat)
     expect(r.checked, 'nothing to check: no append-only table').toBeGreaterThan(0)
+    expect([...catalogSentinel(cat), ...scanProblems('R12 append-only tables', r.seen, 'returns.state_events')]).toEqual([])
     expect(onlyKnown('R12', r.problems)).toEqual([])
   })
 
@@ -539,6 +566,7 @@ describe('SC R12 to R15: rules over every table in schema returns (SEC-7, EV-1, 
     expect(valueColumns, 'src/contracts/text.ts exports no VALUE_COLUMNS (table.column to its reason)').not.toBeNull()
     const r = await blankProblems(db, cat, valueColumns ?? {})
     expect(r.checked).toBeGreaterThan(0)
+    expect([...catalogSentinel(cat), ...scanProblems('R13 text columns', r.seen, 'returns.facts.fact_key')]).toEqual([])
     expect(onlyKnown('R13', r.problems)).toEqual([])
   })
 
@@ -554,6 +582,7 @@ describe('SC R12 to R15: rules over every table in schema returns (SEC-7, EV-1, 
     expect(cat.tables.length, NOTHING).toBeGreaterThan(0)
     const r = await stampProblems(db, cat)
     expect(r.checked, 'nothing to check: no version_stamp column').toBeGreaterThan(0)
+    expect([...catalogSentinel(cat), ...scanProblems('R14 version_stamp columns', r.seen, 'returns.facts.version_stamp')]).toEqual([])
     expect(onlyKnown('R14', r.problems)).toEqual([])
   })
 
@@ -577,6 +606,7 @@ describe('SC R12 to R15: rules over every table in schema returns (SEC-7, EV-1, 
     expect(records, 'src/contracts/records.ts (F01) is not on main').not.toBeNull()
     const r = await stateListProblems(db, cat, stringLists(records ?? {}))
     expect(r.checked).toBeGreaterThan(0)
+    expect([...catalogSentinel(cat), ...scanProblems('R15 state columns', r.seen, 'returns.facts.status')]).toEqual([])
     expect(onlyKnown('R15', r.problems)).toEqual([])
   })
 })
@@ -591,6 +621,7 @@ describe('SC R41 to R44: blanks, parity, pointers and sequences (EV-1, FLOW-1, F
   test('EV-1 R41 no CHECK in schema returns uses btrim(, trim(, [[:space:]] or \\s (one blank definition: returns.is_blank)', async () => {
     const { cat } = await realCatalog()
     expect(cat.checks.length, NOTHING).toBeGreaterThan(0)
+    expect([...catalogSentinel(cat), ...scanProblems('R41 checks', checkLabels(cat), 'returns.facts facts_version_stamp')]).toEqual([])
     expect(onlyKnown('R41-sql', blankDefinitionProblems(cat))).toEqual([])
   })
 
@@ -614,6 +645,7 @@ describe('SC R41 to R44: blanks, parity, pointers and sequences (EV-1, FLOW-1, F
     const text = await loadContract('text.ts')
     const r = await parityProblems(db, cat, pairs, stringRecord(text?.['VALUE_COLUMNS']) ?? {})
     expect(r.checked).toBeGreaterThan(0)
+    expect([...catalogSentinel(cat), ...scanProblems('R42 paired columns', r.seen, 'returns.facts.fact_key')]).toEqual([])
     expect(onlyKnown('R42', r.problems)).toEqual([])
   })
 
@@ -633,6 +665,7 @@ describe('SC R41 to R44: blanks, parity, pointers and sequences (EV-1, FLOW-1, F
     const ids = await loadContract('ids.ts')
     const r = await pointerProblems(db, cat, stringRecord(ids?.['FUTURE_POINTERS']) ?? {}, cat.tables)
     expect(r.checked).toBeGreaterThan(0)
+    expect([...catalogSentinel(cat), ...scanProblems('R43 id columns', r.seen, 'returns.client_handoff.fact_id')]).toEqual([])
     expect(onlyKnown('R43', r.problems)).toEqual([])
   })
 
@@ -649,6 +682,11 @@ describe('SC R41 to R44: blanks, parity, pointers and sequences (EV-1, FLOW-1, F
     expect(cat.tables.length, NOTHING).toBeGreaterThan(0)
     const r = guardProblems(cat)
     expect(r.checked, 'nothing to check: no identity or version column').toBeGreaterThan(0)
+    expect([
+      ...catalogSentinel(cat),
+      ...scanProblems('R44 identity columns', r.seen, 'returns.state_events.seq'),
+      ...scanProblems('R44 version columns', r.seen, 'returns.facts.version_no'),
+    ]).toEqual([])
     expect(onlyKnown('R44', r.problems)).toEqual([])
   })
 })

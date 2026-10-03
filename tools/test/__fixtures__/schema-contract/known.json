@@ -118,6 +118,15 @@
       "why": "a core file without // @mutate"
     },
     {
+      "rule": "R18",
+      "file": "src/contracts/auth.ts",
+      "problems": [
+        "src/contracts/auth.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX7",
+      "why": "FX7 (core) lists src/contracts/auth.ts in its Paths since A414; FX7 adds // @mutate when it edits the file"
+    },
+    {
       "rule": "R23",
       "file": "src/contracts/auth.ts",
       "problems": [
@@ -505,8 +514,8 @@
       "problems": [
         "reference/sample-clients/01-maple-ridge/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -514,8 +523,8 @@
       "problems": [
         "reference/sample-clients/02-halton-haulage/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -523,8 +532,8 @@
       "problems": [
         "reference/sample-clients/03-bluewater-renovations/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -532,8 +541,8 @@
       "problems": [
         "reference/sample-clients/04-lakeshore-eats/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -541,8 +550,8 @@
       "problems": [
         "reference/sample-clients/05-eglinton-holdings/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -550,8 +559,8 @@
       "problems": [
         "reference/sample-clients/06-eglinton-retail/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -559,8 +568,8 @@
       "problems": [
         "reference/sample-clients/07-riverdale-rentals/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -568,8 +577,8 @@
       "problems": [
         "reference/sample-clients/08-queen-west-design/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -577,8 +586,8 @@
       "problems": [
         "reference/sample-clients/09-scarborough-robotics/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -586,8 +595,8 @@
       "problems": [
         "reference/sample-clients/10-danforth-cleaning/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -596,8 +605,8 @@
         "reference/sample-clients/11-humber-bay-software/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)",
         "reference/sample-clients/11-humber-bay-software/taxprep/import.csv: CRLF in the index under text=auto eol=lf"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -606,8 +615,8 @@
         "reference/sample-clients/12-kensington-market-crafts/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)",
         "reference/sample-clients/12-kensington-market-crafts/taxprep/import.csv: CRLF in the index under text=auto eol=lf"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -615,8 +624,8 @@
       "problems": [
         "reference/sample-clients/13-sharma-medicine/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -624,8 +633,8 @@
       "problems": [
         "reference/sample-clients/14-rouge-valley-landscaping-2024/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -633,8 +642,8 @@
       "problems": [
         "reference/sample-clients/15-rouge-valley-landscaping-2025/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -642,8 +651,8 @@
       "problems": [
         "reference/taxprep/2026-10-01-day1/exports/all-input-cells-return1-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -651,8 +660,8 @@
       "problems": [
         "reference/taxprep/2026-10-02-day2/exports/bs-forms-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -660,8 +669,8 @@
       "problems": [
         "reference/taxprep/2026-10-02-day2/exports/gifi-dict-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -669,8 +678,8 @@
       "problems": [
         "reference/taxprep/2026-10-02-day2/exports/gifi-probe-typed.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -678,8 +687,8 @@
       "problems": [
         "reference/taxprep/2026-10-02-day2/exports/probe-enc-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -687,8 +696,8 @@
       "problems": [
         "reference/taxprep/2026-10-02-day2/exports/rt-07-imported-default.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -696,8 +705,8 @@
       "problems": [
         "reference/taxprep/2026-10-02-day2/exports/sched-forms-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -705,8 +714,8 @@
       "problems": [
         "reference/taxprep/2026-10-03-day3/exports/s8-s1-after-cca-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -714,8 +723,8 @@
       "problems": [
         "reference/taxprep/2026-10-04-day4/autofill-edited-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -723,8 +732,8 @@
       "problems": [
         "reference/taxprep/2026-10-04-day4/autofill-entered-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -732,8 +741,8 @@
       "problems": [
         "reference/taxprep/2026-10-04-day4/autofill-imported-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -741,8 +750,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/schedules-all-structure-05.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -750,8 +759,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/schedules-all-structure-06.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -759,8 +768,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/schedules-input-structure-05.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -768,8 +777,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/schedules-input-structure-06.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -777,8 +786,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/settings-column-semicolon.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -786,8 +795,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/settings-column-space.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -795,8 +804,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/settings-column-tab.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -804,8 +813,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/settings-decimal-comma.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -813,8 +822,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/settings-negatives-paren.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -822,8 +831,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/settings-thousands-comma.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R37",
@@ -831,8 +840,8 @@
       "problems": [
         "reference/taxprep/2026-10-05-day5/exports/settings-thousands-space.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
       ],
-      "owner": "FX7",
-      "why": "byte-compared CSV not -text in .gitattributes"
+      "owner": "FX9",
+      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
     },
     {
       "rule": "R38",

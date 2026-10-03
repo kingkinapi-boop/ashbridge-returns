@@ -35,15 +35,45 @@ const KNOWN_REL = `${FIX_REL}/known.json`
 const KNOWN = JSON.parse(read(KNOWN_REL)).unit
 const KNOWN_KEYS = new Set(['rule', 'file', 'problems', 'owner', 'why'])
 const CLOSED = new Set(['done', 'parked'])
+// Only a fix card may own a KNOWN entry (spec review 3 gap 1, A415): a card can never name itself the owner of a
+// defect it brings and land with it.
+const FIX_CARDS = new Set(['FX3', 'FX4', 'FX5', 'FX6', 'FX7', 'FX8', 'FX9'])
+// Read only by the two real-data tests (known.json and PENDING); every plant test passes PINNED_STATUSES instead, so a
+// card landing or parking never changes what a rule test expects (spec review 3 gap 2).
 const cardStatuses = () => new Map(JSON.parse(read('plan/slices.json')).cards.map((c) => [c.id, c.status]))
+const PINNED_STATUSES = new Map([
+  ['FX3', 'carded'], ['FX4', 'carded'], ['FX6', 'done'], ['FX7', 'carded'], ['FX9', 'carded'], ['W16', 'carded'], ['A07D', 'done'], ['B04', 'carded'],
+])
 /** The path a problem string leads with (up to "#" or ": "), when it leads with one. */
 const leadingPath = (p) => /^([^\s:#"]+\/[^:#]*?)(?:#|: )/.exec(p)?.[1] ?? null
+// A problem string that names no file (leadingPath gives null) is filed under the file or folder its rule names here
+// (spec review 3 gap 3). R54 problems lead with the reader's label, so its rows carry the label. A null-subject
+// problem whose rule (and label) has no row fails: a spec job adds the row first.
+const NO_FILE_HOMES = [
+  { rule: 'R30', file: 'src/contracts/taxprep.ts' },
+  { rule: 'R32', file: 'src/contracts/taxprep.ts' },
+  { rule: 'R38', file: 'src/core/test-no-network.ts' }, // the setup file every Vitest project lists (the Node 24 floor)
+  { rule: 'R39', file: 'src/contracts/amount-grammar.ts' },
+  { rule: 'R45', file: 'src/contracts/facts.ts' },
+  { rule: 'R45-enum', file: 'src/contracts/facts.ts' },
+  { rule: 'R45-cite', file: 'src/contracts/facts.ts' },
+  { rule: 'R54', label: 'A01', file: 'src/modules/ocr/textlayer/**' },
+  { rule: 'R54', label: 'A03', file: 'src/modules/ocr/recorded/**' },
+  { rule: 'R54', label: 'A07', file: 'src/modules/sheets/**' },
+]
+/** The file (or glob) a problem that names no file is filed under, or null when NO_FILE_HOMES has no row for it. */
+function noFileHome(rule, problem, rows = NO_FILE_HOMES) {
+  return rows.find((r) => r.rule === rule && (r.label === undefined || problem.startsWith(`${r.label}: `)))?.file ?? null
+}
+/** Whether a path is a file in the walked repo, in exact case (fs.existsSync ignores case on Windows). */
+let walkedFiles
+const walkedFileOk = (f) => (walkedFiles ??= new Set(walk(''))).has(f)
 /**
- * The KNOWN shape (A407): one file, one rule, a non-empty list of literal strings, an open owner card; every rule
+ * The KNOWN shape (A407): one file, one rule, a non-empty list of literal strings, an open fix-card owner; every rule
  * named is one whose test reads KNOWN; no string twice. `fileOk` says whether the file is real; `subjectOf` gives the
- * file a problem string names (null: it names none).
+ * file a problem string names (null: it names none, and `homeOf` gives the file its rule files it under).
  */
-function knownShapeProblems(entries, { statuses, rules, fileOk, subjectOf }) {
+function knownShapeProblems(entries, { statuses, rules, fileOk, subjectOf, homeOf = noFileHome }) {
   const problems = []
   const seen = new Set()
   entries.forEach((k, i) => {
@@ -66,7 +96,13 @@ function knownShapeProblems(entries, { statuses, rules, fileOk, subjectOf }) {
       seen.add(p)
       const subject = subjectOf(p)
       if (subject !== null && subject !== k.file) problems.push(`${at}: the problem names another file (${subject})`)
+      if (subject === null) {
+        const home = homeOf(String(k.rule), p)
+        if (home === null) problems.push(`${at}: the problem names no file and NO_FILE_HOMES has no row for ${String(k.rule)}`)
+        else if (typeof k.file !== 'string' || !globToRe(home).test(k.file)) problems.push(`${at}: the problem names no file, and ${String(k.rule)} files it under ${home}`)
+      }
     }
+    if (typeof k.owner !== 'string' || !FIX_CARDS.has(k.owner)) problems.push(`${at}: the owner ${JSON.stringify(k.owner)} is not a fix card (FX3 to FX9)`)
     const status = typeof k.owner === 'string' ? statuses.get(k.owner) : undefined
     if (status === undefined) problems.push(`${at}: the owner ${JSON.stringify(k.owner)} is not a card in plan/slices.json`)
     else if (CLOSED.has(status)) problems.push(`${at}: the owner ${String(k.owner)} is ${String(status)}, so it can never fix the defect`)
@@ -463,7 +499,7 @@ function stampProblems(entries) {
   const problems = stamps.flatMap(({ key, schema }) =>
     STAMP_BAD.filter((v) => schema.safeParse(v).success).map((v) => `${key} accepts ${JSON.stringify(v)}`),
   )
-  return { checked: stamps.length, problems }
+  return { checked: stamps.length, keys: stamps.map((e) => e.key), problems }
 }
 
 const STATE_FIELD = /^(state|.*_state|status|origin|entry_type)$/
@@ -749,6 +785,7 @@ async function writesProblems(files, registry) {
 async function readBackCheckProblems(files, registry) {
   const problems = []
   const list = tagged(files, 'writes')
+  const keys = list.map((t) => t.key)
   for (const t of list) {
     const entry = registry[t.key]
     const mod = await load(t.file)
@@ -765,7 +802,7 @@ async function readBackCheckProblems(files, registry) {
       if (mod[checkName](given, back) !== false) problems.push(`${t.file}#${checkName}: ${what} is accepted`)
     }
   }
-  return { checked: list.length, problems }
+  return { checked: list.length, keys, problems }
 }
 
 // ---------- R25: one home for Taxprep cell lists and descriptions ----------
@@ -959,15 +996,40 @@ function binaryListProblems(files) {
 const readLatin1 = (rel) => fs.readFileSync(path.join(ROOT, rel), 'latin1')
 const dataText = (f) => (TEXT_EXT.test(f) ? read(f) : readLatin1(f))
 /** R34 widened: W00b's guardFolder, once it is on main, refuses each folder of test data. */
-function guardOutcome(guardFolder, absDir) {
+function guardOutcome(guardFolder, absDir, limit = 300) {
   try {
     const r = guardFolder(absDir)
-    if (Array.isArray(r)) return r.length === 0 ? null : JSON.stringify(r).slice(0, 300)
-    if (r && typeof r === 'object' && r.ok === false) return JSON.stringify(r).slice(0, 300)
+    if (Array.isArray(r)) return r.length === 0 ? null : JSON.stringify(r).slice(0, limit)
+    if (r && typeof r === 'object' && r.ok === false) return JSON.stringify(r).slice(0, limit)
     return null
   } catch (e) {
-    return String(e?.message ?? e).slice(0, 300)
+    return String(e?.message ?? e).slice(0, limit)
   }
+}
+/**
+ * R34-guard never drops a whole folder on one refusal (spec review 3 gap 5): the folder holding SC's plants must be
+ * refused naming every plant, and a copy of it without the named plants (and the KNOWN file that quotes them) must
+ * pass, so any other file in it still meets the guard. `copyWithout(absDir, excluded)` gives the copy's folder.
+ */
+function plantHomeProblems(guardFolder, home, plants, excluded, copyWithout) {
+  const problems = []
+  const refusal = guardOutcome(guardFolder, path.join(ROOT, home), Number.POSITIVE_INFINITY)
+  if (refusal === null) return [`${home}: guardFolder passed the folder that holds the R34 plants`]
+  for (const f of plants) if (!refusal.includes(path.basename(f))) problems.push(`${home}: guardFolder's refusal does not name the plant ${f}`)
+  const copy = copyWithout(path.join(ROOT, home), excluded.map((f) => path.join(ROOT, f)))
+  try {
+    const o = guardOutcome(guardFolder, copy)
+    if (o !== null) problems.push(`${home} without the named plants: ${o}`)
+  } finally {
+    fs.rmSync(copy, { recursive: true, force: true })
+  }
+  return problems
+}
+function copyWithout(absDir, excludedAbs) {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sc-r34-home-'))
+  const skip = new Set(excludedAbs.map((f) => path.resolve(f)))
+  fs.cpSync(absDir, tmp, { recursive: true, filter: (src) => !skip.has(path.resolve(src)) })
+  return tmp
 }
 
 // ---------- R36: money is read from text ----------
@@ -1028,7 +1090,8 @@ function blankRuleProblems(files, readFile) {
 // ---------- subjects not on main yet (R35: "nothing to check" unless declared) ----------
 // A rule whose subject is not built yet is declared here with the open card that brings it. A row whose subject is on
 // main fails as stale (findings SC RC1): the rule then runs on the subject, and the spec job that adds its registry
-// entry deletes the row. A missing subject with no row fails with "nothing to check".
+// entry deletes the row. A missing subject with no row fails with "nothing to check". Whichever of SC and the
+// subject's card lands second clears the row (and adds the registry entry); each subject card carries that note (A415).
 const PENDING = [
   { rule: 'R34-guard', subject: 'testworld/model/guard.ts', owner: 'W00b', why: 'guardFolder and guardValue' },
   { rule: 'R35', subject: 'testworld/model/checks.ts', owner: 'W00c', why: 'the model checks' },
@@ -1493,8 +1556,16 @@ function xmlAndToleranceProblems(files, readFile) {
 // =====================================================================================================
 const THIS_FILE = 'tools/test/schema-contract-rules.test.mjs'
 const UNIT_RULES = () => new Set([...read(THIS_FILE).matchAll(/onlyKnown\('([^']+)'/g)].map((m) => m[1]))
-const UNIT_SHAPE = () => ({ statuses: cardStatuses(), rules: UNIT_RULES(), fileOk: exists, subjectOf: leadingPath })
+const UNIT_SHAPE = () => ({ statuses: cardStatuses(), rules: UNIT_RULES(), fileOk: walkedFileOk, subjectOf: leadingPath })
+// The plant tests' shape: pinned statuses, the rules this file reads KNOWN for, and a pinned file list (exact case).
+const PLANT_FILES = new Set([
+  'src/contracts/jobs.ts', 'src/contracts/reading.ts', 'src/contracts/facts.ts', 'src/contracts/ai.ts', 'src/contracts/taxprep.ts',
+  'src/modules/lifecycle/index.ts', 'src/modules/sheets/xlsx/index.ts', 'src/modules/sheets/index.ts', 'src/modules/ocr/textlayer/index.ts',
+  'reference/sample-clients/01-maple-ridge/answer-key.json',
+])
+const PLANT_SHAPE = () => ({ statuses: PINNED_STATUSES, rules: UNIT_RULES(), fileOk: (f) => PLANT_FILES.has(f), subjectOf: leadingPath })
 const R18_TEXT = 'a core card lists it, but it has no // @mutate in its first 5 lines'
+const R45_TRANSIT = 'sensitiveKindForKey("corp.bank.bank_transit") is "none"'
 
 describe('SC KNOWN, PENDING and scans: every exemption is exact, owned and alive (findings SC RC1 to RC4, A407)', () => {
   test('ARC-15 KNOWN shape rule: a planted entry with a pattern, two files, a done owner or a non-card owner is caught; the clean entry is not', () => {
@@ -1505,24 +1576,62 @@ describe('SC KNOWN, PENDING and scans: every exemption is exact, owned and alive
       { rule: 'R41', file: 'src/contracts/facts.ts', problems: [/^src\/contracts\/facts\.ts: /], owner: 'FX7' },
       { rule: 'R18', file: 'src/contracts/ai.ts', problems: [`src/contracts/ai.ts: ${R18_TEXT}`, `src/modules/jobs/queue.ts: ${R18_TEXT}`], owner: 'FX3' },
       { rule: 'R18', file: 'src/(contracts|modules)/jobs.ts', problems: ['planted two-file (Test)'], owner: 'FX3' },
-      { rule: 'R16', file: 'src/modules/lifecycle/index.ts', problems: ['src/modules/lifecycle/index.ts: planted done owner (Test)'], owner: 'F02' },
+      { rule: 'R16', file: 'src/modules/lifecycle/index.ts', problems: ['src/modules/lifecycle/index.ts: planted done owner (Test)'], owner: 'FX6' },
       { rule: 'R46', file: 'src/modules/sheets/xlsx/index.ts', problems: ['src/modules/sheets/xlsx/index.ts: planted prose owner (Test)'], owner: 'FX3 spec job' },
       { rule: 'R99', file: 'src/contracts/no-such-file (Test).ts', problems: [], owner: 'FX3' },
       { rule: 'R18', file: 'src/contracts/jobs.ts', problems: [`src/contracts/jobs.ts: ${R18_TEXT}`], owner: 'FX3' },
     ]
-    expect(knownShapeProblems(planted, UNIT_SHAPE())).toEqual([
+    expect(knownShapeProblems(planted, PLANT_SHAPE())).toEqual([
       'KNOWN[1] R41 src/contracts/reading.ts: the key match is not one of rule, file, problems, owner, why',
       'KNOWN[2] R41 src/contracts/facts.ts: a problem that is not a literal string ([object RegExp])',
       'KNOWN[3] R18 src/contracts/ai.ts: the problem names another file (src/modules/jobs/queue.ts)',
       'KNOWN[4] R18 src/(contracts|modules)/jobs.ts: the file is not one plain path',
-      'KNOWN[5] R16 src/modules/lifecycle/index.ts: the owner F02 is done, so it can never fix the defect',
+      'KNOWN[4] R18 src/(contracts|modules)/jobs.ts: the problem names no file and NO_FILE_HOMES has no row for R18',
+      'KNOWN[5] R16 src/modules/lifecycle/index.ts: the owner FX6 is done, so it can never fix the defect',
+      'KNOWN[6] R46 src/modules/sheets/xlsx/index.ts: the owner "FX3 spec job" is not a fix card (FX3 to FX9)',
       'KNOWN[6] R46 src/modules/sheets/xlsx/index.ts: the owner "FX3 spec job" is not a card in plan/slices.json',
       'KNOWN[7] R99 src/contracts/no-such-file (Test).ts: the rule is not one whose test reads KNOWN',
       'KNOWN[7] R99 src/contracts/no-such-file (Test).ts: the file does not exist',
       'KNOWN[7] R99 src/contracts/no-such-file (Test).ts: problems is not a non-empty list',
       `KNOWN[8] R18 src/contracts/jobs.ts: the problem ${JSON.stringify(`src/contracts/jobs.ts: ${R18_TEXT}`)} is listed twice`,
     ])
-    expect(knownShapeProblems([clean], UNIT_SHAPE())).toEqual([])
+    expect(knownShapeProblems([clean], PLANT_SHAPE())).toEqual([])
+  })
+  test('ARC-15 KNOWN owner rule (gap 1): a planted entry owned by an open card that is not a fix card (W16) is caught; FX3 to FX9 pass', () => {
+    const entry = (owner) => ({ rule: 'R18', file: 'src/contracts/jobs.ts', problems: [`src/contracts/jobs.ts: ${R18_TEXT}`], owner })
+    expect(knownShapeProblems([entry('W16')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner "W16" is not a fix card (FX3 to FX9)'])
+    expect(knownShapeProblems([entry('B04')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner "B04" is not a fix card (FX3 to FX9)'])
+    for (const fx of ['FX3', 'FX4', 'FX7', 'FX9']) expect(knownShapeProblems([entry(fx)], PLANT_SHAPE()), fx).toEqual([])
+    expect([...FIX_CARDS]).toEqual(['FX3', 'FX4', 'FX5', 'FX6', 'FX7', 'FX8', 'FX9'])
+  })
+  test('ARC-15 KNOWN file rule (gap 3): a planted R45 string filed under src/contracts/reading.ts, a no-file string with no NO_FILE_HOMES row and a wrong-case file are caught', () => {
+    const planted = [
+      { rule: 'R45', file: 'src/contracts/reading.ts', problems: [R45_TRANSIT], owner: 'FX3' },
+      { rule: 'R52', file: 'reference/sample-clients/01-maple-ridge/answer-key.json', problems: ['01-maple-ridge: planted marker (Test)'], owner: 'FX3' },
+      { rule: 'R45-cite', file: 'src/contracts/Facts.ts', problems: ['loadFactCatalogue accepts a cra_form cite that is free text'], owner: 'FX3' },
+      { rule: 'R54', file: 'src/modules/ocr/textlayer/index.ts', problems: ['A07: gzip bytes under statement (Test).csv was not refused with a reason (planted)'], owner: 'FX4' },
+      { rule: 'R54', file: 'src/modules/sheets/index.ts', problems: ['E00: planted unmapped label (Test)'], owner: 'FX4' },
+    ]
+    expect(knownShapeProblems(planted, PLANT_SHAPE())).toEqual([
+      'KNOWN[0] R45 src/contracts/reading.ts: the problem names no file, and R45 files it under src/contracts/facts.ts',
+      'KNOWN[1] R52 reference/sample-clients/01-maple-ridge/answer-key.json: the problem names no file and NO_FILE_HOMES has no row for R52',
+      'KNOWN[2] R45-cite src/contracts/Facts.ts: the file does not exist',
+      'KNOWN[2] R45-cite src/contracts/Facts.ts: the problem names no file, and R45-cite files it under src/contracts/facts.ts',
+      'KNOWN[3] R54 src/modules/ocr/textlayer/index.ts: the problem names no file, and R54 files it under src/modules/sheets/**',
+      'KNOWN[4] R54 src/modules/sheets/index.ts: the problem names no file and NO_FILE_HOMES has no row for R54',
+    ])
+    const clean = [
+      { rule: 'R45', file: 'src/contracts/facts.ts', problems: [R45_TRANSIT], owner: 'FX3' },
+      { rule: 'R54', file: 'src/modules/sheets/index.ts', problems: ['A07: gzip bytes under statement (Test).csv was not refused with a reason (planted)'], owner: 'FX4' },
+      { rule: 'R32', file: 'src/contracts/taxprep.ts', problems: [`"+1'234": passes as plain text "+1'234" (neither a number nor a named fault)`], owner: 'FX3' },
+    ]
+    expect(knownShapeProblems(clean, PLANT_SHAPE())).toEqual([])
+  })
+  test('ARC-15 KNOWN file rule (gap 3): the real-data check reads the walked file list in exact case, never fs.existsSync', () => {
+    expect(walkedFileOk('src/contracts/facts.ts')).toBe(true)
+    expect(walkedFileOk('src/contracts/Facts.ts')).toBe(false)
+    expect(walkedFileOk('src/contracts')).toBe(false)
+    expect(UNIT_SHAPE().fileOk).toBe(walkedFileOk)
   })
   test('ARC-15 KNOWN rule: an entry cannot grow (a new problem in its file fails) and a string the rule no longer prints is stale', () => {
     const known = [{ rule: 'R18', file: 'src/contracts/jobs.ts', problems: [`src/contracts/jobs.ts: ${R18_TEXT}`, 'src/contracts/jobs.ts: planted gone (Test)'], owner: 'FX3' }]
@@ -1543,7 +1652,7 @@ describe('SC KNOWN, PENDING and scans: every exemption is exact, owned and alive
       { rule: 'R47', subject: 'src/modules/planted-unbuilt (Test)', owner: 'A07D', why: 'planted (Test)' },
       { rule: 'R47', subject: 'src/modules/planted-unbuilt (Test)', owner: 'B04', why: 'clean (Test)' },
     ]
-    expect(stalePendingProblems(rows, { statuses: cardStatuses(), subjectExists: exists })).toEqual([
+    expect(stalePendingProblems(rows, { statuses: PINNED_STATUSES, subjectExists: (s) => s === 'src/modules/sheets' })).toEqual([
       'stale PENDING row R47 src/modules/sheets (owner FX4): the subject is on main, so the rule runs on it; delete the row',
       'PENDING row R47 src/modules/planted-unbuilt (Test): the owner A07D is not an open card',
     ])
@@ -1639,6 +1748,7 @@ describe('SC R14 and R23: contract schemas (ARC-10, EV-5, AI-1)', () => {
   test('ARC-10 R14 every zod VersionStampSchema in src/contracts refuses {}, {"x":null} and {"x":""}', async () => {
     const r = stampProblems(await exportedSchemas(contractFiles()))
     expect(r.checked, 'nothing to check: no VersionStampSchema in src/contracts (F01 brings records.ts)').toBeGreaterThan(0)
+    expect(scanProblems('R14', r.keys, 'src/contracts/records.ts#VersionStampSchema')).toEqual([])
     expect(onlyKnown('R14', r.problems)).toEqual([])
   })
 
@@ -1731,6 +1841,7 @@ describe('SC R24 to R28: money, converters, writers and the Taxprep tables (EV-6
   test('RT-3 ARC-14 R30 R33 every @writes module exports its read-back check and refuses each planted mismatch (rates compare exact text against toFixed(4))', async () => {
     const r = await readBackCheckProblems(CONTRACT_AND_MODULE_FILES(), WRITES_REGISTRY)
     expect(r.checked).toBeGreaterThan(0)
+    expect(scanProblems('R30', r.keys, 'src/contracts/taxprep.ts#writeTaxprepCsv')).toEqual([])
     expect(onlyKnown('R30', r.problems)).toEqual([])
   })
 
@@ -1889,14 +2000,59 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
       fs.rmSync(tmp, { recursive: true, force: true })
     }
     const dirs = [...new Set(['reference/sample-clients', 'testworld', ...testDataFiles().filter(isFixture).map((f) => f.replace(/(__fixtures__|__golden__)\/.*$/, '$1'))])]
-    // The folder holding SC's R34 plants is named here and must be refused, never skipped (findings SC RC2).
+    // The folder holding SC's R34 plants is refused naming each plant, and a copy without the named plants passes, so
+    // no other file in it escapes the guard (findings SC RC2; spec review 3 gap 5).
     const PLANT_HOME = 'tools/test/__fixtures__'
     expect(dirs).toContain(PLANT_HOME)
-    expect(guardOutcome(guardFolder, path.join(ROOT, PLANT_HOME)), `guardFolder passed ${PLANT_HOME}, which holds the R34 plants`).not.toBeNull()
-    const problems = dirs
-      .filter((d) => d !== PLANT_HOME).map((d) => [d, guardOutcome(guardFolder, path.join(ROOT, d))]).filter(([, o]) => o !== null).map(([d, o]) => `${d}: ${String(o)}`)
+    const home = plantHomeProblems(guardFolder, PLANT_HOME, Object.keys(R34_PLANTED), [...Object.keys(R34_PLANTED), KNOWN_REL], copyWithout)
+    // Refusing the plant folder and naming each plant is never excused; only what the copy raises may be a KNOWN entry.
+    const COPY = `${PLANT_HOME} without the named plants: `
+    expect(home.filter((p) => !p.startsWith(COPY))).toEqual([])
+    const problems = home.filter((p) => p.startsWith(COPY))
+    problems.push(
+      ...dirs.filter((d) => d !== PLANT_HOME).map((d) => [d, guardOutcome(guardFolder, path.join(ROOT, d))]).filter(([, o]) => o !== null).map(([d, o]) => `${d}: ${String(o)}`),
+    )
     expect(onlyKnown('R34-guard', problems)).toEqual([])
   }, 60_000)
+
+  test('SEC-11 R34 guard rule (gap 5): a guard that refuses the plant folder without naming each plant, or refuses the copy without the plants, is caught; a whole-folder skip is never the answer', () => {
+    const home = 'tools/test/__fixtures__'
+    const plants = Object.keys(R34_PLANTED)
+    const excluded = [...plants, KNOWN_REL]
+    const fakeCopy = (absDir, ex) => {
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sc-r34-plant-'))
+      fs.writeFileSync(path.join(dir, 'excluded.json'), JSON.stringify(ex.map((f) => path.relative(ROOT, f).split(path.sep).join('/'))))
+      return dir
+    }
+    const copied = (abs) => fs.existsSync(path.join(abs, 'excluded.json'))
+    const names = (abs) => (copied(abs) ? [] : [`refused: ${plants.map((f) => path.basename(f)).join(', ')}`])
+    // A guard that names only the first plant, and one that also refuses the copy (a file outside the plants it dislikes).
+    const firstOnly = (abs) => (copied(abs) ? [] : [`refused: ${path.basename(plants[0])}`])
+    const refusesCopy = (abs) => (copied(abs) ? ['refused: other (Test).json'] : names(abs))
+    const passesAll = () => []
+    expect(plantHomeProblems(firstOnly, home, plants, excluded, fakeCopy)).toEqual(
+      plants.slice(1).map((f) => `${home}: guardFolder's refusal does not name the plant ${f}`),
+    )
+    expect(plantHomeProblems(refusesCopy, home, plants, excluded, fakeCopy)).toEqual([`${home} without the named plants: ["refused: other (Test).json"]`])
+    expect(plantHomeProblems(passesAll, home, plants, excluded, fakeCopy)).toEqual([`${home}: guardFolder passed the folder that holds the R34 plants`])
+    expect(plantHomeProblems(names, home, plants, excluded, fakeCopy)).toEqual([])
+    // The real copy leaves out exactly the named plants and the KNOWN file, and keeps every other file.
+    const copy = copyWithout(FIX, excluded.map((f) => path.join(ROOT, f)))
+    try {
+      const listed = []
+      const visit = (d, rel) => {
+        for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+          if (e.isDirectory()) visit(path.join(d, e.name), `${rel}${e.name}/`)
+          else listed.push(`${rel}${e.name}`)
+        }
+      }
+      visit(copy, `${FIX_REL}/`)
+      const original = walk(FIX_REL)
+      expect(listed.sort()).toEqual(original.filter((f) => !excluded.includes(f)).sort())
+    } finally {
+      fs.rmSync(copy, { recursive: true, force: true })
+    }
+  })
 
   test('EV-6 R36 rule: a planted dollarsToCents(number) with Math.round(x * 100) is caught', () => {
     expect(moneyFromNumberProblems(['planted-r36-money.ts.txt'], fix)).toHaveLength(2)
@@ -1921,6 +2077,9 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
     const out = execFileSync('git', ['ls-files', '--eol'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
     const lines = out.split('\n').filter(Boolean)
     expect(lines.length).toBeGreaterThan(100)
+    const compared = lines.map((l) => /\t(.+)$/.exec(l)?.[1] ?? '').filter((f) => f !== '' && BYTE_COMPARED(f))
+    expect(scanProblems('R37 sample-client CSVs', compared, 'reference/sample-clients/01-maple-ridge/taxprep/import.csv')).toEqual([])
+    expect(scanProblems('R37 goldens', compared, 'src/contracts/__golden__/apostrophe-in.csv')).toEqual([])
     expect(onlyKnown('R37', eolProblems(lines))).toEqual([])
   }, 60_000)
 
@@ -2070,6 +2229,7 @@ describe('SC R35, R45 and R50 to R53: test-world checks, cites, one Luhn, loader
       expect(pendingOrNothing('R51', 'testworld')).toBeNull()
       return
     }
+    expect(scanProblems('R51', readers, 'testworld/clients/load.ts')).toEqual([])
     expect(onlyKnown('R51', loaderProblems(files, read))).toEqual([])
   })
 
@@ -2088,6 +2248,7 @@ describe('SC R35, R45 and R50 to R53: test-world checks, cites, one Luhn, loader
   test('ARC-8 END-2 R52 every fault-marker field in every answer key has a catalogue entry and its arithmetic proof holds', async () => {
     const keys = answerKeys()
     expect(keys.length).toBeGreaterThanOrEqual(10)
+    expect(scanProblems('R52', keys.map(([d]) => d), '01-maple-ridge')).toEqual([])
     const marked = keys.flatMap(([, k]) => (k.transactions ?? []).filter((t) => Object.keys(MARKER_CATALOGUE).some((m) => m in t)))
     expect(marked.length, 'nothing to check: no marked row in any answer key').toBeGreaterThan(0)
     const problems = keys.flatMap(([d, k]) => markerProblems(d, k, MARKER_CATALOGUE))
@@ -2113,6 +2274,7 @@ describe('SC R35, R45 and R50 to R53: test-world checks, cites, one Luhn, loader
     const keys = answerKeys()
     const withMonths = keys.filter(([, k]) => Object.keys(k.statementBalances ?? {}).length > 0)
     expect(withMonths.length, 'nothing to check: no statement months').toBeGreaterThan(5)
+    expect(scanProblems('R53', withMonths.map(([d]) => d), '01-maple-ridge')).toEqual([])
     expect(onlyKnown('R53', [...keys.flatMap(([d, k]) => sequenceProblems(d, k)), ...yearLinkProblems(keys)])).toEqual([])
   })
 })
@@ -2140,6 +2302,7 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
   })
   test('ARC-11 R47 every reader adapter keys its cache on every input its result depends on and returns a copy (A01 now; A02, A03, A07, B04 as they land)', async () => {
     const problems = []
+    const ran = []
     for (const dir of READER_DIRS) {
       const entry = Object.entries(READERS).find(([, r]) => r.dir === dir)
       if (!exists(dir)) {
@@ -2152,9 +2315,12 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
         continue
       }
       const [label, r] = entry
+      ran.push(label)
       problems.push(...(await cacheProblems(label, r.make, r.good(), r.names, r.routes, r.fingerprint)))
     }
     expect(Object.keys(READERS).length).toBeGreaterThan(0)
+    expect(scanProblems('R47 readers', ran, 'A01')).toEqual([])
+    expect(scanProblems('R47 readers', ran, 'A07')).toEqual([])
     expect(onlyKnown('R47', problems)).toEqual([])
   }, 60_000)
 
@@ -2164,13 +2330,17 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
   })
   test('EV-14 ARC-6 R48 every reader whose contract says hidden or never dropped keeps an empty instance (a blank page, an empty hidden row or column)', async () => {
     const problems = []
+    const ran = []
     for (const [label, r] of Object.entries(READERS)) {
       if (r.blank === undefined) {
         problems.push(`${label}: no empty instance in the SC READERS registry`)
         continue
       }
+      ran.push(label)
       problems.push(...(await emptyInstanceProblems(label, r.make, r.blank(), r.keeps, r.fingerprint)))
     }
+    expect(scanProblems('R48 readers', ran, 'A01')).toEqual([])
+    expect(scanProblems('R48 readers', ran, 'A07')).toEqual([])
     for (const dir of READER_DIRS.filter(exists)) {
       const says = productTs([dir]).some((f) => /\bhidden\b|never dropped|without a text layer/i.test(read(f)))
       if (says && !Object.values(READERS).some((r) => r.dir === dir && r.blank !== undefined)) problems.push(`${dir}: its contract says hidden or never dropped, and no empty instance tests it`)
@@ -2198,7 +2368,13 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
   })
   test('ARC-6 EV-14 R54 every reader refuses a wrong-kind container (gzip, MZ, zip, spanned zip, CSV, empty, a bare header, a zero-size page) with a reason and never throws raw', async () => {
     const problems = []
-    for (const [label, r] of Object.entries(READERS)) problems.push(...(await wrongKindProblems(label, r.make, r.wrongKind, r.refusal, r.fingerprint)))
+    const ran = []
+    for (const [label, r] of Object.entries(READERS)) {
+      ran.push(label)
+      problems.push(...(await wrongKindProblems(label, r.make, r.wrongKind, r.refusal, r.fingerprint)))
+    }
+    expect(scanProblems('R54 readers', ran, 'A01')).toEqual([])
+    expect(scanProblems('R54 readers', ran, 'A07')).toEqual([])
     for (const dir of ['src/modules/sheets', 'src/modules/documents/intake']) {
       if (exists(dir) && !Object.values(READERS).some((r) => r.dir === dir)) problems.push(`${dir}: a reader with no entry in the SC READERS registry (R54)`)
       else if (!exists(dir)) {
