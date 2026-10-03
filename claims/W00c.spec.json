@@ -2,10 +2,9 @@
  "card": "W00c",
  "role": "spec",
  "note": "A450: round 3, see card directive",
- "worker": "cloud-03268d",
- "state": "reopened",
- "at": "2026-10-03T09:12:10.034Z",
- "mode": "turbo",
- "commit": "77bbbef0",
- "validated": "0f7e1cc4"
+ "reopenedFrom": "77bbbef0",
+ "worker": "cloud-0afb81",
+ "state": "working",
+ "at": "2026-10-03T09:23:50.416Z",
+ "mode": "turbo"
 }
