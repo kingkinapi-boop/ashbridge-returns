@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "f62e90f9",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T11:17:59.884Z",
+ "state": "reported",
+ "at": "2026-10-03T11:31:10.628Z",
  "mode": "turbo",
- "beat": "2026-10-03T11:19:52.534Z"
+ "beat": "2026-10-03T11:19:52.534Z",
+ "note": "5 of 5 acceptance tests pass"
 }
