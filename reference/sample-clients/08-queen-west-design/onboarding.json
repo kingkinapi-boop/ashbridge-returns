@@ -187,12 +187,12 @@
     "ucc": [
       {
         "class": "8",
-        "ucc": 3440,
+        "ucc": 3315.2,
         "note": "made-up"
       },
       {
         "class": "50",
-        "ucc": 1210,
+        "ucc": 42.52,
         "note": "made-up"
       }
     ]

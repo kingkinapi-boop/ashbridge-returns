@@ -1,0 +1,10 @@
+// Planted (SC R35): the test file for planted-r35-checks.mjs; only checkRolls has a planted failing test.
+import { expect, test } from 'vitest'
+import { checkRolls, checkMarkers } from '../planted-r35-checks.mjs'
+
+test('END-2 planted fault: a month that does not roll is caught by checkRolls', () => {
+  expect(checkRolls([{ opening: 1, activity: 1, closing: 3 }]).ok).toBe(false)
+})
+test('END-2 checkMarkers passes a clean row', () => {
+  expect(checkMarkers([{ catalogued: true, marker: 'dupOf' }]).ok).toBe(true)
+})

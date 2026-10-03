@@ -1,0 +1,12 @@
+// Clean (SC R46): the typed switch builds text from the value's own type.
+import ExcelJS from 'exceljs'
+export function typedText(value: ExcelJS.CellValue): string {
+  switch (typeof value) {
+    case 'number':
+      return String(value)
+    case 'boolean':
+      return value ? 'TRUE' : 'FALSE'
+    default:
+      return `${value}`
+  }
+}

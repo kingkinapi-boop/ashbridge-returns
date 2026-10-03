@@ -8,7 +8,7 @@ description: How checked cards reach main through the train (a batch branch test
 Main only ever moves to a commit that passed the full suite and every journey in the cloud. Cards reach it in batches (the train), so the expensive cloud run happens once per batch, not once per card. All train work happens in its own worktree, `.claude/worktrees/train`: the main checkout stays on `main`, clean, because Zo reads his to-do from it.
 
 ## 1. Board the train
-A card boards when, on its latest commit: check PASS (from a worker that did not spec or build it); GitHub checks green (typecheck and unit tests); `node tools/scope.mjs <card>` clean; its acceptance tests unchanged since the spec commit; and, for a card marked `security`, a clean security review.
+A card boards when, on its latest commit: check PASS (from a worker that did not spec or build it); GitHub checks green (typecheck and unit tests); `node tools/scope.mjs <card>` clean (run it from any checkout: it reads `origin/claude/<card>` and exits 2 if that branch is missing); its acceptance tests unchanged since the spec commit; and, for a card marked `security`, a clean security review.
 ```
 W=.claude/worktrees/train
 git fetch -q origin
@@ -17,7 +17,11 @@ git -C $W checkout -q -B train origin/claude/train 2>/dev/null || git -C $W chec
 git -C $W merge --no-ff origin/claude/<card> -m "Merge <card>: <title> (spec, build, check by three workers)"
 git -C $W push -q origin train:claude/train
 ```
+A card whose build lives on `claude/<id>-r2`: board that branch and run `node tools/scope.mjs <id> --branch claude/<id>-r2` once CQ4 lands (A430).
+
 A conflict: `git merge --abort`, release the card's build job with the note "rebase on main", and it goes back in the queue.
+
+When any boarded card touches `reference/sample-clients/`, the train run also runs `node reference/sample-clients/verify.mjs` on the train head (A417).
 
 ## 2. Run the train
 When due (mode table: every 3 green cards in normal, 6 or hourly in turbo): fire a cloud check of the train (`check train full`): `npm ci`, typecheck, the full unit suite, every journey for every kind built so far, mutation tests on changed core modules. Report in `reports/train-<time>.md` on `claude/train`.

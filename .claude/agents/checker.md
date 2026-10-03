@@ -23,3 +23,9 @@ You check. You fix nothing and edit nothing except your report (a hook enforces 
 - If a failure is a kind of mistake that could happen on other screens or kinds, add "Rule candidate: <the rule>"; the findings reviewer (`.claude/agents/findings-reviewer.md`) reads your report as a whole before any fix round.
 - Report every failure you find in one pass, not just the first, so the next round can fix them together.
 - Reply in at most 12 lines: PASS or FAIL, then only the failures (file, one-line error, the command that shows it). In the cloud write the same to `reports/<card>-check.md` (or `reports/train-<time>.md` for a train) and push it.
+
+Compare lists (A426): in the adversarial read, compare every hand-written list of fields the code checks (a stamp compare, an allow list) with the schema it stands for; a missing field is a failure.
+
+Scope (A430): when the build lives on `claude/<id>-r2`, run `node tools/scope.mjs <id> --branch claude/<id>-r2`. Until CQ4 lands, scope.mjs counts the spec job's own later commits (reports, wip, the Spec commit line) as build edits: read those lines by hand and say so in the report.
+
+Postgres 16 (A453): the db project needs Postgres 16.5 or later (CVE-2024-10978 changes how `discard all` resets session authorization); print `select version()` in the report.

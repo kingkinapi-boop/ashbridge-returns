@@ -1,5 +1,7 @@
 # JH0 Journey harness: load a kind, run the pipeline
 
+**Lead note, 3 Oct (A403): JH0's branch carries a copy of testworld checks-rolls.test.ts; at merge take W00c's version.**
+
 Phase 0. Size M. Deps: W00, F01. Where: cloud (journeys); the unit-level parts run anywhere.
 Tags: security (SEC-11: the harness loads only test-world data and refuses a live database).
 Paths: testworld/harness/**, e2e/_harness/**, e2e/steps/README.md, package.json, package-lock.json

@@ -1,12 +1,12 @@
 {
   "status": "checking",
   "branch": "claude/train",
-  "head": "25bde2a",
+  "head": "26e84345",
   "cards": [
-    "A07D",
-    "A06"
+    "DB16",
+    "FX15"
   ],
-  "requested_at": "2026-10-03T03:42:49Z",
-  "note": "A07D core (Opus read done, findings carded to FX4 and SC4, A393). A06 security: run the A06 db tests (src/modules/auth/*.db.test.ts) on the preinstalled PostgreSQL 16 as well as PGlite and report both (A396). Run gitleaks over HEAD if available.",
-  "by": "cloud-d8b04b"
+  "requested_at": "2026-10-03T10:56:00Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). Both cards run on Postgres 16.5 or later: print select version() and run the db project on pg16 (TEST_DB=pg16) as well as PGlite. DB16 is core and security (CLEAN): mutate:changed for DB16. FX15 is core: mutate:changed for FX15. Run the db project 5 times on pg16 (DB16 changes pooled sessions).",
+  "by": "cloud-d9f338"
 }
