@@ -1,12 +1,11 @@
 {
  "card": "A04",
  "role": "check",
- "for": "2026-10-03T10:46:21.456Z",
- "worker": "cloud-e9d462",
- "state": "released",
- "at": "2026-10-03T11:36:13.083Z",
+ "for": "2026-10-03T11:24:04.999Z",
+ "worker": "cloud-1f7dcd",
+ "state": "working",
+ "at": "2026-10-03T11:44:18.230Z",
  "mode": "turbo",
- "note": "needs Lead ruling, no code fails at e4d9714f: scope.mjs flags src/core/safe-read.test.ts (outside Paths) and engines.build.test.ts (build's own test, no assertion changed); Paths edit or ruling, then re-check is not needed beyond security review; 3 low findings to SC12/FX; see reports/A04-check.md on claude/A04",
  "lastRelease": {
   "tip": "c93ed92557552635dd702c26b88f01c3242c53ec"
  }
