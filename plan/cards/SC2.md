@@ -31,3 +31,12 @@ A checker who did neither: the five rules fail on the planted copies and pass on
 
 ## KNOWN shape (3 Oct, A407)
 Every KNOWN entry names one rule, one file, the exact problem strings (no regex) and an open owner card; any problem not listed fails, and a listed string not produced fails as stale. Every file scan asserts it read at least one file and a named sentinel.
+
+## Also (A450, reports/W00c-findings-3.md)
+Each first failing on a planted copy of C10, C12 or C14:
+- **R98** every testworld/** loader schema is strict at every depth and every JSON leaf is read or declared carried (R73 extended to testworld; plant `dup_of` in C10).
+- **R99** every date-shaped leaf of every folder is a calendar date or month (plant 2023-02-29 in C14).
+- **R100** every id-shaped leaf resolves within its client and agrees with the idRule.
+- **R102** priorYear money is integer cents (ARC-13).
+- **R103** one GIFI code per account across the three trial balances and the adjusting lines (TB-3).
+- **R75 reworded:** compare `rowsInExport` with the account's transaction count, never CSV lines.

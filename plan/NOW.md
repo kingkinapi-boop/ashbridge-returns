@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:10Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:25Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:10Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | round 2 check FAIL (6 loader gaps: proto key, totals, strictness, dates, id refs); findings review 3 running | round 3 (last), check |
+| W00c | findings 3 (A450): round 3, the last; samples already pass; FX16, CQ9 carded | spec patch, build, mutation on cloud (45 min dry run), check |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:10Z by the Lea
 | FX12, FX14, FX15 | FX12 build open; FX14 carded; FX15 spec Paths fixed (A449) | builds, checks |
 | CQ6 to CQ8, SC10, A08 | CQ6, CQ7, CQ8 specs reported; A08 spec reported, refusal-file gap to its spec (A443) | CQ builds after CQ4 and CQ5 land; A08 after A04 |
 
-Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helper: W00c findings 3. Local: local-1 (A04 spec).
+Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Local: local-1 (A04 spec).
 
 ## Next, in order
 

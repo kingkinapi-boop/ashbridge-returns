@@ -10043,6 +10043,27 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ6"
+      ],
+      "paths": [
+        "stryker.config.mjs",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-args.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ9",
+      "title": "Mutation gate: long dry runs and extra Stryker arguments",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [
@@ -10487,6 +10508,28 @@
       "size": "S",
       "core": true,
       "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC5"
+      ],
+      "paths": [
+        "src/contracts/records.ts",
+        "src/contracts/records.acceptance.test.ts"
+      ],
+      "clauses": [
+        "SEC-10",
+        "ARC-15"
+      ],
+      "id": "FX16",
+      "title": "Records and gaps bank refuse prototype-name keys (R101)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
     },
     {
       "status": "carded",
