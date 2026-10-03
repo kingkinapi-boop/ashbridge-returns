@@ -5,7 +5,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core only. Local helper: phase 3 card review (Opus).
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core only. Local helper: phase 3 card fixes (Sonnet, edits plan/cards in the main checkout).
 - **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). Train claude/train boarding: A07D, A06.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
@@ -20,7 +20,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 | CQ2 | spec reopened for rule 6 (A394) | spec, build, check |
 | SC4 | startable (A07D built) | spec, then FX4 |
 | A04, A08 | held on A06, then A04 | as before |
-| Phase 3 cards | local Opus card review (03:24Z), reports/phase3-card-review-2026-10-03.md | fix cards before their first spec |
+| Phase 3 cards | review done: 28 fixes (reports/phase3-card-review-2026-10-03.md); a local Sonnet helper applies them in the main checkout | Lead commits with one amber row |
 
 Cloud runs fired 03:22Z: 6 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
 
