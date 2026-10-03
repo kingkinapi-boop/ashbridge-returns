@@ -3,9 +3,7 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-6b6859",
- "state": "released",
- "at": "2026-10-03T11:56:05.948Z",
- "mode": "turbo",
- "note": "wait: build round 2 not done; 3 of 14 spec tests fail (harness list still names root vitest-setup.ts, A464 patch). Typecheck, lint, deps OK",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
+ "state": "working",
+ "at": "2026-10-03T11:56:08.159Z",
+ "mode": "turbo"
 }
