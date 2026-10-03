@@ -14,14 +14,14 @@
 //   stay not null. Nullability is not this card's subject.
 // - The test world loads: the stand-in's test users (seeded into staff_users by createAuth) are accepted as the
 //   actor in every column.
-// SC3's reviewed free-text lines for events.actor, state_events.actor and approvals.approved_by are deleted from
-// src/contracts/security-rules.db.test.ts in this spec commit, so R66 fails until this card's keys exist.
+// SC3's R66 KNOWN entries owned by FX17 (the five actor columns and sign_in_events.reason, A458) are deleted from
+// tools/test/__fixtures__/security-rules/harness.ts in this spec, so R66 fails until this card's keys exist.
 import fc from 'fast-check'
 import type { PGlite } from '@electric-sql/pglite'
 import { describe, expect, test } from 'vitest'
 import { cloneTestDb } from '../core/db'
 import { createAuth } from '../modules/auth'
-import { listTestUsers } from '../modules/auth/testing'
+import { listTestUsers, testCredentials } from '../modules/auth/testing'
 
 const AT = new Date('2026-03-17T10:00:00-04:00')
 const TEST_IDS = listTestUsers().map((u) => u.id)
@@ -250,5 +250,74 @@ describe('SEC-1 ARC-13 property: an actor value is accepted exactly when it is a
       ),
       { seed: 20261017, numRuns: 40 },
     )
+  })
+})
+
+// ---------- A458 (card "Also"): sign_in_events.reason takes only the fixed sentences the auth engine writes ----------
+// The sentences are not copied here from the engine (A426): every path of the stand-in is driven, each must still
+// write its row (a refused insert would make the call throw), and the sentences it wrote are the accepted set.
+const SIGN_IN_START = new Date('2026-10-02T10:00:05-04:00').getTime()
+
+async function signInWorld(): Promise<{ db: PGlite; auth: Awaited<ReturnType<typeof createAuth>> }> {
+  const db = await cloneTestDb()
+  const auth = await createAuth({ db, env: { NODE_ENV: 'test' }, clock: { now: () => new Date(SIGN_IN_START) } })
+  return { db, auth }
+}
+
+/** Drives every path of the stand-in once; returns the sentences written, one row per path. */
+async function everySignInSentence(): Promise<{ db: PGlite; reasons: string[] }> {
+  const { db, auth } = await signInWorld()
+  const [a, b, c] = TEST_IDS
+  if (!a || !b || !c) throw new Error('the test world has fewer than three users')
+  const cred = (id: string): ReturnType<typeof testCredentials> => testCredentials(id)
+  const now = (): Date => new Date(SIGN_IN_START)
+  // signed in, then the same code again (code reused)
+  const s1 = await auth.startSignIn(a, cred(a).password)
+  if (!s1.ok) throw new Error('control sign-in refused')
+  expect((await auth.finishSignIn(s1.challenge, cred(a).codeAt(now()))).ok).toBe(true)
+  const s2 = await auth.startSignIn(a, cred(a).password)
+  if (s2.ok) await auth.finishSignIn(s2.challenge, cred(a).codeAt(now()))
+  // wrong code
+  const s3 = await auth.startSignIn(b, cred(b).password)
+  if (s3.ok) await auth.finishSignIn(s3.challenge, cred(b).codeAt(new Date(SIGN_IN_START + 10 * 60_000)))
+  // wrong password five times, then locked
+  for (let i = 0; i < 5; i++) await auth.startSignIn(c, 'not the password (Test)')
+  await auth.startSignIn(c, cred(c).password)
+  // unknown user, bad challenge, not a test user
+  await auth.startSignIn('nobody-9', 'whatever (Test)')
+  await auth.finishSignIn('no-such-challenge', '000000')
+  await db.query(`insert into returns.staff_users (id, display_name, roles) values ('real-person', 'Jordan Real', '{preparer}')`)
+  await auth.startSignIn('real-person', cred('real-person').password)
+  const reasons = (await db.query<{ reason: string }>('select distinct reason from returns.sign_in_events order by reason')).rows.map((r) => r.reason)
+  return { db, reasons }
+}
+
+describe('SEC-1 SEC-7 sign_in_events.reason takes only the fixed sentences of the auth engine (A458)', () => {
+  test('SEC-1 every path of the stand-in still writes its sign-in event: eight paths, eight distinct sentences', async () => {
+    const { reasons } = await everySignInSentence()
+    expect(reasons).toHaveLength(8)
+  })
+  test('SEC-7 planted: a free-text reason, and each written sentence padded or recased, is refused naming sign_in_events.reason', async () => {
+    const { db, reasons } = await everySignInSentence()
+    const user = TEST_IDS[0] ?? ''
+    const planted = ['Typed by someone (Test)', ...reasons.flatMap((r) => [`${r} `, r.toUpperCase()])]
+    for (const reason of planted) {
+      const r = await refusalOf(
+        db.query(`insert into returns.sign_in_events (id, user_id, outcome, reason) values ($1, $2, 'refused', $3)`, [tid('sign-in'), user, reason]),
+      )
+      expect(r, `sign_in_events.reason accepted ${JSON.stringify(reason)}`).toBeDefined()
+      expect(r?.code, `refused ${JSON.stringify(reason)} for the wrong reason: ${r?.text ?? ''}`).toMatch(/^23/)
+      expect(r?.text).toContain('sign_in_events')
+      expect(r?.text).toContain('reason')
+    }
+  })
+  test('SEC-7 control: each written sentence is accepted again on a direct insert', async () => {
+    const { db, reasons } = await everySignInSentence()
+    for (const reason of reasons) {
+      const r = await refusalOf(
+        db.query(`insert into returns.sign_in_events (id, user_id, outcome, reason) values ($1, $2, 'refused', $3)`, [tid('sign-in'), TEST_IDS[0], reason]),
+      )
+      expect(r, `sign_in_events.reason refused ${reason}: ${r?.text ?? ''}`).toBeUndefined()
+    }
   })
 })

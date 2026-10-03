@@ -592,7 +592,6 @@ export const FREE_TEXT: Record<string, string> = {
 /** The R66 problem string for a free-text column (KNOWN entries list these exactly). */
 export const r66Problem = (col: string): string => `${col} is text in an append-only table with no key, list or format`
 
-const ACTOR_FIX = 'db/schema/94_actor_keys.sql'
 // KNOWN for every rule here (A407, R80 form). R62 is empty since FX2 landed (A443). R66: the deferred columns, each
 // with the open card whose Paths hold its schema file (or, for FX17, its fix file). An owner deletes its own entries
 // when it lands; tools/test/security-rules.test.mjs pins which columns each owner may hold (A458 G6).
@@ -606,12 +605,7 @@ export const KNOWN: Known[] = [
     ].map(r66Problem),
   },
   { rule: 'R66', file: 'db/schema/30_books.sql', owner: 'B05', problems: ['adjusting_entries.qbo_snapshot_id', 'gifi_mappings.gifi_code'].map(r66Problem) },
-  { rule: 'R66', file: 'db/schema/20_ledger.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['events.actor'].map(r66Problem) },
-  { rule: 'R66', file: 'db/schema/50_returns.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['state_events.actor'].map(r66Problem) },
-  { rule: 'R66', file: 'db/schema/60_versions.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['approvals.approved_by'].map(r66Problem) },
-  { rule: 'R66', file: 'db/schema/30_books.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['adjusting_entries.author', 'judgment_inputs.author'].map(r66Problem) },
-  // A458: the three former FREE_TEXT keeps, each a format or a fixed list its owner adds
-  { rule: 'R66', file: 'db/schema/15_auth.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['sign_in_events.reason'].map(r66Problem) },
+  // A458: the former FREE_TEXT keeps, each a format or a fixed list its owner adds (FX17's deleted by its spec)
   { rule: 'R66', file: 'db/schema/60_versions.sql', owner: 'T08', problems: ['approvals.fingerprint'].map(r66Problem) },
 ]
 

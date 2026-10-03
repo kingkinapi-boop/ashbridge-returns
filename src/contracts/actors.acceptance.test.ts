@@ -7,7 +7,7 @@ import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { createTemplate, type DbTemplate } from '../core/db'
 import { createAuth } from '../modules/auth'
-import { listTestUsers } from '../modules/auth/testing'
+import { listTestUsers, testCredentials } from '../modules/auth/testing'
 
 const BOOT_MS = 60_000
 const TEST_MS = 20_000
@@ -110,6 +110,25 @@ describe('SEC-1 SEC-7 unit twin: each actor column takes a staff id or a listed 
       expect(r?.code, `${c.name} refused ${JSON.stringify(v)} for the wrong reason: ${r?.text ?? ''}`).toMatch(/^23/)
       expect(r?.text).toContain(c.table)
       expect(r?.text).toContain(c.column)
+    }
+  }, TEST_MS)
+  test('SEC-7 sign_in_events.reason keeps every sentence the stand-in writes and refuses free text naming the column (A458)', async () => {
+    const db = await world()
+    const auth = await createAuth({ db, env: { NODE_ENV: 'test' }, clock: { now: () => AT } })
+    const [a, b] = TEST_IDS
+    if (!a || !b) throw new Error('the test world has fewer than two users')
+    const s = await auth.startSignIn(a, testCredentials(a).password)
+    if (s.ok) await auth.finishSignIn(s.challenge, testCredentials(a).codeAt(AT))
+    await auth.startSignIn(b, 'not the password (Test)')
+    await auth.startSignIn('nobody-9', 'whatever (Test)')
+    const reasons = (await db.query<{ reason: string }>('select distinct reason from returns.sign_in_events')).rows.map((r) => r.reason)
+    expect(reasons).toHaveLength(3)
+    for (const reason of ['Typed by someone (Test)', ...reasons.map((r) => `${r} `)]) {
+      const r = await outcome(db.query(`insert into returns.sign_in_events (id, user_id, outcome, reason) values ($1, $2, 'refused', $3)`, [tid('sign-in'), a, reason]))
+      expect(r, `sign_in_events.reason accepted ${JSON.stringify(reason)}`).toBeDefined()
+      expect(r?.code).toMatch(/^23/)
+      expect(r?.text).toContain('sign_in_events')
+      expect(r?.text).toContain('reason')
     }
   }, TEST_MS)
 })
