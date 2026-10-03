@@ -9612,7 +9612,7 @@
       "phase": 4,
       "size": "M",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED. From the FX2 security review (3 Oct, A435): a production host with NODE_ENV unset defaults to development and starts every stand-in; the go-live check refuses to start unless NODE_ENV is set explicitly."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED. From the FX2 security review (3 Oct, A435): a production host with NODE_ENV unset defaults to development and starts every stand-in; the go-live check refuses to start unless NODE_ENV is set explicitly. A441: the live database adapter follows code.md: a pooled connection carries only transaction-local state, or it is destroyed on release; never swallow a failed reset."
     },
     {
       "status": "todo",
@@ -10431,7 +10431,9 @@
       "paths": [
         "tools/test/rule-walker.test.mjs",
         "tools/test/__fixtures__/rule-walker/**",
-        "tools/test/lib/walk.mjs"
+        "tools/test/lib/walk.mjs",
+        "tools/test/rules.test.mjs",
+        "src/core/db/db.test.ts"
       ],
       "clauses": [
         "ARC-15",
@@ -10469,6 +10471,30 @@
       "size": "S",
       "core": true,
       "note": "From the DB16 and CQ4 findings, 3 Oct (A430). R89 added 3 Oct from C1 of reports/phase3-card-review-2026-10-03b.md."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "DB16"
+      ],
+      "paths": [
+        "src/core/db/rules.db.test.ts",
+        "src/core/db/global-setup.ts",
+        "tools/test-homes.json"
+      ],
+      "clauses": [
+        "ARC-6",
+        "SEC-1",
+        "ARC-15"
+      ],
+      "id": "SC11",
+      "title": "Db rules R90 to R92: clean pooled connections, no leftover roles, no swallowed db errors",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/DB16-findings-4.md, 3 Oct (A441)."
     },
     {
       "status": "carded",
