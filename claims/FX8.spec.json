@@ -1,11 +1,9 @@
 {
  "card": "FX8",
  "role": "spec",
- "worker": "cloud-fd4d7f",
- "state": "reported",
- "at": "2026-10-03T04:32:35.116Z",
- "mode": "turbo",
- "note": "17 tests, 3 fail on main (07, 09, 14). 15 has no bare name on main; folder 02 onboarding has a bare lender name (company, not in scope); verify.mjs rule is a build item",
- "commit": "84810b04",
- "validated": "a8ff206b"
+ "note": "toolchain refit",
+ "worker": "cloud-a113b9",
+ "state": "working",
+ "at": "2026-10-03T06:22:50.071Z",
+ "mode": "turbo"
 }
