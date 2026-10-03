@@ -33,7 +33,7 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 ## Modes, machines and models (skill `modes`, file `plan/mode.json`)
 
 - `pause`, `prep`, `normal`, `turbo`, `wind-down`. Only Zo raises the mode; turbo only on his word. The Lead lowers it on a usage limit, a Reviewer SLOW or HOLD, or at the wind-down time. A hook logs every dispatch to `plan/ledger.jsonl` and caps dispatches by mode.
-- **Cloud first** (decision 0009): workers run in cloud sessions the Lead starts. The laptop runs the Lead and at most two local workers (decision 0018); Zo uses it for other work.
+- **Cloud first** (decision 0009): workers run in cloud sessions the Lead starts. The laptop runs the Lead and up to three local workers (decision 0026), on top of the cloud ones; Zo uses it for other work.
 - **Models** (decision 0009): Sonnet 5.5 for building, routine checks, testers, research readers, designers and drafting. Opus 5.5 for the Lead, the Critic, the Reviewer, specs and adversarial checks on `core` cards (money, tax, CSV, citations, permissions), findings reviews and cold sign-offs. Haiku 4.5 for summaries of pages and logs.
 
 ## Where things are
@@ -67,7 +67,7 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 
 ## Context and waits (decision 0024)
 
-- Sessions compact at 200k tokens (`CLAUDE_CODE_AUTO_COMPACT_WINDOW`). A SessionStart hook reloads NOW.md, the active claims and recent commits after every compaction.
+- Sessions compact at 300k tokens (`CLAUDE_CODE_AUTO_COMPACT_WINDOW`; decision 0025). A SessionStart hook reloads NOW.md, the active claims and recent commits after every compaction.
 - **Compact instructions:** every summary keeps Zo's words this session verbatim, every red or amber decided, what is in flight (card, role, branch, train head), the next step, and any refused action (never retried through another route).
 - No wait over 4.5 minutes inside a turn (use ScheduleWakeup); never revive a big helper, start a fresh one with a file to read.
 - Loop step 1 also reads the top of `reviews/CRITIC.md`: an "Approved, not applied" line is applied first, then marked "Applied".
