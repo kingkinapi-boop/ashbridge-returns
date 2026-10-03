@@ -1994,7 +1994,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": "be09e312",
       "deps": [
         "F04",
@@ -2027,7 +2027,8 @@
       "size": "M",
       "hard": true,
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -2529,7 +2530,9 @@
         "db/schema/10_documents.sql",
         "src/pipeline/steps/intake.ts",
         "tools/test/__fixtures__/security-rules/harness.ts",
-        "src/contracts/security-rules.db.test.ts"
+        "src/contracts/security-rules.db.test.ts",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "EV-2",
@@ -2653,7 +2656,9 @@
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
         "e2e/steps/skeleton-*.ts",
-        "tools/test/reading-rules.test.mjs"
+        "tools/test/reading-rules.test.mjs",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "EV-5",
@@ -3275,7 +3280,9 @@
         "src/modules/gaps/index.ts",
         "data/gaps/required.json",
         "src/pipeline/steps/gaps.ts",
-        "db/schema/05_bridge.sql"
+        "db/schema/05_bridge.sql",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "AI-12",
@@ -3639,7 +3646,9 @@
       ],
       "paths": [
         "src/modules/ai/grounding/**",
-        "src/modules/ai/index.ts"
+        "src/modules/ai/index.ts",
+        "tools/test/security-rules.test.mjs",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "AI-1",
@@ -5160,7 +5169,8 @@
         "e2e/skeleton/stubs.md",
         "e2e/steps/skeleton-*.ts",
         "tools/test/reading-rules.test.mjs",
-        "src/pipeline/deps.ts"
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RT-1",
@@ -5362,7 +5372,8 @@
         "src/modules/roundtrip/index.ts",
         "src/contracts/roundtrip.ts",
         "db/schema/45_roundtrip.sql",
-        "src/pipeline/deps.ts"
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RT-16",
@@ -5400,7 +5411,8 @@
         "db/schema/82_assessment.sql",
         "data/assessment/**",
         "src/pipeline/deps.ts",
-        "src/pipeline/handlers.ts"
+        "src/pipeline/handlers.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "FLOW-8",
@@ -6264,7 +6276,8 @@
         "src/pipeline/handlers.ts",
         "src/pipeline/deps.ts",
         "tools/test/__fixtures__/security-rules/harness.ts",
-        "src/contracts/security-rules.db.test.ts"
+        "src/contracts/security-rules.db.test.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "FLOW-4",
@@ -6296,7 +6309,9 @@
         "src/pipeline/steps/checks.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "CK-1",
@@ -7626,7 +7641,8 @@
         "src/modules/comments/**",
         "db/schema/75_comments.sql",
         "src/pipeline/deps.ts",
-        "e2e/staff/review-comments.spec.ts"
+        "e2e/staff/review-comments.spec.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RV-7",
@@ -7669,7 +7685,8 @@
         "src/app/(staff)/prepare/exceptions/**",
         "src/modules/respond/**",
         "src/pipeline/deps.ts",
-        "e2e/staff/exceptions.spec.ts"
+        "e2e/staff/exceptions.spec.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RV-24",
@@ -9227,7 +9244,8 @@
         "data/transmit/**",
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
-        "src/pipeline/deps.ts"
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RT-19",
@@ -9271,7 +9289,8 @@
         "db/schema/99_closed.sql",
         "src/pipeline/steps/binder.ts",
         "src/pipeline/handlers.ts",
-        "src/pipeline/deps.ts"
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "FLOW-9",
@@ -9312,7 +9331,8 @@
         "db/schema/79_clientsign.sql",
         "data/clientsign/**",
         "src/pipeline/deps.ts",
-        "src/pipeline/handlers.ts"
+        "src/pipeline/handlers.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "FLOW-2",
@@ -10102,7 +10122,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ5"
@@ -10120,10 +10140,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "3 Oct (A439)."
+      "note": "3 Oct (A439).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ6"
@@ -10141,7 +10162,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
+      "note": "From reports/W00c-findings-3.md, 3 Oct (A450).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -10192,7 +10214,7 @@
       "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10217,7 +10239,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "Review 3 Oct finding 7 (A478)."
+      "note": "Review 3 Oct finding 7 (A478).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10265,6 +10288,32 @@
       "size": "M",
       "core": true,
       "note": "Split from W00a, 2 Oct; branch from claude/W00a 239b553."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00c"
+      ],
+      "paths": [
+        "testworld/clients/load.ts",
+        "testworld/clients/json-keys.ts",
+        "testworld/model/checks.ts",
+        "testworld/clients/w00d-*.acceptance.test.ts",
+        "testworld/model/__fixtures__/w00d-*.ts",
+        "testworld/model/__fixtures__/w00c-r3-walk.ts"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16"
+      ],
+      "id": "W00d",
+      "title": "Test world loader: ids by rule and every typed field read (W00c split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Split from W00c by its landing rule (A450, A501)."
     },
     {
       "status": "carded",
@@ -10632,7 +10681,8 @@
       "paths": [
         "src/core/db/**/*.db.test.ts",
         "src/modules/bridge/**/*.db.test.ts",
-        "src/modules/jobs/**/*.db.test.ts"
+        "src/modules/jobs/**/*.db.test.ts",
+        "tools/test/db-budget.test.mjs"
       ],
       "clauses": [
         "ARC-4",
@@ -10755,7 +10805,8 @@
       "paths": [
         "src/contracts/lifecycle.ts",
         "src/modules/lifecycle/**",
-        "tools/test/__fixtures__/schema-contract/known.json"
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "FLOW-1",
@@ -10823,13 +10874,20 @@
         "SC3",
         "SC4",
         "SC5",
-        "SC6"
+        "SC6",
+        "SC10"
       ],
       "paths": [
         "tools/test/lib/known.mjs",
         "tools/test/lib/known.test.mjs",
         "tools/test/lib/cards.mjs",
-        "tools/test/lib/cards.test.mjs"
+        "tools/test/lib/cards.test.mjs",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/spec-rules.test.mjs",
+        "tools/test/card-rules.test.mjs",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-harness.test.mjs"
       ],
       "clauses": [
         "ARC-15",
