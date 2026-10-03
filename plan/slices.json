@@ -9608,6 +9608,7 @@
       ],
       "paths": [
         "tools/scope.mjs",
+        "tools/lib.mjs",
         "tools/test/scope-spec-files.test.mjs"
       ],
       "clauses": [
@@ -9639,6 +9640,27 @@
       "size": "S",
       "core": false,
       "note": "From reports/CQ3-check.md, 3 Oct (A428)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ4"
+      ],
+      "paths": [
+        "tools/mutate-changed.mjs",
+        "tools/test-homes.json",
+        "tools/test/mutate-harness.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ6",
+      "title": "Mutation gate: core from slices.json and a Lead-kept harness list",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/DB16-findings.md, 3 Oct (A430)."
     },
     {
       "status": "carded",
@@ -9873,7 +9895,8 @@
       "deps": [
         "SC",
         "W00c",
-        "FX2"
+        "FX2",
+        "CQ6"
       ],
       "paths": [
         "src/contracts/facts.ts",
@@ -10163,6 +10186,29 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "SC",
+        "CQ4",
+        "CQ6"
+      ],
+      "paths": [
+        "tools/test/card-rules.test.mjs",
+        "tools/test/__fixtures__/card-rules/**"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC10",
+      "title": "Card rules R85 to R87: flags, harness, spec-owned files",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From the DB16 and CQ4 findings, 3 Oct (A430)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "SC"
       ],
       "paths": [
@@ -10202,6 +10248,7 @@
       "paths": [
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
+        "src/core/db/target.ts",
         "src/core/db/pg16.test.ts",
         "vitest.config.ts",
         "package.json",
@@ -10218,7 +10265,7 @@
       "title": "The db test project runs on Postgres 16 in cloud checks",
       "phase": 0,
       "size": "S",
-      "core": true,
+      "core": false,
       "security": true,
       "note": "From the train report of 3 Oct (A405)."
     }

@@ -25,3 +25,5 @@ You check. You fix nothing and edit nothing except your report (a hook enforces 
 - Reply in at most 12 lines: PASS or FAIL, then only the failures (file, one-line error, the command that shows it). In the cloud write the same to `reports/<card>-check.md` (or `reports/train-<time>.md` for a train) and push it.
 
 Compare lists (A426): in the adversarial read, compare every hand-written list of fields the code checks (a stamp compare, an allow list) with the schema it stands for; a missing field is a failure.
+
+Scope (A430): when the build lives on `claude/<id>-r2`, run `node tools/scope.mjs <id> --branch claude/<id>-r2`. Until CQ4 lands, scope.mjs counts the spec job's own later commits (reports, wip, the Spec commit line) as build edits: read those lines by hand and say so in the report.

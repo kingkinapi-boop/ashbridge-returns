@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:05Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -22,13 +22,13 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lea
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | round 4 spec reported (26 tests, 11 fail); build open (A427) | build runner.ts, check, security review |
-| DB16 | check FAIL (two core db files lack @mutate; scope note); Opus findings review running with CQ4 | fix list, round, check, board |
+| DB16 | findings done (A430): now security, not core; build round 4 (target.ts marked) | build, check (Opus read), security review, board |
 | FX2 | build reported (one auth line; mutation cloud only) | check in the cloud, security review; lands before FX7 |
 | JH0 | spec reported | build after W00c lands |
 | FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
-| CQ3, CQ4, CQ5 | CQ3 PASS, on the train; CQ4 check FAIL, findings review running; CQ5 carded (claims race, A428) | train; CQ4 fix round; CQ5 spec |
+| CQ4, CQ5, CQ6, SC10 | CQ4 findings done (A430): spec patch reopened; CQ5, CQ6, SC10 carded | CQ4 spec, build, check; it lands before the FX2, S00, DB16 checks (until then checkers read spec-commit lines by hand) |
 
-Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-2 and local-3 done. Helper: DB16 and CQ4 findings review. Local-2 restarted 06:55Z. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
+Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-2 and local-3 done. Local-2 restarted 06:55Z. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
 
 ## Next, in order
 
