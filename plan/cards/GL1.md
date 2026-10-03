@@ -43,3 +43,6 @@ Turning go-live on, adding real staff, connecting any real service or database (
 
 ## The second-reader rule (A491, 3 Oct)
 SC3's second-reader rule (G5) refuses a second file that names a registered `*_ENGINE` setting, and its NOT_SETTINGS list is pinned in tools/test/security-rules.test.mjs. engines.ts and golive.ts take setting names from env.ts's export and never spell a `*_ENGINE` name; if one must, GL1's spec adds it to NOT_SETTINGS with its reason (reports/SC3-security-2.md (on claude/SC3, on main once SC3 lands), item 4). Paths gain the two rule files.
+
+## Exchange files after a job (A492, 3 Oct)
+Returns does not delete a finished AI job's exchange files today (the stand-in keeps them for tests). Who deletes them before go-live, and when, is asked with the go-live questions: it is the retention of client data in the exchange folder, so it may be red then.

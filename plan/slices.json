@@ -10711,7 +10711,10 @@
         "src/modules/ai/runner/engines.ts",
         "src/modules/ai/runner/runner.ts",
         "src/core/safe-read.ts",
-        "src/modules/ai/runner/exchange-errors.acceptance.test.ts"
+        "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/index.ts",
+        "data/ai/exchange-limits.json"
       ],
       "clauses": [
         "ARC-22",

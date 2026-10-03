@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 14:46Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 14:56Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,10 +13,10 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 14:46Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| Train | 725bc456 (FX5, FX12, CQ10) checking | land if green; never board onto it while it checks; then the next train |
+| Train | 725bc456 (FX5, FX12, CQ10) GREEN (reports/train-20261003-1450.md); main merged in (e1195602), guard empty; tools tests running | land; then train 2: SC3, CQ8, GL3, CQ9, A04, plus G18 and SC10 as each clears (merge-tree dry run clean) |
 | W00c | build round 3 (last) held by FX5's path hold (known.json) | taken once FX5 lands; then reopen FX8's build (A481) |
 | FX8, FX3, FX4 | builds held `wait:` (A481) | FX8 when W00c's build is taken; FX3's spec patch (A488) after FX8 lands; then FX4 |
-| A04 | check PASS (cloud-39d8f1) | Opus security review (local); clean: board; then A04C build, FX18 spec, SC8 build, A08 and SC5 specs |
+| A04 | check PASS; security review CLEAN 14:52Z, six lows to FX18 and SC12 (A492; report local only) | board on the next train; then A04C build, FX18 spec, SC8 build, A08 and SC5 specs |
 | A04C | spec reported (G1 to G4) | build after A04 lands; Opus check |
 | SC3 | PASS; security re-review CLEAN (9b2f5425); lows to SC9, L00, B05, T08, E00, GL1, checker.md (A491) | board on the next train; FX17 build after SC3 lands |
 | SC6 | check FAIL (R77, R78, R81 gaps; reports/SC6-check.md) | Opus findings review (local); fix list into the card; spec patch, then build |
@@ -56,4 +56,5 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 14:46Z by the Lea
 - Commit no new Taxprep CSV to main before FX9 lands (SC's R37, A415).
 - A job released twice at one tip is held "needs Lead": re-release a check with a note starting "wait:", reopen a spec or build. Local workers skip cloud-only cards.
 - Python edits: write a backslash as chr(92) (a heredoc halves a doubled one); run `date -u` before writing any time.
+- A04's security report push was refused (too detailed, 14:52Z): it stays on local branch a04-sec; never push it another way (A492).
 - Never kill processes by name. Another Lead works in ashbridge-app: read-only there.
