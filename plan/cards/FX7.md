@@ -3,6 +3,7 @@
 Phase 0. Size M. Deps: SC, W00c, FX2, CQ6. Where: cloud.
 Tags: core (contracts every figure and citation passes through).
 Paths: src/contracts/facts.ts, src/contracts/reading.ts, src/contracts/amount-grammar.ts, src/modules/ocr/textlayer/**, src/modules/storage/**, src/core/test-no-network.ts, src/contracts/auth.ts, tools/test/__fixtures__/planted-interpolated-log.ts.txt, tools/test/__fixtures__/schema-contract/known.json
+Harness: src/core/test-no-network.ts
 Clauses: EV-1, EV-5, ARC-10, ARC-15, SEC-11
 Read: `reports/SC-findings.md` (fix list step 3: the FX7 entries), `plan/cards/SC.md`, `src/contracts/text.ts` (the one blank rule).
 Spec commit: (spec-writer fills)
