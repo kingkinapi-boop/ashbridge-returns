@@ -1,14 +1,9 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "local box: cloud-only job (Where: cloud, Postgres 16); queue re-offered it to the same local worker right after release, Lead please reopen for cloud",
- "reopenedFrom": "05be2607",
+ "note": "A455: cloud box (pg16)",
  "worker": "local-2",
- "state": "released",
- "at": "2026-10-03T09:53:00.383Z",
- "mode": "turbo",
- "lastRelease": {
-  "tip": "05be26079f331955df5eff833c7dce5fd0ab1c26"
- },
- "needsLead": true
+ "state": "reopened",
+ "at": "2026-10-03T09:53:27.239Z",
+ "mode": "turbo"
 }
