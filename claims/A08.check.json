@@ -1,9 +1,9 @@
 {
  "card": "A08",
  "role": "check",
- "state": "released",
- "worker": "lead",
- "at": "2026-10-03T21:30:34.585Z",
- "note": "wait: build reports mutation under 100 (call.ts, index.ts, scan.ts); findings review first (local Opus, from 21:30Z)",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
+ "for": "2026-10-03T21:21:35.397Z",
+ "worker": "cloud-725535",
+ "state": "working",
+ "at": "2026-10-03T21:32:11.862Z",
+ "mode": "turbo"
 }
