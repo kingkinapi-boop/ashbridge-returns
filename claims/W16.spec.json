@@ -2,8 +2,8 @@
  "card": "W16",
  "role": "spec",
  "note": "toolchain refit",
- "worker": "cloud-03268d",
+ "worker": "local-3",
  "state": "working",
- "at": "2026-10-03T05:56:07.826Z",
+ "at": "2026-10-03T05:56:14.601Z",
  "mode": "turbo"
 }
