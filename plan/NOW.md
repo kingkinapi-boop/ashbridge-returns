@@ -14,13 +14,13 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 15:22Z by the Lea
 | Card | State | Next action |
 |---|---|---|
 | Train 2 | A04, SC3, CQ8, CQ9 requested 15:22Z | land if green (rehearsal: two vitest runs, A495); then A04C build, FX18 spec, SC8 build, A08 and SC5 specs; FX17 build; SC12 spec after SC11 lands |
-| Train 3 | SC11 (check working) and whatever passes next | board each PASS; request hourly or at 6 cards |
+| Train 3 | CQ12 (check working) and whatever passes next | board each PASS; request hourly or at 6 cards |
+| SC11 | check FAIL: test:flake 4 of 5 on pg16 (57P01 on a pooled client; reports/SC11-check.md on claude/SC11-report); build on hold-findings | findings review (local Opus, from 15:44Z); then an Opus read and a security review before boarding (A496) |
 | SC10 | Opus read FAIL, 7 items (landing traps in KNOWN and R89 owners, R86 reach, core read three ways; report local only: sc10-read e68b2986); build on hold-findings | findings review (local Opus, from 15:38Z): Lead plan edits first, then a spec patch; consistent with SC6's A493 fix |
 | GL3 | security review FINDINGS: one medium, five lows (report local only: branch gl3-sec, 3fec0c11); build on hold-findings | findings review (local Opus, from 15:29Z); round 4 (the last): spec patch, build, check, security re-review |
-| W00c | toolchain refit (FX12), then build round 3 (last) | FX8's spec patch (A493) once W00c's build is taken; then FX8's build, FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
+| W00c | refit reported 15:41Z; build round 3 (last) offered | FX8's spec patch (A493) once W00c's build is taken; then FX8's build, FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | G18 | Opus read FAIL: 26 of 105 mappings wrong (reports/G18-check-opus.md on claude/G18-check, 1308ab4f); build on hold-findings | findings review (local Opus); fix list into the card; then its round |
 | SC6, CQ11 | spec patches reopened (A493) | SC6 then an Opus check; CQ11's build after CQ8 lands |
-| CQ12 | spec reopened: refit plus A495 (a groupOrder per vitest project) | build, check |
 | FX17 | spec open | build after SC3 lands |
 | A04C | spec reported (G1 to G4) | build after A04 lands; Opus check |
 | W00b, A08, FX6, FX18, SC5, SC12 | held `wait:` | reopen when W00c, A04, SC3, SC11 or SC5's deps land |
@@ -29,7 +29,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 15:22Z by the Lea
 
 ## Next, in order
 
-1. Poll claims; land train 2 if green; board SC11 and each PASS; GL3 and SC10 after their findings rounds.
+1. Poll claims; land train 2 if green; board CQ12 and each PASS; GL3, SC10, SC11 and G18 after their findings rounds.
 2. W00c refit and build, then W00c lands: W00b, S00, JH0, B04, SC2, FX7; SK0, W01 to W13, W20, I40 follow.
 3. G18 findings review, then its round 2.
 4. Design lane as above (lane plan reports/design-lane-2026-10-03.md, section 4).
