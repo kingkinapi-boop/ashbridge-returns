@@ -28,14 +28,14 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:10Z by the Lea
 | FX12, FX14, FX15 | FX12 build open; FX14 carded; FX15 spec Paths fixed (A449) | builds, checks |
 | CQ6 to CQ8, SC10, A08 | CQ6, CQ7, CQ8 specs reported; A08 spec reported, refusal-file gap to its spec (A443) | CQ builds after CQ4 and CQ5 land; A08 after A04 |
 
-Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helpers: cards N19, GL2 to GL6; W00c findings 3. Local: local-1 (A04 spec).
+Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helper: W00c findings 3. Local: local-1 (A04 spec).
 
 ## Next, in order
 
 1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
 2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
 3. FX2 and A04 round 2 specs, then SC3, SC5 (R71 to R73); DB16.
-4. Phase 3 and 4 cards reviewed and fixed (A437, A438, A447: 28 fixes, cpa-check items 34 and 35). To write: N19, GL2 to GL6 (helper). Go-live reds (SEC-9, LIVE-3, LL-8, amended-return client view) wait for the go-live questions.
+4. Phase 3 and 4 cards reviewed and fixed (A437, A438, A447: 28 fixes, cpa-check items 34 and 35). N19, GL2 to GL6 carded (A448). Go-live reds (SEC-9, LIVE-3, LL-8, amended-return client view) wait for the go-live questions.
 5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
 6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).

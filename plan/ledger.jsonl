@@ -517,3 +517,5 @@
 {"ts":"2026-10-03T08:55:46.018Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Apply phase 4 card review fixes","allowed":true}
 {"ts":"2026-10-03T09:00:08.215Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Draft cards N19 GL2-GL6","allowed":true}
 {"ts":"2026-10-03T09:03:34.647Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W00c findings review round 2","allowed":true}
+{"ts":"2026-10-03T09:04:08.569Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T09:04:08.936Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
