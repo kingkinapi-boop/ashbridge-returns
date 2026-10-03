@@ -1,12 +1,13 @@
 {
   "status": "checking",
   "branch": "claude/train",
-  "head": "26e84345",
+  "head": "25ea2736",
   "cards": [
-    "DB16",
-    "FX15"
+    "A04",
+    "FX15",
+    "CQ7"
   ],
-  "requested_at": "2026-10-03T10:56:00Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). Both cards run on Postgres 16.5 or later: print select version() and run the db project on pg16 (TEST_DB=pg16) as well as PGlite. DB16 is core and security (CLEAN): mutate:changed for DB16. FX15 is core: mutate:changed for FX15. Run the db project 5 times on pg16 (DB16 changes pooled sessions).",
-  "by": "cloud-d9f338"
+  "requested_at": "2026-10-03T12:20:00Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462); print select version(); run npm test with TEST_DB=pg16 and once on PGlite. A04 is core and security (CLEAN, reports/A04-security.md): mutate:changed for A04 (engines.ts, runner.ts, schemas.ts, safe-read.ts, env.ts at 100); its 8 Linux-only tests must run here. scope.mjs flags A04's engines.build.test.ts: ruled build-owned (A465), not a failure. FX15 is not core (A465): no mutation. CQ7 changes claim.mjs: every tools test. A refused command makes the train blocked, not red.",
+  "by": "cloud-194125"
 }
