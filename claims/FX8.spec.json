@@ -1,11 +1,9 @@
 {
  "card": "FX8",
  "role": "spec",
- "note": "19 tests, refit on main 66de2c9",
- "worker": "cloud-0ac9e9",
- "state": "reported",
- "at": "2026-10-03T12:34:28.678Z",
- "mode": "turbo",
- "commit": "ff07848",
- "validated": "66de2c9"
+ "note": "toolchain refit",
+ "worker": "cloud-beb1e2",
+ "state": "working",
+ "at": "2026-10-03T15:28:54.051Z",
+ "mode": "turbo"
 }
