@@ -2,11 +2,9 @@
  "card": "A04",
  "role": "spec",
  "note": "A460: spec lint fix only",
- "worker": "cloud-e39e16",
- "state": "reopened",
- "at": "2026-10-03T10:49:32.857Z",
- "mode": "turbo",
- "beat": "2026-10-03T09:55:23.943Z",
- "commit": "15f44d53",
- "validated": "ff3def7d"
+ "reopenedFrom": "15f44d53",
+ "worker": "local-2",
+ "state": "working",
+ "at": "2026-10-03T10:50:09.934Z",
+ "mode": "turbo"
 }
