@@ -13,6 +13,7 @@ On 3 Oct 07:30Z next.mjs printed START for A04, FX10 and W00c while claim.mjs of
 ## Spec
 - next.mjs and claim.mjs agree: a build whose Paths overlap a reported or working build of another card is listed as "waiting on paths: <card>", never START. Planted: two cards sharing `src/core/env.ts`, one with a reported build.
 - `claim.mjs update <card> check reopened --worker lead` clears needs Lead and offers the check again; other workers cannot reopen.
+- A worker whose name starts `local-` is never offered a job of a card whose Where line says only `cloud`; next.mjs prints such jobs as "cloud only". Planted: FX10 (Where: cloud) offered to local-1 at 08:05Z on 3 Oct, released twice and handed straight back (A440).
 
 ## Build
 Both changes; nothing else.

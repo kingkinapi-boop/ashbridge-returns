@@ -2,7 +2,7 @@
 
 Phase 0. Size S. Deps: SC, SC7. Where: cloud.
 Tags: core (the rules keep every later table and reader honest).
-Paths: tools/test/rule-walker.test.mjs, tools/test/__fixtures__/rule-walker/**, tools/test/lib/walk.mjs
+Paths: tools/test/rule-walker.test.mjs, tools/test/__fixtures__/rule-walker/**, tools/test/lib/walk.mjs, tools/test/rules.test.mjs, src/core/db/db.test.ts
 Clauses: ARC-15, ARC-16
 Read: `reports/SC-spec-review-3.md` (section 3, escapes), `plan/cards/SC.md`, `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
@@ -18,3 +18,9 @@ The walker and its test only.
 
 ## Check
 A checker who did neither: every planted escape is found; the walker's result on main equals the union of what the current rules walk plus the escapes.
+
+## Also (A440, from reports/SC-check.md)
+Shape tests the SC check asked for: NO_FILE_HOMES (tools/test/rules.test.mjs), READERS, PENDING rows (rule name and why), FUTURE_POINTERS staleness (src/core/db/db.test.ts); KNOWN_KEYS allows only the keys SC uses. The spec job owns these test lines.
+
+## Also (A452, reports/SC3-findings.md)
+Plant the file-walker escapes SC3's review found (copied walkers that skip a folder or extension) and text inside jsonb columns.
