@@ -1,9 +1,11 @@
 {
  "card": "FX2",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit on 0f7e1cc4; 1 intended failure",
  "worker": "cloud-adefa2",
- "state": "working",
- "at": "2026-10-03T05:59:27.895Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T06:01:55.474Z",
+ "mode": "turbo",
+ "commit": "6bb1d6fd",
+ "validated": "0f7e1cc49f6489857b33bf1c64612182d36005bf"
 }
