@@ -1,3 +1,34 @@
+# DB16 spec report (round 3, A419; round 2 below)
+
+Worker local-1 (laptop), Opus 5.5. Spec commit d69ac553 on claude/DB16, validated on main 49c44fd5 (merged). Tests now: unit 68 (was 47), db 21 (was 13). Clauses ARC-4, ARC-16 (SEC-7, SEC-10 unchanged).
+
+## The 7 tests of reports/DB16-spec-review-2.md
+1. ARC-16 session state (db, both): role `db16_tx` set on the handle, then reset, then setting `app.db16`, then both: each `db.transaction` sees exactly the handle's `current_user` and setting, or is refused with a message naming what is set; with nothing set it must run (so a role left on a pooled connection after reset fails). Plus two overlapping transactions with the role set: each runs as `db16_tx` or is refused naming it.
+2. ARC-16 parity on every connection (db, both): settings and same-types row through `tx.query`, in two overlapping transactions (two backend pids under ON), and on a clone of `createTemplate(<tmp dir with one .sql>)` (main session and a transaction; under ON it is Postgres 16).
+3. ARC-16 parameters (db, both): a Date at 02:00Z on 31 March (22:00 on 30 March in Toronto) into `::date` and `::timestamptz`, int4[], uuid[], text[] (quote, accents) and an empty text[], jsonb from an object and from a JSON string, `9007199254740993n` into int8, a boolean, a null, quoted accented text; on the handle and in a transaction. Values read from PGlite 0.5.8: the date is 31 March (UTC day), the JSON string comes back as an object.
+4. ARC-16 types by class (db, both): `COVERED_TYPES` (12) equals the column types of a temp table built from the same-types row, and covers every `format_type` of schema `returns` (tables, views); planted: interval, numeric[] and timestamp without time zone reported by name. The same-types row gains text[] and uuid[] (the catalog has both).
+5. ARC-4 roles (db, both): A and B open, each makes a role, B sets its own; after A closes, B still runs as `db16_role_b`, its role exists, A's is gone; after B closes, a fresh clone sees no `db16_role_%`.
+6. ARC-4 scan (unit): also a value, bare, required or dynamic import of `pg`, `pg-pool`, `postgres` (subpaths too), and `new Client(`/`new Pool(` in a file loading one; 13 planted, 6 clean; scans every test file and every non-test code file under src, tools, design, e2e, testworld, src/core/db exempt, `__fixtures__` and `.stryker-tmp` skipped; string literal contents are ignored for the `new X(` checks (a test title naming `new PGlite()` is not code). Floor and sentinels kept, plus at least 100 test files, `tools/test/db-rules.test.mjs`, `src/modules/auth/rules.acceptance.test.ts`, `tools/claim.mjs`.
+7. ARC-4 one cast (unit, `readOwnSource`): exactly one `as unknown as PGlite` across src non-test files, in src/core/db/index.ts; planted cases.
+
+## Fail first (laptop, no `pg` module, no cluster)
+- Db file on PGlite (main's index.ts and global-setup.ts swapped in as a throwaway stub, then restored): 18 pass, 1 expected fail (race), 2 skipped. Tests 1 to 5 are guards on PGlite and the proof on Postgres 16, where tests 1, 2, 3 and 5 fail on the round 1 build by the review's reasons (a pool connection runs as `postgres`; nothing pinned on pool connections; node-pg sends a Date as Toronto local time; `close()` drops every role).
+- Unit file on the branch: tests 6 and 7 pass (7 fails on main: no cast there); the other failures are the laptop's missing `pg` package and the 2 docs tests (identity-test line), as in round 2.
+- eslint clean on both files; tsc: only index.ts errors from the missing `pg` package.
+
+## 6b
+No other test contradicted: test 6 and 7 pass on the repo, tests 1 to 5 pass on main's PGlite path. Tests retired: none. Full suite not run on the laptop (no `pg`); the cloud build and check run it.
+
+## Amber
+- Test 1 accepts a refusal only when it names what is set (the role or `app.db16`) and only while something is set.
+- Test 6 scans e2e/ and design/ too (cheap, same risk), and ignores string contents for `new X(`.
+- The same-types row grows by text[] and uuid[] (expectations read from PGlite literals).
+
+## Note for the Lead
+- The claims list showed `DB16 build working | cloud-555a8d` while this spec round ran: that build started before round 3; it must pick up d69ac553.
+
+---
+
 # DB16 spec report (round 2, A411)
 
 Worker local-2 (laptop). Model: Opus 5.5 (local worker; core and security card). Branch claude/DB16; round 1 was d6f3a1b1, round 2 adds the 9 gaps of reports/DB16-spec-review.md plus its optional lower-case refusal. Validated on main 2288da55.
