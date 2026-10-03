@@ -1,12 +1,10 @@
-# GL3 check (round 3, tip 7271039) - PASS
+# GL3 check (round 4, tip 8e47f8d) - cloud-fce4c0, Sonnet 5.5
 
-Worker cloud-92d46e. Node 24.21.0, Postgres 16.14 (select version()).
-- typecheck, lint, deps:check: clean.
-- npm test: 2820 unit passed; db project on PGlite 635 passed (1 expected fail, 5 skipped).
-- TEST_DB=pg16 db project: 640 passed, 1 skipped (a PGlite-only case); "a test database is Postgres 16" passed, not skipped.
-- test:flake: 5 of 5 cold runs ok.
-- Spec files unchanged since cd78aaf (empty diff). scope.mjs: SCOPE OK (19 files).
-- mutate:canary: survivor found (tool fine). mutate:changed GL3: scan.ts 100 (125 killed, 0 survived).
-- Opus adversarial and security read: PASS, nothing medium or higher. e2e not run (no screens).
-Advisory (low): 0002_grants.sql revokes PUBLIC execute only on functions existing when it runs; add `alter default privileges in schema returns revoke execute on functions from public` in GL2 or a README line. views-manifest.ts fixture (spec author's) uses z.string().min(1): for SC.
-Permission gaps: none. Model: Sonnet 5.5; Opus subagent for the read.
+FAIL (two blockers, both tooling or spec-owned; no product defect found in steps 1 to 6). Opus adversarial read and /security-review NOT run: steps 1 to 3 fail, so the check stops (checker.md).
+
+1. Lint (step 2): `npm run lint` error at src/modules/golive/bridge/reach.acceptance.test.ts:56:17, no-unnecessary-condition on `markers ?? []` (NEVER_READ.markerIds is now a required readonly string[]). Spec-owned file; the builder cannot edit it. Fix: a spec patch drops `?? []`. Rule candidate: a spec that reads a field the build adds as optional must not carry a fallback the type makes unnecessary.
+2. Mutation gate (step 7): `npm run mutate:changed -- GL3` stops "core file without @mutate: db.ts, index.ts, manifest.ts" (A505 split: only pure scans carry @mutate). Needs a Lead ruling (mark or exempt). scan.ts 100.00 per builder's direct Stryker run, not re-run here.
+
+Passed: typecheck clean; deps:check 0 violations (237 modules); bridge unit 56 of 56; db 42 of 42 on TEST_DB=pg16 (Postgres 16, identity test passes); scope OK (22 files).
+Not run: npm test full, test:flake, e2e (stopped after step 3 failures).
+Permission gaps: none. Model: Sonnet 5.5.
