@@ -1,8 +1,8 @@
 {
   "mode": "turbo",
   "resume_to": null,
-  "set_by": "Zo, 2 Oct 2026 about 15:30Z: \"turbo on\" (to-do #1), after the Reviewer SLOW of 14:40Z; the normal cap had blocked the runs that land FX1 and F01C.",
-  "set_at": "2026-10-02",
+  "set_by": "Zo, 3 Oct 2026 03:20Z: \"turbo on\" again (mode was already turbo since 2 Oct 15:30Z)",
+  "set_at": "2026-10-03",
   "why": "Zo raised it. Order: FX1 and F01C land first, then the Reviewer's other fixes (CQ1, cards ahead, W kinds), then the rest.",
   "wind_down_at": "2026-10-09T18:00:00-04:00",
   "heavy_slots": 1,

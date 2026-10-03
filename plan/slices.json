@@ -2048,7 +2048,8 @@
         "src/contracts/auth.ts",
         "db/schema/15_auth.sql",
         "src/core/env.ts",
-        "src/core/env.settings.test.ts"
+        "src/core/env.settings.test.ts",
+        "src/contracts/auth.acceptance.test.ts"
       ],
       "clauses": [
         "SEC-1",
@@ -7255,41 +7256,54 @@
       "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "Q00"
       ],
       "paths": [
-        "src/modules/exceptions/**"
+        "src/modules/exceptions/**",
+        "data/exceptions/weak-answers.json",
+        "db/schema/71_exceptions.sql"
       ],
       "clauses": [
         "EX-1",
         "EX-2",
-        "EX-3"
+        "EX-3",
+        "AI-7",
+        "SEC-7"
       ],
       "id": "X00",
       "title": "Exception answers and their rules",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "X00"
       ],
       "paths": [
-        "src/modules/tiers/**"
+        "src/modules/tiers/**",
+        "data/tiers/rules.json",
+        "db/schema/72_tiers.sql"
       ],
       "clauses": [
         "CK-40",
-        "RV-8"
+        "RV-8",
+        "RULE-7",
+        "RULE-8"
       ],
       "id": "X01",
       "title": "Tiers (approved rules, testable terms)",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true,
+      "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
       "status": "todo",
@@ -9300,7 +9314,7 @@
       "phase": 4,
       "size": "M",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED."
     },
     {
       "status": "todo",
@@ -9439,7 +9453,9 @@
         "tools/scope.mjs",
         "tools/test/claim.test.mjs",
         "tools/test/scope.test.mjs",
-        "tools/test/__fixtures__/claims/**"
+        "tools/test/__fixtures__/claims/**",
+        "tools/test/claim-needs-lead.test.mjs",
+        ".claude/skills/merge/SKILL.md"
       ],
       "clauses": [
         "ARC-15"
@@ -9480,7 +9496,9 @@
         "testworld/model/schema.test.ts",
         "testworld/model/guard.ts",
         "testworld/model/guard.test.ts",
-        "testworld/model/kinds.ts"
+        "testworld/model/kinds.ts",
+        "testworld/model/checks.test.ts",
+        "testworld/model/faults.test.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -9614,11 +9632,36 @@
         "ARC-10"
       ],
       "id": "SC4",
-      "title": "Reading rules R67 to R70, and the R56 exemption",
+      "title": "Reading rules R67 to R70, R74, and the R56 exemption",
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From reports/A07C-findings.md."
+      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A07D",
+        "SC4"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "FX4",
+      "title": "Spreadsheet reader: the five A07D Opus findings",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "note": "From reports/A07D-opus-read.md, 3 Oct (A393); landing rule: fallbacks are removals."
     },
     {
       "status": "carded",
