@@ -2,10 +2,9 @@
  "card": "SC8",
  "role": "spec",
  "note": "toolchain refit: main merged, typecheck/lint green, only 10 R79 tests fail (wrong build, reads not switched); validated on main 2f472bdf",
- "worker": "cloud-64f020",
- "state": "reopened",
- "at": "2026-10-03T13:47:18.219Z",
- "mode": "turbo",
- "commit": "6dccc118",
- "validated": "2f472bdf40d5d20c9d6311b6058d7a8f1cb04978"
+ "reopenedFrom": "6dccc118",
+ "worker": "cloud-c7f307",
+ "state": "working",
+ "at": "2026-10-03T13:49:30.480Z",
+ "mode": "turbo"
 }
