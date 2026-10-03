@@ -13,11 +13,11 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| Train 4 | SC8, GL3, SC10 at 40e9173c, requested 23:06Z | land if green; next train: W00c on its mutation check, SC6, FX18 and SC11 on PASS |
+| Train 4 | SC8, GL3, SC10 at 40e9173c, checking (cloud-eced92) | land if green; next train: W00c on its mutation check, SC6, FX18 and SC11 on PASS |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
-| W00c | mutation check 3 could not finish on one box (A530): file groups across check sessions, lean test set | next check session takes group 1; land on 100 on all 11 files |
+| W00c | check 4 stalled on hanging mutants (A533): 5 s timeout in pass 1, line-range shards, 10-minute rate check | next check session takes json-keys.ts; land on 100 on all files |
 | SC10 | Opus read 2 PASS (A527) | boarded train 4 at 21:50Z; then the push guard for plan/cards and slices.json |
-| SC6 | round 3 check FAIL (6 fail-open forms): re-carded to R78 (A528); R77 moves to SC7 as a data rule | spec reopened (one patch, last round); then build marked reported; Opus read; board |
+| SC6 | R78-only spec reported (84 tests); build marked reported 23:35Z | check with an Opus read; board; a failure parks it (R78 to SC7) |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | SC11 | round 3 spec reported (21 tests); build reopened 21:07Z (B3 to B14) | Opus read; security review; board; then SC3 round 3 (A517) |
