@@ -3,8 +3,8 @@
  "role": "check",
  "for": "2026-10-03T14:17:03.229Z",
  "worker": "cloud-e9b38e",
- "state": "reported",
- "at": "2026-10-03T14:30:40.022Z",
+ "state": "failed",
+ "at": "2026-10-03T15:21:09.428Z",
  "mode": "turbo",
- "note": "PASS (tests, scope, lint); Opus read of tax content/owner picks Q00 B03 B07 G00 X00 still owed, only a Sonnet spot read done; see reports/G18-check.md"
+ "note": "Opus read FAIL: 26 of 105 mappings wrong (17 questions, 9 owners), 1 incomplete; reports/G18-check-opus.md on claude/G18-check (1308ab4f); findings review next"
 }

@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "4ce0202",
  "worker": "cloud-84988c",
- "state": "reported",
- "at": "2026-10-03T14:17:03.229Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T15:21:09.428Z",
  "mode": "turbo",
- "note": "15 of 15 acceptance pass; 105 flags mapped (41 to questions)"
+ "note": "Opus read FAIL: 26 of 105 mappings wrong (17 questions, 9 owners), 1 incomplete; reports/G18-check-opus.md on claude/G18-check (1308ab4f); findings review next"
 }
