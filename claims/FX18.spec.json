@@ -1,10 +1,11 @@
 {
  "card": "FX18",
  "role": "spec",
- "note": "71 tests (51 red by design); runner.acceptance.test.ts import of aiEngines moved to ./engines (N1)",
- "reopenedFrom": "eb8d158c",
+ "note": "13 new tests S1-S9 (13 red by design, all 87 in file); engines.ts must export attempt and relIsInside; 6b stub sweep not run: B4 name-only keys may retire L4 tests that rewrite strangers",
  "worker": "cloud-086697",
- "state": "working",
- "at": "2026-10-03T23:43:42.017Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T23:53:21.040Z",
+ "mode": "turbo",
+ "commit": "31f5579",
+ "validated": "0d631db"
 }
