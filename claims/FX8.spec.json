@@ -1,9 +1,8 @@
 {
  "card": "FX8",
  "role": "spec",
- "worker": "cloud-a113b9",
- "state": "reopened",
- "at": "2026-10-03T07:57:14.241Z",
- "mode": "turbo",
- "note": "W16 landed: round 2 on claude/FX8-r2 from main (card directive, A417)"
+ "worker": "local-2",
+ "state": "working",
+ "at": "2026-10-03T07:58:38.162Z",
+ "mode": "turbo"
 }
