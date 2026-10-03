@@ -33,7 +33,6 @@ Items 1 to 3 rewrite `readOutbox`. More decisively, A04's spec-owned tests pin t
 - R95: every loop that awaits a sleep or timer checks a deadline or abort signal inside the loop. Planted: `for (;;) { await sleep(10) }`.
 - R96: every child process `src/**` starts has a timeout and is stopped by its own PID, never by name. Planted: `spawn` with no timeout (A08's launcher is the first subject).
 - R97: `isTest` or `is_test` is written into a job only in `src/pipeline/**`; no module sets it. Planted: a step module building `{ isTest: true }`.
-
 ## Risks and re-test
 - Restated tests (358, 991, 1034, 1376, build:50) flip from "waits" to "fails at once": a spec-job change, never the builder's. Log-once keyed by size and mtime misses a same-size rewrite in the same millisecond: test 1376 sets mtimes with `utimes`.
 - The deadline changes check 11's sequence (first attempt fails before the lease, retry accepts): re-run `ai-exchange.acceptance.db.test.ts` and the 1000 ms poll test under the pinned clock.
