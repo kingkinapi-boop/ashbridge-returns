@@ -1,11 +1,8 @@
 {
  "card": "S00",
  "role": "spec",
- "note": "A402: gaps in reports/S00-spec-review.md; see bold directive on the card",
- "worker": "cloud-c447a8",
- "state": "reopened",
- "at": "2026-10-03T03:47:54.362Z",
- "mode": "turbo",
- "commit": "39ac95b",
- "validated": "a5475d6"
+ "worker": "cloud-fdf303",
+ "state": "working",
+ "at": "2026-10-03T03:50:02.609Z",
+ "mode": "turbo"
 }
