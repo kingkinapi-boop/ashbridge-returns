@@ -4,7 +4,7 @@
 //   1. the db worker count comes from a named setting with a pinned default per machine kind, never from
 //      the CPU count (the config is loaded in a child process with a faked os.cpus());
 //   2. no db test builds more than one database (FX10's guard, made general; static, over every
-//      *.db.test.ts, planted fixtures included); KNOWN names today's five with an owner card;
+//      *.db.test.ts, planted fixtures included); KNOWN names today's seven with an owner card;
 //   3. a measured table of the 10 slowest db tests, each under half the test budget or named with an owner.
 // Every child process of the test itself is async (A247).
 import { spawn } from 'node:child_process'
@@ -203,6 +203,8 @@ const KNOWN = [
   { file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'END-1 a year end the client never confirmed becomes an ops-confirms item and no return', worlds: 2, owner: 'FX14' },
   { file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-16 two runs of the same scenario give identical rows (no randomness in the backoff)', worlds: 2, owner: 'FX14' },
   { file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-5 given the same jobs, handlers and clock both runners end with deep-equal statuses and results', worlds: 2, owner: 'FX14' },
+  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 two test databases are isolated: a table made in one is not in the other', worlds: 2, owner: 'FX14' },
+  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: "ARC-4 closing one test database never drops a role another open test database made and uses; each database's roles go when it closes", worlds: 3, owner: 'FX14' },
 ]
 const knownStrings = KNOWN.map((k) => `${k.file}: "${k.title}" builds ${k.worlds} databases`)
 
