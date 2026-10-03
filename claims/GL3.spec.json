@@ -1,9 +1,11 @@
 {
  "card": "GL3",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: merged main, typecheck+lint green, unit green except build-owned R41 in manifest.ts (A462), db pg16 638 pass",
  "worker": "cloud-c6e634",
- "state": "working",
- "at": "2026-10-03T12:12:35.162Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T12:19:23.870Z",
+ "mode": "turbo",
+ "commit": "c6ed0a6",
+ "validated": "66de2c9"
 }
