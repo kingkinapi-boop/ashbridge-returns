@@ -1141,6 +1141,24 @@
     },
     "netIncomeLossBeforeTax": 184237.07
   },
+  "assets": [
+    {
+      "description": "Shop equipment brought forward",
+      "glAccount": "1530",
+      "accumAccount": "1531",
+      "class": "8",
+      "cost": 24600,
+      "availableForUse": "2022-01-01",
+      "book": {
+        "method": "straight-line",
+        "years": 5,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    }
+  ],
   "t2Inputs": {
     "netIncomeLossPerBooksBeforeTax": 184237.07,
     "schedule1": {
@@ -1180,7 +1198,7 @@
       "openingUcc": [
         {
           "class": "8",
-          "ucc": 9840,
+          "ucc": 11020.8,
           "note": "brought forward from last year, made-up figure"
         }
       ],

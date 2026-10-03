@@ -2,7 +2,7 @@
 
 Phase 1. Size S. Deps: W00c, SC4, SC. Where: cloud.
 Tags: core (Taxprep CSV figures).
-Paths: src/contracts/taxprep.ts, src/contracts/taxprep.acceptance.test.ts, tools/test/reading-rules.test.mjs
+Paths: src/contracts/taxprep.ts, src/contracts/taxprep.acceptance.test.ts, tools/test/reading-rules.test.mjs, tools/test/__fixtures__/schema-contract/known.json
 Clauses: EV-5, ARC-10
 Read: `reports/SC4-spec.md` (KNOWN, R69), `plan/cards/SC4.md` (R69), `src/contracts/taxprep.ts` (the rate text near `toFixed(4)`).
 Spec commit: (spec-writer fills)
