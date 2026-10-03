@@ -4,9 +4,8 @@
  "round": 1,
  "spec": "78a9fba1",
  "worker": "cloud-4c2861",
- "state": "released",
- "at": "2026-10-03T04:49:10.705Z",
+ "state": "reopened",
+ "at": "2026-10-03T05:01:39.472Z",
  "mode": "turbo",
- "note": "wait: core spec review of the new spec (reports/W16-spec-review-3.md); build opens after GO",
- "waitKey": "{\"status\":\"carded\",\"deps\":[],\"depStatus\":[]}"
+ "note": "A415: fixup spec GO (reports/W16-spec-review-3.md)"
 }
