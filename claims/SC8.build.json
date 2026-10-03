@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "7849b700",
  "worker": "cloud-fce4c0",
- "state": "working",
- "at": "2026-10-03T19:16:52.059Z",
+ "state": "reported",
+ "at": "2026-10-03T19:30:06.267Z",
  "mode": "turbo",
- "beat": "2026-10-03T19:17:29.490Z"
+ "beat": "2026-10-03T19:17:29.490Z",
+ "note": "13 reads switched, R79 and G5 tests green, npm test pass"
 }
