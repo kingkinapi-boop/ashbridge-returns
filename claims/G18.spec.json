@@ -2,7 +2,10 @@
  "card": "G18",
  "role": "spec",
  "worker": "cloud-f5e750",
- "state": "working",
- "at": "2026-10-03T14:04:33.592Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T14:10:56.197Z",
+ "mode": "turbo",
+ "note": "15 tests",
+ "commit": "4ce0202",
+ "validated": "dadad60"
 }
