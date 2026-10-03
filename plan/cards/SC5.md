@@ -15,6 +15,8 @@ Each rule first shown failing on its planted fixture, then passing on main (any 
 - **R71** `process.env` appears in no `src/**` file except `src/core/env.ts` (tests and fixtures aside), and every setting name a module exports (`*_SETTING_NAMES`) or reads is a key of env.ts's schema. Planted: `options.env ?? process.env`. Expected KNOWN on landing: ocr, storage and auth/index.ts (owner FX2) unless FX2 has landed.
 - **R72** no boolean literal constant gates a branch in `src/modules` or `src/core` (for example `const X = false as boolean; if (!X)`). Planted: a `GO_LIVE_ON` constant.
 - **R73** R23 extended: every zod schema in `src/modules/**` that parses a file read from disk is strict at every depth. Planted: a recording schema built with `z.object`. Expected KNOWN: the storage drive `Index` (owner FX7, A414).
+- **R83** (A426, reports/A04-findings.md) every `src/**/__recordings__/*.json` whose `stamp` parses with `versionStampSchema` and matches a job fixture by key agrees with that job on every part in A04's `STAMP_PARTS_FROM_JOB`, unless named on that folder's planted-mismatch list. Planted: a copy of finding-c01-good with `ocrEngine: "other-ocr"`.
+- **R84** (A426) a recording with two provenance fields for one fact (an OCR recording's `sourceEngine` and `result.engine`) agrees on both. Planted: a C01 OCR recording with a different `result.engine.version`. Expected KNOWN: A03's recorded OCR (owner FX11).
 
 ## Build
 Rules only; no product code. A rule that fails on landed code is a KNOWN entry, never a product fix here.

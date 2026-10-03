@@ -1,33 +1,33 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:16Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (44):** through A07C, A03, G17, then A07D and A06 (train 25bde2a, 04:04Z, A405). No train in flight; the next one runs test:flake.
+- **Landed (46):** through A07C, A03, G17, A07D, A06, then CQ2 and SC4 (train 677e92f green with test:flake 5 of 5, landed 05:52Z as edd3af05). No train in flight.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | round 2 spec patch reopened (A413: 4 gaps); build held | spec, build, check; unblocks W00b, JH0, B04, SC2 |
+| W00c | spec patch reported (A413); build open (A424) | build round 2, check; unblocks W00b round 4, JH0, B04, SC2 |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
 | W16 | fixup spec GO (A415); build open | build, check; then SC6, FX9 |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| SC | spec patch reopened (A415: 5 gaps; R37 to FX9; SC9 carded for walker escapes) | spec, build, check with Opus read and test:flake |
+| SC | spec patch reported (110 tests); build open (A424) | build, check with Opus read and test:flake |
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | spec patch reported (6fa39bb1, 106 tests); build open (A421) | build (mutation 100 on four files), check, security review |
-| DB16 | spec round 3 d69ac553 (89 tests); build working in the cloud (must contain d69ac553, A422) | check on Postgres 16, security review |
+| A04 | findings done (A426): round 4 narrow patch, spec reopened | spec patch (21 stamp cases), build runner.ts, check, security review |
+| DB16 | round 3 build reported (565 db tests on Postgres 16) | check (cloud), security review, board |
 | FX2 | round 2 spec reported; build open | build (one auth line), check, security review; lands before FX7 |
-| CQ2, SC4 | train requested 05:25Z (head 677e92f, test:flake) | land when green |
 | JH0 | spec reported | build after W00c lands |
+| CQ3, CQ4 | specs reported (CQ3 Paths gain claim.test.mjs) | build, check |
 
-Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local (Opus): local-2 (FX2 spec), local-3 (CQ3 spec); local-1 idle (queue empty 05:20Z). npm ci done 04:45Z.
+Cloud runs: 3 at 05:56Z, 2 at 06:16Z. Local (Opus): local-1 (CQ3 refit), local-3 (W16 refit), local-2 (FX10 spec). The CQ2 landing set off toolchain refits on every reported spec (06:15Z): for the Critic, a refit only when a spec's own commands changed.
 
 ## Next, in order
 
