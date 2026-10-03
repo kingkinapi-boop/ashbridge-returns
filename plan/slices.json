@@ -3822,7 +3822,7 @@
       "hard": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
@@ -8999,7 +8999,7 @@
       "size": "S"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "B04",
@@ -9031,7 +9031,7 @@
       "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T08",
@@ -9070,7 +9070,7 @@
       "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T09",
@@ -9106,7 +9106,7 @@
       "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T08",

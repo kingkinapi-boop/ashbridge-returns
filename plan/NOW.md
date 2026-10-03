@@ -35,7 +35,7 @@ Cloud runs: 2 at 06:50Z, 4 at 06:56Z (W00c, A04, FX10 builds, SC check, DB16 bui
 1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
 2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
 3. FX2 and A04 round 2 specs, then SC3, SC5 (R71 to R73); DB16.
-4. V02, V03, V04, V09, V13 drafted (A421): independent card review with the other phase 3 cards before their first spec; V15 to write. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
+4. V02, V03, V04, V09, V13 (A421) and V15, B06, T09, T10, T11 (A433) drafted: one independent card review of them with the other phase 3 cards before their first spec. To write: a card for the notice of assessment compare and the filed-to-assessed move (gap, A433). Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
 5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
 6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
