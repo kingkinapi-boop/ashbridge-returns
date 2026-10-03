@@ -85,6 +85,10 @@
             {
               "source": "answers.answer_verbatim",
               "cite": "M0006:42"
+            },
+            {
+              "source": "answers.question_asked",
+              "cite": "M0006:41"
             }
           ]
         },
@@ -733,6 +737,10 @@
         {
           "source": "answers.status",
           "cite": "M0006:46"
+        },
+        {
+          "source": "answers.question_asked",
+          "cite": "M0006:41"
         }
       ],
       "derived": []

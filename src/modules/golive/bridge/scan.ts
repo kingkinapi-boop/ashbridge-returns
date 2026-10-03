@@ -22,8 +22,10 @@ export interface SentenceLiteral {
 }
 
 /** Contract section 3: the table and the columns no bridge view may read. */
-export const NEVER_READ: { tables: readonly string[]; columns: readonly ColumnRef[] } = {
+export const NEVER_READ: { tables: readonly string[]; columns: readonly ColumnRef[]; markerIds: readonly string[] } = {
   tables: ['restricted_data'],
+  // the marker answers (line 70): every answer to one reads as given in bridge.answer, never its value
+  markerIds: ['PY3.sin', 'PY3.dob', 'PY3.bank', 'BQ7.sin', 'BQ1.bn'],
   columns: [
     { table: 'quickbooks_connections', column: 'access_token_encrypted' },
     { table: 'quickbooks_connections', column: 'refresh_token_encrypted' },
@@ -80,4 +82,16 @@ export function findSentenceLiterals(sql: string, file: string): SentenceLiteral
     if (literal !== undefined && literal.search(/\s/) >= 0) out.push({ file, line: sql.slice(0, m.index).split('\n').length, literal })
   }
   return out
+}
+
+/**
+ * U9 and ARC-2: what a role reaches beyond its allow-list (`extra`, in reach order) and what the allow-list gives that the
+ * role does not reach (`missing`, in allow-list order). A reachable security definer function is always extra, even when
+ * the allow-list names it.
+ */
+export function reachDiff(reach: readonly string[], allowed: readonly string[]): { extra: string[]; missing: string[] } {
+  return {
+    extra: reach.filter((k) => !allowed.includes(k) || k.endsWith(' security definer')),
+    missing: allowed.filter((k) => !reach.includes(k)),
+  }
 }

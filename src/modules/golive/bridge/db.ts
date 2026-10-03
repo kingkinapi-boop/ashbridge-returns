@@ -10,9 +10,12 @@ export const DRAFT_SQL_FILES = ['0001_bridge_views.sql', '0002_grants.sql'] as c
 
 type Queryable = Pick<PGlite, 'query'>
 
-/** Applies 0001 then 0002 (the client app's tables and the roles are the caller's). */
+/** Applies 0001 then 0002 as one transaction (the client app's tables and the roles are the caller's): a failure leaves nothing. */
 export async function applyDraft(db: PGlite): Promise<void> {
-  for (const f of DRAFT_SQL_FILES) await db.exec(fs.readFileSync(path.join(DRAFT_DIR, f), 'utf8'))
+  const files = DRAFT_SQL_FILES.map((f) => fs.readFileSync(path.join(DRAFT_DIR, f), 'utf8'))
+  await db.transaction(async (tx) => {
+    for (const sql of files) await tx.exec(sql)
+  })
 }
 
 /** Every column (or whole table) each view in schema bridge depends on, from the catalog. */
@@ -44,4 +47,53 @@ export async function probeClientSchema(db: Queryable): Promise<{ reads: ColumnR
   )
   const missing = missingColumns(reads, present.rows)
   return { reads, missing, clean: missing.length === 0 }
+}
+
+// What the reach rule leaves out: the system schemas, toast and temp schemas.
+const SYSTEM_SCHEMA = `n.nspname not in ('pg_catalog', 'information_schema') and n.nspname not like 'pg\\_toast%' and n.nspname not like 'pg\\_temp\\_%'`
+
+/**
+ * LIVE-6, ARC-2: every right a role holds in this database, as plain-text keys (usage and create on schemas; the seven table
+ * rights; column rights held without the table one; sequence rights; execute on functions, marked security definer; role
+ * memberships), each once, in plain string order. PUBLIC's rights count, as they are every role's. Catalog selects only.
+ */
+export async function probeReach(db: Queryable, role: string): Promise<string[]> {
+  const q = async (sql: string): Promise<string[]> => (await db.query<{ k: string }>(sql, [role])).rows.map((r) => r.k)
+  const keys = [
+    ...(await q(
+      `select p.priv || ' on schema ' || n.nspname as k from pg_catalog.pg_namespace n cross join (values ('usage'), ('create')) p (priv)
+       where ${SYSTEM_SCHEMA} and pg_catalog.has_schema_privilege($1::name, n.oid, p.priv)`,
+    )),
+    ...(await q(
+      `select p.priv || ' on ' || n.nspname || '.' || c.relname as k
+       from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+       cross join (values ('select'), ('insert'), ('update'), ('delete'), ('truncate'), ('references'), ('trigger')) p (priv)
+       where ${SYSTEM_SCHEMA} and c.relkind in ('r', 'p', 'v', 'm', 'f') and pg_catalog.has_table_privilege($1::name, c.oid, p.priv)`,
+    )),
+    ...(await q(
+      `select p.priv || ' (' || a.attname || ') on ' || n.nspname || '.' || c.relname as k
+       from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+       join pg_catalog.pg_attribute a on a.attrelid = c.oid and a.attnum > 0 and not a.attisdropped
+       cross join (values ('select'), ('insert'), ('update'), ('references')) p (priv)
+       where ${SYSTEM_SCHEMA} and c.relkind in ('r', 'p', 'v', 'm', 'f')
+         and pg_catalog.has_column_privilege($1::name, c.oid, a.attname::text, p.priv) and not pg_catalog.has_table_privilege($1::name, c.oid, p.priv)`,
+    )),
+    ...(await q(
+      `select p.priv || ' on ' || n.nspname || '.' || c.relname as k
+       from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+       cross join (values ('usage'), ('select'), ('update')) p (priv)
+       where ${SYSTEM_SCHEMA} and c.relkind = 'S' and pg_catalog.has_sequence_privilege($1::name, c.oid, p.priv)`,
+    )),
+    ...(await q(
+      `select 'execute on ' || n.nspname || '.' || f.proname || '(' || pg_catalog.pg_get_function_identity_arguments(f.oid) || ')'
+              || case when f.prosecdef then ' security definer' else '' end as k
+       from pg_catalog.pg_proc f join pg_catalog.pg_namespace n on n.oid = f.pronamespace
+       where ${SYSTEM_SCHEMA} and pg_catalog.has_function_privilege($1::name, f.oid, 'execute')`,
+    )),
+    ...(await q(
+      `select 'member of ' || r.rolname as k from pg_catalog.pg_roles r
+       where r.rolname <> $1::name and pg_catalog.pg_has_role($1::name, r.oid, 'MEMBER')`,
+    )),
+  ]
+  return [...new Set(keys)].sort()
 }

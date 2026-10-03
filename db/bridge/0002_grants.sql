@@ -11,16 +11,16 @@ revoke all on all functions in schema bridge from anon, authenticated;
 revoke all on all sequences in schema bridge from public;
 revoke all on all sequences in schema bridge from anon, authenticated;
 
--- ARC-2: this system reads the bridge views and nothing else: select only, never a write, never a base table.
+-- ARC-2: this system reads the bridge views only: select only, never a write, never a base table.
 grant usage on schema bridge to returns_app;
 grant select on all tables in schema bridge to returns_app;
 
--- Postgres lets PUBLIC execute every function it creates; take that back so client_app_reader (and every role) executes none in
+-- Postgres lets PUBLIC execute every function it creates; take that back so client_app_reader (and every role) executes no function in
 -- schema returns. This draft grants returns_app nothing in returns: its rights there come only from GL2's migration.
 revoke execute on all functions in schema returns from public;
 
--- END-7: the client app reads returns.client_handoff and nothing else in returns: the columns of the hand-off row
--- (ids, slot values and numbers, never a sentence), and only rows a person signed. A draft never leaves this system.
+-- END-7: the client app reads returns.client_handoff in returns: the columns of the hand-off row
+-- (ids, slot values and numbers, never a sentence), and only rows a person signed (sent_at set). A draft never leaves this system.
 grant usage on schema returns to client_app_reader;
 grant select (
   id, corporation_id, engagement_id, tax_year, list_kind, list_version, position, status, sent_at, is_test,
@@ -30,4 +30,4 @@ grant select (
 alter table returns.client_handoff enable row level security;
 create policy client_handoff_client_app_read on returns.client_handoff
   for select to client_app_reader
-  using (status in ('sent', 'withdrawn', 'closed'));
+  using (status in ('sent', 'withdrawn', 'closed') and sent_at is not null);

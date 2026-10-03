@@ -9,11 +9,15 @@ commit and migration, so the LIVE-6 re-check knows what the draft was written ag
 
 ## Apply order
 
+Both files go in as one migration, in one transaction (`applyDraft` does this in the tests): a failure in `0002` leaves no
+schema `bridge` behind. `0001` also revokes every right on schema `bridge` and its views from `public`, `anon` and
+`authenticated` as it goes, so no window opens even before `0002` runs.
+
 1. GL2's live migration first (schema `returns`, its roles: `returns_app`, `client_app_reader`; role names are placeholders).
 2. `0001_bridge_views.sql`: schema `bridge` and one read-only view per contract view.
-3. `0002_grants.sql`: `returns_app` selects the bridge views and nothing else; the public-key roles see nothing in
+3. `0002_grants.sql`: `returns_app` selects the bridge views only; the public-key roles see nothing in
    `bridge`; `client_app_reader` selects the hand-off columns of `returns.client_handoff` and only its `sent`,
-   `withdrawn` and `closed` rows (a row-level security policy; a draft never leaves this system).
+   `withdrawn` and `closed` rows once `sent_at` is set (a row-level security policy; a draft never leaves this system).
    `0002` revokes PUBLIC execute on every function in `returns` and grants `returns_app` nothing there, so GL2's
    migration must already grant `returns_app` execute on every function its writes call (check helpers, functions
    called in trigger bodies), or its inserts fail.
@@ -31,6 +35,17 @@ commit and migration, so the LIVE-6 re-check knows what the draft was written ag
   default privilege may hand it to them.
 
 ## Notes
+
+- Every view in schema `bridge` is created with `security_barrier`, so a function in a caller's filter cannot see a row the
+  view hides. A view with a union is wrapped in a subquery (`select * from (... union all ...) u`): the barrier does nothing on a
+  bare union view. A view added later follows both rules.
+- Marker answers read as `given`: `bridge.answer` shows an answer to PY3.sin, PY3.dob, PY3.bank, BQ7.sin or BQ1.bn (bare or
+  "<id>: <label>"), or any value starting `restricted-provided`, as `given`, never its value (contract line 70); a null stays null.
+  `bridge.document` skips those rows.
+- Reach: run `probeReach(db, role)` on every role at LIVE-6. It lists every right the role holds in the database (schema, table,
+  column, sequence, function, membership), with catalog selects only; compare it with the allow-list (`reachDiff`). A security
+  definer function it lists is the client repo's Lead's call: keep it or drop it there. Never a blanket PUBLIC revoke in the
+  client repo's schema; this draft revokes only inside `bridge` and `returns`.
 
 - `views.json` lists every column of every view, the client-app column each comes from and the contract cite, the
   columns a view reads only in joins and filters (`alsoReads`), and the F07 fields the live reader derives
