@@ -1,11 +1,9 @@
 {
  "card": "CQ9",
  "role": "spec",
- "worker": "cloud-a244c5",
- "state": "reported",
- "at": "2026-10-03T11:48:02.759Z",
- "mode": "turbo",
- "note": "15 tests",
- "commit": "d25918c",
- "validated": "3e9f1c8d38ba570eba4e3e6acb521200674e7fe6"
+ "note": "toolchain refit",
+ "worker": "cloud-c6e634",
+ "state": "working",
+ "at": "2026-10-03T12:22:06.393Z",
+ "mode": "turbo"
 }
