@@ -41,7 +41,7 @@ export type FixtureName = (typeof FIXTURE_NAMES)[number]
  * three groups and put into the fixture's slot at load time, so no test-data file holds a check-digit-valid nine-digit
  * number (SC rule R34, SEC-11); the jobs the tests see are unchanged.
  */
-const SIN_GROUPS = ['729', '458', '133'] as const
+export const SIN_GROUPS = ['729', '458', '133'] as const
 export const PLANTED_SIN = SIN_GROUPS.join(' ')
 export const PLANTED_SIN_DIGITS = SIN_GROUPS.join('')
 const SIN_SLOT = 'PLANTED-SIN-SLOT'
@@ -78,14 +78,29 @@ export const NOT_JSON_TEXT = 'Here is my finding (Test): the meals total looks f
 export const SCHEMA_BREAKING_OUTPUT = { outcome: 'answer', findingType: 'issue', summary: 'Looks fine (Test).', citations: [], approved: true }
 export const OTHER_MODEL = 'claude-other-model-test'
 
-export interface FakeRule {
+/** The CLI's failure envelope controls (A509 gap 8): on a rule, else at the top of the control file. */
+export interface FakeFailure {
+  /** The code the fake exits with (default 0). */
+  exitCode?: number
+  /** Sets the envelope's is_error (its `result` stays as given). */
+  isError?: boolean
+  /** Sets the envelope's subtype (default 'success'). */
+  subtype?: string
+  /** Prints nothing on stdout. */
+  emptyStdout?: boolean
+  /** Written to stderr. */
+  stderr?: string
+}
+export interface FakeRule extends FakeFailure {
   match: string
   result: string
   model?: string | null
+  /** The exact modelUsage object to print (several models); wins over `model`. */
+  modelUsage?: Record<string, { inputTokens: number; outputTokens: number }>
   /** The fake waits this long (after logging the call) before answering. */
   hangMs?: number
 }
-export interface FakeControl {
+export interface FakeControl extends FakeFailure {
   rules: FakeRule[]
   defaultResult: string
   hangMs?: number
@@ -110,6 +125,9 @@ export interface FakeCall {
   cwdFiles: Record<string, string | null>
   /** The fake's process id. */
   pid: number
+  /** CLAUDE_CONFIG_DIR as the fake saw it (null: unset), and its entries when the fake started (null: no such folder). */
+  configDir: string | null
+  configDirFiles: string[] | null
 }
 
 export interface World {

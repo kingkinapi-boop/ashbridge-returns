@@ -29,7 +29,7 @@ import { execFileSync, spawn, type ChildProcess } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, describe, expect, test, vi } from 'vitest'
-import { loadFactCatalogue } from '../../../contracts/facts'
+import { SENSITIVE_KINDS, loadFactCatalogue } from '../../../contracts/facts'
 import { readOwnSource } from '../../../core/testing/read-own-source'
 import { AI_JOB_LEASE_MS, AiJobIdSchema, OutboxRefusalSchema } from '../index'
 import { AI_LEASE_MARGIN_MS } from '../runner/runner'
@@ -37,6 +37,7 @@ import { CLAUDE_TIMEOUT_MS, runAiProjectOnce } from './index'
 import {
   FIXTURES_DIR,
   REPO_ROOT,
+  SIN_GROUPS,
   VALID_OUTPUT,
   VALID_TEXT,
   callsFor,
@@ -46,7 +47,9 @@ import {
   makeWorld,
   markerOf,
   outboxOf,
+  watchNames,
   type FakeControl,
+  type FakeFailure,
   type Json,
   type World,
 } from './__fixtures__/harness'
@@ -90,7 +93,7 @@ interface Run {
   lines: string[]
 }
 
-async function runOnce(w: World, extra: { claudeTimeoutMs?: number } = {}): Promise<Run> {
+async function runOnce(w: World, extra: { claudeTimeoutMs?: number; env?: Record<string, string | undefined> } = {}): Promise<Run> {
   const lines: string[] = []
   const result = (await runAiProjectOnce({
     argv: [],
@@ -464,8 +467,23 @@ const CATALOGUE = (() => {
   if (!loaded.ok) throw new Error(`data/facts/catalogue.json does not load: ${loaded.reasons.join('; ')}`)
   return loaded.catalogue
 })()
-/** A498: every fact key E03 marks sin or birth_date, from the catalogue (never a hand list). */
-const MARKED_KEYS = CATALOGUE.entries.filter((e) => e.sensitive === 'sin' || e.sensitive === 'birth_date').map((e) => e.key)
+type Entry = { key: string; sensitive: string }
+/**
+ * A509 gap 6: fact keys exempt from the marked-key rule, each with its reason. Empty: the Lead's ruling (amber A509) is
+ * that an account's last digits count as masked only inside the restricted-provided marker form, which A498 refuses
+ * anyway, so every other tail of a bank_account fact is refused like a SIN or a birth date.
+ */
+const EXEMPT: Readonly<Record<string, string>> = {}
+/** Every key E03 marks sensitive (any kind but none), minus the reasoned exemptions: never a closed list of kinds. */
+const markedKeysOf = (entries: readonly Entry[], exempt: Readonly<Record<string, string>>): string[] =>
+  entries.filter((e) => e.sensitive !== 'none' && !Object.hasOwn(exempt, e.key)).map((e) => e.key)
+/** An exemption whose key is gone from the catalogue, or no longer sensitive, is stale. */
+const staleExemptions = (entries: readonly Entry[], exempt: Readonly<Record<string, string>>): string[] =>
+  Object.keys(exempt)
+    .filter((k) => !entries.some((e) => e.key === k && e.sensitive !== 'none'))
+    .map((k) => `stale exemption: ${k}`)
+/** A498, A509 gap 6: every fact key E03 marks sensitive, from the catalogue (never a hand list). */
+const MARKED_KEYS = markedKeysOf(CATALOGUE.entries, EXEMPT)
 /** A fact E03 marks not sensitive, whose name says nothing of a SIN, birth, bank, account or card. */
 const PLAIN_KEY = CATALOGUE.entries.find((e) => e.sensitive === 'none' && !/sin|birth|bank|account|card|transit/.test(e.key))?.key
 /** A value the nine-digit SIN scan and the date scan both miss (a marker's last digits). */
@@ -482,12 +500,34 @@ const FORMS: readonly (readonly [string, Plant])[] = [
 ]
 const ROWS = MARKED_KEYS.flatMap((key) => FORMS.map(([label, plant]) => [key, label, plant] as const))
 
-describe('AI-9 SEC-5 A498 a value of a fact E03 marks sin or birth_date, or text after restricted-provided, never reaches the model', SLOW, () => {
+describe('AI-9 SEC-5 A498 a value of a fact E03 marks sensitive, or text after restricted-provided, never reaches the model', SLOW, () => {
   test('AI-9 A498 the marked keys come from E03 catalogue and hold the shareholder SIN, the T4 SIN and the director birth date (sentinels)', () => {
     expect(MARKED_KEYS.length).toBeGreaterThan(0)
     expect(MARKED_KEYS).toEqual(expect.arrayContaining(['shareholder.identity.sin', 't4.slip.employee_sin', 'director.identity.birth_date']))
     expect(ROWS.length).toBe(MARKED_KEYS.length * FORMS.length)
     expect(PLAIN_KEY).toBeDefined()
+  })
+
+  test('AI-9 A509 the marked keys are every key E03 marks sensitive: the bank account keys too, every sensitive kind of the contract has a row, and no exemption is stale', () => {
+    expect(MARKED_KEYS).toEqual(expect.arrayContaining(['bank.statement.account_number', 'card.statement.card_number', 'loan.statement.account_number']))
+    const kinds = SENSITIVE_KINDS.filter((k) => k !== 'none')
+    expect(kinds.length).toBeGreaterThan(0)
+    for (const kind of kinds) {
+      const keys = CATALOGUE.entries.filter((e) => e.sensitive === kind).map((e) => e.key)
+      expect(keys.length, `no catalogue key of kind ${kind}`).toBeGreaterThan(0)
+      expect(keys.every((k) => MARKED_KEYS.includes(k) || Object.hasOwn(EXEMPT, k)), kind).toBe(true)
+    }
+    expect(staleExemptions(CATALOGUE.entries, EXEMPT)).toEqual([])
+  })
+
+  test('AI-9 A509 rule: a copied catalogue with a new sensitive kind is covered by the derivation (a closed sin and birth_date list misses it), and a planted stale exemption is caught', () => {
+    const copy: Entry[] = [...CATALOGUE.entries.map((e) => ({ key: e.key, sensitive: e.sensitive })), { key: 'owner.identity.passport_number', sensitive: 'passport' }]
+    expect(markedKeysOf(copy, EXEMPT)).toContain('owner.identity.passport_number')
+    const closed = copy.filter((e) => e.sensitive === 'sin' || e.sensitive === 'birth_date').map((e) => e.key)
+    expect(closed).not.toContain('owner.identity.passport_number')
+    expect(staleExemptions(copy, { 'owner.identity.gone_number': 'planted (Test)' })).toEqual(['stale exemption: owner.identity.gone_number'])
+    expect(staleExemptions(copy, { [PLAIN_KEY ?? '']: 'planted (Test)' })).toEqual([`stale exemption: ${PLAIN_KEY ?? ''}`])
+    expect(staleExemptions(copy, { 'owner.identity.passport_number': 'reason (Test)' })).toEqual([])
   })
 
   test.each(ROWS)('AI-9 SEC-5 A498 a value of the E03-marked fact %s, as %s, is refused at stage input before any call', async (key, _label, plant) => {
@@ -530,6 +570,306 @@ describe('AI-9 SEC-5 A498 a value of a fact E03 marks sin or birth_date, or text
   })
 })
 
+// ---------- ARC-22 SEC-10 A509 gap 3: the claude child's environment is an allowlist ----------
+
+/**
+ * The only setting names the claude child may see (A509 gap 3): what a program needs to start on Windows or Linux,
+ * the subscription's own token (gap 4) and the fresh config folder (gap 2). Compared without case (Windows' Path).
+ */
+const CHILD_ENV_ALLOWLIST = ['PATH', 'HOME', 'USERPROFILE', 'APPDATA', 'SystemRoot', 'TEMP', 'TMP', 'TZ', 'LANG', 'CLAUDE_CODE_OAUTH_TOKEN', 'CLAUDE_CONFIG_DIR']
+const notAllowed = (names: readonly string[]): string[] => {
+  const ok = new Set(CHILD_ENV_ALLOWLIST.map((n) => n.toUpperCase()))
+  return names.filter((n) => !ok.has(n.toUpperCase()))
+}
+
+describe('ARC-22 SEC-10 A509 the claude child sees only allowlisted settings', SLOW, () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  test('ARC-22 SEC-10 A509 settings planted in the process (DATABASE_URL, SUPABASE_SERVICE_ROLE_KEY) and in options.env (an extra name, NODE_OPTIONS, the exchange settings) never reach the child: its names are a subset of the allowlist', async () => {
+    vi.stubEnv('DATABASE_URL', 'postgres://planted-a08-test@localhost/none')
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'planted-a08-test-not-a-key')
+    const w = world(['c01-clean'])
+    const { result, lines } = await runOnce(w, { env: { ...w.env, A08_PLANTED_EXTRA_SETTING: 'planted (Test)', NODE_OPTIONS: '--max-old-space-size=4096' } })
+    expect(result).toEqual({ ok: true })
+    const [call] = w.calls()
+    expect(call, 'the clean job was not called').toBeDefined()
+    if (call === undefined) return
+    // sentinel: the child got a working environment (PATH at least), so an empty list cannot pass by accident
+    expect(call.envNames.map((n) => n.toUpperCase())).toContain('PATH')
+    expect(notAllowed(call.envNames)).toEqual([])
+    expect(lines.join('\n')).not.toContain('planted-a08-test')
+  })
+
+  test('ARC-22 A509 rule: the allowlist check catches the pass-through launcher (spawn with env: process.env) and passes the allowlisted names', () => {
+    expect(notAllowed(['PATH', 'HOME', 'DATABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'AI_EXCHANGE_DIR', 'NODE_OPTIONS'])).toEqual([
+      'DATABASE_URL',
+      'SUPABASE_SERVICE_ROLE_KEY',
+      'AI_EXCHANGE_DIR',
+      'NODE_OPTIONS',
+    ])
+    expect(notAllowed(['Path', 'SystemRoot', 'TEMP', 'CLAUDE_CODE_OAUTH_TOKEN', 'CLAUDE_CONFIG_DIR'])).toEqual([])
+  })
+})
+
+// ---------- AI-9 SEC-5 A509 gap 5: the code scan beyond ASCII ----------
+
+/** The planted SIN's three groups (from the harness; no test-data file holds the nine digits, SC R34). */
+const [G1, G2, G3] = SIN_GROUPS
+const SIN_DIGITS = `${G1}${G2}${G3}`
+const fullWidth = (digits: string): string => digits.split('').map((d) => String.fromCharCode(0xff10 + Number(d))).join('')
+/** The separators SC rule R34 already knows: a dot, the no-break and thin spaces, and the Unicode hyphens and dashes. */
+const SEPARATORS: readonly (readonly [string, string])[] = [
+  ['a dot', '.'],
+  ['U+00A0', ' '],
+  ['U+2009', ' '],
+  ['U+202F', ' '],
+  ['U+2010', '‐'],
+  ['U+2011', '‑'],
+  ['U+2012', '‒'],
+  ['U+2013', '–'],
+  ['U+2014', '—'],
+  ['U+2015', '―'],
+]
+const setText = (text: string) => (inputs: Json): void => {
+  const docs = inputs['documents'] as Json[]
+  if (docs[0]) docs[0]['text'] = text
+}
+const DOB = '1971-04-12'
+
+/** One row: what is planted in the job's inputs, and the strings that must reach no log line and no refusal. */
+type ScanRow = readonly [label: string, plant: (inputs: Json) => void, secrets: readonly string[]]
+const SCAN_ROWS: readonly ScanRow[] = [
+  ...SEPARATORS.map(([label, sep]): ScanRow => [`a SIN separated by ${label}`, setText(`Payroll slip (Test), reference ${G1}${sep}${G2}${sep}${G3}`), [`${G1}${sep}${G2}${sep}${G3}`, SIN_DIGITS]]),
+  ['a SIN in full-width digits (NFKC)', setText(`Payroll slip (Test), reference ${fullWidth(SIN_DIGITS)}`), [fullWidth(SIN_DIGITS), SIN_DIGITS]],
+  ['a SIN in spaced full-width digits', setText(`Payroll slip (Test), reference ${fullWidth(G1)} ${fullWidth(G2)} ${fullWidth(G3)}`), [fullWidth(G1), SIN_DIGITS]],
+  [
+    'a SIN as a JSON number nested three deep (ledger[0].memo)',
+    (inputs) => {
+      const ledger = inputs['ledger'] as Json[]
+      if (ledger[0]) ledger[0]['memo'] = Number(SIN_DIGITS)
+    },
+    [SIN_DIGITS],
+  ],
+  ['a DOB label', setText(`Owner profile (Test). DOB: ${DOB}`), [DOB]],
+  ['a D.O.B. label', setText(`Owner profile (Test). D.O.B. ${DOB}`), [DOB]],
+  ['a born label', setText(`Owner profile (Test), born ${DOB}`), [DOB]],
+  ['a birth date label', setText(`Owner profile (Test). Birth date: ${DOB}`), [DOB]],
+  ['a date de naissance label', setText(`Profil du propriétaire (Test). Date de naissance : ${DOB}`), [DOB]],
+  ['a dob key', (inputs) => { inputs['dob'] = DOB }, [DOB]],
+  [
+    'a birth_date key nested in a document',
+    (inputs) => {
+      const docs = inputs['documents'] as Json[]
+      if (docs[0]) docs[0]['birth_date'] = DOB
+    },
+    [DOB],
+  ],
+  ['a birthDate key nested in an owner object', (inputs) => { inputs['owner'] = { name: 'Jordan Lee (Test)', birthDate: DOB } }, [DOB]],
+  ['an accountNumber key', (inputs) => { inputs['payee'] = { accountNumber: '7654321' } }, ['7654321']],
+  ['a transitNumber key', (inputs) => { inputs['payee'] = { transitNumber: '00123' } }, []],
+  ['an institutionNumber key', (inputs) => { inputs['payee'] = { institutionNumber: '004' } }, []],
+  ['a bank account shape with spaces', setText('Direct deposit (Test) to account 00123 004 7654321'), ['7654321']],
+  ['the marker written RESTRICTED-PROVIDED', (inputs) => { inputs['answers'] = [{ questionId: 'PY3.bank', answer: 'RESTRICTED-PROVIDED 4821' }] }, ['4821']],
+  ['the marker written with a U+2011 hyphen', (inputs) => { inputs['answers'] = [{ questionId: 'PY3.sin', answer: 'restricted‑provided 4821' }] }, ['4821']],
+]
+
+/** No false alarm, one row per kind: values a correct scan leaves alone. */
+const CLEAN_ROWS: readonly (readonly [string, (inputs: Json) => void])[] = [
+  [
+    'SIN kind: amountCents a nine-digit number that fails the check digit, as a JSON number',
+    (inputs) => {
+      const ledger = inputs['ledger'] as Json[]
+      if (ledger[0]) ledger[0]['amountCents'] = Number(SIN_DIGITS) + 1
+    },
+  ],
+  ['birth date kind: yearEnd a date under a key that is not a birth date', (inputs) => { inputs['yearEnd'] = DOB }],
+  [
+    'bank kind: recordId with digit groups that are not a bank shape',
+    (inputs) => {
+      const ledger = inputs['ledger'] as Json[]
+      if (ledger[0]) ledger[0]['recordId'] = 'txn-2025-004-0042'
+    },
+  ],
+  ['marker kind: the words restricted and provided apart', setText('Statement provided by the owner (Test); access restricted to staff')],
+]
+
+describe('AI-9 SEC-5 A509 the sensitive-value scan reads Unicode, numbers, nesting and escapes, not ASCII text only', SLOW, () => {
+  test('AI-9 A509 the scan tables are not empty and cover every R34 separator (sentinel)', () => {
+    expect(SCAN_ROWS.length).toBeGreaterThan(SEPARATORS.length)
+    expect(SEPARATORS.map(([, sep]) => sep).join('')).toBe('.   ‐‑‒–—―')
+    expect(CLEAN_ROWS.length).toBe(4)
+    expect(Number(SIN_DIGITS) + 1).not.toBe(Number(SIN_DIGITS))
+  })
+
+  test.each(SCAN_ROWS)('AI-9 SEC-5 A509 %s is refused at stage input before any call, the value in no log line and no refusal', async (_label, plant, secrets) => {
+    const w = world([])
+    writeJob(w.inbox, 'c01-scan.json', cleanJob('a08-scan', 'c01-scan', (j) => { plant(j['inputs'] as Json) }))
+    const { lines } = await runOnce(w)
+    const r = refusalOf(w, 'c01-scan')
+    expect(r.reason).toMatch(/AI-9/)
+    expect(r.stage).toBe('input')
+    expect(w.calls()).toEqual([])
+    const told = `${JSON.stringify(r)}\n${lines.join('\n')}`
+    for (const secret of secrets) expect(told).not.toContain(secret)
+  })
+
+  test('AI-9 SEC-5 A509 a SIN written with \\u escapes in the raw inbox file is refused at stage input before any call', async () => {
+    const w = world([])
+    const j = cleanJob('a08-scan-escaped', 'c01-scan-escaped', (job) => { setText(`Payroll slip (Test), reference ${SIN_DIGITS}`)(job['inputs'] as Json) })
+    const escaped = SIN_DIGITS.split('').map((d) => `\\u00${d.charCodeAt(0).toString(16)}`).join('')
+    const raw = JSON.stringify(j, null, 2).replace(SIN_DIGITS, escaped)
+    // sentinel: the raw file holds no plain digits, and it still parses to the same job
+    expect(raw).not.toContain(SIN_DIGITS)
+    expect(JSON.parse(raw)).toEqual(j)
+    fs.writeFileSync(path.join(w.inbox, 'c01-scan-escaped.json'), raw + '\n')
+    const { lines } = await runOnce(w)
+    const r = refusalOf(w, 'c01-scan-escaped')
+    expect(r.reason).toMatch(/AI-9/)
+    expect(r.stage).toBe('input')
+    expect(w.calls()).toEqual([])
+    expect(`${JSON.stringify(r)}\n${lines.join('\n')}`).not.toContain(SIN_DIGITS)
+  })
+
+  test.each(CLEAN_ROWS)('AI-9 A509 no false alarm (%s): the job is answered', async (_label, plant) => {
+    const w = world([])
+    writeJob(w.inbox, 'c01-scan-clean.json', cleanJob('a08-scan-clean', 'c01-scan-clean', (j) => { plant(j['inputs'] as Json) }))
+    await runOnce(w)
+    expect(outboxOf(w, 'c01-scan-clean')).toMatchObject({ jobId: 'c01-scan-clean', output: VALID_OUTPUT })
+    expect(callsHolding(w, 'a08-scan-clean')).toBe(1)
+  })
+})
+
+// ---------- AI-1 A509 gap 8: the CLI's failure envelope ----------
+
+const FAILURES: readonly (readonly [string, FakeFailure])[] = [
+  ['is_error true (the result text still a valid answer)', { isError: true }],
+  ['subtype error_max_turns', { subtype: 'error_max_turns' }],
+  ['subtype error_during_execution with is_error true', { subtype: 'error_during_execution', isError: true }],
+  ['exit code 1 after a success envelope', { exitCode: 1 }],
+  ['empty stdout with exit code 0', { emptyStdout: true }],
+  ['exit code 2, an error on stderr and empty stdout', { exitCode: 2, emptyStdout: true, stderr: 'Error: not logged in (Test)' }],
+]
+
+describe('AI-1 A509 a failed CLI run is a refusal at stage run, never an answer', SLOW, () => {
+  test.each(FAILURES)('AI-1 A509 %s becomes a refusal at stage run, with no output and no stamp, and the next job is answered', async (_label, failure) => {
+    const w = world(['c01-clean', 'c01-injected'], {
+      rules: [{ match: markerOf('c01-clean'), result: VALID_TEXT, ...failure }],
+      defaultResult: VALID_TEXT,
+    })
+    const { result } = await runOnce(w)
+    expect(result).toEqual({ ok: true })
+    const r = refusalOf(w, 'c01-clean')
+    expect(r.stage).toBe('run')
+    expect(outboxOf(w, 'c01-clean')).not.toHaveProperty('output')
+    expect(outboxOf(w, 'c01-clean')).not.toHaveProperty('stamp')
+    expect(callsFor(w, 'c01-clean')).toHaveLength(1)
+    expect(outboxOf(w, 'c01-injected')).toMatchObject({ jobId: 'c01-injected', output: VALID_OUTPUT })
+  })
+})
+
+// ---------- AI-8 SEC-10 A509 gap 9: no shell between the launcher and the CLI ----------
+
+/** Shell metacharacters, a %VAR%, a $(...) and a backtick, made up. */
+const SHELL_TEXT = 'Memo (Test): " & | < > %PATH% $(echo planted) `echo planted` \' ; end'
+
+/** Every string a data block's content can stand for: the raw text, HTML-unescaped, and any JSON it parses to. */
+function dataStrings(content: string): string[] {
+  const out: string[] = []
+  const html = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&')
+  const collect = (v: unknown): void => {
+    if (typeof v === 'string') out.push(v)
+    else if (Array.isArray(v)) v.forEach(collect)
+    else if (v !== null && typeof v === 'object') Object.values(v).forEach(collect)
+  }
+  for (const text of [content, html]) {
+    out.push(text)
+    for (const candidate of [text.trim(), `"${text}"`]) {
+      try {
+        collect(JSON.parse(candidate))
+      } catch {
+        // not JSON
+      }
+    }
+  }
+  return out
+}
+
+describe('AI-8 SEC-10 A509 document text reaches the CLI byte for byte, with no shell on the way', SLOW, () => {
+  test('AI-8 SEC-10 A509 document text holding quotes, & | < >, %PATH%, $(...) and a backtick reaches the fake unchanged, inside the data wrapper only', async () => {
+    const w = world([])
+    writeJob(w.inbox, 'c01-shell.json', cleanJob('a08-shell', 'c01-shell', (j) => { setText(SHELL_TEXT)(j['inputs'] as Json) }))
+    await runOnce(w)
+    const [call] = w.calls()
+    expect(call, 'the job was not called').toBeDefined()
+    if (call === undefined) return
+    const texts = [...call.argv, call.stdin]
+    const inside = texts.flatMap((t) => [...t.matchAll(/<data\b[^>]*>([\s\S]*?)<\/data>/g)].map((m) => m[1] ?? ''))
+    expect(inside.length, 'no data wrapper').toBeGreaterThan(0)
+    expect(inside.flatMap(dataStrings).some((t) => t.includes(SHELL_TEXT)), 'the text was changed on the way').toBe(true)
+    const outside = texts.map((t) => t.replace(/<data\b[^>]*>[\s\S]*?<\/data>/g, '')).join('\n')
+    expect(outside).not.toContain('%PATH%')
+    expect(outside).not.toContain('$(echo planted)')
+    expect(outboxOf(w, 'c01-shell')).toMatchObject({ jobId: 'c01-shell', output: VALID_OUTPUT })
+  })
+
+  test('AI-8 A509 rule: the decoder finds the text in JSON-escaped and HTML-escaped data, and not in a shell-mangled copy', () => {
+    expect(dataStrings(JSON.stringify({ text: SHELL_TEXT }).replace(/</g, '\\u003c')).some((t) => t.includes(SHELL_TEXT))).toBe(true)
+    expect(dataStrings(SHELL_TEXT.replace(/&/g, '&amp;').replace(/</g, '&lt;')).some((t) => t.includes(SHELL_TEXT))).toBe(true)
+    const mangled = SHELL_TEXT.replace('%PATH%', '/usr/bin').replace('$(echo planted)', 'planted')
+    expect(dataStrings(JSON.stringify({ text: mangled })).some((t) => t.includes(SHELL_TEXT))).toBe(false)
+  })
+})
+
+// ---------- ARC-22 A509 gap 10: one run at a time ----------
+
+describe('ARC-22 A509 one run at a time: a second run on the same exchange folder calls nothing', SLOW, () => {
+  test('ARC-22 A509 a run started while another is answering refuses "a run is already going" and calls nothing; the first run answers each job once', async () => {
+    const w = world(['c01-clean', 'c01-injected'], {
+      rules: [{ match: markerOf('c01-clean'), result: VALID_TEXT, hangMs: 2500 }],
+      defaultResult: VALID_TEXT,
+    })
+    const first = runOnce(w)
+    const until = Date.now() + 20_000
+    while (w.calls().length === 0 && Date.now() < until) await new Promise((r) => setTimeout(r, 20))
+    expect(w.calls().length, 'the first run never called the fake').toBeGreaterThan(0)
+    const second = await within(runOnce(w), 20_000, 'the second run waited')
+    expect(second.result.ok).toBe(false)
+    expect(second.result.reason).toContain('a run is already going')
+    const { result } = await within(first, 30_000, 'the first run never ended')
+    expect(result).toEqual({ ok: true })
+    expect(callsFor(w, 'c01-clean')).toHaveLength(1)
+    expect(callsFor(w, 'c01-injected')).toHaveLength(1)
+    expect(outboxNames(w)).toEqual(['c01-clean.json', 'c01-injected.json'])
+  })
+
+  test('ARC-22 A509 two runs started at the same moment: one runs, the other refuses "a run is already going"; each job is called once and each outbox file written once', async () => {
+    const w = world(['c01-clean', 'c01-injected'])
+    fs.mkdirSync(w.outbox, { recursive: true })
+    const watch = watchNames(w.outbox)
+    const runs = await within(Promise.all([runOnce(w), runOnce(w)]), 45_000, 'the two runs never ended')
+    const seen = await watch.stop()
+    const oks = runs.filter((r) => r.result.ok)
+    const refused = runs.filter((r) => !r.result.ok)
+    expect(oks).toHaveLength(1)
+    expect(refused).toHaveLength(1)
+    expect(refused[0]?.result.reason).toContain('a run is already going')
+    expect(callsFor(w, 'c01-clean')).toHaveLength(1)
+    expect(callsFor(w, 'c01-injected')).toHaveLength(1)
+    expect(outboxNames(w)).toEqual(['c01-clean.json', 'c01-injected.json'])
+    expect(seen).toEqual(expect.arrayContaining(['c01-clean.json', 'c01-injected.json']))
+  })
+
+  test('ARC-22 A509 the run lock is released: after a run ends, the next run goes ahead', async () => {
+    const w = world(['c01-clean'])
+    expect((await runOnce(w)).result).toEqual({ ok: true })
+    fs.rmSync(path.join(w.outbox, 'c01-clean.json'))
+    expect((await runOnce(w)).result).toEqual({ ok: true })
+    expect(callsFor(w, 'c01-clean')).toHaveLength(2)
+  })
+})
+
 // ---------- source rules (shape only; the spies and the decoy above prove the behaviour) ----------
 
 /** Problems in a launcher source: node:fs imported any way but the default import, or a process stopped by name. */
@@ -541,10 +881,15 @@ function sourceProblems(text: string): string[] {
   if (/import\s+\w+\s*(?:,\s*\{[^}]*\})?\s*from\s*['"]fs['"]/.test(text)) problems.push("fs without the node: prefix")
   if (/import\s+\w+\s*,\s*\{[^}]*\}\s*from\s*['"]node:fs['"]/.test(text)) problems.push('a named fs import')
   if (/\b(?:pkill|killall|taskkill)\b/i.test(text)) problems.push('a process stopped by name')
+  // A509 gap 9 (the same forms as tools/shell-rules.mjs): a shell option other than false, or exec/execSync
+  if (/\bshell\s*:(?!\s*false\b)/.test(text)) problems.push('a shell option other than false')
+  if (/import\s*\{[^}]*\b(?:exec|execSync)\b[^}]*\}\s*from\s*['"](?:node:)?child_process['"]/.test(text) || /(?<![.\w])(?:exec|execSync)\s*\(|\b(?:child_process|childProcess|cp)\.(?:exec|execSync)\s*\(/.test(text)) {
+    problems.push('exec or execSync (always a shell)')
+  }
   return problems
 }
 
-describe('ARC-22 R96 the launcher sources: node:fs by its default import only, no process stopped by name', () => {
+describe('ARC-22 R96 SEC-10 the launcher sources: node:fs by its default import only, no process stopped by name, no shell', () => {
   test('ARC-22 rule: planted sources are each caught; the default import alone is not', () => {
     expect(sourceProblems("import { readFileSync } from 'node:fs'")).toContain('a named fs import')
     expect(sourceProblems("import fs, { readFileSync } from 'node:fs'")).toContain('a named fs import')
@@ -556,7 +901,18 @@ describe('ARC-22 R96 the launcher sources: node:fs by its default import only, n
     expect(sourceProblems("import fs from 'node:fs'\nchild.kill()")).toEqual([])
   })
 
-  test('ARC-22 R96 no source under src/modules/ai/project/ imports node:fs except as its default import, or stops a process by name', () => {
+  test('SEC-10 A509 rule: a truthy shell option and exec or execSync are each caught; shell false, execFile and RegExp exec are not', () => {
+    const opt = (value: string): string => `spawn(bin, args, { ${'sh' + 'ell'}: ${value} })`
+    expect(sourceProblems(opt("process.platform === 'win32'"))).toContain('a shell option other than false')
+    expect(sourceProblems(opt('true'))).toContain('a shell option other than false')
+    expect(sourceProblems(`import { ${'exec' + 'Sync'} } from 'node:child_process'`)).toContain('exec or execSync (always a shell)')
+    expect(sourceProblems(`import { exec } from 'node:child_process'`)).toContain('exec or execSync (always a shell)')
+    expect(sourceProblems(`child_process.${'exec' + 'Sync'}('claude -p')`)).toContain('exec or execSync (always a shell)')
+    expect(sourceProblems(opt('false'))).toEqual([])
+    expect(sourceProblems("import { spawn, execFile } from 'node:child_process'\nconst m = /x/.exec(text)\nexecFile(bin, args)")).toEqual([])
+  })
+
+  test('ARC-22 R96 SEC-10 no source under src/modules/ai/project/ imports node:fs except as its default import, stops a process by name, or uses a shell', () => {
     const dir = path.join(REPO_ROOT, 'src', 'modules', 'ai', 'project')
     const files = listTree(dir).filter((f) => /\.(?:ts|mts|mjs|js)$/.test(f) && !/\.test\.ts$/.test(f) && !f.split('/').some((p) => p.startsWith('__')))
     expect(files).toContain('index.ts')
