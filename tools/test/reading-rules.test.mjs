@@ -55,9 +55,9 @@ const KNOWN = [
   { rule: 'R74', owner: FX4, match: /^sheets reader \(A07\): whole-sheet-range (did not finish|failed)/ },
   // Same cause, not in the five findings: mergedRanges (index.ts) sets a map entry for every address a merge names.
   { rule: 'R74', owner: FX4, match: /^sheets reader \(A07\): whole-sheet-merge (did not finish|failed)/ },
-  // From 1e17 up toFixed(4) prints the double's exact digits (1.00000000001e20 reads 21 digits). F03 and F03R are done:
-  // the Lead names the card that fixes src/modules/export/taxprep.ts.
-  { rule: 'R69', owner: 'the Lead assigns (taxprep.ts rate text)', match: /^Taxprep rate text \(F03\): invents digits/ },
+  // From 1e17 up toFixed(4) prints the double's exact digits (1.00000000001e20 reads 21 digits). Owner FX6 (A406), which
+  // fixes the rate text in src/contracts/taxprep.ts and removes this entry.
+  { rule: 'R69', owner: 'FX6 (Taxprep rate text, A406)', match: /^Taxprep rate text \(F03\): invents digits/ },
 ]
 
 function onlyKnown(rule, problems) {
