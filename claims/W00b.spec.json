@@ -1,12 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-f0768b",
- "state": "released",
- "at": "2026-10-03T05:38:07.595Z",
- "mode": "turbo",
- "note": "wait: W00c lands, then spec round 4 (A423)",
- "commit": "b3e31300",
- "validated": "2288da55",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "worker": "cloud-f6d708",
+ "state": "working",
+ "at": "2026-10-03T06:35:19.558Z",
+ "mode": "turbo"
 }
