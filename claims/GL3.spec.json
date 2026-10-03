@@ -2,10 +2,9 @@
  "card": "GL3",
  "role": "spec",
  "note": "12 tests added (G1 to G4); 85 GL3 acceptance tests, 29 red on tip by design; scratch B1 to B6 passes",
- "worker": "cloud-301e56",
- "state": "reopened",
- "at": "2026-10-03T19:51:03.880Z",
- "mode": "turbo",
- "commit": "c4a5a4bd",
- "validated": "b37a8e35"
+ "reopenedFrom": "c4a5a4bd",
+ "worker": "cloud-8c7eee",
+ "state": "working",
+ "at": "2026-10-03T19:56:44.235Z",
+ "mode": "turbo"
 }
