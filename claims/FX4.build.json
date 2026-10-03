@@ -1,0 +1,9 @@
+{
+ "card": "FX4",
+ "role": "build",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-03T07:00:31.780Z",
+ "note": "wait: Opus spec review (A432), then SC lands and a spec patch deletes FX4's SC known.json entries",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A07D\",\"SC\",\"SC4\"],\"depStatus\":[\"done\",\"carded\",\"done\"]}"
+}
