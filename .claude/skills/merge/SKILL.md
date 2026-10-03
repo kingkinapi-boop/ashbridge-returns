@@ -19,6 +19,8 @@ git -C $W push -q origin train:claude/train
 ```
 A conflict: `git merge --abort`, release the card's build job with the note "rebase on main", and it goes back in the queue.
 
+When any boarded card touches `reference/sample-clients/`, the train run also runs `node reference/sample-clients/verify.mjs` on the train head (A417).
+
 ## 2. Run the train
 When due (mode table: every 3 green cards in normal, 6 or hourly in turbo): fire a cloud check of the train (`check train full`): `npm ci`, typecheck, the full unit suite, every journey for every kind built so far, mutation tests on changed core modules. Report in `reports/train-<time>.md` on `claude/train`.
 

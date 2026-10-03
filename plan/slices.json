@@ -1057,7 +1057,8 @@
         ".dependency-cruiser.cjs",
         "e2e/skeleton/**",
         "e2e/steps/**",
-        "e2e/_harness/pipeline.ts"
+        "e2e/_harness/pipeline.ts",
+        "playwright.config.ts"
       ],
       "clauses": [
         "ARC-5",
@@ -1983,7 +1984,7 @@
     },
     {
       "status": "carded",
-      "spec": null,
+      "spec": "fb82b8c",
       "deps": [
         "F04",
         "F06",
@@ -9490,6 +9491,46 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ2"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-wait.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ3",
+      "title": "Queue: no build while its spec is open, and wait: holds",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the DB16 double offer, 3 Oct (A416)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ2"
+      ],
+      "paths": [
+        "tools/scope.mjs",
+        "tools/test/scope-spec-files.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ4",
+      "title": "scope.mjs: files the Spec names belong to the spec job (R82)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/FX8-findings.md, 3 Oct (A417)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [
@@ -9591,7 +9632,10 @@
       "paths": [
         "src/core/env.ts",
         "src/modules/ocr/index.ts",
-        "src/modules/storage/index.ts",
+        "src/modules/storage/safe.ts",
+        "src/modules/storage/files/index.ts",
+        "src/modules/storage/drive/index.ts",
+        "src/modules/auth/index.ts",
         "src/modules/ocr/engine-setting.test.ts",
         "src/modules/storage/engine-setting.test.ts"
       ],
@@ -9668,7 +9712,8 @@
       ],
       "paths": [
         "src/modules/sheets/**",
-        "src/contracts/sheets.ts"
+        "src/contracts/sheets.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-14",
@@ -9694,7 +9739,8 @@
       ],
       "paths": [
         "src/contracts/taxprep.ts",
-        "src/contracts/taxprep.acceptance.test.ts"
+        "src/contracts/taxprep.acceptance.test.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-5",
@@ -9712,7 +9758,8 @@
       "spec": null,
       "deps": [
         "SC",
-        "W00c"
+        "W00c",
+        "FX2"
       ],
       "paths": [
         "src/contracts/facts.ts",
@@ -9721,7 +9768,8 @@
         "src/modules/ocr/textlayer/**",
         "src/modules/storage/**",
         "src/core/test-no-network.ts",
-        ".gitattributes"
+        "src/contracts/auth.ts",
+        "tools/test/__fixtures__/planted-interpolated-log.ts.txt"
       ],
       "clauses": [
         "EV-1",
@@ -9740,7 +9788,9 @@
     {
       "status": "carded",
       "spec": null,
-      "deps": [],
+      "deps": [
+        "W16"
+      ],
       "paths": [
         "reference/sample-clients/clients/c07_08.mjs",
         "reference/sample-clients/clients/c09_10.mjs",
@@ -9763,6 +9813,29 @@
       "size": "S",
       "core": false,
       "note": "From reports/W00b-spec-review.md, 3 Oct (A409)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W16",
+        "FX8"
+      ],
+      "paths": [
+        ".gitattributes",
+        "reference/**/*.csv"
+      ],
+      "clauses": [
+        "ARC-10",
+        "RT-14"
+      ],
+      "id": "FX9",
+      "title": "CSV line endings: .gitattributes and the committed CSVs (R37)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Split from FX7, 3 Oct (A415)."
     },
     {
       "status": "carded",
@@ -9857,6 +9930,60 @@
       "size": "S",
       "core": true,
       "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "FX2"
+      ],
+      "paths": [
+        "tools/test/source-read-rules.test.mjs",
+        "tools/test/__fixtures__/source-read-rules/**",
+        "src/core/testing/read-own-source.acceptance.test.ts",
+        "src/contracts/amount-grammar.acceptance.test.ts",
+        "src/contracts/reading.acceptance.test.ts",
+        "src/contracts/reading-strict.acceptance.test.ts",
+        "src/core/clock.acceptance.test.ts",
+        "src/core/env.acceptance.test.ts",
+        "src/core/ids.acceptance.test.ts",
+        "src/core/log.acceptance.test.ts",
+        "src/core/money.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC8",
+      "title": "Source reads go through readOwnSource (R79)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/FX2-findings.md, 3 Oct (A414)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "SC7"
+      ],
+      "paths": [
+        "tools/test/rule-walker.test.mjs",
+        "tools/test/__fixtures__/rule-walker/**",
+        "tools/test/lib/walk.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC9",
+      "title": "Rule walkers: no escape by name, kind or path",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-spec-review-3.md, 3 Oct (A415)."
     },
     {
       "status": "carded",
