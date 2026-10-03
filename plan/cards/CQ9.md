@@ -27,5 +27,5 @@ A checker who did neither: the new tests and every tools test pass; scope clean.
 ## Also (A464)
 The mutation gate also covers family cards (A430): a card built from `plan/cards/families/<family>.md` is gated by its own Tags like any card. Planted: a family card tagged core with an unmarked src file.
 
-## Also (A465, reports/A04-check.md)
-scope.mjs tells a build-owned test (`*.build.test.ts`) from a spec file and never reports the build's edits to it as "spec file edited".
+## Also (A465, reports/A04-check.md): moved to CQ11 (A490, 3 Oct)
+The scope.mjs item (a build-owned `*.build.test.ts` told from a spec file) left this card: scope.mjs is outside its Paths and the item had no test. CQ11 carries it with a planted test. CQ9's check does not judge it; CQ9 boards on its own clauses.

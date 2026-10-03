@@ -2524,7 +2524,9 @@
         "src/modules/documents/index.ts",
         "src/contracts/documents.ts",
         "db/schema/10_documents.sql",
-        "src/pipeline/steps/intake.ts"
+        "src/pipeline/steps/intake.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts"
       ],
       "clauses": [
         "EV-2",
@@ -6256,7 +6258,8 @@
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
         "src/pipeline/deps.ts",
-        "tools/test/__fixtures__/security-rules/harness.ts"
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -9776,7 +9779,9 @@
         "src/modules/storage/**",
         "src/modules/qbo/**",
         "data/live/**",
-        "tools/golive-check.mjs"
+        "tools/golive-check.mjs",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-6",
@@ -10187,7 +10192,8 @@
         "vitest.mutate.config.ts",
         "src/contracts/facts.acceptance.test.ts",
         "src/modules/gaps/bank/bank.acceptance.test.ts",
-        "src/modules/auth/rules.acceptance.test.ts"
+        "src/modules/auth/rules.acceptance.test.ts",
+        "tools/test/vitest-projects.test.mjs"
       ],
       "clauses": [
         "ARC-15"
@@ -10706,7 +10712,10 @@
         "src/modules/ai/runner/engines.ts",
         "src/modules/ai/runner/runner.ts",
         "src/core/safe-read.ts",
-        "src/modules/ai/runner/exchange-errors.acceptance.test.ts"
+        "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/index.ts",
+        "data/ai/exchange-limits.json"
       ],
       "clauses": [
         "ARC-22",
@@ -10776,11 +10785,11 @@
         "W16"
       ],
       "paths": [
-        "tools/test/card-rules.test.mjs",
-        "tools/test/__fixtures__/card-rules/**"
+        "tools/test/spec-rules.test.mjs",
+        "tools/test/__fixtures__/spec-rules/**"
       ],
       "clauses": [
-        "ARC-15",
+        "ARC-12",
         "ARC-16"
       ],
       "id": "SC6",
@@ -10803,7 +10812,9 @@
       ],
       "paths": [
         "tools/test/lib/known.mjs",
-        "tools/test/lib/known.test.mjs"
+        "tools/test/lib/known.test.mjs",
+        "tools/test/lib/cards.mjs",
+        "tools/test/lib/cards.test.mjs"
       ],
       "clauses": [
         "ARC-15",
@@ -10855,7 +10866,8 @@
       "spec": null,
       "deps": [
         "SC",
-        "SC7"
+        "SC7",
+        "SC3"
       ],
       "paths": [
         "tools/test/rule-walker.test.mjs",
@@ -10865,7 +10877,9 @@
         "src/core/db/db.test.ts",
         "src/contracts/schema-rules.db.test.ts",
         "tools/test/__fixtures__/schema-contract/known.json",
-        "data/schema/contract-tables.json"
+        "data/schema/contract-tables.json",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-15",
