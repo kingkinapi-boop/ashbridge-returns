@@ -1,11 +1,12 @@
 {
  "card": "SC6",
  "role": "spec",
- "note": "71 tests; only N01.md trips R77 (needs rewording on main, Lead); amber in reports/SC6-spec.md",
- "reopenedFrom": "f64dedb0",
+ "note": "111 tests; validated a677d7fe; landing trap: JH0.md names e2e/_harness/kinds.spec.ts in Acceptance checks, reword before CQ11 lands; ambers in reports/SC6-spec.md",
  "worker": "cloud-3c6766",
- "state": "working",
- "at": "2026-10-03T18:42:32.582Z",
+ "state": "reported",
+ "at": "2026-10-03T19:27:10.601Z",
  "mode": "turbo",
- "beat": "2026-10-03T18:42:56.278Z"
+ "beat": "2026-10-03T18:42:56.278Z",
+ "commit": "d208b8ee",
+ "validated": "a677d7fe"
 }
