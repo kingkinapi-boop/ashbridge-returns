@@ -1,6 +1,6 @@
 # SC spec, patch A415 re-validated (cloud, 3 Oct): the 5 gaps of reports/SC-spec-review-3.md
 
-Spec commit: see the `spec(SC): acceptance tests, patch A415` commit on claude/SC (its hash is in the Lead's claim note and the line below once pushed). Validated on main edd3af05 (origin/main merged into claude/SC; one plan/cards/SC4.md conflict taken from main). The five gaps were already closed by round 3 (348528d6, below); this patch re-ran every check on the new main (CQ2 and SC4 landed: tools/claim.mjs, scope.mjs, next.mjs, reading-rules fixtures). No spec file changed, no assertion changed, no KNOWN entry added or removed. Retired tests (step 6b): none (SC is rules only, the stub is empty, and the full suite is green).
+Spec commit: 0884fdfa15e538d71674d6a6c65690e065b8c74c on claude/SC (validated on main edd3af05).
 
 ## Checks on edd3af05 (Node 24.21.0, npm ci on the box)
 - `npm run typecheck`: exit 0. `npm run lint`: exit 0, no output.
