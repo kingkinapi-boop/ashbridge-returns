@@ -1,10 +1,9 @@
 {
  "card": "FX2",
  "role": "check",
- "for": "2026-10-03T04:27:11.806Z",
- "worker": "cloud-12baf5",
- "state": "failed",
- "at": "2026-10-03T04:34:36.904Z",
- "mode": "turbo",
- "note": "FAIL: scope (3 storage files not in card Paths) and mutation dry run blocked by spec source-text test, see reports/FX2-check.md"
+ "for": "2026-10-03T06:28:36.858Z",
+ "worker": "cloud-3d19bd",
+ "state": "working",
+ "at": "2026-10-03T06:35:15.588Z",
+ "mode": "turbo"
 }
