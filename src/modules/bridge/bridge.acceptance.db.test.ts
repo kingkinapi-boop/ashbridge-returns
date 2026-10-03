@@ -146,6 +146,18 @@ describe('F07 what the client app leaves unclear is never guessed (END-1)', () =
     }
   })
 
+  test('END-1 a T2 engagement with no tax year becomes a tax_year_missing ops item naming it, and no return is guessed', async () => {
+    const db = await cloneTestDb()
+    const entity = company(1, {}, [null])
+    const res = await runBridge(db, snapshot(entity))
+    expect(res.created).toEqual([])
+    expect(res.items).toHaveLength(1)
+    expect(res.items[0]).toMatchObject({ kind: 'tax_year_missing', corporationId: entity.corporation?.id, taxYear: null })
+    expect(JSON.stringify(res.items[0])).toContain(entity.engagements[0]?.id)
+    expect(await count(db, 'returns')).toBe(0)
+    expect(await listBridgeReturns(db)).toEqual([])
+  })
+
   test('END-1 unfiled years held only as text become an ops-confirms item, and no return is guessed for them', async () => {
     const db = await cloneTestDb()
     const entity = company(1, { all_prior_years_filed: 'no', outstanding_years: '2023 and 2024' })
