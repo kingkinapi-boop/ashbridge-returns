@@ -2,10 +2,10 @@
  "card": "SC11",
  "role": "spec",
  "worker": "cloud-06931b",
- "state": "reported",
- "at": "2026-10-03T09:48:46.413Z",
+ "state": "reopened",
+ "at": "2026-10-03T09:51:27.143Z",
  "mode": "turbo",
- "note": "20 tests (R90 to R92); branch cut from claude/DB16 (unmerged), see reports/SC11-spec.md",
+ "note": "A455: spec patch for the A453 section, see card directive",
  "commit": "05be2607",
  "validated": "f9da8e525a892f8d4ab2ca8287b35642d688c8a7"
 }
