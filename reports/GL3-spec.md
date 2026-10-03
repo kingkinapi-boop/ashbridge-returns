@@ -20,3 +20,6 @@ None met.
 
 ## Model
 Opus 5.5 (cloud worker cloud-cb16ff).
+
+## Refit 3 Oct (cloud-da95a7)
+Merged origin/main 8e4698a4 into claude/GL3. Typecheck and lint clean; unit 2905 pass; db on Postgres 16 (TEST_DB=pg16) 687 pass, 1 skipped (the PGlite-only identity test; the Postgres 16 one passes). No spec file changed. Model: Sonnet 5.5. Permission gaps: none.
