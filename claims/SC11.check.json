@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-03T17:40:52.430Z",
  "worker": "cloud-6345e6",
- "state": "working",
- "at": "2026-10-03T17:41:41.721Z",
+ "state": "failed",
+ "at": "2026-10-03T18:03:59.469Z",
  "mode": "turbo",
- "beat": "2026-10-03T17:41:55.806Z"
+ "beat": "2026-10-03T17:41:55.806Z",
+ "note": "FAIL: Opus read, close() and template paths lose failures (index.ts:462, 504, 222), see reports/SC11-check.md"
 }
