@@ -2,9 +2,8 @@
  "card": "FX2",
  "role": "spec",
  "worker": "cloud-4b7764",
- "state": "released",
- "at": "2026-10-02T21:38:42.076Z",
+ "state": "reopened",
+ "at": "2026-10-03T04:03:41.896Z",
  "mode": "turbo",
- "note": "wait: A06 round 2 production-refusal pattern not built or landed; see reports/FX2-spec.md",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"carded\"]}"
+ "note": "A06 landed; spec to the A06 production-refusal pattern"
 }
