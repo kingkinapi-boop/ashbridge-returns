@@ -24,8 +24,22 @@
 // - ARC-16 parity: the session settings and the JS types of values are the same on both backends, fixed
 //   to what PGlite gives today (read 3 Oct 2026 with TZ=America/Toronto): money in int8 cents stays a
 //   JS number, numeric stays a string, a date is a Date at UTC midnight.
+//
+// Round 3 (reports/DB16-spec-review-2.md, A419): the one cast in src/core/db hides four differences, so
+// each gets a test that runs on both backends (a guard on PGlite, the proof on Postgres 16):
+// - Session state reaches transactions: a role or a setting set on the handle holds inside
+//   db.transaction (row-level security and grants must hold there), or the transaction is refused naming
+//   it; never a transaction running as another user. Once the role is reset, the next transaction runs as
+//   the handle does (nothing leaks through a pooled connection).
+// - Parity on every connection: inside a transaction, in two overlapping transactions, and on a clone of a
+//   template built from a custom folder (as the two contract test files build theirs).
+// - Parameters round-trip the same by type (a Date into a date column goes in by its UTC day, as PGlite
+//   does, not the Toronto day), and every column type in schema `returns` is in the same-types row.
+// - Roles belong to the cluster on Postgres 16: closing one test database never drops a role another
+//   open test database made, and each database's roles go when it closes.
 // This file imports no PGlite value: only src/core/db builds a database (the rule scan in the unit part).
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import type { Transaction } from '@electric-sql/pglite'
 import { describe, expect, test } from 'vitest'
@@ -223,63 +237,360 @@ describe('DB16 SEC-7 every guard, by class, on either backend', () => {
 
 // ---- ARC-16 the same results on both backends ----
 
-describe('DB16 ARC-16 parity: Postgres 16 behaves like PGlite for the tests', () => {
-  test('ARC-16 the session settings and the test database locale are pinned (the values PGlite gives today)', async () => {
-    const db = await cloneTestDb()
-    const r = await db.query<Record<string, string>>(
-      `select current_setting('TimeZone') as timezone, current_setting('DateStyle') as datestyle,
+// The pinned settings and the same-types row, shared by every parity test (round 3: run on every
+// connection, not only the handle's main session). Fixed to what PGlite 0.5.8 gives under TZ=America/Toronto.
+const SETTINGS_SQL = `select current_setting('TimeZone') as timezone, current_setting('DateStyle') as datestyle,
               current_setting('IntervalStyle') as intervalstyle,
               current_setting('default_transaction_isolation') as isolation,
               current_setting('server_encoding') as server_encoding, current_setting('client_encoding') as client_encoding,
               current_setting('standard_conforming_strings') as standard_strings,
               d.datcollate as collate, d.datctype as ctype
-         from pg_database d where d.datname = current_database()`,
-    )
-    expect(r.rows[0]).toEqual({
-      timezone: 'Etc/GMT+5',
-      datestyle: 'ISO, MDY',
-      intervalstyle: 'postgres',
-      isolation: 'read committed',
-      server_encoding: 'UTF8',
-      client_encoding: 'UTF8',
-      standard_strings: 'on',
-      collate: 'C',
-      ctype: 'C.UTF-8',
+         from pg_database d where d.datname = current_database()`
+const EXPECTED_SETTINGS = {
+  timezone: 'Etc/GMT+5',
+  datestyle: 'ISO, MDY',
+  intervalstyle: 'postgres',
+  isolation: 'read committed',
+  server_encoding: 'UTF8',
+  client_encoding: 'UTF8',
+  standard_strings: 'on',
+  collate: 'C',
+  ctype: 'C.UTF-8',
+}
+// Round 3 adds text[] and uuid[]: the catalog of schema `returns` has columns of both (test 4 below).
+const TYPES_SQL = `select 7::int4 as i4, 12345::int8 as cents, (-123456)::int8 as cents_negative, 9007199254740993::int8 as i8_beyond_safe,
+              count(*) as n, 1234.50::numeric(12,2) as num, 'Hello (Test)'::text as txt, true as yes,
+              date '2026-03-31' as day, timestamptz '2026-03-31 12:00:00+00' as at, '{"k": [1, "2"]}'::jsonb as doc,
+              null::text as nothing, null::int8 as no_cents, '{1,2}'::int4[] as ints,
+              'a1b2c3d4-0000-4000-8000-000000000001'::uuid as id,
+              '{"a b",c}'::text[] as words, '{a1b2c3d4-0000-4000-8000-000000000002}'::uuid[] as ids`
+const EXPECTED_TYPES = {
+  i4: 7,
+  cents: 12345,
+  cents_negative: -123456,
+  i8_beyond_safe: 9007199254740993n,
+  n: 1,
+  num: '1234.50',
+  txt: 'Hello (Test)',
+  yes: true,
+  day: new Date('2026-03-31T00:00:00.000Z'),
+  at: new Date('2026-03-31T12:00:00.000Z'),
+  doc: { k: [1, '2'] },
+  nothing: null,
+  no_cents: null,
+  ints: [1, 2],
+  id: 'a1b2c3d4-0000-4000-8000-000000000001',
+  words: ['a b', 'c'],
+  ids: ['a1b2c3d4-0000-4000-8000-000000000002'],
+}
+// The column types the same-types row covers (format_type, no modifier). Test 4 checks this list against
+// the row itself and against every column of schema `returns`.
+const COVERED_TYPES = [
+  'bigint', 'boolean', 'date', 'integer', 'integer[]', 'jsonb', 'numeric', 'text', 'text[]', 'timestamp with time zone', 'uuid', 'uuid[]',
+]
+
+type Queryable = Pick<Transaction, 'query'>
+
+async function settingsAndTypes(q: Queryable): Promise<{ settings: unknown; types: unknown }> {
+  return {
+    settings: (await q.query<Record<string, string>>(SETTINGS_SQL)).rows[0],
+    types: (await q.query<Record<string, unknown>>(TYPES_SQL)).rows[0],
+  }
+}
+
+/** Waits until the other caller arrives too, or RACE_WAIT_MS on a backend that serialises transactions. */
+function twoWayBarrier(): () => Promise<void> {
+  let arrived = 0
+  const waiting: (() => void)[] = []
+  return () =>
+    new Promise<void>((resolve) => {
+      arrived += 1
+      if (arrived >= 2) {
+        for (const w of waiting.splice(0)) w()
+        resolve()
+        return
+      }
+      waiting.push(resolve)
+      setTimeout(resolve, RACE_WAIT_MS)
     })
+}
+
+describe('DB16 ARC-16 parity: Postgres 16 behaves like PGlite for the tests', () => {
+  test('ARC-16 the session settings and the test database locale are pinned (the values PGlite gives today)', async () => {
+    const db = await cloneTestDb()
+    const r = await db.query<Record<string, string>>(SETTINGS_SQL)
+    expect(r.rows[0]).toEqual(EXPECTED_SETTINGS)
   })
 
   test('ARC-16 values come back as the same JS types: int8 cents stay numbers, numeric stays a string, a date is a Date at UTC midnight', async () => {
     const db = await cloneTestDb()
-    const r = await db.query<Record<string, unknown>>(
-      `select 7::int4 as i4, 12345::int8 as cents, (-123456)::int8 as cents_negative, 9007199254740993::int8 as i8_beyond_safe,
-              count(*) as n, 1234.50::numeric(12,2) as num, 'Hello (Test)'::text as txt, true as yes,
-              date '2026-03-31' as day, timestamptz '2026-03-31 12:00:00+00' as at, '{"k": [1, "2"]}'::jsonb as doc,
-              null::text as nothing, null::int8 as no_cents, '{1,2}'::int4[] as ints,
-              'a1b2c3d4-0000-4000-8000-000000000001'::uuid as id`,
+    const r = await db.query<Record<string, unknown>>(TYPES_SQL)
+    expect(r.rows[0]).toStrictEqual(EXPECTED_TYPES)
+  })
+
+  test(
+    'ARC-16 parity on every connection: inside a transaction and in both of two overlapping transactions, the pinned settings and the same-types row are unchanged',
+    async () => {
+      const db = await cloneTestDb()
+      const one = await db.transaction((tx) => settingsAndTypes(tx))
+      expect(one.settings).toEqual(EXPECTED_SETTINGS)
+      expect(one.types).toStrictEqual(EXPECTED_TYPES)
+      const barrier = twoWayBarrier()
+      const pids: number[] = []
+      const both = await Promise.all(
+        [0, 1].map(() =>
+          db.transaction(async (tx) => {
+            const pid = await tx.query<{ pid: number }>('select pg_backend_pid() as pid')
+            pids.push(pid.rows[0]?.pid ?? -1)
+            await barrier()
+            return settingsAndTypes(tx)
+          }),
+        ),
+      )
+      for (const r of both) {
+        expect(r.settings).toEqual(EXPECTED_SETTINGS)
+        expect(r.types).toStrictEqual(EXPECTED_TYPES)
+      }
+      if (ON) expect(new Set(pids).size, 'on Postgres 16 the two transactions run on two connections').toBe(2)
+    },
+    RACE_WAIT_MS * 5,
+  )
+
+  test(
+    'ARC-16 a template built from a custom folder (as the contract tests build theirs) honours the switch, and its clones keep the pinned settings and the same types, inside a transaction too',
+    async () => {
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'db16-schema-'))
+      try {
+        fs.writeFileSync(path.join(dir, '0001_db16_tiny.sql'), 'create table public.db16_tiny (id int primary key, note text not null);\n')
+        const template = await createTemplate(dir)
+        try {
+          const db = await template.clone()
+          try {
+            const v = await db.query<{ v: string; num: string; tiny: string | null }>(
+              `select version() as v, current_setting('server_version_num') as num, to_regclass('public.db16_tiny')::text as tiny`,
+            )
+            expect(v.rows[0]?.tiny, 'the clone holds the custom folder schema').toBe('db16_tiny')
+            if (ON) {
+              expect(v.rows[0]?.v).not.toMatch(/PGlite/)
+              expect(Number(v.rows[0]?.num)).toBeGreaterThanOrEqual(160000)
+              expect(Number(v.rows[0]?.num)).toBeLessThan(170000)
+            } else {
+              expect(v.rows[0]?.v).toMatch(/PGlite/)
+            }
+            const main = await settingsAndTypes(db)
+            expect(main.settings).toEqual(EXPECTED_SETTINGS)
+            expect(main.types).toStrictEqual(EXPECTED_TYPES)
+            const inTx = await db.transaction((tx) => settingsAndTypes(tx))
+            expect(inTx.settings).toEqual(EXPECTED_SETTINGS)
+            expect(inTx.types).toStrictEqual(EXPECTED_TYPES)
+          } finally {
+            await db.close()
+          }
+        } finally {
+          await template.close()
+        }
+      } finally {
+        fs.rmSync(dir, { recursive: true, force: true })
+      }
+    },
+    BOOT_MS,
+  )
+
+  test('ARC-16 every column type in schema returns, read from the catalog, is covered by the same-types row', async () => {
+    const db = await cloneTestDb()
+    await db.exec(`create temp table db16_types_row as ${TYPES_SQL}`)
+    const row = await db.query<{ ty: string }>(
+      `select distinct format_type(a.atttypid, null) as ty from pg_attribute a
+        where a.attrelid = 'db16_types_row'::regclass and a.attnum > 0 and not a.attisdropped order by 1`,
     )
-    expect(r.rows[0]).toStrictEqual({
-      i4: 7,
-      cents: 12345,
-      cents_negative: -123456,
-      i8_beyond_safe: 9007199254740993n,
-      n: 1,
-      num: '1234.50',
-      txt: 'Hello (Test)',
-      yes: true,
-      day: new Date('2026-03-31T00:00:00.000Z'),
-      at: new Date('2026-03-31T12:00:00.000Z'),
-      doc: { k: [1, '2'] },
-      nothing: null,
-      no_cents: null,
-      ints: [1, 2],
-      id: 'a1b2c3d4-0000-4000-8000-000000000001',
-    })
+    expect(row.rows.map((x) => x.ty), 'the covered list is what the same-types row really holds').toEqual([...COVERED_TYPES].sort())
+    const columns = await schemaColumnTypes(db)
+    expect(columns.length, 'the catalog read reaches the schema').toBeGreaterThanOrEqual(8)
+    expect(columns).toEqual(expect.arrayContaining(['bigint', 'jsonb', 'text[]', 'timestamp with time zone', 'uuid[]']))
+    expect(uncoveredTypes(columns, COVERED_TYPES)).toEqual([])
+  })
+
+  test('ARC-16 planted: a column type outside the same-types row (interval, numeric[], timestamp) is reported by name', async () => {
+    const db = await cloneTestDb()
+    expect(uncoveredTypes(['interval', ...COVERED_TYPES], COVERED_TYPES)).toEqual(['interval'])
+    await db.exec(
+      'create table returns.db16_planted_types (id int primary key, took interval, rates numeric[], seen timestamp without time zone)',
+    )
+    expect(uncoveredTypes(await schemaColumnTypes(db), COVERED_TYPES)).toEqual(['interval', 'numeric[]', 'timestamp without time zone'])
   })
 
   test('ARC-16 a money parameter goes in as a number and comes back as the same number', async () => {
     const db = await cloneTestDb()
     const r = await db.query<{ cents: unknown; total: unknown }>('select $1::int8 as cents, ($1::int8 + $2::int8) as total', [123456, -6])
     expect(r.rows[0]).toStrictEqual({ cents: 123456, total: 123450 })
+  })
+
+  test(
+    'ARC-16 parameters round-trip the same by type: a Date into date (by its UTC day, in Toronto) and timestamptz, arrays (one empty), jsonb from an object and from a JSON string, an int8 beyond 2^53, a boolean, a null and quoted accented text',
+    async () => {
+      const db = await cloneTestDb()
+      const r = await db.query<Record<string, unknown>>(PARAMS_SQL, PARAMS)
+      expect(r.rows[0]?.['day'], 'a Date goes into a date column by its UTC day, as on PGlite (not the Toronto day)').toStrictEqual(
+        new Date('2026-03-31T00:00:00.000Z'),
+      )
+      expect(r.rows[0]).toStrictEqual(EXPECTED_PARAMS)
+      const inTx = await db.transaction(async (tx) => (await tx.query<Record<string, unknown>>(PARAMS_SQL, PARAMS)).rows[0])
+      expect(inTx).toStrictEqual(EXPECTED_PARAMS)
+    },
+  )
+})
+
+// 02:00 UTC on 31 March is 22:00 on 30 March in Toronto: the day a date column gets shows how a Date is sent.
+const PARAM_DATE = new Date('2026-03-31T02:00:00.000Z')
+const PARAMS_SQL = `select $1::date as day, $2::timestamptz as at, $3::int4[] as ints, $4::uuid[] as ids, $5::text[] as words,
+          $6::text[] as no_words, $7::jsonb as doc, $8::jsonb as doc_text, $9::int8 as big, $10::bool as yes,
+          $11::text as nothing, $12::text as quoted`
+const PARAMS: unknown[] = [
+  PARAM_DATE,
+  PARAM_DATE,
+  [1, 2, 3],
+  ['a1b2c3d4-0000-4000-8000-000000000001', 'a1b2c3d4-0000-4000-8000-000000000002'],
+  ["O'Brien (Test)", 'Zoë Côté (Test)'],
+  [],
+  { k: [1, '2'], n: null },
+  '{"a": 1}',
+  9007199254740993n,
+  true,
+  null,
+  "L'Érable Côté (Test)",
+]
+// Read from PGlite 0.5.8 under TZ=America/Toronto, 3 Oct 2026.
+const EXPECTED_PARAMS = {
+  day: new Date('2026-03-31T00:00:00.000Z'),
+  at: new Date('2026-03-31T02:00:00.000Z'),
+  ints: [1, 2, 3],
+  ids: ['a1b2c3d4-0000-4000-8000-000000000001', 'a1b2c3d4-0000-4000-8000-000000000002'],
+  words: ["O'Brien (Test)", 'Zoë Côté (Test)'],
+  no_words: [],
+  doc: { k: [1, '2'], n: null },
+  doc_text: { a: 1 },
+  big: 9007199254740993n,
+  yes: true,
+  nothing: null,
+  quoted: "L'Érable Côté (Test)",
+}
+
+/** The distinct column types (format_type, no modifier) of every table and view in schema returns. */
+async function schemaColumnTypes(db: Db): Promise<string[]> {
+  const r = await db.query<{ ty: string }>(
+    `select distinct format_type(a.atttypid, null) as ty from pg_attribute a join pg_class c on c.oid = a.attrelid
+       join pg_namespace n on n.oid = c.relnamespace
+      where n.nspname = 'returns' and c.relkind in ('r', 'p', 'v', 'm', 'f') and a.attnum > 0 and not a.attisdropped order by 1`,
+  )
+  return r.rows.map((x) => x.ty)
+}
+
+function uncoveredTypes(columns: string[], covered: readonly string[]): string[] {
+  return columns.filter((t) => !covered.includes(t)).sort()
+}
+
+// ---- ARC-16 session state reaches transactions; ARC-4 roles belong to the cluster ----
+
+type SessionState = { u: string; s: string | null }
+
+async function sessionState(q: Queryable): Promise<SessionState> {
+  const r = await q.query<SessionState>(`select current_user::text as u, current_setting('app.db16', true) as s`)
+  const row = r.rows[0]
+  if (row === undefined) throw new Error('no session row')
+  return row
+}
+
+/**
+ * A transaction on the handle either sees exactly the handle's role and setting, or is refused with a
+ * message naming one of the things set on the handle. With nothing set, it must run.
+ */
+async function expectTxFollowsHandle(db: Db, setNames: string[]): Promise<void> {
+  const handle = await sessionState(db)
+  const got = await db.transaction((tx) => sessionState(tx)).then(
+    (ran) => ({ ran }),
+    (e: unknown) => ({ refused: e instanceof Error ? e.message : String(e) }),
+  )
+  if ('refused' in got) {
+    expect(setNames, `a transaction with nothing set on the handle must run (it was refused: ${got.refused})`).not.toEqual([])
+    expect(
+      setNames.some((n) => got.refused.includes(n)),
+      `the refusal names what it could not carry (${setNames.join(', ')}): ${got.refused}`,
+    ).toBe(true)
+  } else {
+    expect(got.ran, 'the transaction runs as the handle does').toEqual(handle)
+  }
+}
+
+describe('DB16 ARC-16 session state on the handle reaches every transaction (row-level security and grants hold inside db.transaction)', () => {
+  test(
+    'ARC-16 a role or a setting set on the handle reaches the transaction, or the transaction is refused naming it; never another user; after reset, the next transaction runs as the handle (nothing leaks)',
+    async () => {
+      const db = await cloneTestDb()
+      await db.exec('create role db16_tx nologin')
+      await db.exec('set role db16_tx')
+      expect(await sessionState(db)).toEqual({ u: 'db16_tx', s: null })
+      await expectTxFollowsHandle(db, ['db16_tx'])
+
+      await db.exec('reset role')
+      const reset = await sessionState(db)
+      expect(reset.u).not.toBe('db16_tx')
+      await expectTxFollowsHandle(db, [])
+
+      await db.query(`select set_config('app.db16', 'x', false)`)
+      expect((await sessionState(db)).s).toBe('x')
+      await expectTxFollowsHandle(db, ['app.db16'])
+
+      await db.exec('set role db16_tx')
+      expect(await sessionState(db)).toEqual({ u: 'db16_tx', s: 'x' })
+      await expectTxFollowsHandle(db, ['db16_tx', 'app.db16'])
+    },
+  )
+
+  test(
+    'ARC-16 two overlapping transactions on a handle with a role set both run as that role, or are refused naming it; neither runs as another user',
+    async () => {
+      const db = await cloneTestDb()
+      await db.exec('create role db16_tx nologin')
+      await db.exec('set role db16_tx')
+      const barrier = twoWayBarrier()
+      const outcomes = await Promise.all(
+        [0, 1].map(() =>
+          db
+            .transaction(async (tx) => {
+              const first = await sessionState(tx)
+              await barrier()
+              return first
+            })
+            .then(
+              (s) => s.u,
+              (e: unknown) => (/db16_tx/.test(e instanceof Error ? e.message : String(e)) ? 'refused naming db16_tx' : `refused: ${String(e)}`),
+            ),
+        ),
+      )
+      for (const o of outcomes) expect(['db16_tx', 'refused naming db16_tx']).toContain(o)
+    },
+    RACE_WAIT_MS * 5,
+  )
+})
+
+describe('DB16 ARC-4 roles belong to the Postgres cluster: one test database never drops another one\'s roles', () => {
+  test('ARC-4 closing one test database never drops a role another open test database made and uses; each database\'s roles go when it closes', async () => {
+    const a = await cloneTestDb()
+    const b = await cloneTestDb()
+    await a.exec('create role db16_role_a nologin')
+    await b.exec('create role db16_role_b nologin')
+    await b.exec('set role db16_role_b')
+    await a.close()
+    const fromB = await b.query<{ u: string; b_roles: number; a_roles: number }>(
+      `select current_user::text as u,
+              (select count(*)::int from pg_roles where rolname = 'db16_role_b') as b_roles,
+              (select count(*)::int from pg_roles where rolname = 'db16_role_a') as a_roles`,
+    )
+    expect(fromB.rows[0], 'B keeps its role and still runs as it; A\'s role went with A').toEqual({ u: 'db16_role_b', b_roles: 1, a_roles: 0 })
+    await b.close()
+    const c = await cloneTestDb()
+    const left = await c.query<{ rolname: string }>(`select rolname::text as rolname from pg_roles where rolname like 'db16\\_role\\_%' order by 1`)
+    expect(left.rows, 'no role of A or B is left in the cluster').toEqual([])
   })
 })
 
