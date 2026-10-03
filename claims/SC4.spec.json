@@ -2,7 +2,10 @@
  "card": "SC4",
  "role": "spec",
  "worker": "cloud-a93d05",
- "state": "working",
- "at": "2026-10-03T04:17:13.314Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T04:26:34.031Z",
+ "mode": "turbo",
+ "note": "cloud refit: 17 rule tests green on main 4a330123 with ExcelJS; KNOWN FX4 (A07D) all match, R69 rate text owner FX6; 6b none retired",
+ "commit": "aa5b46ad",
+ "validated": "4a330123"
 }
