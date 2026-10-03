@@ -3,12 +3,9 @@
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
  "worker": "cloud-944d6f",
- "state": "released",
- "at": "2026-10-03T23:31:02.400Z",
+ "state": "reopened",
+ "at": "2026-10-03T23:38:22.893Z",
  "mode": "turbo",
  "beat": "2026-10-03T23:22:39.941Z",
- "note": "continue: group 1 too slow (7h ETA on lean set); shard by line range, see reports/W00c-check-4.md",
- "lastRelease": {
-  "tip": "19cd5ddb0d249960544f40c6b8f170dee2ef9ce3"
- }
+ "note": "A533: continue: json-keys.ts first; 5 s timeout in pass 1; line-range shards"
 }
