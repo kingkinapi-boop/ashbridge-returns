@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "a13b660",
  "worker": "cloud-84988c",
- "state": "hold-findings",
- "at": "2026-10-03T14:20:21.977Z",
+ "state": "reported",
+ "at": "2026-10-03T14:32:07.604Z",
  "mode": "turbo",
- "note": "FAIL: card Also (A465) scope.mjs *.build.test.ts vs spec not built, scope.mjs outside Paths, see reports/CQ9-check.md"
+ "note": "A490: the A465 scope item moved to CQ11; fresh check of this build (card note on main)"
 }
