@@ -1,11 +1,9 @@
 {
  "card": "CQ4",
  "role": "check",
- "for": "2026-10-03T06:11:27.936Z",
- "worker": "local-1",
- "state": "failed",
- "at": "2026-10-03T06:26:03.799Z",
- "mode": "turbo",
- "beat": "2026-10-03T06:20:53.061Z",
- "note": "FAIL: scope.mjs CQ4 flags tools/scope.mjs (Spec prose names it; also bites FX2), see reports/CQ4-check.md"
+ "for": "2026-10-03T08:02:15.425Z",
+ "worker": "cloud-5dde9a",
+ "state": "working",
+ "at": "2026-10-03T08:03:23.409Z",
+ "mode": "turbo"
 }
