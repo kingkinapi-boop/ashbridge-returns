@@ -15,6 +15,12 @@ const inFlight = cards.filter((c) => IN_FLIGHT.has(c.status))
 const reportedBuilds = new Set()
 const reportedSpecs = new Set()
 const heldCards = new Set()
+// CQ2 rule 3: in flight, waiting on check and ready to board all come from the claims.
+const workingCards = new Set()
+const workingJobs = []
+const checkPending = new Set()
+const readyToBoard = new Set()
+const blockedBuild = new Set()
 try {
   const listing = execFileSync('node', [path.join(ROOT, 'tools', 'claim.mjs'), 'list'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
   for (const m of listing.matchAll(/^(\S+) build reported/gm)) reportedBuilds.add(m[1])
@@ -23,6 +29,14 @@ try {
   for (const m of listing.matchAll(/^(\S+) spec reported(?! \(toolchain refit\))/gm)) reportedSpecs.add(m[1])
   // CQ1 rule 2: a job released with "wait:" and not yet lifted is listed as waiting, never started.
   for (const m of listing.matchAll(/^(\S+) (?:spec|build) released \(waiting\)/gm)) heldCards.add(m[1])
+  for (const m of listing.matchAll(/^(\S+) (spec|build|check) working(?! \((?:stale|inactive)\))/gm)) {
+    workingCards.add(m[1])
+    workingJobs.push(m[1])
+  }
+  for (const m of listing.matchAll(/^(\S+) build (reported|hold-findings)/gm)) blockedBuild.add(m[1])
+  for (const m of listing.matchAll(/^(\S+) build reported/gm)) checkPending.add(m[1])
+  for (const m of listing.matchAll(/^(\S+) check reported(?! \(old build\))[^\n]*\| PASS\b/gm)) if (checkPending.has(m[1])) readyToBoard.add(m[1])
+  for (const id of readyToBoard) checkPending.delete(id)
 } catch {}
 
 let taken = inFlight.flatMap((c) => c.paths || [])
@@ -34,6 +48,7 @@ for (const c of cards) {
   if (picked.length >= slots) break
   if (c.status !== 'carded') continue
   if (c.lane === 'design') continue // CQ1 rule 3: the design lane has no spec or build job
+  if (workingCards.has(c.id) || blockedBuild.has(c.id)) continue // CQ2 rule 3: already being worked, or its build has reported
   if (heldCards.has(c.id)) {
     waitingHeld.push(c.id)
     continue
@@ -54,13 +69,15 @@ for (const c of cards) {
 
 const count = (s) => cards.filter((c) => c.status === s).length
 console.log(
-  `in flight ${inFlight.length} | can start ${picked.length} of ${slots} | carded ${count('carded')} | to write ${count('todo')} | parked ${count('parked')} | done ${count('done')}/${cards.length}`,
+  `in flight ${workingJobs.length} | can start ${picked.length} of ${slots} | carded ${count('carded')} | to write ${count('todo')} | parked ${count('parked')} | done ${count('done')}/${cards.length}`,
 )
 for (const c of picked) {
   const tags = [c.size, c.hard ? 'hard' : '', c.screens ? 'screens' : '', c.where || ''].filter(Boolean).join(' ')
   const spec = c.spec ? (c.spec === 'n/a' ? 'no spec needed' : `spec ${c.spec}`) : reportedSpecs.has(c.id) ? 'spec reported (commit in the claim)' : 'NEEDS SPEC FIRST'
   console.log(`START ${c.id} [${tags}] ${spec} | ${c.title}`)
 }
+if (checkPending.size) console.log(`waiting on check: ${[...checkPending].join(' ')}`)
+if (readyToBoard.size) console.log(`ready to board: ${[...readyToBoard].join(' ')}`)
 if (waitingHeld.length) console.log(`waiting (released with wait:): ${waitingHeld.join(' ')}`)
 if (waitingOnDeps.length) console.log(`waiting on deps: ${waitingOnDeps.join(', ')}`)
 if (blockedByPaths.length) console.log(`waiting on paths in use: ${blockedByPaths.join(' ')}`)

@@ -1,6 +1,6 @@
 # FX7 Rule defects in landed contracts and readers (found by SC)
 
-Phase 0. Size M. Deps: SC, W00c, FX2. Where: cloud.
+Phase 0. Size M. Deps: SC, W00c, FX2, CQ6. Where: cloud.
 Tags: core (contracts every figure and citation passes through).
 Paths: src/contracts/facts.ts, src/contracts/reading.ts, src/contracts/amount-grammar.ts, src/modules/ocr/textlayer/**, src/modules/storage/**, src/core/test-no-network.ts, src/contracts/auth.ts, tools/test/__fixtures__/planted-interpolated-log.ts.txt
 Clauses: EV-1, EV-5, ARC-10, ARC-15, SEC-11

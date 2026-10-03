@@ -15,6 +15,7 @@ Three flag details name a shareholder without "(Test)": Grace Liu (c07_08.mjs:54
 ## Spec
 - `tools/test/sample-names.test.mjs`: for every folder 01 to 15, every person the folder declares (answer key and onboarding) is never named in any text of that folder without "(Test)" or "TEST" right after the name; a planted folder copy with one bare name fails, the clean copy passes. Walk-driven: the declared people come from the files, never a typed list.
 - verify.mjs gains the same rule, so a regenerated folder is refused too.
+- The spec job owns the pass-count sentence in `reference/sample-clients/README.md` (A430).
 
 ## Build
 Add "(Test)" at the three generator lines; regenerate 07, 09, 14, 15 with generate.mjs; nothing else moves (the spec test and `git diff --stat` show only text lines with the names).
