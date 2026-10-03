@@ -7,6 +7,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PGlite } from '@electric-sql/pglite'
 import pg from 'pg'
+import { testDbTarget } from './target'
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
 export const DEFAULT_SCHEMA_DIR = path.join(REPO_ROOT, 'db', 'schema')
@@ -16,12 +17,10 @@ export interface DbTemplate {
   close(): Promise<void>
 }
 
-export type TestDbTarget = { kind: 'pglite' } | { kind: 'pg16'; url: string }
+export { testDbTarget, type TestDbTarget } from './target'
 
-const LOCAL_HOSTS = new Set(['127.0.0.1', 'localhost'])
 // A throwaway test cluster on this box: the default credentials guard nothing real (decision 0003).
 // The url never carries a password; the driver gets it from PGPASSWORD, else this default.
-const LOCAL_USER = 'postgres'
 const LOCAL_PASSWORD = 'postgres'
 
 function connOpts(connectionString: string): pg.ClientConfig {
@@ -38,29 +37,6 @@ function connOpts(connectionString: string): pg.ClientConfig {
     options: '-c TimeZone=Etc/GMT+5 -c DateStyle=ISO,MDY -c IntervalStyle=postgres -c standard_conforming_strings=on',
     types: typeParsers,
   }
-}
-
-/**
- * Which backend the db project uses (DB16, ARC-4). Pure: reads only the env it is given. The switch is
- * TEST_DB=pg16; it refuses a live database (DATABASE_URL, any SUPABASE variable, a non-local PGHOST) and
- * never prints a value.
- */
-export function testDbTarget(env: Record<string, string | undefined>): TestDbTarget {
-  const sw = env['TEST_DB']
-  if (sw === undefined || sw === '') return { kind: 'pglite' }
-  if (sw !== 'pg16') throw new Error('TEST_DB must be empty or pg16 (it is a switch, never a connection string)')
-  if (env['DATABASE_URL'] !== undefined) throw new Error('TEST_DB=pg16 refuses to start: DATABASE_URL is set (decision 0003)')
-  const supabase = Object.keys(env).find((k) => k.toUpperCase().includes('SUPABASE') && env[k] !== undefined)
-  if (supabase !== undefined) throw new Error(`TEST_DB=pg16 refuses to start: ${supabase} is set (decision 0003)`)
-  for (const name of ['PGHOST', 'PGHOSTADDR']) {
-    const host = env[name]
-    if (host !== undefined && host !== '' && !LOCAL_HOSTS.has(host)) {
-      throw new Error(`TEST_DB=pg16 refuses to start: ${name} is not the local cluster`)
-    }
-  }
-  const port = env['PGPORT'] !== undefined && env['PGPORT'] !== '' ? env['PGPORT'] : '5432'
-  if (!/^\d{1,5}$/.test(port)) throw new Error('TEST_DB=pg16 refuses to start: PGPORT is not a port number')
-  return { kind: 'pg16', url: `postgres://${LOCAL_USER}@127.0.0.1:${port}/postgres` }
 }
 
 function schemaFiles(schemaDir: string): string[] {
