@@ -1,0 +1,10 @@
+{
+ "card": "FX10",
+ "role": "build",
+ "round": 1,
+ "spec": "0f8e76f6",
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T07:58:10.009Z",
+ "mode": "turbo"
+}
