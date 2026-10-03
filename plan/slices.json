@@ -9564,7 +9564,9 @@
         "J5-K10",
         "J5-K11",
         "J5-K12",
-        "J5-K13"
+        "J5-K13",
+        "T13",
+        "T14"
       ],
       "paths": [
         "e2e/kinds/learning.spec.ts"
