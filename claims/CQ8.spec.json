@@ -1,10 +1,11 @@
 {
  "card": "CQ8",
  "role": "spec",
- "note": "8 tests, refit on main 66de2c9",
- "reopenedFrom": "503c520",
+ "note": "5 rule 3 tests added (13 total), plants kill; validated on main 2bb7db20",
  "worker": "cloud-613a54",
- "state": "working",
- "at": "2026-10-03T13:51:52.380Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T13:56:20.275Z",
+ "mode": "turbo",
+ "commit": "b7913ddbac51377e719223c06d1342769aff4805",
+ "validated": "2bb7db20"
 }
