@@ -1,10 +1,11 @@
 {
  "card": "W00d",
  "role": "spec",
- "note": "A517 data job done: type from generator, 28 entries, 4 data tests pass; loader tests wait for the build",
+ "note": "wait: dep W00c not landed on main (load.ts, json-keys.ts, checks.ts are W00c's; no code base)",
  "reopenedFrom": "a55b9426",
  "worker": "cloud-a61550",
- "state": "working",
- "at": "2026-10-03T23:05:18.329Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T23:05:27.742Z",
+ "mode": "turbo",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"W00c\"],\"depStatus\":[\"carded\"]}"
 }
