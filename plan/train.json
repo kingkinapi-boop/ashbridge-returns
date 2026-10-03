@@ -1,14 +1,12 @@
 {
-  "status": "green",
+  "status": "requested",
   "branch": "claude/train",
-  "head": "f4e43c51",
+  "head": "40e9173c",
   "cards": [
-    "A04C",
-    "CQ11",
-    "FX14"
+    "SC8",
+    "GL3",
+    "SC10"
   ],
-  "requested_at": "2026-10-03T19:42:00Z",
-  "note": "Train 3 on main: run the full check (checker.md, check train full): npm ci, typecheck, lint, the full unit suite, the db project on PGlite and with TEST_DB=pg16 (print select version()), npm run test:flake with TEST_DB=pg16 and test:flake:shifted, e2e, and mutate:changed at 100 for every @mutate file the train changes. CQ11 changes the queue tools (claim.mjs, next.mjs, lib.mjs): run tools/test with --project unit. FX14 changes the db budget walker and splits db tests: run tools/test/db-budget.test.mjs and the split files on pg16. Landing rehearsal (merge skill): with A04C, CQ11 and FX14 set done in plan/slices.json (not committed), run tools/test with --project unit and src/contracts/schema-rules.db.test.ts with --project db; report any failure. Known main flake until SC11 lands (A500): a pg16 run that fails only on an unhandled 57P01 from a pool is re-run once; report both runs. A refused command makes the train blocked, not red.",
-  "by": "cloud-b25ed0",
-  "report": "reports/train-20261003-2034.md"
+  "requested_at": "2026-10-03T23:06:00Z",
+  "note": "Train 4 on main: run the full check (checker.md, check train full): npm ci, typecheck, lint, the full unit suite, the db project on PGlite and with TEST_DB=pg16 (print select version()), npm run test:flake with TEST_DB=pg16 and test:flake:shifted, e2e, and mutate:changed at 100 for every @mutate file the train changes (GL3: index.ts, scan.ts; db.ts and manifest.ts carry a reasoned Stryker disable, A515). GL3 adds bridge views and migrations: its db tests run on both PGlite and pg16. SC10 and SC8 change rule tests over cards and sources: run tools/test with --project unit, and the landing rehearsal (SC8, GL3, SC10 set done in plan/slices.json, uncommitted) over tools/test and src/contracts/schema-rules.db.test.ts with --project db. SC8's build switched landed tests' reads to readOwnSource by design (A523). Known main flake until SC11 lands (A500): a pg16 run failing only on an unhandled 57P01 from a pool is re-run once; report both runs. A refused command makes the train blocked, not red."
 }

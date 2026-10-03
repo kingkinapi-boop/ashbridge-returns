@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| Train 4 | SC8 (scope flag by design, A523), GL3, SC10 boarded (40e9173c) | add W00c on its mutation check, SC6 on PASS; request at 6 cards or 22:10Z |
+| Train 4 | SC8, GL3, SC10 at 40e9173c, requested 23:06Z | land if green; next train: W00c on its mutation check, SC6, FX18 and SC11 on PASS |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
 | W00c | mutation check 3 could not finish on one box (A530): file groups across check sessions, lean test set | next check session takes group 1; land on 100 on all 11 files |
 | SC10 | Opus read 2 PASS (A527) | boarded train 4 at 21:50Z; then the push guard for plan/cards and slices.json |
