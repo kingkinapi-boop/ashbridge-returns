@@ -1,9 +1,11 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit 2: no test change; typecheck, lint, unit 2875, db 677 (PGlite) green",
  "worker": "cloud-97b8bd",
- "state": "working",
- "at": "2026-10-03T15:40:06.275Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T15:48:06.682Z",
+ "mode": "turbo",
+ "commit": "b8b82f7",
+ "validated": "bd5ec11"
 }
