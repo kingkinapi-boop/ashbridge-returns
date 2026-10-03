@@ -8,13 +8,19 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { loadIndex, globToRegExp, ROOT } from './lib.mjs'
 
-const [id, baseArg] = process.argv.slice(2)
+// Arguments after `--` go to Stryker as they are (no shell): npm run mutate:changed -- <card> [base] -- --concurrency 4
+const argv = process.argv.slice(2)
+const dashAt = argv.indexOf('--')
+const extraArgs = dashAt === -1 ? [] : argv.slice(dashAt + 1)
+const [id, baseArg] = dashAt === -1 ? argv : argv.slice(0, dashAt)
 if (!id) {
-  console.error('usage: node tools/mutate-changed.mjs <card> [base]')
+  console.error('usage: node tools/mutate-changed.mjs <card> [base] [-- <stryker args>]')
   process.exit(2)
 }
 const card = loadIndex().cards.find((c) => c.id === id)
-const cardFile = path.join(ROOT, 'plan', 'cards', `${id}.md`)
+// A card with a `family` in slices.json is carded by plan/cards/families/<family>.md: its Tags gate it like any card (A464).
+const ownFile = path.join(ROOT, 'plan', 'cards', `${id}.md`)
+const cardFile = card?.family && !fs.existsSync(ownFile) ? path.join(ROOT, 'plan', 'cards', 'families', `${card.family}.md`) : ownFile
 if (!card || !fs.existsSync(cardFile)) {
   console.error(`no card ${id} (plan/slices.json and plan/cards/${id}.md)`)
   process.exit(2)
@@ -56,6 +62,13 @@ const leaks = harnessImports()
 if (leaks.length > 0) {
   console.error(`harness file imported by a non-test module (only tests and the harness itself may):\n${leaks.join('\n')}`)
   process.exit(1)
+}
+
+// A core card whose Paths name no product code under src/ or testworld/ (tests, tools, fixtures only) has nothing to mutate (A460).
+const productGlob = (g) => /^(src|testworld)\//.test(g) && !/__fixtures__|__golden__|\.(test|acceptance)\.ts$|\.db\.test\.ts$|\.eval\.test\.ts$/.test(g)
+if (core && !(card.paths || []).some(productGlob)) {
+  console.log('no product code to mutate')
+  process.exit(0)
 }
 
 if (core) {
@@ -102,7 +115,7 @@ console.log(`mutating: ${targets.join(', ')}`)
 const stryker = 'node_modules/@stryker-mutator/core/bin/stryker.js'
 const reportFile = path.join('reports', 'mutation', 'mutation.json')
 fs.rmSync(reportFile, { force: true })
-const r = spawnSync(process.execPath, [stryker, 'run', '--incremental', '--mutate', targets.join(',')], {
+const r = spawnSync(process.execPath, [stryker, 'run', '--incremental', '--mutate', targets.join(','), ...extraArgs], {
   stdio: 'inherit',
   shell:false,
 })

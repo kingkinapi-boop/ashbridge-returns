@@ -1,6 +1,7 @@
 # Family: one check ({check})
 
 Phase (the card's own, in plan/slices.json). Where: local or cloud; check: cloud (the mutation run on the check's rule).
+Tags: none.
 
 Cards Q10 to Q47 (Q33 parked). Deps, paths and clauses: the card's entry in `plan/slices.json`. Read the clause {check} in blueprint 05, `src/contracts/checks.ts` (F05), `src/modules/checks/engine/` (Q00) and `reference/sources.md`.
 
