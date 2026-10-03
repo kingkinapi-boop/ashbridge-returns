@@ -1,11 +1,9 @@
 {
  "card": "SC8",
  "role": "spec",
- "note": "A479 patch in (f788ca60); refit merged main 2bb7db20 (plan files taken from main); typecheck/lint green, only the 11 R79 tests fail (reads not switched)",
- "worker": "cloud-c7f307",
- "state": "reported",
- "at": "2026-10-03T13:55:36.305Z",
- "mode": "turbo",
- "commit": "d5a4c2a2",
- "validated": "2bb7db20"
+ "note": "toolchain refit",
+ "worker": "cloud-da95a7",
+ "state": "working",
+ "at": "2026-10-03T15:39:47.555Z",
+ "mode": "turbo"
 }
