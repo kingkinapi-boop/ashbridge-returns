@@ -1,10 +1,11 @@
 {
  "card": "SC2",
  "role": "spec",
- "note": "A450: patch, see card directive",
+ "note": "wait: dep W00c not merged; no code base (testworld loaders and kinds not on main)",
  "reopenedFrom": "aba1c99d",
  "worker": "cloud-6345e6",
- "state": "working",
- "at": "2026-10-03T18:04:10.224Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T18:04:19.882Z",
+ "mode": "turbo",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"W00c\"],\"depStatus\":[\"carded\"]}"
 }
