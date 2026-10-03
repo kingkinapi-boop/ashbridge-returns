@@ -1,11 +1,11 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "wait: A477 split, Lead sets the spec",
- "reopenedFrom": "71a8efe8",
+ "note": "A477: frozen at round 5c tests (71a8efe8); G1 to G4 to A04C",
  "worker": "local-5",
- "state": "released",
- "at": "2026-10-03T13:17:49.953Z",
+ "state": "reported",
+ "at": "2026-10-03T13:22:17.875Z",
  "mode": "turbo",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"F04\",\"F06\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
+ "commit": "be09e312",
+ "validated": "0eccaccd"
 }
