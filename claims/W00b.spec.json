@@ -1,10 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-a2c0b4",
- "state": "released",
- "at": "2026-10-03T13:48:47.579Z",
- "mode": "turbo",
- "note": "wait: A423 round 4 needs W00c landed (its build round 3 is still open, loader and json-keys.ts not on main); no code base",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "worker": "cloud-1ba1dc",
+ "state": "working",
+ "at": "2026-10-03T13:59:20.614Z",
+ "mode": "turbo"
 }
