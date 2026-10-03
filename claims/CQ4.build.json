@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "78fbaf82",
  "worker": "cloud-03268d",
- "state": "reported",
- "at": "2026-10-03T06:11:27.936Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T06:26:03.799Z",
  "mode": "turbo",
- "note": "7 of 7 acceptance tests pass; tools 255 pass; FX8 planted case fails by name"
+ "note": "FAIL: scope.mjs CQ4 flags tools/scope.mjs (Spec prose names it; also bites FX2), see reports/CQ4-check.md"
 }
