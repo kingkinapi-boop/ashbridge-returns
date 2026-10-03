@@ -1,12 +1,8 @@
 {
  "card": "A04",
  "role": "spec",
- "worker": "local-1",
- "state": "reopened",
- "at": "2026-10-03T05:16:06.197Z",
- "mode": "turbo",
- "beat": "2026-10-03T04:52:56.213Z",
- "note": "A420: reports/A04-spec-review-3.md; see bold directive",
- "commit": "fb82b8c8",
- "validated": "b277a240"
+ "worker": "local-2",
+ "state": "working",
+ "at": "2026-10-03T05:18:35.022Z",
+ "mode": "turbo"
 }
