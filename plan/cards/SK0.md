@@ -1,6 +1,7 @@
 # SK0 Walking skeleton: one sample client from document to trace, stubs allowed
 
 Phase 0. Size M. Hard. Deps: F01, F03, F04, F05, F09, F09B (F09A split, A349), W00, S00, A01, JH0. Where: cloud.
+Tags: none.
 Paths: e2e/skeleton/**, e2e/steps/skeleton-*.ts
 Clauses: END-9, END-2, ARC-7, RT-14
 Read: `reference/lessons-deep.md` pattern 1, blueprint 00 (END-2, END-9), 04 (the lock export and the trace), `plan/cards/JH0.md`, `plan/cards/W00.md`, `reference/sample-clients/01-maple-ridge/` (answer key and `taxprep/import.csv`).

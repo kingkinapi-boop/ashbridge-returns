@@ -331,9 +331,9 @@ describe('spec reopen', () => {
     expect((await claim(w, ['next', '--worker', 'w2', '--roles', 'spec'])).out).toBe('CLAIMED A spec')
   })
 
-  test('reopen: a role other than build or spec is still refused', async () => {
+  test('reopen: a role other than build, spec or check is still refused (CQ8 adds check)', async () => {
     const w = await world({ cards })
-    expect((await claim(w, ['update', 'A', 'check', 'reopened', '--worker', 'lead'])).code).toBe(6)
+    expect((await claim(w, ['update', 'A', 'deploy', 'reopened', '--worker', 'lead'])).code).toBe(6)
   })
 })
 

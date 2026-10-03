@@ -1,5 +1,8 @@
 # Family: AI tax checklist topic ({topic})
 
+Phase (the card's own, in plan/slices.json). Where: local or cloud.
+Tags: none.
+
 Cards I10 to I19 (I20 parked: next year's instalments are code, CK-46). Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 05 (AI-1 to AI-11), `src/modules/ai/checklist/_core/` (I01) and `src/modules/ai/grounding/` (I00).
 
 ## Goal
@@ -16,6 +19,7 @@ The owner-manager issue "{topic}" is looked for on every return, and every findi
 3. On kinds without the issue, no flag.
 4. The prompt version and model are stamped on every output (AI-10).
 5. The evaluation harness (I40) shows this topic's score, and it is recorded in `reports/`.
+6. Each sample flag that `data/question-coverage.json` (G18) gives this card as owner is raised on its sample client, by flag id; before G18 is on main, take the rows from G18's directive (A499).
 
 ## Not in this card
 Other topics. Clearing anything: AI never clears (AI-7).

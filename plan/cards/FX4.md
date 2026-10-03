@@ -29,3 +29,6 @@ A checker who did neither, plus an Opus adversarial read: every finding's input 
 
 ## SC KNOWN entries (3 Oct, A407)
 SC lands with exact KNOWN entries owned by this card (reports/SC-findings.md, fix list step 3). Each defect fixed here deletes its entry; never widen an entry or weaken a rule (A329).
+
+## SC12 KNOWN entries (A488, 3 Oct)
+SC12 (when it lands) lists R93, R94 or R104 KNOWN entries this card owns in tools/test/fs-rules.test.mjs (R104: the `cache` Map in src/modules/sheets/index.ts). The build fixes them (a guarded read or write; a cap from data or a reasoned `// R104 bounded: <reason>` marker); the spec of that round deletes the entries, with that file added to Paths then. If this card lands first, SC12 re-homes them (A488).
