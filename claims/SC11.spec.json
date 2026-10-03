@@ -1,10 +1,10 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "refit 2: no test change; typecheck, lint, unit 2875, db 677 (PGlite) green",
+ "note": "A500 round 2: restore DB16.md from main, then spec patch S1 to S3 (R116, R117) per the Lead directive at the top of plan/cards/SC11.md; then the build reopens",
  "worker": "cloud-97b8bd",
- "state": "reported",
- "at": "2026-10-03T15:48:06.682Z",
+ "state": "reopened",
+ "at": "2026-10-03T16:24:04.047Z",
  "mode": "turbo",
  "commit": "b8b82f7",
  "validated": "bd5ec11"
