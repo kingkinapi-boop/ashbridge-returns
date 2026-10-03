@@ -2204,8 +2204,7 @@
         "ai-project/**",
         "src/modules/ai/project/**",
         "package.json",
-        "src/core/env.ts",
-        "tools/test/settings-rules.test.mjs"
+        "src/core/env.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -10802,7 +10801,9 @@
         "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
         "src/modules/ai/runner/schemas.ts",
         "src/modules/ai/index.ts",
-        "data/ai/exchange-limits.json"
+        "data/ai/exchange-limits.json",
+        "src/core/safe-read.test.ts",
+        "src/modules/ai/runner/exchange-limits.build.test.ts"
       ],
       "clauses": [
         "ARC-22",
