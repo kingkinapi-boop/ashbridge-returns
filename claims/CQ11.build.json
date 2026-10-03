@@ -1,7 +1,10 @@
 {
  "card": "CQ11",
  "role": "build",
- "state": "reopened",
- "worker": "lead",
- "at": "2026-10-03T17:35:49.051Z"
+ "round": 1,
+ "spec": "2d3f287",
+ "worker": "cloud-120b8f",
+ "state": "working",
+ "at": "2026-10-03T17:58:52.222Z",
+ "mode": "turbo"
 }
