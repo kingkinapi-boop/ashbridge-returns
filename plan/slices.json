@@ -10711,7 +10711,10 @@
         "src/modules/ai/runner/engines.ts",
         "src/modules/ai/runner/runner.ts",
         "src/core/safe-read.ts",
-        "src/modules/ai/runner/exchange-errors.acceptance.test.ts"
+        "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/index.ts",
+        "data/ai/exchange-limits.json"
       ],
       "clauses": [
         "ARC-22",
@@ -10781,11 +10784,11 @@
         "W16"
       ],
       "paths": [
-        "tools/test/card-rules.test.mjs",
-        "tools/test/__fixtures__/card-rules/**"
+        "tools/test/spec-rules.test.mjs",
+        "tools/test/__fixtures__/spec-rules/**"
       ],
       "clauses": [
-        "ARC-15",
+        "ARC-12",
         "ARC-16"
       ],
       "id": "SC6",
@@ -10808,7 +10811,9 @@
       ],
       "paths": [
         "tools/test/lib/known.mjs",
-        "tools/test/lib/known.test.mjs"
+        "tools/test/lib/known.test.mjs",
+        "tools/test/lib/cards.mjs",
+        "tools/test/lib/cards.test.mjs"
       ],
       "clauses": [
         "ARC-15",
