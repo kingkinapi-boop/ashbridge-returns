@@ -1,11 +1,10 @@
 {
  "card": "CQ11",
  "role": "spec",
- "worker": "cloud-1ef50b",
- "state": "reopened",
- "at": "2026-10-03T13:33:35.427Z",
- "mode": "turbo",
  "note": "A478: Review items a to c (card directive)",
- "commit": "17b31e9af5ec9054fed65f877943070b2799fda4",
- "validated": "9d5bc734654967121f88e5510beee1e626b4e980"
+ "reopenedFrom": "17b31e9af5ec9054fed65f877943070b2799fda4",
+ "worker": "cloud-ddf73a",
+ "state": "working",
+ "at": "2026-10-03T14:07:25.708Z",
+ "mode": "turbo"
 }
