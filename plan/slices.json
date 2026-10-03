@@ -9686,9 +9686,8 @@
         "src/modules/lifecycle/**"
       ],
       "clauses": [
-        "FLOW-4",
-        "EV-1",
-        "LL-1"
+        "FLOW-1",
+        "FLOW-4"
       ],
       "id": "FX5",
       "title": "F02 move inside a caller transaction (for T08)",

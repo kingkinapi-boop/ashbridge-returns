@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 |---|---|---|
 | A07D, A06 | on train claude/train 25bde2a (A393, A396: A06 security review CLEAN) | train requested 03:42Z (plan/train.json; A06 db tests on PG16 too); cloud run fired to take it | land when green (skill merge) |
 | W00c | check FAIL round 1; Opus findings review running (A400: markers as row ids) | card fix list, spec job for new tests, then build round 2 |
-| S00, FX5 | specs reported; builds held for an Opus spec review (A401) | GO: release the hold; GAPS: spec reopened |
+| S00, FX5 | spec review GAPS (11, 7); specs reopened (A402) | spec, then build (the wait: build releases clear when the spec reports) |
 | JH0 | spec reported (Paths + testworld/harness, A401) | build |
 | SC | build reopened | cloud run |
 | W16 | spec reported | build, cloud run |
