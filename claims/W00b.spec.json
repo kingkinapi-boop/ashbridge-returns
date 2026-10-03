@@ -2,7 +2,11 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-f75b9b",
- "state": "working",
- "at": "2026-10-03T07:15:14.139Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T07:15:33.443Z",
+ "mode": "turbo",
+ "note": "W00b spec round 4 waits for W00c to land (NOW.md, A423); W00c build not merged, no code base",
+ "lastRelease": {
+  "tip": "b3e3130015b43c41bb7ed395bea7af684089a0f0"
+ }
 }
