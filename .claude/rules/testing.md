@@ -24,7 +24,7 @@ paths:
 - The `db` project also runs on Postgres 16 in cloud checks; the schema avoids features newer than the oldest Postgres in use.
 
 ## Determinism
-- The clock is the injectable one (`src/core/clock.ts`), pinned in every test. `TZ=America/Toronto`, locale `en-CA`, in Vitest and Playwright (`timezoneId`, `locale`).
+- The clock is the injectable one (`src/core/clock.ts`), pinned in every test. A test that fixes one clock (a `ctx.now`, a queue clock) pins every other clock the code under test reads; a test that passes only on today's date is a flaky test (A469). `TZ=America/Toronto`, locale `en-CA`, in Vitest and Playwright (`timezoneId`, `locale`).
 - Random data uses a fixed seed. Test data comes from `testworld/` or typed fixtures with fixed defaults; made-up names end in "(Test)".
 - No network in tests. AI steps use recorded answers keyed by model id, prompt hash and input hash; a changed key fails with "re-record", never passes silently.
 - A flaky test is a failure: Playwright `failOnFlakyTests` and `forbidOnly`; cloud runs use one retry only to detect flakiness. A flaky test gets a fix card the same day and is never skipped without one.

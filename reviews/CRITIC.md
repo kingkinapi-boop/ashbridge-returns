@@ -24,50 +24,37 @@ Big reads go to a helper that writes a file and returns 10 lines. A research que
 - **G. Subtraction.** Guards, rules and tests that caught nothing in two weeks: propose removing them.
 
 ## Write
-Rewrite `reviews/CRITIC.md` below the line "## Latest run" (never append; keep these orders above it), at most 400 words:
-1. The date, and three plain lines for Zo.
-2. **Proposals:** at most three, numbered. Each: the problem, the evidence, the change (a test, a guard, a rule, a card, or a deleted line), its cost, how to undo it.
-3. **Watch list:** at most three things not yet worth a change.
-Then add one item to `plan/TODO-ZO.md` section 1: "Critic proposals of <date>: reply in the Lead chat `critic ok`, `critic ok 1 3` or `critic no 2`." The Lead applies what Zo approves.
-In chat say only `Critic written: reviews/CRITIC.md. Waiting on to-do #N.` and the to-do's full path.
+Rewrite `reviews/CRITIC.md` below the line "## Latest run
 
-## Rules for yourself
-- A reviewer told to find problems always finds some. Report only what would change what gets built or how; "nothing this time" is a valid run.
-- Label each finding [verified], [inferred] or [speculation].
-- Never reopen a decision Zo made. You may show new evidence against it, once.
-- Plain words. No em dashes.
+Last run's proposals: approved (0024), applied 2 Oct.
 
-## Latest run
+**3 Oct 2026, 13:00Z** (since 2 Oct 20:50Z).
 
-Approved by Zo (`critic ok`, decision 0024). Applied 2 Oct by the Lead: 1 (settings env, SessionStart hook, CLAUDE.md "Context and waits"), 2 (CQ2 item 6), 3 (render.md layouts step); watch 1 fixed as amber A387.
-
-**2 Oct 2026, 20:50Z** (since 02:50Z).
-
-1. Much faster: 31 cards landed in 18 hours; 63% of checks pass first time.
-2. Your 2 Oct yes on token savings was never carried out; about 60% of the Lead's 225M tokens since was avoidable.
-3. 238 of 276 cards left wait on one test-world card that failed three times.
+1. About 15% built: 54 of 351 cards on main, 71 of 198 clauses tested, no screen yet.
+2. The week's allowance (69% used) runs out about Sun 4 Oct morning. With your saved reset: 30% to 50% of cards by the 9 Oct wind-down; no phase 3 or 4 card.
+3. Turbo works mostly on the build itself: 9 of 12 cards landed today are repairs; clauses tested rose only 69 to 71.
 
 ### Proposals
 
-**1. A yes given here reaches the Lead.** [verified]
-- Evidence: the to-do line "the Lead applies them" was deleted at 13:50Z (bc97984); no env line, hook or 270 s rule exists. 463 of 698 Lead turns sat above 200k; replay at 200k: 60% fewer reads [inferred] (`reference/research/2026-10-02b-token-use-since-0250.md`).
-- Change: the Lead applies the 2 Oct yes now, plus `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, which cloud sessions honour (`2026-10-02c-outside-world.md`). Then this file opens with "Approved, not applied", which loop step 1 reads and the Lead marks "Applied".
-- Cost: two lines. Undo: revert.
+**1. Restart the design lane now.** [verified]
+- Evidence: D02 to D13 left the queue on 2 Oct (A352) and nobody runs them; no design work since 2 Oct 13:52Z. They hold every V screen, J5 and J6, and do not wait on W00c.
+- Change: the Lead runs them through designers and the panel in idle slots, for one sitting about Tue 6 Oct.
+- Cost: about 30 Sonnet runs, an hour of yours. Undo: stop the lane.
 
-**2. The queue holds a job released twice.** [verified]
-- Evidence: 17:41Z to 20:31Z (Lead in the Auto-fill session) 22 of 35 cloud runs took the SC build and released it 41 times. CQ1 covers checks only; CQ2 omits this.
-- Change: CQ2 item 6: two releases with no new branch commit hold the job as "needs Lead" until reopened.
-- Cost: one item. Undo: drop it.
+**2. Fix re-offered checks and card counts.** [verified]
+- Evidence: `tools/claim.mjs:254-262` re-offers a check after a "wait:" release (specs and builds hold, 278, 291); CQ6's check went out 14 times since 07:00Z. `tools/metrics.mjs:44` looks for "failed X build", lines say "failed X check": 15 landed cards show 0 check fails against 19 failures; "jobs" counts heartbeats.
+- Change: one CQ card for both.
+- Cost: one small card. Undo: revert.
 
-**3. Real layouts before made-up documents.** [verified gap]
-- Evidence: W21 to W36 must look "like the real ones Ontario firms see" (`plan/cards/families/render.md`); nothing in the repo describes one, so readers E10 to E25 get tested on invented layouts. Bank statements: about 60% of clients.
-- Change: before W21's spec, a research pair and checker write `reference/layouts/<doc>.md` from public pages (bank statement guides and samples, CRA slips, payroll, loans): columns, formats, running balances, page carry-over. Render cards cite one; checks compare. Your own documents, structure only, need a separate yes.
-- Cost: three Sonnet helpers, no real data. Undo: delete the render.md line.
+**3. Until W00c lands, no new repair card without a red or a measured waste.** [verified numbers, inferred effect]
+- Evidence: 21 of 36 cards added since last run are repairs, taking 68% of landed jobs; 22 of 26 cards startable outside W00c's shadow are repairs. The allowance binds, not the clock: an idle slot costs nothing.
+- Change: one line in the dispatch skill.
+- Cost: idle slots until W00c lands. Undo: delete the line.
 
 ### Watch list
 
-1. [verified] `design/map/navigation.md:13` gives each role its own record tabs; Z20-6 says one set for everyone. V00, U01, U02 read it. Lead: amber fix.
-2. [verified] W00c gates 238 cards (chain 17 deep) after 26 hours and 3 splits. One more failure: judge it on answer keys and failing tests only.
-3. [fact] Claude Code 2.1.288 blocks a call when a PreToolUse hook fails to match; watch "refused".
+1. [verified] W00c: 15.5 hours, 7 spec reports, 2 failed checks, spec still changing in round 3 (A467); 246 cards behind it.
+2. [verified] 59 of 87 helper dispatches were Opus findings reviewers or workers; 0009 says Sonnet for building. If plan use outruns cards, local builds go to Sonnet.
+3. [inferred] Trial day 6 (Sun 4 Oct) meets the allowance's end; P02 holds S03 and all of phase 2.
 
-E: no model change. F, G: nothing.
+E: nothing new. F, G: none. Sources: `reference/research/2026-10-03-*.md`.

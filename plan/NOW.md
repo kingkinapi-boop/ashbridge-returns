@@ -1,12 +1,12 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:20Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:45Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (54):** through FX10 (train 12af2528), then DB16 (train 65f59a22 green on pg16 16.14, landed 12:15Z as dc36b33d). Train 25ea2736 (A04, FX15, CQ7) requested 12:20Z.
+- **Landed (54):** through FX10 (train 12af2528), then DB16 (train 65f59a22 green on pg16 16.14, landed 12:15Z as dc36b33d). Train df6f1249 (FX15, CQ7, CQ6) requested 12:35Z.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
@@ -17,10 +17,10 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:20Z by the Lea
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| Train | A04, FX15, CQ7 on 25ea2736, requested 12:20Z | cloud check full on pg16, mutation A04; land |
+| Train | 25ea2736 red on A04 (clock mix, A468); FX15, CQ7, CQ6 on df6f1249, requested 12:35Z | check; land |
 | SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | on the train (PASS by ruling A465, security CLEAN A466) | land; then A08 spec, FX18, SC12 |
+| A04 | findings 6: one clock (A469), round 5c in-round; CQ10 carded, R105 R106 to SC12 | spec (Opus), build, check, security read, train |
 | SC11, GL3 | DB16 landed: SC11 spec refit open (cloud); GL3 build reopened (pg16 run, R41 fix) | SC11 build; GL3 check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:20Z by the Lea
 | FX12, FX14, FX15, FX17 | FX15 off core, round 1 PASS stands, boards (A465); FX12, FX17 specs refit | FX12 build; FX17 build |
 | CQ6, CQ8, CQ9, SC10, A08 | CQ6 spec patch in, build round 2 open; CQ9 spec reported; CQ8 build; SC10 spec working; A08 after A04 lands | builds, checks |
 
-Cloud runs: about 6 since 10:58Z (train DB16, A04 and FX15 builds, specs). Local: none; local workers only for a named local job until CQ8 lands (claim.mjs offers Where: cloud jobs to them).
+Cloud runs: 4 fired 12:47Z (train df6f1249 first, then W00c build, SC11, FX17, FX12 builds). Local: local-1 CQ8 build, local-2 CQ10 spec, local-3 SC12 spec (R104 to R106); each claims its named job with `update`, never `next`.
 
 ## Next, in order
 
