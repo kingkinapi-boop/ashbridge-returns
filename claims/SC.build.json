@@ -4,9 +4,12 @@
  "round": 53,
  "spec": "0884fdfa15e538d71674d6a6c65690e065b8c74c",
  "worker": "local-3",
- "state": "reported",
- "at": "2026-10-03T06:23:57.040Z",
+ "state": "released",
+ "at": "2026-10-03T10:48:04.425Z",
  "mode": "turbo",
  "beat": "2026-10-03T06:21:05.614Z",
- "note": "110 of 110 acceptance tests pass (87 unit, 23 db on PGlite); reports/SC-build.md"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "a6364725e6d5eaa8c77eec27377090995ab84fb1"
+ }
 }
