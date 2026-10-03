@@ -4,8 +4,8 @@
  "round": 8,
  "spec": "d69ac553",
  "worker": "cloud-120dac",
- "state": "hold-findings",
- "at": "2026-10-03T06:20:41.643Z",
+ "state": "reopened",
+ "at": "2026-10-03T06:48:12.587Z",
  "mode": "turbo",
- "note": "FAIL: core files global-setup.ts and index.ts lack @mutate, see reports/DB16-check.md"
+ "note": "A430: round 4 per reports/DB16-findings.md; see bold directive on the card"
 }
