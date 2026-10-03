@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:40Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,20 +13,22 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:40Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | spec round 2 (cloud) per reports/W00c-findings.md (A403) | build round 2, check; unblocks W00b, JH0, B04, SC2 |
-| W00b | spec round 3 reopened (A409: 10 gaps); build waits on W00c and FX8 | spec, then build after both land |
-| FX8 | carded (A409): "(Test)" on four bare names in C07, C09, C14, C15 | spec, build, check (non-core); lands before W00b's build |
-| W16, SC6 | specs reopened (A408: 3 and 6 gaps); SC6 now depends on W16 | spec, build, check |
-| SC | spec reopened (A407: exact KNOWN, owners FX3 to FX8) | spec, build re-run, check with Opus read |
-| SC4 | refit spec reported 04:25Z | build, check |
-| S00, FX5 | round 2 specs GO (A410); builds open | build, check |
-| A04 | spec round 3 reopened (A410: 7 gaps, env.ts in Paths) | spec, build, check, security review |
-| DB16 | spec round 2 reopened (A411: 9 gaps; one cast in src/core/db) | spec, build, check on Postgres 16 in the cloud, security review |
-| FX2 | build working (cloud) | check |
-| CQ2 | check PASS | board on the next train |
+| W00c | round 2 spec reported (2210 tests); Opus spec review running, build held | GO: reopen build; unblocks W00b, JH0, B04, SC2 |
+| W00b | spec round 3 working (cloud, A409); build waits on W00c and FX8 | spec review, then build after both land |
+| FX8 | spec reported (non-core); build working (cloud) | check, board |
+| W16 | fixup spec reported; Opus re-review (with SC) running, build held | GO: reopen build |
+| SC6 | spec reopened (A408); depends on W16 | spec, build, check |
+| SC | spec reported (105 rule tests, exact KNOWN); Opus review running, build held; FX7 Paths widened (A412) | GO: reopen build; check with Opus read and test:flake |
+| SC3 | spec reported (security) | build, check, security review |
+| SC4 | build reported; check working (local-3) | board |
+| S00, FX5 | builds open (A410) | build, check |
+| A04 | spec round 3 working (local-1, A410) | spec review, build, check, security review |
+| DB16 | spec round 2 working (local-2, A411); an early cloud build claim voided | spec review, build, check on Postgres 16 |
+| FX2 | check FAIL (scope, mutation dry run); Opus findings review running | fix round from reports/FX2-findings.md |
+| CQ2 | on the train (claude/train a5d6dba0), boarding | request the train at 6 cards or 05:30Z, with test:flake |
 | JH0 | spec reported | build after W00c lands |
 
-Cloud runs fired 04:28Z: 4 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). npm ci done 04:45Z (exceljs, pdfjs-dist present). 3 local Opus workers (local-1 to local-3) started 04:46Z.
+Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local: local-1 (A04 spec), local-2 (DB16 spec), local-3 (SC4 check), Opus. npm ci done 04:45Z.
 
 ## Next, in order
 
@@ -37,10 +39,6 @@ Cloud runs fired 04:28Z: 4 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). npm ci
 5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
 6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
-
-## Splits (last rounds)
-
-W00a to W00c (A379), A07C to A07D (A384; no more rounds), rule cards SC2 (R57 to R61), SC3 (R62 to R66, security), SC4 (R67 to R70), SC5 (R71 to R73). Each split card has a landing rule: new edge cases go to SC cards as rule tests.
 
 ## Watch out
 
@@ -53,7 +51,7 @@ W00a to W00c (A379), A07C to A07D (A384; no more rounds), rule cards SC2 (R57 to
 - Mutation bar is 100 per `@mutate` file (testing.md, ARC-15; agent orders fixed, A391).
 - Network to GitHub drops now and then: retry a push up to three times.
 - Landing: never rebase a train; merge main in; never force-push.
-- Findings review before every fix round; a third failure parks or splits.
+- Findings review before every fix round; a third failure parks or splits (split cards carry a landing rule: new edge cases go to SC cards).
 - Never weaken redaction, permissions or security checks to pass a test (A329); never route a refused edit through another worker.
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`.
