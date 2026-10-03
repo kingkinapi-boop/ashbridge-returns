@@ -1,11 +1,10 @@
 {
  "card": "GL3",
  "role": "build",
- "round": 2,
- "spec": "c6ed0a6",
- "worker": "cloud-0ac9e9",
- "state": "reopened",
- "at": "2026-10-03T13:28:37.540Z",
- "mode": "turbo",
- "note": "A476: round 2 after the GL3 spec test: delete 0002_grants.sql line 20, keep line 19, README lines"
+ "round": 3,
+ "spec": "cd78aaf5",
+ "worker": "cloud-84988c",
+ "state": "working",
+ "at": "2026-10-03T13:53:37.648Z",
+ "mode": "turbo"
 }
