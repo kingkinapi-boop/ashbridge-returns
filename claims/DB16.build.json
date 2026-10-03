@@ -4,9 +4,9 @@
  "round": 9,
  "spec": "d69ac553",
  "worker": "cloud-d137a3",
- "state": "hold-findings",
- "at": "2026-10-03T08:01:20.075Z",
+ "state": "reopened",
+ "at": "2026-10-03T08:44:40.363Z",
  "mode": "turbo",
  "beat": "2026-10-03T06:52:18.492Z",
- "note": "FAIL: 4 medium findings (pooled role/settings leaks, index.ts), see reports/DB16-check.md"
+ "note": "final round 5 per A441 directive; spec T1 to T5 reported"
 }
