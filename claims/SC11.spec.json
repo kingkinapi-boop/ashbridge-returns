@@ -1,9 +1,8 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "A455: cloud box (pg16)",
- "worker": "local-2",
- "state": "reopened",
- "at": "2026-10-03T09:53:27.239Z",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T09:54:38.624Z",
  "mode": "turbo"
 }
