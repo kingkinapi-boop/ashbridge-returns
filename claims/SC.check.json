@@ -4,11 +4,11 @@
  "for": "2026-10-03T06:23:57.040Z",
  "worker": "local-1",
  "state": "released",
- "at": "2026-10-03T07:36:19.544Z",
+ "at": "2026-10-03T07:36:39.546Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "e19dcdbd14cb089bfc88339fb4e38abeaf8a9f57"
  },
- "note": "wait-free re-offer: cloud box only (A415: npm test, db, test:flake); local workers skip it",
- "needsLead": true
+ "note": "wait: none for a check; cloud box only (A415: npm test, db, test:flake); local workers skip it",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"F01D\",\"F05M\",\"F09\",\"F09B\"],\"depStatus\":[\"done\",\"done\",\"done\",\"done\"]}"
 }
