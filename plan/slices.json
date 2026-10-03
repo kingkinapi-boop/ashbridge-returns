@@ -3058,7 +3058,7 @@
       "paths": [
         "src/modules/qbo/**",
         "src/contracts/qbo.ts",
-        "db/schema/35_qbo.sql",
+        "db/schema/56_qbo.sql",
         "testworld/qbo/export.ts",
         "src/core/env.ts"
       ],
