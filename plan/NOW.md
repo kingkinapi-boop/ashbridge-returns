@@ -1,37 +1,38 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:25Z by the Lead at handover (Zo's `handover`). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:40Z by the Lead (Zo's `turbo on` 03:20Z; mode already turbo). Times are UTC from `date -u`.
 
 ## State
 
-- **Mode: turbo** (Zo, 2 Oct 15:30Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use about 52% of the week at 21:10Z. Blueprint v1.2.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). At 03:16Z the RemoteTrigger tool dropped out of the Lead session; if it is missing after `go`, workers cannot be fired: say `Blocked` only if it stays missing after a fresh session. Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core only. None running now.
-- **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). No train in flight (plan/train.json landed).
+- **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:30Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core only. One local Opus helper: A06 security review.
+- **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). Train claude/train boarding: A07D.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
-## In flight (no cloud run is working; all jobs below are reported or held)
+## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| A07D | build reported, check PASS (Sonnet); Opus read: 5 findings in reports/A07D-opus-read.md | Lead decides before boarding (A07D has no more rounds: a fallback is a removal, A384) |
-| W00c | build reported: 1975 of 1975, mutation 100; Paths fixed (A392) | check job; then merge W00c into claude/W00b, W00b spec, unblock S00, JH0, B04, SC2 |
-| A06 round 2 | build reported, check PASS (PG16 parity not run) | fresh `/security-review` on claude/A06, then board; then FX2 spec (held on A06), then A04 round 2 spec |
-| SC | spec reported (R34, R47 for A03 recorded); build reopened 03:20Z | build, check, board |
-| CQ2 | check FAIL on scope only (2 files outside Paths, reports/CQ2-check.md) | add the files to Paths if they test CQ2's own code (amber), re-stamp build, re-offer check |
-| A04 | held: round 2 (reports/A04-findings.md, A391, card directive) | reopen spec after A06 lands; then build, check, security review |
-| W16 | spec reported (KNOWN emptied, 5 R8 fail) | build |
-| A08 | spec reported (71 tests; A04 must read A08 refusal files) | build after A04 lands |
+| A07D | on train claude/train 2c59925 (A393: Opus findings to FX4, SC4 R74) | train check when due (hourly or 6 cards) |
+| A06 round 2 | check PASS; local Opus security review fired 03:40Z | board if clean; then FX2 spec, A04 round 2 spec |
+| W00c | build reported; check job open | cloud run; then W00b spec on W00c, S00, JH0, B04, SC2 |
+| SC | build reopened | cloud run |
+| W16 | spec reported | build, cloud run |
+| CQ2 | spec reopened for rule 6 (A394) | spec, build, check |
+| SC4 | startable (A07D built) | spec, then FX4 |
+| A04, A08 | held on A06, then A04 | as before |
+
+Cloud runs fired 03:40Z: 6 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
 
 ## Next, in order
 
-1. Poll claims; fire cloud runs for open jobs (W00c check, SC build, W16 build, A06 security review via a local Opus helper). Board every PASS: scope, GitHub checks green, Opus read for core. One train at a time; land by merging main into the train, code guard, ff main.
-2. A07D Opus read: decide each finding (fix only by removal, else SC4 rule or FX card), then board.
-3. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
-4. A06 lands, then FX2 spec, A04 round 2 spec, SC3, SC5 (R71 to R73).
-5. Phase 3 cards T08, Q00, Q01, I01, I30, I40 rewritten (A390): an independent card review before their first spec. Still to write: the 22 `todo` cards `node tools/next.mjs` lists.
-6. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
-7. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
-8. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
+1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
+2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
+3. A06 lands, then FX2 spec, A04 round 2 spec, SC3, SC5 (R71 to R73).
+4. Phase 3 cards T08, Q00, Q01, I01, I30, I40 rewritten (A390): an independent card review before their first spec. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00 X01 V02 V03 V04 V09 first).
+5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
+6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
+7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
 
 ## Splits (last rounds)
 
