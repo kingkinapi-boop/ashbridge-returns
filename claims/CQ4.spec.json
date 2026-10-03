@@ -1,10 +1,10 @@
 {
  "card": "CQ4",
  "role": "spec",
- "note": "4 R82 tests, refit on 0f7e1cc4",
+ "note": "A430: spec patch per reports/CQ4-findings.md; see bold directive",
  "worker": "cloud-adefa2",
- "state": "reported",
- "at": "2026-10-03T05:59:20.798Z",
+ "state": "reopened",
+ "at": "2026-10-03T06:48:19.193Z",
  "mode": "turbo",
  "commit": "78fbaf82",
  "validated": "0f7e1cc49f6489857b33bf1c64612182d36005bf"
