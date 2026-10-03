@@ -1,11 +1,8 @@
 {
  "card": "FX5",
  "role": "spec",
- "worker": "cloud-7e015b",
- "state": "reopened",
- "at": "2026-10-03T03:47:59.044Z",
- "mode": "turbo",
- "note": "A402: gaps in reports/FX5-spec-review.md; see bold directive on the card",
- "commit": "ad79731d",
- "validated": "f96bb895"
+ "worker": "local-2",
+ "state": "working",
+ "at": "2026-10-03T03:48:42.544Z",
+ "mode": "turbo"
 }
