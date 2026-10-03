@@ -1,10 +1,10 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 14:10Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 13:26Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
-- **Mode: normal** (Reviewer SLOW 13:15Z; `resume_to` turbo on Zo's "turbo on"). Today is past normal's 40 dispatches: no new worker, cloud run or helper before 00:00Z; in-flight jobs finish. Review findings 1, 2, 5, 8 done 14:10Z (A477). Plan use 69% of the week (Critic 13:00Z).
+- **Mode: turbo** (Zo, "turbo on" 13:26Z, after the Reviewer's SLOW of 13:15Z; findings 1, 2, 5, 8 done 13:25Z, A477; Reviewer's "apply all" fixes in, b783ae76). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 69% of the week (Critic 13:00Z).
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims). Laptop: up to 3 local workers (decision 0026; heavy_slots 2).
 - **Landed (54):** through DB16 (train 65f59a22, 12:15Z as dc36b33d). Train df6f1249 (FX15, CQ7, CQ6) checking (cloud-9e54a6). Red reports 1103 and 1221 now on main.
 - **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027, applied 13:15Z): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 14:10Z by the Lea
 | SC10 | spec reported; build after CQ6 lands | build, check |
 | SC6, FX3, SC8 | waits met: SC6, FX3 specs and SC8 build reopened (A477) | specs, build |
 | JH0, S00, B04, SC2 | wait for W00c | builds after W00c lands |
-| Design lane | plan reports/design-lane-2026-10-03.md (A475) | 00:00Z: base branch claude/design-base, brief re-check; then designers D13 with D04, D03, D02; sitting Tue 6 Oct |
+| Design lane | plan reports/design-lane-2026-10-03.md (A475) | base branch claude/design-base and brief re-check now; then designers D13 with D04, D03, D02; sitting Tue 6 Oct |
 
 Local: local-2 CQ10 spec, local-4 CQ8 check; then `npm ci` in the main checkout.
 
@@ -36,7 +36,7 @@ Local: local-2 CQ10 spec, local-4 CQ8 check; then `npm ci` in the main checkout.
 
 1. Poll claims; land the train if green; board FX5 and every PASS; request a train hourly or at 6 cards.
 2. W00c lands, then W00b, S00, JH0, B04, SC2; SK0, W01 to W13, W20, I40 follow.
-3. 00:00Z (new day's cap) or Zo's "turbo on": design lane jobs, then cloud runs for the open builds.
+3. Design lane jobs; cloud runs for the open builds; Reviewer's open items (claim.mjs check-name rule, metrics fields, next.mjs offers) to CQ11, `expect.hasAssertions()` and a G-family sample sweep carded.
 4. Phase 3 and 4 card fixes (A437, A438, A447); go-live reds wait for the go-live questions.
 5. Taxprep: fold O8 into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 6. Critic about 5 Oct; Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
