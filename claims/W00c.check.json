@@ -2,11 +2,10 @@
  "card": "W00c",
  "role": "check",
  "for": "2026-10-03T08:21:09.951Z",
- "worker": "local-1",
- "state": "released",
- "at": "2026-10-03T08:53:55.821Z",
+ "worker": "cloud-3014c0",
+ "state": "working",
+ "at": "2026-10-03T08:54:53.208Z",
  "mode": "turbo",
- "note": "cloud-only check (card Where: cloud; full checker needs Stryker, test:flake, Postgres 16); local-1 cannot run it, offer to a cloud worker",
  "lastRelease": {
   "tip": "ddcccdd8cb6360552c5c571636b456521705684e"
  }
