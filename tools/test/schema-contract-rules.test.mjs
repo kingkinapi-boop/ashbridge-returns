@@ -35,14 +35,16 @@ const KNOWN_REL = `${FIX_REL}/known.json`
 const KNOWN = JSON.parse(read(KNOWN_REL)).unit
 const KNOWN_KEYS = new Set(['rule', 'file', 'problems', 'owner', 'why'])
 const CLOSED = new Set(['done', 'parked'])
-// Only a fix card may own a KNOWN entry (spec review 3 gap 1, A415): a card can never name itself the owner of a
-// defect it brings and land with it.
-const FIX_CARDS = new Set(['FX3', 'FX4', 'FX5', 'FX6', 'FX7', 'FX8', 'FX9'])
+// Every KNOWN entry has an owner card that will retire it (spec review 3 gap 1, A415, made exact by A467): the owner is
+// a card id in plan/slices.json whose status is open (not done, not parked) and whose card file plan/cards/<id>.md
+// exists. An empty owner, a closed card or an id with no card is refused, naming the row.
+const cardFileRel = (id) => `plan/cards/${id}.md`
 // Read only by the two real-data tests (known.json and PENDING); every plant test passes PINNED_STATUSES instead, so a
 // card landing or parking never changes what a rule test expects (spec review 3 gap 2).
 const cardStatuses = () => new Map(JSON.parse(read('plan/slices.json')).cards.map((c) => [c.id, c.status]))
 const PINNED_STATUSES = new Map([
   ['FX3', 'carded'], ['FX4', 'carded'], ['FX6', 'done'], ['FX7', 'carded'], ['FX9', 'carded'], ['W16', 'carded'], ['A07D', 'done'], ['B04', 'carded'],
+  ['SC', 'done'], ['W00b', 'carded'], ['P99 (Test)', 'parked'], ['Q99 (Test)', 'carded'],
 ])
 /** The path a problem string leads with (up to "#" or ": "), when it leads with one. */
 const leadingPath = (p) => /^([^\s:#"]+\/[^:#]*?)(?:#|: )/.exec(p)?.[1] ?? null
@@ -69,11 +71,11 @@ function noFileHome(rule, problem, rows = NO_FILE_HOMES) {
 let walkedFiles
 const walkedFileOk = (f) => (walkedFiles ??= new Set(walk(''))).has(f)
 /**
- * The KNOWN shape (A407): one file, one rule, a non-empty list of literal strings, an open fix-card owner; every rule
+ * The KNOWN shape (A407): one file, one rule, a non-empty list of literal strings, an open owner card (A467); every rule
  * named is one whose test reads KNOWN; no string twice. `fileOk` says whether the file is real; `subjectOf` gives the
  * file a problem string names (null: it names none, and `homeOf` gives the file its rule files it under).
  */
-function knownShapeProblems(entries, { statuses, rules, fileOk, subjectOf, homeOf = noFileHome }) {
+function knownShapeProblems(entries, { statuses, rules, fileOk, subjectOf, cardFileOk, homeOf = noFileHome }) {
   const problems = []
   const seen = new Set()
   entries.forEach((k, i) => {
@@ -102,10 +104,11 @@ function knownShapeProblems(entries, { statuses, rules, fileOk, subjectOf, homeO
         else if (typeof k.file !== 'string' || !globToRe(home).test(k.file)) problems.push(`${at}: the problem names no file, and ${String(k.rule)} files it under ${home}`)
       }
     }
-    if (typeof k.owner !== 'string' || !FIX_CARDS.has(k.owner)) problems.push(`${at}: the owner ${JSON.stringify(k.owner)} is not a fix card (FX3 to FX9)`)
     const status = typeof k.owner === 'string' ? statuses.get(k.owner) : undefined
-    if (status === undefined) problems.push(`${at}: the owner ${JSON.stringify(k.owner)} is not a card in plan/slices.json`)
+    if (typeof k.owner !== 'string' || k.owner.trim() === '') problems.push(`${at}: the owner ${JSON.stringify(k.owner)} is empty or not a card id`)
+    else if (status === undefined) problems.push(`${at}: the owner ${JSON.stringify(k.owner)} is not a card in plan/slices.json`)
     else if (CLOSED.has(status)) problems.push(`${at}: the owner ${String(k.owner)} is ${String(status)}, so it can never fix the defect`)
+    else if (!cardFileOk(k.owner)) problems.push(`${at}: the owner ${String(k.owner)} has no card file ${cardFileRel(k.owner)}`)
   })
   return problems
 }
@@ -1670,14 +1673,16 @@ function xmlAndToleranceProblems(files, readFile) {
 // =====================================================================================================
 const THIS_FILE = 'tools/test/schema-contract-rules.test.mjs'
 const UNIT_RULES = () => new Set([...read(THIS_FILE).matchAll(/onlyKnown\('([^']+)'/g)].map((m) => m[1]))
-const UNIT_SHAPE = () => ({ statuses: cardStatuses(), rules: UNIT_RULES(), fileOk: walkedFileOk, subjectOf: leadingPath })
+const UNIT_SHAPE = () => ({ statuses: cardStatuses(), rules: UNIT_RULES(), fileOk: walkedFileOk, subjectOf: leadingPath, cardFileOk: (id) => walkedFileOk(cardFileRel(id)) })
 // The plant tests' shape: pinned statuses, the rules this file reads KNOWN for, and a pinned file list (exact case).
 const PLANT_FILES = new Set([
   'src/contracts/jobs.ts', 'src/contracts/reading.ts', 'src/contracts/facts.ts', 'src/contracts/ai.ts', 'src/contracts/taxprep.ts',
   'src/modules/lifecycle/index.ts', 'src/modules/sheets/xlsx/index.ts', 'src/modules/sheets/index.ts', 'src/modules/ocr/textlayer/index.ts',
   'reference/sample-clients/01-maple-ridge/answer-key.json',
 ])
-const PLANT_SHAPE = () => ({ statuses: PINNED_STATUSES, rules: UNIT_RULES(), fileOk: (f) => PLANT_FILES.has(f), subjectOf: leadingPath })
+// Pinned card files for the plant tests: every pinned card has one except Q99 (Test), an open card with no card file.
+const PLANT_CARD_FILES = new Set([...PINNED_STATUSES.keys()].filter((id) => id !== 'Q99 (Test)'))
+const PLANT_SHAPE = () => ({ statuses: PINNED_STATUSES, rules: UNIT_RULES(), fileOk: (f) => PLANT_FILES.has(f), subjectOf: leadingPath, cardFileOk: (id) => PLANT_CARD_FILES.has(id) })
 const R18_TEXT = 'a core card lists it, but it has no // @mutate in its first 5 lines'
 const R45_TRANSIT = 'sensitiveKindForKey("corp.bank.bank_transit") is "none"'
 
@@ -1702,7 +1707,6 @@ describe('SC KNOWN, PENDING and scans: every exemption is exact, owned and alive
       'KNOWN[4] R18 src/(contracts|modules)/jobs.ts: the file is not one plain path',
       'KNOWN[4] R18 src/(contracts|modules)/jobs.ts: the problem names no file and NO_FILE_HOMES has no row for R18',
       'KNOWN[5] R16 src/modules/lifecycle/index.ts: the owner FX6 is done, so it can never fix the defect',
-      'KNOWN[6] R46 src/modules/sheets/xlsx/index.ts: the owner "FX3 spec job" is not a fix card (FX3 to FX9)',
       'KNOWN[6] R46 src/modules/sheets/xlsx/index.ts: the owner "FX3 spec job" is not a card in plan/slices.json',
       'KNOWN[7] R99 src/contracts/no-such-file (Test).ts: the rule is not one whose test reads KNOWN',
       'KNOWN[7] R99 src/contracts/no-such-file (Test).ts: the file does not exist',
@@ -1711,12 +1715,31 @@ describe('SC KNOWN, PENDING and scans: every exemption is exact, owned and alive
     ])
     expect(knownShapeProblems([clean], PLANT_SHAPE())).toEqual([])
   })
-  test('ARC-15 KNOWN owner rule (gap 1): a planted entry owned by an open card that is not a fix card (W16) is caught; FX3 to FX9 pass', () => {
+  test('ARC-15 KNOWN owner rule (A467): a planted entry owned by a done card (SC), a card id that does not exist (FX99) or an empty owner is refused naming the row; open cards with a card file pass', () => {
     const entry = (owner) => ({ rule: 'R18', file: 'src/contracts/jobs.ts', problems: [`src/contracts/jobs.ts: ${R18_TEXT}`], owner })
-    expect(knownShapeProblems([entry('W16')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner "W16" is not a fix card (FX3 to FX9)'])
-    expect(knownShapeProblems([entry('B04')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner "B04" is not a fix card (FX3 to FX9)'])
-    for (const fx of ['FX3', 'FX4', 'FX7', 'FX9']) expect(knownShapeProblems([entry(fx)], PLANT_SHAPE()), fx).toEqual([])
-    expect([...FIX_CARDS]).toEqual(['FX3', 'FX4', 'FX5', 'FX6', 'FX7', 'FX8', 'FX9'])
+    expect(knownShapeProblems([entry('SC')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner SC is done, so it can never fix the defect'])
+    expect(knownShapeProblems([entry('FX99')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner "FX99" is not a card in plan/slices.json'])
+    expect(knownShapeProblems([entry('')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner "" is empty or not a card id'])
+    expect(knownShapeProblems([entry(' ')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner " " is empty or not a card id'])
+    const { owner: _dropped, ...noOwner } = entry('FX3')
+    expect(knownShapeProblems([noOwner], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner undefined is empty or not a card id'])
+    // The row is named by its index: a bad owner in the third row names KNOWN[2] only.
+    expect(knownShapeProblems([entry('FX3'), { ...entry('W00b'), file: 'src/contracts/facts.ts', problems: ['src/contracts/facts.ts: planted (Test)'] }, { ...entry('SC'), file: 'src/contracts/ai.ts', problems: ['src/contracts/ai.ts: planted (Test)'] }], PLANT_SHAPE())).toEqual([
+      'KNOWN[2] R18 src/contracts/ai.ts: the owner SC is done, so it can never fix the defect',
+    ])
+    expect(knownShapeProblems([entry('P99 (Test)')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner P99 (Test) is parked, so it can never fix the defect'])
+    expect(knownShapeProblems([entry('Q99 (Test)')], PLANT_SHAPE())).toEqual(['KNOWN[0] R18 src/contracts/jobs.ts: the owner Q99 (Test) has no card file plan/cards/Q99 (Test).md'])
+    for (const open of ['FX3', 'FX4', 'FX7', 'FX9', 'W00b', 'W16', 'B04']) expect(knownShapeProblems([entry(open)], PLANT_SHAPE()), open).toEqual([])
+  })
+  test('ARC-15 KNOWN owner rule (A467): the real-data check reads plan/slices.json and the walked card files', () => {
+    const shape = UNIT_SHAPE()
+    expect(shape.cardFileOk('SC')).toBe(true)
+    expect(shape.cardFileOk('FX99')).toBe(false)
+    expect(shape.cardFileOk('sc')).toBe(false)
+    expect(shape.statuses.get('SC')).toBe('done')
+    expect(knownShapeProblems([{ rule: 'R18', file: 'src/contracts/jobs.ts', problems: [`src/contracts/jobs.ts: ${R18_TEXT}`], owner: 'SC' }], shape)).toEqual([
+      'KNOWN[0] R18 src/contracts/jobs.ts: the owner SC is done, so it can never fix the defect',
+    ])
   })
   test('ARC-15 KNOWN file rule (gap 3): a planted R45 string filed under src/contracts/reading.ts, a no-file string with no NO_FILE_HOMES row and a wrong-case file are caught', () => {
     const planted = [

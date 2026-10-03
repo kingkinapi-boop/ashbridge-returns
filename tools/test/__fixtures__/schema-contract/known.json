@@ -966,6 +966,33 @@
       ],
       "owner": "FX4",
       "why": "a raw-XML regex that misses a self-closed element"
+    },
+    {
+      "rule": "R28",
+      "file": "testworld/model/guard.ts",
+      "problems": [
+        "testworld/model/guard.ts: defines its own amount pattern (/\\(\\\\{1,2}d\\{3\\}\\)/); import from src/contracts/amount-grammar.ts"
+      ],
+      "owner": "W00b",
+      "why": "PHONE10 and NINE_DIGITS capture groups (\\d{3}) are a phone or SIN shape, not an amount; W00b's guard rewrite settles it, never by dodging the scanner (A463 row 2, A467)"
+    },
+    {
+      "rule": "R51",
+      "file": "testworld/clients/load.ts",
+      "problems": [
+        "testworld/clients/load.ts: reads data files without guardFolder or guardValue (SEC-11)"
+      ],
+      "owner": "W00b",
+      "why": "guardFolder and guardValue do not exist until W00b, which wires the loader through them and deletes this row (A463 row 11, A467)"
+    },
+    {
+      "rule": "R51",
+      "file": "testworld/generate.ts",
+      "problems": [
+        "testworld/generate.ts: reads data files without guardFolder or guardValue (SEC-11)"
+      ],
+      "owner": "W00b",
+      "why": "guardFolder and guardValue do not exist until W00b, which wires the generator through them and deletes this row (A463 row 11, A467)"
     }
   ],
   "db": [
