@@ -9,7 +9,7 @@ Tags: core, security (stand-ins in production, once-only and at-most-N rules, ap
 Paths: tools/test/security-rules.test.mjs, src/modules/auth/testusers/engine.ts, src/contracts/security-rules.db.test.ts, tools/test/__fixtures__/security-rules/**
 Clauses: SEC-11, ARC-6, ARC-20, FLOW-1, ARC-15
 Read: `reports/A06-findings.md` ("Rule tests for everywhere", risks), `reports/A06-security.md`, `plan/cards/SC.md` (rule style, R26 registry), `.claude/rules/testing.md`.
-Spec commit: 155938f2 (refit, validated on main d19d4bc5)
+Spec commit: d69c50b1 (patch A452, validated on main 46ab96ea)
 
 ## Goal
 The three causes behind A06's security findings, made rules that run on every adapter, every once-only or limited export and every append-only table, so later cards (F06, F10, E00, E01, L00, N00, Q00, V00, GL1) cannot bring them back.
