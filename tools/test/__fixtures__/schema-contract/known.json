@@ -817,15 +817,6 @@
       "why": "a private blank rule; go through src/contracts/text.ts"
     },
     {
-      "rule": "R45",
-      "file": "src/contracts/facts.ts",
-      "problems": [
-        "sensitiveKindForKey(\"corp.identity.business_number\") is \"none\""
-      ],
-      "owner": "FX7",
-      "why": "the sensitive-key rule misses this key"
-    },
-    {
       "rule": "R46",
       "file": "src/modules/sheets/xlsx/index.ts",
       "problems": [

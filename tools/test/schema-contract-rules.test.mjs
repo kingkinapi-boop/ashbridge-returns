@@ -2130,15 +2130,28 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
     expect(onlyKnown('R41', blankRuleProblems(files, read))).toEqual([])
   })
 
-  test('SEC-4 R45 the sensitive-key name rule covers bank transit, institution and account numbers, date of birth, SIN and business number', async () => {
+  // A511 (3 Oct): business numbers are not sensitive (SEC-4 does not list them; data/facts/catalogue.json marks the key
+  // "none"), so corp.identity.business_number left this list and stays "none".
+  const R45_SENSITIVE_KEYS = [
+    'corp.bank.bank_transit', 'corp.bank.institution_no', 'corp.bank.account_number', 'owner.person.dob',
+    'owner.person.date_of_birth', 'owner.person.sin', 'corp.bank.transit_number',
+  ]
+  const r45Problems = (sensitiveKindForKey) =>
+    R45_SENSITIVE_KEYS.filter((k) => sensitiveKindForKey(k) === 'none').map((k) => `sensitiveKindForKey("${k}") is "none"`)
+  test('SEC-4 R45 rule: a planted name rule that misses SIN (or every key) is caught, key by key', () => {
+    const missesSin = (k) => (k.endsWith('.sin') ? 'none' : 'sin')
+    expect(r45Problems(missesSin)).toEqual(['sensitiveKindForKey("owner.person.sin") is "none"'])
+    expect(r45Problems(() => 'none')).toHaveLength(R45_SENSITIVE_KEYS.length)
+    expect(r45Problems(() => 'sin')).toEqual([])
+  })
+  test('SEC-4 R45 the sensitive-key name rule covers bank transit, institution and account numbers, date of birth and SIN', async () => {
     const { sensitiveKindForKey } = await load('src/contracts/facts.ts')
-    const keys = [
-      'corp.bank.bank_transit', 'corp.bank.institution_no', 'corp.bank.account_number', 'owner.person.dob',
-      'owner.person.date_of_birth', 'owner.person.sin', 'corp.identity.business_number', 'corp.bank.transit_number',
-    ]
-    const problems = keys.filter((k) => sensitiveKindForKey(k) === 'none').map((k) => `sensitiveKindForKey("${k}") is "none"`)
     expect(sensitiveKindForKey('corp.identity.legal_name')).toBe('none')
-    expect(onlyKnown('R45', problems)).toEqual([])
+    expect(onlyKnown('R45', r45Problems(sensitiveKindForKey))).toEqual([])
+  })
+  test('SEC-4 R45 a business number is not sensitive (A511): corp.identity.business_number stays "none"', async () => {
+    const { sensitiveKindForKey } = await load('src/contracts/facts.ts')
+    expect(sensitiveKindForKey('corp.identity.business_number')).toBe('none')
   })
   test('SEC-4 R45 the fact catalogue loader refuses duplicate enum options', async () => {
     const { loadFactCatalogue } = await load('src/contracts/facts.ts')
