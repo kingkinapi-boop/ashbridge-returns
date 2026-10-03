@@ -1,9 +1,11 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: 14 tests, 3 fail by design",
  "worker": "cloud-286042",
- "state": "working",
- "at": "2026-10-03T06:35:23.152Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T06:44:13.268Z",
+ "mode": "turbo",
+ "commit": "edf23e0",
+ "validated": "d19d4bc"
 }
