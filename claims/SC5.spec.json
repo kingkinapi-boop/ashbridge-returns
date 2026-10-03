@@ -2,10 +2,12 @@
  "card": "SC5",
  "role": "spec",
  "worker": "cloud-65d267",
- "state": "working",
- "at": "2026-10-03T08:10:13.334Z",
+ "state": "released",
+ "at": "2026-10-03T08:10:21.165Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "none"
- }
+ },
+ "note": "wait: deps SC and A04 not landed; see reports/SC5-spec.md",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\",\"A06\",\"FX2\"],\"depStatus\":[\"carded\",\"done\",\"done\"]}"
 }
