@@ -2,10 +2,8 @@
  "card": "W00c",
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
- "worker": "cloud-944d6f",
- "state": "reopened",
- "at": "2026-10-03T23:38:22.893Z",
- "mode": "turbo",
- "beat": "2026-10-03T23:22:39.941Z",
- "note": "A533: continue: json-keys.ts first; 5 s timeout in pass 1; line-range shards"
+ "worker": "cloud-331e27",
+ "state": "working",
+ "at": "2026-10-03T23:43:09.767Z",
+ "mode": "turbo"
 }
