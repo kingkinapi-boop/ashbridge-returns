@@ -2,8 +2,7 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-c447a8",
- "state": "released",
- "at": "2026-10-03T03:26:02.045Z",
- "mode": "turbo",
- "note": "no code base: W00b builds on W00c (check still open, not merged); refit after W00c lands"
+ "state": "working",
+ "at": "2026-10-03T03:26:04.380Z",
+ "mode": "turbo"
 }
