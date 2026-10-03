@@ -132,18 +132,37 @@ describe('F07 one clean company becomes one return (END-1)', () => {
 })
 
 describe('F07 what the client app leaves unclear is never guessed (END-1)', () => {
-  test('END-1 a year end the client never confirmed becomes an ops-confirms item and no return', async () => {
-    for (const over of [{ financial_year_end_confirmed: false }, { financial_year_end: null }]) {
-      const db = await cloneTestDb()
-      const entity = company(1, over)
-      const res = await runBridge(db, snapshot(entity))
-      expect(res.created).toEqual([])
-      expect(res.items).toHaveLength(1)
-      expect(res.items[0]).toMatchObject({ kind: 'year_end_unconfirmed', corporationId: entity.corporation?.id, taxYear: 2025 })
-      expect(await count(db, 'returns')).toBe(0)
-      expect(await listBridgeReturns(db)).toEqual([])
-      expect(await listOpsItems(db)).toHaveLength(1)
-    }
+  // FX14 (A504): one database per test, so each kind of unclear year end is its own test.
+  async function unclearYearEnd(over: NonNullable<Parameters<typeof company>[1]>): Promise<void> {
+    const db = await cloneTestDb()
+    const entity = company(1, over)
+    const res = await runBridge(db, snapshot(entity))
+    expect(res.created).toEqual([])
+    expect(res.items).toHaveLength(1)
+    expect(res.items[0]).toMatchObject({ kind: 'year_end_unconfirmed', corporationId: entity.corporation?.id, taxYear: 2025 })
+    expect(await count(db, 'returns')).toBe(0)
+    expect(await listBridgeReturns(db)).toEqual([])
+    expect(await listOpsItems(db)).toHaveLength(1)
+  }
+
+  test('END-1 a year end the client never confirmed (flag false) becomes an ops-confirms item and no return', async () => {
+    await unclearYearEnd({ financial_year_end_confirmed: false })
+  })
+
+  test('END-1 a year end the client never gave (null) becomes an ops-confirms item and no return', async () => {
+    await unclearYearEnd({ financial_year_end: null })
+  })
+
+  test('END-1 a T2 engagement with no tax year becomes a tax_year_missing ops item naming it, and no return is guessed', async () => {
+    const db = await cloneTestDb()
+    const entity = company(1, {}, [null])
+    const res = await runBridge(db, snapshot(entity))
+    expect(res.created).toEqual([])
+    expect(res.items).toHaveLength(1)
+    expect(res.items[0]).toMatchObject({ kind: 'tax_year_missing', corporationId: entity.corporation?.id, taxYear: null })
+    expect(JSON.stringify(res.items[0])).toContain(entity.engagements[0]?.id)
+    expect(await count(db, 'returns')).toBe(0)
+    expect(await listBridgeReturns(db)).toEqual([])
   })
 
   test('END-1 unfiled years held only as text become an ops-confirms item, and no return is guessed for them', async () => {
@@ -336,13 +355,18 @@ describe('F07 client_ref (RT-5, onboarding contract U6)', () => {
     expect((await listBridgeReturns(db)).map((r) => r.clientRef)).toEqual(['ASH-0001', 'ASH-0002'])
   })
 
-  test('RT-5 the number is never built from client data: names, business numbers and quote references change nothing', async () => {
-    const dbA = await cloneTestDb()
-    const dbB = await cloneTestDb()
-    await runBridge(dbA, snapshot(company(1, { legal_name: 'Alpha 123456789 Inc. (Test)', business_number: '123456789' })))
-    await runBridge(dbB, snapshot(company(1, { legal_name: 'Zeta Inc. (Test)', business_number: '987654321' })))
-    expect((await listClientRefs(dbA))[0]?.clientRef).toBe('ASH-0001')
-    expect((await listClientRefs(dbB))[0]?.clientRef).toBe('ASH-0001')
+  // FX14 (A504): one database per test. The old test ran two companies with different names and numbers in two
+  // worlds and compared; now each world is its own test and both must give the same fixed first number.
+  test('RT-5 the number is never built from client data: a name that holds digits and a business number still get ASH-0001', async () => {
+    const db = await cloneTestDb()
+    await runBridge(db, snapshot(company(1, { legal_name: 'Alpha 123456789 Inc. (Test)', business_number: '123456789' })))
+    expect((await listClientRefs(db))[0]?.clientRef).toBe('ASH-0001')
+  })
+
+  test('RT-5 the number is never built from client data: a different name and a different business number also get ASH-0001', async () => {
+    const db = await cloneTestDb()
+    await runBridge(db, snapshot(company(1, { legal_name: 'Zeta Inc. (Test)', business_number: '987654321' })))
+    expect((await listClientRefs(db))[0]?.clientRef).toBe('ASH-0001')
   })
 
   test('RT-5 numbering goes on past 9999 with more digits', async () => {
@@ -379,35 +403,43 @@ describe('F07 client_ref (RT-5, onboarding contract U6)', () => {
     expect(await rows(db, 'select client_ref from returns.client_refs')).toEqual([{ client_ref: 'ASH-0001' }])
   })
 
-  test('RT-5 property (fixed seed): any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
-    const pool = [1, 2, 3, 4, 5, 6]
-    const runArb = fc.shuffledSubarray(pool, { minLength: 1, maxLength: 6 })
-    await fc.assert(
-      fc.asyncProperty(fc.array(runArb, { minLength: 1, maxLength: 4 }), async (runs) => {
-        const db = await cloneTestDb()
-        try {
-          const expected = new Map<string, string>()
-          for (const run of runs) {
-            await runBridge(db, snapshot(...run.map((n) => company(n))))
-            for (const n of run) {
-              if (!expected.has(uuid(100 + n))) expected.set(uuid(100 + n), `ASH-${String(expected.size + 1).padStart(4, '0')}`)
-            }
-            const refs = await listClientRefs(db)
-            // stable: every ref seen so far equals what first sight gave it
-            expect(new Map(refs.map((r) => [r.corporationId, r.clientRef]))).toEqual(expected)
-            expect(new Set(refs.map((r) => r.clientRef)).size).toBe(refs.length)
-          }
-          // two returns of one corporation share its ref: here one return per corporation, carrying that ref
-          const list = await listBridgeReturns(db)
-          expect(list).toHaveLength(expected.size)
-          for (const r of list) expect(r.clientRef).toBe(expected.get(r.corporationId))
-        } finally {
-          await db.close()
+  // FX14 (A504): the property ran 8 generated sequences of runs, one clone each, in one test (4506 ms of 6000).
+  // The same 8 sequences (seed 20261002, 8 runs, same generator) are now drawn once and each is its own test
+  // with its own one world, so no test is over half the budget and no run is dropped.
+  const SEED = 20261002
+  const RUNS = 8
+  const sequences = fc
+    .sample(fc.array(fc.shuffledSubarray([1, 2, 3, 4, 5, 6], { minLength: 1, maxLength: 6 }), { minLength: 1, maxLength: 4 }), { seed: SEED, numRuns: RUNS })
+    .map((runs, i) => ({ n: i + 1, runs }))
+
+  test('RT-5 property draws exactly the pinned 8 sequences from the fixed seed', () => {
+    expect(SEED).toBe(20261002)
+    expect(sequences).toHaveLength(8)
+    for (const s of sequences) expect(s.runs.length).toBeGreaterThanOrEqual(1)
+  })
+
+  test.each(sequences)(
+    'RT-5 property (fixed seed 20261002, sequence $n of 8): any order of runs gives unique, stable, contiguous refs numbered in order of first sight',
+    async ({ runs }) => {
+      const db = await cloneTestDb()
+      const expected = new Map<string, string>()
+      for (const run of runs) {
+        await runBridge(db, snapshot(...run.map((n) => company(n))))
+        for (const n of run) {
+          if (!expected.has(uuid(100 + n))) expected.set(uuid(100 + n), `ASH-${String(expected.size + 1).padStart(4, '0')}`)
         }
-      }),
-      { seed: 20261002, numRuns: 8 },
-    )
-  }, 120_000)
+        const refs = await listClientRefs(db)
+        // stable: every ref seen so far equals what first sight gave it
+        expect(new Map(refs.map((r) => [r.corporationId, r.clientRef]))).toEqual(expected)
+        expect(new Set(refs.map((r) => r.clientRef)).size).toBe(refs.length)
+      }
+      // two returns of one corporation share its ref: here one return per corporation, carrying that ref
+      const list = await listBridgeReturns(db)
+      expect(list).toHaveLength(expected.size)
+      for (const r of list) expect(r.clientRef).toBe(expected.get(r.corporationId))
+    },
+    60_000,
+  )
 })
 
 describe('F07 the hand-off table (ARC-2)', () => {

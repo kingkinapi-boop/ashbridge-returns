@@ -2,7 +2,7 @@
 
 Phase 4. Size L. Deps: A01, A02, A04, A05, A06, A08, B04, SC3, SC5, SC11, FX7, FX10, FX11, FX13. Where: cloud (Postgres 16 for the lock-out and pool tests; security: `/security-review` before boarding).
 Tags: security (the one switch between made-up and real data; stand-ins refuse real data and live engines refuse until go-live; no key in the repo; staff sign-in), core (permissions).
-Paths: src/modules/live/**, src/core/env.ts, src/core/golive.ts, src/core/engines.ts, src/instrumentation.ts, src/modules/auth/**, src/modules/ai/runner/**, src/modules/ai/project/**, src/modules/ocr/index.ts, src/modules/storage/**, src/modules/qbo/**, data/live/**, tools/golive-check.mjs
+Paths: src/modules/live/**, src/core/env.ts, src/core/golive.ts, src/core/engines.ts, src/instrumentation.ts, src/modules/auth/**, src/modules/ai/runner/**, src/modules/ai/project/**, src/modules/ocr/index.ts, src/modules/storage/**, src/modules/qbo/**, data/live/**, tools/golive-check.mjs, tools/test/__fixtures__/security-rules/harness.ts, tools/test/security-rules.test.mjs (A491)
 Clauses: ARC-6, END-8, LIVE-3, SEC-9, ARC-20, SEC-1, SEC-10, SEC-11, LIVE-5, AI-7
 Read: blueprint 09 (ARC-6 and its adapter table, ARC-20, ARC-22), 10 (LIVE-3, LIVE-5, LIVE-9), 08 (SEC-1, SEC-9, SEC-10, SEC-11), 00 (END-8), `.claude/rules/code.md` (the pooled-connection rule, A441), `reports/A06-findings.md` (RC1, RC2, fix 5 and 6), `reports/A06-security-review.md` (the `is_test` default and READ COMMITTED notes), `reports/FX2-security.md` (NODE_ENV unset), `reports/A04-findings.md` (RC3: `GO_LIVE_ON` removed), `plan/cards/A01.md`, `A02.md`, `A04.md`, `A05.md`, `A06.md`, `A08.md`, `B04.md` (each engine switch and its live slot), `plan/cards/SC3.md` (R62, R63, R64, R65), `plan/cards/SC5.md` (R72, R88), `plan/cards/SC11.md` (R90 to R92), `src/core/env.ts`.
 Spec commit: (spec-writer fills)
@@ -40,3 +40,21 @@ By a third worker (Opus read): acceptance tests unchanged since the spec commit,
 
 ## Not in this card
 Turning go-live on, adding real staff, connecting any real service or database (LIVE items, each Zo's yes). Choosing vendors and the OCR benchmark (LIVE-3, GL6). The live schema migration (GL2). Two-factor enrolment screens (a V card at go-live). LIVE-8: the go-live run reruns the J journeys with the live engines in test mode; JH0's harness takes the engine settings as input.
+
+## The second-reader rule (A491, 3 Oct)
+SC3's second-reader rule (G5) refuses a second file that names a registered `*_ENGINE` setting, and its NOT_SETTINGS list is pinned in tools/test/security-rules.test.mjs. engines.ts and golive.ts take setting names from env.ts's export and never spell a `*_ENGINE` name; if one must, GL1's spec adds it to NOT_SETTINGS with its reason (reports/SC3-security-2.md (on claude/SC3, on main once SC3 lands), item 4). Paths gain the two rule files.
+
+## Exchange files after a job (A492, 3 Oct)
+Returns does not delete a finished AI job's exchange files today (the stand-in keeps them for tests). Who deletes them before go-live, and when, is asked with the go-live questions: it is the retention of client data in the exchange folder, so it may be red then.
+
+## The live bridge reader (A498, 3 Oct)
+The live bridge reader is not carded yet. When it is, it refuses a marker answer row holding anything but `given` (GL3's views mask them; this is the second lock).
+
+## Also (A504, SC3's findings review 1, 3 Oct)
+- SC3 leaves two R62-inventory KNOWN entries for createAiRunner owned by this card: delete them when the runner calls `assertEngineAllowed`, and list createAiRunner as a factory or a registry-gated adapter.
+- Register Taxprep's simulator (S00's createSimulator, ARC-6's Taxprep stand-in) in the engine registry; delete any KNOWN entry for it that SC3 or S00 left with this card as owner.
+- Rule test, the ARC-6 anchor: every ARC-6 adapter row has registered engines and a gated factory. Plant: the Taxprep row with none.
+
+## Also (A525, GL3 read 5, 3 Oct)
+- The reach probe also reports role attributes (superuser, bypassrls, createrole); for every table a role can select, whether row security is on and which policies apply; and default privileges in each schema that name the role or PUBLIC. Plants: a reader role with bypassrls; an extra permissive policy on a handoff table; row security switched off; a default privilege in the bridge schema handing later views to anon. Each must fail the reach check (today they pass probeReach plus reachDiff and are caught only by stand-in tests and README words).
+- View dependencies follow reads through functions and views in other schemas. Plant: a bridge view reading a table through a function in another schema.

@@ -47,12 +47,17 @@
 // line after CLAIMED and cannot be reported without a new --commit; a job released twice with no new commit on
 // origin/claude/<card> between the two releases is held ("needs Lead") until the Lead reopens it.
 //
+// CQ8 (ARC-15): a build whose Paths overlap a working or reported build (or a working spec) of another
+// card is never offered (tools/next.mjs lists it as "<card> waiting on paths: <holder>"); the Lead reopens a
+// check (`update <card> check reopened --worker lead`), which clears "needs Lead" and offers it again; a
+// worker named local-* is never offered any job of a card whose Where line says only "cloud".
+//
 // Tests pin the clock with CLAIMS_NOW (ISO time) and shorten the backoff with CLAIMS_BACKOFF_MS.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { ROOT, pathsOverlap, depGate, toolchainChanged } from './lib.mjs'
+import { ROOT, pathsOverlap, depGate, toolchainChanged, whereFor, whereOf, newFileHolders } from './lib.mjs'
 
 const BRANCH = 'claude/claims'
 const REMOTE = process.env.CLAIMS_REMOTE || 'origin'
@@ -164,6 +169,8 @@ const isActive = (c) => (c.state === 'working' || c.state === 'reported') && !is
 // CQ5: `decidedTip` is the claims tip the caller decided on. If the tip moved since and any of the
 // files written changed in between, the decision is stale: nothing is written and 'retry' is returned.
 // A move that touched other jobs only is kept, and the new claim lands on top of it.
+// CQ11: the commit body carries what metrics.mjs reads back: the claim's time, and the note and tokens of this call.
+let bodyExtra = []
 function writeClaims(files, attempt = 1, decidedTip) {
   const tip = claimsTip()
   if (decidedTip !== undefined && tip !== decidedTip) {
@@ -184,7 +191,8 @@ function writeClaims(files, attempt = 1, decidedTip) {
     const tree = run(['write-tree'])
     const parent = tip ? ['-p', tip] : []
     const first = files[names[0]]
-    const commit = run(['commit-tree', tree, ...parent, '-m', `${first.state} ${first.card} ${first.role} (${first.worker})`])
+    const body = [`at: ${first.at}`, ...bodyExtra].join('\n')
+    const commit = run(['commit-tree', tree, ...parent, '-m', `${first.state} ${first.card} ${first.role} (${first.worker})`, '-m', body])
     try {
       git(['push', '-q', REMOTE, `${commit}:refs/heads/${BRANCH}`])
       git(['update-ref', `refs/remotes/${REMOTE}/${BRANCH}`, commit])
@@ -240,6 +248,48 @@ function next() {
     const claimFor = (id, role) => claims.find((c) => c.card === id && c.role === role)
     // Paths are held by working specs and by builds until the Lead merges them; a card never blocks itself.
     const holds = (c) => c.role === 'build' || (c.role === 'spec' && c.state === 'working')
+    // CQ8 rule 3, CQ11 (A482): only a cloud-* worker takes a job whose Where answer is cloud (read from main, once per card).
+    // A name that says it is local, or says nothing (unknown, worker-N, the default host-pid), takes no cloud job; the
+    // short names tests and routines use (w0, wb) are not refused (amber).
+    const cloudWorker = !(/^local-/.test(worker) || /^(unknown|worker-\d*)$/.test(worker) || !opt('worker'))
+    const whereCache = new Map()
+    const cloudOnly = (c, role) => {
+      if (cloudWorker) return false
+      if (!whereCache.has(c.id)) {
+        const text = (rel) => {
+          try {
+            return readMain(rel)
+          } catch {
+            return ''
+          }
+        }
+        whereCache.set(c.id, whereOf(text(`plan/cards/${c.id}.md`), c.family ? text(`plan/cards/families/${c.family}.md`) : '', c.where))
+      }
+      return whereFor(whereCache.get(c.id), role) === 'cloud'
+    }
+    // CQ11 (A478 a): everyone named in a card's spec or build history, from the claims log (read once, only when a check is weighed).
+    let history
+    const touched = (id) => {
+      if (!history) {
+        history = new Map()
+        for (const line of (tryGit(['log', '--format=%s', `refs/remotes/${REMOTE}/${BRANCH}`]) || '').split('\n')) {
+          const m = /^\S+ (\S+) (spec|build) \((.*)\)$/.exec(line)
+          if (m) history.set(m[1], (history.get(m[1]) || new Set()).add(m[3]))
+        }
+      }
+      return history.get(id) || new Set()
+    }
+    // CQ11 (A478 c): a card on a requested or checking train is not respecced.
+    let trainCards = new Set()
+    try {
+      const t = JSON.parse(readMain('plan/train.json'))
+      if (['requested', 'checking'].includes(t.status)) trainCards = new Set(t.cards || [])
+    } catch {}
+    // CQ11 (A493): a new file a reported spec names holds every other card naming it.
+    const reportedSpecs = new Set(claims.filter((c) => c.role === 'spec' && c.state === 'reported').map((c) => c.card))
+    // A spec job is held by a reported spec only; a build is held by any spec in hand (a reported one or one on the card).
+    const specInHand = new Set([...reportedSpecs, ...cards.filter((c) => c.spec && c.spec !== 'n/a').map((c) => c.id)])
+    const newFileHeld = (c, role) => newFileHolders(c, cards, role === 'spec' ? reportedSpecs : specInHand).length > 0
     const busyFor = (id) => active.filter((c) => holds(c) && c.card !== id).flatMap((c) => (cards.find((k) => k.id === c.card) || {}).paths || [])
     let allowed = ROLES[mode.mode] ? roles.filter((r) => ROLES[mode.mode].includes(r)) : roles
     // Past wind_down_at no new build starts; checks and specs still flow.
@@ -257,11 +307,14 @@ function next() {
           if (!b || b.state !== 'reported' || b.worker === worker) continue
           // A check blocks a re-offer only while it is working, or when it was for this very build
           // (a passed check on an older build does not cover a reopened, rebuilt one).
-          // A released check for this build is offered again; one that reported, or is working, is not.
-          if (ck && ((ck.state === 'working' && !isStale(ck)) || (ck.for === b.at && ck.state !== 'released' && ck.state !== 'working'))) continue
+          // A released check for this build, or one the Lead reopened (CQ8), is offered again; one that
+          // reported, or is working, is not.
+          if (ck && ((ck.state === 'working' && !isStale(ck)) || (ck.for === b.at && !['released', 'reopened', 'working'].includes(ck.state)))) continue
           if (NEEDS_LEAD(ck) && ck.for === b.at) continue
-          const s = claimFor(c.id, 'spec')
-          if (s && s.worker === worker) continue
+          // CQ11: a "wait:" check stays held until the Lead reopens it.
+          if (isHeld(ck) && ck.for === b.at) continue
+          if (touched(c.id).has(worker)) continue
+          if (cloudOnly(c, role)) continue
           pick = { card: c.id, role, for: b.at }
           break
         }
@@ -281,12 +334,16 @@ function next() {
           if (b && b.state === 'failed' && (b.round || 1) >= MAX_ROUNDS) continue
           if (s && s.worker === worker && c.spec !== 'n/a') continue
           if (pathsOverlap(c.paths || [], busyFor(c.id))) continue
+          if (newFileHeld(c, role)) continue
+          if (cloudOnly(c, role)) continue
           pick = { card: c.id, role, round: (b?.round || 0) + 1, spec: (reopened ? s.commit : c.spec) || s.commit }
           break
         }
         if (role === 'spec') {
           const s = claimFor(c.id, 'spec')
           if (c.spec && !(s && s.state === 'reopened')) continue
+          if (trainCards.has(c.id)) continue
+          if (newFileHeld(c, role)) continue
           if (!depGate(c, 'spec', status, reportedBuilds).ok) continue
           if (isHeld(s, c, status)) continue
           if (NEEDS_LEAD(s)) continue
@@ -296,6 +353,7 @@ function next() {
           const refit = specNeedsRefit(s)
           if (refit && buildPassed(claimFor(c.id, 'build'), claimFor(c.id, 'check'))) continue
           if (s && ((s.state === 'working' && !isStale(s)) || (s.state === 'reported' && !refit))) continue
+          if (cloudOnly(c, role)) continue
           // CQ2 rule 5: a new round carries the Lead's note and the commit it must replace.
           const from = s && (s.state === 'reopened' ? (REFIT_NOTE.test(s.note || '') ? null : s.commit) : s.reopenedFrom)
           pick = refit ? { card: c.id, role, note: 'toolchain refit' } : from ? { card: c.id, role, note: s.note, reopenedFrom: from } : { card: c.id, role }
@@ -325,7 +383,11 @@ function update() {
   const [, card, role, state] = args
   if (!card || !role || !STATES.includes(state)) return out('usage: update <card> <role> <working|reported|failed|released|reopened> --worker <name>', 2)
   const worker = opt('worker', 'unknown')
-  if (state === 'reopened' && (worker !== 'lead' || !['build', 'spec'].includes(role))) return out('REFUSED: only --worker lead may reopen a build or a spec', 6)
+  if (state === 'reopened' && (worker !== 'lead' || !['build', 'spec', 'check'].includes(role))) return out('REFUSED: only --worker lead may reopen a build, a spec or a check', 6)
+  // CQ11: --tokens is a count (metrics.mjs adds them up); a value that is not one records nothing.
+  const tokens = opt('tokens')
+  if (tokens !== undefined && !/^\d+$/.test(tokens)) return out(`usage: --tokens must be a whole number, not ${tokens}`, 2)
+  bodyExtra = [opt('note') ? `note: ${opt('note').replace(/\s+/g, ' ')}` : '', tokens !== undefined ? `tokens: ${tokens}` : ''].filter(Boolean)
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     fetchAll()
     // CQ7: the write goes on the tip this decision read (as CQ5 does for next).
@@ -333,14 +395,17 @@ function update() {
     const claims = readClaims(decidedTip)
     const find = (r) => claims.find((c) => c.card === card && c.role === r)
     const prev = find(role) || {}
-    if (prev.worker && prev.worker !== worker && worker !== 'lead') return out(`REFUSED: ${card} ${role} is held by ${prev.worker}, not ${worker}`, 6)
+    // CQ11: the Lead's reopen may name the one worker who takes the job with `update working`; otherwise only `next` hands it out.
+    const named = state === 'working' && prev.state === 'reopened' && prev.forWorker === worker
+    if (state === 'working' && prev.state === 'reopened' && !named && worker !== 'lead') return out(`REFUSED: ${card} ${role} was reopened${prev.forWorker ? ` for ${prev.forWorker}` : ''}: it is handed out by next, not taken with update`, 6)
+    if (prev.worker && prev.worker !== worker && worker !== 'lead' && !named) return out(`REFUSED: ${card} ${role} is held by ${prev.worker}, not ${worker}`, 6)
     // CQ2 rule 5: a reopened spec round is reported only with a new --commit.
     if (role === 'spec' && state === 'reported' && prev.reopenedFrom && (!opt('commit') || opt('commit') === prev.reopenedFrom)) {
       return out(`REFUSED: ${card} spec was reopened for a new round: report with a new --commit (not ${prev.reopenedFrom}) and the tests it adds`, 6)
     }
     const at = new Date(nowMs()).toISOString()
     // The Lead updating someone else's claim leaves the holder's name on it.
-    const obj = { ...prev, card, role, state, worker: prev.worker || worker, at, note: opt('note', prev.note), commit: opt('commit', prev.commit), validated: opt('validated', prev.validated) }
+    const obj = { ...prev, card, role, state, worker: named ? worker : prev.worker || worker, at, note: opt('note', prev.note), commit: opt('commit', prev.commit), validated: opt('validated', prev.validated) }
     // CQ1 rule 2: a release with "wait:" stores the snapshot that lifts it.
     let key
     if (state === 'released' && WAIT_NOTE.test(obj.note || '')) {
@@ -362,6 +427,10 @@ function update() {
       if (state !== 'working') delete obj.lastRelease
     }
     if (state === 'reported' || state === 'reopened') delete obj.reopenedFrom
+    // CQ11: a spec taken by name on a reopen must report a new commit, as one handed out by next must (CQ2 rule 5).
+    if (named && role === 'spec' && prev.commit && !REFIT_NOTE.test(prev.note || '')) obj.reopenedFrom = prev.commit
+    delete obj.forWorker
+    if (state === 'reopened' && opt('for')) obj.forWorker = opt('for')
     if (state === 'reopened') delete obj.lastRelease
     const files = { [`${card}.${role}.json`]: obj }
     // A check FAIL: one push writes the failed check and holds the build for the findings review.

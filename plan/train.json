@@ -1,13 +1,14 @@
 {
-  "status": "checking",
+  "status": "green",
   "branch": "claude/train",
-  "head": "725bc456",
+  "head": "f4e43c51",
   "cards": [
-    "FX5",
-    "FX12",
-    "CQ10"
+    "A04C",
+    "CQ11",
+    "FX14"
   ],
-  "requested_at": "2026-10-03T14:03:00Z",
-  "note": "FX5 first: its PASS build holds known.json, which W00c's last build round needs (A481). Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462): print select version(); npm test with TEST_DB=pg16 and once on PGlite. FX5 is core: mutate:changed for its @mutate files at 100. FX5's GitHub check failed at 10:53Z on R18 for src/modules/jobs/runner.ts and src/modules/auth/testusers/engine.ts: a main-side card state since fixed (A465), not FX5's files; R18 passes on main now. FX12 changes vitest.config.ts and the db time budget: every db test on pg16 and PGlite. CQ10 adds npm run test:flake:shifted: run it once on the train (its card's Check) and put any DIFFERS lines in the report. A refused command makes the train blocked, not red.",
-  "by": "cloud-bdd6e0"
+  "requested_at": "2026-10-03T19:42:00Z",
+  "note": "Train 3 on main: run the full check (checker.md, check train full): npm ci, typecheck, lint, the full unit suite, the db project on PGlite and with TEST_DB=pg16 (print select version()), npm run test:flake with TEST_DB=pg16 and test:flake:shifted, e2e, and mutate:changed at 100 for every @mutate file the train changes. CQ11 changes the queue tools (claim.mjs, next.mjs, lib.mjs): run tools/test with --project unit. FX14 changes the db budget walker and splits db tests: run tools/test/db-budget.test.mjs and the split files on pg16. Landing rehearsal (merge skill): with A04C, CQ11 and FX14 set done in plan/slices.json (not committed), run tools/test with --project unit and src/contracts/schema-rules.db.test.ts with --project db; report any failure. Known main flake until SC11 lands (A500): a pg16 run that fails only on an unhandled 57P01 from a pool is re-run once; report both runs. A refused command makes the train blocked, not red.",
+  "by": "cloud-b25ed0",
+  "report": "reports/train-20261003-2034.md"
 }

@@ -112,6 +112,7 @@ describe('ARC-2 each item fits the fact it resolves', () => {
   })
 
   test('ARC-2 a slot name is a word in snake case, the same slot name never twice in one item', () => {
+    expect(expenseItems().length, 'the expenses topic holds items to check').toBeGreaterThan(0)
     for (const i of expenseItems()) {
       const names = i.slots.map((s) => s.name)
       for (const n of names) expect(n, i.id).toMatch(/^[a-z][a-z0-9_]*$/)

@@ -1,8 +1,10 @@
 # SC7 One shared KNOWN helper for every rules file
 
-Phase 0. Size S. Deps: SC, SC2, SC3, SC4, SC5, SC6. Where: cloud.
+**Lead note, 3 Oct 20:19Z (A521):** W00d edits tools/mutate-changed.mjs first (zero-mutant guard, refused pass-through mutate, shards mode); SC7's spec and build start from main after W00d lands and keep those behaviours.
+
+Phase 0. Size S. Deps: SC, SC2, SC3, SC4, SC5, SC6, SC10. Where: cloud.
 Tags: core (the exemptions every rule test trusts).
-Paths: tools/test/lib/known.mjs, tools/test/lib/known.test.mjs
+Paths: tools/test/lib/known.mjs, tools/test/lib/known.test.mjs, tools/test/lib/cards.mjs, tools/test/lib/cards.test.mjs, tools/test/schema-contract-rules.test.mjs, tools/test/reading-rules.test.mjs, tools/test/spec-rules.test.mjs, tools/test/card-rules.test.mjs, tools/mutate-changed.mjs, tools/test/mutate-harness.test.mjs (A493, A502)
 Clauses: ARC-15, ARC-16
 Read: `reports/SC-findings.md` (KNOWN shape), `plan/cards/SC.md`, `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
@@ -31,3 +33,22 @@ List the modules whose every test is a db test (jobs/queue.ts, jobs/runner.ts fi
 
 ## Also (A467)
 The KNOWN owner rule (an open card in plan/slices.json with a card file) is shared: SC7 makes every rules file use the one helper, so security-rules, fs-rules and db rules read owners the same way.
+
+## Also (A493): one card scan for the card rules
+One card scan shared by SC, SC4, SC6 and SC10 (tools/test/lib/cards.mjs): it reads every card and family template with its params, takes sentinels and floors from the unfiltered list, filters to open cards only after that, and drops nothing silently (a card with no file fails by id). The four rule files use it. Planted: SC6's rules as at 7f6d200a with SC6 marked done (the landing trap of 3 Oct). Paths gain tools/test/lib/cards.mjs and tools/test/lib/cards.test.mjs.
+
+## Also (A502, A503): one card reader for the four rule files and the gate
+From SC10's findings review 1 and SC6's spec review (3 Oct, Opus; both reports stay on the laptop, so these lines are the brief). Deps gain SC10. Paths gain the four rule files, tools/mutate-changed.mjs and its test: they switch to the helper in this card, since SC6 and SC10 will be done by then.
+- The one reader gives each card's core and security (SC10's closed form for the tags line), its Paths (from slices.json) and its Build ownership (SC6's R77 grammar) to the four rule files and the mutation gate. The gate reads family templates: today it stops on all 162 open family cards, which have no card file.
+- The shared scan fails a card with no file only when the card is open: 8 closed cards have none (P02, P03, P04, B00, B02, T03, V07, T06). This replaces "a card with no file fails by id" in A493.
+- On the one reader, R18 reads GL1 as core (its tags line has security first) with 6 auth files unmarked. The Lead names the card that marks them before this card's spec starts; known.json takes only FX3 to FX9 as owners.
+- Rule tests for everywhere: (A) one card reader for the four rule files and the gate, planted with Q10 (the gate stops today) and GL1 (security first); (B) every card's Paths line equals slices.json, planted with A08's line before A502; (C) every exemption list (in-test KNOWN arrays, known.json, R89's guard list) names open owners whose Paths hold it, planted with SC10 at 73fe6af4.
+
+## Also (A515, GL3 findings review 3, 3 Oct)
+- R-A: no test file casts to `typeof X & { y?: ... }` (an intersection that tracks the built type turns a needed fallback into a lint error once the build lands). Plant: GL3's round 4 cast.
+- R-B: every src or testworld file with `Stryker disable all` names in its reason a `.db.test.ts` that exists and imports it (directly or through its index), or a test that pins its input whole; mutate-changed.mjs's "core file without @mutate" message prints the accepted form. Plants: a pure file with disable all and no named test; a reason naming a missing test. Paths gain tools/mutate-changed.mjs (already listed).
+
+## Also (A518, SC6 findings review 2, 3 Oct)
+- R-C: every list of words two readers share comes from one export; a meta test fails when a copy drifts. Plant: SC6's tip NEG_VERBS against OWN_VERB.
+- R-D: every reader's drop or exemption path has a planted near-miss that must not be dropped. Plants: SC6's fixes 2 and 9.
+- R-E: a coverage rule never uses the regex it checks. Plant: SC6's tip coverage against a "Build note (Axxx):" label.
