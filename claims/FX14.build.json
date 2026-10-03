@@ -1,0 +1,9 @@
+{
+ "card": "FX14",
+ "role": "build",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-03T17:09:37.737Z",
+ "note": "wait: a spec item joins first (A504: FX12's walker counts test.each bodies); the Lead reopens the spec",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX12\"],\"depStatus\":[\"done\"]}"
+}
