@@ -4,8 +4,11 @@
  "round": 2,
  "spec": "bd0e2fe2",
  "worker": "cloud-aab122",
- "state": "reported",
- "at": "2026-10-03T10:53:04.426Z",
+ "state": "released",
+ "at": "2026-10-03T15:19:43.463Z",
  "mode": "turbo",
- "note": "174 of 174 lifecycle tests pass (61 spec)"
+ "note": "merged with train 725bc456; the card stays open for round 3 after FX4 (A494)",
+ "lastRelease": {
+  "tip": "90e1c9ae8ec84a8ab51a86075fe7c4c321c2fa97"
+ }
 }
