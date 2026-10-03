@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "1a43657b",
  "worker": "cloud-613a54",
- "state": "working",
- "at": "2026-10-03T13:48:23.240Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T13:51:49.958Z",
+ "mode": "turbo",
+ "note": "12 of 12 acceptance tests pass; 392 tools tests, typecheck, lint, deps:check, scope clean; reports/CQ10-build.md"
 }
