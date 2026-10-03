@@ -25,7 +25,7 @@
 //
 // The rule is first shown catching planted bad examples, then applied to the repo. KNOWN (A407 shape) is empty: the
 // card's build switches every raw read itself (card SC8, A414), so any finding on the repo fails by name. The listed
-// tests keep their titles, `expect(` counts and skips as at main 25fc96d (G5, tools/test/__fixtures__/
+// tests keep their titles, `expect(` counts and skips as at the SC8 spec tip 40391e96 (G5, tools/test/__fixtures__/
 // source-read-rules/listed-baseline.json): the build changes only the read.
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -680,12 +680,12 @@ describe('R79 a wrong build cannot pass without switching the reads (SC8 review 
   })
 
   const BASELINE = JSON.parse(fix('listed-baseline.json'))
-  test('R79 ARC-15 G5 the baseline covers exactly the listed tests, captured at main 25fc96d', () => {
-    expect(BASELINE.capturedAt).toBe('25fc96d')
+  test('R79 ARC-15 G5 the baseline covers exactly the listed tests, captured at the spec tip 40391e96', () => {
+    expect(BASELINE.capturedAt).toBe('40391e96')
     expect(Object.keys(BASELINE.files).sort()).toEqual([...LISTED].sort())
   })
 
-  test.each(LISTED)('R79 ARC-15 G5 %s keeps its test titles, expect( count, skips and sandbox guards as at 25fc96d', (f) => {
+  test.each(LISTED)('R79 ARC-15 G5 %s keeps its test titles, expect( count, skips and sandbox guards as at 40391e96', (f) => {
     expect(shapeOf(readRel(f))).toEqual(BASELINE.files[f])
   })
 

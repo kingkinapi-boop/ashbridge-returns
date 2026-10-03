@@ -1,6 +1,6 @@
 {
-  "capturedAt": "25fc96d",
-  "note": "SC8 review G5: for each listed test, its test and describe titles in order, its expect( count, skips and sandbox guards, from git show 25fc96d:<file> through shapeOf in tools/test/source-read-rules.test.mjs. Owned by the SC8 spec.",
+  "capturedAt": "40391e96",
+  "note": "SC8 review G5: for each listed test, its test and describe titles in order, its expect( count, skips and sandbox guards, from git show 40391e96:<file> (the SC8 spec tip with main 89be70a6 merged; first captured at 25fc96d, recaptured at the toolchain refit because main and A479 added checks to egress-rules and auth rules, none removed) through shapeOf in tools/test/source-read-rules.test.mjs. Owned by the SC8 spec.",
   "files": {
     "src/contracts/amount-grammar.acceptance.test.ts": {
       "titles": [
@@ -304,13 +304,14 @@
         "test 'SEC-10 rule: a planted Stryker config with the dashboard reporter is caught'",
         "test 'SEC-10 no Stryker config lists the dashboard reporter'",
         "test 'SEC-10 rule: a planted tool spawning npx with shell on Windows is caught'",
+        "test 'SEC-10 rule: shell false passes with or without a space; any other shell value is caught'",
         "test 'SEC-10 no spawn or exec in tools/ runs a shell, except tools/heavy.mjs'",
         "test 'SEC-10 mutate-changed.mjs and test-flake.mjs run their bins through process.execPath'",
         "test 'SEC-5 rule: a planted logger call with an interpolated message is caught'",
         "test 'SEC-5 no logger call in src has an interpolated message'",
         "test 'SEC-5 ESLint refuses console and interpolated logger messages in src, except the db global setup'"
       ],
-      "expects": 41,
+      "expects": 46,
       "skips": 0,
       "guards": 5
     },
@@ -333,7 +334,7 @@
         "test 'SEC-10 no auth file (module, contract, schema) holds a secret-shaped value'",
         "test 'SEC-10 gitleaks, when installed, finds nothing under src/modules/auth'"
       ],
-      "expects": 35,
+      "expects": 36,
       "skips": 0,
       "guards": 0
     }
