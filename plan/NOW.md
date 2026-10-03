@@ -15,7 +15,6 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 |---|---|---|
 | Train 4 | SC8 and GL3 boarded (5de37d09) (69dd4084; scope flag by design, A523) | add SC10, GL3 on PASS of their Opus reads, W00c on its mutation check; request at 6 cards or hourly |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
-| A08 | spec review GAPS 11 (A509): spec patch reopened | build after it; then Opus check and a security review |
 | W00c | findings review 4 done (A521): no build round; mutation-only check of 75556283 in shards, union of kills | check opened (cloud); land on 100 on all 11 files; W00d makes the method a tool |
 | SC10 | round 2 check PASS | Opus read of the landing form (local, from 21:10Z); board on PASS |
 | SC6 | round 3 spec reported (168 tests); build marked reported 21:30Z | Opus check against the stated grammar; board; a fourth R77 failure splits SC6a and SC6b |
