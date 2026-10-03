@@ -130,16 +130,7 @@ if (below.length > 0) {
 process.exit(0)
 
 function harnessImports() {
-  // vitest setup files (setupFiles, globalSetup in the vitest configs) run only under test, so they count as tests.
-  const setup = new Set()
-  for (const cfg of ['vitest.config.ts', 'vitest.mutate.config.ts']) {
-    const p = path.join(ROOT, cfg)
-    if (!fs.existsSync(p)) continue
-    for (const m of fs.readFileSync(p, 'utf8').matchAll(/(?:setupFiles|globalSetup)\s*:\s*\[([^\]]*)\]/g)) {
-      for (const q of m[1].matchAll(/['"]([^'"]+)['"]/g)) setup.add(path.posix.normalize(q[1]))
-    }
-  }
-  const isTest = (f) => /\.(test|acceptance)\.[cm]?[jt]sx?$/.test(f) || /(^|\/)(__fixtures__|__golden__)\//.test(f) || setup.has(f)
+  const isTest = (f) => /\.(test|acceptance)\.[cm]?[jt]sx?$/.test(f) || /(^|\/)(__fixtures__|__golden__)\//.test(f)
   const noExt = (f) => f.replace(/\.[cm]?[jt]sx?$/, '')
   const targets = new Map(harness.map((h) => [noExt(h), h]))
   const out = []
