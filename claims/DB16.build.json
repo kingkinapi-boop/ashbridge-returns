@@ -4,7 +4,8 @@
  "round": 5,
  "spec": "d6f3a1b1",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T05:03:38.776Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T05:04:33.833Z",
+ "mode": "turbo",
+ "note": "wrong premise: spec round 2 (A411, 9 gaps) still working by local-2, so no tests to build to; card is cloud (needs pg driver via npm ci and a Postgres 16 cluster, neither on the laptop). Round 1 build d7a2a06e untouched."
 }
