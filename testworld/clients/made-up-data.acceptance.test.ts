@@ -26,7 +26,7 @@ import {
   SAMPLE_ROOT,
   copySamples,
   editText,
-  luhnPassing,
+  checkDigitPassing,
   luhnValid,
   readJsonAt,
   removeCopies,
@@ -65,7 +65,7 @@ async function expectGuard(id: FixtureClientId, root: string, reason: RegExp, hi
 
 const PERSON = 'Jordan Realperson';
 const COMPANY = 'Realco Holdings Ltd.';
-const VALID = luhnPassing('04645428');
+const VALID = checkDigitPassing('04645428');
 const spaced = `${VALID.slice(0, 3)} ${VALID.slice(3, 6)} ${VALID.slice(6)}`;
 const hyphened = `${VALID.slice(0, 3)}-${VALID.slice(3, 6)}-${VALID.slice(6)}`;
 

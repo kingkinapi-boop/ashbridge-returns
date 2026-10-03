@@ -4,10 +4,16 @@
 import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const SAMPLE_ROOT = join(REPO_ROOT, 'reference', 'sample-clients');
+
+// One Luhn (SC R50, A463 row 9): the check digit comes from the sample generator's home, independent of guard.ts under
+// test. util.mjs has no type declarations, so it is loaded by file URL and given its one signature here.
+const util = (await import(pathToFileURL(join(SAMPLE_ROOT, 'lib', 'util.mjs')).href)) as { luhnValid: (s: string) => boolean };
+/** The Luhn check digit (what a real business number or SIN passes): lib/util.mjs's own function, re-exported. */
+export const { luhnValid } = util;
 
 /** Client id to its folder under reference/sample-clients/ (one id per numbered folder; 11 to 15 from W14 and W15). */
 export const FOLDERS = {
@@ -144,27 +150,11 @@ export function setJsonAt(root: string, id: FixtureClientId, file: string, path:
   writeFileSync(jsonPath(root, id, file), JSON.stringify(j, null, 2) + '\n');
 }
 
-/** A nine-digit number that passes the Luhn check digit (what a real business number or SIN does), from eight digits. */
-export function luhnPassing(first8: string): string {
+/** A nine-digit number that passes the Luhn check digit (what a real business number or SIN does), from eight digits; util.mjs's luhnValid decides. */
+export function checkDigitPassing(first8: string): string {
   const d = Array.from({ length: 10 }, (_, k) => first8 + String(k)).find((x) => luhnValid(x));
   if (d === undefined) throw new Error('fixture: no check digit found');
   return d;
-}
-
-/** Independent Luhn check (the business-number and SIN check digit), written here on purpose. */
-export function luhnValid(s: string): boolean {
-  let sum = 0;
-  let alt = false;
-  for (let i = s.length - 1; i >= 0; i--) {
-    let d = Number(s[i]);
-    if (alt) {
-      d *= 2;
-      if (d > 9) d -= 9;
-    }
-    sum += d;
-    alt = !alt;
-  }
-  return sum % 10 === 0;
 }
 
 /** Dollars (a JSON number with at most two decimals) to cents, for comparing against the raw answer keys. */
