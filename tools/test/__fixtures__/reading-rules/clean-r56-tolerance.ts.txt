@@ -1,0 +1,11 @@
+// Clean (SC4 R56 exemption): a page allowance with its scale named, and a money tolerance that scales with the magnitude.
+
+/** Page fractions (0 to 1) come from decimals, so an edge can be off by a rounding error on that scale. */
+const GEOMETRY_EPSILON = 1e-9
+
+export const fits = (left: number, width: number): boolean => left + width <= 1 + GEOMETRY_EPSILON
+
+/** How many units in the last place a sum may stray. */
+const ULPS = 4
+
+export const nearSum = (x: number, total: number, ulp: (n: number) => number): boolean => Math.abs(x - total) <= ULPS * ulp(total)

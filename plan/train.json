@@ -1,12 +1,15 @@
 {
-  "status": "checking",
+  "status": "landed",
   "branch": "claude/train",
-  "head": "25bde2a",
+  "head": "5deca4a3",
   "cards": [
-    "A07D",
-    "A06"
+    "CQ3",
+    "W16",
+    "FX2"
   ],
-  "requested_at": "2026-10-03T03:42:49Z",
-  "note": "A07D core (Opus read done, findings carded to FX4 and SC4, A393). A06 security: run the A06 db tests (src/modules/auth/*.db.test.ts) on the preinstalled PostgreSQL 16 as well as PGlite and report both (A396). Run gitleaks over HEAD if available.",
-  "by": "cloud-d8b04b"
+  "requested_at": "2026-10-03T07:17:08Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). W16 touches reference/sample-clients: run node reference/sample-clients/verify.mjs on the train head (A417). CQ3 changes claim.mjs: run every tools test. FX2 is security: run mutate:changed for FX2 (cloud; Stryker cannot run on the laptop). scope.mjs on FX2 flags only the spec job's report commit 22e1212 (known tool gap, CQ4): not a failure.",
+  "by": "cloud-91039f",
+  "report": "reports/train-20261003-0752.md",
+  "landed_at": "2026-10-03T07:55:19Z"
 }

@@ -9,8 +9,8 @@
 //     A sheet carries hiddenRows: number[] and hiddenColumns: number[] (1-based, sorted, empty rows and columns included);
 //       a CSV sheet has both empty.
 //     A number cell's text: the shortest round-trip text of the stored double (String(x)), except a value within 1e-9 of a
-//       whole cent, which is written as that cent amount in plain digits (String of the cent value, or every digit when it
-//       is 1e21 or more; never exponent form).
+//       whole cent, which is written as that cent amount (String of the cent value). A07D D3 supersedes the digit expansion
+//       from 1e21 up (String(x), "1e+21") and the "0" for subnormals (a nonzero double never reads "0").
 //     cellValueMatches adds the reason 'formula cell: no cached value' (a no-cache formula never matches).
 //     Sheet names and pointer sheet names are kept exactly as stored ("TB " is not "TB"); a blank or whitespace-only one is
 //       refused.
@@ -133,9 +133,9 @@ describe('A07 round 2 S1 and S2: cell text from the typed value (EV-14, EV-6)', 
     expect(cellValueMatches(r, ptr(r, TB, 3, 'B'), '0.31')).toEqual({ ok: false, reason: 'formula cell: cached value differs' })
   })
 
-  test('EV-14 1E+21 is written as its whole digits, never in exponent form', async () => {
+  test('EV-14 1E+21 is written as its own text "1e+21" (A07D D3 supersedes the whole-digit form)', async () => {
     const r = await readXlsx('cells-r2.xlsx')
-    expect(cellAt(r, TB, 4, 'B')).toMatchObject({ type: 'number', text: '1000000000000000000000' })
+    expect(cellAt(r, TB, 4, 'B')).toMatchObject({ type: 'number', text: '1e+21' })
   })
 
   test('EV-6 planted fault: 0.125 is not within 1e-9 of a cent, so it stays "0.125" and "0.13" is refused', async () => {
@@ -310,8 +310,8 @@ describe('A07 round 2 S5: sheet and pointer names exactly as stored (EV-14, EV-5
 describe('A07 round 2 S6: the number text rule (EV-14)', () => {
   /** How Excel stores a double in <v>: its shortest text, exponent in capitals. */
   const stored = (x: number): string => String(x).replace('e', 'E')
-  /** The cent amount in plain digits: String below 1e21, every digit from there up. */
-  const plain = (c: number): string => (Math.abs(c) < 1e21 ? String(c) : BigInt(c).toString())
+  /** The cent amount as text: String at every magnitude (A07D D3 supersedes the digit expansion from 1e21 up). */
+  const plain = (c: number): string => String(c)
   const nearestCent = (x: number): number => (Number.isInteger(x) ? x : Math.round(x * 100) / 100)
   /** One unit in the last place of x (the gap to the next double away from zero). */
   function ulp(x: number): number {
@@ -333,6 +333,8 @@ describe('A07 round 2 S6: the number text rule (EV-14)', () => {
     const distance = Math.abs(x - c)
     const lower = 4 * ulp(x)
     const upper = 64 * ulp(x)
+    // A07D D3: a nonzero double never reads "0", so a subnormal reads its own text.
+    if (x !== 0 && c === 0) return [String(x)]
     if (lower < 0.001 && distance <= lower) return [plain(c)]
     if (upper < 0.005 && distance > upper) return [String(x)]
     return [plain(c), String(x)]
@@ -345,14 +347,14 @@ describe('A07 round 2 S6: the number text rule (EV-14)', () => {
     })
   }
 
-  test('EV-14 fixed examples: float noise, 1E+21, the largest double, the smallest, -0, and values that are not cents', async () => {
+  test('EV-14 fixed examples: float noise, 1E+21, the largest double, the smallest (never "0", A07D D3), -0, and values that are not cents', async () => {
     const got = await readNumbers([Number('1234.5600000000001'), 0.30000000000000004, 1e21, Number.MAX_VALUE, 5e-324, -0, 0.1, 1e-7, 0.125, -2.675, 12345678.9])
     expect(got.map((g) => g.text)).toEqual([
       '1234.56',
       '0.3',
-      '1000000000000000000000',
-      BigInt(Number.MAX_VALUE).toString(),
-      '0',
+      '1e+21',
+      String(Number.MAX_VALUE),
+      '5e-324',
       '0',
       '0.1',
       '1e-7',
