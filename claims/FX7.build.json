@@ -1,9 +1,8 @@
 {
  "card": "FX7",
  "role": "build",
- "state": "released",
+ "state": "reopened",
  "worker": "lead",
- "at": "2026-10-03T21:08:35.967Z",
- "note": "wait: second Opus spec review of FX7 (local, from 21:10Z; core) before the build",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ6\",\"FX2\",\"SC\",\"W00c\"],\"depStatus\":[\"done\",\"done\",\"done\",\"carded\"]}"
+ "at": "2026-10-03T21:39:33.568Z",
+ "note": "A526: spec review 2 PASS; build after W00c lands (dep); notes at the top of the card"
 }
