@@ -1,0 +1,7 @@
+// Planted R93: a write to inbox/<id>.json with no grammar check on the id first.
+import fs from 'node:fs'
+import path from 'node:path'
+
+export function queueJob(exchange: string, id: string, body: string): void {
+  fs.writeFileSync(path.join(exchange, 'inbox', `${id}.json`), body)
+}

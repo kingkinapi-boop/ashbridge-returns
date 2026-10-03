@@ -1,0 +1,7 @@
+// Planted R94: a read of an outbox path that does not go through readRegularFile.
+import fs from 'node:fs'
+import path from 'node:path'
+
+export function readResult(outbox: string, id: string): string {
+  return fs.readFileSync(path.join(outbox, `${id}.json`), 'utf8')
+}

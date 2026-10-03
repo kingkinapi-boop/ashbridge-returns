@@ -1,0 +1,8 @@
+// Clean R97: a schema may name the key, and a copy of a job's own flag is not setting it.
+import { z } from 'zod'
+
+export const JobSchema = z.strictObject({ isTest: z.boolean() })
+
+export function toInbox(job: { isTest: boolean }): { isTest: boolean } {
+  return { isTest: job.isTest }
+}

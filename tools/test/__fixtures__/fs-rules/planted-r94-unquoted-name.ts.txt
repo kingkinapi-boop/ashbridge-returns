@@ -1,0 +1,10 @@
+// Planted R94: a name read from a folder goes into a log line unquoted (a newline in it forges a line).
+import fs from 'node:fs'
+import { readRegularFile } from '../../core/safe-read'
+
+export function scan(outbox: string, sink: (line: string) => void): void {
+  for (const name of fs.readdirSync(outbox)) {
+    sink(`ignored outbox file ${name}`)
+    readRegularFile(outbox + '/x', 10)
+  }
+}

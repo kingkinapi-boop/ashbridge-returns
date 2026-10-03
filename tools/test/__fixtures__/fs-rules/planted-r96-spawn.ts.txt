@@ -1,0 +1,11 @@
+// Planted R96: a child process with no timeout, stopped by name.
+import { spawn, execSync } from 'node:child_process'
+
+export function launch(): void {
+  const child = spawn('claude', ['--print'])
+  child.on('exit', () => undefined)
+}
+
+export function stop(): void {
+  execSync('pkill claude')
+}

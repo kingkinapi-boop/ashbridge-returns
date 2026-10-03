@@ -1,0 +1,8 @@
+// Clean R96: a timeout on the child, stopped by its own PID.
+import { spawn } from 'node:child_process'
+
+export function launch(): void {
+  const child = spawn('claude', ['--print'], { timeout: 60_000, killSignal: 'SIGKILL' })
+  const stopLater = setTimeout(() => process.kill(child.pid ?? 0), 90_000)
+  child.on('exit', () => clearTimeout(stopLater))
+}

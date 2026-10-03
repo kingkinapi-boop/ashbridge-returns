@@ -1,0 +1,14 @@
+// Clean R94: the read goes through readRegularFile; the name from the folder is logged quoted.
+import fs from 'node:fs'
+import path from 'node:path'
+import { readRegularFile } from '../../core/safe-read'
+
+export function scan(outbox: string, sink: (line: string) => void): string[] {
+  const texts: string[] = []
+  for (const name of fs.readdirSync(outbox)) {
+    const got = readRegularFile(path.join(outbox, name), 1024)
+    if (!got.ok) sink(`ignored ${JSON.stringify(name)}`)
+    else texts.push(got.text)
+  }
+  return texts
+}

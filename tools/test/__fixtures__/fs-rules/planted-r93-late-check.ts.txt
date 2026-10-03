@@ -1,0 +1,9 @@
+// Planted R93: the grammar check comes after the write, so it does not count ("first calls").
+import fs from 'node:fs'
+import path from 'node:path'
+import { realInside } from './safe'
+
+export function store(root: string, name: string, bytes: Uint8Array): void {
+  fs.writeFileSync(path.join(root, name), bytes)
+  realInside(root, path.join(root, name), 'file')
+}

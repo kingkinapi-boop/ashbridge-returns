@@ -1,0 +1,16 @@
+// Clean R95: every loop that sleeps checks the deadline inside the loop; a loop that never sleeps needs none.
+const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
+
+export async function waitFor(ready: () => boolean, now: () => number, deadline: number): Promise<boolean> {
+  for (;;) {
+    if (now() >= deadline) return false
+    if (ready()) return true
+    await sleep(10)
+  }
+}
+
+export function sum(xs: number[]): number {
+  let n = 0
+  for (const x of xs) n += x
+  return n
+}

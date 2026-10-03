@@ -1,0 +1,13 @@
+// Clean R93: the id passes a named grammar check before the write; a literal path needs none.
+import fs from 'node:fs'
+import path from 'node:path'
+import { AiJobIdSchema } from './schemas'
+
+export function queueJob(exchange: string, id: string, body: string): void {
+  if (!AiJobIdSchema.safeParse(id).success) throw new Error('unsafe id')
+  fs.writeFileSync(path.join(exchange, 'inbox', `${id}.json`), body)
+}
+
+export function touchMarker(): void {
+  fs.writeFileSync('marker.txt', 'x')
+}

@@ -1,0 +1,9 @@
+// Planted R95: a loop that sleeps and never looks at a deadline or an abort signal.
+const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
+
+export async function waitFor(ready: () => boolean): Promise<void> {
+  for (;;) {
+    if (ready()) return
+    await sleep(10)
+  }
+}

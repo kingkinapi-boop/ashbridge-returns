@@ -1,0 +1,8 @@
+// Planted R97: a step module builds a job with isTest set by itself.
+export function buildJob(inputs: Record<string, unknown>): { stepType: string; isTest: boolean; inputs: Record<string, unknown> } {
+  return { stepType: 'finding', isTest: true, inputs }
+}
+
+export function buildRow(): { is_test: boolean } {
+  return { is_test: false }
+}
