@@ -5,7 +5,7 @@ Tags: core (mutation testing is the bar for money, tax and citation code; a raw 
 Paths: tools/test/source-read-rules.test.mjs, tools/test/__fixtures__/source-read-rules/**, src/core/testing/read-own-source.acceptance.test.ts, src/contracts/amount-grammar.acceptance.test.ts, src/contracts/reading.acceptance.test.ts, src/contracts/reading-strict.acceptance.test.ts, src/core/clock.acceptance.test.ts, src/core/env.acceptance.test.ts, src/core/ids.acceptance.test.ts, src/core/log.acceptance.test.ts, src/core/money.acceptance.test.ts
 Clauses: ARC-15, ARC-16
 Read: `reports/FX2-findings.md` (RC2), `.claude/rules/testing.md`, `src/core/testing/` (readOwnSource).
-Spec commit: (spec-writer fills)
+Spec commit: f91a3f6 (validated on main 25fc96d; branch carries SC e19dcdb and FX2 82f9b10 merged)
 
 ## Goal
 testing.md says a test that reads a source file's text reads it through `readOwnSource`, because Stryker rewrites the file and its preamble holds `process.env`. Nothing enforces it: FX2's check failed on it, and eight more raw reads of `@mutate` files sit on main.
