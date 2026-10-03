@@ -87,6 +87,9 @@ function freshDbName(kind: string): string {
   return `${DB_PREFIX}${pg16RunId()}_${kind}${String(dbCounter)}_${String(process.pid)}`
 }
 
+// A JS Date goes to the server by its UTC clock, as PGlite sends it (not the box's local time).
+pg.defaults.parseInputDatesAsUTC = true
+
 const typeParsers = {
   getTypeParser: (oid: number, format?: 'text' | 'binary'): ((v: string) => unknown) => {
     // PGlite gives int8 as a number when it is safe, else a bigint; keep the two backends alike.
@@ -140,13 +143,56 @@ class PgDb {
     return this.closed_
   }
 
+  private readonly ownedRoles = new Set<string>()
+  private readonly customSettings = new Set<string>()
+
+  private async roleNames(c: { query: pg.Client['query'] }): Promise<Set<string>> {
+    const r = await c.query<{ rolname: string }>('select rolname from pg_roles')
+    return new Set(r.rows.map((x) => x.rolname))
+  }
+
+  /** Runs a statement; when it creates a role, remembers which one, so close drops only this handle's roles. */
+  private async tracked<R>(c: pg.Client | pg.PoolClient, sql: string, run: () => Promise<R>): Promise<R> {
+    // Custom settings (app.x) are not listed in pg_settings: remember the names a statement sets.
+    for (const m of sql.matchAll(/set_config\(\s*'([\w]+\.[\w.]+)'|\bset\s+(?:session\s+)?([\w]+\.[\w.]+)\s*(?:=|\bto\b)/gi)) {
+      this.customSettings.add((m[1] ?? m[2]) as string)
+    }
+    if (!/\bcreate\s+(role|user)\b/i.test(sql)) return run()
+    const before = await this.roleNames(c)
+    const out = await run()
+    for (const n of await this.roleNames(c)) if (!before.has(n)) this.ownedRoles.add(n)
+    return out
+  }
+
   async query<T>(sql: string, params?: unknown[]): Promise<QueryResult<T>> {
-    const r = await (await this.session()).query<Record<string, unknown>>(sql, params)
+    const c = await this.session()
+    const r = await this.tracked(c, sql, () => c.query<Record<string, unknown>>(sql, params))
     return { rows: r.rows as T[], affectedRows: r.rowCount ?? 0 }
   }
 
   async exec(sql: string): Promise<void> {
-    await (await this.session()).query(sql)
+    const c = await this.session()
+    await this.tracked(c, sql, () => c.query(sql))
+  }
+
+  /** A transaction connection starts with the handle's role and settings (set in the main session) and is wiped when it is returned. */
+  private async inheritSession(client: pg.PoolClient): Promise<void> {
+    await client.query('reset role')
+    const main = await this.session()
+    const r = await main.query<{ name: string; setting: string }>(
+      `select name, setting from pg_settings where source = 'session'`,
+    )
+    for (const { name, setting } of r.rows) {
+      if (name !== 'role') await client.query('select set_config($1, $2, false)', [name, setting])
+    }
+    for (const name of this.customSettings) {
+      const v = await main.query<{ v: string | null }>('select current_setting($1, true) as v', [name])
+      const value = v.rows[0]?.v
+      if (value !== undefined && value !== null) await client.query('select set_config($1, $2, false)', [name, value])
+    }
+    const who = await main.query<{ u: string; s: string }>('select current_user as u, session_user as s')
+    const row = who.rows[0]
+    if (row !== undefined && row.u !== row.s) await client.query(`set role "${row.u.replaceAll('"', '""')}"`)
   }
 
   async transaction<T>(fn: (tx: PgTx) => Promise<T>): Promise<T> {
@@ -154,11 +200,11 @@ class PgDb {
     const state = { rolledBack: false }
     const tx: PgTx = {
       query: async <R>(sql: string, params?: unknown[]): Promise<QueryResult<R>> => {
-        const r = await client.query<Record<string, unknown>>(sql, params)
+        const r = await this.tracked(client, sql, () => client.query<Record<string, unknown>>(sql, params))
         return { rows: r.rows as R[], affectedRows: r.rowCount ?? 0 }
       },
       exec: async (sql: string): Promise<void> => {
-        await client.query(sql)
+        await this.tracked(client, sql, () => client.query(sql))
       },
       rollback: async (): Promise<void> => {
         state.rolledBack = true
@@ -166,6 +212,7 @@ class PgDb {
       },
     }
     try {
+      await this.inheritSession(client)
       await client.query('begin')
       const out = await fn(tx)
       if (!state.rolledBack) await client.query('commit')
@@ -174,27 +221,26 @@ class PgDb {
       if (!state.rolledBack) await client.query('rollback').catch(() => undefined)
       throw e
     } finally {
+      // Nothing set in this transaction's connection may reach the next one.
+      await client.query('reset role; reset all').catch(() => undefined)
       client.release()
     }
   }
 
-  private async dropTestRoles(): Promise<void> {
+  private async dropOwnedRoles(): Promise<void> {
     await this.main.query('reset role')
-    const r = await this.main.query<{ rolname: string }>(
-      `select rolname from pg_roles where rolname not like 'pg\\_%' and rolname <> 'postgres'`,
-    )
-    for (const { rolname } of r.rows) {
-      await this.main.query(`drop owned by "${rolname}"`)
-      await this.main.query(`drop role if exists "${rolname}"`)
+    for (const rolname of this.ownedRoles) {
+      await this.main.query(`drop owned by "${rolname}"`).catch(() => undefined)
+      await this.main.query(`drop role if exists "${rolname}"`).catch(() => undefined)
     }
   }
 
   async close(): Promise<void> {
     if (this.closed_) return
     this.closed_ = true
-    // Roles belong to the cluster, not to a database: drop the ones this test made, so the next test can make them again.
+    // Roles belong to the cluster, not to a database: drop the ones this handle made, and only those.
     if (this.connected !== undefined) {
-      await this.dropTestRoles().catch(() => undefined)
+      await this.dropOwnedRoles().catch(() => undefined)
       await this.main.end()
     }
     await this.pool.end()
