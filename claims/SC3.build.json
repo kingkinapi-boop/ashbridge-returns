@@ -1,13 +1,12 @@
 {
  "card": "SC3",
  "role": "build",
- "round": 3,
+ "round": 4,
  "spec": "edf23e0",
  "worker": "cloud-d98b06",
- "state": "released",
- "at": "2026-10-03T08:06:21.763Z",
+ "state": "working",
+ "at": "2026-10-03T08:06:24.667Z",
  "mode": "turbo",
- "note": "BLOCKED: build already done (7c323a3); 4 R62 tests in security-rules.test.mjs still stale after FX2 landed (KNOWN FX2 entries, factory list). Needs spec patch, not a build.",
  "lastRelease": {
   "tip": "6f2edd152880be35ae6071369e712dce07fefae4"
  }
