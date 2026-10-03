@@ -21,14 +21,14 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:15Z by the Lea
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | round 4 build reported (126 unit, mutation 100); check working | security review, board |
-| DB16 | round 4 check FAIL (4 medium: pooled role and settings leaks); findings review 4 running | verdict: final round, split or park |
+| DB16 | findings 4 (A441): one final round; SC11 carded (R90 to R92, new parity cases) | spec patch T1 to T5 (Opus), build round 5, check, security review |
 | JH0 | spec reported | build after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6, FX8 | W16 landed: their wait lifts | spec (FX8 on claude/FX8-r2) |
 | FX10, FX12 | FX10 build reported (no product change); check for a cloud box; FX12 carded | FX10 check, security review; FX12 after |
 | CQ4 to CQ8, SC10 | CQ4 and CQ5 builds reported, checks working; CQ8 gains the cloud-only rule (A440) | board; CQ4 lands before the S00 and DB16 checks |
 
-Cloud runs: 6 fired 07:42Z to 08:08Z (W00c build; A04, CQ4, CQ5 checks; SC3 build reopened for cloud). Local: local-2 (FX8 spec); local-1 and local-3 done. Helper: DB16 findings review 4.
+Cloud runs: 6 fired 07:42Z to 08:08Z (W00c build; A04, CQ4, CQ5 checks; SC3 build reopened for cloud). Local: local-2 (FX8 spec); local-1 and local-3 done.
 
 ## Next, in order
 
