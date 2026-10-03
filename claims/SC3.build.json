@@ -1,13 +1,12 @@
 {
  "card": "SC3",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "edf23e0",
- "worker": "cloud-a98eee",
- "state": "released",
- "at": "2026-10-03T08:02:20.236Z",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T08:02:35.041Z",
  "mode": "turbo",
- "note": "BLOCKED: 18 of 22 pass; 4 R62 tests stale since FX2 landed (KNOWN owner FX2 done); needs spec patch, see reports/SC3-build.md",
  "lastRelease": {
   "tip": "7c323a382ade6bb88bf434f48abf9d077ac78263"
  }
