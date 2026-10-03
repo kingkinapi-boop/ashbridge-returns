@@ -2,7 +2,10 @@
  "card": "FX18",
  "role": "spec",
  "worker": "cloud-657654",
- "state": "working",
- "at": "2026-10-03T18:31:29.465Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T18:43:08.567Z",
+ "mode": "turbo",
+ "note": "71 tests (51 red by design); runner.acceptance.test.ts import of aiEngines moved to ./engines (N1)",
+ "commit": "eb8d158c",
+ "validated": "5a21f65a"
 }
