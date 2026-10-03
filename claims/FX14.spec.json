@@ -3,8 +3,8 @@
  "role": "spec",
  "note": "refit only: main merges in clean; on pg16 (node 24.21) bridge, jobs, core/db db files 113 pass, 1 skipped (the PGlite-only case); db-budget rule 17 pass; no test change",
  "worker": "cloud-beb1e2",
- "state": "reported",
- "at": "2026-10-03T15:30:26.125Z",
+ "state": "reopened",
+ "at": "2026-10-03T17:34:23.300Z",
  "mode": "turbo",
  "commit": "9bd1e9d",
  "validated": "8e4698a"
