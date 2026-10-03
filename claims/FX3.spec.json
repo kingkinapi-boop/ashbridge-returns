@@ -2,8 +2,11 @@
  "card": "FX3",
  "role": "spec",
  "worker": "cloud-22d057",
- "state": "working",
- "at": "2026-10-03T13:31:04.237Z",
+ "state": "reported",
+ "at": "2026-10-03T14:06:46.915Z",
  "mode": "turbo",
- "beat": "2026-10-03T13:31:29.970Z"
+ "beat": "2026-10-03T13:31:29.970Z",
+ "note": "5 test files; 86 unit and 9 db fail for the right reason; FX3 KNOWN entries deleted (36 unit, 59 db); NEEDS LEAD: R42 client_handoff and R43 fact_id cannot pass in FX3, re-own to a rule card or exempt; see reports/FX3-spec.md",
+ "commit": "06469ba4",
+ "validated": "b66f8428"
 }
