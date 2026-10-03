@@ -1,11 +1,10 @@
 {
  "card": "DB16",
  "role": "build",
- "round": 7,
- "spec": "d6f3a1b1",
- "worker": "cloud-555a8d",
- "state": "reopened",
- "at": "2026-10-03T05:27:33.379Z",
- "mode": "turbo",
- "note": "A422: build reported on the round 1 spec (47 unit); rebuild on d69ac553 (89 tests). The Postgres 16 path itself works (557 pass)."
+ "round": 8,
+ "spec": "d69ac553",
+ "worker": "cloud-120dac",
+ "state": "working",
+ "at": "2026-10-03T05:32:36.952Z",
+ "mode": "turbo"
 }
