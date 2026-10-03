@@ -1992,7 +1992,7 @@
     },
     {
       "status": "carded",
-      "spec": "fb82b8c",
+      "spec": "be09e312",
       "deps": [
         "F04",
         "F06",
@@ -2025,6 +2025,28 @@
       "hard": true,
       "core": true,
       "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/runner.acceptance.test.ts",
+        "src/modules/ai/runner/exchange.acceptance.test.ts",
+        "src/modules/ai/runner/runner.ts"
+      ],
+      "clauses": [
+        "AI-9",
+        "ARC-15"
+      ],
+      "id": "A04C",
+      "title": "AI runner: one clock, pinned as a class",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Split from A04 (A477, Review 3 Oct finding 2)."
     },
     {
       "status": "done",
@@ -5450,7 +5472,6 @@
       "deps": [
         "V05",
         "B00",
-        "D06",
         "U02"
       ],
       "paths": [
@@ -10076,6 +10097,50 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "package.json",
+        "tools/flake-shifted.mjs",
+        "tools/test/flake-shifted.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ10",
+      "title": "Flake run with the date shifted",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/A04-findings-6.md, 3 Oct (A469)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ8"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/metrics.mjs",
+        "tools/test/claim-wait-check.test.mjs",
+        "tools/test/metrics-counts.test.mjs",
+        "tools/next.mjs",
+        "tools/lib.mjs",
+        "tools/test/next-paths.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ11",
+      "title": "Queue: no re-offered checks after a wait, honest card counts",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "DG2"
       ],
@@ -10782,6 +10847,7 @@
       ],
       "paths": [
         "src/core/db/rules.acceptance.db.test.ts",
+        "src/core/db/__fixtures__/grants/**",
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",
