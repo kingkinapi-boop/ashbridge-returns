@@ -1,12 +1,9 @@
 {
  "card": "CQ3",
  "role": "spec",
- "worker": "local-3",
- "state": "reported",
- "at": "2026-10-03T05:42:48.563Z",
- "mode": "turbo",
- "beat": "2026-10-03T05:34:29.617Z",
- "note": "30 tests (8 fail on main); retires 2 CQ1 wait-lift tests in claim.test.mjs (outside Paths), rewrites 1; amber: wait: rule covers spec and build only (Lead cannot reopen a check), stale working spec not pinned",
- "commit": "2f1a4298",
- "validated": "a50769da"
+ "note": "toolchain refit",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T05:56:18.997Z",
+ "mode": "turbo"
 }
