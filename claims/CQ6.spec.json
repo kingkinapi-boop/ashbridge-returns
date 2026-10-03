@@ -1,11 +1,9 @@
 {
  "card": "CQ6",
  "role": "spec",
- "worker": "cloud-65d267",
- "state": "reported",
- "at": "2026-10-03T08:09:36.204Z",
- "mode": "turbo",
- "note": "13 tests, 8 fail",
- "commit": "f5a17f0",
- "validated": "a4c79912681b44ee2984bc4a507f6fcdb4978c2a"
+ "note": "toolchain refit",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T10:50:46.193Z",
+ "mode": "turbo"
 }
