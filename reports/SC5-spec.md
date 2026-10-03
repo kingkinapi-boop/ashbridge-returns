@@ -1,3 +1,5 @@
-# SC5 spec released (cloud-65d267, 3 Oct 2026)
-Cannot start: the card extends SC's rule style, R23 and KNOWN table (SC built and checked PASS, not landed) and R83/R84 read A04's STAMP_PARTS_FROM_JOB (absent on main; A04 round 4 build/check not landed). On origin/main there is no such rule helper or constant, so tests cannot be validated on main. Core card: also needs an Opus spec-writer. Re-offer after SC and A04 land.
-Model: Sonnet 5.5. Permission gaps: none.
+# SC5 spec (cloud-07698b, Opus spec-writer subagent)
+Commits 7f49fdb0 (spec) and 57ff731b (card Spec commit line) on claude/SC5. Validated on main 89be70a6. 42 rule tests in tools/test/settings-rules.test.mjs: R71 (plus harness, names), R72, R73, R73-run, R83, R84, R84-run, R88, R88-run, R101 record/json/run; each with a plant and a clean twin; KNOWN shape, stale and owner tests. Fixtures in tools/test/__fixtures__/settings-rules/ (known.json owned by the spec). Clauses: ARC-20, ARC-15, ARC-22, SEC-11 (also SEC-10, AI-10).
+Rules pass on main because KNOWN lists 16 faults (no product stub); deleting an entry turns its rule red. typecheck, lint, unit 3217 green; db 662 passed, 1 expected fail, 5 skipped. Retired: none.
+Amber: KNOWN entries beyond the card's, incl. FX16's on bridge.ts, ai/runner/schemas.ts, engines.ts, runner.ts: FX16's Paths need those four files plus gaps/bank/index.ts. FX7 owns the drive entries, FX11 the ocr/recorded ones. R71 lets src/core/db read process.env (test-homes.json lists it as harness). Planted-mismatch list ../__fixtures__/planted-mismatch.json. Whichever card lands second adds KNOWN rows or R88 drivers (B04/GL1 new _ENGINE setting, W00c testworld JSON and z.record files).
+Permission gaps: none. Model: Sonnet 5.5 worker, Opus 5.5 spec-writer.
