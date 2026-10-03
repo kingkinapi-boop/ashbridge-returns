@@ -1,12 +1,10 @@
 {
  "card": "GL3",
  "role": "build",
- "round": 4,
- "spec": "c4a5a4bd",
- "worker": "cloud-dfe211",
- "state": "reopened",
- "at": "2026-10-03T20:01:15.004Z",
- "mode": "turbo",
- "beat": "2026-10-03T19:08:52.658Z",
- "note": "A515: add @mutate to index.ts; @mutate plus Stryker disable all with reason to db.ts and manifest.ts; nothing else"
+ "round": 5,
+ "spec": "43d42761",
+ "worker": "cloud-7035d1",
+ "state": "working",
+ "at": "2026-10-03T20:02:08.752Z",
+ "mode": "turbo"
 }
