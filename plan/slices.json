@@ -9869,7 +9869,8 @@
       "paths": [
         "src/modules/sheets/**",
         "src/contracts/sheets.ts",
-        "tools/test/reading-rules.test.mjs"
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "EV-14",
@@ -9896,7 +9897,8 @@
       "paths": [
         "src/contracts/taxprep.ts",
         "src/contracts/taxprep.acceptance.test.ts",
-        "tools/test/reading-rules.test.mjs"
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "EV-5",
@@ -9926,7 +9928,8 @@
         "src/modules/storage/**",
         "src/core/test-no-network.ts",
         "src/contracts/auth.ts",
-        "tools/test/__fixtures__/planted-interpolated-log.ts.txt"
+        "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "EV-1",
@@ -9958,7 +9961,8 @@
         "reference/sample-clients/15-*/**",
         "reference/sample-clients/verify.mjs",
         "reference/sample-clients/README.md",
-        "tools/test/sample-names.test.mjs"
+        "tools/test/sample-names.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "SEC-11",
@@ -9981,7 +9985,8 @@
       ],
       "paths": [
         ".gitattributes",
-        "reference/**/*.csv"
+        "reference/**/*.csv",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "ARC-10",
@@ -10063,7 +10068,8 @@
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
-        "src/modules/lifecycle/**"
+        "src/modules/lifecycle/**",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "FLOW-1",

@@ -1,8 +1,10 @@
 # FX4 Spreadsheet reader: the five A07D Opus findings
 
+**Lead note, 3 Oct (A432): spec reported (63df226e, 15 tests; reading-rules KNOWN entries removed). Opus spec review running; build held. After SC lands, a spec patch deletes FX4's 11 entries in SC's known.json (now in Paths). A whole-sheet merge ExcelJS would expand is refused with a reason, never loaded (a flag for a person, not a silent pass). Finding 1 has no failing input in 2,000,000 cases: its tests are guards.**
+
 Phase 1. Size M. Hard. Deps: A07D, SC4, SC. Where: cloud.
 Tags: core (citations and amounts: every figure a spreadsheet gives is checked against this text).
-Paths: src/modules/sheets/**, src/contracts/sheets.ts, tools/test/reading-rules.test.mjs
+Paths: src/modules/sheets/**, src/contracts/sheets.ts, tools/test/reading-rules.test.mjs, tools/test/__fixtures__/schema-contract/known.json
 Clauses: EV-14, EV-5, EV-6, ARC-10, END-8
 Read: `reports/A07D-opus-read.md` (all), `plan/cards/A07D.md`, `plan/cards/SC4.md`, `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)

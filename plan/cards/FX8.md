@@ -4,7 +4,7 @@
 
 Phase 0. Size S. Deps: W16. Where: local or cloud (Node scripts, no packages).
 Tags: none (made-up names gain "(Test)"; no figure changes).
-Paths: reference/sample-clients/clients/c07_08.mjs, reference/sample-clients/clients/c09_10.mjs, reference/sample-clients/clients/c13_15.mjs, reference/sample-clients/07-*/**, reference/sample-clients/09-*/**, reference/sample-clients/14-*/**, reference/sample-clients/15-*/**, reference/sample-clients/verify.mjs, reference/sample-clients/README.md, tools/test/sample-names.test.mjs
+Paths: reference/sample-clients/clients/c07_08.mjs, reference/sample-clients/clients/c09_10.mjs, reference/sample-clients/clients/c13_15.mjs, reference/sample-clients/07-*/**, reference/sample-clients/09-*/**, reference/sample-clients/14-*/**, reference/sample-clients/15-*/**, reference/sample-clients/verify.mjs, reference/sample-clients/README.md, tools/test/sample-names.test.mjs, tools/test/__fixtures__/schema-contract/known.json
 Clauses: SEC-11, ARC-8
 Read: `reports/W00b-spec-review.md` ("Who owns the C07, C09, C14 bare-name fix"), `reference/sample-clients/README.md`.
 Spec commit: (spec-writer fills)
