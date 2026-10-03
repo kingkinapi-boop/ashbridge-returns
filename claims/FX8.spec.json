@@ -2,10 +2,12 @@
  "card": "FX8",
  "role": "spec",
  "worker": "cloud-a113b9",
- "state": "working",
- "at": "2026-10-03T06:23:07.414Z",
+ "state": "released",
+ "at": "2026-10-03T06:23:13.804Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "560e3b2e0c61c29eaec768c645fe825f2b82a5f7"
- }
+ },
+ "note": "waits for W16 to land (A417); queue re-offers it, Lead: hold FX8 until W16 is merged",
+ "needsLead": true
 }
