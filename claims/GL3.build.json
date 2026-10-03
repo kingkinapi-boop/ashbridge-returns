@@ -4,8 +4,10 @@
  "round": 1,
  "spec": "9da00fbd",
  "worker": "cloud-06931b",
- "state": "working",
- "at": "2026-10-03T09:48:49.106Z",
+ "state": "released",
+ "at": "2026-10-03T10:08:26.773Z",
  "mode": "turbo",
- "beat": "2026-10-03T10:08:06.296Z"
+ "beat": "2026-10-03T10:08:06.296Z",
+ "note": "wait: BLOCKED only on db tests under TEST_DB=pg16 (DB16 harness not on main); 29 unit + 25 db pass on PGlite, mutate scan.ts 100, typecheck/lint/deps/scope clean, security review not run; head 2395f0c2 pushed, see reports/GL3-build.md; re-run pg16 after DB16 lands, then check",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"F07\",\"G01\"],\"depStatus\":[\"done\",\"done\"]}"
 }
