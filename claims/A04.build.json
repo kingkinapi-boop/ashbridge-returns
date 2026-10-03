@@ -4,9 +4,9 @@
  "round": 10,
  "spec": "fb82b8c",
  "worker": "cloud-dfeb44",
- "state": "reported",
- "at": "2026-10-03T10:46:21.456Z",
+ "state": "reopened",
+ "at": "2026-10-03T11:16:56.626Z",
  "mode": "turbo",
  "beat": "2026-10-03T10:32:18.100Z",
- "note": "build done, mutation 100, unit 2847 pass; lint BLOCKED by 1 error in spec exchange-safe-read.acceptance.test.ts:63 (drop the unnecessary 'as' cast), see reports/A04-build.md"
+ "note": "A461: round 5b, R41 blank checks via contracts/text.ts; cloud box"
 }
