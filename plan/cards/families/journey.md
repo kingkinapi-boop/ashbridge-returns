@@ -1,6 +1,7 @@
 # Family: journey ({kind}, stage {stage})
 
 Phase (the card's own, in plan/slices.json). Where: cloud (journeys, Postgres 16).
+Tags: none.
 
 Cards J2-K01 to J6 (ids keep the old numbers; `params.stage` names the stage). Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 00 (the kinds), the stage's blueprint file, and `e2e/_harness/` (JH0).
 
