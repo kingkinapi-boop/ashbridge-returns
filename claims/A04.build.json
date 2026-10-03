@@ -4,7 +4,8 @@
  "round": 11,
  "spec": "fb82b8c",
  "worker": "cloud-91d3cf",
- "state": "working",
- "at": "2026-10-03T11:17:52.771Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T11:24:04.999Z",
+ "mode": "turbo",
+ "note": "round 5b: isBlank in engines.ts, runner.ts; unit 2951, mutation 100; head e4d9714f"
 }
