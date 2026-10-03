@@ -3,11 +3,9 @@
  "role": "check",
  "for": "2026-10-03T06:23:57.040Z",
  "worker": "cloud-117624",
- "state": "working",
- "at": "2026-10-03T07:37:24.795Z",
+ "state": "reported",
+ "at": "2026-10-03T08:05:17.211Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "e19dcdbd14cb089bfc88339fb4e38abeaf8a9f57"
- },
- "beat": "2026-10-03T08:04:56.637Z"
+ "beat": "2026-10-03T08:04:56.637Z",
+ "note": "PASS"
 }
