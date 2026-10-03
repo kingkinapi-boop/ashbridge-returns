@@ -19,9 +19,8 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 | SC6 | spec reported; review running, build held | GO: reopen build |
 | SC | findings done; spec reopened (A407: exact KNOWN, owners FX3 to FX7); FX7, SC7 carded | spec, build re-run, check with Opus read |
 | SC4 | spec refit on a cloud box (laptop lacks ExcelJS); KNOWN owners FX4, FX6 (A406) | build, check |
-| S00, FX5 | specs reopened for review gaps (A402); FX5 spec by local worker 2 | build after spec |
+| S00, FX5, A04 | round 2 specs reported; one Opus review of all three running, builds held | GO: reopen builds |
 | FX2 | spec reported (not core); build open | build, check |
-| A04 | spec round 2 open | spec, build, check, security review |
 | CQ2 | check in the cloud | board |
 | JH0 | spec reported | build after W00c lands |
 | DB16 | carded (A405) | spec |
