@@ -1,11 +1,9 @@
 {
  "card": "DB16",
  "role": "check",
- "for": "2026-10-03T07:20:25.050Z",
- "worker": "cloud-54d8a4",
- "state": "failed",
- "at": "2026-10-03T08:01:20.075Z",
- "mode": "turbo",
- "beat": "2026-10-03T08:00:30.564Z",
- "note": "FAIL: 4 medium findings (pooled role/settings leaks, index.ts), see reports/DB16-check.md"
+ "for": "2026-10-03T08:59:21.266Z",
+ "worker": "cloud-4eee2d",
+ "state": "working",
+ "at": "2026-10-03T09:04:30.762Z",
+ "mode": "turbo"
 }
