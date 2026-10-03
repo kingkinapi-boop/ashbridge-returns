@@ -771,14 +771,16 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00c"
+        "W00c",
+        "FX8"
       ],
       "paths": [
         "testworld/model/guard.ts",
         "testworld/model/guard-fields.ts",
         "testworld/model/made-up-data.acceptance.test.ts",
         "testworld/model/kinds.ts",
-        "testworld/model/__fixtures__/guard/**"
+        "testworld/model/__fixtures__/guard/**",
+        "testworld/clients/load.ts"
       ],
       "clauses": [
         "SEC-11",
@@ -942,7 +944,8 @@
         "e2e/_harness/**",
         "package.json",
         "e2e/steps/README.md",
-        "package-lock.json"
+        "package-lock.json",
+        "testworld/harness/**"
       ],
       "clauses": [
         "END-9",
@@ -2036,7 +2039,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2065,7 +2068,8 @@
       "title": "Staff sign-in stand-in and roles",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "parked",
@@ -2452,7 +2456,8 @@
         "src/modules/ledger/dots/**",
         "src/modules/ledger/index.ts",
         "data/ledger/origins.json",
-        "data/ledger/agree-rules.json"
+        "data/ledger/agree-rules.json",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-10",
@@ -2608,7 +2613,8 @@
         "src/pipeline/steps/facts.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-5",
@@ -3119,7 +3125,8 @@
         "src/modules/books/gifi/**",
         "src/modules/books/index.ts",
         "data/gifi/**",
-        "testworld/qbo/gfi.ts"
+        "testworld/qbo/gfi.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "TB-3",
@@ -5045,7 +5052,8 @@
         "src/pipeline/steps/import.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "RT-1",
@@ -6062,11 +6070,16 @@
         "T04",
         "T07",
         "F02",
-        "N00"
+        "N00",
+        "L00",
+        "V00",
+        "FX5"
       ],
       "paths": [
         "src/modules/approval/**",
-        "db/schema/60_versions.sql"
+        "db/schema/60_versions.sql",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -6077,7 +6090,7 @@
       "id": "T08",
       "title": "Approval fingerprint and approval record",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "hard": true,
       "security": true,
       "core": true
@@ -6089,7 +6102,8 @@
         "F05",
         "L00",
         "SK0",
-        "F10"
+        "F10",
+        "T07"
       ],
       "paths": [
         "src/modules/checks/engine/**",
@@ -6111,7 +6125,7 @@
       "id": "Q00",
       "title": "Check engine",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "core": true
     },
     {
@@ -6899,7 +6913,8 @@
       ],
       "paths": [
         "src/modules/ai/checklist/_core/**",
-        "src/pipeline/steps/checks.ts"
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "AI-2",
@@ -7208,20 +7223,24 @@
       "spec": null,
       "deps": [
         "I00",
-        "T05",
         "T07",
-        "Q00"
+        "Q00",
+        "I01"
       ],
       "paths": [
         "src/modules/ai/redteam/**",
-        "src/pipeline/steps/checks.ts"
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts",
+        "db/schema/73_redteam.sql"
       ],
       "clauses": [
         "AI-3",
         "AI-1",
         "AI-4",
         "AI-5",
-        "AI-8"
+        "AI-6",
+        "AI-8",
+        "SEC-7"
       ],
       "id": "I30",
       "title": "Red team (a different model, raw documents)",
@@ -9590,7 +9609,7 @@
       "note": "From reports/A06-findings.md, 2 Oct."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -9614,7 +9633,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals."
+      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals.",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9643,7 +9663,8 @@
       "spec": null,
       "deps": [
         "A07D",
-        "SC4"
+        "SC4",
+        "SC"
       ],
       "paths": [
         "src/modules/sheets/**",
@@ -9662,6 +9683,108 @@
       "size": "M",
       "core": true,
       "note": "From reports/A07D-opus-read.md, 3 Oct (A393); landing rule: fallbacks are removals."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00c",
+        "SC4",
+        "SC"
+      ],
+      "paths": [
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.acceptance.test.ts"
+      ],
+      "clauses": [
+        "EV-5",
+        "ARC-10"
+      ],
+      "id": "FX6",
+      "title": "Taxprep rate text invents digits at huge values (found by SC4)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC4-spec.md, 3 Oct (A406)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W00c"
+      ],
+      "paths": [
+        "src/contracts/facts.ts",
+        "src/contracts/reading.ts",
+        "src/contracts/amount-grammar.ts",
+        "src/modules/ocr/textlayer/**",
+        "src/modules/storage/**",
+        "src/core/test-no-network.ts",
+        ".gitattributes"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "ARC-10",
+        "ARC-15",
+        "SEC-11"
+      ],
+      "id": "FX7",
+      "title": "Rule defects in landed contracts and readers (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "reference/sample-clients/clients/c07_08.mjs",
+        "reference/sample-clients/clients/c09_10.mjs",
+        "reference/sample-clients/clients/c13_15.mjs",
+        "reference/sample-clients/07-*/**",
+        "reference/sample-clients/09-*/**",
+        "reference/sample-clients/14-*/**",
+        "reference/sample-clients/15-*/**",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md",
+        "tools/test/sample-names.test.mjs"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-8"
+      ],
+      "id": "FX8",
+      "title": "Sample clients: the four bare names in flag text",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/W00b-spec-review.md, 3 Oct (A409)."
+    },
+    {
+      "status": "carded",
+      "spec": "bd0e2fe2",
+      "deps": [
+        "F02",
+        "SC"
+      ],
+      "paths": [
+        "src/contracts/lifecycle.ts",
+        "src/modules/lifecycle/**"
+      ],
+      "clauses": [
+        "FLOW-1",
+        "FLOW-4"
+      ],
+      "id": "FX5",
+      "title": "F02 move inside a caller transaction (for T08)",
+      "phase": 3,
+      "size": "S",
+      "core": true,
+      "note": "From reports/phase3-card-review-2026-10-03.md fix 2 (A397). L00 and N00 take the caller transaction in their own builds."
     },
     {
       "status": "carded",
@@ -9691,6 +9814,54 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "SC",
+        "W16"
+      ],
+      "paths": [
+        "tools/test/card-rules.test.mjs",
+        "tools/test/__fixtures__/card-rules/**"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC6",
+      "title": "Card and verify rules R77 and R78",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/W16-findings.md, 3 Oct (A404)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "SC2",
+        "SC3",
+        "SC4",
+        "SC5",
+        "SC6"
+      ],
+      "paths": [
+        "tools/test/lib/known.mjs",
+        "tools/test/lib/known.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC7",
+      "title": "One shared KNOWN helper for every rules file",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "SC"
       ],
       "paths": [
@@ -9702,7 +9873,9 @@
         "src/modules/gaps/bank/index.ts",
         "src/modules/jobs/queue.ts",
         "src/modules/bridge/run.ts",
-        "tools/test/__fixtures__/schema-contract/known.json"
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/contracts/ids.ts",
+        "src/contracts/checks.ts"
       ],
       "clauses": [
         "SEC-7",
@@ -9718,6 +9891,35 @@
       "size": "M",
       "core": true,
       "note": "From reports/SC-build.md, 2 Oct."
+    },
+    {
+      "status": "carded",
+      "spec": "d6f3a1b1",
+      "deps": [
+        "A06"
+      ],
+      "paths": [
+        "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/pg16.test.ts",
+        "vitest.config.ts",
+        "package.json",
+        "package-lock.json",
+        ".claude/agents/checker.md",
+        ".claude/cloud-worker-run.md"
+      ],
+      "clauses": [
+        "ARC-4",
+        "ARC-16",
+        "SEC-7"
+      ],
+      "id": "DB16",
+      "title": "The db test project runs on Postgres 16 in cloud checks",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From the train report of 3 Oct (A405)."
     }
   ]
 }
