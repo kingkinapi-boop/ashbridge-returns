@@ -1,0 +1,9 @@
+{
+ "card": "FX5",
+ "role": "build",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-03T03:42:27.080Z",
+ "note": "wait: core spec review in progress (reports/FX5-spec-review.md); build opens after GO",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"F02\"],\"depStatus\":[\"done\"]}"
+}
