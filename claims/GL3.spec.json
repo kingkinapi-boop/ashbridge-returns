@@ -1,10 +1,11 @@
 {
  "card": "GL3",
  "role": "spec",
- "note": "round 4: 17 tests (6 unit, 11 db) red on 470bc705 by design; 73 total; builder note B2 union flatten, see reports/GL3-spec-4.md",
- "reopenedFrom": "c0528761",
+ "note": "12 tests added (G1 to G4); 85 GL3 acceptance tests, 29 red on tip by design; scratch B1 to B6 passes",
  "worker": "cloud-301e56",
- "state": "working",
- "at": "2026-10-03T17:58:55.059Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T18:22:32.638Z",
+ "mode": "turbo",
+ "commit": "c4a5a4bd",
+ "validated": "b37a8e35"
 }
