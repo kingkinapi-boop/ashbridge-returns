@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T13:33:28.634Z",
  "worker": "cloud-11e3ce",
- "state": "working",
- "at": "2026-10-03T13:40:08.302Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T13:40:15.432Z",
+ "mode": "turbo",
+ "note": "wait: not started, worker session ended after the SC11 spec; no findings",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"FX2\"],\"depStatus\":[\"done\",\"done\"]}"
 }
