@@ -1,10 +1,11 @@
 {
  "card": "SC12",
  "role": "spec",
- "note": "A466, A469: R104 to R106",
- "reopenedFrom": "79217eec6da7f8bcceba824d534500ddf07a6290",
+ "note": "40 tests; owners to re-home (FX18, FX7, FX4, SC3, SC11, A04C G4); paths gap: auth.acceptance.db.test.ts createAuth calls need owner",
  "worker": "cloud-e9b38e",
- "state": "working",
- "at": "2026-10-03T13:50:22.923Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T14:09:52.823Z",
+ "mode": "turbo",
+ "commit": "b6bc226f",
+ "validated": "2bb7db20"
 }
