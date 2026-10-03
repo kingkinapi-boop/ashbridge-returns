@@ -59,3 +59,7 @@ No product code written (rules only). Unit 2 of 75 fail, db 19 of 19 pass: R34 (
 ## Run 2 Oct 21:3xZ (cloud-a181cc), main ae7deb6 merged
 No product code written. Unit 2 of 75 fail (same as cloud-0c9d3d): R34 (A03 one-page.pdf and unrecorded.pdf need reasoned BINARY_FIXTURES entries) and R47 (src/modules/ocr/recorded missing from READERS). Both are test-file edits, so a spec refit is needed before re-offering. Released.
 Permission gaps: none. Model: Sonnet 5.5.
+
+## Run 3 Oct 03:2xZ (cloud-a93d05), main merged at 9509e17
+No product code written (rules only). Unit 75 of 75 pass, db 19 of 19 pass; full npm test 507 pass. typecheck, lint, deps:check clean; scope OK (51 files). Mutation: no core file added or changed. All earlier failures (A03 R34, R47) are fixed by the 21:40Z spec round.
+Amber: none. Permission gaps: none. Model: Sonnet 5.5.
