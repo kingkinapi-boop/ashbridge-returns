@@ -9721,7 +9721,9 @@
         "src/modules/ocr/textlayer/**",
         "src/modules/storage/**",
         "src/core/test-no-network.ts",
-        ".gitattributes"
+        ".gitattributes",
+        "src/contracts/auth.ts",
+        "tools/test/__fixtures__/planted-interpolated-log.ts.txt"
       ],
       "clauses": [
         "EV-1",
