@@ -4,9 +4,8 @@
  "round": 6,
  "spec": "ea5d29d",
  "worker": "cloud-186a3b",
- "state": "released",
- "at": "2026-10-03T05:12:39.817Z",
+ "state": "reopened",
+ "at": "2026-10-03T05:25:08.824Z",
  "mode": "turbo",
- "note": "wait: Opus re-review of spec round 3 (reports/A04-spec-review-3.md); build opens after GO",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"F04\",\"F06\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
+ "note": "A421: spec patch 6fa39bb1 matches reports/A04-spec-review-3.md"
 }
