@@ -399,3 +399,5 @@
 {"ts":"2026-10-03T03:36:58.308Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 1 (Opus)","allowed":true}
 {"ts":"2026-10-03T03:41:50.580Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W00c findings review","allowed":true}
 {"ts":"2026-10-03T03:41:56.533Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"S00 and FX5 spec review","allowed":true}
+{"ts":"2026-10-03T03:42:56.419Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T03:43:40.133Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 2 (Opus)","allowed":true}

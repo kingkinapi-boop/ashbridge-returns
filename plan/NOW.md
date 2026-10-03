@@ -6,14 +6,14 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). Train claude/train boarding: A07D, A06.
+- **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). Train claude/train 25bde2a requested: A07D, A06.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| A07D, A06 | on train claude/train 25bde2a (A393, A396: A06 security review CLEAN) | train check by 04:20Z or at 6 cards; ask the checker to run A06 db tests on Postgres 16 |
+| A07D, A06 | on train claude/train 25bde2a (A393, A396: A06 security review CLEAN) | train requested 03:42Z (plan/train.json; A06 db tests on PG16 too); cloud run fired to take it | land when green (skill merge) |
 | W00c | check FAIL round 1; Opus findings review running (A400: markers as row ids) | card fix list, spec job for new tests, then build round 2 |
 | S00, FX5 | specs reported; builds held for an Opus spec review (A401) | GO: release the hold; GAPS: spec reopened |
 | JH0 | spec reported (Paths + testworld/harness, A401) | build |
@@ -24,7 +24,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 | A04, A08 | held on A06, then A04 | as before |
 | Local workers 1 to 3 | started 03:38Z; worker 1 restarted on Opus 03:42Z (Sonnet released core specs) | re-fire on Opus while the queue has jobs; Lead removes junctions |
 
-Cloud runs fired 03:22Z: 6 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
+Cloud runs fired 03:22Z: 6, plus 1 at 03:43Z for the train (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
 
 ## Next, in order
 
@@ -45,7 +45,7 @@ W00a to W00c (A379), A07C to A07D (A384; no more rounds), rule cards SC2 (R57 to
 - The permission system refuses edits to `.gitleaks.toml` for every agent; changes go to Zo by hand (0021). Cloud boxes lack gitleaks; GitHub checks run it.
 - No real client data: Assets/ is excluded from git; never commit it.
 - Cloud boxes need Node 24.21 or later; see .claude/cloud-worker-run.md.
-- Local workers have no subagent tool: start them with model opus so they can do core specs and checks themselves (Sonnet ones release core jobs). They cannot run `cmd //c rmdir`: the Lead removes each worktree's node_modules junction, then the worktree.
+- Local workers have no subagent tool: start them with model opus so they can do core specs and checks themselves (Sonnet ones release core jobs). They cannot run `cmd //c rmdir`: the Lead removes each worktree's node_modules junction, then the worktree. The main checkout's node_modules lacks exceljs and pdfjs-dist (SC check released 03:47Z): run `node tools/heavy.mjs -- npm ci` in the main checkout when no local worker is running, before firing more.
 - claim.mjs drops the Lead's reopen note on specs (CQ2 item 5): put a bold directive at the top of the card.
 - Code guard at landing lists design/ docs too (A388): a doc-only path is not a reason to re-check.
 - Mutation bar is 100 per `@mutate` file (testing.md, ARC-15; agent orders fixed, A391).
