@@ -2,8 +2,7 @@
  "card": "SC4",
  "role": "spec",
  "worker": "local-3",
- "state": "released",
- "at": "2026-10-03T04:16:29.077Z",
- "mode": "turbo",
- "note": "Laptop gap: SC4 rules run on the sheets readers (A07, exceljs) and the main checkout's node_modules lacks exceljs and pdfjs-dist; needs a cloud worker. Existing spec 8ca5fb7a on claude/SC4 untouched."
+ "state": "working",
+ "at": "2026-10-03T04:16:41.581Z",
+ "mode": "turbo"
 }
