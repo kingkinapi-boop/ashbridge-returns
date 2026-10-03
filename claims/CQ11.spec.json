@@ -3,8 +3,8 @@
  "role": "spec",
  "note": "37 failing by design (33 + 4 scope); A490 scope tests added",
  "worker": "cloud-92d46e",
- "state": "reported",
- "at": "2026-10-03T14:33:36.018Z",
+ "state": "reopened",
+ "at": "2026-10-03T15:05:04.313Z",
  "mode": "turbo",
  "commit": "b095e65b2c903575a7bc90a071c6125be856c753",
  "validated": "ddf3c09c57d31794164be00ad7e940a040c629ae"
