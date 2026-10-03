@@ -10181,7 +10181,11 @@
         "src/modules/gaps/bank/expenses.acceptance.test.ts",
         "src/contracts/blank-rule.acceptance.test.ts",
         "src/contracts/jobs.acceptance.test.ts",
-        "src/modules/bridge/**/*.test.ts"
+        "src/modules/bridge/**/*.test.ts",
+        "vitest.mutate.config.ts",
+        "src/contracts/facts.acceptance.test.ts",
+        "src/modules/gaps/bank/bank.acceptance.test.ts",
+        "src/modules/auth/rules.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-15"
