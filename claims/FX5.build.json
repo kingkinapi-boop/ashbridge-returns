@@ -1,8 +1,10 @@
 {
  "card": "FX5",
  "role": "build",
- "state": "reopened",
- "worker": "lead",
- "at": "2026-10-03T04:30:31.081Z",
- "note": "A410: reports/FX5-spec-review-2.md"
+ "round": 1,
+ "spec": "bd0e2fe2",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T10:50:18.475Z",
+ "mode": "turbo"
 }
