@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "c526b32d",
  "worker": "cloud-1ba1dc",
- "state": "hold-findings",
- "at": "2026-10-03T21:39:42.319Z",
+ "state": "reported",
+ "at": "2026-10-03T23:33:26.564Z",
  "mode": "turbo",
- "note": "FAIL: Opus read, 6 fail-open forms in R77/R78 (negation phrase, SPEC_OWNS nouns, possessive, participle, glued separators, regex.exec), see reports/SC6-check.md"
+ "note": "A528: spec-only last round (R78 only); check with an Opus read"
 }
