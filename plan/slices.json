@@ -2048,7 +2048,8 @@
         "src/contracts/auth.ts",
         "db/schema/15_auth.sql",
         "src/core/env.ts",
-        "src/core/env.settings.test.ts"
+        "src/core/env.settings.test.ts",
+        "src/contracts/auth.acceptance.test.ts"
       ],
       "clauses": [
         "SEC-1",
@@ -9313,7 +9314,7 @@
       "phase": 4,
       "size": "M",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED."
     },
     {
       "status": "todo",
