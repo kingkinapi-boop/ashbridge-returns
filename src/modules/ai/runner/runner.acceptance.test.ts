@@ -552,8 +552,8 @@ describe('AI-11 only approved (step type, prompt version, model id) triples run'
     expect(ApprovedListSchema.parse(shipped)).toEqual({ triples: [] })
     const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, env: {} })
     const res = await r.runAiStep(job('good'))
-    expect(res.ok).toBe(false)
-    if (!res.ok) expect(res.reason).toMatch(/not approved/)
+    // round 3: the default list is read (the shipped file, not a missing one), so the reason is the absent triple
+    expect(res).toEqual({ ok: false, reason: 'not approved: run the evaluation set first (AI-11)', problems: [] })
   })
 
   test('AI-11 a triple not on the list is refused with "not approved"; adding it to a temp copy lets the same job run', async () => {
@@ -1152,6 +1152,8 @@ describe('ARC-16 round 3: two recordings for one key are refused, naming both fi
     expect(all).toMatch(DUPLICATE)
     expect(all).toContain('a-first.json')
     expect(all).toContain('b-second.json')
+    // each name stands on its own (a person must be able to read both)
+    expect(all).toMatch(/\ba-first\.json\b[\s\S]*\bb-second\.json\b|\bb-second\.json\b[\s\S]*\ba-first\.json\b/)
     expect(all).not.toContain('c-another-job.json')
     expect(all).not.toContain('another recorded answer (Test)')
   })
@@ -1276,6 +1278,75 @@ describe('ARC-20 SEC-10 round 3: every AI setting goes through env.ts (R71 is th
     for (const name of AI_SETTING_NAMES) {
       const got = readSettings({ [name]: 'x (Test)' }) as Record<string, unknown>
       expect(got[name], name).toBe('x (Test)')
+    }
+  })
+})
+
+// Round 3 survivor tests: behaviour a passing stub left unpinned under `npm run mutate:changed -- A04`
+// (reports/A04-spec.md, round 3). Each names what it pins.
+
+describe('AI-1 AI-10 round 3: every refusal names its clause and every part it lists stands on its own', () => {
+  test('AI-1 an answer that fails F04 is refused with a reason naming AI-1, besides the problems', async () => {
+    const res = await runner().runAiStep(job('broken'))
+    expect(res.ok).toBe(false)
+    if (res.ok) return
+    expect(res.reason).toMatch(/\bAI-1\b/)
+    expect(res.problems.length).toBeGreaterThan(0)
+  })
+
+  test('AI-10 an answer stamped with another model id and another input hash is refused naming both parts, each on its own', async () => {
+    const good = GOOD_REC()
+    const stamp = { ...good.stamp, modelId: OTHER.modelId, inputHash: OTHER.inputHash }
+    expect(validateAiOutput('finding', good.output, stamp).ok).toBe(true)
+    const dir = recordingsWith('stamp-two-parts', [{ ...good, stamp }])
+    const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+    expect(res.ok).toBe(false)
+    if (res.ok) return
+    const all = allText(res)
+    expect(all).toMatch(/AI-10/)
+    expect(all).toMatch(/model ?id\W+input ?hash|input ?hash\W+model ?id/i)
+    expect(all).not.toMatch(PARTS.promptVersion)
+    expect(all).not.toMatch(PARTS.promptHash)
+  })
+
+  test('ARC-22 the handler message keeps the reason and each problem apart (never run together)', async () => {
+    const expected = await runner().runAiStep(job('broken'))
+    if (expected.ok) throw new Error('fixture must be refused')
+    const [firstProblem] = expected.problems
+    if (firstProblem === undefined) throw new Error('fixture must list a problem')
+    const h = createAiStepHandler('finding', runner())
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    let message = ''
+    try {
+      await h.run(job('broken'), ctx)
+    } catch (e) {
+      message = e instanceof Error ? e.message : String(e)
+    }
+    expect(message).toContain(expected.reason)
+    expect(message).toContain(firstProblem)
+    expect(message).not.toContain(expected.reason + firstProblem)
+  })
+})
+
+describe('ARC-22 round 3: a file in the outbox that is not a result is flagged, by name only (card: files that match no running job)', () => {
+  test('ARC-22 a notes.txt in the outbox is ignored, logged once by name, and the job waits for its real file', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const { lines, sink } = collectLines()
+      const canary = 'PLANTED-CANARY-NOTES (Test)'
+      writeOutbox(exchange, 'notes.txt', `${canary}\n`)
+      const p = projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
+      await vi.advanceTimersByTimeAsync(0)
+      for (let i = 0; i < 6; i++) await vi.advanceTimersByTimeAsync(5)
+      expect(lines.filter((l) => l.includes('notes.txt'))).toHaveLength(1)
+      writeOutbox(exchange, `${JOB_ID}.json`, outboxResult(JOB_ID, GOOD_REC().output, GOOD_REC().stamp))
+      await vi.advanceTimersByTimeAsync(5)
+      expect(await p).toMatchObject({ ok: true, output: GOOD_REC().output })
+      expect(lines.filter((l) => l.includes('notes.txt'))).toHaveLength(1)
+      expect(lines.join('\n')).not.toContain(canary)
+      expect(lines.join('\n')).not.toContain(exchange)
+    } finally {
+      vi.useRealTimers()
     }
   })
 })
