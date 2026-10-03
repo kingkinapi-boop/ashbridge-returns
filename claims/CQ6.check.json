@@ -3,9 +3,7 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-1f7dcd",
- "state": "released",
- "at": "2026-10-03T11:45:07.262Z",
- "mode": "turbo",
- "note": "wait: A464 reopened the spec (real setup path) and orders build round 2; this build (c0e59e56) predates it, a check now would be wasted. Re-offer after the round 2 build reports",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
+ "state": "working",
+ "at": "2026-10-03T11:45:09.592Z",
+ "mode": "turbo"
 }
