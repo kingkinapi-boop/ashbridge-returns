@@ -19,9 +19,26 @@ export interface DbTemplate {
 export type TestDbTarget = { kind: 'pglite' } | { kind: 'pg16'; url: string }
 
 const LOCAL_HOSTS = new Set(['127.0.0.1', 'localhost'])
-// A throwaway test cluster on this box: the credentials guard nothing real (decision 0003).
+// A throwaway test cluster on this box: the default credentials guard nothing real (decision 0003).
+// The url never carries a password; the driver gets it from PGPASSWORD, else this default.
 const LOCAL_USER = 'postgres'
 const LOCAL_PASSWORD = 'postgres'
+
+function connOpts(connectionString: string): pg.ClientConfig {
+  // Fields, not the url: a url without a password would overwrite the password given beside it.
+  const u = new URL(connectionString)
+  const password = process.env['PGPASSWORD']
+  return {
+    host: u.hostname,
+    port: Number(u.port),
+    user: decodeURIComponent(u.username),
+    database: decodeURIComponent(u.pathname.slice(1)),
+    password: password !== undefined && password !== '' ? password : LOCAL_PASSWORD,
+    // Session settings pinned to what PGlite gives every db test today (fixed UTC-5, no daylight time).
+    options: '-c TimeZone=Etc/GMT+5 -c DateStyle=ISO,MDY -c IntervalStyle=postgres -c standard_conforming_strings=on',
+    types: typeParsers,
+  }
+}
 
 /**
  * Which backend the db project uses (DB16, ARC-4). Pure: reads only the env it is given. The switch is
@@ -33,7 +50,7 @@ export function testDbTarget(env: Record<string, string | undefined>): TestDbTar
   if (sw === undefined || sw === '') return { kind: 'pglite' }
   if (sw !== 'pg16') throw new Error('TEST_DB must be empty or pg16 (it is a switch, never a connection string)')
   if (env['DATABASE_URL'] !== undefined) throw new Error('TEST_DB=pg16 refuses to start: DATABASE_URL is set (decision 0003)')
-  const supabase = Object.keys(env).find((k) => k.includes('SUPABASE') && env[k] !== undefined)
+  const supabase = Object.keys(env).find((k) => k.toUpperCase().includes('SUPABASE') && env[k] !== undefined)
   if (supabase !== undefined) throw new Error(`TEST_DB=pg16 refuses to start: ${supabase} is set (decision 0003)`)
   for (const name of ['PGHOST', 'PGHOSTADDR']) {
     const host = env[name]
@@ -43,7 +60,7 @@ export function testDbTarget(env: Record<string, string | undefined>): TestDbTar
   }
   const port = env['PGPORT'] !== undefined && env['PGPORT'] !== '' ? env['PGPORT'] : '5432'
   if (!/^\d{1,5}$/.test(port)) throw new Error('TEST_DB=pg16 refuses to start: PGPORT is not a port number')
-  return { kind: 'pg16', url: `postgres://${LOCAL_USER}:${LOCAL_PASSWORD}@127.0.0.1:${port}/postgres` }
+  return { kind: 'pg16', url: `postgres://${LOCAL_USER}@127.0.0.1:${port}/postgres` }
 }
 
 function schemaFiles(schemaDir: string): string[] {
@@ -79,6 +96,8 @@ const typeParsers = {
         return n > BigInt(Number.MAX_SAFE_INTEGER) || n < BigInt(Number.MIN_SAFE_INTEGER) ? n : Number(n)
       }
     }
+    // A date is a Date at UTC midnight, as PGlite gives it.
+    if (oid === 1082) return (v: string) => new Date(`${v}T00:00:00.000Z`)
     return pg.types.getTypeParser(oid, format) as (v: string) => unknown
   },
 }
@@ -109,7 +128,7 @@ class PgDb {
     private readonly name: string,
     dbUrl: string,
   ) {
-    this.main = new pg.Client({ connectionString: dbUrl, types: typeParsers })
+    this.main = new pg.Client(connOpts(dbUrl))
   }
 
   private session(): Promise<pg.Client> {
@@ -190,7 +209,7 @@ interface PgTx {
 }
 
 async function dropDatabase(adminUrl: string, name: string): Promise<void> {
-  const admin = new pg.Client({ connectionString: adminUrl, types: typeParsers })
+  const admin = new pg.Client(connOpts(adminUrl))
   await admin.connect()
   try {
     await admin.query(`drop database if exists "${name}" with (force)`)
@@ -201,7 +220,7 @@ async function dropDatabase(adminUrl: string, name: string): Promise<void> {
 
 /** Drops every database this run made (the global setup's teardown). */
 export async function dropRunDatabases(url: string): Promise<void> {
-  const admin = new pg.Client({ connectionString: url, types: typeParsers })
+  const admin = new pg.Client(connOpts(url))
   await admin.connect()
   try {
     const r = await admin.query<{ datname: string }>('select datname from pg_database where datname like $1', [
@@ -215,14 +234,14 @@ export async function dropRunDatabases(url: string): Promise<void> {
 
 async function createPg16Template(url: string, schemaDir: string): Promise<DbTemplate> {
   const tplName = freshDbName('tpl')
-  const admin = new pg.Client({ connectionString: url, types: typeParsers })
+  const admin = new pg.Client(connOpts(url))
   await admin.connect()
   try {
-    await admin.query(`create database "${tplName}"`)
+    await admin.query(`create database "${tplName}" template template0 encoding 'UTF8' lc_collate 'C' lc_ctype 'C.UTF-8'`)
   } finally {
     await admin.end()
   }
-  const schemaPool = new pg.Pool({ connectionString: withDatabase(url, tplName), max: 1, types: typeParsers })
+  const schemaPool = new pg.Pool({ ...connOpts(withDatabase(url, tplName)), max: 1 })
   try {
     for (const f of schemaFiles(schemaDir)) {
       try {
@@ -240,14 +259,14 @@ async function createPg16Template(url: string, schemaDir: string): Promise<DbTem
   return {
     clone: async () => {
       const name = freshDbName('db')
-      const c = new pg.Client({ connectionString: url, types: typeParsers })
+      const c = new pg.Client(connOpts(url))
       await c.connect()
       try {
         await c.query(`create database "${name}" template "${tplName}"`)
       } finally {
         await c.end()
       }
-      const pool = new pg.Pool({ connectionString: withDatabase(url, name), max: 4, types: typeParsers })
+      const pool = new pg.Pool({ ...connOpts(withDatabase(url, name)), max: 4 })
       return new PgDb(pool, url, name, withDatabase(url, name)) as unknown as PGlite
     },
     close: () => dropDatabase(url, tplName),
