@@ -215,7 +215,8 @@ describe('EV-10 suppliedBy names only document kinds or the named non-document s
 
   test('EV-10 each named non-document source and each document kind is accepted in suppliedBy', () => {
     for (const s of [...NON_DOCUMENT_SOURCES, ...DOCUMENT_KINDS]) {
-      loaded(withExtra(cleanEntry({ key: 'testarea.supplier_test.amount', suppliedBy: [s] })))
+      const cat = loaded(withExtra(cleanEntry({ key: 'testarea.supplier_test.amount', suppliedBy: [s] })))
+      expect(cat.get('testarea.supplier_test.amount'), s).toBeDefined()
     }
   })
 
