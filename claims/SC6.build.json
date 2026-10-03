@@ -1,0 +1,9 @@
+{
+ "card": "SC6",
+ "role": "build",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-03T04:17:44.708Z",
+ "note": "wait: core spec review (reports/SC6-spec-review.md); build opens after GO",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\"],\"depStatus\":[\"carded\"]}"
+}
