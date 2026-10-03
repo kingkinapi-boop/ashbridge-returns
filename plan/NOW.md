@@ -14,8 +14,8 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 13:26Z by the Lea
 | Card | State | Next action |
 |---|---|---|
 | Train | df6f1249 (FX15, CQ7, CQ6) checking | land if green; FX5 (PASS) boards the next one |
-| W00c | spec reported (A467 owner rule); build round 3 open (cloud) | build, mutation on cloud, check |
-| A04 | split and frozen at the 5c spec (A477); build round 5c open, its last | build, check, security read, train; A04C after |
+| W00c | spec reported (A467); build round 3 reopened 13:30Z (it sat in hold-findings 4.5 h: lesson) | build, mutation on cloud, check |
+| A04 | split and frozen (A477), spec be09e312; build round 5c reopened, its last | build, check, security read, train; A04C after |
 | A04C | carded (G1 to G4, draft on claude/A04C-draft) | spec after A04 lands |
 | W00b, A08 | wait for W00c and FX8; A08 for A04 | spec, build, check |
 | FX8 | round 2 spec in; build reopened (cloud box, LF) | build, check |
@@ -30,7 +30,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 13:26Z by the Lea
 | JH0, S00, B04, SC2 | wait for W00c | builds after W00c lands |
 | Design lane | plan reports/design-lane-2026-10-03.md (A475) | base branch claude/design-base and brief re-check now; then designers D13 with D04, D03, D02; sitting Tue 6 Oct |
 
-Local: local-2 CQ10 spec, local-4 CQ8 check; then `npm ci` in the main checkout.
+Cloud: 8 runs fired 13:30Z (W00c build first; A04, SC3, FX4, SC8, FX17 builds; GL3, SC11, SC6, FX3, SC12 specs). Local: local-2 CQ10 spec, local-4 CQ8 check, local-6 next after the cloud claims; then `npm ci` in the main checkout. Helpers: design base branch, brief re-check.
 
 ## Next, in order
 
