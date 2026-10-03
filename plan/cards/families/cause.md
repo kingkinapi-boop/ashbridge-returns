@@ -1,5 +1,8 @@
 # Family: learning cause rule ({cause})
 
+Phase (the card's own, in plan/slices.json). Where: local or cloud.
+Tags: none.
+
 Cards N10 to N18. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 07 (LL-4) and `src/modules/learning/diffs/` (N01).
 
 ## Goal

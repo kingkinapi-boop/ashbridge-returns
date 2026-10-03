@@ -1,0 +1,5 @@
+// Planted (SC R56): a regex over raw sheet XML that misses a self-closed <c r="B2"/>, and an absolute snap tolerance.
+const CELL = /<c r="([A-Z]+\d+)"[^>]*>(.*?)<\/c>/g
+const SNAP = 1e-9
+export const cells = (xml: string): string[] => [...xml.matchAll(CELL)].map((m) => m[1] ?? '')
+export const snapped = (a: number, b: number): boolean => Math.abs(a - b) < SNAP
