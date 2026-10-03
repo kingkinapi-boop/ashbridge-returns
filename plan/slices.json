@@ -10576,6 +10576,8 @@
       ],
       "paths": [
         "src/modules/ai/runner/engines.ts",
+        "src/modules/ai/runner/runner.ts",
+        "src/core/safe-read.ts",
         "src/modules/ai/runner/exchange-errors.acceptance.test.ts"
       ],
       "clauses": [

@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:00Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:10Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -20,7 +20,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:00Z by the Lea
 | Train | 26e84345 red on R18 (fixed by A461) and blocked on pg16 and mutation (refused); rebuilt with DB16 alone, requested 11:25Z (A462) | check on pg16; land; SC11 and GL3 follow |
 | SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 5b check: no code failure; scope ruling (A465); lows to FX18 | security review, then the train; A08 spec after landing |
+| A04 | round 5b PASS by ruling (A465), security CLEAN (5 lows to FX18, A466) | board the next train with FX15, CQ7; A08 spec after landing |
 | DB16, SC11, GL3 | DB16 PASS, CLEAN; SC11 spec reported (39 tests, A453 in); GL3 build waits for DB16 on main (pg16) | board DB16 next train; SC11 build; GL3 pg16 re-run, check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
