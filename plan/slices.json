@@ -1492,7 +1492,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -1518,7 +1518,8 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -3822,21 +3823,39 @@
       "hard": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
         "D02",
-        "U02"
+        "U02",
+        "X01",
+        "V02",
+        "F02"
       ],
-      "paths": [],
-      "clauses": [],
+      "paths": [
+        "src/app/(staff)/review/queue/**",
+        "src/modules/review/queue/**",
+        "e2e/staff/review-queue.spec.ts"
+      ],
+      "clauses": [
+        "RV-8",
+        "FLOW-7",
+        "FLOW-2",
+        "SEC-2",
+        "RV-50",
+        "RV-53",
+        "RV-54"
+      ],
       "id": "V15",
-      "title": "CPA review queue (/review): returns waiting for review, oldest first",
+      "title": "CPA review queue (/review): returns waiting for review, in Zo's order (Z20-4)",
       "phase": 3,
       "size": "M",
       "core": false,
-      "note": "No card owned the queue screen (reports/cards-V02-V13-draft.md, A421)."
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card.",
+      "security": true,
+      "screens": true,
+      "hard": false
     },
     {
       "status": "carded",
@@ -5071,7 +5090,8 @@
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
         "e2e/steps/skeleton-*.ts",
-        "tools/test/reading-rules.test.mjs"
+        "tools/test/reading-rules.test.mjs",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "RT-1",
@@ -5272,7 +5292,8 @@
         "src/modules/roundtrip/resolve/**",
         "src/modules/roundtrip/index.ts",
         "src/contracts/roundtrip.ts",
-        "db/schema/45_roundtrip.sql"
+        "db/schema/45_roundtrip.sql",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "RT-16",
@@ -5292,6 +5313,80 @@
       "hard": true,
       "core": true,
       "note": "Split from T04 on 2 Oct (reports/cards-phase2.md): T04 classes the cells, T12 resolves them and holds the sign-off gate."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "T09",
+        "E18",
+        "W29",
+        "N00",
+        "A05",
+        "T07"
+      ],
+      "paths": [
+        "src/modules/assessment/**",
+        "src/contracts/assessment.ts",
+        "db/schema/82_assessment.sql",
+        "data/assessment/**",
+        "src/pipeline/deps.ts",
+        "src/pipeline/handlers.ts"
+      ],
+      "clauses": [
+        "FLOW-8",
+        "FLOW-2",
+        "LL-1",
+        "RV-30",
+        "EV-2",
+        "AI-7",
+        "SEC-2",
+        "SEC-7"
+      ],
+      "id": "T13",
+      "title": "Notice of assessment: compare with the filed return and the move from filed to assessed",
+      "phase": 4,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Carded 3 Oct from the unowned gap in reports/phase3-card-review-2026-10-03b.md (fix 31, A433). Registers guard filed_to_assessed. Independent review before first spec."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "T13",
+        "T11",
+        "T09",
+        "T10",
+        "F02",
+        "F07",
+        "L00"
+      ],
+      "paths": [
+        "src/modules/amended/**",
+        "src/contracts/amended.ts",
+        "db/schema/83_amended.sql"
+      ],
+      "clauses": [
+        "FLOW-8",
+        "FLOW-1",
+        "FLOW-2",
+        "FLOW-9",
+        "EV-8",
+        "AI-7",
+        "SEC-2",
+        "SEC-7"
+      ],
+      "id": "T14",
+      "title": "Amended return: a new cycle at prepare linked to the filed return",
+      "phase": 4,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Carded 3 Oct from the second unowned gap in reports/phase3-card-review-2026-10-03b.md (FLOW-8's amended return). Independent review before first spec."
     },
     {
       "status": "carded",
@@ -6091,13 +6186,15 @@
         "N00",
         "L00",
         "V00",
-        "FX5"
+        "FX5",
+        "X00"
       ],
       "paths": [
         "src/modules/approval/**",
         "db/schema/60_versions.sql",
         "src/pipeline/steps/approval-watch.ts",
-        "src/pipeline/handlers.ts"
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -7349,7 +7446,10 @@
         "V00",
         "T07",
         "X01",
-        "Q46",
+        "B03",
+        "T05",
+        "Q00",
+        "X00",
         "T12",
         "D02",
         "U02"
@@ -7369,7 +7469,8 @@
         "RT-18",
         "SEC-2",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "SEC-3"
       ],
       "id": "V02",
       "title": "CPA review: the brief",
@@ -7377,7 +7478,8 @@
       "size": "M",
       "screens": true,
       "hard": false,
-      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "security": true
     },
     {
       "status": "carded",
@@ -7436,7 +7538,8 @@
         "V09",
         "U02",
         "D02",
-        "D08"
+        "D08",
+        "N00"
       ],
       "paths": [
         "src/app/(staff)/review/comments/**",
@@ -7457,16 +7560,20 @@
         "SEC-2",
         "SEC-7",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "RT-18",
+        "EX-1",
+        "RV-6"
       ],
       "id": "V04",
       "title": "CPA review: comments and rework view",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "screens": true,
       "hard": false,
       "security": true,
-      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "core": true
     },
     {
       "status": "carded",
@@ -7477,7 +7584,9 @@
         "X00",
         "T04",
         "D08",
-        "U02"
+        "U02",
+        "T12",
+        "V00"
       ],
       "paths": [
         "src/app/(staff)/prepare/exceptions/**",
@@ -7506,7 +7615,8 @@
       "screens": true,
       "hard": false,
       "core": true,
-      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "security": true
     },
     {
       "status": "carded",
@@ -7517,7 +7627,8 @@
         "T01",
         "D02",
         "D08",
-        "U02"
+        "U02",
+        "I40"
       ],
       "paths": [
         "src/app/(staff)/review/fixes/**",
@@ -7527,7 +7638,8 @@
         "db/schema/76_fixes.sql",
         "src/pipeline/steps/fix-drafts.ts",
         "src/pipeline/handlers.ts",
-        "e2e/staff/fixes.spec.ts"
+        "e2e/staff/fixes.spec.ts",
+        "data/ai/evals/sets/fix_draft.json"
       ],
       "clauses": [
         "RV-12",
@@ -7543,7 +7655,8 @@
         "SEC-2",
         "SEC-7",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "AI-11"
       ],
       "id": "V13",
       "title": "CPA review: AI-drafted fixes for simple comments, approved by the preparer",
@@ -8981,92 +9094,163 @@
       "size": "S"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "B04",
         "B05",
+        "B01",
         "T08"
       ],
       "paths": [
-        "src/modules/books/recheck/**"
+        "src/modules/books/recheck/**",
+        "src/modules/books/index.ts",
+        "src/contracts/books.ts",
+        "db/schema/77_recheck.sql",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "TB-11",
-        "FLOW-5"
+        "FLOW-5",
+        "TB-10",
+        "OUT-3",
+        "SEC-7",
+        "SEC-11",
+        "AI-7"
       ],
       "id": "B06",
       "title": "Books changed after approval: re-read QBO and compare with the approved snapshot",
       "phase": 4,
       "size": "M",
-      "hard": true
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T08",
         "T02",
-        "B06"
+        "B06",
+        "N00",
+        "T11"
       ],
       "paths": [
-        "src/modules/transmit/**"
+        "src/modules/transmit/**",
+        "src/contracts/transmit.ts",
+        "db/schema/78_transmit.sql",
+        "data/transmit/**",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "RT-19",
         "END-4",
-        "FLOW-5"
+        "FLOW-5",
+        "FLOW-2",
+        "RT-20",
+        "LL-1",
+        "LL-3",
+        "AI-7",
+        "SEC-7",
+        "OUT-3",
+        "TB-11",
+        "SEC-2"
       ],
       "id": "T09",
       "title": "The check before transmit: check export against the approval",
       "phase": 4,
-      "size": "M",
+      "size": "L",
       "hard": true,
-      "security": true
+      "security": true,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T09",
-        "T07"
+        "T07",
+        "T11",
+        "V04",
+        "A05",
+        "T13",
+        "W29"
       ],
       "paths": [
-        "src/modules/binder/**"
+        "src/modules/binder/**",
+        "src/contracts/binder.ts",
+        "db/schema/81_binder.sql",
+        "db/schema/99_closed.sql",
+        "src/pipeline/steps/binder.ts",
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "FLOW-9",
         "SEC-8",
-        "RT-11"
+        "RT-11",
+        "SEC-7",
+        "FLOW-2",
+        "EV-1",
+        "SEC-2",
+        "AI-7"
       ],
       "id": "T10",
       "title": "The frozen binder and retention",
       "phase": 4,
-      "size": "M",
-      "security": true
+      "size": "L",
+      "security": true,
+      "core": true,
+      "hard": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T08",
         "F07",
-        "F02"
+        "F02",
+        "T07",
+        "B03",
+        "A05",
+        "E00",
+        "W20",
+        "G01"
       ],
       "paths": [
-        "src/modules/clientsign/**"
+        "src/modules/clientsign/**",
+        "src/contracts/clientsign.ts",
+        "db/schema/79_clientsign.sql",
+        "data/clientsign/**",
+        "src/pipeline/deps.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "FLOW-2",
+        "FLOW-5",
         "FLOW-8",
         "RV-30",
         "SEC-8",
-        "END-7"
+        "END-7",
+        "ARC-2",
+        "AI-7",
+        "SEC-7"
       ],
       "id": "T11",
       "title": "Approval summary data and the T183CORP record (client wording stays in the client app)",
       "phase": 4,
-      "size": "S"
+      "size": "M",
+      "core": true,
+      "security": true,
+      "hard": false,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
       "status": "todo",
@@ -9138,7 +9322,8 @@
       "id": "N01",
       "title": "Differences by natural key",
       "phase": 4,
-      "size": "M"
+      "size": "M",
+      "note": "T10 exempts returns.differences from the closed-return guard (99_closed.sql): N01 writes the CRA-assessed differences, causes and ranking after the return closes (reports/phase3-card-review-2026-10-03b.md fix 33). Insert rows only; never another table of a closed return."
     },
     {
       "status": "carded",
@@ -9380,7 +9565,9 @@
         "J5-K10",
         "J5-K11",
         "J5-K12",
-        "J5-K13"
+        "J5-K13",
+        "T13",
+        "T14"
       ],
       "paths": [
         "e2e/kinds/learning.spec.ts"
@@ -9425,7 +9612,7 @@
       "phase": 4,
       "size": "M",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED. From the FX2 security review (3 Oct, A435): a production host with NODE_ENV unset defaults to development and starts every stand-in; the go-live check refuses to start unless NODE_ENV is set explicitly."
     },
     {
       "status": "todo",
@@ -9580,7 +9767,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ2"
@@ -9598,7 +9785,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From the DB16 double offer, 3 Oct (A416)."
+      "note": "From the DB16 double offer, 3 Oct (A416).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9608,6 +9796,7 @@
       ],
       "paths": [
         "tools/scope.mjs",
+        "tools/lib.mjs",
         "tools/test/scope-spec-files.test.mjs"
       ],
       "clauses": [
@@ -9619,6 +9808,88 @@
       "size": "S",
       "core": false,
       "note": "From reports/FX8-findings.md, 3 Oct (A417)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ3"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-race.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ5",
+      "title": "claim.mjs: a claim is written on the tip it was decided on",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/CQ3-check.md, 3 Oct (A428)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ4"
+      ],
+      "paths": [
+        "tools/mutate-changed.mjs",
+        "tools/test-homes.json",
+        "tools/test/mutate-harness.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ6",
+      "title": "Mutation gate: core from slices.json and a Lead-kept harness list",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/DB16-findings.md, 3 Oct (A430)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ5"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-race-update.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ7",
+      "title": "claim.mjs: update and beat write on the tip they read",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/CQ5-spec.md, 3 Oct (A431)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ5"
+      ],
+      "paths": [
+        "tools/next.mjs",
+        "tools/claim.mjs",
+        "tools/test/next-paths.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ8",
+      "title": "next.mjs names path holds; the Lead can reopen a check",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "3 Oct (A439)."
     },
     {
       "status": "carded",
@@ -9717,7 +9988,7 @@
       "note": "From reports/A06-findings.md, 2 Oct."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A06"
@@ -9743,7 +10014,8 @@
       "size": "S",
       "core": false,
       "security": true,
-      "note": "From reports/A06-findings.md, 2 Oct."
+      "note": "From reports/A06-findings.md, 2 Oct.",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -9807,7 +10079,8 @@
       "paths": [
         "src/modules/sheets/**",
         "src/contracts/sheets.ts",
-        "tools/test/reading-rules.test.mjs"
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "EV-14",
@@ -9834,7 +10107,8 @@
       "paths": [
         "src/contracts/taxprep.ts",
         "src/contracts/taxprep.acceptance.test.ts",
-        "tools/test/reading-rules.test.mjs"
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "EV-5",
@@ -9853,7 +10127,8 @@
       "deps": [
         "SC",
         "W00c",
-        "FX2"
+        "FX2",
+        "CQ6"
       ],
       "paths": [
         "src/contracts/facts.ts",
@@ -9863,7 +10138,8 @@
         "src/modules/storage/**",
         "src/core/test-no-network.ts",
         "src/contracts/auth.ts",
-        "tools/test/__fixtures__/planted-interpolated-log.ts.txt"
+        "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "EV-1",
@@ -9895,7 +10171,8 @@
         "reference/sample-clients/15-*/**",
         "reference/sample-clients/verify.mjs",
         "reference/sample-clients/README.md",
-        "tools/test/sample-names.test.mjs"
+        "tools/test/sample-names.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "SEC-11",
@@ -9918,7 +10195,8 @@
       ],
       "paths": [
         ".gitattributes",
-        "reference/**/*.csv"
+        "reference/**/*.csv",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "ARC-10",
@@ -9953,6 +10231,69 @@
     },
     {
       "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC5"
+      ],
+      "paths": [
+        "src/modules/ocr/**"
+      ],
+      "clauses": [
+        "AI-10",
+        "EV-5"
+      ],
+      "id": "FX11",
+      "title": "Recorded OCR: the engine named by the result matches the source (R84)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/A04-findings.md, 3 Oct (A426)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "FX10"
+      ],
+      "paths": [
+        "vitest.config.ts",
+        "tools/test/db-budget.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "FX12",
+      "title": "Db test time budget: workers by machine, tests near the budget",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/FX10-spec.md, 3 Oct (A429)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "FX2",
+        "SC5"
+      ],
+      "paths": [
+        "src/modules/ocr/index.ts",
+        "src/modules/ocr/ocr-guard.acceptance.test.ts"
+      ],
+      "clauses": [
+        "SEC-10",
+        "SEC-11"
+      ],
+      "id": "FX13",
+      "title": "Setting errors name the setting, never its value (R88)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/FX2-security.md, 3 Oct (A435)."
+    },
+    {
+      "status": "carded",
       "spec": "bd0e2fe2",
       "deps": [
         "F02",
@@ -9960,7 +10301,8 @@
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
-        "src/modules/lifecycle/**"
+        "src/modules/lifecycle/**",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "FLOW-1",
@@ -10050,7 +10392,8 @@
       "spec": null,
       "deps": [
         "SC",
-        "FX2"
+        "FX2",
+        "A04"
       ],
       "paths": [
         "tools/test/source-read-rules.test.mjs",
@@ -10063,7 +10406,9 @@
         "src/core/env.acceptance.test.ts",
         "src/core/ids.acceptance.test.ts",
         "src/core/log.acceptance.test.ts",
-        "src/core/money.acceptance.test.ts"
+        "src/core/money.acceptance.test.ts",
+        "src/core/egress-rules.acceptance.test.ts",
+        "src/modules/auth/rules.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-15",
@@ -10098,6 +10443,32 @@
       "size": "S",
       "core": true,
       "note": "From reports/SC-spec-review-3.md, 3 Oct (A415)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "CQ4",
+        "CQ6",
+        "F02"
+      ],
+      "paths": [
+        "tools/test/card-rules.test.mjs",
+        "tools/test/__fixtures__/card-rules/**",
+        "data/lifecycle/unbuilt-guards.json"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16",
+        "FLOW-2"
+      ],
+      "id": "SC10",
+      "title": "Card rules R85 to R87 and R89: flags, harness, spec-owned files, guard owners",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From the DB16 and CQ4 findings, 3 Oct (A430). R89 added 3 Oct from C1 of reports/phase3-card-review-2026-10-03b.md."
     },
     {
       "status": "carded",
@@ -10142,6 +10513,7 @@
       "paths": [
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
+        "src/core/db/target.ts",
         "src/core/db/pg16.test.ts",
         "vitest.config.ts",
         "package.json",
@@ -10158,7 +10530,7 @@
       "title": "The db test project runs on Postgres 16 in cloud checks",
       "phase": 0,
       "size": "S",
-      "core": true,
+      "core": false,
       "security": true,
       "note": "From the train report of 3 Oct (A405)."
     }

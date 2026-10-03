@@ -142,7 +142,7 @@ export function build10() {
   hstQuarterly(c, 'CHQ', 312040);
   c.cardPayments('BCD', 'CHQ', 20);
   const am = amortAje(c, { date: c.fyEnd, tx: [suv], reason: 'Book amortization for the year (straight-line, 5 years)', items: [
-    { label: 'floor machines and vacuums brought forward', cost: 980000, acc: '1531', life: 5, inService: '2021-01-01', prior: 588000 },
+    { label: 'floor machines and vacuums brought forward', cost: 980000, acc: '1531', life: 5, inService: '2022-01-01', prior: 588000 },
     { label: 'SUV', cost: 7200000, acc: '1521', life: 5, inService: '2025-03-12' }] });
 
   // ---- the mess: May missing from the export, four March lines twice, eight December 2024 lines mixed in
@@ -195,7 +195,8 @@ export function build10() {
     client_notes: ['The bank sent me the file in pieces. I think May is missing and the first page has last year\'s December on it.', 'My husband Carlos helps us and I pay him $2,000 every two weeks.', 'The camp in July was for the kids. The groceries and the family phone plan go through the business account because it is easier.', 'I bought an SUV in March for visiting customers.'],
   };
   c.t2.addBacks = [{ item: 'HST late-filing penalties and interest', amount: 28655 + 14310, reason: 'penalties are not deductible; the interest part of the same payments is for a person to confirm', tx: [pen1, pen2], confirm: true }];
-  c.t2.openingUcc = [{ class: '8', ucc: 2940.0, note: 'made-up' }];
+  c.t2.openingUcc = [{ class: '8', ucc: 4390.4, note: 'made-up' }];
+  c.assets = [{ description: 'Floor machines and vacuums brought forward', glAccount: '1530', accumAccount: '1531', class: '8', cost: 9800, availableForUse: '2022-01-01', book: { method: 'straight-line', years: 5, convention: 'monthly' }, cca: { firstYear: 'aii' } }];
   c.t2.slips = { T4: [], T5: [], note: 'The spouse\'s pay is not booked as wages; whether a T4 is required is for a person to decide (flag 10-F05).' };
   c.t2.schedule3 = { dividendsReceived: [], dividendsPaid: [] };
   c.t2.schedule4 = { note: 'no loss' };

@@ -66,7 +66,7 @@ export function build03() {
   c.cardPayments('BCD', 'CHQ', 20);
   const ajeBonus = c.aje({ date: '2025-06-30', lines: [{ gl: '6132', dr: 2500000 }, { gl: '2035', cr: 2500000 }], reason: 'Owner bonus of $25,000.00 declared by resolution on 30 Jun 2025: accrued at year end; paid 28 Dec 2025', onb: ['owner_bonus'] });
   const am = amortAje(c, { date: c.fyEnd, tx: [truck, saw], reason: 'Book amortization for the year (straight-line, 5 years)', items: [
-    { label: 'shop equipment brought forward', cost: 2460000, acc: '1531', life: 5, inService: '2020-01-01', prior: 1230000 },
+    { label: 'shop equipment brought forward', cost: 2460000, acc: '1531', life: 5, inService: '2022-01-01', prior: 1230000 },
     { label: 'pickup truck', cost: 5800000, acc: '1521', life: 5, inService: '2024-09-15' },
     { label: 'table saw', cost: 230000, acc: '1531', life: 5, inService: '2025-02-14' }] });
 
@@ -104,7 +104,8 @@ export function build03() {
       'I pay WSIB every quarter. Most electrical, plumbing and drywall is done by subcontractors.',
     ],
   };
-  c.t2.openingUcc = [{ class: '8', ucc: 9840.0, note: 'brought forward from last year, made-up figure' }];
+  c.t2.openingUcc = [{ class: '8', ucc: 11020.8, note: 'brought forward from last year, made-up figure' }];
+  c.assets = [{ description: 'Shop equipment brought forward', glAccount: '1530', accumAccount: '1531', class: '8', cost: 24600, availableForUse: '2022-01-01', book: { method: 'straight-line', years: 5, convention: 'monthly' }, cca: { firstYear: 'aii' } }];
   c.t2.addBacks = [{ item: 'Owner bonus accrued at year end and not paid within 179 days', amount: 2500000, reason: 'paid on day 181; deductible in the year paid', aje: [ajeBonus], onb: ['owner_bonus'] }];
   c.t2.slips = { T4: t4o.slips, T4Summary: t4o.summary, T5: [], note: 'T4 slips are by calendar year, not by fiscal year. Sarah\'s 2025 slip includes the $25,000.00 bonus paid 28 Dec 2025.' };
   c.t2.schedule3 = { dividendsReceived: [], dividendsPaid: [] };
@@ -193,7 +194,7 @@ export function build04() {
   c.opening['1530'] = 6200000; c.opening['1531'] = -2800000; c.opening['3010'] = -20000;
   c.cardPayments('BCD', 'CHQ', 20);
   const am = amortAje(c, { date: c.fyEnd, tx: [kit], reason: 'Book amortization for the year (straight-line, 5 years)', items: [
-    { label: 'kitchen equipment brought forward', cost: 6200000, acc: '1531', life: 5, inService: '2021-01-01', prior: 2800000 },
+    { label: 'kitchen equipment brought forward', cost: 6200000, acc: '1531', life: 5, inService: '2022-07-01', prior: 2800000 },
     { label: 'kitchen equipment bought in May', cost: 1450000, acc: '1531', life: 5, inService: '2025-05-08' }] });
 
   c.flag({ rule: 'HST quick method: rate, line 101 and no input tax credits on costs', judgement: true, aje: [ajeQm], onb: ['hst'],
@@ -224,7 +225,8 @@ export function build04() {
     card_processing_fees_by_month: Object.entries(feeByMonth).sort().map(([month, f]) => ({ month, processing_fees: D(f), gross_card_batches: D(grossByMonth[month]) })),
     client_notes: ['We use the quick method for HST. Card sales come in daily; the deposit is after the fees.', 'Tips go to the staff every second Friday with their pay.', 'Rent is $6,500 a month. We bought a new range and hood in May.'],
   };
-  c.t2.openingUcc = [{ class: '8', ucc: 21400.0, note: 'brought forward from last year, made-up figure' }];
+  c.t2.openingUcc = [{ class: '8', ucc: 29120.0, note: 'brought forward from last year, made-up figure' }];
+  c.assets = [{ description: 'Kitchen equipment brought forward', glAccount: '1530', accumAccount: '1531', class: '8', cost: 50000, availableForUse: '2022-07-01', book: { method: 'straight-line', years: 5, convention: 'monthly' }, cca: { firstYear: 'aii' } }, { description: 'Walk-in cooler brought forward', glAccount: '1530', accumAccount: '1531', class: '8', cost: 12000, availableForUse: '2023-10-01', book: { method: 'straight-line', years: 5, convention: 'monthly' }, cca: { firstYear: 'aii' } }];
   c.t2.slips = { T4: t4o.slips, T4Summary: t4o.summary, T5: [], note: 'No dividends and no owner pay in the year.' };
   c.t2.schedule3 = { dividendsReceived: [], dividendsPaid: [] };
   c.t2.schedule4 = { note: 'no loss' };

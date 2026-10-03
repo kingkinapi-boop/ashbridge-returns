@@ -15,7 +15,7 @@ export interface AuthOptions {
 
 /** The engine comes from AUTH_ENGINE read by name (unset means testusers outside production; in production it must be set); live is off and refuses. */
 export async function createAuth(opts: AuthOptions): Promise<AuthAdapter> {
-  const settings = readSettings(opts.env ?? process.env)
+  const settings = readSettings(opts.env)
   if (settings.NODE_ENV === 'production' && settings.AUTH_ENGINE === undefined) {
     throw new Error('AUTH_ENGINE must be set in production')
   }
