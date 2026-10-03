@@ -336,3 +336,85 @@ describe('ARC-15 CQ4 R82 round 2: the expectation class, the base card, --branch
     expect(r.out).not.toMatch(/superseded/)
   })
 })
+
+// CQ11 (A465, A490): a build-owned test (`*.build.test.ts`, `*.build.db.test.ts`) is not a spec file. A spec commit may have
+// touched it (a restated test) and the build may still edit it; the build's edits to it are never "spec file edited".
+const BUILD_TEST = 'src/f/e.build.test.ts'
+const CARD3 = [
+  '# F card',
+  '',
+  'Paths: src/f/**',
+  '',
+  '## Spec',
+  '- Tests: `src/f/e.build.test.ts` line 50 restated; `tests/f.test.mjs` is the spec file.',
+  '',
+  '## Build',
+  'The code under src/f.',
+  ''
+].join('\n')
+
+describe('ARC-15 CQ11 A465: scope tells a build-owned test from a spec file', () => {
+  test('ARC-15 A465 a build commit that edits a *.build.test.ts file a spec commit also touched is not flagged', async () => {
+    const w = await world2(CARD3)
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { [BUILD_TEST]: 'e1\n', 'tests/f.test.mjs': 't1\n' }),
+      () => commit(w, 'build(F): code and own test', { 'src/f/c.ts': 'c1\n', [BUILD_TEST]: 'e-build\n' })
+    ])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(0)
+    expect(r.out).toMatch(/SCOPE OK F/)
+    expect(r.out).not.toMatch(/spec file edited/)
+  })
+
+  test('ARC-15 A465 a *.build.db.test.ts file edited by the build is not flagged either', async () => {
+    const w = await world2(CARD3)
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { 'src/f/d.build.db.test.ts': 'd1\n' }),
+      () => commit(w, 'build(F): code and own db test', { 'src/f/c.ts': 'c1\n', 'src/f/d.build.db.test.ts': 'd-build\n' })
+    ])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(0)
+    expect(r.out).not.toMatch(/spec file edited/)
+  })
+
+  test('ARC-15 A465 plant: the build editing a spec-owned file next to it (acceptance test, plain test) still fails by name', async () => {
+    const w = await world2(CARD3)
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { [BUILD_TEST]: 'e1\n', 'src/f/g.acceptance.test.ts': 'g1\n', 'tests/f.test.mjs': 't1\n' }),
+      () => commit(w, 'build(F): code, own test, and a spec edit', { 'src/f/c.ts': 'c1\n', [BUILD_TEST]: 'e-build\n', 'src/f/g.acceptance.test.ts': 'g-build\n', 'tests/f.test.mjs': 't-build\n' })
+    ])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(1)
+    expect(r.out).toMatch(/g\.acceptance\.test\.ts/)
+    expect(r.out).toMatch(/tests\/f\.test\.mjs/)
+    expect(r.out).not.toMatch(/e\.build\.test\.ts in/)
+  })
+
+  test('ARC-15 A465 a hand-edited merge in a *.build.test.ts file is not flagged', async () => {
+    const w = await world2(CARD3)
+    await commit(w, 'main moves', { 'src/other/m.ts': 'm\n' })
+    await git(w, 'push', '-q', 'origin', 'main')
+    await git(w, 'reset', '-q', '--hard', 'HEAD~1')
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { [BUILD_TEST]: 'e1\n' }),
+      () => commit(w, 'build(F): code', { 'src/f/c.ts': 'c1\n' }),
+      async () => {
+        await git(w, 'merge', '-q', '--no-commit', '--no-ff', 'origin/main')
+        put(w, BUILD_TEST, 'e-by-hand\n')
+        await git(w, 'add', BUILD_TEST)
+        await git(w, 'commit', '-q', '-m', 'Merge origin/main into claude/F')
+      }
+    ])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(0)
+    expect(r.out).not.toMatch(/merge:/)
+  })
+
+  test('ARC-15 A465 being build-owned does not put a file outside Paths: a *.build.test.ts outside the card still fails', async () => {
+    const w = await world2(CARD3)
+    await branch(w, [() => commit(w, 'build(F): code and a test outside', { 'src/f/c.ts': 'c1\n', 'src/elsewhere/z.build.test.ts': 'z\n' })])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(1)
+    expect(r.out).toMatch(/src\/elsewhere\/z\.build\.test\.ts/)
+  })
+})
