@@ -1,14 +1,13 @@
 {
-  "status": "landed",
+  "status": "green",
   "branch": "claude/train",
-  "head": "3c3de19",
+  "head": "25bde2a",
   "cards": [
-    "A03",
-    "G17"
+    "A07D",
+    "A06"
   ],
-  "requested_at": "2026-10-02T20:55:43Z",
-  "note": "A03 core (Opus read in its check). Run gitleaks over HEAD.",
-  "by": "cloud-0c9d3d",
-  "report": "reports/train-20261002-2105.md",
-  "landed_at": "2026-10-02T21:08:00Z"
+  "requested_at": "2026-10-03T03:42:49Z",
+  "note": "A07D core (Opus read done, findings carded to FX4 and SC4, A393). A06 security: run the A06 db tests (src/modules/auth/*.db.test.ts) on the preinstalled PostgreSQL 16 as well as PGlite and report both (A396). Run gitleaks over HEAD if available.",
+  "by": "cloud-d8b04b",
+  "report": "reports/train-20261003-0401.md"
 }

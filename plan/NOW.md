@@ -1,37 +1,40 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:25Z by the Lead at handover (Zo's `handover`). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lead (Zo's `turbo on` 03:20Z; mode already turbo). Times are UTC from `date -u`.
 
 ## State
 
-- **Mode: turbo** (Zo, 2 Oct 15:30Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use about 52% of the week at 21:10Z. Blueprint v1.2.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). At 03:16Z the RemoteTrigger tool dropped out of the Lead session; if it is missing after `go`, workers cannot be fired: say `Blocked` only if it stays missing after a fresh session. Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core only. None running now.
-- **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). No train in flight (plan/train.json landed).
-- **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
+- **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
+- **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). Train claude/train 25bde2a requested: A07D, A06.
+- **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
-## In flight (no cloud run is working; all jobs below are reported or held)
+## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| A07D | build reported, check PASS (Sonnet); Opus read: 5 findings in reports/A07D-opus-read.md | Lead decides before boarding (A07D has no more rounds: a fallback is a removal, A384) |
-| W00c | build reported: 1975 of 1975, mutation 100; Paths fixed (A392) | check job; then merge W00c into claude/W00b, W00b spec, unblock S00, JH0, B04, SC2 |
-| A06 round 2 | build reported, check PASS (PG16 parity not run) | fresh `/security-review` on claude/A06, then board; then FX2 spec (held on A06), then A04 round 2 spec |
-| SC | spec reported (R34, R47 for A03 recorded); build reopened 03:20Z | build, check, board |
-| CQ2 | check FAIL on scope only (2 files outside Paths, reports/CQ2-check.md) | add the files to Paths if they test CQ2's own code (amber), re-stamp build, re-offer check |
-| A04 | held: round 2 (reports/A04-findings.md, A391, card directive) | reopen spec after A06 lands; then build, check, security review |
-| W16 | spec reported (KNOWN emptied, 5 R8 fail) | build |
-| A08 | spec reported (71 tests; A04 must read A08 refusal files) | build after A04 lands |
+| A07D, A06 | on train claude/train 25bde2a (A393, A396: A06 security review CLEAN) | train requested 03:42Z (plan/train.json; A06 db tests on PG16 too); cloud run fired to take it | land when green (skill merge) |
+| W00c | findings review done (reports/W00c-findings.md); spec reopened for round 2 (A403) | spec, build round 2, check; it unblocks W00b, JH0, B04, SC2 |
+| S00, FX5 | spec review GAPS (11, 7); specs reopened (A402) | spec, then build (the wait: build releases clear when the spec reports) |
+| JH0 | spec reported (Paths + testworld/harness, A401) | build |
+| SC | build reopened | cloud run |
+| W16 | findings: the spec was wrong; spec reopened for round 2 on claude/W16-r2 (A404); SC6 carded | spec, build (data only), check with security review |
+| CQ2 | rule 6 spec and build round 2 reported (no code change needed) | check (cloud), then board |
+| SC4 | startable (A07D built) | spec, then FX4 |
+| A04, A08 | held on A06, then A04 | as before |
+| Local workers 1 to 3 | started 03:38Z; worker 1 restarted on Opus 03:42Z (Sonnet released core specs) | re-fire on Opus while the queue has jobs; Lead removes junctions |
+
+Cloud runs fired 03:22Z: 6, plus 1 at 03:43Z for the train (now checking), 3 at 03:50Z for W00c spec, S00 spec, SC check (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
 
 ## Next, in order
 
-1. Poll claims; fire cloud runs for open jobs (W00c check, SC build, W16 build, A06 security review via a local Opus helper). Board every PASS: scope, GitHub checks green, Opus read for core. One train at a time; land by merging main into the train, code guard, ff main.
-2. A07D Opus read: decide each finding (fix only by removal, else SC4 rule or FX card), then board.
-3. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
-4. A06 lands, then FX2 spec, A04 round 2 spec, SC3, SC5 (R71 to R73).
-5. Phase 3 cards T08, Q00, Q01, I01, I30, I40 rewritten (A390): an independent card review before their first spec. Still to write: the 22 `todo` cards `node tools/next.mjs` lists.
-6. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
-7. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
-8. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
+1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
+2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
+3. A06 lands, then FX2 spec (unhold it), A04 round 2 spec, SC3, SC5 (R71 to R73).
+4. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
+5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
+6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
+7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
 
 ## Splits (last rounds)
 
@@ -42,6 +45,7 @@ W00a to W00c (A379), A07C to A07D (A384; no more rounds), rule cards SC2 (R57 to
 - The permission system refuses edits to `.gitleaks.toml` for every agent; changes go to Zo by hand (0021). Cloud boxes lack gitleaks; GitHub checks run it.
 - No real client data: Assets/ is excluded from git; never commit it.
 - Cloud boxes need Node 24.21 or later; see .claude/cloud-worker-run.md.
+- Local workers have no subagent tool: start them with model opus so they can do core specs and checks themselves (Sonnet ones release core jobs). They cannot run `cmd //c rmdir`: the Lead removes each worktree's node_modules junction, then the worktree. The main checkout's node_modules lacks exceljs and pdfjs-dist (SC check released 03:47Z): run `node tools/heavy.mjs -- npm ci` in the main checkout when no local worker is running, before firing more (`npm install` is refused; never route around it).
 - claim.mjs drops the Lead's reopen note on specs (CQ2 item 5): put a bold directive at the top of the card.
 - Code guard at landing lists design/ docs too (A388): a doc-only path is not a reason to re-check.
 - Mutation bar is 100 per `@mutate` file (testing.md, ARC-15; agent orders fixed, A391).
