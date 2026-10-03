@@ -1,9 +1,10 @@
 {
  "card": "JH0",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "wait: refit blocked by W00 files on the branch tripping SC rule tests (W00b/W00c own them); reopen after W00c lands, see reports/JH0-spec.md",
  "worker": "cloud-c5d3df",
- "state": "working",
- "at": "2026-10-03T16:17:01.780Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T16:22:52.897Z",
+ "mode": "turbo",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"F00T\",\"F01D\",\"W00c\"],\"depStatus\":[\"done\",\"done\",\"carded\"]}"
 }
