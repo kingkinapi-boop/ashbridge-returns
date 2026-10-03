@@ -1,11 +1,12 @@
 {
  "card": "FX7",
  "role": "spec",
- "note": "51 tests; Lead decides 2 items in reports/FX7-spec.md: business_number R45 KNOWN entry kept, safe-read.ts Paths gap",
- "reopenedFrom": "72aa3482",
+ "note": "A511 patch: business_number dropped from R45; readRegularFileBytes spec (18) + 4 storage tests; Opus spec review next",
  "worker": "cloud-fce4c0",
- "state": "working",
- "at": "2026-10-03T19:30:09.491Z",
+ "state": "reported",
+ "at": "2026-10-03T19:49:45.002Z",
  "mode": "turbo",
- "beat": "2026-10-03T19:30:39.958Z"
+ "beat": "2026-10-03T19:30:39.958Z",
+ "commit": "c12b1b12",
+ "validated": "a677d7fe"
 }
