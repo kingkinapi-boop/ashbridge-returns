@@ -12,6 +12,9 @@ import { aiEngines, type EngineContext } from './engines'
 import { AiJobSchema, ApprovedListSchema, inputHashOf, readUtf8, type AiJob, type ApprovedList } from './schemas'
 
 export const AI_JOB_LEASE_MS = 24 * 60 * 60 * 1000
+/** AI-10: every stamp part is compared; the parts come from the stamp contract, never a hand list. */
+export const STAMP_PARTS_FROM_JOB: readonly (keyof VersionStamp)[] = Object.keys(versionStampSchema.shape) as (keyof VersionStamp)[]
+export const STAMP_PARTS_FROM_ANSWER: readonly (keyof VersionStamp)[] = []
 export const AI_SETTING_NAMES = ['AI_EXCHANGE_DIR'] as const
 export const DECISION_0008 = 'AI runs only through the Claude project (decision 0008)'
 const NOT_APPROVED = 'not approved: run the evaluation set first (AI-11)'
@@ -98,13 +101,16 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
     }
     const { version } = checked.data
     // AI-10: the stamp must describe this very job; a late result is accepted only on a matching input hash.
-    const expected = {
+    const expected: VersionStamp = {
       modelId: job.modelId,
       promptVersion: job.promptVersion,
       promptHash: job.promptHash,
       inputHash: inputHashOf(job.inputs),
+      ocrEngine: job.ocrEngine,
+      ocrEngineVersion: job.ocrEngineVersion,
+      mappingRelease: job.mappingRelease,
     }
-    const wrong = (Object.keys(expected) as (keyof typeof expected)[]).filter((k) => version[k] !== expected[k])
+    const wrong = (Object.keys(versionStampSchema.shape) as (keyof VersionStamp)[]).filter((k) => version[k] !== expected[k])
     if (wrong.length > 0) {
       return refuse(`the answer's stamp does not match the job: ${wrong.join(', ')} (AI-10)`)
     }
