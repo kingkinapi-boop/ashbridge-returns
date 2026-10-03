@@ -2,7 +2,10 @@
  "card": "FX14",
  "role": "spec",
  "worker": "cloud-8dacd4",
- "state": "working",
- "at": "2026-10-03T18:29:56.476Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T19:00:59.798Z",
+ "mode": "turbo",
+ "note": "27 new or changed tests; whole split done, no build left; see reports/FX14-spec.md",
+ "commit": "7fddce5",
+ "validated": "89be70a"
 }
