@@ -2,7 +2,7 @@
 
 Phase 1. Size M. Hard. Deps: A07D, SC4, SC. Where: cloud.
 Tags: core (citations and amounts: every figure a spreadsheet gives is checked against this text).
-Paths: src/modules/sheets/**, src/contracts/sheets.ts
+Paths: src/modules/sheets/**, src/contracts/sheets.ts, tools/test/reading-rules.test.mjs
 Clauses: EV-14, EV-5, EV-6, ARC-10, END-8
 Read: `reports/A07D-opus-read.md` (all), `plan/cards/A07D.md`, `plan/cards/SC4.md`, `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
