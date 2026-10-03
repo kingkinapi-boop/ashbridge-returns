@@ -1,9 +1,8 @@
 {
  "card": "FX2",
  "role": "spec",
- "worker": "cloud-4b7764",
- "state": "reopened",
- "at": "2026-10-03T04:03:41.896Z",
- "mode": "turbo",
- "note": "A06 landed; spec to the A06 production-refusal pattern"
+ "worker": "cloud-253f9f",
+ "state": "working",
+ "at": "2026-10-03T04:04:51.036Z",
+ "mode": "turbo"
 }
