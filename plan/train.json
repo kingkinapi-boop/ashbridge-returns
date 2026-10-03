@@ -1,5 +1,5 @@
 {
-  "status": "checking",
+  "status": "green",
   "branch": "claude/train",
   "head": "677e92f",
   "cards": [
@@ -8,5 +8,6 @@
   ],
   "requested_at": "2026-10-03T05:25:26Z",
   "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). SC4 is core: its Opus read is done (local-3). CQ2 changes the queue tools: run every tools test. No sample clients on board.",
-  "by": "cloud-8369bc"
+  "by": "cloud-8369bc",
+  "report": "reports/train-20261003-0548.md"
 }
