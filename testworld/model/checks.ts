@@ -22,6 +22,8 @@ function repeated<T>(xs: readonly T[], key: (x: T) => string): string[] {
 }
 
 export function modelIssues(c: Client, catalogue: readonly FaultEntry[]): LoadIssue[] {
+  // A call with no client (SC R35 passes an empty list) is a check with nothing to check, never a pass.
+  if (!('corporation' in c)) return [{ client: 'C00', check: 'schema', record: 'client', reason: 'nothing to check: no client was given' }]
   const client = c.id as ClientId
   const issues: LoadIssue[] = []
   const add = (check: LoadIssue['check'], record: string, reason: string): void => {

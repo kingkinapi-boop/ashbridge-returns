@@ -20,9 +20,8 @@ function decoded(raw: string): string {
   }
 }
 
-/** Every key that appears twice in any one object of the text, once per repeat, in the order the repeat shows. Equal keys in different objects and text inside string values are not repeats. */
-export function repeatedKeys(text: string): readonly { key: string }[] {
-  const found: { key: string }[] = []
+/** Every key of every object of the text, in the order written, once per occurrence, with the keys already seen in that same object. */
+function scanKeys(text: string, onKey: (key: string, seenInObject: boolean) => void): void {
   const stack: Frame[] = []
   let i = 0
   while (i < text.length) {
@@ -32,7 +31,7 @@ export function repeatedKeys(text: string): readonly { key: string }[] {
       const end = stringEnd(text, i)
       if (top !== undefined && top.object && top.wantKey) {
         const key = decoded(text.slice(i, end + 1))
-        if (top.seen.has(key)) found.push({ key })
+        onKey(key, top.seen.has(key))
         top.seen.add(key)
         top.wantKey = false
       }
@@ -44,5 +43,25 @@ export function repeatedKeys(text: string): readonly { key: string }[] {
       i++
     }
   }
+}
+
+/** Every key that appears twice in any one object of the text, once per repeat, in the order the repeat shows. Equal keys in different objects and text inside string values are not repeats. */
+export function repeatedKeys(text: string): readonly { key: string }[] {
+  const found: { key: string }[] = []
+  scanKeys(text, (key, seen) => {
+    if (seen) found.push({ key })
+  })
+  return found
+}
+
+/** The prototype names: a key spelt so is dropped by z.record or reaches the prototype of the parsed object (W00c RC-A). */
+const RESERVED = new Set(['__proto__', 'constructor', 'prototype'])
+
+/** Every key of any object, at any depth, that is a prototype name once its JSON escapes are decoded, once per occurrence, in the order written. */
+export function reservedKeys(text: string): readonly { key: string }[] {
+  const found: { key: string }[] = []
+  scanKeys(text, (key) => {
+    if (RESERVED.has(key)) found.push({ key })
+  })
   return found
 }

@@ -8,29 +8,39 @@ import { decimalToCents } from '../../src/core/money'
 import { faults, type FaultEntry } from '../model/faults'
 import { guardIssues, type GuardFile } from '../model/guard'
 import { modelIssues } from '../model/checks'
-import { repeatedKeys } from './json-keys'
+import { repeatedKeys, reservedKeys } from './json-keys'
 import { ACCOUNT_ROLES, CLIENT_ID, ClientSchema, TestWorldLoadError, calendarDate, isCalendarDate, type Client, type ClientId, type LoadIssue } from '../model/schema'
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 export const SAMPLE_ROOT = join(REPO_ROOT, 'reference', 'sample-clients')
 
 // Amounts arrive as integer cents: readJson turns each money field's text into cents, never through a float (ARC-13).
+// Every object the loader describes is strict (W00c RC-A): a key it does not declare is a 'schema' issue, never dropped.
+// A key written but not read here is declared `carried` (`u`), with the card that reads it named in the comment above it.
 const dollars = z.number()
-const line = z.object({
+const u = z.unknown().optional()
+const ids = z.array(z.string())
+const line = z.strictObject({
   account: z.string(),
   gifi: z.number().int().nullish(),
   gifiStatus: z.string().nullish(),
   debit: dollars,
   credit: dollars,
+  // carried (T-family trial balance cards): names, notes and the source of an opening row
+  name: u,
+  gifiName: u,
+  note: u,
+  source: u,
 })
-const tb = z.object({ rows: z.array(line) })
+const tb = z.strictObject({ rows: z.array(line), totalDebit: dollars, totalCredit: dollars })
 
-const RawKey = z.object({
+const RawKey = z.strictObject({
   name: z.string(),
-  fiscalYear: z.object({ start: calendarDate, end: calendarDate }),
+  fiscalYear: z.strictObject({ start: calendarDate, end: calendarDate, days: z.number().int() }),
   accounts: z.array(
-    z.object({
+    z.strictObject({
       key: z.string(),
+      tag: z.string(),
       role: z.enum(ACCOUNT_ROLES),
       currency: z.string(),
       file: z.string(),
@@ -38,10 +48,16 @@ const RawKey = z.object({
       glAccount: z.string(),
       openingBalance: dollars,
       closingBalance: dollars,
+      rowsInExport: z.number().int(),
+      rowsMissingFromExport: z.number().int(),
+      // carried (W00b, B04 and the statement cards)
+      layout: u,
+      balanceMeaning: u,
+      holder: u,
     }),
   ),
   transactions: z.array(
-    z.object({
+    z.strictObject({
       id: z.string(),
       acct: z.string(),
       date: calendarDate,
@@ -51,47 +67,189 @@ const RawKey = z.object({
       missingFromExport: z.boolean().optional(),
       dupOf: z.string().optional(),
       priorYear: z.boolean().optional(),
-      post: z.array(z.object({ a: z.string(), dr: dollars.optional(), cr: dollars.optional() })).optional(),
+      post: z.array(z.strictObject({ a: z.string(), dr: dollars.optional(), cr: dollars.optional() })).optional(),
+      // carried (the matching, HST, payroll and posting cards: B04, JH0, S00)
+      description: u,
+      currency: u,
+      kind: u,
+      line: u,
+      qboLine: u,
+      gifi: u,
+      gifiStatus: u,
+      hstItc: u,
+      hstCollected: u,
+      pair: u,
+      notes: u,
+      flags: u,
+      mirror: u,
+      postedVia: u,
+      personal: u,
+      external: u,
+      business: u,
+      suggestedPost: u,
+      payroll: u,
+      parts: u,
     }),
   ),
-  statementBalances: z.record(z.string(), z.array(z.object({ month: z.string(), opening: dollars, closing: dollars, rolls: z.boolean() }))),
+  statementBalances: z.record(
+    z.string(),
+    z.array(z.strictObject({ month: z.string(), opening: dollars, closing: dollars, exportActivity: dollars, rolls: z.boolean(), note: u })),
+  ),
   adjustingEntries: z.array(
-    z.object({
+    z.strictObject({
       id: z.string(),
       date: calendarDate,
+      amount: dollars,
       reason: z.string(),
       lines: z.array(line),
-      source: z.object({ transactions: z.array(z.string()), onboarding: z.array(z.string()) }),
+      source: z.strictObject({ transactions: z.array(z.string()), onboarding: z.array(z.string()) }),
+      // carried (T-family adjusting entry cards)
+      note: u,
+      confirm: u,
     }),
   ),
-  trialBalance: z.object({ opening: tb, unadjusted: tb, adjusted: tb }),
+  trialBalance: z.strictObject({ opening: tb, unadjusted: tb, adjusted: tb, basis: u, netIncomeLossBeforeTax: u }),
   flags: z.array(
-    z.object({ id: z.string(), rule: z.string(), detail: z.string(), severity: z.string().optional(), action: z.string().optional() }),
+    z.strictObject({
+      id: z.string(),
+      rule: z.string(),
+      detail: z.string(),
+      severity: z.string().optional(),
+      action: z.string().optional(),
+      evidence: z.strictObject({ transactions: ids.optional(), onboarding: ids.optional(), adjustingEntries: ids.optional() }).optional(),
+      // carried (the flag cards)
+      judgement: u,
+      blocking: u,
+    }),
   ),
-  parties: z.array(z.object({ name: z.string(), kind: z.string().optional() })),
+  parties: z.array(z.strictObject({ name: z.string(), kind: z.string().optional() })),
   t2Inputs: z
-    .object({
-      schedule50: z.array(z.object({ name: z.string(), sin: z.string().optional(), businessNumber: z.string().optional() })).optional(),
+    .strictObject({
+      schedule50: z
+        .array(z.strictObject({ name: z.string(), sin: z.string().optional(), businessNumber: z.string().optional(), percentCommonShares: u, percentPreferredShares: u }))
+        .optional(),
+      schedule1: z
+        .strictObject({
+          addBacks: z
+            .array(
+              z.strictObject({
+                item: u,
+                amount: u,
+                reason: u,
+                confirm: u,
+                source: z.strictObject({ account: u, adjustingEntries: ids.optional(), transactions: ids.optional(), onboarding: ids.optional() }).optional(),
+              }),
+            )
+            .optional(),
+          deductions: u,
+          note: u,
+        })
+        .optional(),
+      // carried (the T2 schedule cards, T-family): every other part of the T2 inputs
+      netIncomeLossPerBooksBeforeTax: u,
+      schedule8: u,
+      schedule3: u,
+      slips: u,
+      schedule4: u,
+      schedule23: u,
+      shareholderLoan: u,
+      instalments: u,
+      schedule6: u,
+      investmentIncomeCheck: u,
+      schedule9: u,
+      specifiedInvestmentBusiness: u,
+      taxationYear: u,
+      pendingDecisions: u,
+      lines: u,
+      losses: u,
     })
     .optional(),
-  prior_year: z.unknown().optional(),
+  prior_year: u,
+  // carried (W00b, FX8, the HST, OHIP, asset and FX cards): top-level parts the model does not read yet
+  client: u,
+  generator: u,
+  idRule: u,
+  amountConvention: u,
+  postingCurrency: u,
+  hst: u,
+  notes: u,
+  assets: u,
+  fx: u,
+  ohip: u,
+  nonOhipIncome: u,
 })
 
-const RawOnboarding = z.object({
-  corporation: z.object({
+const RawOnboarding = z.strictObject({
+  corporation: z.strictObject({
     legal_name: z.string(),
     business_number: z.string(),
     financial_year_end: z.string().optional(),
     fiscal_year_start: z.string().optional(),
     incorporation_date: z.string().optional(),
+    // carried (the engagement and tax-status cards)
+    jurisdiction: u,
+    all_prior_years_filed: u,
+    client_type: u,
+    claims_small_business_deduction: u,
+    hst_filing_frequency: u,
+    hst_basis: u,
+    books_kept_by: u,
+    hst_registration_effective: u,
+    first_taxation_year: u,
+    outstanding_years: u,
+    financial_year_end_confirmed: u,
   }),
-  prior_year_closing_balances: z.object({ as_of: z.string().optional() }).optional(),
-  cra_program_accounts: z.array(z.object({ account_number: z.string() })).optional(),
-  owners: z.array(z.object({ name: z.string() })),
-  related_entities: z.array(z.object({ entity_name: z.string() })).optional(),
-  shares: z.object({ holders: z.array(z.object({ name: z.string() })).optional() }).optional(),
-  shareholder_loans: z.array(z.object({ lender: z.string().optional() })).optional(),
-  spouse: z.object({ name: z.string().optional() }).optional(),
+  prior_year_closing_balances: z.strictObject({ as_of: z.string().optional(), accounts: u, ucc: u }).optional(),
+  cra_program_accounts: z.array(z.strictObject({ account_number: z.string(), program: u, is_open: u })).optional(),
+  owners: z.array(
+    z.strictObject({ name: z.string(), role: u, holder_kind: u, approximate_share_percent: u, share_class: u, tax_residency: u, sin: u }),
+  ),
+  related_entities: z.array(z.strictObject({ entity_name: z.string(), entity_role: u, ownership_percent: u, note: u })).optional(),
+  shares: z
+    .strictObject({
+      holders: z.array(z.strictObject({ name: z.string(), percent: u, paid: u })).optional(),
+      class: u,
+      issued_on: u,
+      total_paid: u,
+    })
+    .optional(),
+  shareholder_loans: z
+    .array(z.strictObject({ lender: z.string().optional(), amount: u, received_on: u, interest: u, written_terms: u }))
+    .optional(),
+  spouse: z.strictObject({ name: z.string().optional(), paid_by_company: u, note: u }).optional(),
+  // carried (the onboarding and answers cards: answers is read raw by resolves() below)
+  note: u,
+  is_test: u,
+  accounts_provided: u,
+  services: u,
+  staff: u,
+  hst: u,
+  home_office: u,
+  vehicle: u,
+  personal_card_business_items: u,
+  declared_dividends: u,
+  client_notes: u,
+  loan: u,
+  cra_record: u,
+  payroll: u,
+  owner_bonus: u,
+  card_processing_fees_by_month: u,
+  business_limit: u,
+  capital_dividend: u,
+  grip: u,
+  investments_held: u,
+  inventory: u,
+  fx: u,
+  sales_channels: u,
+  tenants: u,
+  mortgage: u,
+  property: u,
+  grant: u,
+  research: u,
+  prior_year_note: u,
+  answers: u,
+  ohip_remittance_advice: u,
+  engagements: u,
 })
 
 /** The numbered folders of a sample-clients root, as client ids (C01 upward), in order. */
@@ -111,14 +269,17 @@ function linkedFolder(root: string, id: string): string | undefined {
   return readdirSync(root, { withFileTypes: true }).find((e) => e.isSymbolicLink() && new RegExp(`^${id.slice(1)}-`).test(e.name))?.name
 }
 
-const AMOUNT_KEYS = new Set(['amount', 'debit', 'credit', 'dr', 'cr', 'opening', 'closing', 'openingBalance', 'closingBalance'])
+const AMOUNT_KEYS = new Set(['amount', 'debit', 'credit', 'dr', 'cr', 'opening', 'closing', 'openingBalance', 'closingBalance', 'exportActivity', 'totalDebit', 'totalCredit'])
 
 /** Is this number a money field the loader reads? Decided by the shape of the object that holds it, so rates never match. */
 function isMoneyField(key: string, holder: unknown): boolean {
   // Stryker disable next-line ConditionalExpression: JSON.parse always hands the reviver an object as holder, so the null and typeof tests never decide
   if (!AMOUNT_KEYS.has(key) || holder === null || typeof holder !== 'object') return false
   const h = holder as Record<string, unknown>
-  if (key === 'amount') return 'acct' in h && 'date' in h
+  // A transaction's amount, or an adjusting entry's (its lines are written beside its reason).
+  if (key === 'amount') return ('acct' in h && 'date' in h) || ('lines' in h && 'reason' in h)
+  if (key === 'totalDebit' || key === 'totalCredit') return 'rows' in h
+  if (key === 'exportActivity') return 'month' in h
   if (key === 'debit' || key === 'credit') return 'account' in h
   if (key === 'dr' || key === 'cr') return 'a' in h
   if (key === 'opening' || key === 'closing') return 'month' in h
@@ -163,11 +324,13 @@ function readClientJson(
     fileIssue(name, 'it is not a regular file')
     return undefined
   }
-  const again = repeatedKeys(readFileSync(path, 'utf8'))
-  if (again.length > 0) {
-    for (const r of again) fileIssue(name, `the key "${r.key}" is written twice in one object`)
-    return undefined
-  }
+  const text = readFileSync(path, 'utf8')
+  const again = repeatedKeys(text)
+  // A prototype name as a key is dropped or reached through the prototype by z.record, so it is refused beside a repeat (W00c RC-A).
+  const reserved = reservedKeys(text)
+  for (const r of again) fileIssue(name, `the key "${r.key}" is written twice in one object`)
+  for (const r of reserved) fileIssue(name, `the key "${r.key}" is a reserved name (a prototype name) and is never written as a key`)
+  if (again.length > 0 || reserved.length > 0) return undefined
   try {
     return readJson(path, moneyIssue)
   } catch (e) {
@@ -197,6 +360,45 @@ function dayBefore(date: string): string {
 /** Is this a path of the form `<dir>/<name>.csv`, directly inside `dir`? */
 function isAccountFile(name: string, dir: string): boolean {
   return name.startsWith(`${dir}/`) && name.endsWith('.csv') && name.length > dir.length + 5 && !name.includes('/', dir.length + 1)
+}
+
+/** Every string leaf of a parsed JSON tree, with its path (array indexes are numbers), in document order. */
+function stringLeaves(json: unknown, visit: (path: readonly (string | number)[], value: string) => void, path: readonly (string | number)[] = []): void {
+  if (typeof json === 'string') visit(path, json)
+  else if (Array.isArray(json)) for (const [i, x] of json.entries()) stringLeaves(x, visit, [...path, i])
+  else if (json !== null && typeof json === 'object') for (const [k, v] of Object.entries(json)) stringLeaves(v, visit, [...path, k])
+}
+
+/** A value written like a date: two or three numbers split by dashes, slashes or dots ("2025-13", "03/02/2025", "2025.02.30"). */
+const DATE_SHAPED = /^\d{1,4}[-/.]\d{1,2}(?:[-/.]\d{1,4})?$/
+/** Two numbers split by a dot are a decimal ("10.1", "960.00"), a CCA class or an amount, never a date. */
+const DECIMAL = /^\d+\.\d+$/
+const MONTH = /^\d{4}-(?:0[1-9]|1[0-2])$/
+const TIMESTAMP = /^\d{4}-\d\d-\d\dT/
+
+/** Why a string is a bad date, or undefined when it is not date-shaped or is a whole calendar date, a month or a timestamp with one (W00c RC-B). */
+function dateProblem(v: string): string | undefined {
+  if (TIMESTAMP.test(v)) return isCalendarDate(v.slice(0, 10)) ? undefined : 'its date part is not a calendar date written YYYY-MM-DD'
+  if (!DATE_SHAPED.test(v) || DECIMAL.test(v) || isCalendarDate(v) || MONTH.test(v)) return undefined
+  return v.split(/[-/.]/).length === 3 ? 'it is not a calendar date written YYYY-MM-DD' : 'it is not a month written YYYY-MM'
+}
+
+/** The days of a fiscal year, both ends counted. */
+function daysIn(start: string, end: string): number {
+  return Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000) + 1
+}
+
+const TX_ID = /^\d\d-[A-Z]{2,4}-\d{4}-\d\d-\d{4}$/
+const AJE_ID = /^\d\d-AJE-\d\d$/
+
+/** Walks a dotted path own key by own key, so "corporation.toString" is never found through the prototype. */
+function hasOwnPath(root: unknown, dotted: string): boolean {
+  let cur = root
+  for (const k of dotted.split('.')) {
+    if (cur === null || typeof cur !== 'object' || !Object.hasOwn(cur, k)) return false
+    cur = (cur as Record<string, unknown>)[k]
+  }
+  return true
 }
 
 /** Loads a client, or throws a TestWorldLoadError listing every check it fails. Deterministic: no clock, no randomness. */
@@ -247,6 +449,16 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
     v === dayBefore(start) ? undefined : `it is ${v} but the prior year closes the day before the fiscal year starts on ${start}`,
   )
 
+  // One walk over every string leaf of both files, carried parts included: a date-shaped value is a whole calendar date or a month (W00c RC-B).
+  for (const [file, json] of [['answer-key.json', keyJson], ['onboarding.json', onbJson]] as const) {
+    stringLeaves(json, (path, v) => {
+      const why = dateProblem(v)
+      const record = `${file} ${path.join('.')}`
+      if (why !== undefined && !issues.some((i) => i.record === record)) schemaIssue(record, why)
+    })
+  }
+  if (daysIn(start, end) !== key.fiscalYear.days) schemaIssue('answer-key.json fiscalYear.days', `it is ${String(key.fiscalYear.days)} but the fiscal year runs ${start} to ${end}, ${String(daysIn(start, end))} days`)
+
   const toLine = (l: z.infer<typeof line>) => ({
     account: l.account,
     gifi: l.gifi ?? null,
@@ -261,6 +473,16 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
       totalDebitCents: rows.reduce((s, r) => s + r.debitCents, 0),
       totalCreditCents: rows.reduce((s, r) => s + r.creditCents, 0),
     }
+  }
+
+  for (const name of ['opening', 'unadjusted', 'adjusted'] as const) {
+    const t = toTb(key.trialBalance[name])
+    if (t.totalDebitCents !== key.trialBalance[name].totalDebit) issues.push({ client: id, check: 'trial-balance', record: name, reason: `its totalDebit is written ${String(key.trialBalance[name].totalDebit)} but its rows add up to ${String(t.totalDebitCents)}` })
+    if (t.totalCreditCents !== key.trialBalance[name].totalCredit) issues.push({ client: id, check: 'trial-balance', record: name, reason: `its totalCredit is written ${String(key.trialBalance[name].totalCredit)} but its rows add up to ${String(t.totalCreditCents)}` })
+  }
+  for (const j of key.adjustingEntries) {
+    const debits = j.lines.reduce((sum, l) => sum + l.debit, 0)
+    if (debits !== j.amount) schemaIssue(`${j.id} amount`, `it is written ${String(j.amount)} but its lines debit ${String(debits)}`)
   }
 
   const transactions = key.transactions.map((t) => ({
@@ -312,8 +534,16 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
         .filter((t) => t.accountKey === a.key && t.date.slice(0, 7) === m.month && !t.missingFromExport)
         .reduce((s, t) => s + t.amountCents, 0)
       const net = a.role === 'card' || a.role === 'pcard' ? m.opening - activityCents : m.opening + activityCents
+      if (m.rolls !== (net === m.closing)) issues.push({ client: id, check: 'roll', record: `${a.key} ${m.month}`, reason: `its rolls is written ${String(m.rolls)} but its opening, activity and closing say ${String(net === m.closing)}` })
+      if (m.exportActivity !== activityCents) issues.push({ client: id, check: 'roll', record: `${a.key} ${m.month}`, reason: `its exportActivity is written ${String(m.exportActivity)} but its transactions in the export add up to ${String(activityCents)}` })
       return { month: m.month, openingCents: m.opening, closingCents: m.closing, activityCents, rolls: net === m.closing }
     })
+    const exported = key.transactions.filter((t) => t.acct === a.key && t.missingFromExport !== true).length
+    if (a.rowsInExport !== exported) schemaIssue(`${a.key} rowsInExport`, `it is written ${String(a.rowsInExport)} but ${String(exported)} of its transactions are in the export`)
+    const missing = key.transactions.filter((t) => t.acct === a.key && t.missingFromExport === true).length
+    if (a.rowsMissingFromExport !== missing) schemaIssue(`${a.key} rowsMissingFromExport`, `it is written ${String(a.rowsMissingFromExport)} but ${String(missing)} of its transactions are missing from the export`)
+    // The export file is still checked for being there; its line count is not the row count (a layout B or C export has more or fewer lines).
+    accountFile(a.key, 'file', a.file, 'accounts')
     return {
       key: a.key,
       role: a.role,
@@ -321,7 +551,7 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
       glAccount: a.glAccount,
       openingCents: a.openingBalance,
       closingCents: a.closingBalance,
-      exportRows: accountFile(a.key, 'file', a.file, 'accounts'),
+      exportRows: a.rowsInExport,
       qboRows: accountFile(a.key, 'qboFile', a.qboFile, 'qbo'),
       months,
     }
@@ -349,12 +579,28 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   const resolves = (source: string): boolean => {
     if (Array.isArray(onbAnswers) && onbAnswers.some((x) => (x as { question_asked?: unknown }).question_asked === source)) return true
     const q = /^(.*?)\s*\(([^)]*)\)\s*$/.exec(source)
-    if (q === null) return Object.hasOwn(onbKeys, source)
+    if (q === null) return hasOwnPath(onbKeys, source)
     // A "(...)" qualifier must name a record of that key: "(1200 Prepaid expenses)" is the account 1200 called "Prepaid expenses".
     const base = q[1] as string
     const named = /^(\d+) (.+)$/.exec(q[2] as string)
     return Object.hasOwn(onbKeys, base) && named !== null && recordsOf(base).some((r) => r.account === named[1] && r.name === named[2])
   }
+  // Every id-shaped string of the answer key is a whole id of this client (W00c RC-C); an adjusting entry's own source ids are checked below.
+  stringLeaves(keyJson, (path, v) => {
+    const [top, , sub, third] = path
+    if ((top === 'transactions' || top === 'adjustingEntries') && sub === 'id' && path.length === 3) return
+    if (top === 'adjustingEntries' && sub === 'source' && third === 'transactions') return
+    const record = `answer-key.json ${path.join('.')}`
+    if (/^\d\d-AJE-/.test(v)) {
+      if (!AJE_ID.test(v) || !key.adjustingEntries.some((j) => j.id === v)) schemaIssue(record, `"${v}" is not an adjusting entry of this client`)
+    } else if (/^\d\d-[A-Z]{2,4}-/.test(v) && (!TX_ID.test(v) || !txIds.has(v))) schemaIssue(record, `"${v}" is not a transaction of this client`)
+  })
+  // Onboarding evidence of flags and Schedule 1 add-backs resolves like an adjusting entry's.
+  const evidence = (record: string, sources: readonly string[] | undefined): void => {
+    for (const [i, s] of (sources ?? []).entries()) if (!resolves(s)) schemaIssue(`${record}.${String(i)}`, `"${s}" is not in onboarding.json`)
+  }
+  for (const [i, f] of key.flags.entries()) evidence(`answer-key.json flags.${String(i)}.evidence.onboarding`, f.evidence?.onboarding)
+  for (const [i, a] of (key.t2Inputs?.schedule1?.addBacks ?? []).entries()) evidence(`answer-key.json t2Inputs.schedule1.addBacks.${String(i)}.source.onboarding`, a.source?.onboarding)
   for (const j of key.adjustingEntries) {
     for (const s of j.source.transactions) {
       if (!txIds.has(s)) issues.push({ client: id, check: 'adjusting-entry', record: j.id, reason: `its source "${s}" is not a transaction of this client` })

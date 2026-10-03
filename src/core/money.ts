@@ -55,8 +55,7 @@ export function decimalToCents(s: string): CentsResult {
 
 function refusalReason(s: string): string {
   if (s.trim() === '') return 'an amount cannot be blank'
-  // Stryker disable next-line Regex: the regex only matches text that includes(','), so any change to it leaves the result unchanged
-  if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s) || s.includes(',')) return `"${s}" has a thousands separator; amounts carry none`
+  if (s.includes(',')) return `"${s}" has a thousands separator; amounts carry none`
   if (/[eE]/.test(s) && /\d/.test(s)) return `"${s}" is in exponent notation; amounts are written in full`
   if (/^-?\d+\.\d{3,}$/.test(s)) return `"${s}" has more than two decimals; cents are the smallest unit`
   return `"${s}" is not a decimal amount of dollars (digits, an optional "-", at most two decimals)`
