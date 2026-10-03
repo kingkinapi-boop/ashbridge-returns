@@ -2,7 +2,8 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-aae833",
- "state": "working",
- "at": "2026-10-03T20:56:19.557Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T20:56:38.315Z",
+ "mode": "turbo",
+ "note": "wait: no card file or slices entry for W00b on main; its last Lead note says Opus review of spec round 3 then W00c and FX8 land first; no code base"
 }
