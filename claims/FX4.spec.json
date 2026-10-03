@@ -1,12 +1,10 @@
 {
  "card": "FX4",
  "role": "spec",
- "worker": "local-1",
- "state": "reopened",
- "at": "2026-10-03T07:13:14.414Z",
- "mode": "turbo",
- "beat": "2026-10-03T06:46:10.964Z",
  "note": "A434: 11 gaps per reports/FX4-spec-review.md; see bold directive",
- "commit": "63df226e",
- "validated": "25fc96d084130c5f695a4e9e05af5e1517a8fe80"
+ "reopenedFrom": "63df226e",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T07:13:46.427Z",
+ "mode": "turbo"
 }
