@@ -1,11 +1,9 @@
 {
  "card": "G18",
  "role": "spec",
- "worker": "cloud-f5e750",
- "state": "reported",
- "at": "2026-10-03T14:10:56.197Z",
- "mode": "turbo",
- "note": "15 tests",
- "commit": "4ce0202",
- "validated": "dadad60"
+ "note": "toolchain refit",
+ "worker": "cloud-beb1e2",
+ "state": "working",
+ "at": "2026-10-03T15:23:26.688Z",
+ "mode": "turbo"
 }
