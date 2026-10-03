@@ -41,7 +41,7 @@ export function build07() {
   const ajeRent = c.aje({ date: c.fyEnd, lines: [{ gl: '1110', dr: 97500 }, { gl: '4100', cr: 97500 }], tx: [halfOct], onb: ['tenants'],
     reason: 'Unit 2 rent: October ($1,950.00) was half paid in November and $975.00 is still owed at year end (the tenant left): rent earned but not received' });
   const am = amortAje(c, { date: c.fyEnd, tx: [roof], reason: 'Book amortization on the building (straight-line, 25 years)', items: [
-    { label: 'building brought forward', cost: 56000000, acc: '1511', life: 25, inService: '2010-01-01', prior: 11200000 },
+    { label: 'building brought forward', cost: 56000000, acc: '1511', life: 25, inService: '2020-01-01', prior: 11200000 },
     { label: 'new roof', cost: 1840000, acc: '1511', life: 25, inService: '2025-08-20' }] });
 
   c.flag({ rule: 'specified investment business: no employees', judgement: true, onb: ['staff'],
@@ -79,7 +79,8 @@ export function build07() {
     property: { type: 'duplex (two rental units)', land_cost: 310000.0, building_cost: 560000.0 },
     client_notes: ['The second tenant did not pay in October and paid half in November. She moved out at the end of December owing me $975.', 'I put $15,000 of my own money in on 18 August because the roof had to be replaced. Nothing is written down about interest.', 'The insurance renewed on 1 October.'],
   };
-  c.t2.openingUcc = [{ class: '1', ucc: 481200.0, note: 'brought forward from last year, made-up figure' }];
+  c.t2.openingUcc = [{ class: '1', ucc: 447096.03, note: 'brought forward from last year, made-up figure' }];
+  c.assets = [{ description: 'Rental building brought forward', glAccount: '1510', accumAccount: '1511', class: '1', cost: 560000, availableForUse: '2020-01-01', book: { method: 'straight-line', years: 25, convention: 'monthly' }, cca: { firstYear: 'aii' } }];
   c.t2.schedule3 = { dividendsReceived: [], dividendsPaid: [] };
   c.t2.schedule4 = { note: 'no loss brought forward (made-up)' };
   c.t2.schedule23 = { required: false, note: 'no associated corporations' };
@@ -174,7 +175,7 @@ export function build08() {
   const ajeSw = c.aje({ date: c.fyEnd, lines: mergeLines(c.reimburseLines(sw, c.fyEnd, '2080')), tx: sw, onb: ['personal_card_business_items'],
     reason: 'Software the owner paid on his personal card (listed in onboarding): expense it and record what the company owes him' });
   const am = amortAje(c, { date: c.fyEnd, tx: [laptop, camera], reason: 'Book amortization for the year (straight-line: laptop 3 years, camera and older equipment 5 years)', items: [
-    { label: 'equipment brought forward', cost: 860000, acc: '1531', life: 5, inService: '2020-01-01', prior: 516000 },
+    { label: 'equipment brought forward', cost: 860000, acc: '1531', life: 5, inService: '2021-10-01', prior: 516000 },
     { label: 'laptop', cost: 329900, acc: '1541', life: 3, inService: '2024-11-19' },
     { label: 'camera', cost: 215000, acc: '1531', life: 5, inService: '2025-03-11' }] });
   const usdClose = c.nativeBalance('USD'), carrying = c.glNet('1015'), diff = Math.round(usdClose * YE) - carrying;
@@ -214,7 +215,8 @@ export function build08() {
     personal_card_business_items: { note: 'Five software subscriptions the owner pays on his personal card every month for the business.', subscriptions: subs.map(([n, a]) => ({ merchant: n, monthly_amount: D(a), months: 12 })), total_for_the_year: D(sw.reduce((s, t) => s + t.meta.biz.total, 0)) },
     client_notes: ['One client, Bayview Print and Pack, went bankrupt in the summer. The invoice from February was never paid; I wrote it off in September.', 'Our accountant bills the year-end work after the year ends: $3,500.', 'I put my design software on my own card. The list is above.', 'I paid for a conference in the US in April.'],
   };
-  c.t2.openingUcc = [{ class: '8', ucc: 3440.0, note: 'made-up' }, { class: '50', ucc: 1210.0, note: 'made-up' }];
+  c.t2.openingUcc = [{ class: '8', ucc: 3315.2, note: 'made-up' }, { class: '50', ucc: 42.52, note: 'made-up' }];
+  c.assets = [{ description: 'Studio furniture and equipment brought forward', glAccount: '1530', accumAccount: '1531', class: '8', cost: 7400, availableForUse: '2021-10-01', book: { method: 'straight-line', years: 5, convention: 'monthly' }, cca: { firstYear: 'aii' } }, { description: 'Computers brought forward', glAccount: '1530', accumAccount: '1531', class: '50', cost: 1200, availableForUse: '2021-10-01', book: { method: 'straight-line', years: 5, convention: 'monthly' }, cca: { firstYear: 'aii' } }];
   c.t2.slips = { T4: t4o.slips, T4Summary: t4o.summary, T5: [], note: 'T4 slips are by calendar year, not by fiscal year.' };
   c.t2.schedule3 = { dividendsReceived: [], dividendsPaid: [] };
   c.t2.schedule4 = { note: 'no loss' };

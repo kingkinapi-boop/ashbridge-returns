@@ -1,0 +1,12 @@
+// Planted (SC R25): a simulator with its own list of the eight creation cells and a day 2 description.
+export const CREATION_CELLS = [
+  'IDENT.Ident120',
+  'IDENT.Ident121',
+  'IDENT.Ident311',
+  'IDENT.Ident492',
+  'IDENT.Ident230',
+  'IDENT.Ident451',
+  'IFirm.ContactPartner',
+  'IFirm.ContactID',
+]
+export const LAND_LABEL = 'Account - Land improvements'

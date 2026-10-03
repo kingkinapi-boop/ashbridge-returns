@@ -18,7 +18,7 @@ const KEY = /^sha256\/([0-9a-f]{2})\/([0-9a-f]{64})$/
 const sha = (bytes: Uint8Array): string => crypto.createHash('sha256').update(bytes).digest('hex')
 
 export function createFileStore(options: FileStoreOptions): FileStore {
-  readEngine(options.env ?? process.env, 'STORAGE_FILES_ENGINE', options.sink)
+  readEngine(options.env, 'STORAGE_FILES_ENGINE', options.sink)
   const root = path.resolve(options.root)
 
   function keyPath(key: string): string {

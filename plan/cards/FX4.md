@@ -1,8 +1,12 @@
 # FX4 Spreadsheet reader: the five A07D Opus findings
 
-Phase 1. Size M. Hard. Deps: A07D, SC4. Where: cloud.
+**Lead ruling, 3 Oct 12:50Z (A470), on the refit-2 note:** all 11 FX4 rows in `tools/test/__fixtures__/schema-contract/known.json` (R36, R41, R46, R54, R56) name files inside this card's Paths (`src/modules/sheets/**`, `src/contracts/sheets.ts`), so they are this card's to fix, whether or not they are among the five A07D findings (A434). The spec job deletes all 11 rows (each SC rule then fails naming its file) and fills the Spec commit line; the build fixes each through `src/contracts/text.ts` and typed value switches; a row FX4 still owns after landing would fail SC's owner rule (A467).
+
+**Lead directive, 3 Oct (A434): spec patch for the 11 gaps in reports/FX4-spec-review.md (on claude/FX4), then the build waits for SC to land and a second patch deletes FX4's entries in SC's known.json.** Export `snapSums(cells, limit)` returning `{visits, skipped:[{row,column,reason}]}` and `centText(cents)` so budgets are work counts, not wall time, and item 1 is testable (7053684657509001n ends `.01`). Cycles: range and cross-sheet edges, a 50,000-cell ring (no recursion), an acyclic SUM still snaps. Names: Unicode in any position (`B1Ü*2`, `ÉB1*2`), off-grid names past three letters; the generator draws unquoted 3D ranges (`SUM(Q1:Dec!B1)`). The whole-sheet range test must tell a snapped total from the cell's own text. A merge region over 1,000,000 cells is refused with a reason, never loaded (tested). ARC-10: the reader's engine version gains a rules suffix (`exceljs 4.4.0+rules.N`), bumped when derived text changes; tested. A whole-sheet merge ExcelJS would expand is a flag for a person, not a silent pass.**
+
+Phase 1. Size M. Hard. Deps: A07D, SC4, SC. Where: cloud.
 Tags: core (citations and amounts: every figure a spreadsheet gives is checked against this text).
-Paths: src/modules/sheets/**, src/contracts/sheets.ts
+Paths: src/modules/sheets/**, src/contracts/sheets.ts, tools/test/reading-rules.test.mjs, tools/test/__fixtures__/schema-contract/known.json
 Clauses: EV-14, EV-5, EV-6, ARC-10, END-8
 Read: `reports/A07D-opus-read.md` (all), `plan/cards/A07D.md`, `plan/cards/SC4.md`, `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
@@ -22,3 +26,6 @@ One acceptance test per finding, each with the failing input from the report, pl
 
 ## Check
 A checker who did neither, plus an Opus adversarial read: every finding's input gives the right result, SC4's rules green with no FX4 entry left in KNOWN, mutation 100 per `@mutate` file.
+
+## SC KNOWN entries (3 Oct, A407)
+SC lands with exact KNOWN entries owned by this card (reports/SC-findings.md, fix list step 3). Each defect fixed here deletes its entry; never widen an entry or weaken a rule (A329).

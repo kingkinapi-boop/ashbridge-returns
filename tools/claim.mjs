@@ -41,6 +41,12 @@
 // starts "wait:" is held until the card's status, its deps or a dep's status change (the release stores
 // a snapshot key); a card with lane "design" gets no spec or build job.
 //
+// CQ2 (ARC-15): a check released for a build is offered again with no re-stamp of the build (only a check
+// that reported for this build, or is working, blocks); no spec job while the build is reported (until the
+// Lead reopens it); a spec the Lead reopens (note not starting "refit") is offered with the Lead's note on the
+// line after CLAIMED and cannot be reported without a new --commit; a job released twice with no new commit on
+// origin/claude/<card> between the two releases is held ("needs Lead") until the Lead reopens it.
+//
 // Tests pin the clock with CLAIMS_NOW (ISO time) and shorten the backoff with CLAIMS_BACKOFF_MS.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -145,15 +151,25 @@ function buildPassed(b, ck) {
   if (b.state === 'reopened') return false
   return b.state !== 'reported' || ck.for === b.at
 }
-// CQ1 rule 2: a release with "wait:" is still held while the card's wait key is unchanged.
-const isHeld = (c, card, status) => Boolean(c && c.state === 'released' && WAIT_NOTE.test(c.note || '') && c.waitKey && card && c.waitKey === waitKey(card, status))
+// CQ3 rule 2: a release with "wait:" is held until the Lead reopens the job (which ends the released state).
+const isHeld = (c) => Boolean(c && c.state === 'released' && WAIT_NOTE.test(c.note || ''))
+// CQ2 rule 6: a release stores the card branch tip; a second release at the same tip is "needs Lead".
+const NEEDS_LEAD = (c) => Boolean(c && c.state === 'released' && c.needsLead)
+const REFIT_NOTE = /^refit/i
 const isActive = (c) => (c.state === 'working' || c.state === 'reported') && !isStale(c)
 
 // Write claims/<file> (one or several, in ONE commit) on top of the claims branch tip and push.
 // `files` is { name: object }. A refused push (someone else pushed first) waits a
 // jittered, growing time, re-fetches and returns 'retry'; after 6 tries it returns false.
-function writeClaims(files, attempt = 1) {
+// CQ5: `decidedTip` is the claims tip the caller decided on. If the tip moved since and any of the
+// files written changed in between, the decision is stale: nothing is written and 'retry' is returned.
+// A move that touched other jobs only is kept, and the new claim lands on top of it.
+function writeClaims(files, attempt = 1, decidedTip) {
   const tip = claimsTip()
+  if (decidedTip !== undefined && tip !== decidedTip) {
+    const blobAt = (t, f) => (t ? tryGit(['rev-parse', '--verify', '-q', `${t}:claims/${f}`]) : '') || ''
+    if (Object.keys(files).some((f) => blobAt(tip, f) !== blobAt(decidedTip, f))) return 'retry'
+  }
   const index = path.join(os.tmpdir(), `claims-index-${process.pid}-${attempt}`)
   const env = { ...process.env, ...ID, GIT_INDEX_FILE: index }
   const run = (a, input) => execFileSync('git', a, { cwd: ROOT, env, encoding: 'utf8', input, stdio: ['pipe', 'pipe', 'pipe'] }).trim()
@@ -183,7 +199,7 @@ function writeClaims(files, attempt = 1) {
     fs.rmSync(index, { force: true })
   }
 }
-const writeClaim = (file, obj, attempt) => writeClaims({ [file]: obj }, attempt)
+const writeClaim = (file, obj, attempt, decidedTip) => writeClaims({ [file]: obj }, attempt, decidedTip)
 
 // The protect-spec hook reads this to know whether we are building or checking.
 function setCurrentJob(job) {
@@ -203,6 +219,8 @@ function modeNow() {
   }
 }
 
+const claimFor0 = (claims, id, role) => claims.find((c) => c.card === id && c.role === role)
+
 function next() {
   const worker = opt('worker', `${os.hostname()}-${process.pid}`)
   const roles = opt('roles', 'check,build,spec').split(',')
@@ -211,7 +229,8 @@ function next() {
     const mode = modeNow()
     const cap = mode.mode === 'turbo' ? Number(mode.max_workers || 16) : CAPS[mode.mode] ?? 0
     const { cards } = JSON.parse(readMain('plan/slices.json'))
-    const claims = readClaims(claimsTip())
+    const decidedTip = claimsTip()
+    const claims = readClaims(decidedTip)
     const active = claims.filter(isActive)
     if (cap === 0) return out(`PAUSED ${mode.mode}`, 3)
     if (active.filter((c) => c.state === 'working').length >= cap) return out(`PAUSED ${mode.mode} (cap ${cap} reached)`, 3)
@@ -238,7 +257,9 @@ function next() {
           if (!b || b.state !== 'reported' || b.worker === worker) continue
           // A check blocks a re-offer only while it is working, or when it was for this very build
           // (a passed check on an older build does not cover a reopened, rebuilt one).
-          if (ck && ((ck.state === 'working' && !isStale(ck)) || ck.for === b.at)) continue
+          // A released check for this build is offered again; one that reported, or is working, is not.
+          if (ck && ((ck.state === 'working' && !isStale(ck)) || (ck.for === b.at && ck.state !== 'released' && ck.state !== 'working'))) continue
+          if (NEEDS_LEAD(ck) && ck.for === b.at) continue
           const s = claimFor(c.id, 'spec')
           if (s && s.worker === worker) continue
           pick = { card: c.id, role, for: b.at }
@@ -247,12 +268,15 @@ function next() {
         if (role === 'build') {
           const s = claimFor(c.id, 'spec')
           const reopened = s && s.state === 'reopened'
+          // CQ3 rule 1: no build while its spec is reopened or being written.
+          if (reopened || (s && s.state === 'working' && !isStale(s))) continue
           const specReady = (c.spec && !reopened) || (s && s.state === 'reported' && s.commit && !specNeedsRefit(s))
           if (!specReady || !depGate(c, 'build', status, reportedBuilds).ok) continue
           const b = claimFor(c.id, 'build')
           if (b && isActive(b)) continue
           if (buildPassed(b, claimFor(c.id, 'check'))) continue
           if (isHeld(b, c, status)) continue
+          if (NEEDS_LEAD(b)) continue
           if (b && b.state === 'hold-findings') continue // waits for the Lead's findings review
           if (b && b.state === 'failed' && (b.round || 1) >= MAX_ROUNDS) continue
           if (s && s.worker === worker && c.spec !== 'n/a') continue
@@ -265,21 +289,30 @@ function next() {
           if (c.spec && !(s && s.state === 'reopened')) continue
           if (!depGate(c, 'spec', status, reportedBuilds).ok) continue
           if (isHeld(s, c, status)) continue
+          if (NEEDS_LEAD(s)) continue
+          // CQ2 rule 2: a reported, unmerged build is never invalidated by a spec job (the Lead's reopen of the spec aside).
+          const bd = claimFor(c.id, 'build')
+          if (bd && bd.state === 'reported' && !(s && s.state === 'reopened')) continue
           const refit = specNeedsRefit(s)
           if (refit && buildPassed(claimFor(c.id, 'build'), claimFor(c.id, 'check'))) continue
           if (s && ((s.state === 'working' && !isStale(s)) || (s.state === 'reported' && !refit))) continue
-          pick = refit ? { card: c.id, role, note: 'toolchain refit' } : { card: c.id, role }
+          // CQ2 rule 5: a new round carries the Lead's note and the commit it must replace.
+          const from = s && (s.state === 'reopened' ? (REFIT_NOTE.test(s.note || '') ? null : s.commit) : s.reopenedFrom)
+          pick = refit ? { card: c.id, role, note: 'toolchain refit' } : from ? { card: c.id, role, note: s.note, reopenedFrom: from } : { card: c.id, role }
           break
         }
       }
     }
     if (!pick) return out('NOTHING', 4)
     const claim = { ...pick, worker, state: 'working', at: new Date(nowMs()).toISOString(), mode: mode.mode }
+    // CQ2 rule 6: a taken-over released job remembers where the branch stood at the release.
+    const was = claimFor0(claims, pick.card, pick.role)
+    if (was && was.state === 'released' && was.lastRelease) claim.lastRelease = was.lastRelease
     const file = `${pick.card}.${pick.role}.json`
-    const res = writeClaim(file, claim, attempt)
+    const res = writeClaim(file, claim, attempt, decidedTip)
     if (res === true) {
       setCurrentJob({ card: pick.card, role: pick.role, worker })
-      return out(`CLAIMED ${pick.card} ${pick.role}`, 0)
+      return out(`CLAIMED ${pick.card} ${pick.role}${pick.reopenedFrom && pick.note ? `\n${pick.note}` : ''}`, 0)
     }
     if (res === false) return out('RACE: gave up after 6 tries', 5)
   }
@@ -299,6 +332,10 @@ function update() {
     const find = (r) => claims.find((c) => c.card === card && c.role === r)
     const prev = find(role) || {}
     if (prev.worker && prev.worker !== worker && worker !== 'lead') return out(`REFUSED: ${card} ${role} is held by ${prev.worker}, not ${worker}`, 6)
+    // CQ2 rule 5: a reopened spec round is reported only with a new --commit.
+    if (role === 'spec' && state === 'reported' && prev.reopenedFrom && (!opt('commit') || opt('commit') === prev.reopenedFrom)) {
+      return out(`REFUSED: ${card} spec was reopened for a new round: report with a new --commit (not ${prev.reopenedFrom}) and the tests it adds`, 6)
+    }
     const at = new Date(nowMs()).toISOString()
     // The Lead updating someone else's claim leaves the holder's name on it.
     const obj = { ...prev, card, role, state, worker: prev.worker || worker, at, note: opt('note', prev.note), commit: opt('commit', prev.commit), validated: opt('validated', prev.validated) }
@@ -312,6 +349,18 @@ function update() {
       } catch {}
     }
     obj.waitKey = key
+    // CQ2 rule 6: a release (not a "wait:" one) stores the branch tip; the same tip twice in a row holds the job for the Lead.
+    delete obj.needsLead
+    if (state === 'released' && !WAIT_NOTE.test(obj.note || '')) {
+      tryGit(['fetch', '-q', REMOTE, `+refs/heads/claude/${card}:refs/remotes/${REMOTE}/claude/${card}`])
+      const tip = tryGit(['rev-parse', '--verify', '-q', `refs/remotes/${REMOTE}/claude/${card}`]) || 'none'
+      if (prev.lastRelease && prev.lastRelease.tip === tip) obj.needsLead = true
+      obj.lastRelease = { tip }
+    } else if (state !== 'released') {
+      if (state !== 'working') delete obj.lastRelease
+    }
+    if (state === 'reported' || state === 'reopened') delete obj.reopenedFrom
+    if (state === 'reopened') delete obj.lastRelease
     const files = { [`${card}.${role}.json`]: obj }
     // A check FAIL: one push writes the failed check and holds the build for the findings review.
     const held = role === 'check' && state === 'failed' ? find('build') : null
@@ -351,10 +400,16 @@ function list() {
   } catch {}
   const status = Object.fromEntries(slices.map((k) => [k.id, k.status]))
   if (!claims.length) return out('no claims', 0)
+  const oldCheck = (c) => {
+    if (c.role !== 'check' || c.state !== 'reported') return false
+    const b = claims.find((k) => k.card === c.card && k.role === 'build')
+    return Boolean(b && b.state === 'reported' && c.for !== b.at)
+  }
   for (const c of claims.sort((a, b) => a.at.localeCompare(b.at))) {
     const age = Math.round((nowMs() - lastSeen(c)) / 60000)
-    const tag = specNeedsRefit(c) ? ' (toolchain refit)' : isStale(c) ? ' (stale)' : isHeld(c, slices.find((k) => k.id === c.card), status) ? ' (waiting)' : isActive(c) || c.state === 'hold-findings' ? '' : ' (inactive)'
-    console.log(`${c.card} ${c.role} ${c.state}${tag} | ${c.worker} | ${age} min since last beat${c.note ? ' | ' + c.note : ''}`)
+    const tag = specNeedsRefit(c) ? ' (toolchain refit)' : isStale(c) ? ' (stale)' : NEEDS_LEAD(c) ? ' (needs Lead)' : isHeld(c, slices.find((k) => k.id === c.card), status) ? ' (waiting)' : isActive(c) || c.state === 'hold-findings' ? '' : ' (inactive)'
+    const tag2 = oldCheck(c) ? ' (old build)' : ''
+    console.log(`${c.card} ${c.role} ${c.state}${tag}${tag2} | ${c.worker} | ${age} min since last beat${c.note ? ' | ' + c.note : ''}`)
   }
   return 0
 }

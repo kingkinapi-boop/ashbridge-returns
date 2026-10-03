@@ -1,0 +1,4 @@
+// Planted (SC R49): a zod .trim() transform rewrites the stored value ("TB " becomes "TB").
+import { z } from 'zod'
+export const SheetNameSchema = z.string().trim().min(1)
+export const EngineSchema = z.object({ name: z.string().max(40).trim() })

@@ -1,0 +1,7 @@
+{
+  "note": "Planted (SC R34, widened): a SIN held as a JSON number, the same number in exponent form, and a mixed-separator SIN. All made up.",
+  "sin": 271000002,
+  "sinExponent": 2.71000002e8,
+  "mixed": "271 000-002",
+  "clean": { "left": 0.490196078, "amount": 1234567.89, "notLuhn": 271000000 }
+}

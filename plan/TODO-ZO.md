@@ -6,6 +6,6 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 Nothing now.
 
-## 2. What the Lead is doing now (3 Oct, 03:25 UTC)
+## 2. What the Lead is doing now (3 Oct, 13:26 UTC)
 
-Turbo, between sessions (handover). 42 cards are on main. Your three Critic fixes are in (decision 0024). Waiting to board: the spreadsheet reader's last round, the test-world fix round that most of the build waits on (all 1,975 of its tests pass), and sign-in round 2 (passed its check; a fresh security review comes first). The AI runner failed its check on test strength and goes round 2 after sign-in lands. Six cards for phase 3 are written. Plan use this week: about 52%.
+Turbo again: you typed `turbo on` at 13:26 UTC, after the Reviewer's slow-down and the four fixes it asked for (done 13:25 UTC). 54 cards are on main; a batch of three is being checked in the cloud. The AI runner card is split: its small clock fix is its last round, and the extra tests go to a new card, so it cannot loop again. Your Critic answer is applied: the screen designs restart now, aiming at one design sitting about Tue 6 Oct. The test-world fixes most of the build waits on are in their last round. The week's allowance is about 69% used and runs out about Sunday morning.

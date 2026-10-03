@@ -24,7 +24,7 @@ paths:
 - The `db` project also runs on Postgres 16 in cloud checks; the schema avoids features newer than the oldest Postgres in use.
 
 ## Determinism
-- The clock is the injectable one (`src/core/clock.ts`), pinned in every test. `TZ=America/Toronto`, locale `en-CA`, in Vitest and Playwright (`timezoneId`, `locale`).
+- The clock is the injectable one (`src/core/clock.ts`), pinned in every test. A test that fixes one clock (a `ctx.now`, a queue clock) pins every other clock the code under test reads; a test that passes only on today's date is a flaky test (A469). `TZ=America/Toronto`, locale `en-CA`, in Vitest and Playwright (`timezoneId`, `locale`).
 - Random data uses a fixed seed. Test data comes from `testworld/` or typed fixtures with fixed defaults; made-up names end in "(Test)".
 - No network in tests. AI steps use recorded answers keyed by model id, prompt hash and input hash; a changed key fails with "re-record", never passes silently.
 - A flaky test is a failure: Playwright `failOnFlakyTests` and `forbidOnly`; cloud runs use one retry only to detect flakiness. A flaky test gets a fix card the same day and is never skipped without one.
@@ -34,12 +34,13 @@ paths:
 - Money and tax arithmetic: fast-check property tests as well as examples (entries net to zero; allocations and prorations sum exactly; cents stay safe integers; rounded statements still tie or carry a recorded rounding item). A counterexample found once becomes a fixed example.
 - Taxprep CSV: golden files for every file written or read, per return kind, plus the fault set of RT-9 as the Taxprep trial set it (a BOM, LF-only line ends, other separators, unquoted values, (123) negatives, thousands separators, a decimal comma, scientific notation, lost leading zeros, reformatted dates, UTF-8 accents), each refused with a reason; an empty value is a clear and "0" is zero (RT-12), and both are tested.
 - Every tie, reconciliation and flag: a planted fault that must be caught, and no false alarm on any clean kind.
-- Mutation testing (StrykerJS, Vitest runner, `--incremental`) on changed money, tax, CSV and citation-check files; every file marked `// @mutate` must score 100 (ARC-15: one surviving core mutant fails; equivalents removed by rewrite or a reasoned disable comment), checked per file by `mutate-changed.mjs` (card DG); the overall break of 70 stays as a floor for unmarked files. Not on screens.
+- Mutation testing (StrykerJS, Vitest runner, `--incremental`) on changed money, tax, CSV and citation-check files; every file marked `// @mutate` must score 100 (ARC-15: one surviving core mutant fails; equivalents removed by rewrite or a reasoned disable comment), checked per file by `mutate-changed.mjs` (card DG); the overall break of 70 stays as a floor for unmarked files. Not on screens. Before writing up survivors on lines that did not change, rerun with `--force`: incremental mode can reuse stale results (A418).
 - Screens: ARIA snapshots for structure (section order, Approve appearing only when every section is reviewed), axe on every journey (WCAG 2.2 AA tags) through one shared fixture, keyboard-only walks, and pixel screenshots only for a few dense screens, with baselines made on the cloud Linux runner, never the laptop.
 - RV-4 timing: the app marks click and source paint (`performance.mark`); the journey fails above 1000 ms on the largest test-world return.
 - Every journey runs against the production build (`next build`, then `next start`), never the development server.
 - Prompt injection: test-world documents carry planted instructions; the expected result is no effect.
 
 ## A test is only good if it would fail without the feature
-Assert outcomes (a value, a state, a refusal with its reason), never just "does not throw". Do not mock our own modules in acceptance tests. A pass with zero tests is a failure.
+Assert outcomes (a value, a state, a refusal with its reason), never just "does not throw". Do not mock our own modules in acceptance tests. A pass with zero tests is a failure. A test that loops over a list first asserts the list is not empty (a loop over zero items asserts nothing); a source-scan test proves shape only and needs a behaviour test beside it (Review 3 Oct: expenses:114, jobs:52, blank-rule:407).
 - Source-scan tests (a test that reads its own module's text, for example a marker or a "no network import" scan) read the file through `readOwnSource` (`src/core/testing/read-own-source.ts`), so they still hold inside Stryker's sandbox (DG, ARC-15).
+- A KNOWN (expected-failure) entry in any rules file names one rule, one file, the exact problem strings (no regex) and an open owner card; an unlisted problem fails, a listed string no longer produced fails as stale, and every file scan asserts it read at least one file and a named sentinel (A407, reports/SC-findings.md).
