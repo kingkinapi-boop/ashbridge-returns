@@ -2,7 +2,10 @@
  "card": "SC11",
  "role": "spec",
  "worker": "cloud-06931b",
- "state": "working",
- "at": "2026-10-03T09:24:16.518Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T09:48:46.413Z",
+ "mode": "turbo",
+ "note": "20 tests (R90 to R92); branch cut from claude/DB16 (unmerged), see reports/SC11-spec.md",
+ "commit": "05be2607",
+ "validated": "f9da8e525a892f8d4ab2ca8287b35642d688c8a7"
 }
