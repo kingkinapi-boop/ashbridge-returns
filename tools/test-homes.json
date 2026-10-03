@@ -12,6 +12,8 @@
       "reason": "The first rollback of a transaction after a failure: the finally block repeats the rollback, then discards the connection or destroys it on failure, so a failed first rollback is never trusted or lost (DB16 security review, low 3)."
     }
   ],
+  "dbGrantAllow": [],
+  "definerAllow": [],
   "tsconfig": {
     "include": [
       "next-env.d.ts",
