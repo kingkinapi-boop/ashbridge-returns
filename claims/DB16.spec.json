@@ -1,12 +1,8 @@
 {
  "card": "DB16",
  "role": "spec",
- "worker": "local-2",
- "state": "reopened",
- "at": "2026-10-03T05:14:54.791Z",
- "mode": "turbo",
- "beat": "2026-10-03T05:06:42.053Z",
- "note": "A419: reports/DB16-spec-review-2.md; see bold directive",
- "commit": "e4eddf71",
- "validated": "2288da55"
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T05:15:30.534Z",
+ "mode": "turbo"
 }
