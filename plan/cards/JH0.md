@@ -5,7 +5,7 @@ Tags: security (SEC-11: the harness loads only test-world data and refuses a liv
 Paths: e2e/_harness/**, e2e/steps/README.md, package.json, package-lock.json
 Clauses: END-9, ARC-4, ARC-16, ARC-21, SEC-11
 Read: blueprint 00 (END-9), 09 (ARC-4, ARC-8, ARC-16, ARC-21), `.claude/rules/testing.md`, `plan/cards/W00.md`, `plan/cards/F01.md`, `plan/cards/SK0.md` (its first user).
-Spec commit: (spec-writer fills)
+Spec commit: e295acc
 
 ## Goal
 One harness every journey uses: load a test-world client or kind into a fresh database, run the pipeline steps that exist, and compare what came out with the known right answers, so END-9 ("all thirteen kinds pass on every merge") is one command and grows by itself as cards land.
