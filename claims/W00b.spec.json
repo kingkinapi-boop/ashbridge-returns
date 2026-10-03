@@ -2,8 +2,7 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-06d0d7",
- "state": "released",
- "at": "2026-10-03T08:27:08.947Z",
- "mode": "turbo",
- "note": "wait: deps W00c and FX8 not on main (W00c build reported, check working; FX8 build not started); round 4 spec needs W00c's load.ts and json-keys.ts"
+ "state": "working",
+ "at": "2026-10-03T08:27:11.148Z",
+ "mode": "turbo"
 }
