@@ -1,10 +1,11 @@
 {
  "card": "CQ11",
  "role": "spec",
- "note": "A500: spec patch, R82 clean-merge item per the Lead directive at the top of plan/cards/CQ11.md; build after CQ8 lands",
- "reopenedFrom": "cc4bc6f4",
+ "note": "A500: 2 new tests (clean two-sided merge fails now, hand-edit plant passes); 12 older CQ11 tests in the file fail as expected",
  "worker": "cloud-019852",
- "state": "working",
- "at": "2026-10-03T16:25:20.696Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T16:27:30.434Z",
+ "mode": "turbo",
+ "commit": "2d3f287",
+ "validated": "11468064aabd17a62929d3072ab0a3ad990e5829"
 }
