@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T21:21:35.397Z",
  "worker": "cloud-725535",
- "state": "working",
- "at": "2026-10-03T21:32:11.862Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T21:32:25.281Z",
+ "mode": "turbo",
+ "note": "wait: build reports mutation under 100 (call.ts, index.ts, scan.ts) and Lead's findings review is pending (NOW.md); check not run",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
 }
