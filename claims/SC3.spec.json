@@ -2,10 +2,9 @@
  "card": "SC3",
  "role": "spec",
  "note": "A452 patch (10 items from reports/SC3-findings.md), not A443",
- "worker": "cloud-e9d462",
- "state": "reopened",
- "at": "2026-10-03T09:41:46.432Z",
- "mode": "turbo",
- "commit": "1f7ff0e05b3abfe9675c8d23f31ccb08cb308433",
- "validated": "f9da8e525a892f8d4ab2ca8287b35642d688c8a7"
+ "reopenedFrom": "1f7ff0e05b3abfe9675c8d23f31ccb08cb308433",
+ "worker": "cloud-d01e1c",
+ "state": "working",
+ "at": "2026-10-03T09:42:25.069Z",
+ "mode": "turbo"
 }
