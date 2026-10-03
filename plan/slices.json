@@ -2027,6 +2027,28 @@
       "security": true
     },
     {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/runner.acceptance.test.ts",
+        "src/modules/ai/runner/exchange.acceptance.test.ts",
+        "src/modules/ai/runner/runner.ts"
+      ],
+      "clauses": [
+        "AI-9",
+        "ARC-15"
+      ],
+      "id": "A04C",
+      "title": "AI runner: one clock, pinned as a class",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Split from A04 (A477, Review 3 Oct finding 2)."
+    },
+    {
       "status": "done",
       "spec": null,
       "deps": [
