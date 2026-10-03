@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "78fbaf82",
  "worker": "cloud-03268d",
- "state": "hold-findings",
- "at": "2026-10-03T06:26:03.799Z",
+ "state": "reopened",
+ "at": "2026-10-03T07:36:56.450Z",
  "mode": "turbo",
- "note": "FAIL: scope.mjs CQ4 flags tools/scope.mjs (Spec prose names it; also bites FX2), see reports/CQ4-check.md"
+ "note": "A430: build round 2 after the spec patch (reports/CQ4-findings.md)"
 }
