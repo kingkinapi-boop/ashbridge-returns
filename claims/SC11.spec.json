@@ -1,9 +1,12 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "Card says Where: cloud (Postgres 16); local laptop worker cannot run pg16 tests. Left for a cloud worker.",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T11:31:55.890Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T11:32:08.183Z",
+ "mode": "turbo",
+ "lastRelease": {
+  "tip": "46975225bf2eb48c2b540b77f181fe9c76ead7c2"
+ }
 }
