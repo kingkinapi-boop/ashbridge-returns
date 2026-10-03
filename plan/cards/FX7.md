@@ -1,8 +1,10 @@
 # FX7 Rule defects in landed contracts and readers (found by SC)
 
+**Lead rulings, 3 Oct 19:05Z (A511), from FX7's spec report:** (1) business numbers are not sensitive: SEC-4 does not list them and the catalogue marks the key "none", so the spec job drops `corp.identity.business_number` from R45's list in tools/test/schema-contract-rules.test.mjs and its KNOWN entry goes. (2) One reader: src/core/safe-read.ts gains a bytes form beside readRegularFile (regular files only, capped, binary safe) and the Drive stand-in reads PDFs through it; no second reader inside storage. The spec job adds the bytes-form tests; then an Opus spec review (core) before the build.
+
 Phase 0. Size M. Deps: SC, W00c, FX2, CQ6. Where: cloud.
 Tags: core (contracts every figure and citation passes through).
-Paths: src/contracts/facts.ts, src/contracts/reading.ts, src/contracts/amount-grammar.ts, src/modules/ocr/textlayer/**, src/modules/storage/**, src/core/test-no-network.ts, src/contracts/auth.ts, tools/test/__fixtures__/planted-interpolated-log.ts.txt, tools/test/__fixtures__/schema-contract/known.json
+Paths: src/contracts/facts.ts, src/contracts/reading.ts, src/contracts/amount-grammar.ts, src/modules/ocr/textlayer/**, src/modules/storage/**, src/core/test-no-network.ts, src/contracts/auth.ts, tools/test/__fixtures__/planted-interpolated-log.ts.txt, tools/test/__fixtures__/schema-contract/known.json, src/core/safe-read.ts, tools/test/schema-contract-rules.test.mjs (A511)
 Harness: src/core/test-no-network.ts
 Clauses: EV-1, EV-5, ARC-10, ARC-15, SEC-11
 Read: `reports/SC-findings.md` (fix list step 3: the FX7 entries), `plan/cards/SC.md`, `src/contracts/text.ts` (the one blank rule).
