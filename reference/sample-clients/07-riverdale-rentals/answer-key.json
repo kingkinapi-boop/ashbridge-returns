@@ -327,6 +327,24 @@
     },
     "netIncomeLossBeforeTax": -15932.96
   },
+  "assets": [
+    {
+      "description": "Rental building brought forward",
+      "glAccount": "1510",
+      "accumAccount": "1511",
+      "class": "1",
+      "cost": 560000,
+      "availableForUse": "2020-01-01",
+      "book": {
+        "method": "straight-line",
+        "years": 25,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    }
+  ],
   "t2Inputs": {
     "netIncomeLossPerBooksBeforeTax": -15932.96,
     "schedule1": {
@@ -348,7 +366,7 @@
       "openingUcc": [
         {
           "class": "1",
-          "ucc": 481200,
+          "ucc": 447096.03,
           "note": "brought forward from last year, made-up figure"
         }
       ],
