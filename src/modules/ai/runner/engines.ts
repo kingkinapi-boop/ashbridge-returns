@@ -7,6 +7,7 @@ import path from 'node:path'
 import { z } from 'zod'
 import { aiStepSchemas } from '../../../contracts/ai'
 import { readRegularFile } from '../../../core/safe-read'
+import { isBlank } from '../../../contracts/text'
 import {
   AiJobIdSchema,
   InboxFileSchema,
@@ -174,8 +175,8 @@ function realFolder(root: string, name: 'inbox' | 'outbox'): string | undefined 
 
 async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult> {
   const { jobId, exchangeDir } = ctx
-  if (jobId === undefined || jobId.trim() === '') return refuse('the project engine needs a job id (the inbox file is named by it)')
-  if (exchangeDir === undefined || exchangeDir.trim() === '') return refuse('the project engine is off: AI_EXCHANGE_DIR is not set')
+  if (jobId === undefined || isBlank(jobId)) return refuse('the project engine needs a job id (the inbox file is named by it)')
+  if (exchangeDir === undefined || isBlank(exchangeDir)) return refuse('the project engine is off: AI_EXCHANGE_DIR is not set')
   // SEC-10: the id becomes a file name in a folder another process writes; it is never printed.
   if (!AiJobIdSchema.safeParse(jobId).success) return refuse('the job id is not a safe file name (SEC-10)')
   const inboxFile: InboxFile = InboxFileSchema.parse({

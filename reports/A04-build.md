@@ -9,3 +9,10 @@ scope.mjs prints "spec file edited by the build: reports/A04-spec.md in bf0c21d"
 Not run here: test:flake, /security-review (checker's job), the A08 re-merge.
 Ambers: A1 getting the own file first, strangers only when it is not there; A2 realFolder uses realpath equality (lstat-free, same effect); A3 EngineResult carries `counted` so the runner counts stage output refusals; A4 AI_LEASE_MARGIN_MS exported from runner.ts. Reverse by editing those lines.
 Permission gaps: none. Model: Sonnet 5.5.
+
+## Round 5b (cloud-91d3cf, 3 Oct, A461)
+engines.ts and runner.ts use isBlank from src/contracts/text.ts instead of .trim() (R41). Nothing else changed.
+Typecheck, lint, deps:check clean. Unit 2951 of 2951 (A04 dir 223 of 223). mutate:changed A04: 100 on engines.ts, runner.ts, schemas.ts, safe-read.ts, env.ts, no survivors.
+Scope: prints "spec file edited by the build: engines.build.test.ts" for commits 70db2c0 and 8e752c5 from earlier rounds, not this one; this round touches no test.
+Not run here: db project, ARC-6 symlink tests (laptop-only).
+Ambers: none. Permission gaps: none. Model: Sonnet 5.5.
