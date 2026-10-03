@@ -2,7 +2,9 @@
  "card": "FX3",
  "role": "spec",
  "worker": "cloud-7e015b",
- "state": "working",
- "at": "2026-10-03T03:40:44.027Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T03:40:58.669Z",
+ "mode": "turbo",
+ "note": "wait: dep SC not landed on main (rules and KNOWN file absent; SC check working)",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\"],\"depStatus\":[\"carded\"]}"
 }
