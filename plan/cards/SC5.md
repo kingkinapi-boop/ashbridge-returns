@@ -5,7 +5,7 @@ Tags: core (settings that switch engines and go-live; strict parsing of files re
 Paths: tools/test/settings-rules.test.mjs, tools/test/__fixtures__/settings-rules/**
 Clauses: ARC-20, ARC-15, ARC-22, SEC-11
 Read: `reports/A04-findings.md` ("Rule tests for everywhere", "Where else"), `plan/cards/SC.md` (rule style, R23, KNOWN table), `plan/cards/SC3.md` (R62), `.claude/rules/testing.md`.
-Spec commit: (spec-writer fills)
+Spec commit: 7f49fdb0 (validated on main 89be70a6)
 
 ## Goal
 The causes behind A04's failed check, made rules that run on every module, so B04, A08, L00 and later cards cannot repeat them: settings read around src/core/env.ts, a hard-coded boolean that hides a branch from tests, and loose schemas on files read from disk.
