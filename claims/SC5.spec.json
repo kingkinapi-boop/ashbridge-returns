@@ -2,10 +2,11 @@
  "card": "SC5",
  "role": "spec",
  "worker": "cloud-07698b",
- "state": "reported",
- "at": "2026-10-03T19:00:25.422Z",
+ "state": "released",
+ "at": "2026-10-03T19:51:08.400Z",
  "mode": "turbo",
- "note": "42 rule tests; pass on main via KNOWN (16 entries); FX16 Paths gap, see reports/SC5-spec.md",
+ "note": "wait: round 2 (A514) starts after W00c lands",
  "commit": "7f49fdb0",
- "validated": "89be70a6"
+ "validated": "89be70a6",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\",\"A06\",\"FX2\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
 }
