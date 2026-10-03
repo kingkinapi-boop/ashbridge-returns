@@ -4,7 +4,8 @@
  "round": 6,
  "spec": "72943edb",
  "worker": "cloud-652c84",
- "state": "working",
- "at": "2026-10-03T08:45:43.112Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T08:47:21.973Z",
+ "mode": "turbo",
+ "note": "22 of 22 acceptance tests pass; scope flags engine.ts (needs Paths entry)"
 }
