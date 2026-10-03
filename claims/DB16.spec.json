@@ -2,11 +2,7 @@
  "card": "DB16",
  "role": "spec",
  "worker": "local-2",
- "state": "reopened",
- "at": "2026-10-03T04:33:31.883Z",
- "mode": "turbo",
- "beat": "2026-10-03T04:09:55.807Z",
- "note": "A411: gaps in reports/DB16-spec-review.md; see bold directive",
- "commit": "d6f3a1b1",
- "validated": "73751b0e"
+ "state": "working",
+ "at": "2026-10-03T04:34:29.631Z",
+ "mode": "turbo"
 }
