@@ -23,7 +23,7 @@ describe('ARC-16 an unreadable .json entry in the recordings folder is logged on
     fs.mkdirSync(path.join(tmp.dir, 'a-dir.json'))
     fs.writeFileSync(path.join(tmp.dir, 'b-good.json'), recordingText(recording('finding-c01-good')))
     const { lines, sink } = collectLines()
-    const ctx = { recordingsDir: tmp.dir, pollMs: 5, sink, waiting: new Set<string>(), seen: new Set<string>() }
+    const ctx = { recordingsDir: tmp.dir, pollMs: 5, sink, waiting: new Map<string, number>(), seen: new Set<string>(), now: () => new Date(0), deadline: new Date(1) }
     const res = await aiEngines.recorded.run(job('good'), ctx)
     expect(res.ok).toBe(true)
     expect(lines).toEqual(['ai exchange: ignored recording a-dir.json: EISDIR'])
@@ -39,7 +39,7 @@ describe('ARC-16 recordings are read in name order, so the duplicate message lis
     vi.spyOn(fs, 'readdirSync').mockImplementation(((p: fs.PathLike, o?: unknown) => {
       return [...(real(p, o as never))].reverse()
     }) as typeof fs.readdirSync)
-    const ctx = { recordingsDir: tmp.dir, pollMs: 5, sink: () => undefined, waiting: new Set<string>(), seen: new Set<string>() }
+    const ctx = { recordingsDir: tmp.dir, pollMs: 5, sink: () => undefined, waiting: new Map<string, number>(), seen: new Set<string>(), now: () => new Date(0), deadline: new Date(1) }
     const res = await aiEngines.recorded.run(job('good'), ctx)
     expect(res).toMatchObject({ ok: false })
     if (!res.ok) expect(res.reason).toContain('a-first.json and b-second.json')

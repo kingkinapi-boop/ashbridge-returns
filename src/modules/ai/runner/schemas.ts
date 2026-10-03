@@ -66,8 +66,25 @@ export const InboxFileSchema = z.strictObject({
 })
 export type InboxFile = z.infer<typeof InboxFileSchema>
 
+/** The most an outbox file may hold (ARC-22): the Claude project's one result is far smaller. */
+export const OUTBOX_MAX_BYTES = 4 * 1024 * 1024
+
+const DEVICE_NAMES: readonly string[] = ['con', 'prn', 'aux', 'nul', ...Array.from({ length: 10 }, (_, i) => `com${String(i)}`), ...Array.from({ length: 10 }, (_, i) => `lpt${String(i)}`)]
+
+/** A job id is a file name in the exchange folder (SEC-10): an allowlist, no regex flags, never a Windows device name. */
+export const AiJobIdSchema = z
+  .string()
+  .regex(/^[a-z0-9][a-z0-9-]{2,63}$/)
+  .refine((id) => !DEVICE_NAMES.includes(id))
+
 /** outbox/<job id>.json: one result for one job; the output and stamp are checked by F04 afterwards. */
 export const OutboxFileSchema = z.strictObject({ jobId: NonBlankSchema, output: z.unknown(), stamp: z.unknown() })
+
+/** outbox/<job id>.json when the Claude project refuses the job (A08 writes it); `stage` says where it stopped. */
+export const OutboxRefusalSchema = z.strictObject({
+  jobId: NonBlankSchema,
+  refusal: z.strictObject({ reason: NonBlankSchema, problems: z.array(z.string()), stage: z.enum(['input', 'run', 'output']) }),
+})
 
 export const ApprovedListSchema = z.strictObject({
   triples: z.array(z.strictObject({ stepType: NonBlankSchema, promptVersion: NonBlankSchema, modelId: NonBlankSchema })),

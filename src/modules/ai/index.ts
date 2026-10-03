@@ -9,5 +9,14 @@ export {
 } from './runner/runner'
 export type { AiRunner, AiRunnerOptions, AiStepResult } from './runner/runner'
 export { aiEngines } from './runner/engines'
-export { AiJobSchema, ApprovedListSchema, InboxFileSchema, OutboxFileSchema, inputHashOf } from './runner/schemas'
+export {
+  AiJobIdSchema,
+  AiJobSchema,
+  ApprovedListSchema,
+  InboxFileSchema,
+  OUTBOX_MAX_BYTES,
+  OutboxFileSchema,
+  OutboxRefusalSchema,
+  inputHashOf,
+} from './runner/schemas'
 export type { AiJob } from './runner/schemas'

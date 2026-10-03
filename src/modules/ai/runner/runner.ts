@@ -15,6 +15,8 @@ export const AI_JOB_LEASE_MS = 24 * 60 * 60 * 1000
 /** AI-10: every stamp part is compared; the parts come from the stamp contract, never a hand list. */
 export const STAMP_PARTS_FROM_JOB: readonly (keyof VersionStamp)[] = Object.keys(versionStampSchema.shape) as (keyof VersionStamp)[]
 export const STAMP_PARTS_FROM_ANSWER: readonly (keyof VersionStamp)[] = []
+/** The wait for the Claude project ends this long before the lease does, so the retry can still take a late result. */
+export const AI_LEASE_MARGIN_MS = 10 * 60 * 1000
 export const AI_SETTING_NAMES = ['AI_EXCHANGE_DIR'] as const
 export const DECISION_0008 = 'AI runs only through the Claude project (decision 0008)'
 const NOT_APPROVED = 'not approved: run the evaluation set first (AI-11)'
@@ -33,12 +35,13 @@ export interface AiRunnerOptions {
   env?: Record<string, string | undefined>
   sink?: (line: string) => void
   pollMs?: number
+  now?: () => Date
 }
 
 export interface AiRunner {
   engine(): 'recorded' | 'project'
   useEngine(name: string): { ok: true } | { ok: false; reason: string }
-  runAiStep(job: AiJob, ctx?: { jobId?: string }): Promise<AiStepResult>
+  runAiStep(job: AiJob, ctx?: { jobId?: string; deadline?: Date }): Promise<AiStepResult>
   refusals(stepType: string): number
 }
 
@@ -62,7 +65,8 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
   })
   const approvedPath = options.approvedPath ?? DEFAULT_APPROVED
   const pollMs = options.pollMs ?? 1000
-  const waiting = new Set<string>()
+  const now = options.now ?? ((): Date => new Date())
+  const waiting = new Map<string, number>()
   const seen = new Set<string>()
   const counts = new Map<string, number>()
   let current: 'recorded' | 'project' = 'recorded'
@@ -73,7 +77,7 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
     counts.set(stepType, (counts.get(stepType) ?? 0) + 1)
   }
 
-  async function run(job: AiJob, ctx: { jobId?: string }): Promise<AiStepResult> {
+  async function run(job: AiJob, ctx: { jobId?: string; deadline?: Date }): Promise<AiStepResult> {
     // AI-9: no redaction stamp, no engine.
     const stamp = job.redaction
     if (stamp === undefined || blank(stamp.redactedBy) || blank(stamp.redactorVersion)) {
@@ -86,13 +90,18 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
       return refuse(NOT_APPROVED)
     }
     const engine = current
-    // SEC-11: before go-live only made-up returns go to the project.
+    // SEC-11: before go-live only made-up returns go to the project. The gate trusts `isTest` because F10 sets it
+    // from returns.returns.is_test for the job's return; no module sets it (R97).
     if (engine === 'project' && !job.isTest) {
       return refuse('the project engine runs only made-up returns until go-live (SEC-11)')
     }
-    const engineCtx: EngineContext = { jobId: ctx.jobId, recordingsDir: options.recordingsDir, exchangeDir, pollMs, sink, waiting, seen }
+    const deadline = ctx.deadline ?? new Date(now().getTime() + AI_JOB_LEASE_MS - AI_LEASE_MARGIN_MS)
+    const engineCtx: EngineContext = { jobId: ctx.jobId, recordingsDir: options.recordingsDir, exchangeDir, pollMs, sink, waiting, seen, now, deadline }
     const got = await aiEngines[engine].run(job, engineCtx)
-    if (!got.ok) return got
+    if (!got.ok) {
+      if (got.counted === true) count(job.stepType)
+      return refuse(got.reason, got.problems)
+    }
     // AI-1: every output is checked by F04 before anything uses it.
     const checked = validateAiOutput(job.stepType, got.output, got.stamp)
     if (!checked.ok) {
@@ -153,7 +162,7 @@ export function createAiStepHandler(stepType: string, runner: AiRunner): Handler
     leaseMs: AI_JOB_LEASE_MS,
     versions: { handler: `ai:${stepType}`, runner: 'a04-1' },
     async run(input, ctx) {
-      const res = await runner.runAiStep(input, { jobId: ctx.jobId })
+      const res = await runner.runAiStep(input, { jobId: ctx.jobId, deadline: new Date(ctx.now.getTime() + AI_JOB_LEASE_MS - AI_LEASE_MARGIN_MS) })
       if (!res.ok) throw new Error([res.reason, ...res.problems].join(' '))
       return { output: res.output, stamp: res.stamp }
     },
