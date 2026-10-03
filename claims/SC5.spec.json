@@ -2,7 +2,10 @@
  "card": "SC5",
  "role": "spec",
  "worker": "cloud-07698b",
- "state": "working",
- "at": "2026-10-03T18:35:52.549Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T19:00:25.422Z",
+ "mode": "turbo",
+ "note": "42 rule tests; pass on main via KNOWN (16 entries); FX16 Paths gap, see reports/SC5-spec.md",
+ "commit": "7f49fdb0",
+ "validated": "89be70a6"
 }
