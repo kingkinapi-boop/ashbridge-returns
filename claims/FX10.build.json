@@ -1,11 +1,10 @@
 {
  "card": "FX10",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "0f8e76f6",
- "worker": "local-3",
- "state": "reopened",
- "at": "2026-10-03T08:00:37.157Z",
- "mode": "turbo",
- "note": "cloud only (Where: cloud); local workers skip it"
+ "worker": "cloud-5dde9a",
+ "state": "working",
+ "at": "2026-10-03T08:01:22.482Z",
+ "mode": "turbo"
 }
