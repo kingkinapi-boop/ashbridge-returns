@@ -1,9 +1,8 @@
 {
  "card": "SC6",
  "role": "spec",
- "worker": "cloud-65d267",
- "state": "reopened",
- "at": "2026-10-03T13:20:25.637Z",
- "mode": "turbo",
- "note": "A477: wait met (SC landed 10:49Z)"
+ "worker": "cloud-e9b38e",
+ "state": "working",
+ "at": "2026-10-03T13:30:57.693Z",
+ "mode": "turbo"
 }
