@@ -2,7 +2,7 @@
 
 Phase 0. Size S. Deps: SC, W16, FX8. Where: cloud.
 Tags: core (Taxprep CSV bytes are what the import reads).
-Paths: .gitattributes, reference/**/*.csv
+Paths: .gitattributes, reference/**/*.csv, tools/test/__fixtures__/schema-contract/known.json
 Clauses: ARC-10, RT-14
 Read: `reports/SC-findings.md` (R37), `reports/SC-spec-review-3.md` (landing traps), `plan/cards/SC.md`.
 Spec commit: (spec-writer fills)
