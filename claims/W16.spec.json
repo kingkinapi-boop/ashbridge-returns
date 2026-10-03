@@ -2,7 +2,10 @@
  "card": "W16",
  "role": "spec",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T03:56:08.723Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T04:15:52.276Z",
+ "mode": "turbo",
+ "note": "Round 2 on claude/W16-r2 (Opus 5.5, local worker). verify.mjs: KNOWN.R8 x5 removed, 2 folder-freeze guards retired, +2 lines (README-to-data opening UCC tie END-2 and its plant). README at end state 539/0/0 plus 6 moved UCC figures, hand-recomputed. Main data: 530 pass, 9 fail (R8 x5, W16 x2, R11 x2). Stub of 562b349 data: 539 pass, 0 fail. Run on 87a641a9, ff to 7eaf18c (no toolchain or sample change). Laptop gap: exceljs/pdfjs missing, sheets/ocr suites not runnable here.",
+ "commit": "704a9432",
+ "validated": "7eaf18cfa0e8c49160d5e37d60f1df584204de88"
 }
