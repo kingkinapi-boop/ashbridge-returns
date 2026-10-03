@@ -1,23 +1,9 @@
-# SC11 spec: reported (cloud-06931b)
+# SC11 spec, round 3 (A508): S4 to S12 and R118
 
-Branch claude/SC11 is cut from claude/DB16 (fc7b45df, build round 5), not main: R90 to R92 need DB16's index.ts. Merge DB16 to main first, or land SC11 in the same train. Spec commit dda1c955; main merged in (f9da8e52).
+- Tests written: 21 new, all in the card's Paths. Unit (pool-rules.acceptance.test.ts): S4 settleAll (6), S5 (2), S10 (3), S11 (1), R118 (4: fault set, good example, the 030e1d6f plants, the real harness). Postgres 16 (rules.acceptance.db.test.ts): S6, S7, S8, S9, S12 guard (peak 51 of max_connections 100 here). Spec commit 7e2f5034. They fail by name on the current harness: settleAll, STEP_BOUND_MS, makeTeardown, withAdmin not exported; endPool resolves on an untracked pool; "late:" not "no owner:"; close, closeClones and createTemplate messages miss 57P01 or the database names; R118 lists 13 problems. S12 and the plant and scanner tests pass now (a guard and self-tests).
+- Clauses: ARC-6, ARC-15, SEC-1. Plants: src/core/db/__fixtures__/index-030e1d6f.ts, vitest-setup-030e1d6f.ts, global-setup-030e1d6f.ts, taken with `git show 030e1d6f:` (030e1d6f is in history; the harness is unchanged since). Only the import paths are edited, plus one no-console lint line on the global-setup copy. The spec owns them.
+- Validated on main b99a7111: typecheck and lint green; unit 3196 passed, with only SC11's 13 failing; db on PGlite 685 passed; db on pg16 712 passed, with only S6 to S9 failing.
+- Step 6b: a throwaway stub passing every new test (unit 3209/3209, db on PGlite and on pg16 all green) left no other test failing. Retired: none. The stub worktree is removed.
+- Amber: (1) API: `settleAll(label, steps, opts?)`, where a step is {name, run, boundMs?} and opts is {primary?, boundMs?}. Steps run in sequence. STEP_BOUND_MS is 3000. CLOSE_BOUNDS_MS keys are inspectIdle, dropOwnedRoles, mainEnd, endPool, drop. `makeTeardown(deps{dropRunDatabases, listRoles}, url, roles)`. `withAdmin(url, run)` is exported. (2) How R118 judges: a finally or a rethrowing catch fails at one bare await; every other region fails at two. "Its own try" means a try whose block holds that one await and whose catch uses the error outside a throw. An empty catch counts only when dbCatchAllow lists it. A nested function is judged under the name of the region around it. Besides the card's plant list, R118 also names on today's index.ts: endPool's inner sequence, the finally of transaction (rollback and discard all in one try) and the catch of createPgliteTemplate (B13). The build fixes all of them, all in index.ts. (3) S12 counts client backends across the whole cluster, as the card says. (4) Rule 4b: S6 to S9 are pg16-only (PGlite has no pool); their collection logic has a unit twin in S4.
 
-- 20 tests in `src/core/db/rules.acceptance.db.test.ts` (ARC-6, SEC-1, ARC-15), plant `src/core/db/__fixtures__/index-36672c88.ts` (index.ts at 36672c88, three edits listed in its header), `dbCatchAllow: []` added to tools/test-homes.json.
-- Validated on main f9da8e52 (merged): typecheck, lint, unit (2674) green; db project fails only SC11's own tests (4 on PGlite, 13 on pg16, each "does not export X").
-- Throwaway stub (not committed) of the contract below: unit 2674, db PGlite 575 and pg16 590 all pass, including the plants. Retired in 6b: none.
-
-## Contract the build must meet (index.ts, vitest-setup.ts, global-setup.ts; nothing in product code)
-- `idleConnectionProblems(db)`: works through `db.pool`, `db.customSettings`, `db.closed`; takes `pool.idleCount` idle connections, rolls back first (an aborted block hides role), names role, session authorization, session-source setting, tracked custom setting, open transaction; [] on PGlite or a closed handle. It may destroy a connection it finds dirty (the tests re-dirty before each check).
-- `assertCleanClones()` rejects naming every problem of every open clone; vitest-setup afterEach calls it before `closeClones()`.
-- `close()` rejects naming a dirty idle connection, after the database is dropped.
-- `leftoverRoles(before, after)`: sorted names in after, not in before. Global teardown records pg_roles at setup, drops run databases first, then rejects naming leftover roles.
-
-## Amber
-- Spec file also holds R92's source scan (db project, runs on both backends); the scan skips `__fixtures__` and test files, matches `.catch(() => undefined | {} | null | void 0)` and `.catch(noop)`.
-- Allow entries are `{file, text, reason}` with the exact text; stale entries fail. R92 passes before the build (nothing swallows now); its plant test and rule tests prove the scan.
-- R91's teardown test runs under a temporary DB16_RUN_ID so it never drops the real run's databases; it needs the db project's one-file-at-a-time pg16 mode.
-
-## Permission gaps
-None.
-## Model
-Sonnet 5.5 (worker).
+Permission gaps: none. Model: Opus 5.5 (spec writer).
