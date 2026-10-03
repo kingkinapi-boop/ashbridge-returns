@@ -3101,7 +3101,8 @@
         "src/contracts/qbo.ts",
         "db/schema/56_qbo.sql",
         "testworld/qbo/export.ts",
-        "src/core/env.ts"
+        "src/core/env.ts",
+        "tools/test/schema-contract-rules.test.mjs"
       ],
       "clauses": [
         "TB-1",
@@ -11003,7 +11004,9 @@
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",
-        "tools/test-homes.json"
+        "tools/test-homes.json",
+        "src/core/db/pool-rules.acceptance.test.ts",
+        "src/core/db/__fixtures__/**"
       ],
       "clauses": [
         "ARC-6",
