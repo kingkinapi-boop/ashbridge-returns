@@ -24,7 +24,7 @@ import fc from 'fast-check'
 import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { fixedClock, setClock, systemClock } from '../core/clock'
-import { cloneTestDb } from '../core/db'
+import { cloneTestDb as cloneBareDb } from '../core/db'
 import {
   AdjustingEntryRecordSchema,
   AnswerRecordSchema,
@@ -50,6 +50,17 @@ import {
   VersionStampSchema,
   sourcesAreReal,
 } from './records'
+
+// FX17 (SEC-1, SEC-7): an actor column takes a staff_users id or a listed system actor, so every clone this file
+// makes first holds its made-up actors as staff users. Only the fixture changes; no assertion does.
+const FX17_ACTORS: readonly string[] = ['Preparer (Test)']
+async function cloneTestDb(): Promise<PGlite> {
+  const db = await cloneBareDb()
+  for (const id of FX17_ACTORS) {
+    await db.query(`insert into returns.staff_users (id, display_name, roles) values ($1, $1, '{preparer}')`, [id])
+  }
+  return db
+}
 
 beforeAll(() => {
   setClock(fixedClock('2026-03-15T14:00:00-04:00'))

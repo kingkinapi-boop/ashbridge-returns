@@ -36,7 +36,7 @@ import type { PGlite } from '@electric-sql/pglite'
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import type { Clock } from '../../core/clock'
-import { cloneTestDb } from '../../core/db'
+import { cloneTestDb as cloneBareDb } from '../../core/db'
 import { ReturnIdSchema, type ReturnId } from '../../contracts/ids'
 import { RETURN_STATES } from '../../contracts/records'
 import { BLANK_RANGES, isBlank } from '../../contracts/text'
@@ -50,6 +50,17 @@ import {
 } from '../../contracts/lifecycle'
 import { BLUEPRINT_MOVES, pathTo, type State } from './__fixtures__/blueprint-moves'
 import { MOVES, createLifecycle } from './index'
+
+// FX17 (SEC-1, SEC-7): an actor column takes a staff_users id or a listed system actor, so every clone this file
+// makes first holds its made-up actors as staff users. Only the fixture changes; no assertion does.
+const FX17_ACTORS: readonly string[] = ['Pat Preparer (Test)', 'Robin Second (Test)', 'Ops Desk (Test)', '\u00a0Pat Preparer (Test)\u200b']
+async function cloneTestDb(): Promise<PGlite> {
+  const db = await cloneBareDb()
+  for (const id of FX17_ACTORS) {
+    await db.query(`insert into returns.staff_users (id, display_name, roles) values ($1, $1, '{preparer}')`, [id])
+  }
+  return db
+}
 
 const T0 = '2026-03-16T09:00:00-04:00'
 const PREPARER = 'Pat Preparer (Test)'

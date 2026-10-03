@@ -75,7 +75,7 @@ import fc from 'fast-check'
 import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { fixedClock, setClock, systemClock } from '../core/clock'
-import { DEFAULT_SCHEMA_DIR, cloneTestDb, createTemplate, type DbTemplate } from '../core/db'
+import { DEFAULT_SCHEMA_DIR, cloneTestDb as cloneBareDb, createTemplate, type DbTemplate } from '../core/db'
 import type {
   AccountRecord,
   AdjustingEntryRecord,
@@ -126,6 +126,17 @@ import {
 } from './records'
 import { BoxSchema } from './reading'
 import { isBlank } from './text'
+
+// FX17 (SEC-1, SEC-7): an actor column takes a staff_users id or a listed system actor, so every clone this file
+// makes first holds its made-up actors as staff users. Only the fixture changes; no assertion does.
+const FX17_ACTORS: readonly string[] = ['Preparer (Test)', 'Reviewer (Test)', 'system (Test)', 'Someone else (Test)', 'Someone (Test)']
+async function cloneTestDb(): Promise<PGlite> {
+  const db = await cloneBareDb()
+  for (const id of FX17_ACTORS) {
+    await db.query(`insert into returns.staff_users (id, display_name, roles) values ($1, $1, '{preparer}')`, [id])
+  }
+  return db
+}
 
 // ids.ts must exist and name the id kinds; this line fails typecheck until it does.
 export type IdKindsExist = [Ids.ReturnId, Ids.FactId, Ids.FigureId, Ids.DocumentId]
