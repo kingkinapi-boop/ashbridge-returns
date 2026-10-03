@@ -1,11 +1,9 @@
 {
  "card": "W00c",
  "role": "check",
- "for": "2026-10-03T16:10:40.902Z",
- "worker": "cloud-4863d0",
- "state": "failed",
- "at": "2026-10-03T16:24:36.810Z",
- "mode": "turbo",
- "beat": "2026-10-03T16:23:51.813Z",
- "note": "FAIL: Opus read, idRule unchecked, typed fields unread (tag, account numbers, parties.kind), prior_year raw; see reports/W00c-check.md"
+ "for": "2026-10-03T17:34:37.137Z",
+ "worker": "cloud-f09ae7",
+ "state": "working",
+ "at": "2026-10-03T17:36:40.530Z",
+ "mode": "turbo"
 }
