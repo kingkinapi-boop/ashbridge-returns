@@ -4,8 +4,14 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 ## 1. Needs you
 
-Nothing now.
+Nothing now. Thank you for landing the batch.
 
-## 2. What the Lead is doing now (3 Oct, 13:26 UTC)
+## 2. What the Lead is doing now (3 Oct, 17:35 UTC)
 
-Turbo again: you typed `turbo on` at 13:26 UTC, after the Reviewer's slow-down and the four fixes it asked for (done 13:25 UTC). 54 cards are on main; a batch of three is being checked in the cloud. The AI runner card is split: its small clock fix is its last round, and the extra tests go to a new card, so it cannot loop again. Your Critic answer is applied: the screen designs restart now, aiming at one design sitting about Tue 6 Oct. The test-world fixes most of the build waits on are in their last round. The week's allowance is about 69% used and runs out about Sunday morning.
+Turbo continues; 63 cards are on main. The batch of four (the AI runner, two queue tools and the test assertion floor) passed its full cloud check and is on main.
+
+The card whose security tests failed the first batch has its fix plan: one more round of test changes, then a security review. Four other cards (two rule checkers, the question-bank mapping and a database test helper) have their fixes written into their cards and are back with the spec writers. The test-world fix most of the build waits on gets its final check now; about ten cards start building once it lands.
+
+Seven tax questions sit on the CPA check list: `reference/cpa-check.md`, items 37 to 43. Nothing waits on them today; item 43 is needed before the test-world kinds are built.
+
+The week's allowance was 78% used at 15:42 UTC; at this pace it runs out about 21:00 UTC. Then work pauses until you use your saved reset (Settings, Usage) and type `go`. Screen designs are being drawn for the design sitting about Tue 6 Oct.
