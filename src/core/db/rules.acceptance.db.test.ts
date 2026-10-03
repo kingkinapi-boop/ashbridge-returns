@@ -18,6 +18,14 @@
 // - R92: no `.catch(() => undefined)` (or the same swallow written `() => {}`, `() => null`, `() => void 0`,
 //   `.catch(noop)`) in a non-test file of src/core/db outside `dbCatchAllow` in tools/test-homes.json, each
 //   entry { file, text, reason } with the exact text. The allow list starts empty. A stale entry fails.
+// - A453 edge cases (DB16 security review), each a planted test below: a tx used after its transaction ended is
+//   refused; custom settings set as `set_config (`, a quoted name or a `$` name are carried or refused, never
+//   dropped; roles are tracked per handle (a role another worker makes meanwhile, a role made in a rolled-back
+//   transaction, a role made in a DO block or by `create group`, a handle left in an aborted block, a role name
+//   with a double quote); session read-only and isolation characteristics apply to the transaction;
+//   `pg16RunId()` refuses a DB16_RUN_ID outside ^[0-9a-z_]+$ and the global setup never reuses an inherited id
+//   (it mints a fresh one and puts it in DB16_RUN_ID); R92 also scans the empty `catch {}` block, and the one in
+//   index.ts (the first rollback of `transaction`) is the allow list's only entry.
 // - The plant for R90 and R92 is __fixtures__/index-36672c88.ts, index.ts as the DB16 round 4 check found it.
 // This file imports no PGlite value: only src/core/db builds a database (the rule scan in pg16.acceptance.test.ts).
 import fs from 'node:fs'
@@ -26,7 +34,7 @@ import { describe, expect, test } from 'vitest'
 import { readOwnSource } from '../testing/read-own-source'
 import setupGlobal from './global-setup'
 import * as dbModule from './index'
-import { cloneTestDb } from './index'
+import { cloneTestDb, pg16RunId } from './index'
 import { createTemplate as createOldTemplate } from './__fixtures__/index-36672c88'
 
 const ON = process.env['TEST_DB'] === 'pg16'
@@ -234,7 +242,7 @@ describe('SC11 R91 no role outlives the run (ARC-6, SEC-1)', () => {
   test.runIf(ON)(
     'SEC-1 the global teardown drops this run databases, then fails naming a role made after setup and not a role that was there at setup',
     async () => {
-      // The clone first: its name carries the real run id, so the teardown below (run id sc11_r91_) never drops it.
+      // The clone first: its name carries the real run id, so the teardown below never drops it.
       const db = (await cloneTestDb()) as unknown as Queryable
       const keep = process.env['DB16_RUN_ID']
       process.env['DB16_RUN_ID'] = `sc11_r91_${PID}`
@@ -243,9 +251,12 @@ describe('SC11 R91 no role outlives the run (ARC-6, SEC-1)', () => {
         const teardown = await setupGlobal()
         expect(teardown, 'sentinel: the pg16 global setup returns a teardown').toBeTypeOf('function')
         const quiet = teardown as () => Promise<void>
+        // The setup mints a fresh run id: this test's databases carry it, so the teardown drops them.
+        const runId = process.env['DB16_RUN_ID'] ?? ''
+        expect(runId).not.toBe(`sc11_r91_${PID}`)
         // Nothing made since setup: the run left nothing (roles of other test files are not this test's).
         const leaked = await newRole(db, 'leak')
-        await db.exec(`create database "ashbridge_t_sc11_r91_${PID}_x1"`)
+        await db.exec(`create database "ashbridge_t_${runId}_x1"`)
         const rejected = await quiet().then(
           () => undefined,
           (e: unknown) => (e instanceof Error ? e.message : String(e)),
@@ -254,7 +265,7 @@ describe('SC11 R91 no role outlives the run (ARC-6, SEC-1)', () => {
         expect(rejected).toContain(leaked)
         expect(rejected).not.toContain(base)
         const dbs = await db.query(`select datname from pg_database where datname like $1`, [
-          `ashbridge\\_t\\_sc11\\_r91\\_${PID}\\_%`,
+          `ashbridge\\_t\\_${(process.env['DB16_RUN_ID'] ?? '').replaceAll('_', '\\_')}\\_%`,
         ])
         expect(dbs.rows, 'the run databases are dropped even when a role is left').toEqual([])
       } finally {
@@ -269,7 +280,7 @@ describe('SC11 R91 no role outlives the run (ARC-6, SEC-1)', () => {
   test.runIf(ON)(
     'SEC-1 the global teardown passes when the run left no new role',
     async () => {
-      // The clone first: its name carries the real run id, so the teardown below (run id sc11_r91b_) never drops it.
+      // The clone first: its name carries the real run id, so the teardown below never drops it.
       const db = (await cloneTestDb()) as unknown as Queryable
       const keep = process.env['DB16_RUN_ID']
       process.env['DB16_RUN_ID'] = `sc11_r91b_${PID}`
@@ -287,9 +298,239 @@ describe('SC11 R91 no role outlives the run (ARC-6, SEC-1)', () => {
   )
 })
 
+type Tx = Parameters<Parameters<Queryable['transaction']>[0]>[0]
+const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
+async function roleNamesIn(db: Queryable, names: string[]): Promise<string[]> {
+  const r = await db.query('select rolname from pg_roles where rolname = any($1) order by rolname', [names])
+  return r.rows.map((x) => String(x['rolname']))
+}
+
+describe('SC11 R90 edge cases from the DB16 security review (A453)', () => {
+  test('ARC-6 a tx used after its transaction ended is refused, whichever method is called', async () => {
+    const db = (await cloneTestDb()) as unknown as Queryable
+    let kept: Tx | undefined
+    await db.transaction(async (tx) => {
+      kept = tx
+      await tx.query('select 1')
+    })
+    expect(kept, 'sentinel: the transaction ran').toBeDefined()
+    const ended = kept as Tx
+    await expect(ended.query('select 1')).rejects.toThrow()
+    await expect(ended.exec('select 1')).rejects.toThrow()
+    await expect(ended.rollback()).rejects.toThrow()
+  })
+
+  test('ARC-6 a tx used after a rollback of its transaction is refused too', async () => {
+    const db = (await cloneTestDb()) as unknown as Queryable
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.rollback()
+        await tx.query('select 1')
+      }),
+    ).rejects.toThrow()
+  })
+
+  test.runIf(ON)(
+    'ARC-6 a call from a promise chain never awaited, issued after the transaction ended, cannot set a role on the pooled connection',
+    async () => {
+      const db = (await cloneTestDb()) as unknown as Queryable
+      const role = await newRole(db, 'late')
+      let late: Promise<unknown> | undefined
+      await db.transaction((tx) => {
+        late = sleep(150).then(() => tx.exec(`set role ${role}`))
+        late.catch(() => undefined)
+        return Promise.resolve()
+      })
+      await sleep(400)
+      await expect(late).rejects.toThrow()
+      await expect(problemsOf(db)).resolves.toEqual([])
+      await db.transaction(async (tx) => {
+        const r = await tx.query('select current_user as u, session_user as s')
+        expect(r.rows[0]?.['u']).toBe(r.rows[0]?.['s'])
+      })
+    },
+    BOOT_MS,
+  )
+
+  const SETTING_FORMS: { name: string; sql: string; key: string }[] = [
+    { name: 'set_config with a space before the parenthesis', sql: `select set_config ('app.sc11_sp', 'v', false)`, key: 'app.sc11_sp' },
+    { name: 'a quoted name', sql: `set "app"."sc11_q" = 'v'`, key: 'app.sc11_q' },
+    { name: 'a name with a dollar sign', sql: `select set_config('app.sc11$d', 'v', false)`, key: 'app.sc11$d' },
+    { name: 'a dollar sign in a set statement', sql: `set app.sc11$e to 'v'`, key: 'app.sc11$e' },
+    { name: 'set session with a quoted second part', sql: `set session app."sc11_s" to 'v'`, key: 'app.sc11_s' },
+  ]
+  for (const f of SETTING_FORMS) {
+    test(`ARC-6 a custom setting set by ${f.name} is carried into a transaction or the transaction is refused, never silently dropped`, async () => {
+      const db = (await cloneTestDb()) as unknown as Queryable
+      await db.exec(f.sql)
+      const outcome = await db
+        .transaction((tx) => tx.query(`select current_setting('${f.key}', true) as v`))
+        .then(
+          (r) => ({ value: r.rows[0]?.['v'] }),
+          (e: unknown) => ({ refused: e instanceof Error ? e.message : String(e) }),
+        )
+      if ('refused' in outcome) expect(outcome.refused).toMatch(/refused|custom setting/i)
+      else expect(outcome.value).toBe('v')
+      await expect(problemsOf(db)).resolves.toEqual([])
+    })
+  }
+
+  test('ARC-6 a session read-only default and a session isolation default apply to the transaction a handle opens', async () => {
+    const db = (await cloneTestDb()) as unknown as Queryable
+    await db.exec('set default_transaction_read_only = on')
+    const ro = await db.transaction((tx) => tx.query(`select current_setting('transaction_read_only') as v`))
+    expect(ro.rows[0]?.['v']).toBe('on')
+    await expect(db.transaction((tx) => tx.exec('create temp table sc11_ro (x int)'))).rejects.toThrow(/read-only/i)
+    await db.exec('set default_transaction_read_only = off')
+    await db.exec(`set default_transaction_isolation = 'serializable'`)
+    const iso = await db.transaction((tx) => tx.query(`select current_setting('transaction_isolation') as v`))
+    expect(iso.rows[0]?.['v']).toBe('serializable')
+  })
+})
+
+describe('SC11 R91 role tracking is per handle and complete (A453, ARC-6, SEC-1)', () => {
+  test.runIf(ON)(
+    'SEC-1 a role another worker makes while this handle runs a statement is never dropped by this handle',
+    async () => {
+      const real = (await cloneTestDb()) as unknown as Queryable
+      const db = (await cloneTestDb()) as unknown as Queryable
+      const mine = `sc11_mine_${PID}`
+      const foreign = `sc11_foreign_${PID}`
+      try {
+        const slow = db.exec(`select pg_sleep(1); create role ${mine}`)
+        await sleep(300)
+        const pool = (db as unknown as { pool: PoolLike }).pool
+        const c = await pool.connect()
+        await c.query(`create role ${foreign}`)
+        c.release()
+        await slow
+        await expect(db.close()).resolves.toBeUndefined()
+        expect(await roleNamesIn(real, [mine, foreign])).toEqual([foreign])
+      } finally {
+        await real.exec(`drop role if exists ${foreign}`)
+        await real.exec(`drop role if exists ${mine}`)
+      }
+    },
+    BOOT_MS,
+  )
+
+  test('SEC-1 a role made in a transaction that rolls back does not make close fail', async () => {
+    const db = (await cloneTestDb()) as unknown as Queryable
+    const name = `sc11_rb_${PID}`
+    await db.transaction(async (tx) => {
+      await tx.exec(`create role ${name}`)
+      await tx.rollback()
+    })
+    await expect(db.close()).resolves.toBeUndefined()
+  })
+
+  test.runIf(ON)(
+    'SEC-1 a role made in a DO block or by create group is dropped when the handle closes',
+    async () => {
+      const real = (await cloneTestDb()) as unknown as Queryable
+      const db = (await cloneTestDb()) as unknown as Queryable
+      const viaDo = `sc11_do_${PID}`
+      const viaGroup = `sc11_grp_${PID}`
+      try {
+        await db.exec(`do $$ begin create role ${viaDo}; end $$`)
+        await db.exec(`create group ${viaGroup}`)
+        await expect(db.close()).resolves.toBeUndefined()
+        expect(await roleNamesIn(real, [viaDo, viaGroup])).toEqual([])
+      } finally {
+        await real.exec(`drop role if exists ${viaDo}`)
+        await real.exec(`drop role if exists ${viaGroup}`)
+      }
+    },
+    BOOT_MS,
+  )
+
+  test.runIf(ON)(
+    'SEC-1 a handle left in an aborted block still has its roles dropped when it closes',
+    async () => {
+      const real = (await cloneTestDb()) as unknown as Queryable
+      const db = (await cloneTestDb()) as unknown as Queryable
+      const name = `sc11_abort_${PID}`
+      try {
+        await db.exec(`create role ${name}`)
+        await db.exec('begin')
+        await expect(db.query('select 1/0')).rejects.toThrow()
+        await expect(db.close()).resolves.toBeUndefined()
+        expect(await roleNamesIn(real, [name])).toEqual([])
+      } finally {
+        await real.exec(`drop role if exists ${name}`)
+      }
+    },
+    BOOT_MS,
+  )
+
+  test.runIf(ON)(
+    'SEC-1 a role name with a double quote is escaped as an identifier when it is dropped',
+    async () => {
+      const real = (await cloneTestDb()) as unknown as Queryable
+      const db = (await cloneTestDb()) as unknown as Queryable
+      const name = `sc11_q"x_${PID}`
+      try {
+        await db.exec(`create role "${name.replaceAll('"', '""')}"`)
+        await expect(db.close()).resolves.toBeUndefined()
+        expect(await roleNamesIn(real, [name])).toEqual([])
+      } finally {
+        await real.exec(`drop role if exists "${name.replaceAll('"', '""')}"`)
+      }
+    },
+    BOOT_MS,
+  )
+})
+
+describe('SC11 the run id is checked and never inherited (A453, SEC-1)', () => {
+  test('SEC-1 pg16RunId refuses a DB16_RUN_ID outside lowercase letters, digits and underscores, naming the variable', () => {
+    const keep = process.env['DB16_RUN_ID']
+    try {
+      for (const bad of ['a"b', "a'b", 'a%b', 'A_b', 'a-b', 'a b', 'a\\b', 'a;drop', 'é']) {
+        process.env['DB16_RUN_ID'] = bad
+        expect(() => pg16RunId(), JSON.stringify(bad)).toThrow(/DB16_RUN_ID/)
+      }
+      process.env['DB16_RUN_ID'] = 'abc_123'
+      expect(pg16RunId()).toBe('abc_123')
+      delete process.env['DB16_RUN_ID']
+      expect(pg16RunId()).toMatch(/^[0-9a-z_]+$/)
+    } finally {
+      if (keep === undefined) delete process.env['DB16_RUN_ID']
+      else process.env['DB16_RUN_ID'] = keep
+    }
+  })
+
+  test.runIf(ON)(
+    'SEC-1 the global setup mints a fresh run id and its teardown leaves the databases of an inherited one alone',
+    async () => {
+      const real = (await cloneTestDb()) as unknown as Queryable
+      const keep = process.env['DB16_RUN_ID']
+      const inherited = `sc11_inh_${PID}`
+      process.env['DB16_RUN_ID'] = inherited
+      try {
+        await real.exec(`create database "ashbridge_t_${inherited}_x1"`)
+        const teardown = (await setupGlobal()) as () => Promise<void>
+        const minted = process.env['DB16_RUN_ID'] ?? ''
+        expect(minted).not.toBe(inherited)
+        expect(minted).toMatch(/^[0-9a-z_]+$/)
+        await teardown()
+        const left = await real.query('select datname from pg_database where datname = $1', [`ashbridge_t_${inherited}_x1`])
+        expect(left.rows).toHaveLength(1)
+      } finally {
+        await real.exec(`drop database if exists "ashbridge_t_${inherited}_x1" with (force)`)
+        if (keep === undefined) delete process.env['DB16_RUN_ID']
+        else process.env['DB16_RUN_ID'] = keep
+      }
+    },
+    BOOT_MS,
+  )
+})
+
 // R92: the scan. `hits` finds each swallowed catch with its line; `unallowed` applies the Lead's allow list.
 const SWALLOW =
   /\.catch\(\s*(?:async\s*)?(?:\(\s*\w*\s*\)\s*=>\s*(?:undefined|void 0|null|\{\s*(?:\/\/[^\n]*\n\s*)?\})|noop)\s*\)/g
+
+// The empty catch block (`catch {}`, `catch (e) {}`, comments only): its hit text is the block with its body removed.
+const EMPTY_CATCH = /\bcatch\s*(?:\(\s*\w*\s*(?::\s*\w+\s*)?\))?\s*\{(?:\s|\/\/[^\n]*|\/\*[\s\S]*?\*\/)*\}/g
 
 interface Hit {
   file: string
@@ -302,6 +543,9 @@ function hits(files: { file: string; src: string }[]): Hit[] {
     for (const m of src.matchAll(SWALLOW)) {
       out.push({ file, line: src.slice(0, m.index).split('\n').length, text: m[0] })
     }
+    for (const m of src.matchAll(EMPTY_CATCH)) {
+      out.push({ file, line: src.slice(0, m.index).split('\n').length, text: m[0].replace(/\{[\s\S]*\}/, '{}') })
+    }
   }
   return out
 }
@@ -311,9 +555,16 @@ interface Allow {
   text: string
   reason: string
 }
+// One allow entry silences one hit: a second swallow with the same text in the same file is still reported.
 function unallowed(found: Hit[], allow: Allow[]): string[] {
+  const spent = new Set<number>()
   return found
-    .filter((h) => !allow.some((a) => a.file === h.file && a.text === h.text))
+    .filter((h) => {
+      const i = allow.findIndex((a, n) => !spent.has(n) && a.file === h.file && a.text === h.text)
+      if (i < 0) return true
+      spent.add(i)
+      return false
+    })
     .map((h) => `${h.file}:${String(h.line)} swallowed failure ${h.text}`)
 }
 
@@ -382,6 +633,38 @@ describe('SC11 R92 no swallowed database errors in src/core/db (ARC-15)', () => 
       expect(f, `${a.file}: allow entry names a non-test file of ${DB_DIR}`).toBeDefined()
       expect(hits(f ? [f] : []).some((h) => h.text === a.text), `${a.file}: stale allow entry ${a.text}`).toBe(true)
     }
+  })
+
+  test('ARC-15 the scan flags an empty catch block, with or without a binding or comments, and no handled one', () => {
+    const bad = [
+      'try { f() } catch {}',
+      'try { f() } catch (e) {}',
+      'try { f() } catch (e: unknown) { }',
+      'try { f() } catch {\n  // ignore\n}',
+      'try { f() } catch { /* ignore */ }',
+    ]
+    for (const src of bad) {
+      const found = hits([{ file: 'f.ts', src }])
+      expect(found, src).toHaveLength(1)
+      expect(found[0]?.text, src).toMatch(/^catch\s*(\(\w+(: unknown)?\)\s*)?\{\}$/)
+    }
+    const fine = ['try { f() } catch (e) { throw e }', 'try { f() } catch { return 1 }', 'try { f() } catch (e) { log(e) }']
+    for (const src of fine) expect(hits([{ file: 'f.ts', src }]), src).toHaveLength(0)
+  })
+
+  test('ARC-15 one allow entry silences one hit: a second empty catch in the same file is still reported', () => {
+    const found = hits([{ file: 'a.ts', src: 'try {} catch {}\ntry {} catch {}' }])
+    expect(found).toHaveLength(2)
+    const one: Allow[] = [{ file: 'a.ts', text: 'catch {}', reason: 'test' }]
+    expect(unallowed(found, one)).toEqual(['a.ts:2 swallowed failure catch {}'])
+    expect(unallowed(found, [...one, ...one])).toEqual([])
+  })
+
+  test('ARC-15 the allow list holds exactly the empty catch around the first rollback in index.ts, with its reason', () => {
+    const allow = allowList()
+    expect(allow.map((a) => `${a.file} ${a.text}`)).toEqual([`${DB_DIR}/index.ts catch {}`])
+    expect(allow[0]?.reason).toMatch(/rollback/i)
+    expect(allow[0]?.reason).toMatch(/finally|destroy/i)
   })
 
   test('ARC-15 an allow entry silences only its own file and text', () => {

@@ -5,7 +5,13 @@
   },
   "db": { "include": ["src/**/*.db.test.ts", "testworld/**/*.db.test.ts"] },
   "evals": { "include": ["evals/**/*.test.ts", "src/**/*.eval.test.ts"] },
-  "dbCatchAllow": [],
+  "dbCatchAllow": [
+    {
+      "file": "src/core/db/index.ts",
+      "text": "catch {}",
+      "reason": "The first rollback of a transaction after a failure: the finally block repeats the rollback, then discards the connection or destroys it on failure, so a failed first rollback is never trusted or lost (DB16 security review, low 3)."
+    }
+  ],
   "tsconfig": {
     "include": [
       "next-env.d.ts",
