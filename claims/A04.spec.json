@@ -2,7 +2,10 @@
  "card": "A04",
  "role": "spec",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T05:18:35.022Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T05:23:46.949Z",
+ "mode": "turbo",
+ "note": "round 3 patch: 106 unit tests (+8 G1, G2 resolves); 28 fail on round 1 build for the right reason",
+ "commit": "6fa39bb1",
+ "validated": "77648178"
 }
