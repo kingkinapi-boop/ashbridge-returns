@@ -1,9 +1,8 @@
 {
  "card": "SC8",
  "role": "build",
- "state": "released",
+ "state": "reopened",
  "worker": "lead",
- "at": "2026-10-03T07:15:19.211Z",
- "note": "wait: Opus spec review (reports/SC8-spec-review.md), then SC and FX2 land",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX2\",\"SC\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "at": "2026-10-03T13:21:37.527Z",
+ "note": "A477: wait met"
 }
