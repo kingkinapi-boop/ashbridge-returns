@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "817cdde4",
  "worker": "cloud-4507da",
- "state": "working",
- "at": "2026-10-03T14:04:29.262Z",
+ "state": "reported",
+ "at": "2026-10-03T14:42:22.302Z",
  "mode": "turbo",
- "beat": "2026-10-03T14:11:12.615Z"
+ "beat": "2026-10-03T14:11:12.615Z",
+ "note": "39 of 39 acceptance tests pass (pg16 and PGlite), flake 5/5; scope lists plan/cards/DB16.md (Lead directive on spec branch)"
 }
