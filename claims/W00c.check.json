@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-03T17:34:37.137Z",
  "worker": "cloud-301e56",
- "state": "working",
- "at": "2026-10-03T18:22:35.211Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-03T19:42:41.907Z",
+ "mode": "turbo",
+ "note": "FAIL: mutation 100 unverified (Stryker first run times out, determinism test 5s then 45min limit); RC-B fix 4 bad created_at forms load (load.ts:377,381); RC-C evidence owners.length loads, adjusting ids unchecked (load.ts:395-402,591); see reports/W00c-check-2.md on claude/W00c (8ca30bc6)"
 }
