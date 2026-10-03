@@ -1,9 +1,8 @@
 {
  "card": "G18",
  "role": "spec",
- "worker": "cloud-899fef",
- "state": "reopened",
- "at": "2026-10-03T14:02:24.567Z",
- "mode": "turbo",
- "note": "wait: Paths gap, Lead must change card Paths (see reports/G18-spec.md on claude/G18)"
+ "worker": "cloud-f5e750",
+ "state": "working",
+ "at": "2026-10-03T14:04:33.592Z",
+ "mode": "turbo"
 }
