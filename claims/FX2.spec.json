@@ -2,7 +2,10 @@
  "card": "FX2",
  "role": "spec",
  "worker": "cloud-253f9f",
- "state": "working",
- "at": "2026-10-03T04:04:51.036Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T04:09:17.039Z",
+ "mode": "turbo",
+ "note": "23 tests (14 fail until built)",
+ "commit": "6ac7457",
+ "validated": "7eaf18cfa0e8c49160d5e37d60f1df584204de88"
 }
