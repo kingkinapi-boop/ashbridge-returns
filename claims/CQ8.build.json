@@ -4,9 +4,12 @@
  "round": 1,
  "spec": "b7913ddbac51377e719223c06d1342769aff4805",
  "worker": "cloud-ddf73a",
- "state": "reported",
- "at": "2026-10-03T14:07:19.828Z",
+ "state": "released",
+ "at": "2026-10-03T17:32:21.728Z",
  "mode": "turbo",
  "beat": "2026-10-03T14:05:00.746Z",
- "note": "412 of 412 tools tests pass; no code change needed"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "d73e9bba252d3f4c8581e0bb9d0b22d5be941f17"
+ }
 }
