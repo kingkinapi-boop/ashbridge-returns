@@ -29,3 +29,13 @@ Proposed (on "apply"): REVIEWER.md C2 says two parts (0022); the hook counts the
 ## Numbers
 
 Since 14:28Z yesterday: 33 merged; 5 cards at 3+ builds; 29 failed-check lines; trains 14 (2 red); dispatches 252 (2 Oct), 195 (3 Oct to 12:50Z); about 110 ambers; open reds 0.
+
+## Applied (Zo said "apply all", 3 Oct 13:22Z)
+
+- Budget hook and modes skill: mode.json `cap_from` (now 13:15Z); the day's cap counts from a lowering, so normal has its 40 from the SLOW.
+- REVIEWER.md: TODO-ZO has two parts; a SLOW sets `cap_from`.
+- Dispatch skill, worker.md: a new local worker name per dispatch; lettered and "final" rounds count as rounds.
+- Merge skill: run `tools/test` on the train after bringing in main (the Lead added the red-report copy, A477).
+- testing.md: a loop asserts its list is not empty; a source-scan test needs a behaviour twin.
+
+Lead, still open: claim.mjs refuses a check to an earlier spec or build name, metrics fields, next.mjs offers (the Critic's CQ card); `expect.hasAssertions()` in the vitest setup and a G-family rule over sample findings (cards); NOW.md true. Findings 1, 2 and 5 are in hand (A477).
