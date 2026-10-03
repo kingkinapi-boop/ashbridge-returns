@@ -2,10 +2,9 @@
  "card": "A04",
  "role": "spec",
  "note": "A469: round 5c clock fix (card directive)",
- "worker": "local-2",
- "state": "reopened",
- "at": "2026-10-03T12:47:57.887Z",
- "mode": "turbo",
- "commit": "796cd7ab",
- "validated": "164d8d66eb67e4f75561831234fc5a35edfd2b35"
+ "reopenedFrom": "796cd7ab",
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T12:50:30.712Z",
+ "mode": "turbo"
 }
