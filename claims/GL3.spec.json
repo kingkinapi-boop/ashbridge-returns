@@ -1,10 +1,10 @@
 {
  "card": "GL3",
  "role": "spec",
- "note": "toolchain refit: merged main, typecheck+lint green, unit green except build-owned R41 in manifest.ts (A462), db pg16 638 pass",
+ "note": "A476: round 2 test (card directive)",
  "worker": "cloud-c6e634",
- "state": "reported",
- "at": "2026-10-03T12:19:23.870Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:15:18.853Z",
  "mode": "turbo",
  "commit": "c6ed0a6",
  "validated": "66de2c9"
