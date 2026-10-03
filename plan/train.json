@@ -1,14 +1,13 @@
 {
-  "status": "landed",
+  "status": "green",
   "branch": "claude/train",
-  "head": "25bde2a",
+  "head": "677e92f",
   "cards": [
-    "A07D",
-    "A06"
+    "CQ2",
+    "SC4"
   ],
-  "requested_at": "2026-10-03T03:42:49Z",
-  "note": "A07D core (Opus read done, findings carded to FX4 and SC4, A393). A06 security: run the A06 db tests (src/modules/auth/*.db.test.ts) on the preinstalled PostgreSQL 16 as well as PGlite and report both (A396). Run gitleaks over HEAD if available.",
-  "by": "cloud-d8b04b",
-  "report": "reports/train-20261003-0401.md",
-  "landed_at": "2026-10-03T04:03:09Z"
+  "requested_at": "2026-10-03T05:25:26Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). SC4 is core: its Opus read is done (local-3). CQ2 changes the queue tools: run every tools test. No sample clients on board.",
+  "by": "cloud-8369bc",
+  "report": "reports/train-20261003-0548.md"
 }

@@ -15,3 +15,7 @@ The KNOWN shape as a tested helper: planted bad entries (a regex match, two file
 
 ## Check
 A checker who did neither: the helper's tests, `npm test`.
+
+## R80 (A414, reports/FX2-findings.md)
+The helper also refuses a KNOWN entry whose file is outside its owner card's Paths, or whose owner is not open in plan/slices.json. Planted: SC5's R73 entry owned by FX2 as first carded; A06 (done) owning auth/index.ts.
+An entry whose fix is a file in its owner's Paths other than the flagged file (R37: FX9's .gitattributes fixes the CSVs) names that fix file, and R80 accepts it.
