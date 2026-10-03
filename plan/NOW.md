@@ -18,13 +18,13 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 | A08 | spec review GAPS 11 (A509): spec patch reopened | build after it; then Opus check and a security review |
 | W00c | findings review 4 done (A521): no build round; mutation-only check of 75556283 in shards, union of kills | check opened (cloud); land on 100 on all 11 files; W00d makes the method a tool |
 | SC10 | round 2 check PASS | Opus read of the landing form (local, from 21:10Z); board on PASS |
-| SC6 | findings review 2 done (A518): round 3, the last: spec patch of 11 fixes, no build; Check grades against the stated grammar | spec reopened; then build marked reported; Opus check; on a fourth R77 failure split SC6a and SC6b |
+| SC6 | round 3 spec reported (168 tests); build marked reported 21:30Z | Opus check against the stated grammar; board; a fourth R77 failure splits SC6a and SC6b |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | SC11 | round 3 spec reported (21 tests); build reopened 21:07Z (B3 to B14) | Opus read; security review; board; then SC3 round 3 (A517) |
 | GL3 | Opus read and security review PASS (A525) | boarded train 4 at 21:15Z |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
-| A08 | A509 spec patch reported (218 tests) | build working (cloud-2cc0af); then Opus check and security review |
+| A08 | build reported (218 of 218) but mutation under 100 (call.ts, index.ts, scan.ts) | findings review (local Opus, from 21:30Z); check held `wait:` |
 | FX7, W00d, FX16 | FX7 A520 patch reported (94 tests): second Opus spec review (local, from 21:10Z), build held `wait:`; W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | W00b, FX6, FX18, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
