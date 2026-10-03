@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-03T06:22:44.412Z",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T06:28:44.363Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T06:41:12.887Z",
+ "mode": "turbo",
+ "note": "PASS (verify 541/0/0 twice; UCC recomputed by hand; scope by hand, scope.mjs reads retired claude/W16; /security-review not run, manual read; see reports/W16-check.md on claude/W16-r2)"
 }
