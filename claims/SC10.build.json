@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "e578b6e2858d07a116ea59ef2d0f275dc911b263",
  "worker": "cloud-e6a4bc",
- "state": "hold-findings",
- "at": "2026-10-03T15:38:11.928Z",
+ "state": "reported",
+ "at": "2026-10-03T20:19:39.220Z",
  "mode": "turbo",
- "note": "Opus read FAIL, 7 items: KNOWN and R89 landing traps, R86 reach, core read three ways, R89 scan, done owners, overlap with SC6 and SC7; report local only (sc10-read e68b2986); findings review next"
+ "note": "A502: spec-only round 2 (P1 to P8); check the spec commit; Opus check on the landing form"
 }
