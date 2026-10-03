@@ -2,10 +2,9 @@
  "card": "SC3",
  "role": "spec",
  "note": "A458: second spec patch G1 to G6",
- "worker": "cloud-d01e1c",
- "state": "reopened",
- "at": "2026-10-03T10:14:54.156Z",
- "mode": "turbo",
- "commit": "d69c50b1",
- "validated": "46ab96ea"
+ "reopenedFrom": "d69c50b1",
+ "worker": "cloud-503b92",
+ "state": "working",
+ "at": "2026-10-03T10:16:14.769Z",
+ "mode": "turbo"
 }
