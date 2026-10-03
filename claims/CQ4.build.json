@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "78fbaf82",
  "worker": "cloud-03268d",
- "state": "working",
- "at": "2026-10-03T06:09:09.571Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T06:11:27.936Z",
+ "mode": "turbo",
+ "note": "7 of 7 acceptance tests pass; tools 255 pass; FX8 planted case fails by name"
 }
