@@ -1,11 +1,9 @@
 {
  "card": "A04",
  "role": "check",
- "for": "2026-10-02T21:16:16.106Z",
- "worker": "cloud-4b7764",
- "state": "failed",
- "at": "2026-10-02T21:32:49.967Z",
- "mode": "turbo",
- "beat": "2026-10-02T21:31:10.905Z",
- "note": "FAIL: mutation per-file score below 100 (engines 67.8, runner 80.4, schemas 92.6), runner reads process.env not core/env, see reports/A04-check.md"
+ "for": "2026-10-03T05:42:28.232Z",
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T05:42:57.697Z",
+ "mode": "turbo"
 }
