@@ -6,7 +6,7 @@
   "harness": [
     "src/core/db/index.ts",
     "src/core/db/global-setup.ts",
-    "vitest-setup.ts",
+    "src/core/db/vitest-setup.ts",
     "src/core/test-no-network.ts",
     "src/core/testing/read-own-source.ts"
   ],
