@@ -107,3 +107,6 @@ Throwaway `index.ts` with the full API and empty bodies (no core files): 90 of 1
 - RT-23 typeCell on a cell off the release list throws a reason naming the cell or "not on t | :1490 | AssertionError: expected [Function] to throw an error
 - RT-23 clearCell on a cell off the release list throws the same kind of reason; nothing cha | :1501 | AssertionError: expected [Function] to throw an error
 - ARC-14 RT-3 the day 2 Riverdale export, imported into a default-list return set up as it s | :1522 | AssertionError: expected '' to be '[Riverdale Rentals Inc. (Test)|0|0|0a…' // Object.is equality
+
+## Toolchain refit (cloud-117624, 3 Oct)
+Old validated sha 0355e1e, new validated on main 6f3ce66 (main merged in; the only toolchain change was the new tools/test/reading-rules.test.mjs). No spec file changed. typecheck, lint: the only errors are in sim.acceptance.test.ts and __fixtures__/harness.ts, all from `../index` not existing yet (the build creates it). npm test unit: 114 files, 2599 tests pass; the one failing file is sim.acceptance.test.ts (module missing, the card's own fails-first). reading-rules and every other rule test are green.
