@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "934365e",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T03:45:24.574Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T03:52:10.549Z",
+ "mode": "turbo",
+ "note": "231 of 231 tools tests pass incl. 28 spec-written rule 6 tests; no code change needed; scope OK"
 }
