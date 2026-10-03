@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-b91986",
- "state": "working",
- "at": "2026-10-03T12:09:20.870Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T12:09:27.380Z",
+ "mode": "turbo",
+ "note": "wait: build round 2 pending (A464); needs Lead to reopen the build",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
 }
