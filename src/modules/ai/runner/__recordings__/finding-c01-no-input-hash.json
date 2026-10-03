@@ -1,0 +1,25 @@
+{
+  "modelId": "claude-opus-5-5",
+  "promptHash": "4fbd8431088416d839f5acee084edd16b0ade1ee7276e79ae53cf0994de22c79",
+  "inputHash": "d47c4c3d9964211fb456c8bf2b7118e86faae34c71de89e15ddddac5386fee28",
+  "output": {
+    "outcome": "answer",
+    "findingType": "issue",
+    "summary": "Meals on the business card total $1,850.00; only half is deductible (Test).",
+    "citations": [
+      {
+        "source": "ledger",
+        "recordKind": "transaction",
+        "recordId": "txn-c01-bcd-0042"
+      }
+    ]
+  },
+  "stamp": {
+    "modelId": "claude-opus-5-5",
+    "promptVersion": "finding-v1",
+    "promptHash": "4fbd8431088416d839f5acee084edd16b0ade1ee7276e79ae53cf0994de22c79",
+    "ocrEngine": "ocr-stand-in",
+    "ocrEngineVersion": "0.0.0-test",
+    "mappingRelease": "mapping-2026.10-test"
+  }
+}
