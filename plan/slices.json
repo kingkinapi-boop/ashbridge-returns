@@ -10192,7 +10192,8 @@
         "vitest.mutate.config.ts",
         "src/contracts/facts.acceptance.test.ts",
         "src/modules/gaps/bank/bank.acceptance.test.ts",
-        "src/modules/auth/rules.acceptance.test.ts"
+        "src/modules/auth/rules.acceptance.test.ts",
+        "tools/test/vitest-projects.test.mjs"
       ],
       "clauses": [
         "ARC-15"

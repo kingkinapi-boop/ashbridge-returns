@@ -634,3 +634,6 @@
 {"ts":"2026-10-03T14:43:32.784Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"checker","model":"opus","where":"worktree","desc":"G18 Opus tax-content read","allowed":true}
 {"ts":"2026-10-03T14:43:58.569Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T14:43:58.883Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:17:45.601Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"GL3 security review (Opus)","allowed":true}
+{"ts":"2026-10-03T15:17:55.075Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"SC10 Opus adversarial read","allowed":true}
+{"ts":"2026-10-03T15:18:29.610Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
