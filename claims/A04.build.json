@@ -4,9 +4,12 @@
  "round": 12,
  "spec": "be09e312",
  "worker": "cloud-a33f4c",
- "state": "reported",
- "at": "2026-10-03T13:43:22.625Z",
+ "state": "released",
+ "at": "2026-10-03T17:32:16.473Z",
  "mode": "turbo",
  "beat": "2026-10-03T13:36:43.781Z",
- "note": "round 5c: 267 A04 tests, unit 3045, db pg16 619, mutation 100"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "bda2e61d3cf722fe2f15f40397e3e9d494c52e25"
+ }
 }
