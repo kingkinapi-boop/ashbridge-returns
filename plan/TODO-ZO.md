@@ -6,6 +6,12 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 Nothing now.
 
-## 2. What the Lead is doing now (3 Oct, 13:26 UTC)
+## 2. What the Lead is doing now (3 Oct, 15:22 UTC)
 
-Turbo again: you typed `turbo on` at 13:26 UTC, after the Reviewer's slow-down and the four fixes it asked for (done 13:25 UTC). 54 cards are on main; a batch of three is being checked in the cloud. The AI runner card is split: its small clock fix is its last round, and the extra tests go to a new card, so it cannot loop again. Your Critic answer is applied: the screen designs restart now, aiming at one design sitting about Tue 6 Oct. The test-world fixes most of the build waits on are in their last round. The week's allowance is about 69% used and runs out about Sunday morning.
+Turbo continues. The batch of three passed its cloud check and is on main: 59 cards now. One of the three (the approval-card fix) stays open for one small round: three problems on its list were not fixed, and closing it now would turn the checks red. The next batch of four (the security rules, the AI runner and two queue fixes) is being checked in the cloud. Three more cards get an extra review first. A fourth, the question-bank mapping, failed its tax-content read (26 of 105 sample flags point to the wrong question or owner), so it gets a findings review and another round. The test-world fix most of the build waits on starts its last round now.
+
+Two review reports stayed on this laptop: the permission system refused to publish them, and I did not try another way. Nothing waits on them:
+- C:\Users\User\Documents\GitHub\ashbridge-returns\.claude\worktrees\agent-a52900e06d281a525\reports\A04-security.md (the AI runner's security review: clean)
+- C:\Users\User\Documents\GitHub\ashbridge-returns\.claude\worktrees\agent-a730f44222021a99e\reports\SC6-findings.md (why one rule card failed its check; the fix is now in its card)
+
+The week's allowance was 74% used at 14:36 UTC; at this pace it runs out late tonight. Then work pauses until you use your saved reset (Settings, Usage) and type `go`. Screen designs are being drawn for the design sitting about Tue 6 Oct.
