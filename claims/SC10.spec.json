@@ -1,11 +1,9 @@
 {
  "card": "SC10",
  "role": "spec",
- "note": "A490: three stale R85 KNOWN entries removed; 27 of 27",
- "worker": "cloud-92d46e",
- "state": "reported",
- "at": "2026-10-03T14:37:14.252Z",
- "mode": "turbo",
- "commit": "e578b6e2858d07a116ea59ef2d0f275dc911b263",
- "validated": "dfd0927698abec0557298aacdaf1150a3710e1f4"
+ "note": "toolchain refit",
+ "worker": "cloud-1fcc74",
+ "state": "working",
+ "at": "2026-10-03T15:39:55.025Z",
+ "mode": "turbo"
 }
