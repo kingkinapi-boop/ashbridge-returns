@@ -10,7 +10,7 @@ You are a worker. You take one job at a time from the queue and do it exactly by
 
 ## Once, at the start
 1. Cloud session: `npm ci`. Local worktree: link `node_modules` with a junction (`node -e "require('fs').symlinkSync('C:/Users/User/Documents/GitHub/ashbridge-returns/node_modules','node_modules','junction')"`); never `npm install`, `rm -rf` or `ln -s`.
-2. Pick a worker name: `cloud-<short date and time>` in the cloud, `local-<n>` on the laptop.
+2. Pick a worker name: `cloud-<short date and time>` in the cloud, `local-<n>` on the laptop with the number the Lead gives, never one used before: a reused name breaks the three-workers proof (Review 3 Oct).
 
 ## The loop
 1. `node tools/claim.mjs next --worker <name>`. The queue offers a spec only when every dep has a reported build, and a build only when every dep is merged and done; a card waiting on deps is never offered, so `NOTHING` is normal. Do not work around the gate.

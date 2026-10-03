@@ -65,6 +65,51 @@ export function depGate(card, role, status, reportedBuilds) {
 const TOOLCHAIN_FILES = ['vitest.config.ts', 'tsconfig.json', 'eslint.config.mjs', 'package.json']
 export const toolchainChanged = (files) => files.some((f) => TOOLCHAIN_FILES.includes(f) || /^tools\/test\/[^/]*-rules\.test\.mjs$/.test(f))
 
+// CQ4 (R82): the expectation class, the files a spec job owns from the start when its card's Spec section names them.
+// Tests, fixtures, goldens, verify scripts and README counts; never a code file the build writes. The class grows by
+// this one list, never by prose.
+export function isExpectationFile(file) {
+  const base = file.split('/').pop()
+  return (
+    /\.test\./.test(base) ||
+    /\.acceptance\./.test(base) ||
+    /(^|\/)__fixtures__\//.test(file) ||
+    /(^|\/)__golden__\//.test(file) ||
+    /^verify[^/]*\.mjs$/.test(base) ||
+    base === 'README.md'
+  )
+}
+
+// The text of a card's "## <heading>" section (up to the next "## " heading), or undefined when it has none.
+export function cardSection(cardText, heading) {
+  const lines = cardText.split(/\r?\n/)
+  const start = lines.findIndex((l) => new RegExp(`^##\\s+${heading}\\b`).test(l))
+  if (start < 0) return undefined
+  const rest = lines.slice(start + 1)
+  const end = rest.findIndex((l) => /^##\s/.test(l))
+  return (end < 0 ? rest : rest.slice(0, end)).join('\n')
+}
+
+// The file names a section mentions: backticked tokens with no space, and bare tokens with an extension.
+export function sectionNames(cardText, heading) {
+  const section = cardSection(cardText, heading)
+  if (section === undefined) return []
+  const names = new Set()
+  for (const m of section.matchAll(/`([^`\s]+)`/g)) names.add(m[1])
+  for (const m of section.replace(/`[^`]*`/g, ' ').matchAll(/[\w./-]+\.\w{1,5}(?![\w/])/g)) names.add(m[0])
+  return [...names]
+}
+
+const namesFile = (names, file) => names.some((n) => file === n || file.endsWith(`/${n}`))
+
+// The R82 set among `files`: those the Spec section names that are in the expectation class and that the Build section
+// does not name as its own (a file both name is R77's lint, SC6).
+export function specOwnedFiles(cardText, files) {
+  const spec = sectionNames(cardText, 'Spec')
+  const build = sectionNames(cardText, 'Build')
+  return files.filter((f) => isExpectationFile(f) && namesFile(spec, f) && !namesFile(build, f))
+}
+
 export function todayUtc() {
   return new Date().toISOString().slice(0, 10)
 }
