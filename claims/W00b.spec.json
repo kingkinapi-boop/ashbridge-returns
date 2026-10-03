@@ -1,10 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-51ac6d",
- "state": "released",
- "at": "2026-10-03T09:42:46.989Z",
- "mode": "turbo",
- "note": "wait: W00c and FX8 not landed on main (W00c in spec round 3); no code base for the merge and rewrites in A423",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "worker": "cloud-e39e16",
+ "state": "working",
+ "at": "2026-10-03T09:53:55.407Z",
+ "mode": "turbo"
 }
