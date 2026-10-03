@@ -2,9 +2,8 @@
  "card": "FX3",
  "role": "spec",
  "worker": "cloud-7e015b",
- "state": "released",
- "at": "2026-10-03T03:40:58.669Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:21:55.939Z",
  "mode": "turbo",
- "note": "wait: dep SC not landed on main (rules and KNOWN file absent; SC check working)",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\"],\"depStatus\":[\"carded\"]}"
+ "note": "A477: wait met (SC landed 10:49Z)"
 }
