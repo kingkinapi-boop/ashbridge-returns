@@ -4,8 +4,8 @@
  "round": 6,
  "spec": "72943edb",
  "worker": "cloud-652c84",
- "state": "reported",
- "at": "2026-10-03T08:47:21.973Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:15:32.792Z",
  "mode": "turbo",
- "note": "22 of 22 acceptance tests pass; scope flags engine.ts (needs Paths entry)"
+ "note": "A458 spec patch 68 tests: run them on the build, fix only what fails, scope engine.ts per card"
 }
