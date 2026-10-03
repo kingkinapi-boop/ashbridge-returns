@@ -4,7 +4,7 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 ## 1. Needs you
 
-Nothing now.
+1. **Critic proposals of 3 Oct** (details in `reviews/CRITIC.md`; each is small and can be undone): (1) start the screen designs again now, so you get one design sitting about Tue 6 Oct; (2) fix the queue handing out the same check again and again, and the counts that hide failed checks; (3) start no new build-repair cards until the test world (W00c) lands. Reply in the Lead chat `critic ok`, `critic ok 1 3` or `critic no 2`. Until then the Lead keeps building as now.
 
 ## 2. What the Lead is doing now (3 Oct, 03:25 UTC)
 
