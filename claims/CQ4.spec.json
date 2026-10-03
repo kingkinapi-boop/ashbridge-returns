@@ -1,10 +1,11 @@
 {
  "card": "CQ4",
  "role": "spec",
- "note": "A430: spec patch per reports/CQ4-findings.md; see bold directive",
- "reopenedFrom": "78fbaf82",
+ "note": "7 tests added (14 total, 6 fail by name)",
  "worker": "cloud-5e4935",
- "state": "working",
- "at": "2026-10-03T06:49:01.461Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T06:51:49.233Z",
+ "mode": "turbo",
+ "commit": "ac01e80",
+ "validated": "25fc96d084130c5f695a4e9e05af5e1517a8fe80"
 }
