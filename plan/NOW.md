@@ -20,15 +20,13 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 14:33Z by the Lea
 | A04C | spec reported (G1 to G4) | build after A04 lands; Opus check |
 | SC3 | PASS; security re-review CLEAN (9b2f5425); lows to SC9, L00, B05, T08, E00, GL1, checker.md (A491) | board on the next train; FX17 build after SC3 lands |
 | SC6 | check FAIL (R77, R78, R81 gaps; reports/SC6-check.md) | Opus findings review (local); fix list into the card; spec patch, then build |
-| GL3, CQ8 | check PASS | board on the next train |
-| G18, CQ9 | G18 check working; CQ9 fresh check open (A490) | board each PASS |
+| GL3, CQ8, G18, CQ9 | GL3, CQ8 PASS; G18 check working; CQ9 fresh check open (A490) | board each PASS on the next train |
 | SC11 | build working | check |
 | CQ11 | spec patch working (A490) | build after CQ8 lands |
 | CQ12 | spec reported | build after FX12 lands (path hold) |
 | SC10, SC12 | spec patches reopened (A490, A488) | SC10 after SC6's paths free; SC12 after SC3 and SC11 land |
-| S01 | spec reopened (A482) | waits for S00 (deps) |
 | W00b, A08, FX6, FX18, SC5 | held `wait:` | reopen when W00c, A04 or SC5's deps land |
-| JH0, S00, B04, SC2, FX7 | wait for W00c | builds after W00c lands |
+| JH0, S00, B04, SC2, FX7, S01 | wait for W00c (S01's reopened spec waits for S00) | builds after W00c lands |
 | Design lane | base claude/design-base; rulings A485 | designers 1 (D13, D04), 2 (D03 B+), 3 (D02) local; then a panel per family; workbench brief check, designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
 
 ## Next, in order
