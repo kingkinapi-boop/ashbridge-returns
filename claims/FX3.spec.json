@@ -1,9 +1,10 @@
 {
  "card": "FX3",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "wait: A488 patch edits known.json, which is free only after W00c and FX8 land (A481); refit waits too",
  "worker": "cloud-da95a7",
- "state": "working",
- "at": "2026-10-03T15:44:23.399Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T15:44:37.952Z",
+ "mode": "turbo",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\"],\"depStatus\":[\"done\"]}"
 }
