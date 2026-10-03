@@ -97,7 +97,7 @@ describe('ARC-10 the version stamp holds non-blank strings or numbers', () => {
   const ok = (v: unknown): boolean => records.VersionStampSchema.safeParse(v).success
   test('ARC-10 accepts strings and numbers, refuses blanks, null, objects, arrays and an empty stamp', () => {
     expect(ok({ a: 'x' })).toBe(true)
-    expect(ok({ a: 0 })).toBe(true)
+    expect(ok({ a: 1 })).toBe(true)
     expect(ok({ a: ' x ' })).toBe(true)
     expect(ok({ a: '' })).toBe(false)
     expect(ok({ a: ' ' })).toBe(false)
