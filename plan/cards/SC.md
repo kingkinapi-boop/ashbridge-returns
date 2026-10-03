@@ -1,5 +1,7 @@
 # SC Schema and contract rules
 
+**Lead directive, 3 Oct (A407): spec round from reports/SC-findings.md, its seven fixes in order.** Merge main first; KNOWN entries become `{ rule, file, problems: [exact strings], owner }` with an open owner card (FX3, FX4, FX5, FX6, FX7 as the report assigns); add the planted `KNOWN shape` rule test; R34 scans the whole fixtures folder and excuses the three plants by name; every file scan asserts a non-empty scan and a named sentinel; sheets moves from KNOWN to a READERS entry; stale PENDING rows fail. Then the build re-runs and a check with an Opus read of the KNOWN diff. This round lands SC; a third failure moves the KNOWN tooling to SC7.
+
 Phase 0. Size M. Deps: F01, F09, F09B (F09A split, A349), F05M. Where: local or cloud.
 Tags: core (permissions and citations: the rules keep every later table and box honest).
 Paths: tools/test/schema-contract-rules.test.mjs, src/contracts/schema-rules.db.test.ts, tools/test/__fixtures__/schema-contract/**
