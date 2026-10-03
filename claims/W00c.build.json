@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "77bbbef0",
  "worker": "cloud-f27e32",
- "state": "working",
- "at": "2026-10-03T07:57:59.234Z",
+ "state": "reported",
+ "at": "2026-10-03T08:21:09.951Z",
  "mode": "turbo",
- "beat": "2026-10-03T08:16:28.938Z"
+ "beat": "2026-10-03T08:16:28.938Z",
+ "note": "all tests pass (unit 6858, db 545); mutation and test:flake NOT run: Stryker dry run times out at 5 min, see reports/W00c-build.md"
 }
