@@ -2,8 +2,11 @@
  "card": "SC",
  "role": "spec",
  "worker": "cloud-93197d",
- "state": "working",
- "at": "2026-10-03T05:02:11.839Z",
+ "state": "reported",
+ "at": "2026-10-03T05:42:04.302Z",
  "mode": "turbo",
- "beat": "2026-10-03T05:41:36.940Z"
+ "beat": "2026-10-03T05:41:36.940Z",
+ "note": "110 tests (87 unit, 23 db); db not run on PG16 (DB16 uncarded); see reports/SC-spec.md",
+ "commit": "348528d6",
+ "validated": "61cb3bc7"
 }
