@@ -10131,7 +10131,7 @@
       "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10148,7 +10148,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/A04-findings-6.md, 3 Oct (A469)."
+      "note": "From reports/A04-findings-6.md, 3 Oct (A469).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10566,7 +10567,7 @@
       "note": "From reports/A04-findings.md, 3 Oct (A426)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "FX10"
@@ -10583,7 +10584,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX10-spec.md, 3 Oct (A429)."
+      "note": "From reports/FX10-spec.md, 3 Oct (A429).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
