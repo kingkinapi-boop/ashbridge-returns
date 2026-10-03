@@ -1,11 +1,10 @@
 {
  "card": "GL3",
  "role": "build",
- "round": 3,
- "spec": "cd78aaf5",
- "worker": "cloud-84988c",
- "state": "reopened",
- "at": "2026-10-03T18:41:36.911Z",
- "mode": "turbo",
- "note": "security review FINDINGS (one medium, five lows; report local only, A496); findings review next, then round 4 (the last)"
+ "round": 4,
+ "spec": "c4a5a4bd",
+ "worker": "cloud-dfe211",
+ "state": "working",
+ "at": "2026-10-03T18:42:28.448Z",
+ "mode": "turbo"
 }
