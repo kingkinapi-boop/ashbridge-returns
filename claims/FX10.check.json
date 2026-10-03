@@ -3,9 +3,7 @@
  "role": "check",
  "for": "2026-10-03T08:03:21.118Z",
  "worker": "local-1",
- "state": "released",
- "at": "2026-10-03T08:04:28.874Z",
- "mode": "turbo",
- "note": "wait: cloud box (Where: cloud; check needs 20 db runs under load, test:flake); local workers skip per NOW",
- "waitKey": "{\"status\":\"carded\",\"deps\":[],\"depStatus\":[]}"
+ "state": "working",
+ "at": "2026-10-03T08:04:34.078Z",
+ "mode": "turbo"
 }
