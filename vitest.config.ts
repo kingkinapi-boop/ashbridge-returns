@@ -38,18 +38,20 @@ export default defineConfig({
           name: 'unit',
           include: homes.unit.include,
           exclude: homes.unit.exclude,
-          setupFiles: ['src/core/test-no-network.ts'],
+          setupFiles: ['src/core/test-no-network.ts', 'src/core/test-assertions.ts'],
           env: { TZ: 'America/Toronto' },
         },
       },
       {
         test: {
           name: 'db',
+          // CQ12 (A495): vitest refuses two projects with different maxWorkers on one groupOrder; db runs after unit.
+          sequence: { groupOrder: 1 },
           maxWorkers: dbWorkers(),
           include: homes.db.include,
           env: { TZ: 'America/Toronto' },
           globalSetup: ['src/core/db/global-setup.ts'],
-          setupFiles: ['src/core/test-no-network.ts', 'src/core/db/vitest-setup.ts'],
+          setupFiles: ['src/core/test-no-network.ts', 'src/core/test-assertions.ts', 'src/core/db/vitest-setup.ts'],
           // isolate:false: the template lives once per worker, not once per file.
           isolate: false,
           // DB16: roles belong to the Postgres cluster, not to a database, so files run one at a time on it.
@@ -64,8 +66,9 @@ export default defineConfig({
       {
         test: {
           name: 'evals',
+          sequence: { groupOrder: 2 },
           include: homes.evals.include,
-          setupFiles: ['src/core/test-no-network.ts'],
+          setupFiles: ['src/core/test-no-network.ts', 'src/core/test-assertions.ts'],
           env: { TZ: 'America/Toronto' },
         },
       },

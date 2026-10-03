@@ -70,6 +70,7 @@ function accepted(dir: string): ReturnType<typeof expectBank> {
 }
 function expectBank(r: ReturnType<typeof loadBank>) {
   if (!r.ok) throw new Error(`refused: ${JSON.stringify(r.problems)}`)
+  expect(r.bank.items.length, 'an accepted bank holds its items').toBeGreaterThan(0)
   return r.bank
 }
 
@@ -272,7 +273,8 @@ describe('RULE-19 END-7 the no-sentence lint', () => {
       fc.property(fc.oneof(ending, tooLong), (label) => {
         fs.writeFileSync(path.join(d, 'dividends.json'), JSON.stringify({ items: [{ ...BASE_ITEM, label }] }))
         const r = loadBank(d, catalogue)
-        return !r.ok && r.problems.some((p) => p.item === 'Q-DIV-001')
+        expect(r.ok, label).toBe(false)
+        expect(!r.ok && r.problems.some((p) => p.item === 'Q-DIV-001'), label).toBe(true)
       }),
       { seed: 20261002, numRuns: 60 },
     )
@@ -284,7 +286,7 @@ describe('RULE-19 END-7 the no-sentence lint', () => {
     fc.assert(
       fc.property(label, (l) => {
         fs.writeFileSync(path.join(d, 'dividends.json'), JSON.stringify({ items: [{ ...BASE_ITEM, label: l }] }))
-        return loadBank(d, catalogue).ok
+        expect(loadBank(d, catalogue).ok, l).toBe(true)
       }),
       { seed: 20261003, numRuns: 60 },
     )
