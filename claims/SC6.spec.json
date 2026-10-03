@@ -1,11 +1,9 @@
 {
  "card": "SC6",
  "role": "spec",
- "note": "wait: W16 lands (directive: KNOWN ends empty, so R78 passes on main only after W16); card Where: cloud",
- "reopenedFrom": "839819f",
+ "note": "W16 landed: spec per card (A408, R81)",
  "worker": "local-3",
- "state": "released",
- "at": "2026-10-03T06:36:17.444Z",
- "mode": "turbo",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\",\"W16\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "state": "reopened",
+ "at": "2026-10-03T07:57:18.754Z",
+ "mode": "turbo"
 }
