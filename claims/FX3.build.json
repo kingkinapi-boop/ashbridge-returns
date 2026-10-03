@@ -1,0 +1,9 @@
+{
+ "card": "FX3",
+ "role": "build",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-03T14:17:52.376Z",
+ "note": "wait: W00c's build takes known.json first (A481); the Lead reopens FX3's build once W00c's build is taken",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\"],\"depStatus\":[\"done\"]}"
+}
