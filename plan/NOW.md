@@ -24,7 +24,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 | GL3 | Opus read and security review PASS (A525) | boarded train 4 at 21:15Z |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
 | A08 | build reported (218 of 218) but mutation under 100 (call.ts, index.ts, scan.ts) | findings review (local Opus, from 21:30Z); check held `wait:` |
-| FX7, W00d, FX16 | FX7 A520 patch reported (94 tests): second Opus spec review (local, from 21:10Z), build held `wait:`; W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
+| FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | W00b, FX6, FX18, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
