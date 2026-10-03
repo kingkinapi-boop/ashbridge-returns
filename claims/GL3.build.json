@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "cd78aaf5",
  "worker": "cloud-84988c",
- "state": "working",
- "at": "2026-10-03T13:53:37.648Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T14:04:15.285Z",
+ "mode": "turbo",
+ "note": "27 of 27 acceptance db pass (PGlite, pg16), 29 of 29 unit; round 3"
 }
