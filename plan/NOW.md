@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lead (Zo's `turbo on` 03:20Z; mode already turbo). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:28Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -14,18 +14,18 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 | Card | State | Next action |
 |---|---|---|
 | W00c | spec round 2 (cloud) per reports/W00c-findings.md (A403) | build round 2, check; unblocks W00b, JH0, B04, SC2 |
-| W00b | refit spec reported (278 tests); Opus spec review running, build held | GO: reopen build after W00c lands |
-| W16 | round 2 spec on claude/W16-r2 reported; Opus spec review (with SC6) running, build held | GO: reopen build |
-| SC6 | spec reported; review running, build held | GO: reopen build |
-| SC | findings done; spec reopened (A407: exact KNOWN, owners FX3 to FX7); FX7, SC7 carded | spec, build re-run, check with Opus read |
-| SC4 | spec refit on a cloud box (laptop lacks ExcelJS); KNOWN owners FX4, FX6 (A406) | build, check |
+| W00b | spec round 3 reopened (A409: 10 gaps); build waits on W00c and FX8 | spec, then build after both land |
+| FX8 | carded (A409): "(Test)" on four bare names in C07, C09, C14, C15 | spec, build, check (non-core); lands before W00b's build |
+| W16, SC6 | specs reopened (A408: 3 and 6 gaps); SC6 now depends on W16 | spec, build, check |
+| SC | spec reopened (A407: exact KNOWN, owners FX3 to FX8) | spec, build re-run, check with Opus read |
+| SC4 | refit spec reported 04:25Z | build, check |
 | S00, FX5, A04 | round 2 specs reported; one Opus review of all three running, builds held | GO: reopen builds |
-| FX2 | spec reported (not core); build open | build, check |
-| CQ2 | check in the cloud | board |
+| DB16 | spec reported (34 tests; PG16 path never run); Opus spec review running, build held | GO: reopen build |
+| FX2 | build working (cloud) | check |
+| CQ2 | check PASS | board on the next train |
 | JH0 | spec reported | build after W00c lands |
-| DB16 | carded (A405) | spec |
 
-Cloud runs fired 03:22Z: 6, plus 1 at 03:43Z for the train (now checking), 3 at 03:50Z for W00c spec, S00 spec, SC check (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
+Cloud runs fired 04:28Z: 4 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). No local workers running: npm ci first (after the S00/FX5/A04 review ends), then up to 3 local Opus workers.
 
 ## Next, in order
 
