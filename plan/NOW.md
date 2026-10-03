@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 18:22Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 19:10Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -19,11 +19,12 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 18:22Z by the Lea
 | W00c | round 3 check FAIL on items 1 to 5 only: split to W00d (A501) | fresh check working (cloud-f09ae7, from 17:36Z); board on PASS |
 | SC10 | findings review 1 done (A502): Lead plan commit on main; round 2 spec patch P1 to P8, no build | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check on the landing form |
 | SC6 | spec review GAPS (A503): second spec patch G1 to G8 plus grammar coverage | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check |
-| SC3 | findings review 1 done (A504): round 3 is spec patch S1 to S3, no build | spec reopened 17:36Z; then mark the build reported; Opus read; security review |
+| SC3 | round 3 spec reported; S4 added (A511: module order under isolate false broke test:flake) and reopened | then mark the build reported; Opus read; security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
-| FX14 | spec reopened 17:35Z (A504: the walker counts test.each bodies; build held) | build after the spec |
+| FX14 | spec-only patch reported; build marked reported 19:10Z | check; board on PASS |
 | SC11 | findings review 2 done (A508): round 3, the last: spec S4 to S12 plus R118 reopened 18:30Z | then the Lead reopens the build (B3 to B14); Opus read; security review; board |
 | GL3 | G1 to G4 spec patch reported (85 tests) | build B1 to B6 reopened 18:43Z; Opus check; fresh security review; board |
+| FX7, W00d, FX16 | A511 rulings: FX7 and W00d specs reopened (FX7 then an Opus spec review) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | FX17, A04C | FX17 spec reported (re-merges main after SC3, A504); A04C spec reported | FX17 build after SC3 lands; A04C build after A04 lands, Opus check |
 | W00b, A08, FX6, FX18, SC5, SC12 | held `wait:` | reopen when W00c, A04, SC3, SC11 or SC5's deps land |
