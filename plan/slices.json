@@ -9872,6 +9872,27 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ5"
+      ],
+      "paths": [
+        "tools/next.mjs",
+        "tools/claim.mjs",
+        "tools/test/next-paths.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ8",
+      "title": "next.mjs names path holds; the Lead can reopen a check",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "3 Oct (A439)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [

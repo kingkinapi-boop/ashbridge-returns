@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:18Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:42Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -22,13 +22,13 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:18Z by the Lea
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | round 4 spec reported (26 tests, 11 fail); build open (A427) | build runner.ts, check, security review |
-| DB16 | findings done (A430): now security, not core; build round 4 (target.ts marked) | build, check (Opus read), security review, board |
+| DB16 | round 4 build reported (target.ts 100, pg16 565, flake 5 of 5) | check (Opus read), security review, board |
 | FX2 | check PASS; security: one older low finding carded as FX13 (A435); on the train | land; then SC3, FX7 |
 | JH0 | spec reported | build after W00c lands |
 | FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
 | CQ4, CQ5, CQ6, CQ7, SC10 | CQ4 findings done (A430): spec patch reopened; CQ5 spec written (cloud refit running); CQ6, CQ7, SC10 carded | CQ4 spec, build, check; it lands before the FX2, S00, DB16 checks (until then checkers read spec-commit lines by hand) |
 
-Cloud runs: 4 at 06:56Z, 4 at 07:16Z (W00c, A04, FX10, DB16 builds, SC check, CQ4, CQ5 builds). Local (Opus): local-1 (FX4 spec patch, A434). Helpers: SC8 spec review, phase 3 card review. Toolchain refits after each tools landing: for the Critic.
+Cloud runs: train check running (cloud, since 07:23Z); 2 at 07:42Z (SC check, CQ4). A04, FX10 and W00c builds wait for this train: reported builds hold their Paths until they land (A04 and FX10 on FX2's env.ts and auth, W00c on W16's sample CSVs); next.mjs still prints START for them. Local: local-1 (FX4 spec patch).
 
 ## Next, in order
 
@@ -56,4 +56,5 @@ Cloud runs: 4 at 06:56Z, 4 at 07:16Z (W00c, A04, FX10, DB16 builds, SC check, CQ
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`.
 - Commit no new Taxprep CSV to main before FX9 lands (SC's R37, A415).
+- A check released twice at one tip is held "needs Lead": re-release it with a note starting "wait:" to offer it again (07:40Z).
 - Never kill processes by name. Another Lead works in ashbridge-app: read-only there.
