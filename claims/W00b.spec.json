@@ -1,9 +1,9 @@
 {
  "card": "W00b",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit blocked: claude/W00b is on W00a base, merge of main conflicts in 12 files incl. Lead plan files; Lead rebases onto W00c after it lands, see reports/W00b-spec-refit.md on claude/W00b-refit-report",
  "worker": "cloud-8a46bb",
- "state": "working",
- "at": "2026-10-03T03:22:14.755Z",
+ "state": "released",
+ "at": "2026-10-03T03:23:35.484Z",
  "mode": "turbo"
 }
