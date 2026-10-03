@@ -7,7 +7,7 @@ Tags: core (a return's state moves; approval voids).
 Paths: src/contracts/lifecycle.ts, src/modules/lifecycle/**
 Clauses: FLOW-1, FLOW-4
 Read: `reports/phase3-card-review-2026-10-03.md` (fix 2), `plan/cards/F02.md`, `plan/cards/T08.md`, `src/modules/lifecycle/index.ts` (the move and its own `db.transaction`).
-Spec commit: ad79731d
+Spec commit: bd0e2fe2 (round 2, validated on main 58b0bec6)
 
 ## Goal
 T08 approves a return in one transaction: the state move, the facts it accepts (L00) and the version it saves (N00). F02's move opens its own transaction and takes no caller's, so T08 cannot be built. This card gives the move an optional caller transaction and changes nothing else. L00 and N00 do the same in their own builds (A397).
