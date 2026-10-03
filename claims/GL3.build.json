@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "cd78aaf5",
  "worker": "cloud-84988c",
- "state": "hold-findings",
- "at": "2026-10-03T15:29:24.377Z",
+ "state": "reopened",
+ "at": "2026-10-03T18:41:36.911Z",
  "mode": "turbo",
  "note": "security review FINDINGS (one medium, five lows; report local only, A496); findings review next, then round 4 (the last)"
 }
