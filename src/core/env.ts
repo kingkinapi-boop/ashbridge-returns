@@ -6,6 +6,8 @@ const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   // ARC-6: which staff sign-in engine; unset or blank means the made-up users. No key is ever read (END-8).
   AUTH_ENGINE: z.preprocess((v) => (v === '' ? undefined : v), z.enum(['testusers', 'live']).optional()),
+  // ARC-22: the folder the Claude project exchange uses. Blank is as unset as missing; the AI runner checks that (a throw here would break every caller).
+  AI_EXCHANGE_DIR: z.string().optional(),
 })
 
 export type Settings = z.infer<typeof schema>
