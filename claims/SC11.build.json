@@ -1,12 +1,10 @@
 {
  "card": "SC11",
  "role": "build",
- "round": 1,
- "spec": "817cdde4",
- "worker": "cloud-4507da",
- "state": "reopened",
- "at": "2026-10-03T16:54:28.201Z",
- "mode": "turbo",
- "beat": "2026-10-03T14:11:12.615Z",
- "note": "A500 round 2 build: B1 (track every client, await each end, bounded 5 s) and B2 (recording listeners, one admin-client helper) per the Lead directive at the top of plan/cards/SC11.md; spec ffa2f8f3 (12 tests, 8 red by design); DB16.md already matches main"
+ "round": 2,
+ "spec": "ffa2f8f",
+ "worker": "cloud-7c6fec",
+ "state": "working",
+ "at": "2026-10-03T16:59:32.707Z",
+ "mode": "turbo"
 }
