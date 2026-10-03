@@ -4,8 +4,11 @@
  "round": 1,
  "spec": "a13b660",
  "worker": "cloud-84988c",
- "state": "reported",
- "at": "2026-10-03T14:32:07.604Z",
+ "state": "released",
+ "at": "2026-10-03T17:32:27.171Z",
  "mode": "turbo",
- "note": "A490: the A465 scope item moved to CQ11; fresh check of this build (card note on main)"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "436a00385f19eded55eb764eb7d366e8adcd35f9"
+ }
 }
