@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:05Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:56Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:05Z by the Lea
 | FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
 | CQ4, CQ5, CQ6, SC10 | CQ4 findings done (A430): spec patch reopened; CQ5, CQ6, SC10 carded | CQ4 spec, build, check; it lands before the FX2, S00, DB16 checks (until then checkers read spec-commit lines by hand) |
 
-Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-2 and local-3 done. Local-2 restarted 06:55Z. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
+Cloud runs: 2 at 06:50Z, 4 at 06:56Z (W00c, A04, FX10 builds, SC check, DB16 build, CQ4 spec open). Local (Opus): local-1 (FX4 spec), local-2. FX2 check working (cloud). The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
 
 ## Next, in order
 
