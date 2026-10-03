@@ -2,11 +2,9 @@
  "card": "G18",
  "role": "spec",
  "note": "75 tests (31 pass as planted, 44 fail by name on today's data)",
- "worker": "cloud-850779",
- "state": "reopened",
- "at": "2026-10-03T17:34:27.867Z",
- "mode": "turbo",
- "beat": "2026-10-03T16:25:28.470Z",
- "commit": "df75d400e85e2c5a915bd9be4f416f7eeec87142",
- "validated": "11468064aabd17a62929d3072ab0a3ad990e5829"
+ "reopenedFrom": "df75d400e85e2c5a915bd9be4f416f7eeec87142",
+ "worker": "cloud-7d7878",
+ "state": "working",
+ "at": "2026-10-03T17:43:42.484Z",
+ "mode": "turbo"
 }
