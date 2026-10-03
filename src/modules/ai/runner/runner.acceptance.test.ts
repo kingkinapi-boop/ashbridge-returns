@@ -51,11 +51,13 @@ import {
   AI_SETTING_NAMES,
   ApprovedListSchema,
   InboxFileSchema,
-  aiEngines,
   createAiRunner,
   createAiStepHandler,
   inputHashOf,
 } from '../index'
+// FX18 N1 (A492): the engines object is no longer exported from src/modules/ai/index.ts; the spies below watch the very
+// object the runner calls at call time, imported from its own file.
+import { aiEngines } from './engines'
 import {
   RECORDINGS_DIR,
   REPO_ROOT,
