@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:58Z by the Lea
 | FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
 | CQ4 to CQ8, SC10 | CQ3 landed; CQ4 build round 2 working (local-1); CQ5 build open; CQ6, CQ7, CQ8, SC10 carded | CQ4 lands before the S00 and DB16 checks |
 
-Cloud runs: 2 at 07:42Z (SC check working, DB16 check working); more at 07:58Z for A04, FX10, W00c builds (path holds lifted). Local: local-1 (CQ4 build).
+Cloud runs: 2 at 07:42Z (SC check, DB16 check); 4 at 08:02Z (A04, FX10, W00c, CQ5 builds; FX8, SC6 specs reopened). Local: local-1 (CQ4 build), local-2 and local-3 (Opus, from 08:03Z).
 
 ## Next, in order
 
