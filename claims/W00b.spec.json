@@ -2,8 +2,7 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-06d0d7",
- "state": "released",
- "at": "2026-10-03T08:27:17.282Z",
- "mode": "turbo",
- "note": "wait: deps W00c and FX8 not on main; Lead to hold until both land"
+ "state": "working",
+ "at": "2026-10-03T08:27:19.468Z",
+ "mode": "turbo"
 }
