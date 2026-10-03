@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "f5c82fc",
  "worker": "cloud-c29b25",
- "state": "reported",
- "at": "2026-10-02T21:33:13.029Z",
+ "state": "released",
+ "at": "2026-10-03T04:03:06.293Z",
  "mode": "turbo",
- "note": "73 of 73 auth tests pass (PGlite); PG16 parity and fresh security review pending"
+ "note": "merged"
 }
