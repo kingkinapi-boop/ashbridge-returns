@@ -2,10 +2,9 @@
  "card": "SC11",
  "role": "spec",
  "note": "A500 round 2: 12 tests (6 unit, 6 pg16 db), 8 fail on the real index.ts as expected",
- "worker": "cloud-019852",
- "state": "reopened",
- "at": "2026-10-03T18:29:30.606Z",
- "mode": "turbo",
- "commit": "ffa2f8f",
- "validated": "11468064aabd17a62929d3072ab0a3ad990e5829"
+ "reopenedFrom": "ffa2f8f",
+ "worker": "cloud-165f9c",
+ "state": "working",
+ "at": "2026-10-03T19:44:36.863Z",
+ "mode": "turbo"
 }
