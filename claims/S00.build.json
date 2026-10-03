@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "5f74392",
  "worker": "cloud-3d81d3",
- "state": "reopened",
- "at": "2026-10-02T10:06:52.313Z",
+ "state": "released",
+ "at": "2026-10-03T03:42:22.493Z",
  "mode": "turbo",
- "note": "deps landed (DG, F03R); spec current"
+ "note": "wait: core spec review in progress (reports/S00-spec-review.md); build opens after GO",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"F03\",\"F03R\",\"W00c\"],\"depStatus\":[\"done\",\"done\",\"carded\"]}"
 }
