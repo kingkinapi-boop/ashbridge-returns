@@ -1,10 +1,13 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "round 3 S1 to S3 (A504): unit 67, rules 511, pg16 db 31 of 31; OPEN: test:flake pg16 fails 4 of 5 on auth.acceptance.db SEC-1 scrypt count (isolate:false, SC3 db file loads auth before its vi.mock; also at 139fd96e); fix is in A06's auth test or vitest config, outside SC3 Paths",
+ "note": "S1 to S3 done; S4 needs src/core/db/index.ts (module-level state reset by vi.resetModules) in Paths, see reports/SC3-spec-s4-gap.md and SC3-s4.patch on claude/SC3",
  "reopenedFrom": "3e27033a",
  "worker": "cloud-3c6766",
- "state": "working",
- "at": "2026-10-03T19:27:16.200Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T19:48:35.445Z",
+ "mode": "turbo",
+ "lastRelease": {
+  "tip": "6306cb64ad0b1fc300ff8ca64d5b42daedbea103"
+ }
 }
