@@ -2,10 +2,12 @@
  "card": "SC6",
  "role": "spec",
  "worker": "cloud-65d267",
- "state": "working",
- "at": "2026-10-03T08:10:24.135Z",
+ "state": "released",
+ "at": "2026-10-03T08:10:36.575Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "839819ffc6b6fd492d5a15717710a571885de850"
- }
+ },
+ "note": "wait: SC and CQ4 not landed; see reports/SC6-spec.md",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\",\"W16\"],\"depStatus\":[\"carded\",\"done\"]}"
 }
