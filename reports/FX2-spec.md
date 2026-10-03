@@ -1,8 +1,6 @@
-# FX2 spec: released (cloud-4b7764, 2 Oct 2026)
-
-Not started. The card says to follow "A06's pattern" in `src/core/env.ts` after A06 round 2. Neither main nor the claude/A06 build has it: main's env.ts has only NODE_ENV, and claude/A06's env.ts has an optional AUTH_ENGINE with no production refusal (round 2 is still being specced and built; its 8 new tests cover the production engine refusal). A spec written now would pin a pattern that does not exist, and A06 round 2 may change it.
-
-Also: src/modules/storage/index.ts has no engine setting at all (only OCR_ENGINE in src/modules/ocr/index.ts:20 uses `?? 'textlayer'`); the card should name where A05's engine setting lives.
-
-Re-offer after A06 round 2 is built and landed. Model: Sonnet 5.5.
-Permission gaps: none.
+# FX2 spec (cloud-253f9f, 3 Oct 2026)
+- 23 tests in src/modules/ocr/engine-setting.test.ts (9) and src/modules/storage/engine-setting.test.ts (14); 14 fail for the right reason (OCR_ENGINE, STORAGE_FILES_ENGINE, STORAGE_DRIVE_ENGINE not in env.ts; no production refusal). Clauses: SEC-11, ARC-6, ARC-20, SEC-10.
+- validated on main 7eaf18c: typecheck and lint green; npm test green except the 14.
+- Step 6b retired tests: none (existing settings.acceptance and adapter.acceptance tests use no NODE_ENV, so they are unaffected).
+- Amber: A05's settings are STORAGE_FILES_ENGINE and STORAGE_DRIVE_ENGINE (the card did not name them); the refusal message names the setting; blank reads as unset; live still fails as "off" in production. Builder must also drop the `process.env` default in storage files/drive index (read via readSettings) and make readEngine take env.ts values.
+Model: Sonnet 5.5. Permission gaps: none.

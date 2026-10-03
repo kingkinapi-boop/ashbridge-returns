@@ -5,7 +5,7 @@ Tags: security (a stand-in chosen by silence in production).
 Paths: src/core/env.ts, src/modules/ocr/index.ts, src/modules/storage/index.ts, src/modules/ocr/engine-setting.test.ts, src/modules/storage/engine-setting.test.ts
 Clauses: SEC-11, ARC-6, ARC-20
 Read: `reports/A06-findings.md` (RC1, R62), `plan/cards/A01.md`, `plan/cards/A05.md`, `src/core/env.ts` after A06 round 2.
-Spec commit: (spec-writer fills)
+Spec commit: see claude/FX2 spec(FX2) commit; validated on main 7eaf18c
 
 ## Goal
 A01 reads `OCR_ENGINE ?? 'textlayer'` and A05 its storage engine the same way, straight from process.env, so a go-live deploy that forgets the setting runs the stand-in silently. Both landed, so this card fixes them rather than a later rebuild.
