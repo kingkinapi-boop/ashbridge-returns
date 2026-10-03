@@ -1,11 +1,10 @@
 {
  "card": "SC11",
  "role": "spec",
- "worker": "cloud-91d3cf",
- "state": "released",
- "at": "2026-10-03T11:35:11.722Z",
+ "worker": "cloud-b91986",
+ "state": "working",
+ "at": "2026-10-03T11:53:31.890Z",
  "mode": "turbo",
- "note": "worker limit of 4 jobs reached; nothing done",
  "lastRelease": {
   "tip": "46975225bf2eb48c2b540b77f181fe9c76ead7c2"
  }
