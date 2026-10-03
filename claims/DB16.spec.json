@@ -1,11 +1,12 @@
 {
  "card": "DB16",
  "role": "spec",
- "note": "A441: final round, T1 to T5 (see card directive)",
- "reopenedFrom": "d69ac553",
+ "note": "6 tests T1 to T5 (pg16: 6 fail on 36672c88 by design), see reports/DB16-spec-5.md",
  "worker": "cloud-d98b06",
- "state": "working",
- "at": "2026-10-03T08:15:21.567Z",
+ "state": "reported",
+ "at": "2026-10-03T08:38:09.378Z",
  "mode": "turbo",
- "beat": "2026-10-03T08:17:47.151Z"
+ "beat": "2026-10-03T08:17:47.151Z",
+ "commit": "71dc7af",
+ "validated": "913ded67"
 }
