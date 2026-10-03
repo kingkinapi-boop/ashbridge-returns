@@ -1,0 +1,4 @@
+// Planted (R62): reads an engine setting that src/core/env.ts does not declare.
+export function pick(env: Record<string, string | undefined>): string {
+  return env['PLANTED_ENGINE'] ?? 'standin'
+}

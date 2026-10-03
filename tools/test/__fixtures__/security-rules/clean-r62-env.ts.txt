@@ -1,0 +1,3 @@
+const schema = z.object({
+  PLANTED_ENGINE: z.enum(['standin', 'live']).optional(),
+})

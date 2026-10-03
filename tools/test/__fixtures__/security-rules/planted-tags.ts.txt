@@ -1,0 +1,17 @@
+/**
+ * Claims once.
+ * @once claimOnce
+ */
+export async function claimOnce(): Promise<boolean> { return true }
+
+/**
+ * Lets three through.
+ * @limit 3 tryThree
+ */
+export async function tryThree(): Promise<boolean> { return true }
+
+/**
+ * A stand-in that seeds rows.
+ * @standin seedPlanted
+ */
+export async function seedPlanted(): Promise<void> {}
