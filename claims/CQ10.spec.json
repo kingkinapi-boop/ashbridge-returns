@@ -1,8 +1,11 @@
 {
  "card": "CQ10",
  "role": "spec",
- "state": "working",
+ "state": "reported",
  "worker": "local-2",
- "at": "2026-10-03T12:49:55.298Z",
- "beat": "2026-10-03T13:27:36.982Z"
+ "at": "2026-10-03T13:35:01.147Z",
+ "beat": "2026-10-03T13:27:36.982Z",
+ "note": "12 tests (ARC-15), fail by name pre-build, 11 of 12 pass on a stub; DIFFERS line contract; amber: baseline failure or 0 tests also fails",
+ "commit": "1a43657b",
+ "validated": "931d08fa14ab7ee0adf260dc81a28f65af835db1"
 }
