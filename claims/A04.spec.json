@@ -1,11 +1,12 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "A446: final round 5, see card directive",
- "reopenedFrom": "5f90f9c7",
+ "note": "77 tests (exchange 61, safe-read 16; 8 Linux-only) + 1 db, 5 restated, 1 retired; see reports/A04-spec.md round 5",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T08:54:48.569Z",
+ "state": "reported",
+ "at": "2026-10-03T09:49:09.230Z",
  "mode": "turbo",
- "beat": "2026-10-03T09:48:08.624Z"
+ "beat": "2026-10-03T09:48:08.624Z",
+ "commit": "e255f795",
+ "validated": "46ab96eabf849c8f31c6676cebf74a6dcf9dc8c3"
 }
