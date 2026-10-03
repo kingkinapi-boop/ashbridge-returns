@@ -1,10 +1,10 @@
 {
  "card": "G18",
  "role": "spec",
- "note": "refit only: 15 of 15 tests pass on main 8e4698a (node 24.21); no test change",
+ "note": "A499 round 2: spec patch (Opus) per the Lead directive at the top of plan/cards/G18.md: R1, R2, R3, R6 with plants and 39 pins; then the build reopens",
  "worker": "cloud-beb1e2",
- "state": "reported",
- "at": "2026-10-03T15:24:46.345Z",
+ "state": "reopened",
+ "at": "2026-10-03T16:20:06.708Z",
  "mode": "turbo",
  "commit": "4ce0202",
  "validated": "8e4698a"
