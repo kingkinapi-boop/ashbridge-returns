@@ -1,10 +1,10 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "lint fix only (A460), assertions unchanged; main merged (a6b43706): typecheck, lint green; new on main merge: SC R41 flags .trim() in A04 product engines.ts:177-178 and runner.ts:49 (build must use src/contracts/text.ts); R18, ARC-6 symlink, RV-52 fail on main too",
+ "note": "A469: round 5c clock fix (card directive)",
  "worker": "local-2",
- "state": "reported",
- "at": "2026-10-03T11:06:12.438Z",
+ "state": "reopened",
+ "at": "2026-10-03T12:47:57.887Z",
  "mode": "turbo",
  "commit": "796cd7ab",
  "validated": "164d8d66eb67e4f75561831234fc5a35edfd2b35"
