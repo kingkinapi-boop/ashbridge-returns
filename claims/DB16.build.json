@@ -5,8 +5,8 @@
  "spec": "d6f3a1b1",
  "worker": "local-3",
  "state": "released",
- "at": "2026-10-03T05:07:17.036Z",
+ "at": "2026-10-03T05:09:28.186Z",
  "mode": "turbo",
- "note": "wait: spec open",
+ "note": "wait: Opus re-review of spec round 2 (reports/DB16-spec-review-2.md); build opens after GO",
  "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
 }
