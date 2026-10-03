@@ -4,8 +4,11 @@
  "round": 1,
  "spec": "244a5daf",
  "worker": "cloud-97b8bd",
- "state": "reported",
- "at": "2026-10-03T15:40:00.565Z",
+ "state": "released",
+ "at": "2026-10-03T17:32:32.530Z",
  "mode": "turbo",
- "note": "acceptance and rule tests pass; floor on, unit 2880, db 656"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "40e6b895075cb3edd03e0dd9aeb88a3ce9001bff"
+ }
 }
