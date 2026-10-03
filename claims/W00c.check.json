@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T17:34:37.137Z",
  "worker": "cloud-f09ae7",
- "state": "working",
- "at": "2026-10-03T17:36:40.530Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T18:21:53.670Z",
+ "mode": "turbo",
+ "note": "wait: mutation dry run times out on the determinism test at 5 s (reports/W00c-check.md); everything else PASS; Lead decides test timeout",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
 }
