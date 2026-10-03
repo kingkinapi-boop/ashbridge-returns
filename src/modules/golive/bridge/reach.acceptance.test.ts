@@ -51,7 +51,7 @@ describe('GL3 round 4: every section 3 item (A498 S1; ARC-2)', () => {
     expect([...NEVER_READ.tables].sort()).toEqual([...items.tables].sort())
     for (const p of items.pairs) expect(NEVER_READ.columns, `${p.table}.${p.column}`).toContainEqual(p)
     expect(NEVER_READ.columns).toHaveLength(items.pairs.length)
-    const markers = (NEVER_READ as typeof NEVER_READ & { markerIds?: readonly string[] }).markerIds
+    const markers = (NEVER_READ as { markerIds?: readonly string[] }).markerIds
     expect(markers, 'NEVER_READ.markerIds').toBeDefined()
     expect([...(markers ?? [])].sort()).toEqual([...items.markerIds].sort())
   })
