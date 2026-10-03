@@ -1,12 +1,9 @@
 {
  "card": "GL3",
  "role": "spec",
- "note": "toolchain refit: 54 tests unchanged (spec 9da00fbd), old sha f9da8e52; typecheck, lint, db green; build fix: R41 flags src/modules/golive/bridge/manifest.ts z.string().min(1); R18 (engine.ts, runner.ts) fails on main too; pg16 not run (DB16 not on main)",
- "worker": "cloud-cb16ff",
- "state": "reported",
- "at": "2026-10-03T10:58:30.176Z",
- "mode": "turbo",
- "beat": "2026-10-03T10:58:27.864Z",
- "commit": "e6f1676a",
- "validated": "164d8d66"
+ "note": "toolchain refit",
+ "worker": "cloud-c6e634",
+ "state": "working",
+ "at": "2026-10-03T12:12:35.162Z",
+ "mode": "turbo"
 }
