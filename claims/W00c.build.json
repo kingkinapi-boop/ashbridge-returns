@@ -4,10 +4,9 @@
  "round": 1,
  "spec": "1b555abb",
  "worker": "cloud-abfeb2",
- "state": "released",
- "at": "2026-10-03T04:48:55.367Z",
+ "state": "reopened",
+ "at": "2026-10-03T05:53:09.176Z",
  "mode": "turbo",
  "beat": "2026-10-03T02:03:11.864Z",
- "note": "wait: core spec review of the new spec (reports/W00c-spec-review-3.md); build opens after GO",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
+ "note": "A424: spec patch matches reports/W00c-spec-review-3.md"
 }
