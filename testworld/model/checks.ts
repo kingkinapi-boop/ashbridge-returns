@@ -210,10 +210,11 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
                 ? `it does not match its original ${o.id} in account, date and amount`
                 : undefined
       if (why !== undefined) add('fault-catalogue', t.id, why)
-      else if (o !== undefined) {
-        const other = copyOf.get(o.id)
-        if (other !== undefined) add('fault-catalogue', t.id, `its original ${o.id} already has a duplicate, ${other}`)
-        else copyOf.set(o.id, t.id)
+      else {
+        // Here the original exists (why is undefined only then), so its id is the dupOf.
+        const other = copyOf.get(t.dupOf)
+        if (other !== undefined) add('fault-catalogue', t.id, `its original ${t.dupOf} already has a duplicate, ${other}`)
+        else copyOf.set(t.dupOf, t.id)
       }
     }
     if (t.priorYear === true && t.date >= c.corporation.yearStart) add('fault-catalogue', t.id, `it is marked priorYear but dated ${t.date}, not before the fiscal year starts on ${c.corporation.yearStart}`)

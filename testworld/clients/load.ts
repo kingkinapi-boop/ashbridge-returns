@@ -155,6 +155,7 @@ function readClientJson(
   try {
     return readJson(path, moneyIssue)
   } catch (e) {
+    // Stryker disable next-line ConditionalExpression: the other errors (a failed read) cannot be made in a test that runs as root
     if (!(e instanceof SyntaxError)) throw e
     fileIssue(name, `it is not valid JSON: ${e.message}`)
     return undefined
@@ -229,7 +230,7 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   /** Rows of an account file, or 0 and a 'file' issue when it is not `<dir>/<name>.csv`, is not a regular file in the client folder, or is not there. */
   const accountFile = (account: string, field: string, name: string, dir: string): number => {
     const record = `${account} ${field}`
-    if (!name.startsWith(`${dir}/`) || !name.endsWith('.csv') || name.length <= dir.length + 5 || name.indexOf('/', dir.length + 1) >= 0) {
+    if (!name.startsWith(`${dir}/`) || !name.endsWith('.csv') || name.length <= dir.length + 5 || name.includes('/', dir.length + 1)) {
       fileIssue(record, `${name} is not a ${dir}/<name>.csv file of the client folder`)
       return 0
     }
@@ -251,7 +252,7 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   }
 
   const accounts = key.accounts.map((a) => {
-    const months = (Object.hasOwn(key.statementBalances, a.key) ? (key.statementBalances[a.key] ?? []) : []).map((m) => {
+    const months = (Object.hasOwn(key.statementBalances, a.key) ? (key.statementBalances[a.key] as (typeof key.statementBalances)[string]) : []).map((m) => {
       const activityCents = transactions
         .filter((t) => t.accountKey === a.key && t.date.slice(0, 7) === m.month && !t.missingFromExport)
         .reduce((s, t) => s + t.amountCents, 0)
@@ -281,7 +282,8 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   /** The `{account, name}` items of an onboarding key, for a "(NNNN Name)" qualifier to name one of them. */
   const recordsOf = (base: string): { account: string; name: string }[] => {
     const holder = onbKeys[base]
-    const list = holder !== null && typeof holder === 'object' ? (holder as { accounts?: unknown }).accounts : undefined
+    const list = (holder as { accounts?: unknown } | null)?.accounts
+    // Stryker disable next-line ArrayDeclaration: a non-list gives no record either way (a stand-in item has no account, so it never matches a qualifier)
     return Array.isArray(list) ? list.map((x) => ({ account: String((x as { account?: unknown }).account), name: String((x as { name?: unknown }).name) })) : []
   }
   const resolves = (source: string): boolean => {
@@ -289,8 +291,8 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
     const q = /^(.*?)\s*\(([^)]*)\)\s*$/.exec(source)
     if (q === null) return Object.hasOwn(onbKeys, source)
     // A "(...)" qualifier must name a record of that key: "(1200 Prepaid expenses)" is the account 1200 called "Prepaid expenses".
-    const base = q[1] ?? ''
-    const named = /^(\d+) (.+)$/.exec(q[2] ?? '')
+    const base = q[1] as string
+    const named = /^(\d+) (.+)$/.exec(q[2] as string)
     return Object.hasOwn(onbKeys, base) && named !== null && recordsOf(base).some((r) => r.account === named[1] && r.name === named[2])
   }
   for (const j of key.adjustingEntries) {
