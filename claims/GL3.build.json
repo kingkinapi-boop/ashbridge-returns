@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "c6ed0a6",
  "worker": "cloud-0ac9e9",
- "state": "hold-findings",
- "at": "2026-10-03T12:52:19.896Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:28:37.540Z",
  "mode": "turbo",
- "note": "FAIL: unasked blanket grant execute to returns_app (0002_grants.sql:20), see reports/GL3-check.md"
+ "note": "A476: round 2 after the GL3 spec test: delete 0002_grants.sql line 20, keep line 19, README lines"
 }
