@@ -1,5 +1,8 @@
 # W16 spec, round 2 fixup (A408), 3 Oct
 
+## Toolchain refit, 3 Oct 06:30Z (local-3)
+The queue reopened the spec because `tools/test/reading-rules.test.mjs` (and other `tools/test/` files) changed on main since 31defba1. Old spec commit 31e0de5a (validated 31defba1); origin/main 0f7e1cc4 merged clean (2d74cc78), no spec file touched by the merge and no assertion changed. Validated on main 0f7e1cc4: `npm run typecheck` 0, `npm run lint` 0, unit 2545 passed, 3 failed, all laptop-only and outside W16's Paths (two A05 ARC-6 symlink tests: EPERM creating a symlink on Windows; RV-52 build.mjs: ERR_UNSUPPORTED_ESM_URL_SCHEME for a `C:` path); the db project was not run (no Postgres 16 on the laptop; W16 touches no db code). verify.mjs on the branch: 531 passed, 0 known, 10 failed, the same 10 build-dependent lines as before (R8 on 03, 04, 07, 08, 10; the three W16 tie lines; the two R11 lines). After verify.mjs, `git checkout -- reference/sample-clients` restores the CRLF import.csv files before any `npm test` (see "For the Lead").
+
 Branch claude/W16-r2, on top of spec 704a943, validated on main 31defba1 (origin/main merged). Files: reference/sample-clients/verify.mjs, reference/sample-clients/README.md, plan/cards/W16.md (Build bullet 3, acceptance check 3, new Check section). From reports/W16-spec-review.md, gaps 1 to 3 and the 07 amber.
 
 ## What changed
