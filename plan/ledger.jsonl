@@ -582,3 +582,8 @@
 {"ts":"2026-10-03T13:08:59.012Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Design lane state scout","allowed":true}
 {"ts":"2026-10-03T13:09:45.511Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"GL3 findings review","allowed":true}
 {"ts":"2026-10-03T13:09:54.085Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker next check","allowed":true}
+{"ts":"2026-10-03T13:10:17.377Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T13:10:21.865Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:10:22.723Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:10:23.171Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:10:23.459Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
