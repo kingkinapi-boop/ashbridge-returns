@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-b91986",
- "state": "working",
- "at": "2026-10-03T12:08:40.341Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T12:09:18.553Z",
+ "mode": "turbo",
+ "note": "wait: build round 2 pending (A464). The spec patch f134477c (14 tests) fails 3 on the round 1 build: harness list still names root vitest-setup.ts, not src/core/db/vitest-setup.ts",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
 }
