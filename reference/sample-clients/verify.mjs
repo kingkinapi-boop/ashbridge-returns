@@ -996,7 +996,24 @@ line(fs.existsSync(path.join(root, 'generate.mjs')), 'generate.mjs is next to ve
   // W16 spec (round 2, findings review W16): W14's "01 to 10" and W15's "01 to 12" byte-identical-to-main guards are retired.
   // They were scope checks with hard-coded folder lists, not ARC-16 (which is determinism, the line above); tools/scope.mjs
   // enforces "only the card's Paths change" on every card, so no per-card folder list belongs in this file (rule R78).
-  const mc = spawnSync(process.execPath, [path.join(root, 'make-csv.mjs'), '--check'], { encoding: 'utf8' });
+  // W16 spec fixup (A408, spec review gap 1): the committed sample data is the generator's output. After the two regenerations
+  // above, every SPEC folder equals HEAD (ignoring CR at line ends: import.csv is CRLF on disk, LF in git) and holds no untracked
+  // file, so a generator change that moves a folder nobody committed (09 from c09_10.mjs, say) fails here. Compared with HEAD,
+  // never main, and over every SPEC folder, so no card's folder list lives here (R78). If git cannot run or answer, the line fails.
+  {
+    const present = specNums.map(folderOf).filter(Boolean), git = (args) => spawnSync('git', ['-c', 'core.safecrlf=false', ...args, '--', ...present], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 28 });
+    const why = [];
+    if (regen.err) why.push(`no regeneration to compare: ${regen.err}`);
+    if (present.length !== specNums.length || !present.length) why.push(`${present.length} of ${specNums.length} SPEC folders present`);
+    const q = git(['diff', '--quiet', '--ignore-cr-at-eol', 'HEAD']);
+    if (q.error || (q.status !== 0 && q.status !== 1)) why.push(`git diff could not run (${q.error ? q.error.message : `exit ${q.status}: ${(q.stderr || '').trim().split('\n').slice(-1)[0]}`})`);
+    else if (q.status === 1) { const d = git(['diff', '--ignore-cr-at-eol', 'HEAD']); why.push(`regenerated output differs from HEAD in ${first([...(d.stdout || '').matchAll(/^diff --git a\/(\S+)/gm)].map((m) => m[1])) || 'some file'}`); }
+    const u = git(['ls-files', '--others', '--exclude-standard']);
+    if (u.error || u.status !== 0) why.push(`git ls-files could not run (${u.error ? u.error.message : `exit ${u.status}`})`);
+    else if (u.stdout.trim()) why.push(`untracked generated files: ${first(u.stdout.trim().split('\n'))}`);
+    line(why.length === 0, `ARC-16 the committed sample data is the generator's output: after regeneration every one of the ${specNums.length} SPEC folders equals HEAD (git diff --ignore-cr-at-eol, no untracked file)` + (why.length ? `: ${why.join('; ')}` : ''));
+  }
+  const mc =spawnSync(process.execPath, [path.join(root, 'make-csv.mjs'), '--check'], { encoding: 'utf8' });
   const noCsv = specNums.filter((n) => { const d = folderOf(n); return !d || !fs.existsSync(path.join(root, d, 'taxprep', 'import.csv')); });
   line(mc.status === 0 && noCsv.length === 0, `ARC-8 make-csv.mjs --check passes for all ${specNums.length} folders (every row equals the answer key, Schedule 100 balances, no blank cells)` + (noCsv.length ? `: no taxprep/import.csv for ${noCsv.join(', ')}` : '') + (mc.status !== 0 ? `: ${(mc.stdout || mc.stderr || '').trim().split('\n').slice(-1)[0]}` : ''));
 }
@@ -1005,12 +1022,17 @@ line(fs.existsSync(path.join(root, 'generate.mjs')), 'generate.mjs is next to ve
 // Each <new> must equal the answer key's t2Inputs.schedule8.openingUcc and onboarding's prior_year_closing_balances.ucc for that
 // folder and class (R8 ties those two together and to the register; this ties the README to them). Proven first on a sample-copy.
 {
+  // Spec fixup (A408, spec review gap 3): every "- " bullet in the section must parse; one that misses the shape fails, named.
+  const BULLET_RE = /^- ([0-9]{2}) class ([0-9.]+): ([0-9,]+\.[0-9]{2}) to ([0-9,]+\.[0-9]{2})\./;
   const movedUcc = (text) => {
     const sec = text.split(/^## /m).find((s) => s.startsWith('Opening UCC moved')) ?? '';
-    return [...sec.matchAll(/^- ([0-9]{2}) class ([0-9.]+): ([0-9,]+\.[0-9]{2}) to ([0-9,]+\.[0-9]{2})\./gm)].map((m) => ({ num: m[1], cls: m[2], from: cents(m[3].replace(/,/g, '')), to: cents(m[4].replace(/,/g, '')) }));
+    const bullets = sec.split(/\r?\n/).filter((l) => /^- /.test(l)), rows = [];
+    rows.unparsed = bullets.filter((l) => !BULLET_RE.test(l));
+    for (const l of bullets) { const m = l.match(BULLET_RE); if (m) rows.push({ num: m[1], cls: m[2], from: cents(m[3].replace(/,/g, '')), to: cents(m[4].replace(/,/g, '')) }); }
+    return rows;
   };
   const movedUccBad = (rows) => {
-    const bad = [];
+    const bad = (rows.unparsed ?? []).map((l) => `a bullet under "Opening UCC moved" does not parse as "- <folder> class <class>: <from> to <to>.": ${l.slice(0, 60)}`);
     if (!rows.length) bad.push('the README section "Opening UCC moved" lists no figure');
     for (const { num, cls, from, to } of rows) {
       const d = folderOf(num);
@@ -1026,6 +1048,11 @@ line(fs.existsSync(path.join(root, 'generate.mjs')), 'generate.mjs is next to ve
   fs.writeFileSync(copy, text.replace(/^(## Opening UCC moved[\s\S]*?^- [0-9]{2} class [0-9.]+: [0-9,]+\.[0-9]{2} to [0-9,]+\.[0-9])([0-9])/m, (m, a, b) => a + ((Number(b) + 1) % 10)));
   const b = movedUccBad(rows), p = movedUccBad(movedUcc(read(copy)));
   line(b.length === 0 && p.length > 0, 'W16 END-2 the README-to-data opening UCC tie catches its planted fault on a sample-copy of README.md (the first moved figure one cent off)' + (b.length ? `: the unchanged copy fails first: ${first(b, 1)}` : p.length ? '' : ': the planted copy passes'));
+  // Plant 2 (gap 3): a sample-copy with the first bullet's "class 8" (or any class) written "class8", so it no longer parses.
+  const copy2 = path.join(tmpRoot, 'README-ucc-bullet.md'), planted2 = text.replace(/^(## Opening UCC moved[\s\S]*?^- [0-9]{2} class) /m, '$1');
+  fs.writeFileSync(copy2, planted2);
+  const p2 = movedUccBad(movedUcc(read(copy2))), named = p2.some((x) => /does not parse/.test(x) && /class[0-9]/.test(x));
+  line(b.length === 0 && planted2 !== text && named, 'W16 END-2 the README-to-data opening UCC tie fails, naming it, on a bullet that does not parse (a sample-copy of README.md with "class 8" written "class8")' + (b.length ? `: the unchanged copy fails first: ${first(b, 1)}` : planted2 === text ? ': nothing to plant (no bullet under "Opening UCC moved")' : named ? '' : ': the planted copy passes or does not name the bullet'));
   line(b.length === 0, `W16 END-2 each opening UCC the README lists as moved equals the answer key's Schedule 8 opening UCC and onboarding's prior_year_closing_balances.ucc for that folder and class (${rows.length} figures: ${rows.map((r) => `${r.num} class ${r.cls}`).join(', ') || 'none'})` + (b.length ? `: ${first(b, 6)}` : ''));
 }
 // ---------- R11, ARC-8: the README's counts equal the generated data (last, so the pass count is final) ----------
