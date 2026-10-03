@@ -17,6 +17,8 @@ git -C $W checkout -q -B train origin/claude/train 2>/dev/null || git -C $W chec
 git -C $W merge --no-ff origin/claude/<card> -m "Merge <card>: <title> (spec, build, check by three workers)"
 git -C $W push -q origin train:claude/train
 ```
+A card whose build lives on `claude/<id>-r2`: board that branch and run `node tools/scope.mjs <id> --branch claude/<id>-r2` once CQ4 lands (A430).
+
 A conflict: `git merge --abort`, release the card's build job with the note "rebase on main", and it goes back in the queue.
 
 When any boarded card touches `reference/sample-clients/`, the train run also runs `node reference/sample-clients/verify.mjs` on the train head (A417).
