@@ -1,12 +1,9 @@
 {
  "card": "FX4",
  "role": "spec",
- "note": "40 tests (patch A434, all 11 review gaps; 34 fail on main by name, 6 guards); SC known.json patch waits for SC",
- "worker": "local-1",
- "state": "reported",
- "at": "2026-10-03T07:50:26.860Z",
- "mode": "turbo",
- "beat": "2026-10-03T07:43:43.370Z",
- "commit": "5005db5c0da493bad77b9de3416a7020e6675924",
- "validated": "83737283d425e35ecd6d847dee9b092ff2a87e9f"
+ "note": "toolchain refit",
+ "worker": "cloud-aab122",
+ "state": "working",
+ "at": "2026-10-03T10:58:11.571Z",
+ "mode": "turbo"
 }
