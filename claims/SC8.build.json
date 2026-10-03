@@ -1,8 +1,10 @@
 {
  "card": "SC8",
  "role": "build",
- "state": "reopened",
- "worker": "lead",
- "at": "2026-10-03T13:21:37.527Z",
- "note": "A477: wait met"
+ "round": 1,
+ "spec": "7849b700",
+ "worker": "cloud-fce4c0",
+ "state": "working",
+ "at": "2026-10-03T19:16:52.059Z",
+ "mode": "turbo"
 }
