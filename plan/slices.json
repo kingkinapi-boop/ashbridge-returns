@@ -2428,7 +2428,8 @@
         "src/modules/ledger/core/**",
         "src/modules/ledger/index.ts",
         "src/contracts/ledger.ts",
-        "db/schema/20_ledger.sql"
+        "db/schema/20_ledger.sql",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "EV-1",
@@ -3097,7 +3098,8 @@
         "src/modules/books/index.ts",
         "src/contracts/books.ts",
         "db/schema/30_books.sql",
-        "src/pipeline/steps/books.ts"
+        "src/pipeline/steps/books.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "TB-1",
@@ -10539,7 +10541,8 @@
       ],
       "paths": [
         "db/schema/94_actor_keys.sql",
-        "src/contracts/actors.acceptance.db.test.ts"
+        "src/contracts/actors.acceptance.db.test.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "SEC-1",
