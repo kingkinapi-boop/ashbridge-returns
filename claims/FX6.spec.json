@@ -2,7 +2,9 @@
  "card": "FX6",
  "role": "spec",
  "worker": "cloud-117624",
- "state": "working",
- "at": "2026-10-03T08:28:49.302Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T08:29:08.886Z",
+ "mode": "turbo",
+ "note": "wait: SC (known.json and the FX6 KNOWN entry) and W00c (owns taxprep.ts) not landed on main; no code base to remove the entry from",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\",\"SC4\",\"W00c\"],\"depStatus\":[\"carded\",\"done\",\"carded\"]}"
 }
