@@ -4,7 +4,8 @@
  "round": 52,
  "spec": "a069a19",
  "worker": "cloud-a93d05",
- "state": "working",
- "at": "2026-10-03T03:22:09.801Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T03:29:58.274Z",
+ "mode": "turbo",
+ "note": "75 of 75 unit, 19 of 19 db pass; full suite 507 green"
 }
