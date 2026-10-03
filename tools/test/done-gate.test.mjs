@@ -58,7 +58,17 @@ function tool(w, name, args) {
   const r = spawnSync('node', [path.join(w.root, 'tools', name), ...args], { cwd: w.root, encoding: 'utf8' })
   return { code: r.status, out: `${r.stdout ?? ''}${r.stderr ?? ''}`.trim() }
 }
-const scope = (w, card, ...extra) => tool(w, 'scope.mjs', [card, 'main', ...extra])
+// CQ2 rule 4 (ARC-15): scope.mjs reads origin/claude/<card>, not HEAD, so the world publishes its branch first.
+const scope = (w, card, ...extra) => {
+  if (!w.remote) {
+    w.remote = fs.mkdtempSync(path.join(os.tmpdir(), 'done-gate-remote-')).replace(/\\/g, '/')
+    tmpDirs.push(w.remote)
+    git(w.remote, 'init', '-q', '--bare', '-b', 'main')
+    git(w.root, 'remote', 'add', 'origin', w.remote)
+  }
+  git(w.root, 'push', '-q', 'origin', `HEAD:refs/heads/claude/${card}`)
+  return tool(w, 'scope.mjs', [card, 'main', ...extra])
+}
 const mutate = (w, ...args) => tool(w, 'mutate-changed.mjs', args)
 const strykerArgs = (w) => {
   try {

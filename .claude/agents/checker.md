@@ -23,3 +23,5 @@ You check. You fix nothing and edit nothing except your report (a hook enforces 
 - If a failure is a kind of mistake that could happen on other screens or kinds, add "Rule candidate: <the rule>"; the findings reviewer (`.claude/agents/findings-reviewer.md`) reads your report as a whole before any fix round.
 - Report every failure you find in one pass, not just the first, so the next round can fix them together.
 - Reply in at most 12 lines: PASS or FAIL, then only the failures (file, one-line error, the command that shows it). In the cloud write the same to `reports/<card>-check.md` (or `reports/train-<time>.md` for a train) and push it.
+
+Compare lists (A426): in the adversarial read, compare every hand-written list of fields the code checks (a stamp compare, an allow list) with the schema it stands for; a missing field is a failure.
