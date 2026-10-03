@@ -942,7 +942,8 @@
         "e2e/_harness/**",
         "package.json",
         "e2e/steps/README.md",
-        "package-lock.json"
+        "package-lock.json",
+        "testworld/harness/**"
       ],
       "clauses": [
         "END-9",
@@ -2036,7 +2037,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2048,7 +2049,8 @@
         "src/contracts/auth.ts",
         "db/schema/15_auth.sql",
         "src/core/env.ts",
-        "src/core/env.settings.test.ts"
+        "src/core/env.settings.test.ts",
+        "src/contracts/auth.acceptance.test.ts"
       ],
       "clauses": [
         "SEC-1",
@@ -2064,7 +2066,8 @@
       "title": "Staff sign-in stand-in and roles",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "parked",
@@ -2451,7 +2454,8 @@
         "src/modules/ledger/dots/**",
         "src/modules/ledger/index.ts",
         "data/ledger/origins.json",
-        "data/ledger/agree-rules.json"
+        "data/ledger/agree-rules.json",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-10",
@@ -2607,7 +2611,8 @@
         "src/pipeline/steps/facts.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-5",
@@ -3118,7 +3123,8 @@
         "src/modules/books/gifi/**",
         "src/modules/books/index.ts",
         "data/gifi/**",
-        "testworld/qbo/gfi.ts"
+        "testworld/qbo/gfi.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "TB-3",
@@ -5044,7 +5050,8 @@
         "src/pipeline/steps/import.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "RT-1",
@@ -6061,11 +6068,16 @@
         "T04",
         "T07",
         "F02",
-        "N00"
+        "N00",
+        "L00",
+        "V00",
+        "FX5"
       ],
       "paths": [
         "src/modules/approval/**",
-        "db/schema/60_versions.sql"
+        "db/schema/60_versions.sql",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -6076,7 +6088,7 @@
       "id": "T08",
       "title": "Approval fingerprint and approval record",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "hard": true,
       "security": true,
       "core": true
@@ -6088,7 +6100,8 @@
         "F05",
         "L00",
         "SK0",
-        "F10"
+        "F10",
+        "T07"
       ],
       "paths": [
         "src/modules/checks/engine/**",
@@ -6110,7 +6123,7 @@
       "id": "Q00",
       "title": "Check engine",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "core": true
     },
     {
@@ -6898,7 +6911,8 @@
       ],
       "paths": [
         "src/modules/ai/checklist/_core/**",
-        "src/pipeline/steps/checks.ts"
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "AI-2",
@@ -7207,20 +7221,24 @@
       "spec": null,
       "deps": [
         "I00",
-        "T05",
         "T07",
-        "Q00"
+        "Q00",
+        "I01"
       ],
       "paths": [
         "src/modules/ai/redteam/**",
-        "src/pipeline/steps/checks.ts"
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts",
+        "db/schema/73_redteam.sql"
       ],
       "clauses": [
         "AI-3",
         "AI-1",
         "AI-4",
         "AI-5",
-        "AI-8"
+        "AI-6",
+        "AI-8",
+        "SEC-7"
       ],
       "id": "I30",
       "title": "Red team (a different model, raw documents)",
@@ -7255,41 +7273,54 @@
       "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "Q00"
       ],
       "paths": [
-        "src/modules/exceptions/**"
+        "src/modules/exceptions/**",
+        "data/exceptions/weak-answers.json",
+        "db/schema/71_exceptions.sql"
       ],
       "clauses": [
         "EX-1",
         "EX-2",
-        "EX-3"
+        "EX-3",
+        "AI-7",
+        "SEC-7"
       ],
       "id": "X00",
       "title": "Exception answers and their rules",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "X00"
       ],
       "paths": [
-        "src/modules/tiers/**"
+        "src/modules/tiers/**",
+        "data/tiers/rules.json",
+        "db/schema/72_tiers.sql"
       ],
       "clauses": [
         "CK-40",
-        "RV-8"
+        "RV-8",
+        "RULE-7",
+        "RULE-8"
       ],
       "id": "X01",
       "title": "Tiers (approved rules, testable terms)",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true,
+      "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
       "status": "todo",
@@ -9300,7 +9331,7 @@
       "phase": 4,
       "size": "M",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED."
     },
     {
       "status": "todo",
@@ -9576,7 +9607,7 @@
       "note": "From reports/A06-findings.md, 2 Oct."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -9600,7 +9631,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals."
+      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals.",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9629,7 +9661,8 @@
       "spec": null,
       "deps": [
         "A07D",
-        "SC4"
+        "SC4",
+        "SC"
       ],
       "paths": [
         "src/modules/sheets/**",
@@ -9648,6 +9681,81 @@
       "size": "M",
       "core": true,
       "note": "From reports/A07D-opus-read.md, 3 Oct (A393); landing rule: fallbacks are removals."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00c",
+        "SC4",
+        "SC"
+      ],
+      "paths": [
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.acceptance.test.ts"
+      ],
+      "clauses": [
+        "EV-5",
+        "ARC-10"
+      ],
+      "id": "FX6",
+      "title": "Taxprep rate text invents digits at huge values (found by SC4)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC4-spec.md, 3 Oct (A406)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W00c"
+      ],
+      "paths": [
+        "src/contracts/facts.ts",
+        "src/contracts/reading.ts",
+        "src/contracts/amount-grammar.ts",
+        "src/modules/ocr/textlayer/**",
+        "src/modules/storage/**",
+        "src/core/test-no-network.ts",
+        ".gitattributes"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "ARC-10",
+        "ARC-15",
+        "SEC-11"
+      ],
+      "id": "FX7",
+      "title": "Rule defects in landed contracts and readers (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F02",
+        "SC"
+      ],
+      "paths": [
+        "src/contracts/lifecycle.ts",
+        "src/modules/lifecycle/**"
+      ],
+      "clauses": [
+        "FLOW-1",
+        "FLOW-4"
+      ],
+      "id": "FX5",
+      "title": "F02 move inside a caller transaction (for T08)",
+      "phase": 3,
+      "size": "S",
+      "core": true,
+      "note": "From reports/phase3-card-review-2026-10-03.md fix 2 (A397). L00 and N00 take the caller transaction in their own builds."
     },
     {
       "status": "carded",
@@ -9680,6 +9788,53 @@
         "SC"
       ],
       "paths": [
+        "tools/test/card-rules.test.mjs",
+        "tools/test/__fixtures__/card-rules/**"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC6",
+      "title": "Card and verify rules R77 and R78",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/W16-findings.md, 3 Oct (A404)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "SC2",
+        "SC3",
+        "SC4",
+        "SC5",
+        "SC6"
+      ],
+      "paths": [
+        "tools/test/lib/known.mjs",
+        "tools/test/lib/known.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC7",
+      "title": "One shared KNOWN helper for every rules file",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC"
+      ],
+      "paths": [
         "db/schema/**",
         "src/contracts/records.ts",
         "src/contracts/jobs.ts",
@@ -9688,7 +9843,9 @@
         "src/modules/gaps/bank/index.ts",
         "src/modules/jobs/queue.ts",
         "src/modules/bridge/run.ts",
-        "tools/test/__fixtures__/schema-contract/known.json"
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/contracts/ids.ts",
+        "src/contracts/checks.ts"
       ],
       "clauses": [
         "SEC-7",
@@ -9704,6 +9861,35 @@
       "size": "M",
       "core": true,
       "note": "From reports/SC-build.md, 2 Oct."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06"
+      ],
+      "paths": [
+        "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/pg16.test.ts",
+        "vitest.config.ts",
+        "package.json",
+        "package-lock.json",
+        ".claude/agents/checker.md",
+        ".claude/cloud-worker-run.md"
+      ],
+      "clauses": [
+        "ARC-4",
+        "ARC-16",
+        "SEC-7"
+      ],
+      "id": "DB16",
+      "title": "The db test project runs on Postgres 16 in cloud checks",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From the train report of 3 Oct (A405)."
     }
   ]
 }

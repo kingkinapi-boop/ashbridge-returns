@@ -5,33 +5,35 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core only. Local helpers: A06 security review (Opus), X00/X01 drafting (Sonnet), phase 3 card review (Opus).
-- **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). Train claude/train boarding: A07D.
-- **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
+- **Landed (44):** through A07C, A03, G17, then A07D and A06 (train 25bde2a, 04:04Z, A405). No train in flight; the next one runs test:flake.
+- **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| A07D | on train claude/train 2c59925 (A393: Opus findings to FX4, SC4 R74) | train check when due (hourly or 6 cards) |
-| A06 round 2 | check PASS; local Opus security review fired 03:22Z | board if clean; then FX2 spec, A04 round 2 spec |
-| W00c | build reported; check job open | cloud run; then W00b spec on W00c, S00, JH0, B04, SC2 |
-| SC | build reopened | cloud run |
-| W16 | spec reported | build, cloud run |
-| CQ2 | spec reopened for rule 6 (A394) | spec, build, check |
-| SC4 | startable (A07D built) | spec, then FX4 |
-| A04, A08 | held on A06, then A04 | as before |
-| X00, X01 | local Sonnet drafting helper (03:24Z) | Lead reviews, slices.json status carded, amber |
-| Phase 3 cards | local Opus card review (03:24Z), reports/phase3-card-review-2026-10-03.md | fix cards before their first spec |
+| W00c | spec round 2 (cloud) per reports/W00c-findings.md (A403) | build round 2, check; unblocks W00b, JH0, B04, SC2 |
+| W00b | refit spec reported (278 tests); Opus spec review running, build held | GO: reopen build after W00c lands |
+| W16 | round 2 spec on claude/W16-r2 reported; Opus spec review (with SC6) running, build held | GO: reopen build |
+| SC6 | spec reported; review running, build held | GO: reopen build |
+| SC | findings done; spec reopened (A407: exact KNOWN, owners FX3 to FX7); FX7, SC7 carded | spec, build re-run, check with Opus read |
+| SC4 | spec refit on a cloud box (laptop lacks ExcelJS); KNOWN owners FX4, FX6 (A406) | build, check |
+| S00, FX5 | specs reopened for review gaps (A402); FX5 spec by local worker 2 | build after spec |
+| FX2 | spec reported (not core); build open | build, check |
+| A04 | spec round 2 open | spec, build, check, security review |
+| CQ2 | check in the cloud | board |
+| JH0 | spec reported | build after W00c lands |
+| DB16 | carded (A405) | spec |
 
-Cloud runs fired 03:22Z: 6 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
+Cloud runs fired 03:22Z: 6, plus 1 at 03:43Z for the train (now checking), 3 at 03:50Z for W00c spec, S00 spec, SC check (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
 
 ## Next, in order
 
 1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
 2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
-3. A06 lands, then FX2 spec, A04 round 2 spec, SC3, SC5 (R71 to R73).
-4. Phase 3 cards T08, Q00, Q01, I01, I30, I40 rewritten (A390): an independent card review before their first spec. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00 X01 V02 V03 V04 V09 first).
+3. FX2 and A04 round 2 specs, then SC3, SC5 (R71 to R73); DB16.
+4. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
 5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
 6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
@@ -45,6 +47,7 @@ W00a to W00c (A379), A07C to A07D (A384; no more rounds), rule cards SC2 (R57 to
 - The permission system refuses edits to `.gitleaks.toml` for every agent; changes go to Zo by hand (0021). Cloud boxes lack gitleaks; GitHub checks run it.
 - No real client data: Assets/ is excluded from git; never commit it.
 - Cloud boxes need Node 24.21 or later; see .claude/cloud-worker-run.md.
+- Local workers have no subagent tool: start them with model opus so they can do core specs and checks themselves (Sonnet ones release core jobs). They cannot run `cmd //c rmdir`: the Lead removes each worktree's node_modules junction, then the worktree. The main checkout's node_modules lacks exceljs and pdfjs-dist (SC check released 03:47Z): run `node tools/heavy.mjs -- npm ci` in the main checkout when no local worker is running, before firing more (`npm install` is refused; never route around it).
 - claim.mjs drops the Lead's reopen note on specs (CQ2 item 5): put a bold directive at the top of the card.
 - Code guard at landing lists design/ docs too (A388): a doc-only path is not a reason to re-check.
 - Mutation bar is 100 per `@mutate` file (testing.md, ARC-15; agent orders fixed, A391).

@@ -392,3 +392,25 @@
 {"ts":"2026-10-03T03:21:58.443Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"A06 security review","allowed":true}
 {"ts":"2026-10-03T03:22:22.706Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Draft cards X00 and X01","allowed":true}
 {"ts":"2026-10-03T03:22:29.945Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Phase 3 card review","allowed":true}
+{"ts":"2026-10-03T03:29:14.495Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Apply phase 3 card fixes","allowed":true}
+{"ts":"2026-10-03T03:34:42.435Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 1","allowed":true}
+{"ts":"2026-10-03T03:34:44.449Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 2","allowed":true}
+{"ts":"2026-10-03T03:34:46.319Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":null,"where":"worktree","desc":"Local worker 3","allowed":true}
+{"ts":"2026-10-03T03:36:58.308Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 1 (Opus)","allowed":true}
+{"ts":"2026-10-03T03:41:50.580Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W00c findings review","allowed":true}
+{"ts":"2026-10-03T03:41:56.533Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"S00 and FX5 spec review","allowed":true}
+{"ts":"2026-10-03T03:42:56.419Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T03:43:40.133Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 2 (Opus)","allowed":true}
+{"ts":"2026-10-03T03:48:24.297Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 2 (Opus) again","allowed":true}
+{"ts":"2026-10-03T03:49:36.957Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"W16 findings review","allowed":true}
+{"ts":"2026-10-03T03:49:37.838Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T03:49:38.471Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T03:49:38.971Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T03:55:45.980Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 3 (Opus)","allowed":true}
+{"ts":"2026-10-03T03:55:46.759Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T04:04:27.684Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T04:04:28.335Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T04:04:28.833Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T04:18:07.742Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Spec review W16 SC6","allowed":true}
+{"ts":"2026-10-03T04:18:14.983Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"Spec review W00b","allowed":true}
+{"ts":"2026-10-03T04:18:20.989Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"SC findings review","allowed":true}

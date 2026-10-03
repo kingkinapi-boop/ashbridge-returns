@@ -24,3 +24,6 @@ A checker who did neither: the three rules fail on their planted fixtures and pa
 
 ## Not in this card
 The fixes themselves: FX2 (ocr, storage), A04 round 2 (runner), A06 round 2 (auth index).
+
+## KNOWN shape (3 Oct, A407)
+Every KNOWN entry names one rule, one file, the exact problem strings (no regex) and an open owner card; any problem not listed fails, and a listed string not produced fails as stale. Every file scan asserts it read at least one file and a named sentinel.

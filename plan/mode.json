@@ -3,9 +3,9 @@
   "resume_to": null,
   "set_by": "Zo, 3 Oct 2026 03:20Z: \"turbo on\" again (mode was already turbo since 2 Oct 15:30Z)",
   "set_at": "2026-10-03",
-  "why": "Zo raised it. Order: FX1 and F01C land first, then the Reviewer's other fixes (CQ1, cards ahead, W kinds), then the rest.",
+  "why": "Zo raised it. Order: FX1 and F01C land first, then the Reviewer's other fixes (CQ1, cards ahead, W kinds), then the rest. 3 Oct: local_workers 3 and heavy_slots 2 (decision 0026).",
   "wind_down_at": "2026-10-09T18:00:00-04:00",
-  "heavy_slots": 1,
+  "heavy_slots": 2,
   "max_workers": 12,
-  "local_workers": 2
+  "local_workers": 3
 }

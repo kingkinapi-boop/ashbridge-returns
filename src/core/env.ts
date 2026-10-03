@@ -4,6 +4,8 @@ import { z } from 'zod'
 
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  // ARC-6: which staff sign-in engine; unset or blank means the made-up users. No key is ever read (END-8).
+  AUTH_ENGINE: z.preprocess((v) => (v === '' ? undefined : v), z.enum(['testusers', 'live']).optional()),
 })
 
 export type Settings = z.infer<typeof schema>
@@ -12,7 +14,6 @@ export function readSettings(source: Record<string, string | undefined> = proces
   const parsed = schema.safeParse(source)
   if (!parsed.success) {
     // Name the settings that failed, never their values.
-    // Stryker disable next-line StringLiteral: NODE_ENV is the only setting, so one issue and no separator is ever printed; killable when a second setting arrives.
     const names = parsed.error.issues.map((i) => String(i.path[0])).join(', ')
     throw new Error(`Invalid settings: ${names}`)
   }

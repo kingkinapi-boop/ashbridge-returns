@@ -4,7 +4,7 @@ Phase 0. Size S. Deps: W00c. Where: cloud.
 Tags: core (the answer keys every later kind is checked against).
 Paths: tools/test/testworld-rules.test.mjs, tools/test/__fixtures__/testworld-rules/**
 Clauses: ARC-8, ARC-13, ARC-16
-Read: `reports/W00a-findings.md` ("Tests to add", rule tests), `plan/cards/SC.md` (rule style, R52), `.claude/rules/testing.md`.
+Read: `reports/W00a-findings.md` ("Tests to add", rule tests), `reports/W00c-findings.md` ("Rule tests for SC2": R57, R59, R60, R61 reworded there win over older wording), `plan/cards/SC.md` (rule style, R52), `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
 
 ## Goal
@@ -23,3 +23,11 @@ None beyond the rules: the rules are the deliverable (a spec writer writes them,
 
 ## Check
 A checker who did neither: the five rules fail on the planted copies and pass on main.
+
+## Added 3 Oct (A403, from reports/W00c-findings.md)
+- **R75** every written derived value in a test-world file equals its computed twin (a statement's `rolls`, an account's `rowsInExport`). Planted: C10 with `rolls` edited.
+- **R76** a posting with neither `dr` nor `cr` (or both) is refused, never read as 0. Planted: a C12 posting with both missing.
+- Known limit, not a rule yet: an unmarked +1/-1 cent pair in one month keeps every total; only the bank CSV rows could pin it, and no card reads those layouts yet. Revisit when one does.
+
+## KNOWN shape (3 Oct, A407)
+Every KNOWN entry names one rule, one file, the exact problem strings (no regex) and an open owner card; any problem not listed fails, and a listed string not produced fails as stale. Every file scan asserts it read at least one file and a named sentinel.
