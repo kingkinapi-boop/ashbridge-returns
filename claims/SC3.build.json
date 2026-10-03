@@ -4,9 +4,8 @@
  "round": 5,
  "spec": "edf23e0",
  "worker": "cloud-a416a1",
- "state": "released",
- "at": "2026-10-03T08:22:03.353Z",
+ "state": "reopened",
+ "at": "2026-10-03T08:44:36.310Z",
  "mode": "turbo",
- "note": "wait: spec patch needed, R62 KNOWN list stale after FX2 landed (4 of 8 fail), see reports/SC3-build.md",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"FX2\"],\"depStatus\":[\"done\",\"done\"]}"
+ "note": "round 2 on the A443 spec patch (cloud)"
 }
