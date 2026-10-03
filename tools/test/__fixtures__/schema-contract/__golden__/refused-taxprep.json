@@ -1,0 +1,115 @@
+{
+  "parser": "parseTaxprepCsv (src/contracts/taxprep.ts)",
+  "recordedOn": "2026-10-02",
+  "encoding": "each input is the file as Latin-1 text: one character per byte",
+  "inputs": [
+    {
+      "name": "bom",
+      "latin1": "ï»¿[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"100\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "lf-only line ends",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\nGFGBA.Ttwgba64,\"100\",\"\",\"\"\n"
+    },
+    {
+      "name": "tab separator",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64\t\"100\"\t\"\"\t\"\"\r\n"
+    },
+    {
+      "name": "semicolon separator",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64;\"100\";\"\";\"\"\r\n"
+    },
+    {
+      "name": "unquoted value",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,100,\"\",\"\"\r\n"
+    },
+    {
+      "name": "(123) negative",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"(123)\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "thousands separator",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"1,234\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "decimal comma",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"12,50\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "scientific notation",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"1.5E3\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "scientific lower",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"1e21\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "reformatted date",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"2026/10/02\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "day-month date",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"02-10-2026\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "utf-8 accent",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"CafÃ© (Test)\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "header without guid",
+      "latin1": "[Riverdale Rentals Inc. (Test)],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"100\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "bad identifier",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\ngfgba.ttwgba64,\"100\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "identifier with a space",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA Ttwgba64,\"100\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "identifier copy index 0",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA[0].Ttwgba64,\"100\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "apostrophe text",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"'abc\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "apostrophe decimal",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"'1356.5\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "apostrophe negative decimal",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"'-12.50\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "lone apostrophe",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"'\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "apostrophe negative thousands",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"'-1,356\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "apostrophe inside digits",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"1'234\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "trailing apostrophe",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"12'\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "negative trailing apostrophe",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"-12'\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "two apostrophes",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"1'2'3\",\"\",\"\"\r\n"
+    },
+    {
+      "name": "text after closing quote",
+      "latin1": "[Riverdale Rentals Inc. (Test)|0|0|0aad6c0c-6444-466e-a247-ed6d63078cd2],\"Current Year\",\"Last Year\",\"\"\r\nGFGBA.Ttwgba64,\"100\"x,\"\",\"\"\r\n"
+    }
+  ]
+}

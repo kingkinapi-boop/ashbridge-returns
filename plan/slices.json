@@ -639,7 +639,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F01D",
@@ -666,7 +666,8 @@
       "title": "Schema and contract rules",
       "phase": 0,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -6197,7 +6198,8 @@
         "db/schema/60_versions.sql",
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
-        "src/pipeline/deps.ts"
+        "src/pipeline/deps.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -9939,7 +9941,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ2"
@@ -9957,10 +9959,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX8-findings.md, 3 Oct (A417)."
+      "note": "From reports/FX8-findings.md, 3 Oct (A417).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ3"
@@ -9977,7 +9980,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/CQ3-check.md, 3 Oct (A428)."
+      "note": "From reports/CQ3-check.md, 3 Oct (A428).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10382,7 +10386,7 @@
       "note": "Split from FX7, 3 Oct (A415)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10399,7 +10403,8 @@
       "size": "S",
       "core": false,
       "security": true,
-      "note": "Seen in DB16's spec run, 3 Oct (A421)."
+      "note": "Seen in DB16's spec run, 3 Oct (A421).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",

@@ -1,0 +1,3 @@
+-- Clean (SC R16): the identity seq comes first.
+create view returns.latest_state_events as
+  select * from returns.state_events order by seq desc, created_at desc, id desc;
