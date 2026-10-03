@@ -2,12 +2,12 @@
 // clock reset after every test, so isolate:false leaks nothing between files.
 import { afterEach, beforeAll } from 'vitest'
 import { systemClock, setClock } from '../clock'
-import { closeClones, createTemplate, hasActiveTemplate, setActiveTemplate } from './index'
+import { closeClones, hasActiveTemplate, openTemplate, setActiveTemplate } from './index'
 
 // hookTimeout in vitest.config.ts covers this boot (measured there).
 beforeAll(async () => {
   if (hasActiveTemplate()) return
-  setActiveTemplate(await createTemplate())
+  setActiveTemplate(await openTemplate())
 })
 
 afterEach(async () => {
