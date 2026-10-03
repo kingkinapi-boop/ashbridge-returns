@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:28Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:40Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -19,13 +19,14 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:28Z by the Lea
 | W16, SC6 | specs reopened (A408: 3 and 6 gaps); SC6 now depends on W16 | spec, build, check |
 | SC | spec reopened (A407: exact KNOWN, owners FX3 to FX8) | spec, build re-run, check with Opus read |
 | SC4 | refit spec reported 04:25Z | build, check |
-| S00, FX5, A04 | round 2 specs reported; one Opus review of all three running, builds held | GO: reopen builds |
+| S00, FX5 | round 2 specs GO (A410); builds open | build, check |
+| A04 | spec round 3 reopened (A410: 7 gaps, env.ts in Paths) | spec, build, check, security review |
 | DB16 | spec reported (34 tests; PG16 path never run); Opus spec review running, build held | GO: reopen build |
 | FX2 | build working (cloud) | check |
 | CQ2 | check PASS | board on the next train |
 | JH0 | spec reported | build after W00c lands |
 
-Cloud runs fired 04:28Z: 4 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). No local workers running: npm ci first (after the S00/FX5/A04 review ends), then up to 3 local Opus workers.
+Cloud runs fired 04:28Z: 4 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). No local workers running: npm ci running 04:40Z, then up to 3 local Opus workers.
 
 ## Next, in order
 
