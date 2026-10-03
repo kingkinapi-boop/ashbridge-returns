@@ -2,10 +2,9 @@
  "card": "SC3",
  "role": "spec",
  "note": "toolchain refit: six multi-world db tests split (db-budget); pg16 R65 serialised twin still fails (build, A500)",
- "worker": "cloud-181f22",
- "state": "reopened",
- "at": "2026-10-03T17:34:32.420Z",
- "mode": "turbo",
- "commit": "f0dde579",
- "validated": "e44251d"
+ "reopenedFrom": "f0dde579",
+ "worker": "cloud-6345e6",
+ "state": "working",
+ "at": "2026-10-03T18:04:22.419Z",
+ "mode": "turbo"
 }
