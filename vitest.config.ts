@@ -37,6 +37,8 @@ export default defineConfig({
           setupFiles: ['src/core/test-no-network.ts', 'src/core/db/vitest-setup.ts'],
           // isolate:false: the template lives once per worker, not once per file.
           isolate: false,
+          // DB16: roles belong to the Postgres cluster, not to a database, so files run one at a time on it.
+          fileParallelism: process.env['TEST_DB'] !== 'pg16',
           // hookTimeout: measured on the cloud machine, 10 cold runs (1 Oct): boot p95 2.8 s, so 3x = 8.4 s; floor 30 s.
           // Laptop (3 runs through tools/heavy.mjs) not yet measured: the Lead adds it.
           hookTimeout: 30_000,
