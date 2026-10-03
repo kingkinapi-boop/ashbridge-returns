@@ -4,8 +4,9 @@
  "round": 3,
  "spec": "9ae225c64fa9c94d8a66e3c72c8125a93f3db223",
  "worker": "cloud-1fcc74",
- "state": "working",
- "at": "2026-10-03T15:43:58.373Z",
+ "state": "reported",
+ "at": "2026-10-03T16:10:40.902Z",
  "mode": "turbo",
- "beat": "2026-10-03T16:08:28.129Z"
+ "beat": "2026-10-03T16:08:28.129Z",
+ "note": "round 3: 7646 unit pass; mutation and flake NOT run (dry run times out on the determinism test at 5 s), see reports/W00c-build.md"
 }
