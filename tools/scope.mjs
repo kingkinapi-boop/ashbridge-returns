@@ -1,4 +1,5 @@
 // Does a branch touch only its card's paths? Exit 0 clean, 1 outside, 2 usage.
+// It reads origin/claude/<card>, never HEAD (exit 2 when that branch is missing).
 // Usage: node tools/scope.mjs <card> [base, default origin/main or main] [--board]
 // Also allowed without counting as outside: every file a `spec(<card>):` commit touched (spec-writer step 7),
 // the name patterns (*.acceptance.test.ts, __golden__/) and any test or golden paths the card file lists.
@@ -31,9 +32,20 @@ if (!base) {
     base = 'main'
   }
 }
+// CQ2 rule 4: the card's own branch, whatever the current checkout.
+const ref = `origin/claude/${id}`
+try {
+  git('fetch', '-q', 'origin', `+refs/heads/claude/${id}:refs/remotes/${ref}`)
+} catch {}
+try {
+  git('rev-parse', '--verify', '-q', `refs/remotes/${ref}`)
+} catch {
+  console.error(`branch ${ref} is missing: push claude/${id} first`)
+  process.exit(2)
+}
 let files
 try {
-  files = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean)
+  files = git('diff', '--name-only', `${base}...${ref}`).split('\n').filter(Boolean)
 } catch {
   console.error(`git diff against ${base} failed`)
   process.exit(2)
@@ -74,7 +86,7 @@ const testGlobs = ['**/*.acceptance.test.ts', '**/__golden__/**', ...listedTestP
 // Spec files by commit: walk the branch's own commits oldest first.
 const specFiles = new Set()
 const edited = []
-const commits = git('log', '--no-merges', '--reverse', '--format=%H%x09%s', `${base}..HEAD`)
+const commits = git('log', '--no-merges', '--reverse', '--format=%H%x09%s', `${base}..${ref}`)
   .split('\n')
   .filter(Boolean)
   .map((l) => {
