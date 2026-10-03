@@ -1,11 +1,11 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 16:30Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 16:58Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, "turbo on" 13:26Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 78% of the week at 15:42Z, about 4% an hour: the limit comes about 21:00Z; then pause until Zo's saved reset and `go`.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims); 4 runs fired 16:25Z (train 2b and the queue). Laptop (decision 0026): designers 1 to 3; SC10 findings review (15:38Z); SC3 findings review and SC6 spec review (16:31Z).
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims); 4 runs fired 16:25Z (train 2b and the queue). Laptop (decision 0026): designers 1 to 3; SC10 findings review (15:38Z); SC3 findings review and SC6 spec review (16:31Z); G18 and GL3 spec reviews (16:58Z).
 - **Landed (59):** train 725bc456 at 15:20Z. Train 2 (6587e0a0) red on SC3's tests only (A500); train 2b (A04, CQ8, CQ9, CQ12) at 092598f3 requested 16:23Z.
 - **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
 
@@ -17,10 +17,10 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 16:30Z by the Lea
 | W00c | round 3 check FAIL on items 1 to 5 only (RC-A, RC-C): split to W00d (A501) | after train 2b lands: `claim.mjs update W00c build reported --worker lead` (fresh check of 75556283: npm test, mutation 100, flake, Opus read); land on PASS |
 | SC3 | train 2 red on its tests (inventory lacks A04's create* exports; 6 db tests over FX12's budget; pg16 R65 twin let 4 of 6 through); build hold-findings | findings review (local Opus, from 16:31Z); then its round, Opus re-check, security re-review; FX17's build waits for SC3 |
 | SC6 | spec patch reported (71 tests; N01.md fixed on main, A501) | Opus spec review (local, from 16:31Z), then reopen the build; Opus check |
-| SC11 | round 2 spec reopened 16:23Z (A500: DB16.md restore, R116, R117) | spec reports: reopen the build (B1, B2); Opus read; security review; board |
+| SC11 | round 2 spec reported (ffa2f8f3, 12 tests; DB16.md matches main); build reopened 16:57Z | Opus read; security review; board |
 | SC10 | Opus read FAIL, 7 items (local sc10-read e68b2986); build hold-findings | findings review (local Opus, from 15:38Z): Lead plan edits, then a spec patch |
-| GL3 | round 4 spec working (A498) | reopen the build (B1 to B6); Opus check; fresh security review; board |
-| G18 | round 2 spec reopened 16:10Z (A499: core, R1 R2 R3 R6, 39 pins) | spec reports: reopen the build (Opus, data only); third Opus check |
+| GL3 | round 4 spec reported (6cf7b79b, 17 new tests) | Opus spec review (local, from 16:58Z; the last round); then reopen the build (B1 to B6); Opus check; fresh security review; board |
+| G18 | round 2 spec reported (df75d400, 75 tests) | Opus spec review (local, from 16:58Z; core); then reopen the build (Opus, data only); third Opus check |
 | CQ11 | spec reopened 16:23Z (A500: R82 clean merges) | build after CQ8 lands |
 | FX8 | A493 spec patch reported | build after W00c lands (known.json, A481); then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | FX17, A04C | FX17 spec reported; A04C spec reported | FX17 build after SC3 lands; A04C build after A04 lands, Opus check |
