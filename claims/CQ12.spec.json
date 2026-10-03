@@ -1,11 +1,10 @@
 {
  "card": "CQ12",
  "role": "spec",
- "worker": "cloud-a2c0b4",
- "state": "reopened",
- "at": "2026-10-03T15:19:48.315Z",
- "mode": "turbo",
  "note": "toolchain refit after FX12, plus the A495 directive at the top of the card",
- "commit": "ef4f933",
- "validated": "310ffa6029417e879f78fd6a02f0151f264aeb39"
+ "reopenedFrom": "ef4f933",
+ "worker": "cloud-da95a7",
+ "state": "working",
+ "at": "2026-10-03T15:23:51.832Z",
+ "mode": "turbo"
 }
