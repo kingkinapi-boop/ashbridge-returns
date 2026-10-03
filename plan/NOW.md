@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:58Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:15Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -17,18 +17,18 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:58Z by the Lea
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| SC | build reported (110 of 110) | check on a cloud box (npm test, db, test:flake) with Opus read |
+| SC | check PASS; boarded (train eb2ee8f) | next train |
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 4 spec reported (26 tests, 11 fail); build open (A427) | build runner.ts, check, security review |
-| DB16 | round 4 build reported (target.ts 100, pg16 565, flake 5 of 5) | check (Opus read), security review, board |
+| A04 | round 4 build reported (126 unit, mutation 100); check working | security review, board |
+| DB16 | findings 4 (A441): one final round; SC11 carded (R90 to R92, new parity cases) | spec patch T1 to T5 (Opus), build round 5, check, security review |
 | JH0 | spec reported | build after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6, FX8 | W16 landed: their wait lifts | spec (FX8 on claude/FX8-r2) |
-| FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
-| CQ4 to CQ8, SC10 | CQ3 landed; CQ4 build round 2 working (local-1); CQ5 build open; CQ6, CQ7, CQ8, SC10 carded | CQ4 lands before the S00 and DB16 checks |
+| FX10, FX12 | FX10 build reported (no product change); check for a cloud box; FX12 carded | FX10 check, security review; FX12 after |
+| CQ4 to CQ8, SC10 | CQ4 and CQ5 builds reported, checks working; CQ8 gains the cloud-only rule (A440) | board; CQ4 lands before the S00 and DB16 checks |
 
-Cloud runs: 2 at 07:42Z (SC check, DB16 check); 4 at 08:02Z (A04, FX10, W00c, CQ5 builds; FX8, SC6 specs reopened). Local: local-1 (CQ4 build), local-2 and local-3 (Opus, from 08:03Z).
+Cloud runs: 6 fired 07:42Z to 08:08Z (W00c build; A04, CQ4, CQ5 checks; SC3 build reopened for cloud). Local: local-2 (FX8 spec); local-1 and local-3 done.
 
 ## Next, in order
 
@@ -56,5 +56,5 @@ Cloud runs: 2 at 07:42Z (SC check, DB16 check); 4 at 08:02Z (A04, FX10, W00c, CQ
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`.
 - Commit no new Taxprep CSV to main before FX9 lands (SC's R37, A415).
-- A check released twice at one tip is held "needs Lead": re-release it with a note starting "wait:" to offer it again (07:40Z).
+- A job released twice at one tip is held "needs Lead": re-release a check with a note starting "wait:", reopen a spec or build (07:40Z). Local workers skip Where: cloud cards (FX10, SC6): tell them to leave those untouched.
 - Never kill processes by name. Another Lead works in ashbridge-app: read-only there.
