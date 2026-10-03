@@ -2,11 +2,11 @@
  "card": "A04",
  "role": "spec",
  "worker": "local-1",
- "state": "reported",
- "at": "2026-10-03T05:12:07.081Z",
+ "state": "reopened",
+ "at": "2026-10-03T05:16:06.197Z",
  "mode": "turbo",
  "beat": "2026-10-03T04:52:56.213Z",
- "note": "98 unit + 5 db tests (round 3: 24 new, 20 fail first on the round 1 build); reports/A04-spec.md",
+ "note": "A420: reports/A04-spec-review-3.md; see bold directive",
  "commit": "fb82b8c8",
  "validated": "b277a240"
 }
