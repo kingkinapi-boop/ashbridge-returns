@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { readSettings } from '../../core/env'
+import { readOwnSource } from '../../core/testing/read-own-source'
 import { createDriveStandIn, createFileStore } from './index'
 import { C01, C01_YEAR, copyFixture, failure, tempDir } from './__fixtures__/harness'
 
@@ -124,10 +125,19 @@ describe('FX2 env.ts declares the storage settings', () => {
     expect(blank['STORAGE_DRIVE_ENGINE']).toBeUndefined()
   })
 
-  test('ARC-20 no storage module reads process.env or env[...] for an engine (reads go through env.ts)', () => {
-    for (const f of ['files/index.ts', 'drive/index.ts', 'safe.ts']) {
-      const src = fs.readFileSync(path.join(__dirname, f), 'utf8')
-      expect(src, f).not.toMatch(/env\[\s*name\s*\]|process\.env/)
-    }
+  // Through readOwnSource, so the scan holds inside Stryker's sandbox (testing.md, FX2 findings RC2).
+  // Round 2 (A414): the auth factory is scanned too; it read AUTH_ENGINE through `opts.env ?? process.env`.
+  test('ARC-20 no storage or auth module reads process.env or env[...] for an engine (reads go through env.ts)', () => {
+    const files = [
+      'src/modules/storage/files/index.ts',
+      'src/modules/storage/drive/index.ts',
+      'src/modules/storage/safe.ts',
+      'src/modules/auth/index.ts',
+    ]
+    const read = files.map((f) => [f, readOwnSource(f)] as const)
+    expect(read.map(([f]) => f), 'every file read').toHaveLength(4)
+    expect(read.find(([f]) => f === 'src/modules/auth/index.ts')?.[1], 'read the auth factory itself').toMatch(/export async function createAuth\b/)
+    const problems = read.filter(([, src]) => /env\[\s*name\s*\]|process\.env/.test(src)).map(([f]) => f)
+    expect(problems).toEqual([])
   })
 })

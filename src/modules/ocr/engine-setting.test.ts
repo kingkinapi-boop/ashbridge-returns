@@ -1,10 +1,9 @@
 // FX2 acceptance tests: OCR_ENGINE is declared in src/core/env.ts and a production deploy that forgets it refuses (SEC-11, ARC-6, ARC-20).
 // Same pattern as A06's AUTH_ENGINE: the stand-in is the default outside production; NODE_ENV=production with the setting unset throws a message naming the setting.
-import fs from 'node:fs'
-import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { fixedClock, getClock, setClock, type Clock } from '../../core/clock'
 import { readSettings } from '../../core/env'
+import { readOwnSource } from '../../core/testing/read-own-source'
 import { createReadingAdapter } from './index'
 import { expected, failure, fixtureDoc, tempDir, wordProblems } from './textlayer/__fixtures__/harness'
 
@@ -84,7 +83,10 @@ describe('FX2 env.ts declares the engine settings', () => {
   })
 
   test('ARC-20 no module reads process.env for an engine (reads go through env.ts)', () => {
-    const src = fs.readFileSync(path.join(__dirname, 'index.ts'), 'utf8')
+    // Through readOwnSource: index.ts is @mutate, and inside Stryker's sandbox its copy carries the
+    // instrumenter's own process.env reads (testing.md, FX2 findings RC2).
+    const src = readOwnSource('src/modules/ocr/index.ts')
+    expect(src, 'read the OCR factory itself').toMatch(/export function createReadingAdapter/)
     expect(src).not.toMatch(/env\[\s*['"]OCR_ENGINE['"]\s*\]/)
     expect(src).not.toMatch(/process\.env/)
   })
