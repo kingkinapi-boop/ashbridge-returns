@@ -120,19 +120,14 @@ const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms
 export const DEADLINE_REASON = 'no result from the Claude project before the lease ends (ARC-22)'
 const REFUSED_BY_PROJECT = 'the Claude project refused the job: '
 
-type Own = { done: true; result: EngineResult } | { done: false }
-
 /** The own file is not what a result looks like: the job fails at once, naming the file and the cause (never content). */
-const ownFails = (jobId: string, cause: string): Own => ({
-  done: true,
-  result: refuse(`the outbox file ${jobId}.json is ${cause} (ARC-22)`),
-})
+const ownFails = (jobId: string, cause: string): EngineResult => refuse(`the outbox file ${jobId}.json is ${cause} (ARC-22)`)
 
-/** This job's own outbox file: a result or a refusal ends the wait; anything else at that name fails the job. */
-function readOwn(jobId: string, outbox: string): Own {
+/** This job's own outbox file: a result or a refusal ends the wait; anything else at that name fails the job; none yet is undefined. */
+function readOwn(jobId: string, outbox: string): EngineResult | undefined {
   const read = readRegularFile(path.join(outbox, `${jobId}.json`), OUTBOX_MAX_BYTES)
   if (!read.ok) {
-    if (read.reason === 'gone') return { done: false }
+    if (read.reason === 'gone') return undefined
     return ownFails(jobId, read.reason === 'too-big' ? `too big (more than ${String(OUTBOX_MAX_BYTES)} bytes)` : 'not a file')
   }
   const json = tryParse(read.text)
@@ -140,19 +135,19 @@ function readOwn(jobId: string, outbox: string): Own {
   const result = OutboxFileSchema.safeParse(json.value)
   if (result.success) {
     if (result.data.jobId !== jobId) return ownFails(jobId, 'for another job')
-    return { done: true, result: { ok: true, output: result.data.output, stamp: result.data.stamp } }
+    return { ok: true, output: result.data.output, stamp: result.data.stamp }
   }
   const refusal = OutboxRefusalSchema.safeParse(json.value)
   if (!refusal.success) return ownFails(jobId, 'not one result or refusal')
   if (refusal.data.jobId !== jobId) return ownFails(jobId, 'for another job')
   const { reason, problems, stage } = refusal.data.refusal
-  return { done: true, result: { ok: false, reason: `${REFUSED_BY_PROJECT}${reason}`, problems, counted: stage === 'output' } }
+  return { ok: false, reason: `${REFUSED_BY_PROJECT}${reason}`, problems, counted: stage === 'output' }
 }
 
 /** Every other entry in the outbox is looked at, never opened, and logged once by quoted name, size and time. */
-function logStrangers(jobId: string, ctx: EngineContext, outbox: string): void {
+function logStrangers(ctx: EngineContext, outbox: string): void {
   for (const name of fs.readdirSync(outbox)) {
-    if (name === `${jobId}.json` || (ctx.waiting.get(path.parse(name).name) ?? 0) > 0) continue
+    if (ctx.waiting.has(path.parse(name).name)) continue
     let looked: fs.Stats
     try {
       looked = fs.lstatSync(path.join(outbox, name))
@@ -168,8 +163,7 @@ function realFolder(root: string, name: 'inbox' | 'outbox'): string | undefined 
   const dir = path.join(root, name)
   try {
     fs.mkdirSync(dir, { recursive: true })
-    const looked = fs.lstatSync(dir)
-    if (looked.isDirectory() && fs.realpathSync(dir) === path.join(fs.realpathSync(root), name)) return dir
+    if (fs.realpathSync(dir) === path.join(fs.realpathSync(root), name)) return dir
   } catch {
     return undefined
   }
@@ -206,19 +200,22 @@ async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult>
   const staging = path.join(exchangeDir, `.staging-${jobId}-${crypto.randomBytes(8).toString('hex')}.json`)
   fs.writeFileSync(staging, JSON.stringify(inboxFile, null, 2), { flag: 'wx' })
   fs.renameSync(staging, path.join(inbox, `${jobId}.json`))
-  ctx.waiting.set(jobId, (ctx.waiting.get(jobId) ?? 0) + 1)
+  const pollers = (by: 1 | -1): void => {
+    const n = (ctx.waiting.get(jobId) ?? 0) + by
+    if (n > 0) ctx.waiting.set(jobId, n)
+    else ctx.waiting.delete(jobId)
+  }
+  pollers(1)
   try {
     for (;;) {
       if (ctx.now().getTime() >= ctx.deadline.getTime()) return refuse(DEADLINE_REASON)
       const own = readOwn(jobId, outbox)
-      if (own.done) return own.result
-      logStrangers(jobId, ctx, outbox)
+      if (own !== undefined) return own
+      logStrangers(ctx, outbox)
       await sleep(ctx.pollMs)
     }
   } finally {
-    const left = (ctx.waiting.get(jobId) ?? 1) - 1
-    if (left > 0) ctx.waiting.set(jobId, left)
-    else ctx.waiting.delete(jobId)
+    pollers(-1)
   }
 }
 
