@@ -29,7 +29,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 19:10Z by the Lea
 | FX17, A04C | FX17 spec reported (re-merges main after SC3, A504); A04C spec reported | FX17 build after SC3 lands; A04C build after A04 lands, Opus check |
 | W00b, A08, FX6, FX18, SC5, SC12 | held `wait:` | reopen when W00c, A04, SC3, SC11 or SC5's deps land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
-| Design lane | base claude/design-base; rulings A485 | designers 1 (D13, D04), 2 (D03 B+), 3 (D02) local; then a panel per family; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
+| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), panel running locally; designers 2 (D03 B+), 3 (D02) local; then a panel each; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
 
 ## Next, in order
 
