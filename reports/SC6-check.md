@@ -1,18 +1,17 @@
-# SC6 check (cloud-a2c0b4) on claude/SC6 7f6d200a: FAIL
+# SC6 check (cloud-165f9c) on claude/SC6 77d11040: FAIL
 
-Passed: typecheck, lint, deps:check, spec diff since c526b32d empty, scope clean, npm test (120 files, 2811 tests), db project on PGlite (608 pass), card-rules 33 of 33, mutate:canary scores. No `@mutate` files in the diff. pg16 and e2e not run (no db or screen code in the diff). KNOWN is empty.
+Passed: typecheck, lint, deps:check, scope clean, npm test (unit, then db on PGlite: 662 passed, 1 expected fail, 5 skipped), 111 of 111 spec-rules tests. No `@mutate` files. pg16 and e2e not run (no db or screen code). KNOWN empty. Landing form (live, SC6 done, every card done) gives 0 scan problems in the Opus read's in-memory simulation.
 
-## Failures (Opus adversarial read; each reproduced with a scratch copy of the rule functions)
-1. Landing trap (card-rules.test.mjs:631, :746): R77 and R81 scans use `plan/cards/SC6.md` as sentinel, but `openCards()` drops done cards, so both go red once SC6 is done. `.filter((c) => c.src)` at :78 silently drops an open card with no source file; nothing asserts none were dropped.
-2. R77 reads only a sentence starting with "Build" (BUILD_START :249-262). Real bold directives start "**Lead directive, <date> (Annn): build round N ...**" and give orders in later sentences: these return []: `**Lead directive, 3 Oct (A999): build round 2.** Rewrite README.md counts.`; `**Lead directive, 3 Oct: Build rewrites README.md counts.**`; `## Fix round 1` + `- Rewrite README.md counts (build).`; "Builders rewrite README.md"; "Rebuild: rewrite README.md"; `### Build` (sections() splits only on `##`).
-3. R77 clauses (:234-246): passive build clause after a spec clause dropped ("README.md counts are rewritten by the build"; "rewritten" not in OWN_VERB).
-4. R77 misses spec-owned files named by folder (`tools/test/__fixtures__/x/` vs `.../a.json`) or as `e2e/x.spec.ts` (isExpectationFile lacks `.spec.`).
-5. Not case-blind for README: `base === 'README.md'` exact; `Readme.md` / `readme.md` unchecked in R77 and R81.
-6. R81 counts a negated mention as ownership (:329-339): Spec saying only "Never touch verify.mjs." passes.
-7. R78 matches per line (:396): a `spawnSync('git', [\n 'diff',\n 'main', ...])` split across lines slips.
-8. Other R78 slips: `refs/heads/main`, `FETCH_HEAD`, `HEAD@{1}`, ref in a variable, "folders 01 to 10 are the same as on main", "unchanged versus main", code lines starting with `*` treated as comments; pinned hashes caught only as 64-hex (40-hex, split hex, `sha256-` base64 pass); GIT_SUB (:356) hand list lacks show-ref, for-each-ref, describe, grep, archive.
-9. R81 narrower than the card: goldens are exempt (NEEDS_NAMED_OWNER :323 covers verify scripts and READMEs only).
+## Failures (Opus adversarial read, each reproduced with in-memory copies of the rule functions)
+1. G2, spec-rules.test.mjs:404-405 vs :387-388: the verbs that start a fresh clause lack modify, touch and refresh (modify and touch are in the editing-verb list). In a Build section "Never edit verify.mjs, and modify README.md counts." gives no failure; same for "; touch ..." and "; refresh ...". The same with "rewrite" fails correctly.
+2. G2, :395: only the exact "never/not/n't forget|fail to" forms are exempt from negation. "without forgetting to update <file>", "never failing to update <file>" and "do not ever forget to update <file>" are dropped with no failure. The plant "don't forget to rewrite <file>" (:1491) already fails under round 1's rules, so it does not fail first.
+3. G6 c, :856-862: "any git call naming main or master fails" misses `git diff main~1`, `main^`, `master~2`, `heads/main`; and `execSync('git init -q && git diff --quiet main ...')` is exempt as a whole because its first subcommand is init.
+4. G6 a, :950-955 with :804-814: any string starting "git init" counts as an init call and mkdtemp counts inside a string. A test with mkdtempSync, describe('git init flow (Test)') and git diff origin/main on the real repo is exempt. The check at :2051 uses the same reader, so it proves nothing. No file on main is wrongly exempt today (all 12 have a real init call).
 
-Rule candidate: a rule test's sentinel must be a card that stays open, and every scan asserts it dropped nothing.
+Weak points (not graded): G3 is judged per sentence, so another clause can name the job ("Rewrite README.md counts, then the checker reruns it."); "the spec review" and "spec commit" read as naming the spec job. Grammar coverage checks the reader against itself and cannot fail on live cards except a "Who does what" heading; "Goldens:", "**Build**:", "## Specification" go unnamed (a scan of 262 open cards found no missed label with bullets). Label words (:340) lack specs, spec-writer, goldens, fixture. A blank line or wrapped bullet ends a label's reach. "Rewrite README.md counts that the spec did not update." is dropped.
 
-Model: Sonnet 5.5 checker; adversarial read by an Opus subagent. Permission gaps: none.
+Fix list for the findings review: add modify, touch, refresh to fresh-clause verbs; extend the forget/fail exemption to forgetting, failing, "not ever"; make the main/master check cover ~N, ^, heads/main and read each git command in a shell chain separately; count init only in a real git call and mkdtemp only in code.
+
+Rule candidate: a plant for a grammar item must fail under the previous rules first, and each list of verbs must be derived from one shared list, not copied.
+
+Model: Sonnet 5.5 checker; adversarial read by an Opus subagent (its own report file was refused by the protect-spec hook; the text is above). Permission gaps: Opus subagent could not Write /tmp/sc6-opus.md (hook), not retried another way.
