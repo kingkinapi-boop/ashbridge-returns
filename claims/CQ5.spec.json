@@ -1,11 +1,9 @@
 {
  "card": "CQ5",
  "role": "spec",
- "worker": "local-2",
- "state": "reported",
- "at": "2026-10-03T06:54:55.942Z",
- "mode": "turbo",
- "note": "3 tests (2 fail on main: both workers CLAIMED X; 1 over-fix guard); race planted by preload; reports/CQ5-spec.md",
- "commit": "756760ac23b64c7e5a7b477e08e1d06848e1541b",
- "validated": "50fcaf4382b0a0e0e8c4f1c7"
+ "note": "toolchain refit",
+ "worker": "cloud-f95290",
+ "state": "working",
+ "at": "2026-10-03T06:55:11.682Z",
+ "mode": "turbo"
 }
