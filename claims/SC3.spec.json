@@ -2,10 +2,9 @@
  "card": "SC3",
  "role": "spec",
  "note": "A443: see card directive",
- "worker": "cloud-286042",
- "state": "reopened",
- "at": "2026-10-03T08:25:24.098Z",
- "mode": "turbo",
- "commit": "edf23e0",
- "validated": "d19d4bc"
+ "reopenedFrom": "edf23e0",
+ "worker": "cloud-a98eee",
+ "state": "working",
+ "at": "2026-10-03T08:27:46.302Z",
+ "mode": "turbo"
 }
