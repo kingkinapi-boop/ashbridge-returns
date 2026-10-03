@@ -5,10 +5,11 @@
  "spec": "bd0e2fe2",
  "worker": "cloud-aab122",
  "state": "released",
- "at": "2026-10-03T15:19:43.463Z",
+ "at": "2026-10-03T16:31:59.350Z",
  "mode": "turbo",
- "note": "merged with train 725bc456; the card stays open for round 3 after FX4 (A494)",
+ "note": "wait: round 3 comes after FX4 lands in the known.json order (A481, A494); the Lead reopens the spec first",
  "lastRelease": {
   "tip": "90e1c9ae8ec84a8ab51a86075fe7c4c321c2fa97"
- }
+ },
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"F02\",\"SC\"],\"depStatus\":[\"done\",\"done\"]}"
 }
