@@ -7,7 +7,7 @@ Tags: core (citations and amounts: every figure a spreadsheet gives is checked a
 Paths: src/modules/sheets/**, src/contracts/sheets.ts, tools/test/reading-rules.test.mjs, tools/test/__fixtures__/schema-contract/known.json
 Clauses: EV-14, EV-5, EV-6, ARC-10, END-8
 Read: `reports/A07D-opus-read.md` (all), `plan/cards/A07D.md`, `plan/cards/SC4.md`, `.claude/rules/testing.md`.
-Spec commit: 63df226e (15 tests in src/modules/sheets/fx4-sums and fx4-slide acceptance files; FX4's 14 KNOWN entries removed from tools/test/reading-rules.test.mjs), validated on main 25fc96d0. SC's 11 FX4 entries in schema-contract/known.json wait for SC to land (reports/FX4-spec.md)
+Spec commit: 5005db5c (patch A434: 40 tests in src/modules/sheets/fx4-sums, fx4-walks, fx4-slide and fx4-engine acceptance files, golden __golden__/reader-rules.1.json; round 1 63df226e removed FX4's 14 KNOWN entries from tools/test/reading-rules.test.mjs), validated on main 83737283. SC's 11 FX4 entries in schema-contract/known.json wait for SC to land (reports/FX4-spec.md)
 
 ## Goal
 A07D lands with five findings from its Opus read (amber A393), none a wrong figure below $10 trillion. This card closes them, and only them. Landing rule (as A07D): if a fix fails its check once, the fallback is a removal (leave the figure unsnapped, or keep the formula text from the cell as written), never another round.
