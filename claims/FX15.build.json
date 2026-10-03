@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "46f870ed",
  "worker": "cloud-4eee2d",
- "state": "working",
- "at": "2026-10-03T09:29:49.706Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T09:32:22.681Z",
+ "mode": "turbo",
+ "note": "49 of 49 jobs tests pass (39 on pg16)"
 }
