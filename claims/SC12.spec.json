@@ -2,10 +2,10 @@
  "card": "SC12",
  "role": "spec",
  "worker": "cloud-dfeb44",
- "state": "reported",
- "at": "2026-10-03T10:55:20.711Z",
+ "state": "reopened",
+ "at": "2026-10-03T12:48:47.395Z",
  "mode": "turbo",
- "note": "23 tests, 9 KNOWN (FX7, FX11)",
+ "note": "A466, A469: R104 to R106",
  "commit": "79217eec6da7f8bcceba824d534500ddf07a6290",
  "validated": "1bc0d4266162d42059d2fa1a1df7e6a5274be25f"
 }
