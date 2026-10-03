@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:32Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:46Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -18,17 +18,17 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:32Z by the Lea
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
 | SC, CQ4, CQ5 | checks PASS; boarded (train f164b1b) | train with A04 if it passes, about 09:00Z |
-| SC3 | build stopped: R62 KNOWN stale after FX2 (A443) | spec patch, build round 2, check, security review |
+| SC3 | spec patch reported (22 of 22 with tags in); build round 2 open | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 4 build reported (126 unit, mutation 100); check working | security review, board |
-| DB16 | findings 4 (A441): one final round; SC11 carded (R90 to R92, new parity cases) | spec patch T1 to T5 (Opus), build round 5, check, security review |
-| JH0 | spec reported | build after W00c lands |
+| A04 | round 4 check FAIL (4 security: path traversal, outbox reads, endless poll, isTest trust); findings review 5 running | verdict; A08 spec held for it |
+| DB16 | final round: spec T1 to T5 reported; build round 5 open (A441) | build, check, security review |
+| JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
-| FX10, FX12, FX14 | FX10 check working; FX12 spec reported, owner renamed FX14 (A443); FX14 carded | FX10 security review, board; FX12 spec patch, build |
+| FX10, FX12, FX14 | FX10 check PASS, security review running; FX12 spec patch reported, build open; FX14 carded | board FX10; FX12 build |
 | CQ6 to CQ8, SC10, A08 | CQ6, CQ7, CQ8 specs reported; A08 spec reported, refusal-file gap to its spec (A443) | CQ builds after CQ4 and CQ5 land; A08 after A04 |
 
-Cloud runs: 6 fired 07:42Z to 08:08Z (W00c build; A04, CQ4, CQ5 checks; SC3 build reopened for cloud). Local: none running (local-1 to 3 done).
+Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helpers: A04 findings review 5, FX10 security review.
 
 ## Next, in order
 
