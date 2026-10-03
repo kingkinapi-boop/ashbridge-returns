@@ -1708,6 +1708,40 @@
     },
     "netIncomeLossBeforeTax": 148734.1
   },
+  "assets": [
+    {
+      "description": "Studio furniture and equipment brought forward",
+      "glAccount": "1530",
+      "accumAccount": "1531",
+      "class": "8",
+      "cost": 7400,
+      "availableForUse": "2021-10-01",
+      "book": {
+        "method": "straight-line",
+        "years": 5,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    },
+    {
+      "description": "Computers brought forward",
+      "glAccount": "1530",
+      "accumAccount": "1531",
+      "class": "50",
+      "cost": 1200,
+      "availableForUse": "2021-10-01",
+      "book": {
+        "method": "straight-line",
+        "years": 5,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    }
+  ],
   "t2Inputs": {
     "netIncomeLossPerBooksBeforeTax": 148734.1,
     "schedule1": {
@@ -1737,12 +1771,12 @@
       "openingUcc": [
         {
           "class": "8",
-          "ucc": 3440,
+          "ucc": 3315.2,
           "note": "made-up"
         },
         {
           "class": "50",
-          "ucc": 1210,
+          "ucc": 42.52,
           "note": "made-up"
         }
       ],
