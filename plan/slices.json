@@ -3058,7 +3058,7 @@
       "paths": [
         "src/modules/qbo/**",
         "src/contracts/qbo.ts",
-        "db/schema/35_qbo.sql",
+        "db/schema/56_qbo.sql",
         "testworld/qbo/export.ts",
         "src/core/env.ts"
       ],
@@ -9560,7 +9560,7 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "N01",
@@ -9570,17 +9570,29 @@
       ],
       "paths": [
         "src/modules/learning/causes/_ai/**",
-        "data/ai/evals/sets/cause_proposal.json"
+        "data/ai/evals/sets/cause_tag.json",
+        "db/schema/93_cause_proposals.sql",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
-        "LL-4"
+        "LL-4",
+        "AI-1",
+        "AI-4",
+        "AI-6",
+        "AI-7",
+        "AI-8",
+        "AI-10",
+        "AI-11",
+        "SEC-7",
+        "ARC-10"
       ],
       "id": "N19",
       "title": "AI cause proposal, unconfirmed (LL-4)",
       "phase": 4,
       "size": "M",
       "core": true,
-      "note": "No card owned LL-4's last sentence: AI proposes a cause only when no rule applies, marked unconfirmed (reports/cards-D11-GL1-draft.md, A444). Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps N01, I00, A04, I40; Paths src/modules/learning/causes/_ai/** and data/ai/evals/sets/cause_proposal.json (AI-11, as V13 fix 19); core. Writes only confirmed_by = 'ai' cause rows marked unconfirmed, never over a code cause (LL-4); citations checked by I00's code (AI-7)."
+      "note": "No card owned LL-4's last sentence: AI proposes a cause only when no rule applies, marked unconfirmed (reports/cards-D11-GL1-draft.md, A444). Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps N01, I00, A04, I40; Paths src/modules/learning/causes/_ai/** and data/ai/evals/sets/cause_proposal.json (AI-11, as V13 fix 19); core. Writes only confirmed_by = 'ai' cause rows marked unconfirmed, never over a code cause (LL-4); citations checked by I00's code (AI-7). Carded 3 Oct (A448): eval set named cause_tag.json after the F04 step type (I40 names sets by step); 93_cause_proposals.sql holds the stamp; handlers.ts for the ai:cause_tag job.",
+      "security": true
     },
     {
       "status": "carded",
@@ -9726,52 +9738,59 @@
       "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "N20",
         "T10",
-        "T14"
+        "T14",
+        "N19"
       ],
       "paths": [
-        "db/live/**"
+        "db/live/**",
+        "src/modules/golive/schema/**"
       ],
       "clauses": [
         "LIVE-4",
-        "SEC-6"
+        "SEC-6",
+        "ARC-3",
+        "SEC-11"
       ],
       "id": "GL2",
       "title": "Live schema migration draft and public-key test",
       "phase": 4,
-      "size": "S",
+      "size": "M",
       "security": true,
-      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add T14 (83_amended.sql) so the draft sees every schema file; LIVE-9 dropped from its clauses (LIVE-9 is the real-host walk; GL1's tool is that walk's command)."
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add T14 (83_amended.sql) so the draft sees every schema file; LIVE-9 dropped from its clauses (LIVE-9 is the real-host walk; GL1's tool is that walk's command). Carded 3 Oct (A448): deps add N19 (93_cause_proposals.sql); tests live in src/modules/golive/schema/ (db/** is not a test home); no generated SQL committed. RED (go-live): applying the migration to any real database (LIVE-4).",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F07",
         "G01"
       ],
       "paths": [
-        "db/bridge/**"
+        "db/bridge/**",
+        "src/modules/golive/bridge/**"
       ],
       "clauses": [
         "ARC-2",
         "LIVE-6",
-        "END-7"
+        "END-7",
+        "SEC-6"
       ],
       "id": "GL3",
       "title": "Client-app views and shared table (draft for the client repo)",
       "phase": 4,
-      "size": "S",
+      "size": "M",
       "security": true,
       "core": true,
-      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Draft only; never applied to the client repo by this build; the client repo's own Lead takes it at LIVE-6. Security and core: its views and grants decide what this system reads of the client app's data."
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Draft only; never applied to the client repo by this build; the client repo's own Lead takes it at LIVE-6. Security and core: its views and grants decide what this system reads of the client app's data. Carded 3 Oct (A448). RED (go-live): applying the draft in the client repo and probing the client app database (LIVE-6, LIVE-4)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "J3-K01",
@@ -9791,21 +9810,24 @@
       ],
       "paths": [
         "reference/golive/**",
-        "data/taxprep/proof/**"
+        "data/taxprep/proof/**",
+        "src/modules/golive/taxprep-proof/**"
       ],
       "clauses": [
         "LIVE-1",
-        "LIVE-2"
+        "LIVE-2",
+        "RT-22",
+        "ARC-14"
       ],
       "id": "GL4",
       "title": "Real Taxprep proof kit for ops",
       "phase": 4,
-      "size": "S",
+      "size": "M",
       "core": true,
-      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add FX9 (no new Taxprep CSV on main before FX9 lands; data/taxprep/proof/** overlaps FX9's reference/**/*.csv rule); the kit uses the three made-up corporations LIVE-1 names, nothing else. Core (Taxprep CSV compare)."
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add FX9 (no new Taxprep CSV on main before FX9 lands; data/taxprep/proof/** overlaps FX9's reference/**/*.csv rule); the kit uses the three made-up corporations LIVE-1 names, nothing else. Core (Taxprep CSV compare). Carded 3 Oct (A448): corporations C01, C07, C11; no CSV committed (kit.json holds hashes)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "I40",
@@ -9827,16 +9849,18 @@
         "src/modules/ai/evals/report/**"
       ],
       "clauses": [
-        "LIVE-7"
+        "LIVE-7",
+        "AI-11",
+        "AI-10"
       ],
       "id": "GL5",
       "title": "AI evaluation report for go-live",
       "phase": 4,
       "size": "S",
-      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job."
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Carded 3 Oct (A448)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A01",
@@ -9851,13 +9875,16 @@
       ],
       "clauses": [
         "LIVE-3",
-        "ARC-6"
+        "ARC-6",
+        "EV-6",
+        "ARC-16",
+        "SEC-11"
       ],
       "id": "GL6",
       "title": "OCR benchmark on the test world (for choosing a vendor at go-live)",
       "phase": 4,
       "size": "M",
-      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add FX11 (Paths overlap src/modules/ocr/**); free engines only (textlayer, tesseract) on the test world; any paid vendor run is LIVE-3, never in this card. RED (go-live): LIVE-3 vendor choice and cost."
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add FX11 (Paths overlap src/modules/ocr/**); free engines only (textlayer, tesseract) on the test world; any paid vendor run is LIVE-3, never in this card. RED (go-live): LIVE-3 vendor choice and cost. Carded 3 Oct (A448)."
     },
     {
       "status": "done",
@@ -10016,6 +10043,27 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ6"
+      ],
+      "paths": [
+        "stryker.config.mjs",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-args.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ9",
+      "title": "Mutation gate: long dry runs and extra Stryker arguments",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [
@@ -10091,7 +10139,8 @@
       "paths": [
         "tools/test/security-rules.test.mjs",
         "src/contracts/security-rules.db.test.ts",
-        "tools/test/__fixtures__/security-rules/**"
+        "tools/test/__fixtures__/security-rules/**",
+        "src/modules/auth/testusers/engine.ts"
       ],
       "clauses": [
         "SEC-11",
@@ -10104,7 +10153,7 @@
       "title": "Security rules R62 to R66",
       "phase": 0,
       "size": "M",
-      "core": false,
+      "core": true,
       "security": true,
       "note": "From reports/A06-findings.md, 2 Oct."
     },
@@ -10444,6 +10493,9 @@
       "deps": [],
       "paths": [
         "src/modules/jobs/queue.ts",
+        "src/modules/jobs/jobs.acceptance.db.test.ts",
+        "src/modules/jobs/runner.ts",
+        "src/contracts/jobs.ts",
         "src/modules/jobs/lease.acceptance.db.test.ts"
       ],
       "clauses": [
@@ -10456,6 +10508,51 @@
       "size": "S",
       "core": true,
       "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC5"
+      ],
+      "paths": [
+        "src/contracts/records.ts",
+        "src/contracts/records.acceptance.test.ts"
+      ],
+      "clauses": [
+        "SEC-10",
+        "ARC-15"
+      ],
+      "id": "FX16",
+      "title": "Records and gaps bank refuse prototype-name keys (R101)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC3"
+      ],
+      "paths": [
+        "db/schema/94_actor_keys.sql",
+        "src/contracts/actors.acceptance.db.test.ts"
+      ],
+      "clauses": [
+        "SEC-1",
+        "SEC-7",
+        "ARC-13"
+      ],
+      "id": "FX17",
+      "title": "Actor columns name a staff user or a named system actor",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From reports/SC3-findings.md, 3 Oct (A452). Schema file number 94: N19 holds 93."
     },
     {
       "status": "carded",
@@ -10644,8 +10741,10 @@
         "DB16"
       ],
       "paths": [
-        "src/core/db/rules.db.test.ts",
+        "src/core/db/rules.acceptance.db.test.ts",
         "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/vitest-setup.ts",
         "tools/test-homes.json"
       ],
       "clauses": [
