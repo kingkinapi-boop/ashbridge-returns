@@ -1,9 +1,8 @@
 {
  "card": "SC11",
  "role": "spec",
- "worker": "local-3",
- "state": "reopened",
- "at": "2026-10-03T11:33:28.038Z",
- "mode": "turbo",
- "note": "cloud box (pg16): toolchain refit after SC landed; DB16 on the train"
+ "worker": "cloud-91d3cf",
+ "state": "working",
+ "at": "2026-10-03T11:35:05.443Z",
+ "mode": "turbo"
 }
