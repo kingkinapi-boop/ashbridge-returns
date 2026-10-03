@@ -1,5 +1,5 @@
 {
-  "status": "checking",
+  "status": "red",
   "branch": "claude/train",
   "head": "6587e0a0",
   "cards": [
@@ -10,5 +10,6 @@
   ],
   "requested_at": "2026-10-03T15:22:00Z",
   "note": "Train 2 on main 04dbb004. Run the full check (checker.md, check train full), npm run test:flake and npm run test:flake:shifted (A405, CQ10). One project per vitest run (A495; npm test already does that). Postgres 16 per .claude/cloud-worker-run.md (A462): print select version(); npm test with TEST_DB=pg16 and once on PGlite; SC3's rule files and A04's db tests run on both. CQ9 changes stryker.config.mjs and tools/mutate-changed.mjs: run npm run mutate:canary first, then mutate:changed at 100 for every @mutate file the train changes (A04: env.ts, safe-read.ts, engines.ts, runner.ts, schemas.ts; SC3's if any). A04's Linux-only cases (FIFO, symlink, file names with a newline) must run, not skip: name them in the report. Landing rehearsal (merge skill, A493): with A04, SC3, CQ8 and CQ9 set done in plan/slices.json (not committed), run tools/test with --project unit and src/contracts/schema-rules.db.test.ts with --project db, and report any failure. A refused command makes the train blocked, not red.",
-  "by": "cloud-37e751"
+  "by": "cloud-37e751",
+  "report": "reports/train-20261003-1531.md"
 }
