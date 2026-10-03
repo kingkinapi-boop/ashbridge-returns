@@ -1,11 +1,10 @@
 {
  "card": "FX2",
  "role": "build",
- "round": 1,
- "spec": "6ac7457",
- "worker": "cloud-fd4d7f",
- "state": "reopened",
- "at": "2026-10-03T05:32:05.366Z",
- "mode": "turbo",
- "note": "A414: round 2 spec 5ebca343 reported; build the one auth line"
+ "round": 2,
+ "spec": "6bb1d6fd",
+ "worker": "local-2",
+ "state": "working",
+ "at": "2026-10-03T06:22:15.623Z",
+ "mode": "turbo"
 }
