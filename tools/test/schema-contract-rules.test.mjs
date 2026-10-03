@@ -1099,7 +1099,6 @@ const PENDING = [
   { rule: 'R51', subject: 'testworld', owner: 'W00c', why: 'the test-world loaders (W00b brings the guard they call)' },
   { rule: 'R52-catalogue', subject: 'testworld/model/faults.ts', owner: 'W00c', why: 'the fault catalogue' },
   { rule: 'R47', subject: 'src/modules/ocr/tesseract', owner: 'A02', why: 'the Tesseract reader' },
-  { rule: 'R47', subject: 'src/modules/qbo', owner: 'B04', why: 'the QBO reader' },
   { rule: 'R54', subject: 'src/modules/documents/intake', owner: 'E00', why: 'the intake reader' },
 ]
 function pendingOrNothing(rule, subject) {
@@ -1317,6 +1316,20 @@ async function a03Recordings() {
 afterAll(() => {
   if (a03Folder !== undefined) fs.rmSync(a03Folder, { recursive: true, force: true })
 })
+// B04's fixture company (the QBO stand-in folder of its spec) and the fresh copies its READERS entry reads.
+const B04_FIXTURE = path.join(ROOT, 'src/modules/qbo/__fixtures__/standin')
+const B04_REALM = '9130000000000001'
+const B04_ZERO_ROW = { accountId: '99', accountNumber: '1999', accountName: 'Petty cash (Test)', accountType: 'Bank', accountSubType: 'CashOnHand', debitCents: 0, creditCents: 0 }
+const b04Folders = []
+function b04StandIn() {
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'sc-b04-standin-')))
+  fs.cpSync(path.join(B04_FIXTURE, B04_REALM), path.join(dir, B04_REALM), { recursive: true })
+  b04Folders.push(dir)
+  return dir
+}
+afterAll(() => {
+  for (const d of b04Folders.splice(0)) fs.rmSync(d, { recursive: true, force: true })
+})
 const READERS = {
   A01: {
     dir: 'src/modules/ocr/textlayer',
@@ -1399,6 +1412,51 @@ const READERS = {
       ['empty bytes under a workbook name', 'statement (Test).xlsx', WRONG_KIND.empty],
     ],
     refusal: (o) => (o.threw === undefined && o.value?.ok === false && typeof o.value.reason === 'string' && o.value.reason.trim() !== '' ? o.value.reason : null),
+  },
+  // B04 (A507 item 1): the QBO reader is not a document reader. It reads a realm's books from a stand-in folder by
+  // realm, date and account, not bytes under a file name, so this is the smallest entry that fits R47, R48 and R54:
+  // make() copies B04's fixture company into a fresh folder and makes one samples-engine reader over it; read() writes
+  // the bytes as that company's year-end trial balance file and reads the trial balance through the reader. The file
+  // name is no input (no route). The empty instance is a trial balance row of zero debit and zero credit, kept.
+  // The reader refuses with its own plain Error, never a raw SyntaxError or ZodError (amber, B04 spec 3 Oct).
+  B04: {
+    dir: 'src/modules/qbo',
+    make: async () => {
+      const { createQboReader } = await load('src/modules/qbo/index.ts')
+      const dir = b04StandIn()
+      const reader = createQboReader({ env: { QBO_ENGINE: 'samples', QBO_STANDIN_DIR: dir, NODE_ENV: 'test' } })
+      const file = path.join(dir, B04_REALM, 'trial-balance-2025-12-31.json')
+      return {
+        read: async ({ bytes }) => {
+          fs.writeFileSync(file, bytes)
+          return reader.trialBalance(B04_REALM, '2025-12-31', 'accrual')
+        },
+      }
+    },
+    good: () => fs.readFileSync(path.join(B04_FIXTURE, B04_REALM, 'trial-balance-2025-12-31.json')),
+    names: ['trial-balance (Test).json', 'trial-balance (Test).txt'],
+    routes: [],
+    blank: () => {
+      const rows = JSON.parse(fs.readFileSync(path.join(B04_FIXTURE, B04_REALM, 'trial-balance-2025-12-31.json'), 'utf8'))
+      return Buffer.from(JSON.stringify([...rows, B04_ZERO_ROW]))
+    },
+    keeps: (rows) =>
+      !Array.isArray(rows)
+        ? `the trial balance came back as ${typeof rows}, not rows`
+        : rows.some((r) => r.accountId === B04_ZERO_ROW.accountId && r.debitCents === 0 && r.creditCents === 0)
+          ? null
+          : `the zero row of account ${B04_ZERO_ROW.accountId} was dropped: ${String(rows.length)} rows`,
+    wrongKind: [
+      ['gzip bytes', 'trial-balance (Test).json', WRONG_KIND.gzip],
+      ['MZ bytes', 'trial-balance (Test).json', WRONG_KIND.mz],
+      ['zip bytes', 'trial-balance (Test).json', WRONG_KIND.zip],
+      ['CSV text', 'trial-balance (Test).json', WRONG_KIND.csv],
+      ['a PDF header', 'trial-balance (Test).json', WRONG_KIND.pdf],
+      ['empty bytes', 'trial-balance (Test).json', WRONG_KIND.empty],
+      ['a JSON object, not rows', 'trial-balance (Test).json', bytesOf('{"rows": []}')],
+      ['JSON cut short', 'trial-balance (Test).json', bytesOf('[{"accountId": "35", "debitCe')],
+    ],
+    refusal: (o) => (o.threw instanceof Error && o.threw.constructor === Error && o.threw.message.trim() !== '' ? o.threw.message : null),
   },
 }
 const READER_DIRS = ['src/modules/ocr/textlayer', 'src/modules/ocr/tesseract', 'src/modules/ocr/recorded', 'src/modules/sheets', 'src/modules/qbo']

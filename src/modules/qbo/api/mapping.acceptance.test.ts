@@ -23,7 +23,7 @@ import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import type { QboSnapshot, QboTransaction } from '../../../contracts/qbo'
 import { createQboReader, pointerFor } from '../index'
-import { REALM, STANDIN_DIR, YEAR_END, YEAR_START, failure, manualClock, readJson, sandboxEnv } from '../__fixtures__/harness'
+import { REALM, STANDIN_DIR, YEAR_END, YEAR_START, failure, manualClock, readJson, sandboxEnv, sha256 } from '../__fixtures__/harness'
 import { UNCONFIRMED, createFakeQboApi, readUnconfirmed, type RouteName } from './__fixtures__/fake-api'
 import { mapGeneralLedger } from './mapping'
 
@@ -65,7 +65,20 @@ const keyFields = (t: QboTransaction) => ({ txnId: t.txnId, idKind: t.idKind, en
 
 const SNAP: QboSnapshot = {
   id: 'snap-b04-gl-0001', returnId: 'ret-b04-test-0001', realm: REALM, kind: 'transactions', asOf: null, periodFrom: YEAR_START, periodTo: YEAR_END,
-  basis: null, accountId: '35', attachmentId: null, engine: 'sandbox', engineVersion: 'fake', readAt: '2026-10-01T16:00:00.000Z', sha256: 'f'.repeat(8), fileKey: 'sha256/ff/fixture',
+  // A507 item 9: a real-length fingerprint (64 lower-case hex), built at run time so no file here holds a long hex literal.
+  basis: null, accountId: '35', attachmentId: null, engine: 'sandbox', engineVersion: 'fake', readAt: '2026-10-01T16:00:00.000Z', sha256: sha256(new TextEncoder().encode('b04 general ledger fixture (Test)')), fileKey: 'sha256/ff/fixture',
+}
+
+/** Drops a GL column from the column list and every line; a section header keeps its first cell (the account). */
+function dropGlColumn(r: GL, key: string): GL {
+  const i = at(r.Columns.Column, key)
+  expect(i, key).toBeGreaterThanOrEqual(0)
+  r.Columns.Column.splice(i, 1)
+  for (const s of r.Rows.Row) {
+    s.Header.ColData.pop()
+    for (const row of s.Rows.Row) row.ColData.splice(i, 1)
+  }
+  return r
 }
 
 describe('B04 the fake responses are marked unconfirmed (TB-13)', () => {
@@ -170,6 +183,59 @@ describe('B04 a General Ledger line gets its Transaction ID from the Transaction
     expect((await failure(() => mapGeneralLedger(gl(), list)))?.message).toMatch(/mystery_test|Mystery \(Test\)/)
   })
 
+  // A507 item 2 (TB-13 by class): every column the mapping needs, missing from any report, is refused naming it.
+  const nameOf = (cols: Col[], key: string): RegExp => {
+    const title = cols[at(cols, key)]?.ColTitle ?? ''
+    const esc = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    return new RegExp(title.trim() === '' ? `\\b${esc(key)}\\b` : `\\b${esc(key)}\\b|\\b${esc(title)}\\b`)
+  }
+  const GL_NEEDS = ['tx_date', 'txn_type', 'doc_num', 'split_acc', 'subt_nat_amount'] as const
+  for (const key of GL_NEEDS) {
+    test(`TB-13 planted: a GeneralLedger without its ${key} column is refused naming it, never read around`, async () => {
+      const r = gl()
+      const want = nameOf(r.Columns.Column, key)
+      dropGlColumn(r, key)
+      const e = await failure(() => mapGeneralLedger(r, tl()))
+      expect(e, key).toBeInstanceOf(Error)
+      expect(e?.message).toMatch(want)
+    })
+  }
+
+  for (const key of ['txn_type', 'doc_num'] as const) {
+    test(`TB-13 planted: a TransactionList without its ${key} column (the join needs it) is refused naming it, never turned composite`, async () => {
+      const list = tl()
+      const want = nameOf(list.Columns.Column, key)
+      dropColumn(list, key, list.Rows.Row)
+      const e = await failure(() => mapGeneralLedger(gl(), list))
+      expect(e, key).toBeInstanceOf(Error)
+      expect(e?.message).toMatch(want)
+    })
+  }
+
+  test('TB-13 the needed-column plants start from a clean report: the unchanged GeneralLedger and TransactionList map with no refusal', () => {
+    expect(mapGeneralLedger(gl(), tl()).length).toBe(standInRows().length)
+  })
+
+  // A507 item 6: two identical transactions with a blank number on one account are both kept (a key on the visible
+  // fields would drop one); they come back in report order, both composite.
+  test('TB-10 TB-13 planted: two identical General Ledger lines with a blank number on one account are both kept', () => {
+    const r = gl()
+    const list = tl()
+    for (const s of r.Rows.Row) {
+      const i = s.Rows.Row.findIndex((row) => cell(r, row, 'doc_num').value === 'D-1')
+      if (i >= 0) s.Rows.Row.splice(i + 1, 0, structuredClone(s.Rows.Row[i] as DataRow))
+    }
+    setGl(r, 'D-1', 'doc_num', '')
+    setTl(list, 'D-1', 'doc_num', '')
+    const got = mapGeneralLedger(r, list)
+    expect(got).toHaveLength(standInRows().length + 2)
+    const twins = got.filter((t) => t.accountId === '35' && t.date === '2025-03-14')
+    expect(twins).toHaveLength(2)
+    expect(twins[0]).toEqual(twins[1])
+    expect(twins[0]).toMatchObject({ idKind: 'composite', txnId: '2025-03-14|Deposit||35|50000', number: '' })
+    expect(got.filter((t) => t.accountId === '79' && t.date === '2025-03-14')).toHaveLength(2)
+  })
+
   test('TB-10 ARC-13 property: any amount in cents written as Intuit writes it maps back to the same cents', () => {
     fc.assert(
       fc.property(fc.integer({ min: -99_999_999_999, max: 99_999_999_999 }), (c) => {
@@ -202,6 +268,24 @@ describe('B04 the sandbox engine reads every report through the mapping (TB-1, T
     for (const row of tb.Rows.Row) row.ColData?.push({ value: '1.00' })
     const e = await failure(() => sandboxWith({ 'trial-balance-2025-12-31': tb }).trialBalance(REALM, YEAR_END, 'accrual'))
     expect(e?.message).toMatch(/mystery_test|Mystery \(Test\)/)
+  })
+
+  for (const key of ['account_name', 'debt_amt', 'credit_amt'] as const) {
+    test(`TB-13 planted: a TrialBalance response without its ${key} column is refused naming it (A507 item 2)`, async () => {
+      const tb = structuredClone(readUnconfirmed('trial-balance-2025-12-31.json')) as TB
+      const i = at(tb.Columns.Column, key)
+      expect(i, key).toBeGreaterThanOrEqual(0)
+      const title = tb.Columns.Column[i]?.ColTitle ?? ''
+      tb.Columns.Column.splice(i, 1)
+      for (const row of tb.Rows.Row) row.ColData?.splice(i, 1)
+      const e = await failure(() => sandboxWith({ 'trial-balance-2025-12-31': tb }).trialBalance(REALM, YEAR_END, 'accrual'))
+      expect(e, key).toBeInstanceOf(Error)
+      expect(e?.message).toMatch(title.trim() === '' ? new RegExp(`\\b${key}\\b`) : new RegExp(`\\b${key}\\b|\\b${title}\\b`))
+    })
+  }
+
+  test('TB-13 the TrialBalance column plants start from a clean response: the unchanged one reads through the sandbox engine', async () => {
+    expect(await sandboxWith({}).trialBalance(REALM, YEAR_END, 'accrual')).toEqual(readJson(path.join(STANDIN_DIR, REALM, `trial-balance-${YEAR_END}.json`)))
   })
 
   test('TB-1 planted: a TrialBalance response on the cash basis is refused with the reason', async () => {

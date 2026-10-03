@@ -24,6 +24,10 @@
 //     pointerFor(snapshot: QboSnapshot, entry: QboJournalEntry, lineNo: number): QboPointer   // throws on a bad pointer
 //     createMemorySnapshotStore(): QboSnapshotStore    // list(): Promise<QboSnapshot[]>, in write order, copies
 //     createDbSnapshotStore(db: PGlite): QboSnapshotStore   (read-books.acceptance.db.test.ts)
+//     QBO_STANDIN_MAX_BYTES: number   // A507 item 4 (R94): the cap on any one stand-in file, 1 MiB to 32 MiB; a file
+//                                     // of exactly the cap is read, one byte more is refused
+//   A507 item 6: a transaction row the stand-in holds twice (same visible fields, a blank number) is kept twice, in
+//   source order; in the database each qbo_transactions row carries source_line, its 1-based position in its snapshot.
 //   Stand-in folder (QBO_STANDIN_DIR/<realm>/): company.json (QboCompany), accounts.json, trial-balance-<date>.json
 //   (QboTrialBalanceRow[]), transactions/<account id>.json (QboTransaction[]), journal-entries.json (QboJournalEntry[]),
 //   attachments/index.json ([{ attachmentId, name, mimeType, file }]) with the files beside it. Rows are strict: a key the
@@ -34,13 +38,16 @@ import fc from 'fast-check'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { fixedClock, type Clock } from '../../core/clock'
 import type { FileStore } from '../../contracts/storage'
-import { QboPointerSchema, QboSnapshotSchema, type QboSnapshot, type QboTrialBalanceRow } from '../../contracts/qbo'
+import { QboPointerSchema, QboSnapshotSchema, type QboCompany, type QboReader, type QboSnapshot, type QboTransaction, type QboTrialBalanceRow } from '../../contracts/qbo'
 import { createFileStore } from '../storage'
 import { exportQboStandIn } from '../../../testworld/qbo/export'
-import { createMemorySnapshotStore, createQboReader, pointerFor, readBooks } from './index'
+import { loadClient } from '../../../testworld/index'
+import { QBO_STANDIN_MAX_BYTES, createMemorySnapshotStore, createQboReader, pointerFor, readBooks } from './index'
 import {
   ACCOUNT_IDS,
   ATTACHMENT_IDS,
+  LEGAL_NAME,
+  NON_TEST_REALM,
   OPENING_AS_OF,
   REALM,
   RETURN_ID,
@@ -49,7 +56,9 @@ import {
   YEAR_START,
   allFiles,
   copyStandIn,
+  dayBefore,
   failure,
+  linkInPlace,
   readJson,
   samplesEnv,
   sha256,
@@ -299,8 +308,16 @@ describe('B04 sample client C01 through the samples engine (TB-1, golden)', () =
     const r = await readBooks('ret-b04-c01-test', realm, '2025-01-01', '2025-12-31', deps(dir))
     const tb = r.trialBalance.map((x) => ({ accountId: x.accountId, accountNumber: x.accountNumber, accountName: x.accountName, debitCents: x.debitCents, creditCents: x.creditCents }))
     await expect(JSON.stringify(tb, null, 2) + '\n').toMatchFileSnapshot('__golden__/c01-trial-balance.json')
-    const je = r.journalEntries.map((e) => ({ txnId: e.txnId, date: e.date, memo: e.memo, lines: e.lines.map((l) => ({ accountId: l.accountId, debitCents: l.debitCents, creditCents: l.creditCents })) }))
+    // A507 (AJE type): the golden holds no memo; the memo (type, reason, sources) is compared with the answer key read
+    // now, so the golden never pins a literal adjusting-entry type (W00d makes each type one of TB-2's five).
+    const je = r.journalEntries.map((e) => ({ txnId: e.txnId, date: e.date, lines: e.lines.map((l) => ({ accountId: l.accountId, debitCents: l.debitCents, creditCents: l.creditCents })) }))
     await expect(JSON.stringify(je, null, 2) + '\n').toMatchFileSnapshot('__golden__/c01-journal-entries.json')
+    const key = loadClient('C01').adjustingEntries
+    expect(key.length).toBeGreaterThan(0)
+    for (const e of key) {
+      expect(r.journalEntries.find((j) => j.txnId === e.id)?.memo, e.id).toBe(`AJE ${e.type}: ${e.reason} | source: ${e.sources.join('; ')}`)
+    }
+    expect(r.journalEntries.filter((j) => j.memo.startsWith('AJE '))).toHaveLength(key.length)
     expect(sum(r.trialBalance, 'debitCents')).toBe(sum(r.trialBalance, 'creditCents'))
     expect(ofKind(r.snapshots, 'trial_balance').map((s) => s.basis)).toEqual(['accrual', 'accrual'])
     const accounts = new Set([...r.trialBalance, ...r.openingTrialBalance].map((x) => x.accountId))
@@ -353,4 +370,202 @@ describe('B04 the stand-in folder is written by another process (SEC-10, SEC-11,
     expect(await failure(() => reader.transactions(REALM, '35', YEAR_START, YEAR_END))).toBeInstanceOf(Error)
     expect(await reader.transactions(REALM, '55', YEAR_START, YEAR_END)).not.toEqual([])
   })
+})
+
+// A507 item 4 (R93, R94 by class). A path part from a caller (asOf here) passes a grammar check before it reaches a
+// path; every stand-in file and folder the reader opens is refused when it is a link; no file over the cap is read.
+describe('B04 the stand-in folder by class: paths, links and the size cap (SEC-10, SEC-11, A446, A507 item 4)', () => {
+  test('SEC-10 SEC-11 R93 planted: an asOf that climbs out of the trial balance file name into the non-test company is refused, though the file it names exists', async () => {
+    const reader = createQboReader({ env: samplesEnv(STANDIN_DIR) })
+    const escape = `x/../../${NON_TEST_REALM}/trial-balance-${YEAR_END}`
+    expect(fs.existsSync(path.join(STANDIN_DIR, REALM, `trial-balance-${escape}.json`))).toBe(true)
+    const bad = [escape, `${YEAR_END}/../../${NON_TEST_REALM}/trial-balance-${YEAR_END}`, `../${YEAR_END}`, `${YEAR_END}/`, `${YEAR_END}.json`, `${YEAR_END}\0`, ` ${YEAR_END}`, '2025-12', '']
+    expect(bad.length).toBeGreaterThan(0)
+    for (const asOf of bad) {
+      const e = await failure(() => reader.trialBalance(REALM, asOf, 'accrual'))
+      expect(e, JSON.stringify(asOf)).toBeInstanceOf(Error)
+    }
+    expect(await reader.trialBalance(REALM, YEAR_END, 'accrual')).toHaveLength(5)
+  })
+
+  // [what is a link, the path in the realm folder, the read that opens it, a read in the same folder that does not]
+  type Read = (r: QboReader) => Promise<unknown>
+  const LINKS: [string, string, Read, Read | null][] = [
+    ['company.json', 'company.json', (r) => r.company(REALM), null],
+    ['the year-end trial balance file', `trial-balance-${YEAR_END}.json`, (r) => r.trialBalance(REALM, YEAR_END, 'accrual'), (r) => r.trialBalance(REALM, OPENING_AS_OF, 'accrual')],
+    ['the opening trial balance file', `trial-balance-${OPENING_AS_OF}.json`, (r) => r.trialBalance(REALM, OPENING_AS_OF, 'accrual'), (r) => r.trialBalance(REALM, YEAR_END, 'accrual')],
+    ['an account transactions file', path.join('transactions', '35.json'), (r) => r.transactions(REALM, '35', YEAR_START, YEAR_END), (r) => r.transactions(REALM, '55', YEAR_START, YEAR_END)],
+    ['journal-entries.json', 'journal-entries.json', (r) => r.journalEntries(REALM, YEAR_START, YEAR_END), (r) => r.trialBalance(REALM, YEAR_END, 'accrual')],
+    ['the attachments index', path.join('attachments', 'index.json'), (r) => r.attachment(REALM, '901'), (r) => r.journalEntries(REALM, YEAR_START, YEAR_END)],
+    ['an attachment file', path.join('attachments', '901-hydro-receipt (Test).txt'), (r) => r.attachment(REALM, '901'), (r) => r.attachment(REALM, '902')],
+    ['the transactions folder', 'transactions', (r) => r.transactions(REALM, '35', YEAR_START, YEAR_END), (r) => r.journalEntries(REALM, YEAR_START, YEAR_END)],
+    ['the attachments folder', 'attachments', (r) => r.attachment(REALM, '902'), (r) => r.journalEntries(REALM, YEAR_START, YEAR_END)],
+    ['the realm folder', '', (r) => r.trialBalance(REALM, YEAR_END, 'accrual'), null],
+  ]
+
+  test('SEC-10 R94 the link plants cover every kind of stand-in file and folder, and each reads clean before it is linked', async () => {
+    expect(LINKS.length).toBeGreaterThanOrEqual(10)
+    const reader = createQboReader({ env: samplesEnv(STANDIN_DIR) })
+    for (const [what, , read] of LINKS) expect(await failure(() => read(reader)), what).toBeUndefined()
+  })
+
+  for (const [what, rel, read, control] of LINKS) {
+    test(`SEC-10 R94 planted: ${what} as a link to a copy of itself is refused${control === null ? '' : ', and a read that does not open it still works'}`, async () => {
+      const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+      const target = path.join(dir, REALM, rel)
+      linkInPlace(target, path.join(tmp.dir, 'elsewhere'))
+      expect(fs.lstatSync(target).isSymbolicLink()).toBe(true)
+      const reader = createQboReader({ env: samplesEnv(dir) })
+      expect(await failure(() => read(reader)), what).toBeInstanceOf(Error)
+      if (control !== null) expect(await failure(() => control(createQboReader({ env: samplesEnv(dir) }))), `${what}: the control read`).toBeUndefined()
+    })
+  }
+
+  test('SEC-10 R94 the stand-in file cap is a safe integer from 1 MiB to 32 MiB', () => {
+    expect(Number.isSafeInteger(QBO_STANDIN_MAX_BYTES)).toBe(true)
+    expect(QBO_STANDIN_MAX_BYTES).toBeGreaterThanOrEqual(1024 * 1024)
+    expect(QBO_STANDIN_MAX_BYTES).toBeLessThanOrEqual(32 * 1024 * 1024)
+  })
+
+  test('SEC-10 R94 planted: a trial balance file of exactly the cap is read; one byte more is refused', async () => {
+    const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+    const file = path.join(dir, REALM, `trial-balance-${YEAR_END}.json`)
+    const rows = readJson(file) as QboTrialBalanceRow[]
+    const text = JSON.stringify(rows)
+    fs.writeFileSync(file, text + ' '.repeat(QBO_STANDIN_MAX_BYTES - Buffer.byteLength(text)))
+    expect(fs.statSync(file).size).toBe(QBO_STANDIN_MAX_BYTES)
+    expect(await createQboReader({ env: samplesEnv(dir) }).trialBalance(REALM, YEAR_END, 'accrual')).toEqual(rows)
+    fs.appendFileSync(file, ' ')
+    expect(await failure(() => createQboReader({ env: samplesEnv(dir) }).trialBalance(REALM, YEAR_END, 'accrual'))).toBeInstanceOf(Error)
+  }, 30_000)
+
+  test('SEC-10 R94 planted: an attachment file of exactly the cap is read whole; one byte more is refused', async () => {
+    const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+    const file = path.join(dir, REALM, 'attachments', '901-hydro-receipt (Test).txt')
+    fs.writeFileSync(file, 'x'.repeat(QBO_STANDIN_MAX_BYTES))
+    expect((await createQboReader({ env: samplesEnv(dir) }).attachment(REALM, '901')).bytes.length).toBe(QBO_STANDIN_MAX_BYTES)
+    fs.appendFileSync(file, 'x')
+    expect(await failure(() => createQboReader({ env: samplesEnv(dir) }).attachment(REALM, '901'))).toBeInstanceOf(Error)
+  }, 30_000)
+
+  test('TB-1 planted: a stand-in trial balance row missing a needed key (creditCents) is refused naming the key (A507 item 2)', async () => {
+    const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+    const file = path.join(dir, REALM, `trial-balance-${YEAR_END}.json`)
+    const rows = readJson(file) as Record<string, unknown>[]
+    rows[1] = Object.fromEntries(Object.entries(rows[1] ?? {}).filter(([k]) => k !== 'creditCents'))
+    writeJson(file, rows)
+    expect((await failure(() => createQboReader({ env: samplesEnv(dir) }).trialBalance(REALM, YEAR_END, 'accrual')))?.message).toContain('creditCents')
+  })
+})
+
+// A507 item 6: two identical transactions with a blank number on one account are both kept, in source order.
+describe('B04 identical rows are both kept (TB-10, A507 item 6)', () => {
+  const TWIN: QboTransaction = {
+    txnId: '2025-05-02|Deposit||35|2500',
+    idKind: 'composite',
+    entityType: 'Deposit',
+    date: '2025-05-02',
+    number: '',
+    memo: 'Coin deposit (Test)',
+    accountId: '35',
+    amountCents: 2500,
+    otherAccountIds: ['79'],
+    attachmentIds: [],
+  }
+  function withTwins(): string {
+    const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+    const file = path.join(dir, REALM, 'transactions', '35.json')
+    writeJson(file, [...(readJson(file) as QboTransaction[]), TWIN, TWIN])
+    return dir
+  }
+
+  test('TB-10 planted: the samples engine returns both identical rows with a blank number, in file order', async () => {
+    const got = await createQboReader({ env: samplesEnv(withTwins()) }).transactions(REALM, '35', YEAR_START, YEAR_END)
+    expect(got.map((t) => t.txnId)).toEqual(['130', '131', TWIN.txnId, TWIN.txnId])
+    expect(got[2]).toEqual(TWIN)
+    expect(got[3]).toEqual(TWIN)
+  })
+
+  test('TB-10 planted: readBooks keeps both identical rows, and the snapshot of the account holds both', async () => {
+    const dir = withTwins()
+    const r = await readBooks(RETURN_ID, REALM, YEAR_START, YEAR_END, deps(dir))
+    expect(r.transactions.filter((t) => t.accountId === '35').map((t) => t.txnId)).toEqual(['130', '131', TWIN.txnId, TWIN.txnId])
+    const snap = one(ofKind(r.snapshots, 'transactions').filter((s) => s.accountId === '35'), 'chequing snapshot')
+    const stored = JSON.parse(new TextDecoder().decode(await files.get(snap.fileKey))) as unknown
+    expect(JSON.stringify(stored).split(TWIN.memo).length - 1).toBe(2)
+  })
+})
+
+// A507 item 7: the opening trial balance is read at the day before year start, for any year start (leap years, the
+// first of every month, centuries), seen through a spy reader.
+describe('B04 the day before year start (TB-1, TB-10, A507 item 7)', () => {
+  function spyReader(fiscalYearStartMonth: number) {
+    const calls = { tb: [] as string[], txn: [] as string[][], je: [] as string[][] }
+    const company: QboCompany = { realm: REALM, legalName: LEGAL_NAME, fiscalYearStartMonth, country: 'CA', homeCurrency: 'CAD', isTestCompany: true }
+    const rows: QboTrialBalanceRow[] = [
+      { accountId: '35', accountNumber: '1010', accountName: 'Chequing (Test)', accountType: 'Bank', accountSubType: 'Checking', debitCents: 100, creditCents: 0 },
+      { accountId: '80', accountNumber: '3000', accountName: 'Common shares (Test)', accountType: 'Equity', accountSubType: 'CommonStock', debitCents: 0, creditCents: 100 },
+    ]
+    const reader: QboReader = {
+      engine: 'samples',
+      version: 'spy (Test)',
+      company: () => Promise.resolve({ ...company }),
+      trialBalance: (_realm, asOf) => {
+        calls.tb.push(asOf)
+        return Promise.resolve(rows.map((x) => ({ ...x })))
+      },
+      transactions: (_realm, _accountId, from, to) => {
+        calls.txn.push([from, to])
+        return Promise.resolve([])
+      },
+      journalEntries: (_realm, from, to) => {
+        calls.je.push([from, to])
+        return Promise.resolve([])
+      },
+      attachment: () => Promise.reject(new Error('the spy holds no attachment (Test)')),
+    }
+    return { reader, calls }
+  }
+
+  async function openingFor(yearStart: string, yearEnd: string) {
+    const spy = spyReader(Number(yearStart.slice(5, 7)))
+    const r = await readBooks(RETURN_ID, REALM, yearStart, yearEnd, { reader: spy.reader, files, store: createMemorySnapshotStore(), clock: fixedClock(AT) })
+    return { r, calls: spy.calls }
+  }
+
+  const EXAMPLES: [string, string, string][] = [
+    ['2024-03-01', '2025-02-28', '2024-02-29'],
+    ['2023-03-01', '2024-02-29', '2023-02-28'],
+    ['2000-03-01', '2001-02-28', '2000-02-29'],
+    ['2100-03-01', '2101-02-28', '2100-02-28'],
+    ['2025-01-01', '2025-12-31', '2024-12-31'],
+    ['2025-04-01', '2026-03-31', '2025-03-31'],
+    ['2025-11-01', '2026-10-31', '2025-10-31'],
+    ['2026-03-01', '2027-02-28', '2026-02-28'],
+  ]
+  for (const [yearStart, yearEnd, opening] of EXAMPLES) {
+    test(`TB-1 TB-10 a year from ${yearStart} reads the opening trial balance at ${opening} and the year end at ${yearEnd}`, async () => {
+      const { r, calls } = await openingFor(yearStart, yearEnd)
+      expect(calls.tb).toEqual([yearEnd, opening])
+      expect(ofKind(r.snapshots, 'trial_balance').map((s) => s.asOf)).toEqual([yearEnd, opening])
+      expect(calls.je).toEqual([[yearStart, yearEnd]])
+      expect(calls.txn.length).toBe(2)
+      for (const c of calls.txn) expect(c).toEqual([yearStart, yearEnd])
+    })
+  }
+
+  test('TB-1 TB-10 property: for any year start on the first of a month, 1901 to 2199, the opening trial balance is read at the day before', async () => {
+    expect(dayBefore('2024-03-01')).toBe('2024-02-29')
+    await fc.assert(
+      fc.asyncProperty(fc.integer({ min: 1901, max: 2199 }), fc.integer({ min: 1, max: 12 }), async (y, m) => {
+        const mm = String(m).padStart(2, '0')
+        const yearStart = `${String(y)}-${mm}-01`
+        const yearEnd = dayBefore(`${String(y + 1)}-${mm}-01`)
+        const { r, calls } = await openingFor(yearStart, yearEnd)
+        expect(calls.tb).toEqual([yearEnd, dayBefore(yearStart)])
+        expect(ofKind(r.snapshots, 'trial_balance').map((s) => s.asOf)).toEqual([yearEnd, dayBefore(yearStart)])
+      }),
+      { seed: 4031, numRuns: 120, examples: [[2024, 3], [2000, 3], [2100, 3], [1904, 3], [2025, 1]] },
+    )
+  }, 60_000)
 })

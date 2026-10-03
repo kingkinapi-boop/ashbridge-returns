@@ -34,15 +34,22 @@ import {
   WRITE_NAME,
   YEAR_END,
   YEAR_START,
+  LEGAL_NAME,
   allFiles,
+  copyStandIn,
   failure,
   manualClock,
   methodNames,
+  mutateDeep,
+  plain,
   plantedValue,
+  readJson,
   samplesEnv,
   sandboxEnv,
   tempDir,
+  writeJson,
 } from './__fixtures__/harness'
+import { readUnconfirmed } from './api/__fixtures__/fake-api'
 
 const SANDBOX_OFF = /QBO sandbox engine is off/
 const LIVE_OFF = /live QBO is off until go-live/
@@ -260,6 +267,106 @@ describe('B04 made-up companies only (SEC-11, check 8)', () => {
     expect(s.requests).toEqual([])
   })
 
+  // A507 item 3 (SEC-11 by class). The rule, as the card and the code rules write it: a made-up company's legal name
+  // carries "(Test)" exactly; a near miss (case, spacing, a missing bracket, a look-alike letter, other brackets, a
+  // hidden character) is not a made-up company.
+  const NEAR_MISSES: [string, string][] = [
+    ['lower case', 'Birchwood Fixture Ltd. (test)'],
+    ['upper case', 'Birchwood Fixture Ltd. (TEST)'],
+    ['no brackets', 'Birchwood Fixture Ltd. Test'],
+    ['no closing bracket', 'Birchwood Fixture Ltd. (Test'],
+    ['no opening bracket', 'Birchwood Fixture Ltd. Test)'],
+    ['spaces inside', 'Birchwood Fixture Ltd. ( Test )'],
+    ['a space in the word', 'Birchwood Fixture Ltd. (Tes t)'],
+    ['a Cyrillic e (U+0435)', 'Birchwood Fixture Ltd. (Tеst)'],
+    ['a Greek capital tau (U+03A4)', 'Birchwood Fixture Ltd. (Τest)'],
+    ['a Cyrillic small es for the s (U+0455)', 'Birchwood Fixture Ltd. (Teѕt)'],
+    ['full-width brackets (U+FF08, U+FF09)', 'Birchwood Fixture Ltd. （Test）'],
+    ['square brackets', 'Birchwood Fixture Ltd. [Test]'],
+    ['a zero-width space in the word (U+200B)', 'Birchwood Fixture Ltd. (Te​st)'],
+    ['a soft hyphen in the word (U+00AD)', 'Birchwood Fixture Ltd. (Te­st)'],
+    ['the word Testing', 'Birchwood Fixture Ltd. (Testing)'],
+  ]
+
+  test('SEC-11 the near-miss list is not empty and every entry lacks the exact "(Test)"', () => {
+    expect(NEAR_MISSES.length).toBeGreaterThan(10)
+    for (const [label, name] of NEAR_MISSES) expect(name.includes('(Test)'), label).toBe(false)
+    expect(LEGAL_NAME).toContain('(Test)')
+  })
+
+  for (const [label, name] of NEAR_MISSES) {
+    test(`SEC-11 planted: the samples engine refuses a company whose legal name has ${label} instead of "(Test)"`, async () => {
+      const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+      const file = path.join(dir, REALM, 'company.json')
+      writeJson(file, { ...(readJson(file) as Record<string, unknown>), legalName: name })
+      const reader = createQboReader({ env: samplesEnv(dir) })
+      for (const call of [() => reader.company(REALM), () => reader.trialBalance(REALM, YEAR_END, 'accrual'), () => reader.attachment(REALM, '901')]) {
+        expect((await failure(call))?.message, label).toContain('(Test)')
+      }
+    })
+
+    test(`SEC-11 planted: the sandbox engine refuses a company whose legal name has ${label}, asking for nothing past the company record`, async () => {
+      const s = sandbox({ legalName: name })
+      expect((await failure(() => s.reader.trialBalance(REALM, YEAR_END, 'accrual')))?.message, label).toContain('(Test)')
+      expect(companyRequests(s.requests).filter((r) => !/\/companyinfo\/|\/preferences/.test(r.url))).toEqual([])
+    })
+  }
+
+  test('SEC-11 the near-miss plants start clean: the same copy with the exact legal name reads on samples and on sandbox', async () => {
+    const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+    expect((await createQboReader({ env: samplesEnv(dir) }).company(REALM)).legalName).toBe(LEGAL_NAME)
+    expect(await sandbox({ legalName: LEGAL_NAME }).reader.trialBalance(REALM, YEAR_END, 'accrual')).toHaveLength(5)
+  })
+
+  test('SEC-11 planted: the sandbox engine checks the legal name, not the trading name: a trading name with "(Test)" over a legal name without it is refused', async () => {
+    const info = readUnconfirmed('company-info.json') as { CompanyInfo: Record<string, unknown> }
+    const trading = { ...info, CompanyInfo: { ...info.CompanyInfo, LegalName: NON_TEST_NAME, CompanyName: 'Northgate Supplies (Test)' } }
+    const mc = manualClock(AT)
+    const fake = createFakeQboApi({ now: mc.now, overrides: { companyinfo: trading } })
+    const reader = createQboReader({ env: sandboxEnv(), transport: fake.transport, clock: mc.clock, sleep: mc.sleep })
+    expect((await failure(() => reader.trialBalance(REALM, YEAR_END, 'accrual')))?.message).toContain('(Test)')
+    expect(companyRequests(fake.requests).filter((r) => !/\/companyinfo\/|\/preferences/.test(r.url))).toEqual([])
+  })
+
+  test('SEC-11 the sandbox engine reads the legal name: a legal name with "(Test)" under a trading name without it is accepted, and company() returns the legal name', async () => {
+    const info = readUnconfirmed('company-info.json') as { CompanyInfo: Record<string, unknown> }
+    const legal = { ...info, CompanyInfo: { ...info.CompanyInfo, LegalName: LEGAL_NAME, CompanyName: 'Birchwood Fixture' } }
+    const mc = manualClock(AT)
+    const fake = createFakeQboApi({ now: mc.now, overrides: { companyinfo: legal } })
+    const reader = createQboReader({ env: sandboxEnv(), transport: fake.transport, clock: mc.clock, sleep: mc.sleep })
+    expect((await reader.company(REALM)).legalName).toBe(LEGAL_NAME)
+    expect(await reader.trialBalance(REALM, YEAR_END, 'accrual')).toHaveLength(5)
+  })
+
+  test('SEC-11 planted: the samples engine checks the company before any other read: with every other file of the non-test company broken, each read is refused for "(Test)", never for the broken file', async () => {
+    const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+    const realmDir = path.join(dir, NON_TEST_REALM)
+    const broken = ['trial-balance-2025-12-31.json', 'trial-balance-2024-12-31.json', 'journal-entries.json', path.join('attachments', 'index.json'), path.join('transactions', '35.json')]
+    for (const f of broken) {
+      expect(fs.existsSync(path.join(realmDir, f)), f).toBe(true)
+      fs.writeFileSync(path.join(realmDir, f), '{ broken on purpose (Test)')
+    }
+    const reader = createQboReader({ env: samplesEnv(dir) })
+    const calls = [
+      () => reader.trialBalance(NON_TEST_REALM, YEAR_END, 'accrual'),
+      () => reader.trialBalance(NON_TEST_REALM, OPENING_AS_OF, 'accrual'),
+      () => reader.transactions(NON_TEST_REALM, '35', YEAR_START, YEAR_END),
+      () => reader.journalEntries(NON_TEST_REALM, YEAR_START, YEAR_END),
+      () => reader.attachment(NON_TEST_REALM, '901'),
+    ]
+    for (const [i, call] of calls.entries()) expect((await failure(call))?.message, String(i)).toContain('(Test)')
+  })
+
+  test('SEC-11 planted: the samples engine refuses the attachment call on the company named without "(Test)"', async () => {
+    const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+    const index = path.join(dir, NON_TEST_REALM, 'attachments', 'index.json')
+    fs.copyFileSync(path.join(dir, REALM, 'attachments', '901-hydro-receipt (Test).txt'), path.join(dir, NON_TEST_REALM, 'attachments', '901-hydro-receipt (Test).txt'))
+    writeJson(index, [{ attachmentId: '901', name: 'hydro-receipt (Test).txt', mimeType: 'text/plain', file: '901-hydro-receipt (Test).txt' }])
+    const reader = createQboReader({ env: samplesEnv(dir) })
+    expect((await failure(() => reader.attachment(NON_TEST_REALM, '901')))?.message).toContain('(Test)')
+    expect((await createQboReader({ env: samplesEnv(dir) }).attachment(REALM, '901')).bytes.length).toBeGreaterThan(0)
+  })
+
   test('SEC-11 readBooks on the company named without "(Test)" stores no snapshot and no file, on samples and on sandbox', async () => {
     for (const reader of [createQboReader({ env: samplesEnv(STANDIN_DIR) }), sandbox({ realm: NON_TEST_REALM, legalName: NON_TEST_NAME }).reader]) {
       const root = storeAt(`store-${reader.engine}`)
@@ -270,6 +377,46 @@ describe('B04 made-up companies only (SEC-11, check 8)', () => {
       expect(allFiles(root)).toEqual([])
     }
   })
+})
+
+// A507 item 5 (as A07, SC R47): the reader returns a copy, never its cached data. Each read's result is changed in
+// place (every string, number, flag, list and byte), then the same reader reads again: the second result equals the
+// first as it was.
+describe('B04 the reader returns a copy, never its cached data (TB-10, ARC-11, A507 item 5)', () => {
+  const READS: [string, (r: QboReader) => Promise<unknown>][] = [
+    ['company', (r) => r.company(REALM)],
+    ['trialBalance', (r) => r.trialBalance(REALM, YEAR_END, 'accrual')],
+    ['transactions', (r) => r.transactions(REALM, '35', YEAR_START, YEAR_END)],
+    ['journalEntries', (r) => r.journalEntries(REALM, YEAR_START, YEAR_END)],
+    ['attachment', (r) => r.attachment(REALM, '901')],
+  ]
+
+  test('TB-10 the copy probe covers all five reads', () => {
+    expect(READS.map(([n]) => n).sort()).toEqual(['attachment', 'company', 'journalEntries', 'transactions', 'trialBalance'])
+  })
+
+  test('TB-10 planted: the probe catches a reader that hands out its cached object', async () => {
+    const cache: { rows?: unknown[] } = {}
+    const leaky = { trialBalance: () => Promise.resolve((cache.rows ??= [{ accountId: '35', debitCents: 1 }])) } as unknown as QboReader
+    const first = await leaky.trialBalance(REALM, YEAR_END, 'accrual')
+    const before = plain(first)
+    mutateDeep(first)
+    expect(plain(await leaky.trialBalance(REALM, YEAR_END, 'accrual'))).not.toEqual(before)
+  })
+
+  for (const engine of ['samples', 'sandbox'] as const) {
+    for (const [name, read] of READS) {
+      test(`TB-10 ${engine}: changing the result of ${name} in place leaves the next read of the same reader unchanged`, async () => {
+        const reader = engine === 'samples' ? createQboReader({ env: samplesEnv(STANDIN_DIR) }) : sandbox().reader
+        const first = await read(reader)
+        const before = plain(first)
+        expect(JSON.stringify(before).length).toBeGreaterThan(2)
+        mutateDeep(first)
+        expect(plain(first)).not.toEqual(before)
+        expect(plain(await read(reader))).toEqual(before)
+      })
+    }
+  }
 })
 
 describe('B04 no secret in logs or files (SEC-10, check 9)', () => {

@@ -132,5 +132,55 @@ export function methodNames(o: object): string[] {
   return [...names].sort()
 }
 
+/**
+ * Replaces `target` (a file or a folder) with a symbolic link to a copy of it under `elsewhere`, so the link names
+ * the same content (R94: a link is refused for what it is, not for what it points at). Returns the copy's path.
+ */
+export function linkInPlace(target: string, elsewhere: string): string {
+  fs.mkdirSync(elsewhere, { recursive: true })
+  const copy = path.join(elsewhere, `${path.basename(target)}-${String(fs.readdirSync(elsewhere).length)}`)
+  fs.cpSync(target, copy, { recursive: true })
+  fs.rmSync(target, { recursive: true, force: true })
+  fs.symlinkSync(copy, target)
+  return copy
+}
+
+/** Changes every string, number, list and byte of a result in place (A07's "returns a copy" probe). */
+export function mutateDeep(v: unknown, depth = 0): void {
+  if (depth > 8 || v === null || typeof v !== 'object') return
+  if (v instanceof Uint8Array) {
+    v.fill(0x58)
+    return
+  }
+  if (Array.isArray(v)) {
+    for (const x of v) mutateDeep(x, depth + 1)
+    v.push('mutated (Test)')
+    return
+  }
+  const o = v as Record<string, unknown>
+  for (const k of Object.keys(o)) {
+    const x = o[k]
+    if (typeof x === 'string') o[k] = 'mutated (Test)'
+    else if (typeof x === 'number') o[k] = -12345
+    else if (typeof x === 'boolean') o[k] = !x
+    else mutateDeep(x, depth + 1)
+  }
+  o['mutatedTest'] = true
+}
+
+/** A plain, comparable copy of a reader result (bytes as hex), taken before the result is mutated. */
+export function plain(v: unknown): unknown {
+  if (v instanceof Uint8Array) return Buffer.from(v).toString('hex')
+  if (Array.isArray(v)) return v.map(plain)
+  if (v !== null && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, plain(x)]))
+  return v
+}
+
+/** The day before an ISO date, computed in UTC (the test's own oracle for TB-5's opening trial balance date). */
+export function dayBefore(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number) as [number, number, number]
+  return new Date(Date.UTC(y, m - 1, d - 1)).toISOString().slice(0, 10)
+}
+
 /** OUT-3: a name that reads as a write to QBO. */
 export const WRITE_NAME = /write|update|delete|remove|upsert|insert|create|post|put|patch|save|send|upload|void|batch/i

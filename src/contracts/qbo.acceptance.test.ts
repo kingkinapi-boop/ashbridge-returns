@@ -72,6 +72,9 @@ describe('B04 the reader interface is read only (OUT-3)', () => {
     expectTypeOf<keyof QboReader>().toEqualTypeOf<'engine' | 'version' | 'company' | 'trialBalance' | 'transactions' | 'journalEntries' | 'attachment'>()
     expectTypeOf<QboReader['trialBalance']>().returns.resolves.items.toHaveProperty('debitCents')
     expectTypeOf<QboReader['attachment']>().returns.resolves.toHaveProperty('bytes').toEqualTypeOf<Uint8Array>()
+    // A runtime twin, so the test holds an assertion under the suite's expect.hasAssertions() (type checks count none).
+    const keys = ['engine', 'version', 'company', 'trialBalance', 'transactions', 'journalEntries', 'attachment'] as const satisfies readonly (keyof QboReader)[]
+    expect(keys.filter((k) => /write|update|delete|create|post|put|patch|save/i.test(k))).toEqual([])
   })
 })
 
@@ -143,6 +146,44 @@ describe('B04 snapshots are dated and fingerprinted (TB-10)', () => {
     expect(QboSnapshotSchema.safeParse({ ...SNAPSHOT, sha256: '' }).success).toBe(false)
     expect(QboSnapshotSchema.safeParse({ ...SNAPSHOT, fileKey: ' ' }).success).toBe(false)
     expect(QboSnapshotSchema.safeParse({ ...SNAPSHOT, engine: 'csv' }).success).toBe(false)
+  })
+
+  // A507 item 9: the fingerprint is a sha256 in its one written form, 64 lower-case hex characters.
+  const HEX64 = 'ab'.repeat(16) + 'cd'.repeat(16)
+  const BAD_SHA: [string, string][] = [
+    ['upper-case hex', HEX64.toUpperCase()],
+    ['63 characters', HEX64.slice(1)],
+    ['65 characters', HEX64 + 'a'],
+    ['a letter past f', 'g' + HEX64.slice(1)],
+    ['a prefix', 'sha256:' + HEX64],
+    ['a trailing newline', HEX64 + '\n'],
+    ['a leading space', ' ' + HEX64.slice(1)],
+    ['8 characters', 'f'.repeat(8)],
+    ['base64 of the digest', Buffer.from(HEX64, 'hex').toString('base64')],
+  ]
+  for (const [label, value] of BAD_SHA) {
+    test(`TB-10 planted: a snapshot whose sha256 is ${label} is refused (64 lower-case hex only)`, () => {
+      expect(QboSnapshotSchema.safeParse({ ...SNAPSHOT, sha256: value }).success).toBe(false)
+    })
+  }
+
+  test('TB-10 property: any 64 lower-case hex sha256 is accepted; any other text is refused', () => {
+    const hex = fc.constantFrom(...'0123456789abcdef'.split(''))
+    fc.assert(
+      fc.property(fc.string({ unit: hex, minLength: 64, maxLength: 64 }), (s) => {
+        expect(QboSnapshotSchema.safeParse({ ...SNAPSHOT, sha256: s }).success).toBe(true)
+      }),
+      { seed: 4021, numRuns: 200 },
+    )
+    fc.assert(
+      fc.property(
+        fc.oneof(fc.string({ maxLength: 80 }), fc.string({ unit: fc.constantFrom(...'0123456789abcdefABCDEF'.split('')), minLength: 60, maxLength: 68 })).filter((s) => !/^[0-9a-f]{64}$/.test(s)),
+        (s) => {
+          expect(QboSnapshotSchema.safeParse({ ...SNAPSHOT, sha256: s }).success).toBe(false)
+        },
+      ),
+      { seed: 4022, numRuns: 300 },
+    )
   })
 })
 

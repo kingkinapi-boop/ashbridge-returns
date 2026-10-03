@@ -24,7 +24,8 @@ import { fixedClock } from '../../core/clock'
 import { cloneTestDb } from '../../core/db'
 import { createFileStore } from '../storage'
 import { createDbSnapshotStore, createQboReader, readBooks } from './index'
-import { NON_TEST_REALM, REALM, RETURN_ID, STANDIN_DIR, YEAR_END, YEAR_START, failure, samplesEnv, tempDir } from './__fixtures__/harness'
+import type { QboTransaction } from '../../contracts/qbo'
+import { NON_TEST_REALM, REALM, RETURN_ID, STANDIN_DIR, YEAR_END, YEAR_START, copyStandIn, failure, readJson, samplesEnv, tempDir, writeJson } from './__fixtures__/harness'
 
 const TABLES = ['qbo_snapshots', 'qbo_accounts', 'qbo_trial_balance_lines', 'qbo_transactions', 'qbo_journal_entries', 'qbo_journal_lines', 'qbo_attachments'] as const
 const AT = '2026-10-01T12:00:00-04:00'
@@ -53,10 +54,10 @@ async function rows<T = Record<string, unknown>>(sql: string, params: unknown[] 
 async function count(table: string, where = 'true', params: unknown[] = []): Promise<number> {
   return (await rows<{ n: number }>(`select count(*)::int as n from returns.${table} where ${where}`, params))[0]?.n ?? -1
 }
-function run(at: string = AT) {
+function run(at: string = AT, dir: string = STANDIN_DIR) {
   const files = createFileStore({ root: path.join(tmp.dir, 'store') })
   return readBooks(RETURN_ID, REALM, YEAR_START, YEAR_END, {
-    reader: createQboReader({ env: samplesEnv(STANDIN_DIR) }),
+    reader: createQboReader({ env: samplesEnv(dir) }),
     files,
     store: createDbSnapshotStore(db),
     clock: fixedClock(at),
@@ -158,5 +159,118 @@ describe('B04 the QBO tables are append-only, test-marked and closed (EV-1, SEC-
   test('SEC-11 every QBO row written by a read is marked is_test', async () => {
     await run()
     for (const t of TABLES) expect(await count(t, 'is_test is not true'), t).toBe(0)
+  })
+})
+
+// A507 item 8: the table checks run on every qbo_ table the catalogue holds, not only the hand list above, so a table
+// the build adds is held to the same rules.
+async function catalogueTables(): Promise<string[]> {
+  const got = await rows<{ relname: string }>(
+    `select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'returns' and c.relkind in ('r', 'p') and c.relname like 'qbo\\_%' order by c.relname`,
+  )
+  return got.map((r) => r.relname)
+}
+
+describe('B04 every qbo_ table in the catalogue (EV-1, SEC-7, SEC-11, A507 item 8)', () => {
+  test('EV-1 SEC-7 the catalogue holds every table of the hand list, and each catalogued qbo_ table has row-level security on, no policies and is_test', async () => {
+    const tables = await catalogueTables()
+    expect(tables.length).toBeGreaterThanOrEqual(TABLES.length)
+    for (const t of TABLES) expect(tables, t).toContain(t)
+    for (const t of tables) {
+      const rel = await rows<{ relrowsecurity: boolean }>(`select c.relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'returns' and c.relname = $1`, [t])
+      expect(rel[0]?.relrowsecurity, t).toBe(true)
+      expect(await rows(`select 1 from pg_policies where schemaname = 'returns' and tablename = $1`, [t]), t).toEqual([])
+      expect(await rows(`select 1 from information_schema.columns where table_schema = 'returns' and table_name = $1 and column_name = 'is_test'`, [t]), t).toHaveLength(1)
+    }
+  })
+
+  test('EV-1 SEC-7 SEC-11 planted: after a read, every catalogued qbo_ table holds rows, all is_test, and refuses UPDATE, DELETE and TRUNCATE', async () => {
+    await run()
+    const tables = await catalogueTables()
+    expect(tables.length).toBeGreaterThan(0)
+    for (const t of tables) {
+      const before = await count(t)
+      expect(before, `${t} has rows to guard`).toBeGreaterThan(0)
+      expect(await count(t, 'is_test is not true'), t).toBe(0)
+      expect(await failure(() => db.query(`update returns.${t} set is_test = is_test`)), `${t} update`).toBeInstanceOf(Error)
+      expect(await failure(() => db.query(`delete from returns.${t}`)), `${t} delete`).toBeInstanceOf(Error)
+      expect(await failure(() => db.query(`truncate returns.${t} cascade`)), `${t} truncate`).toBeInstanceOf(Error)
+      expect(await count(t), t).toBe(before)
+    }
+  })
+
+  // The plant copies a stored row and points it at a snapshot that does not exist. Columns with a default (an
+  // identity, a created_at) take their default; a unique key that leaves out snapshot_id gets a fresh value of its
+  // own type, so the only fault in the row is the missing snapshot (foreign key violation, 23503).
+  const MISSING_SNAPSHOT = '00000000-0000-4000-8000-00000000b04f'
+  function freshValue(dataType: string, k: number): string | number {
+    if (/int|numeric|decimal/.test(dataType)) return 32000 + k
+    if (dataType === 'uuid') return `00000000-0000-4000-8000-${String(900000000000 + k)}`
+    if (/date|time/.test(dataType)) return '2099-12-31'
+    return `b04-fk-plant-${String(k)} (Test)`
+  }
+
+  test('EV-5 TB-10 planted: every catalogued normalised qbo_ table with a snapshot_id refuses a row whose snapshot does not exist, and keeps none', async () => {
+    await run()
+    const tables = (await catalogueTables()).filter((t) => t !== 'qbo_snapshots')
+    const withSnapshot: string[] = []
+    for (const t of tables) {
+      const cols = await rows<{ column_name: string; data_type: string; column_default: string | null; is_identity: string; is_generated: string }>(
+        `select column_name, data_type, column_default, is_identity, is_generated from information_schema.columns where table_schema = 'returns' and table_name = $1 order by ordinal_position`,
+        [t],
+      )
+      if (!cols.some((c) => c.column_name === 'snapshot_id')) continue
+      withSnapshot.push(t)
+      const uniqueCols = await rows<{ attname: string }>(
+        `select distinct a.attname from pg_index i join pg_class c on c.oid = i.indrelid join pg_namespace n on n.oid = c.relnamespace
+           join pg_attribute a on a.attrelid = c.oid and a.attnum = any(i.indkey)
+          where n.nspname = 'returns' and c.relname = $1 and i.indisunique
+            and not exists (select 1 from pg_attribute s where s.attrelid = c.oid and s.attnum = any(i.indkey) and s.attname = 'snapshot_id')`,
+        [t],
+      )
+      const insertable = cols.filter((c) => c.column_default === null && c.is_identity === 'NO' && c.is_generated === 'NEVER')
+      const patch: Record<string, string | number> = { snapshot_id: MISSING_SNAPSHOT }
+      uniqueCols.forEach((u, k) => {
+        const col = cols.find((c) => c.column_name === u.attname)
+        if (col !== undefined && insertable.includes(col)) patch[u.attname] = freshValue(col.data_type, k)
+      })
+      const names = insertable.map((c) => `"${c.column_name}"`).join(', ')
+      const before = await count(t)
+      expect(before, `${t} has a row to copy`).toBeGreaterThan(0)
+      let code = ''
+      try {
+        await db.query(
+          `insert into returns.${t} (${names}) select ${names} from jsonb_populate_record(null::returns.${t}, (select to_jsonb(x) || $1::jsonb from returns.${t} x limit 1))`,
+          [JSON.stringify(patch)],
+        )
+      } catch (e) {
+        code = (e as { code?: string }).code ?? `no code: ${String((e as { message?: string }).message)}`
+      }
+      expect(code, `${t}: a row with a missing snapshot`).toBe('23503')
+      expect(await count(t), t).toBe(before)
+    }
+    for (const t of ['qbo_accounts', 'qbo_trial_balance_lines', 'qbo_transactions', 'qbo_journal_entries', 'qbo_attachments']) expect(withSnapshot, t).toContain(t)
+  })
+})
+
+// A507 item 6, the database side: identical rows are both stored, each with its 1-based position in its snapshot
+// (source_line). Unit twin: "B04 identical rows are both kept" in read-books.acceptance.test.ts.
+describe('B04 identical rows are both stored, with their source position (TB-10, A507 item 6)', () => {
+  test('TB-10 planted: two identical transactions with a blank number on one account are both stored, at their own source_line', async () => {
+    const dir = copyStandIn(path.join(tmp.dir, 'standin'))
+    const file = path.join(dir, REALM, 'transactions', '35.json')
+    const twin: QboTransaction = { txnId: '2025-05-02|Deposit||35|2500', idKind: 'composite', entityType: 'Deposit', date: '2025-05-02', number: '', memo: 'Coin deposit (Test)', accountId: '35', amountCents: 2500, otherAccountIds: ['79'], attachmentIds: [] }
+    writeJson(file, [...(readJson(file) as QboTransaction[]), twin, twin])
+    const r = await run(AT, dir)
+    const snap = r.snapshots.find((s) => s.kind === 'transactions' && s.accountId === '35')
+    expect(snap).toBeDefined()
+    const stored = await rows<{ txn_id: string; source_line: number | string }>('select txn_id, source_line from returns.qbo_transactions where snapshot_id = $1 order by source_line', [snap?.id])
+    expect(stored.map((s) => [s.txn_id, Number(s.source_line)])).toEqual([
+      ['130', 1],
+      ['131', 2],
+      [twin.txnId, 3],
+      [twin.txnId, 4],
+    ])
+    expect(await count('qbo_transactions')).toBe(r.transactions.length)
   })
 })
