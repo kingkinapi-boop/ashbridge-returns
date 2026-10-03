@@ -3,9 +3,9 @@
  "role": "spec",
  "worker": "cloud-8dacd4",
  "state": "reported",
- "at": "2026-10-03T19:00:59.798Z",
+ "at": "2026-10-03T19:01:39.641Z",
  "mode": "turbo",
- "note": "27 new or changed tests; whole split done, no build left; see reports/FX14-spec.md",
- "commit": "7fddce5",
+ "note": "patch: walker reads test.each and property bodies, pg16 T5 and lease property split, CONCURRENT list; whole split in the spec, no build; test:flake left to the check",
+ "commit": "c144ea3",
  "validated": "89be70a"
 }
