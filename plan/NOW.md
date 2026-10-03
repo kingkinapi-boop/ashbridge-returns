@@ -18,7 +18,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:25Z by the Lea
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
 | Train | SC, CQ4, CQ5, FX10 boarded; head 12af2528; requested 08:50Z | cloud check full, test:flake, FX10 db x20; land if green |
-| SC3 | check PASS; security review FINDINGS (4 medium, rules miss tables, tags, settings); findings review running | spec patch, build, re-review |
+| SC3 | findings done (A452): spec patch (10 items, now core), no build change; FX17 carded | spec, re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | findings 5 (A446): final round; refusal file back in A04; FX15, SC12 carded | spec patch (Opus), build round 5, check, security review; A08 spec after |
 | DB16 | final round: build 5 reported (571 pg16 incl. T1 to T5) | check, security review, board |

@@ -10153,7 +10153,7 @@
       "title": "Security rules R62 to R66",
       "phase": 0,
       "size": "M",
-      "core": false,
+      "core": true,
       "security": true,
       "note": "From reports/A06-findings.md, 2 Oct."
     },
@@ -10530,6 +10530,29 @@
       "core": false,
       "security": true,
       "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC3"
+      ],
+      "paths": [
+        "db/schema/94_actor_keys.sql",
+        "src/contracts/actors.acceptance.db.test.ts"
+      ],
+      "clauses": [
+        "SEC-1",
+        "SEC-7",
+        "ARC-13"
+      ],
+      "id": "FX17",
+      "title": "Actor columns name a staff user or a named system actor",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From reports/SC3-findings.md, 3 Oct (A452). Schema file number 94: N19 holds 93."
     },
     {
       "status": "carded",
