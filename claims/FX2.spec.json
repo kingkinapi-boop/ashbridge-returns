@@ -1,11 +1,9 @@
 {
  "card": "FX2",
  "role": "spec",
- "worker": "local-2",
- "state": "reported",
- "at": "2026-10-03T05:18:25.329Z",
- "mode": "turbo",
- "note": "round 2: 23 tests, scans via readOwnSource, auth/index.ts added (1 fails for the right reason)",
- "commit": "5ebca343",
- "validated": "77648178"
+ "note": "toolchain refit",
+ "worker": "cloud-adefa2",
+ "state": "working",
+ "at": "2026-10-03T05:59:27.895Z",
+ "mode": "turbo"
 }
