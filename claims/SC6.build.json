@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "c526b32d",
  "worker": "cloud-1ba1dc",
- "state": "working",
- "at": "2026-10-03T13:56:41.329Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T13:59:14.894Z",
+ "mode": "turbo",
+ "note": "33 of 33 acceptance tests pass; no product code in Paths; tools 413 pass, typecheck, lint, scope clean"
 }
