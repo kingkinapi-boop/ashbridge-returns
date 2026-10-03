@@ -5,7 +5,7 @@ Tags: none (queue tooling).
 Paths: tools/next.mjs, tools/claim.mjs, tools/test/next-paths.test.mjs
 Clauses: ARC-15
 Read: `tools/next.mjs`, `tools/claim.mjs` (next: busyFor, NEEDS_LEAD), `plan/cards/CQ3.md`.
-Spec commit: (spec-writer fills)
+Spec commit: 01c1194 on claude/CQ8, validated on main 0e39bb0 (CQ5 build branch merged in).
 
 ## Goal
 On 3 Oct 07:30Z next.mjs printed START for A04, FX10 and W00c while claim.mjs offered nothing: reported builds (FX2, W16) held overlapping Paths. The SC check sat as "needs Lead" with no Lead command to reopen a check (A439).
