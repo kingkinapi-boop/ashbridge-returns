@@ -357,7 +357,9 @@ function update() {
   if (state === 'reopened' && (worker !== 'lead' || !['build', 'spec', 'check'].includes(role))) return out('REFUSED: only --worker lead may reopen a build, a spec or a check', 6)
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     fetchAll()
-    const claims = readClaims(claimsTip())
+    // CQ7: the write goes on the tip this decision read (as CQ5 does for next).
+    const decidedTip = claimsTip()
+    const claims = readClaims(decidedTip)
     const find = (r) => claims.find((c) => c.card === card && c.role === r)
     const prev = find(role) || {}
     if (prev.worker && prev.worker !== worker && worker !== 'lead') return out(`REFUSED: ${card} ${role} is held by ${prev.worker}, not ${worker}`, 6)
@@ -394,7 +396,7 @@ function update() {
     // A check FAIL: one push writes the failed check and holds the build for the findings review.
     const held = role === 'check' && state === 'failed' ? find('build') : null
     if (held) files[`${card}.build.json`] = { ...held, state: 'hold-findings', at, note: opt('note', held.note) }
-    const res = writeClaims(files, attempt)
+    const res = writeClaims(files, attempt, decidedTip)
     if (res === true) {
       if (state !== 'working') setCurrentJob(null)
       return out(`UPDATED ${card} ${role} ${state}${held ? ' (build on hold-findings)' : ''}`, 0)
@@ -410,10 +412,11 @@ function beat() {
   if (!card || !role) return out('usage: beat <card> <role> --worker <name>', 2)
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     fetchAll()
-    const prev = readClaims(claimsTip()).find((c) => c.card === card && c.role === role)
+    const decidedTip = claimsTip()
+    const prev = readClaims(decidedTip).find((c) => c.card === card && c.role === role)
     if (!prev) return out(`REFUSED: no claim for ${card} ${role}`, 6)
     if (prev.worker !== worker && worker !== 'lead') return out(`REFUSED: ${card} ${role} is held by ${prev.worker}, not ${worker}`, 6)
-    const res = writeClaims({ [`${card}.${role}.json`]: { ...prev, beat: new Date(nowMs()).toISOString() } }, attempt)
+    const res = writeClaims({ [`${card}.${role}.json`]: { ...prev, beat: new Date(nowMs()).toISOString() } }, attempt, decidedTip)
     if (res === true) return out(`BEAT ${card} ${role}`, 0)
     if (res === false) break
   }
