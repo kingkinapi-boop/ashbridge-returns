@@ -3271,7 +3271,8 @@
         "src/modules/gaps/core/**",
         "src/modules/gaps/index.ts",
         "data/gaps/required.json",
-        "src/pipeline/steps/gaps.ts"
+        "src/pipeline/steps/gaps.ts",
+        "db/schema/05_bridge.sql"
       ],
       "clauses": [
         "AI-12",
