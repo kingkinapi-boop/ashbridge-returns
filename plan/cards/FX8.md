@@ -1,5 +1,7 @@
 # FX8 Sample clients: the four bare names in flag text
 
+**Build note (A442):** regenerate 07, 09, 14 and 15 on a cloud box (Linux): regenerating on Windows writes CRLF and breaks RT-3 (sample 01 import.csv). Spec commit a9dd4aa3 on claude/FX8-r2.
+
 **Lead directive, 3 Oct (A417): round 2 from reports/FX8-findings.md, on a fresh branch claude/FX8-r2 from main after W16 lands.** The spec job owns the test, the SEC-11 verify line and the README count (main's count plus 15) and pastes the exact red set on its commit (the SEC-11 lines and the two R11 lines); the acceptance test also asserts no declared person is skipped by the 5-character name guard. The build changes only the three generator lines and regenerates 07, 09, 14 and 15. The check runs verify.mjs green on the branch and again after merging origin/main into a scratch copy. W16 replaces the two whole-folder lines; FX8 does not touch them.
 
 Phase 0. Size S. Deps: W16. Where: local or cloud (Node scripts, no packages).
