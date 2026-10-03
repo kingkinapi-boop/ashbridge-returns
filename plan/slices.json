@@ -942,7 +942,8 @@
         "e2e/_harness/**",
         "package.json",
         "e2e/steps/README.md",
-        "package-lock.json"
+        "package-lock.json",
+        "testworld/harness/**"
       ],
       "clauses": [
         "END-9",
@@ -9685,9 +9686,8 @@
         "src/modules/lifecycle/**"
       ],
       "clauses": [
-        "FLOW-4",
-        "EV-1",
-        "LL-1"
+        "FLOW-1",
+        "FLOW-4"
       ],
       "id": "FX5",
       "title": "F02 move inside a caller transaction (for T08)",
