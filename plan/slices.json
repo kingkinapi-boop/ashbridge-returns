@@ -10858,7 +10858,7 @@
       "note": "From reports/SC-build.md, 2 Oct. Lands before the first phase 4 build: its db/schema/** hold overlaps every phase 4 schema file (77, 78, 79, 81, 82, 83, 91, 92, 99) (phase 4 card review C4, A447)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": "d69ac553",
       "deps": [
         "A06"
@@ -10885,7 +10885,8 @@
       "size": "S",
       "core": false,
       "security": true,
-      "note": "From the train report of 3 Oct (A405)."
+      "note": "From the train report of 3 Oct (A405).",
+      "done": "2026-10-03"
     }
   ]
 }

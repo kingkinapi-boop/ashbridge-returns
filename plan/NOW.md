@@ -1,12 +1,12 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:10Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:20Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (53):** through FX2, then SC, CQ4, CQ5 and FX10 (train 12af2528 green: unit 2703, db 587, flake 5 of 5, FX10 db x20 20 of 20; landed 10:52Z as 6ca8b48f). Train (DB16) requested 11:25Z.
+- **Landed (54):** through FX10 (train 12af2528), then DB16 (train 65f59a22 green on pg16 16.14, landed 12:15Z as dc36b33d). Train 25ea2736 (A04, FX15, CQ7) requested 12:20Z.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
@@ -17,11 +17,11 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:10Z by the Lea
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| Train | 26e84345 red on R18 (fixed by A461) and blocked on pg16 and mutation (refused); rebuilt with DB16 alone, requested 11:25Z (A462) | check on pg16; land; SC11 and GL3 follow |
+| Train | A04, FX15, CQ7 on 25ea2736, requested 12:20Z | cloud check full on pg16, mutation A04; land |
 | SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 5b PASS by ruling (A465), security CLEAN (5 lows to FX18, A466) | board the next train with FX15, CQ7; A08 spec after landing |
-| DB16, SC11, GL3 | DB16 PASS, CLEAN; SC11 spec reported (39 tests, A453 in); GL3 build waits for DB16 on main (pg16) | board DB16 next train; SC11 build; GL3 pg16 re-run, check |
+| A04 | on the train (PASS by ruling A465, security CLEAN A466) | land; then A08 spec, FX18, SC12 |
+| SC11, GL3 | DB16 landed: SC11 spec refit open (cloud); GL3 build reopened (pg16 run, R41 fix) | SC11 build; GL3 check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
