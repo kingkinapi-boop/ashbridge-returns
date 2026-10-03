@@ -4,7 +4,9 @@
  "round": 1,
  "spec": "d6f3a1b1",
  "worker": "cloud-a93d05",
- "state": "working",
- "at": "2026-10-03T04:26:59.879Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T04:28:27.342Z",
+ "mode": "turbo",
+ "note": "wait: core spec review (reports/DB16-spec-review.md); build opens after GO",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
 }
