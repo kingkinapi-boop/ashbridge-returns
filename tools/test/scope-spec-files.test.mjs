@@ -192,3 +192,147 @@ describe('ARC-15 CQ4 R82: files the Spec names belong to the spec job', () => {
     expect(r.code).toBe(0)
   })
 })
+
+// CQ4 round 2 (A430, findings items 3 and 4): the Spec's prose names the build's own code files without owning them,
+// the card is read from the base ref, `--branch` picks the branch, and report, plan and superseded edits are not flagged.
+const CARD2 = [
+  '# F card',
+  '',
+  'Paths: src/f/**, check/verify.mjs, README.md',
+  '',
+  '## Spec',
+  '- The build keeps its logic in `src/f/a.ts` and calls src/f/b.ts for the rest.',
+  '- The verify line lives in `check/verify.mjs`.',
+  '',
+  '## Build',
+  'The code under src/f.',
+  ''
+].join('\n')
+
+async function world2(card) {
+  const w = await world()
+  put(w, 'plan/cards/F.md', card)
+  put(w, 'src/f/a.ts', 'a0\n')
+  put(w, 'src/f/b.ts', 'b0\n')
+  put(w, 'tests/f.test.mjs', 't0\n')
+  await git(w, 'add', 'plan/cards/F.md', 'src/f', 'tests')
+  await git(w, 'commit', '-q', '-m', 'card and base files')
+  await git(w, 'push', '-q', 'origin', 'main')
+  return w
+}
+const scopeArgs = async (work, ...a) => {
+  const r = await exec('node', [path.join(work, 'tools', 'scope.mjs'), 'F', ...a], { cwd: work })
+  return { code: r.status, out: (r.out + r.err).trim() }
+}
+const head7 = async (w) => (await git(w, 'rev-parse', 'HEAD')).slice(0, 7)
+
+describe('ARC-15 CQ4 R82 round 2: the expectation class, the base card, --branch', () => {
+  test('ARC-15 R82 Spec prose naming the build code file (bare and backticked) is not flagged, and verify.mjs still is', async () => {
+    const w = await world2(CARD2)
+    await branch(w, [() => commit(w, 'build(F): code', { 'src/f/a.ts': 'a1\n', 'src/f/b.ts': 'b1\n' })])
+    const ok = await scopeArgs(w)
+    expect(ok.code).toBe(0)
+    expect(ok.out).toMatch(/SCOPE OK F/)
+    await git(w, 'push', '-q', 'origin', '--delete', 'claude/F')
+    await branch(w, [() => commit(w, 'build(F): code and verify line', { 'src/f/a.ts': 'a1\n', 'check/verify.mjs': 'v-build\n' })])
+    const bad = await scopeArgs(w)
+    expect(bad.code).toBe(1)
+    expect(bad.out).toMatch(/check\/verify\.mjs/)
+    expect(bad.out).not.toMatch(/src\/f\/a\.ts/)
+  })
+
+  test('ARC-15 R82 a hand-resolved merge in a file a spec commit touched, not named in the Spec, fails', async () => {
+    const w = await world2(CARD2)
+    await commit(w, 'main moves', { 'src/other/m.ts': 'm\n' })
+    await git(w, 'push', '-q', 'origin', 'main')
+    await git(w, 'reset', '-q', '--hard', 'HEAD~1')
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { 'tests/f.test.mjs': 't1\n' }),
+      () => commit(w, 'build(F): code', { 'src/f/c.ts': 'c1\n' }),
+      async () => {
+        await git(w, 'merge', '-q', '--no-commit', '--no-ff', 'origin/main')
+        put(w, 'tests/f.test.mjs', 't-by-hand\n')
+        await git(w, 'add', 'tests/f.test.mjs')
+        await git(w, 'commit', '-q', '-m', 'Merge origin/main into claude/F')
+      }
+    ])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(1)
+    expect(r.out).toMatch(/tests\/f\.test\.mjs/)
+    expect(r.out).toMatch(/merge/i)
+  })
+
+  test('ARC-15 R82 the card is read from the base ref: a branch edit that unnames verify.mjs does not clear the flag', async () => {
+    const w = await world2(CARD2)
+    await git(w, 'checkout', '-q', '-b', 'claude/F')
+    await commit(w, 'build(F): code, verify line and an unnaming card edit', {
+      'src/f/c.ts': 'c1\n',
+      'check/verify.mjs': 'v-build\n',
+      'plan/cards/F.md': CARD2.replace('`check/verify.mjs`', 'the verify script')
+    })
+    await git(w, 'push', '-q', 'origin', 'claude/F')
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(1)
+    expect(r.out).toMatch(/check\/verify\.mjs/)
+  })
+
+  test('ARC-15 R82 --branch <name> judges that branch, and the default still judges claude/<card>', async () => {
+    const w = await world2(CARD2)
+    await branch(w, [() => commit(w, 'build(F): code', { 'src/f/c.ts': 'c1\n' })])
+    await git(w, 'checkout', '-q', '-b', 'claude/F-r2')
+    await commit(w, 'build(F): round 2 edits the verify line', { 'src/f/c.ts': 'c2\n', 'check/verify.mjs': 'v-r2\n' })
+    await git(w, 'push', '-q', 'origin', 'claude/F-r2')
+    await git(w, 'checkout', '-q', 'main')
+    const r2 = await scopeArgs(w, '--branch', 'claude/F-r2')
+    expect(r2.code).toBe(1)
+    expect(r2.out).toMatch(/check\/verify\.mjs/)
+    const dflt = await scopeArgs(w)
+    expect(dflt.code).toBe(0)
+    expect(dflt.out).toMatch(/SCOPE OK F/)
+  })
+
+  test('ARC-15 R82 a later commit to reports/** or plan/** is never "spec file edited by the build"', async () => {
+    const w = await world2(CARD2)
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { 'tests/f.test.mjs': 't1\n', 'reports/F-spec.md': 'r1\n', 'plan/notes/F.md': 'n1\n' }),
+      () => commit(w, 'F: spec report update', { 'reports/F-spec.md': 'r2\n' }),
+      () => commit(w, 'build(F): code, plan note', { 'src/f/c.ts': 'c1\n', 'plan/notes/F.md': 'n2\n' })
+    ])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(0)
+    expect(r.out).toMatch(/SCOPE OK F/)
+    expect(r.out).not.toMatch(/edited by the build/)
+  })
+
+  test('ARC-15 R82 a file a later spec(F): commit rewrote prints "note: superseded by <sha>" and does not fail', async () => {
+    const w = await world2(CARD2)
+    let s2 = ''
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { 'tests/f.test.mjs': 't1\n' }),
+      () => commit(w, 'wip: touch the test', { 'tests/f.test.mjs': 't-wip\n' }),
+      async () => {
+        await commit(w, 'spec(F): acceptance tests, patch', { 'tests/f.test.mjs': 't2\n' })
+        s2 = await head7(w)
+      },
+      () => commit(w, 'build(F): code', { 'src/f/c.ts': 'c1\n' })
+    ])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(0)
+    expect(r.out).toMatch(new RegExp(`note: superseded by ${s2}`))
+    expect(r.out).toMatch(/tests\/f\.test\.mjs/)
+    expect(r.out).not.toMatch(/SCOPE FAIL/)
+  })
+
+  test('ARC-15 R82 a build commit after the file’s last spec commit still fails, with no superseded note', async () => {
+    const w = await world2(CARD2)
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { 'tests/f.test.mjs': 't1\n' }),
+      () => commit(w, 'build(F): code and edits the test', { 'src/f/c.ts': 'c1\n', 'tests/f.test.mjs': 't-build\n' })
+    ])
+    const r = await scopeArgs(w)
+    expect(r.code).toBe(1)
+    expect(r.out).toMatch(/tests\/f\.test\.mjs/)
+    expect(r.out).toMatch(/spec file edited by the build/)
+    expect(r.out).not.toMatch(/superseded/)
+  })
+})
