@@ -29,7 +29,7 @@ Big reads (a diff over 300 lines, a whole module) go to a helper that writes a f
 
 **C. Independence and process**
 1. From the claims history (`git log origin/claude/claims --since=<since> --format=%s`): for every merged card, the spec, build and check workers are three different names.
-2. NOW.md is true (its "In flight" matches `claim.mjs list`). TODO-ZO has exactly three sections, explains each item, holds no amber and at most 3 open red questions.
+2. NOW.md is true (its "In flight" matches `claim.mjs list`). TODO-ZO has exactly two parts (decision 0022), explains each item, holds no amber and at most 3 open red questions.
 3. The Lead read code or long logs itself (look for large reads in its notes or reports): name it.
 
 **D. Usage and waste**
@@ -66,6 +66,6 @@ Rewrite `reviews/REVIEW.md` (never append), at most 500 words:
 2. "Needs Zo": only red items, click by click, or "Nothing."
 3. Findings: problem, evidence, fix, who does it. Label each [verified], [inferred] or [speculation].
 4. The numbers: cards merged, rounds, check and train failures, dispatches, ambers, open reds.
-No em dashes. On SLOW or HOLD also rewrite `plan/mode.json` (lowering only, with why) and add one line to TODO-ZO section 1 "What the Lead is doing now". In chat say only: `Review written: reviews/REVIEW.md.`
+No em dashes. On SLOW or HOLD also rewrite `plan/mode.json` (lowering only, with why; on SLOW set `cap_from` to the time, so the day's cap counts from then) and add one line to TODO-ZO part 2 "What the Lead is doing now". In chat say only: `Review written: reviews/REVIEW.md.`
 
 You may propose exact edits to CLAUDE.md, agents, skills and rules in the review. Apply them only after Zo reads it and says "apply".

@@ -15,7 +15,7 @@ description: The build's usage modes (pause, prep, normal, turbo, wind-down) - w
 | `pause` | pause | Nothing new starts; in-flight jobs finish. Not used for clearing the Lead (that is `handover`). |
 | `go` | restores `resume_to` after a limit pause; otherwise just runs the loop | |
 
-The Lead lowers the mode by itself only: a usage limit (to pause, `resume_to` = what was running), a Reviewer SLOW (one step down) or HOLD (pause), or `wind_down_at` passing (wind-down). Every change: rewrite mode.json (who, when, why), commit and push it, one line in TODO-ZO "What the Lead is doing now".
+The Lead lowers the mode by itself only: a usage limit (to pause, `resume_to` = what was running), a Reviewer SLOW (one step down) or HOLD (pause), or `wind_down_at` passing (wind-down). Every change: rewrite mode.json (who, when, why), commit and push it, one line in TODO-ZO "What the Lead is doing now". A lowering to normal or prep sets `cap_from` to its time: the budget hook counts that day's cap from then, so a SLOW slows the build and does not stop it (Review 3 Oct).
 
 ## What each mode allows
 | | pause | prep | normal | turbo | wind-down |
