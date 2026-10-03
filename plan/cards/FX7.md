@@ -30,3 +30,6 @@ SC12 (when it lands) lists R93, R94 or R104 KNOWN entries this card owns in tool
 
 ## Also (A508)
 src/modules/ocr/textlayer/index.ts:108-110: `finally { await task.destroy() }` masks a reading error in flight; keep the first error primary (SC11's settleAll pattern) and delete SC12's KNOWN entry for it if one is on main.
+
+## SC5 KNOWN entries (A514)
+SC5 leaves R73 and R73-run entries (Index strict) and R101-json and R101-run key scans on src/modules/storage/drive/index.ts owned by this card: its build fixes each and deletes its entry. If this card lands before SC5, SC5's spec re-homes them.

@@ -41,3 +41,7 @@ From SC10's findings review 1 and SC6's spec review (3 Oct, Opus; both reports s
 - The shared scan fails a card with no file only when the card is open: 8 closed cards have none (P02, P03, P04, B00, B02, T03, V07, T06). This replaces "a card with no file fails by id" in A493.
 - On the one reader, R18 reads GL1 as core (its tags line has security first) with 6 auth files unmarked. The Lead names the card that marks them before this card's spec starts; known.json takes only FX3 to FX9 as owners.
 - Rule tests for everywhere: (A) one card reader for the four rule files and the gate, planted with Q10 (the gate stops today) and GL1 (security first); (B) every card's Paths line equals slices.json, planted with A08's line before A502; (C) every exemption list (in-test KNOWN arrays, known.json, R89's guard list) names open owners whose Paths hold it, planted with SC10 at 73fe6af4.
+
+## Also (A515, GL3 findings review 3, 3 Oct)
+- R-A: no test file casts to `typeof X & { y?: ... }` (an intersection that tracks the built type turns a needed fallback into a lint error once the build lands). Plant: GL3's round 4 cast.
+- R-B: every src or testworld file with `Stryker disable all` names in its reason a `.db.test.ts` that exists and imports it (directly or through its index), or a test that pins its input whole; mutate-changed.mjs's "core file without @mutate" message prints the accepted form. Plants: a pure file with disable all and no named test; a reason naming a missing test. Paths gain tools/mutate-changed.mjs (already listed).
