@@ -1,11 +1,10 @@
 {
  "card": "A04",
  "role": "build",
- "round": 9,
+ "round": 10,
  "spec": "fb82b8c",
- "worker": "cloud-42f06c",
- "state": "reopened",
- "at": "2026-10-03T10:29:02.276Z",
- "mode": "turbo",
- "note": "A456: round 5 build from the patched spec; cloud box (8 Linux-only tests, mutation 100 on engines.ts, runner.ts, schemas.ts, safe-read.ts)"
+ "worker": "cloud-dfeb44",
+ "state": "working",
+ "at": "2026-10-03T10:29:34.131Z",
+ "mode": "turbo"
 }
