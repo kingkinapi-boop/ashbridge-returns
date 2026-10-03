@@ -2,10 +2,9 @@
  "card": "W00c",
  "role": "spec",
  "note": "A459: spec patch gaps 1 to 4",
- "worker": "cloud-0afb81",
- "state": "reopened",
- "at": "2026-10-03T10:34:28.978Z",
- "mode": "turbo",
- "commit": "963c78b7",
- "validated": "18d267a59053c5144700d2e4c119148c3e754e30"
+ "reopenedFrom": "963c78b7",
+ "worker": "cloud-94926d",
+ "state": "working",
+ "at": "2026-10-03T10:34:59.173Z",
+ "mode": "turbo"
 }
