@@ -93,7 +93,7 @@ describe('A06 test credentials stay out of product code (SEC-10)', () => {
 
   test('SEC-10 only e2e, tests and fixtures import auth/testing', () => {
     const files = [...walk(path.join(ROOT, 'src')), ...walk(path.join(ROOT, 'e2e'))].map((f) => path.relative(ROOT, f).replace(/\\/g, '/'))
-    const bad = files.filter((f) => !mayImport(f) && importsTesting(fs.readFileSync(path.join(ROOT, f), 'utf8')))
+    const bad = files.filter((f) => !mayImport(f) && importsTesting(readOwnSource(path.join(ROOT, f))))
     expect(bad).toEqual([])
   })
 

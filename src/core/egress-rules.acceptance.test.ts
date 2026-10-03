@@ -7,6 +7,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { ESLint } from 'eslint'
 import { describe, expect, test } from 'vitest'
+import { readOwnSource } from './testing/read-own-source'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const FIX = path.join(ROOT, 'tools', 'test', '__fixtures__')
@@ -136,7 +137,7 @@ function npmrcProblems(text: string): string[] {
 
 const GOOGLE_FONT = new RegExp(['next', 'font', 'google'].join('\\/') + '|fonts\\.(?:googleapis|gstatic)\\.com')
 function fontProblems(files: string[]): string[] {
-  return files.filter((f) => GOOGLE_FONT.test(fs.readFileSync(f, 'utf8'))).map((f) => `${path.relative(ROOT, f)} fetches a Google font`)
+  return files.filter((f) => GOOGLE_FONT.test(readOwnSource(f))).map((f) => `${path.relative(ROOT, f)} fetches a Google font`)
 }
 
 function strykerProblems(src: string): string[] {
@@ -295,7 +296,7 @@ describe('F00 egress and shell-out rules (SEC-10, ARC-15)', () => {
     expect(loggerProblems(read(FIX, 'planted-interpolated-log.ts.txt'))).toHaveLength(3)
   })
   test('SEC-5 no logger call in src has an interpolated message', () => {
-    const problems = srcFiles().flatMap((f) => loggerProblems(fs.readFileSync(f, 'utf8')).map((p) => `${path.relative(ROOT, f)}: ${p}`))
+    const problems = srcFiles().flatMap((f) => loggerProblems(readOwnSource(f)).map((p) => `${path.relative(ROOT, f)}: ${p}`))
     expect(problems).toEqual([])
   })
   test('SEC-5 ESLint refuses console and interpolated logger messages in src, except the db global setup', async () => {

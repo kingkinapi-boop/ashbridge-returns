@@ -14,9 +14,10 @@
 //     is never answered { ok: true } (it throws, or answers ok false). `read` is an interface with no
 //     implementation in this card; the engines (A01 to A03) parse their own output.
 
-import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
 import fc from 'fast-check'
+import { readOwnSource } from '../core/testing/read-own-source'
 import {
   BoxSchema,
   EngineStampSchema,
@@ -263,7 +264,7 @@ const INSTRUMENTED = 'stryMutAct_9fa48'
 describe('ARC-15 A333 (3): a Stryker disable comment names every method it disables and calls none of them tested', () => {
   for (const file of ['reading.ts', 'amount-grammar.ts']) {
     test(`ARC-15 A333 every MethodExpression disable in ${file} names each mutable method on its line and claims none is tested`, () => {
-      const source = readFileSync(new URL(`./${file}`, import.meta.url), 'utf8')
+      const source = readOwnSource(fileURLToPath(new URL(`./${file}`, import.meta.url)))
       if (source.includes(INSTRUMENTED)) {
         // Inside Stryker's sandbox: the comments are checked on the plain source by the ordinary run.
         expect(source).toContain(INSTRUMENTED)
