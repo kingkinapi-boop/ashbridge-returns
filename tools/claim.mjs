@@ -47,6 +47,11 @@
 // line after CLAIMED and cannot be reported without a new --commit; a job released twice with no new commit on
 // origin/claude/<card> between the two releases is held ("needs Lead") until the Lead reopens it.
 //
+// CQ8 (ARC-15): a build whose Paths overlap a working or reported build (or a working spec) of another
+// card is never offered (tools/next.mjs lists it as "<card> waiting on paths: <holder>"); the Lead reopens a
+// check (`update <card> check reopened --worker lead`), which clears "needs Lead" and offers it again; a
+// worker named local-* is never offered any job of a card whose Where line says only "cloud".
+//
 // Tests pin the clock with CLAIMS_NOW (ISO time) and shorten the backoff with CLAIMS_BACKOFF_MS.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -156,6 +161,9 @@ const isHeld = (c) => Boolean(c && c.state === 'released' && WAIT_NOTE.test(c.no
 // CQ2 rule 6: a release stores the card branch tip; a second release at the same tip is "needs Lead".
 const NEEDS_LEAD = (c) => Boolean(c && c.state === 'released' && c.needsLead)
 const REFIT_NOTE = /^refit/i
+// CQ8 rule 3: the card's Where line (the first in plan/cards/<id>.md, or its family file) says only "cloud".
+const WHERE = /Where: ([^.(\n]*)/
+const cloudOnlyText = (text) => (WHERE.exec(text || '') || [])[1]?.trim().toLowerCase() === 'cloud'
 const isActive = (c) => (c.state === 'working' || c.state === 'reported') && !isStale(c)
 
 // Write claims/<file> (one or several, in ONE commit) on top of the claims branch tip and push.
@@ -240,6 +248,23 @@ function next() {
     const claimFor = (id, role) => claims.find((c) => c.card === id && c.role === role)
     // Paths are held by working specs and by builds until the Lead merges them; a card never blocks itself.
     const holds = (c) => c.role === 'build' || (c.role === 'spec' && c.state === 'working')
+    // CQ8 rule 3: local workers skip cards that run in the cloud only (read from main, once per card).
+    const local = /^local-/.test(worker)
+    const whereCache = new Map()
+    const cloudOnly = (c) => {
+      if (!local) return false
+      if (!whereCache.has(c.id)) {
+        let text = ''
+        for (const rel of [`plan/cards/${c.id}.md`, c.family ? `plan/cards/families/${c.family}.md` : null].filter(Boolean)) {
+          try {
+            text = readMain(rel)
+            break
+          } catch {}
+        }
+        whereCache.set(c.id, cloudOnlyText(typeof c.where === 'string' ? `Where: ${c.where}` : text))
+      }
+      return whereCache.get(c.id)
+    }
     const busyFor = (id) => active.filter((c) => holds(c) && c.card !== id).flatMap((c) => (cards.find((k) => k.id === c.card) || {}).paths || [])
     let allowed = ROLES[mode.mode] ? roles.filter((r) => ROLES[mode.mode].includes(r)) : roles
     // Past wind_down_at no new build starts; checks and specs still flow.
@@ -257,11 +282,13 @@ function next() {
           if (!b || b.state !== 'reported' || b.worker === worker) continue
           // A check blocks a re-offer only while it is working, or when it was for this very build
           // (a passed check on an older build does not cover a reopened, rebuilt one).
-          // A released check for this build is offered again; one that reported, or is working, is not.
-          if (ck && ((ck.state === 'working' && !isStale(ck)) || (ck.for === b.at && ck.state !== 'released' && ck.state !== 'working'))) continue
+          // A released check for this build, or one the Lead reopened (CQ8), is offered again; one that
+          // reported, or is working, is not.
+          if (ck && ((ck.state === 'working' && !isStale(ck)) || (ck.for === b.at && !['released', 'reopened', 'working'].includes(ck.state)))) continue
           if (NEEDS_LEAD(ck) && ck.for === b.at) continue
           const s = claimFor(c.id, 'spec')
           if (s && s.worker === worker) continue
+          if (cloudOnly(c)) continue
           pick = { card: c.id, role, for: b.at }
           break
         }
@@ -281,6 +308,7 @@ function next() {
           if (b && b.state === 'failed' && (b.round || 1) >= MAX_ROUNDS) continue
           if (s && s.worker === worker && c.spec !== 'n/a') continue
           if (pathsOverlap(c.paths || [], busyFor(c.id))) continue
+          if (cloudOnly(c)) continue
           pick = { card: c.id, role, round: (b?.round || 0) + 1, spec: (reopened ? s.commit : c.spec) || s.commit }
           break
         }
@@ -296,6 +324,7 @@ function next() {
           const refit = specNeedsRefit(s)
           if (refit && buildPassed(claimFor(c.id, 'build'), claimFor(c.id, 'check'))) continue
           if (s && ((s.state === 'working' && !isStale(s)) || (s.state === 'reported' && !refit))) continue
+          if (cloudOnly(c)) continue
           // CQ2 rule 5: a new round carries the Lead's note and the commit it must replace.
           const from = s && (s.state === 'reopened' ? (REFIT_NOTE.test(s.note || '') ? null : s.commit) : s.reopenedFrom)
           pick = refit ? { card: c.id, role, note: 'toolchain refit' } : from ? { card: c.id, role, note: s.note, reopenedFrom: from } : { card: c.id, role }
@@ -325,7 +354,7 @@ function update() {
   const [, card, role, state] = args
   if (!card || !role || !STATES.includes(state)) return out('usage: update <card> <role> <working|reported|failed|released|reopened> --worker <name>', 2)
   const worker = opt('worker', 'unknown')
-  if (state === 'reopened' && (worker !== 'lead' || !['build', 'spec'].includes(role))) return out('REFUSED: only --worker lead may reopen a build or a spec', 6)
+  if (state === 'reopened' && (worker !== 'lead' || !['build', 'spec', 'check'].includes(role))) return out('REFUSED: only --worker lead may reopen a build, a spec or a check', 6)
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     fetchAll()
     const claims = readClaims(claimsTip())
