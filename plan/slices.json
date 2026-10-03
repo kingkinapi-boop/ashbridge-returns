@@ -1983,12 +1983,14 @@
       "spec": null,
       "deps": [
         "F04",
-        "F06"
+        "F06",
+        "A06"
       ],
       "paths": [
         "src/modules/ai/runner/**",
         "src/modules/ai/index.ts",
-        "data/ai/approved.json"
+        "data/ai/approved.json",
+        "src/core/env.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -2158,7 +2160,8 @@
       "paths": [
         "ai-project/**",
         "src/modules/ai/project/**",
-        "package.json"
+        "package.json",
+        "src/core/env.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -3046,7 +3049,8 @@
         "src/modules/qbo/**",
         "src/contracts/qbo.ts",
         "db/schema/35_qbo.sql",
-        "testworld/qbo/export.ts"
+        "testworld/qbo/export.ts",
+        "src/core/env.ts"
       ],
       "clauses": [
         "TB-1",
@@ -9296,7 +9300,7 @@
       "phase": 4,
       "size": "M",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch)."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested."
     },
     {
       "status": "todo",
@@ -9435,7 +9439,9 @@
         "tools/scope.mjs",
         "tools/test/claim.test.mjs",
         "tools/test/scope.test.mjs",
-        "tools/test/__fixtures__/claims/**"
+        "tools/test/__fixtures__/claims/**",
+        "tools/test/claim-needs-lead.test.mjs",
+        ".claude/skills/merge/SKILL.md"
       ],
       "clauses": [
         "ARC-15"
@@ -9476,7 +9482,9 @@
         "testworld/model/schema.test.ts",
         "testworld/model/guard.ts",
         "testworld/model/guard.test.ts",
-        "testworld/model/kinds.ts"
+        "testworld/model/kinds.ts",
+        "testworld/model/checks.test.ts",
+        "testworld/model/faults.test.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -9610,11 +9618,60 @@
         "ARC-10"
       ],
       "id": "SC4",
-      "title": "Reading rules R67 to R70, and the R56 exemption",
+      "title": "Reading rules R67 to R70, R74, and the R56 exemption",
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From reports/A07C-findings.md."
+      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A07D",
+        "SC4"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "FX4",
+      "title": "Spreadsheet reader: the five A07D Opus findings",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "note": "From reports/A07D-opus-read.md, 3 Oct (A393); landing rule: fallbacks are removals."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06",
+        "FX2",
+        "A04"
+      ],
+      "paths": [
+        "tools/test/settings-rules.test.mjs",
+        "tools/test/__fixtures__/settings-rules/**"
+      ],
+      "clauses": [
+        "ARC-20",
+        "ARC-15",
+        "ARC-22",
+        "SEC-11"
+      ],
+      "id": "SC5",
+      "title": "Settings and strictness rules R71 to R73",
+      "phase": 0,
+      "size": "S",
+      "core": true
     },
     {
       "status": "carded",
