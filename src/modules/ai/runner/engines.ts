@@ -159,6 +159,7 @@ function logStrangers(ctx: EngineContext, outbox: string): void {
 }
 
 /** A folder of the exchange that must be a real folder inside the exchange folder's real path (made when missing). */
+// Stryker disable BlockStatement: the catch block returns what an empty one would fall through to
 function realFolder(root: string, name: 'inbox' | 'outbox'): string | undefined {
   const dir = path.join(root, name)
   try {
@@ -169,6 +170,7 @@ function realFolder(root: string, name: 'inbox' | 'outbox'): string | undefined 
   }
   return undefined
 }
+// Stryker restore BlockStatement
 
 async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult> {
   const { jobId, exchangeDir } = ctx
