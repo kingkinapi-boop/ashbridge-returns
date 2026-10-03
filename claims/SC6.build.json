@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "c526b32d",
  "worker": "cloud-1ba1dc",
- "state": "reported",
- "at": "2026-10-03T13:59:14.894Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T14:12:37.440Z",
  "mode": "turbo",
- "note": "33 of 33 acceptance tests pass; no product code in Paths; tools 413 pass, typecheck, lint, scope clean"
+ "note": "FAIL: R77/R78/R81 gaps (landing-trap sentinel, bold-directive wording, case, multi-line git, goldens), see reports/SC6-check.md"
 }
