@@ -2,10 +2,9 @@
  "card": "CQ8",
  "role": "spec",
  "note": "8 tests, refit on main 66de2c9",
- "worker": "cloud-0ac9e9",
- "state": "reopened",
- "at": "2026-10-03T13:51:41.190Z",
- "mode": "turbo",
- "commit": "503c520",
- "validated": "66de2c9"
+ "reopenedFrom": "503c520",
+ "worker": "cloud-613a54",
+ "state": "working",
+ "at": "2026-10-03T13:51:52.380Z",
+ "mode": "turbo"
 }
