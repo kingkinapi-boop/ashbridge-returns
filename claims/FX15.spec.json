@@ -2,12 +2,8 @@
  "card": "FX15",
  "role": "spec",
  "worker": "cloud-feb1e6",
- "state": "released",
- "at": "2026-10-03T09:01:22.409Z",
+ "state": "reopened",
+ "at": "2026-10-03T09:03:58.610Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "f4286ddb971e6c115864ce24bd40073b6d40cba2"
- },
- "note": "Paths gap, needs Lead: see reports/FX15-spec.md on claude/FX15",
- "needsLead": true
+ "note": "A449: Paths fixed, see card directive"
 }
