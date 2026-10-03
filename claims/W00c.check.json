@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
  "worker": "cloud-6593f9",
- "state": "working",
- "at": "2026-10-03T20:24:11.830Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T21:39:22.377Z",
+ "mode": "turbo",
+ "note": "wait: mutation pass 1 (3170 mutants, 1183 static) cannot finish in one 4-core box in a session; shard by file, see reports/W00c-check-3.md",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
 }
