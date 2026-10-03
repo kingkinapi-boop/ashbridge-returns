@@ -2,10 +2,9 @@
  "card": "SC11",
  "role": "spec",
  "note": "A476: R107 R108 (card Also)",
- "worker": "cloud-f814e6",
- "state": "reopened",
- "at": "2026-10-03T13:15:23.473Z",
- "mode": "turbo",
- "commit": "d1db68b",
- "validated": "5ba459ce97fcd7fb85d7ec11fe2bfdcbb5fedc75"
+ "reopenedFrom": "d1db68b",
+ "worker": "cloud-11e3ce",
+ "state": "working",
+ "at": "2026-10-03T13:31:00.691Z",
+ "mode": "turbo"
 }
