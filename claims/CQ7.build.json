@@ -4,9 +4,12 @@
  "round": 1,
  "spec": "f62e90f9",
  "worker": "local-1",
- "state": "reported",
- "at": "2026-10-03T11:31:10.628Z",
+ "state": "released",
+ "at": "2026-10-03T14:02:00.521Z",
  "mode": "turbo",
  "beat": "2026-10-03T11:19:52.534Z",
- "note": "5 of 5 acceptance tests pass"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "e5b89dc2e3ebc29350e11ef58377af8cf2a3c5f5"
+ }
 }
