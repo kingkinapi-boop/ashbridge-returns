@@ -3,7 +3,7 @@
  "role": "build",
  "state": "released",
  "worker": "lead",
- "at": "2026-10-02T19:00:56.929Z",
- "note": "wait: W00a check failed; build after W00a's fix round lands on claude/W00a",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"W00a\"],\"depStatus\":[\"carded\"]}"
+ "at": "2026-10-03T04:17:49.289Z",
+ "note": "wait: core spec review (reports/W00b-spec-review.md); build opens after GO",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"W00c\"],\"depStatus\":[\"carded\"]}"
 }
