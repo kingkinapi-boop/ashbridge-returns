@@ -24,7 +24,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | A04 | spec patch reported (6fa39bb1, 106 tests); build open (A421) | build (mutation 100 on four files), check, security review |
 | DB16 | spec round 3 reopened (A419: 7 tests, roles and settings in transactions); build held | spec, review, build in the cloud on Postgres 16 |
 | FX2 | round 2 spec reported (5ebca343); build open | build (one auth line), check, security review; lands before FX7 |
-| CQ2, SC4 | on the train (claude/train 677e92f1); CQ3 carded (A416) | request the train at 6 cards or 05:30Z, with test:flake |
+| CQ2, SC4 | train requested 05:25Z (head 677e92f, test:flake) | land when green |
 | JH0 | spec reported | build after W00c lands |
 
 Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local (Opus): local-2 (FX2 spec), local-3 (CQ3 spec); local-1 idle (queue empty 05:20Z). npm ci done 04:45Z.
