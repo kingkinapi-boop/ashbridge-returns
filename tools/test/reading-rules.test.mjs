@@ -31,7 +31,34 @@ const loadFix = (name) => import(pathToFileURL(path.join(FIX, name)).href)
 const sample = (arb, numRuns) => fc.sample(arb, { seed: SEED, numRuns })
 
 // ---------- known defects on main, each owned by another card ----------
-const KNOWN = []
+const FX4 = 'FX4 (A07D Opus read)'
+const KNOWN = [
+  // A07D Opus read item 4: closeBracket ignores the ' escape inside a structured reference.
+  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("Table1\[Col'\[1\]\+A1"/ },
+  // Item 5a: a name past XFD or row 1048576 becomes #REF! (even by (0, 0)).
+  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("XYZ100\*2"/ },
+  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("A1048577\+1"/ },
+  // Item 5b: WORD is ASCII-only, so a non-ASCII name slides.
+  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("ÜB1\*2"/ },
+  // Item 5c: an unquoted 3D sheet range slides as an area.
+  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("SUM\(Q1:Q4!B1\)"/ },
+  // Item 2: a cycle member joined through a finished node, or through a non-SUM formula, is snapped.
+  { rule: 'R68', owner: FX4, match: /^sheets SUM snap \(A07\): cycle "joined": member Z was snapped/ },
+  { rule: 'R68', owner: FX4, match: /^sheets SUM snap \(A07\): cycle "non-sum": member X was snapped/ },
+  // Not in the five findings, found by this rule: the raw-XML reader matches double-quoted, unprefixed attributes only.
+  { rule: 'R70', owner: FX4, match: /^sheets raw XML \(A07\): the single-quoted attributes variant does not read/ },
+  { rule: 'R70', owner: FX4, match: /^sheets raw XML \(A07\): the namespace prefixes variant does not read/ },
+  { rule: 'R70', owner: FX4, match: /^sheets raw XML \(A07\): the attributes on value elements variant does not read/ },
+  { rule: 'R70', owner: FX4, match: /^sheets raw XML \(A07\): the all three variant does not read/ },
+  // Item 3: termCells walks every range in full (quadratic running balance; SUM(A2:XFD1048576) effectively hangs).
+  { rule: 'R74', owner: FX4, match: /^sheets reader \(A07\): running-balance-20k (did not finish|failed)/ },
+  { rule: 'R74', owner: FX4, match: /^sheets reader \(A07\): whole-sheet-range (did not finish|failed)/ },
+  // Same cause, not in the five findings: mergedRanges (index.ts) sets a map entry for every address a merge names.
+  { rule: 'R74', owner: FX4, match: /^sheets reader \(A07\): whole-sheet-merge (did not finish|failed)/ },
+  // From 1e17 up toFixed(4) prints the double's exact digits (1.00000000001e20 reads 21 digits). F03 and F03R are done:
+  // the Lead names the card that fixes src/modules/export/taxprep.ts.
+  { rule: 'R69', owner: 'the Lead assigns (taxprep.ts rate text)', match: /^Taxprep rate text \(F03\): invents digits/ },
+]
 
 function onlyKnown(rule, problems) {
   const known = KNOWN.filter((k) => k.rule === rule)
@@ -606,6 +633,14 @@ describe('SC4 R69: number text is total over the doubles and invents no digits (
     problems.push(...landingProblems('R69', NUMBER_TEXT))
     expect(onlyKnown('R69', problems)).toEqual([])
   }, 60_000)
+
+  test('EV-14 R69 rule: a planted SUM snap that prints the double sum with two decimals is caught at 1e13; keeping the own text is clean', async () => {
+    const { derive, cleanDerive, ownText } = await loadFix('planted-r69-sum.mjs')
+    expect(await sumCentsProblems('planted sum', derive, ownText)).toEqual([
+      'planted sum: a SUM total of 1e13 or more reads a cent amount other than the exact sum of its terms (first: 572223582302257.9 + 891.67 reads "572223582303149.50", exact 572223582303149.57, own text "572223582303149.5")',
+    ])
+    expect(await sumCentsProblems('clean sum', cleanDerive, ownText)).toEqual([])
+  })
 
   test('EV-14 EV-6 R69 a SUM total of 1e13 and up maps back to the exact cents of its terms or keeps its own text (A07D Opus read item 1)', async () => {
     const deriver = DERIVERS.find((d) => d.card === 'A07')
