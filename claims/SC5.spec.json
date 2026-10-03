@@ -1,9 +1,8 @@
 {
  "card": "SC5",
  "role": "spec",
- "worker": "cloud-65d267",
- "state": "reopened",
- "at": "2026-10-03T17:35:34.432Z",
- "mode": "turbo",
- "note": "wait: deps SC and A04 not landed; see reports/SC5-spec.md"
+ "worker": "cloud-07698b",
+ "state": "working",
+ "at": "2026-10-03T18:35:52.549Z",
+ "mode": "turbo"
 }
