@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:25Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:45Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:25Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | round 3 spec review: 4 gaps (A459), spec patch reopened | spec, build round 3, mutation on cloud, check |
+| W00c | spec patch A459 in; main merge needs SC rule rows (A463: no Zo question) | spec merges main and fixes rows, build round 3, mutation on cloud, check |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |

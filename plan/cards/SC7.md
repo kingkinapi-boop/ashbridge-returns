@@ -22,3 +22,6 @@ An entry whose fix is a file in its owner's Paths other than the flagged file (R
 
 ## Also (A452)
 A rule: no KNOWN, allow or PENDING entry in any rules file carries a postponed reason ("waits on", "later") without an open owner card id; reading-rules' regex KNOWN, SC11's R92 allow list and SC9's PENDING list are its first subjects.
+
+## Also (A463)
+R31 timed out at 5 s under full laptop load: give it an explicit timeout, as R50 has (60 s).
