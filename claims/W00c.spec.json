@@ -1,9 +1,11 @@
 {
  "card": "W00c",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: merged main, typecheck/lint/db green; only card's own round 3 tests fail by name",
  "worker": "cloud-c5d3df",
- "state": "working",
- "at": "2026-10-03T15:24:00.368Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T15:42:00.634Z",
+ "mode": "turbo",
+ "commit": "9ae225c64fa9c94d8a66e3c72c8125a93f3db223",
+ "validated": "8e4698a47e6564c0af4e2b7290eb823870729d7d"
 }
