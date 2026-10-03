@@ -1,11 +1,8 @@
 {
  "card": "CQ2",
  "role": "spec",
- "worker": "cloud-186a3b",
- "state": "reopened",
- "at": "2026-10-03T03:20:21.533Z",
- "mode": "turbo",
- "note": "A394: rule 6 tests by the spec writer; see bold directive on the card",
- "commit": "11df325",
- "validated": "042c2dd"
+ "worker": "local-2",
+ "state": "working",
+ "at": "2026-10-03T03:35:13.422Z",
+ "mode": "turbo"
 }
