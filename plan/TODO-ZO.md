@@ -6,6 +6,6 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 Nothing now.
 
-## 2. What the Lead is doing now (2 Oct, 21:10 UTC)
+## 2. What the Lead is doing now (3 Oct, 03:25 UTC)
 
-Turbo. 42 cards are on main; this evening added the jobs table, the client-app bridge, five question-bank topics, the OCR reader and the bank-statement topic. Your three Critic fixes are in (decision 0024): long chats now shrink on their own and reload where they left off, the queue stops re-handing a stuck job, and real public document layouts get studied before made-up statements are drawn. Sign-in is in a second round after its security review; the test-world card that most of the build waits on is being specified again. Plan use this week: about 52%.
+Turbo, between sessions (handover). 42 cards are on main. Your three Critic fixes are in (decision 0024). Waiting to board: the spreadsheet reader's last round, the test-world fix round that most of the build waits on (all 1,975 of its tests pass), and sign-in round 2 (passed its check; a fresh security review comes first). The AI runner failed its check on test strength and goes round 2 after sign-in lands. Six cards for phase 3 are written. Plan use this week: about 52%.

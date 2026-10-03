@@ -942,7 +942,8 @@
         "e2e/_harness/**",
         "package.json",
         "e2e/steps/README.md",
-        "package-lock.json"
+        "package-lock.json",
+        "testworld/harness/**"
       ],
       "clauses": [
         "END-9",
@@ -1490,6 +1491,35 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "reference/sample-clients/clients/c03_04.mjs",
+        "reference/sample-clients/clients/c07_08.mjs",
+        "reference/sample-clients/clients/c09_10.mjs",
+        "reference/sample-clients/03-*/**",
+        "reference/sample-clients/04-*/**",
+        "reference/sample-clients/07-*/**",
+        "reference/sample-clients/08-*/**",
+        "reference/sample-clients/10-*/**",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md"
+      ],
+      "clauses": [
+        "END-2",
+        "ARC-8",
+        "ARC-16",
+        "SEC-11"
+      ],
+      "id": "W16",
+      "title": "Sample clients 03, 04, 07, 08, 10: asset registers so opening amortization and UCC recompute",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "F09",
         "F09B",
@@ -1954,12 +1984,14 @@
       "spec": null,
       "deps": [
         "F04",
-        "F06"
+        "F06",
+        "A06"
       ],
       "paths": [
         "src/modules/ai/runner/**",
         "src/modules/ai/index.ts",
-        "data/ai/approved.json"
+        "data/ai/approved.json",
+        "src/core/env.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -2005,7 +2037,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2017,7 +2049,8 @@
         "src/contracts/auth.ts",
         "db/schema/15_auth.sql",
         "src/core/env.ts",
-        "src/core/env.settings.test.ts"
+        "src/core/env.settings.test.ts",
+        "src/contracts/auth.acceptance.test.ts"
       ],
       "clauses": [
         "SEC-1",
@@ -2033,7 +2066,8 @@
       "title": "Staff sign-in stand-in and roles",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "parked",
@@ -2129,7 +2163,8 @@
       "paths": [
         "ai-project/**",
         "src/modules/ai/project/**",
-        "package.json"
+        "package.json",
+        "src/core/env.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -3017,7 +3052,8 @@
         "src/modules/qbo/**",
         "src/contracts/qbo.ts",
         "db/schema/35_qbo.sql",
-        "testworld/qbo/export.ts"
+        "testworld/qbo/export.ts",
+        "src/core/env.ts"
       ],
       "clauses": [
         "TB-1",
@@ -6022,17 +6058,22 @@
       "note": "Removed by v1.1: gate 1 and the baseline and receipt exports are dropped (amber A30); its other parts are split. Replaced by T08 (approval fingerprint), T09 (check before transmit), T10 (frozen binder)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T04",
         "T07",
         "F02",
-        "N00"
+        "N00",
+        "L00",
+        "V00",
+        "FX5"
       ],
       "paths": [
         "src/modules/approval/**",
-        "db/schema/60_versions.sql"
+        "db/schema/60_versions.sql",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -6043,18 +6084,20 @@
       "id": "T08",
       "title": "Approval fingerprint and approval record",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "hard": true,
-      "security": true
+      "security": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F05",
         "L00",
         "SK0",
-        "F10"
+        "F10",
+        "T07"
       ],
       "paths": [
         "src/modules/checks/engine/**",
@@ -6076,10 +6119,11 @@
       "id": "Q00",
       "title": "Check engine",
       "phase": 3,
-      "size": "M"
+      "size": "L",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "Q00",
@@ -6099,7 +6143,8 @@
       "title": "Reconciling items: the type table as data, item records, the $1 rounding limit",
       "phase": 3,
       "size": "M",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
       "status": "carded",
@@ -6854,14 +6899,16 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "I00",
         "Q00"
       ],
       "paths": [
-        "src/modules/ai/checklist/_core/**"
+        "src/modules/ai/checklist/_core/**",
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "AI-2",
@@ -6872,7 +6919,8 @@
       "id": "I01",
       "title": "AI tax checklist framework",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
       "status": "carded",
@@ -7165,30 +7213,37 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "I00",
-        "T05",
-        "T07"
+        "T07",
+        "Q00",
+        "I01"
       ],
       "paths": [
-        "src/modules/ai/redteam/**"
+        "src/modules/ai/redteam/**",
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts",
+        "db/schema/73_redteam.sql"
       ],
       "clauses": [
         "AI-3",
         "AI-1",
         "AI-4",
         "AI-5",
-        "AI-8"
+        "AI-6",
+        "AI-8",
+        "SEC-7"
       ],
       "id": "I30",
       "title": "Red team (a different model, raw documents)",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A04",
@@ -7210,44 +7265,58 @@
       "id": "I40",
       "title": "AI evaluation harness on the test world",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "Q00"
       ],
       "paths": [
-        "src/modules/exceptions/**"
+        "src/modules/exceptions/**",
+        "data/exceptions/weak-answers.json",
+        "db/schema/71_exceptions.sql"
       ],
       "clauses": [
         "EX-1",
         "EX-2",
-        "EX-3"
+        "EX-3",
+        "AI-7",
+        "SEC-7"
       ],
       "id": "X00",
       "title": "Exception answers and their rules",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "X00"
       ],
       "paths": [
-        "src/modules/tiers/**"
+        "src/modules/tiers/**",
+        "data/tiers/rules.json",
+        "db/schema/72_tiers.sql"
       ],
       "clauses": [
         "CK-40",
-        "RV-8"
+        "RV-8",
+        "RULE-7",
+        "RULE-8"
       ],
       "id": "X01",
       "title": "Tiers (approved rules, testable terms)",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true,
+      "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
       "status": "todo",
@@ -9258,7 +9327,7 @@
       "phase": 4,
       "size": "M",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch)."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED."
     },
     {
       "status": "todo",
@@ -9397,7 +9466,9 @@
         "tools/scope.mjs",
         "tools/test/claim.test.mjs",
         "tools/test/scope.test.mjs",
-        "tools/test/__fixtures__/claims/**"
+        "tools/test/__fixtures__/claims/**",
+        "tools/test/claim-needs-lead.test.mjs",
+        ".claude/skills/merge/SKILL.md"
       ],
       "clauses": [
         "ARC-15"
@@ -9438,7 +9509,9 @@
         "testworld/model/schema.test.ts",
         "testworld/model/guard.ts",
         "testworld/model/guard.test.ts",
-        "testworld/model/kinds.ts"
+        "testworld/model/kinds.ts",
+        "testworld/model/checks.test.ts",
+        "testworld/model/faults.test.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -9530,7 +9603,7 @@
       "note": "From reports/A06-findings.md, 2 Oct."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -9554,7 +9627,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals."
+      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals.",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9572,11 +9646,102 @@
         "ARC-10"
       ],
       "id": "SC4",
-      "title": "Reading rules R67 to R70, and the R56 exemption",
+      "title": "Reading rules R67 to R70, R74, and the R56 exemption",
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From reports/A07C-findings.md."
+      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A07D",
+        "SC4"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "FX4",
+      "title": "Spreadsheet reader: the five A07D Opus findings",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "note": "From reports/A07D-opus-read.md, 3 Oct (A393); landing rule: fallbacks are removals."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F02"
+      ],
+      "paths": [
+        "src/contracts/lifecycle.ts",
+        "src/modules/lifecycle/**"
+      ],
+      "clauses": [
+        "FLOW-1",
+        "FLOW-4"
+      ],
+      "id": "FX5",
+      "title": "F02 move inside a caller transaction (for T08)",
+      "phase": 3,
+      "size": "S",
+      "core": true,
+      "note": "From reports/phase3-card-review-2026-10-03.md fix 2 (A397). L00 and N00 take the caller transaction in their own builds."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06",
+        "FX2",
+        "A04"
+      ],
+      "paths": [
+        "tools/test/settings-rules.test.mjs",
+        "tools/test/__fixtures__/settings-rules/**"
+      ],
+      "clauses": [
+        "ARC-20",
+        "ARC-15",
+        "ARC-22",
+        "SEC-11"
+      ],
+      "id": "SC5",
+      "title": "Settings and strictness rules R71 to R73",
+      "phase": 0,
+      "size": "S",
+      "core": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC"
+      ],
+      "paths": [
+        "tools/test/card-rules.test.mjs",
+        "tools/test/__fixtures__/card-rules/**"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC6",
+      "title": "Card and verify rules R77 and R78",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/W16-findings.md, 3 Oct (A404)."
     },
     {
       "status": "carded",
@@ -9609,6 +9774,35 @@
       "size": "M",
       "core": true,
       "note": "From reports/SC-build.md, 2 Oct."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06"
+      ],
+      "paths": [
+        "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/pg16.test.ts",
+        "vitest.config.ts",
+        "package.json",
+        "package-lock.json",
+        ".claude/agents/checker.md",
+        ".claude/cloud-worker-run.md"
+      ],
+      "clauses": [
+        "ARC-4",
+        "ARC-16",
+        "SEC-7"
+      ],
+      "id": "DB16",
+      "title": "The db test project runs on Postgres 16 in cloud checks",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From the train report of 3 Oct (A405)."
     }
   ]
 }
