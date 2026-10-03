@@ -18,13 +18,6 @@
       "why": "The same Index schema seen through getFile: an index.json with a stray key is read (card SC5: owner FX7, A414)."
     },
     {
-      "rule": "R84-run",
-      "file": "src/modules/ocr/recorded/index.ts",
-      "problems": ["src/modules/ocr/recorded/index.ts: a recording whose result.engine differs from its sourceEngine is read, not refused"],
-      "owner": "FX11",
-      "why": "A03's load never compares result.engine with sourceEngine (reports/A04-findings.md; card FX11 deletes this entry)."
-    },
-    {
       "rule": "R88",
       "file": "src/modules/ocr/index.ts",
       "problems": ["src/modules/ocr/index.ts: a thrown or logged message interpolates ${engine}, a value read from a setting (name the setting, never its value)"],
