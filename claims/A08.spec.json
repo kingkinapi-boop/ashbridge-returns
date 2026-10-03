@@ -1,10 +1,9 @@
 {
  "card": "A08",
  "role": "spec",
- "worker": "cloud-186a3b",
- "state": "reported",
- "at": "2026-10-02T21:44:24.738Z",
- "mode": "turbo",
- "note": "71 tests (69 unit, 2 db), fail at import; validated on main 7b5d6c9; 6b retired none; A04 must read A08 refusal files",
- "commit": "d2173aa"
+ "note": "toolchain refit",
+ "worker": "cloud-88d9d7",
+ "state": "working",
+ "at": "2026-10-03T05:42:36.813Z",
+ "mode": "turbo"
 }
