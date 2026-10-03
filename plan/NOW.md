@@ -21,10 +21,10 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | SC | spec patch reopened (A415: 5 gaps; R37 to FX9; SC9 carded for walker escapes) | spec, build, check with Opus read and test:flake |
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | spec patch reopened (A420: G1 logging, G2 refusal); build held | spec, build (mutation 100 on four files), check, security review |
+| A04 | spec patch reported (6fa39bb1, 106 tests); build open (A421) | build (mutation 100 on four files), check, security review |
 | DB16 | spec round 3 reopened (A419: 7 tests, roles and settings in transactions); build held | spec, review, build in the cloud on Postgres 16 |
-| FX2 | round 2 spec reopened (A414: Paths fixed, readOwnSource, auth line); SC8 carded (R79) | spec, build, check, security review; lands before FX7 |
-| CQ2, SC4 | on the train (claude/train 677e92f1); CQ3 carded (A416) | request the train at 6 cards or 05:30Z, with test:flake |
+| FX2 | round 2 spec reported (5ebca343); build open | build (one auth line), check, security review; lands before FX7 |
+| CQ2, SC4 | train requested 05:25Z (head 677e92f, test:flake) | land when green |
 | JH0 | spec reported | build after W00c lands |
 
 Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local (Opus): local-2 (FX2 spec), local-3 (CQ3 spec); local-1 idle (queue empty 05:20Z). npm ci done 04:45Z.
@@ -34,7 +34,7 @@ Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local (Opus): local-2 (FX2 sp
 1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
 2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
 3. FX2 and A04 round 2 specs, then SC3, SC5 (R71 to R73); DB16.
-4. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
+4. V02, V03, V04, V09, V13 drafted (A421): independent card review with the other phase 3 cards before their first spec; V15 to write. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
 5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
 6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
