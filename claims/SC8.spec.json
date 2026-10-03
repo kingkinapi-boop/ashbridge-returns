@@ -1,12 +1,10 @@
 {
  "card": "SC8",
  "role": "spec",
- "worker": "cloud-f6d708",
- "state": "reopened",
- "at": "2026-10-03T07:19:37.857Z",
- "mode": "turbo",
- "beat": "2026-10-03T06:38:26.924Z",
  "note": "A436: gaps G1 to G6 per reports/SC8-spec-review.md; see bold directive",
- "commit": "e4e63a5",
- "validated": "25fc96d"
+ "reopenedFrom": "e4e63a5",
+ "worker": "cloud-06fcfe",
+ "state": "working",
+ "at": "2026-10-03T08:11:19.739Z",
+ "mode": "turbo"
 }
