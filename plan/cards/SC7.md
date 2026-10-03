@@ -25,3 +25,9 @@ A rule: no KNOWN, allow or PENDING entry in any rules file carries a postponed r
 
 ## Also (A463)
 R31 timed out at 5 s under full laptop load: give it an explicit timeout, as R50 has (60 s).
+
+## Also (A465)
+List the modules whose every test is a db test (jobs/queue.ts, jobs/runner.ts first, from FX15) and decide per module: unit twins on PGlite in the unit project, or a reasoned entry. A core card may not list such a module without one.
+
+## Also (A467)
+The KNOWN owner rule (an open card in plan/slices.json with a card file) is shared: SC7 makes every rules file use the one helper, so security-rules, fs-rules and db rules read owners the same way.
