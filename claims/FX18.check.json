@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-03T23:03:55.464Z",
  "worker": "cloud-4b9dab",
- "state": "working",
- "at": "2026-10-03T23:04:45.942Z",
+ "state": "failed",
+ "at": "2026-10-03T23:17:58.610Z",
  "mode": "turbo",
- "beat": "2026-10-03T23:15:45.586Z"
+ "beat": "2026-10-03T23:15:45.586Z",
+ "note": "FAIL: spec (c) disable comments over-broad (engines.ts:188,241, schemas.ts:34-53), see reports/FX18-check.md"
 }

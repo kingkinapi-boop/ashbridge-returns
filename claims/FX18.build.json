@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "eb8d158c",
  "worker": "cloud-725535",
- "state": "reported",
- "at": "2026-10-03T23:03:55.464Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T23:17:58.610Z",
  "mode": "turbo",
- "note": "A530: two builder unit test files joined Paths; build 75284762 (51 of 51, mutation 100)"
+ "note": "FAIL: spec (c) disable comments over-broad (engines.ts:188,241, schemas.ts:34-53), see reports/FX18-check.md"
 }
