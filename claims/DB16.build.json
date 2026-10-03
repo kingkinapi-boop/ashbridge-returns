@@ -1,12 +1,10 @@
 {
  "card": "DB16",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "d6f3a1b1",
- "worker": "cloud-a93d05",
- "state": "released",
- "at": "2026-10-03T04:28:27.342Z",
- "mode": "turbo",
- "note": "wait: core spec review (reports/DB16-spec-review.md); build opens after GO",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
+ "worker": "cloud-6aa4a3",
+ "state": "working",
+ "at": "2026-10-03T04:29:19.928Z",
+ "mode": "turbo"
 }
