@@ -4,12 +4,8 @@
  "round": 2,
  "spec": "edf23e0",
  "worker": "local-1",
- "state": "released",
- "at": "2026-10-03T08:03:06.732Z",
+ "state": "reopened",
+ "at": "2026-10-03T08:05:41.432Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "7c323a382ade6bb88bf434f48abf9d077ac78263"
- },
- "note": "wait: cloud box (Where: cloud; R63 to R66 run in the db project on Postgres 16); local worker skips",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"FX2\"],\"depStatus\":[\"done\",\"done\"]}"
+ "note": "cloud only (Where: cloud)"
 }
