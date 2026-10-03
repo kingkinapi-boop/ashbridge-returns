@@ -2,8 +2,11 @@
  "card": "SC10",
  "role": "spec",
  "worker": "cloud-6ca6b4",
- "state": "working",
- "at": "2026-10-03T11:53:27.674Z",
+ "state": "reported",
+ "at": "2026-10-03T12:22:02.019Z",
  "mode": "turbo",
- "beat": "2026-10-03T11:55:50.170Z"
+ "beat": "2026-10-03T11:55:50.170Z",
+ "note": "27 tests; KNOWN: R85 F00T/V10/SC3, R86 FX7, R89 E00/E01/G00/Q00; build after CQ6; Lead rule on SC3/V10 Tags vs slices core",
+ "commit": "bbe1318c",
+ "validated": "0fc6169b"
 }
