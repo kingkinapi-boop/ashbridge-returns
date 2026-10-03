@@ -4,7 +4,11 @@
  "round": 1,
  "spec": "bd0e2fe2",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T10:50:18.475Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T10:50:31.668Z",
+ "mode": "turbo",
+ "note": "Card says Where: cloud; local worker leaves it for a cloud box",
+ "lastRelease": {
+  "tip": "b26392a74de721b39538808841e478e0e1fc98d0"
+ }
 }
