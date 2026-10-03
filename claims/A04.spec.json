@@ -1,10 +1,10 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "A456 patch G1 to G5: 235 unit tests, 109 fail on round 4 build by name; FIFO guard added; see reports/A04-spec.md",
+ "note": "A460: spec lint fix only",
  "worker": "cloud-e39e16",
- "state": "reported",
- "at": "2026-10-03T10:21:32.699Z",
+ "state": "reopened",
+ "at": "2026-10-03T10:49:32.857Z",
  "mode": "turbo",
  "beat": "2026-10-03T09:55:23.943Z",
  "commit": "15f44d53",
