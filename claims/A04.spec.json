@@ -2,10 +2,9 @@
  "card": "A04",
  "role": "spec",
  "note": "A446: final round 5, see card directive",
- "worker": "cloud-adefa2",
- "state": "reopened",
- "at": "2026-10-03T08:52:50.774Z",
- "mode": "turbo",
- "commit": "5f90f9c7",
- "validated": "1f88585c649809663de46bf53ec92623de1fd04f"
+ "reopenedFrom": "5f90f9c7",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T08:54:48.569Z",
+ "mode": "turbo"
 }
