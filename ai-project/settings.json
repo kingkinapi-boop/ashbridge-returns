@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": ["Read(./**)"],
+    "deny": ["Write", "Edit", "MultiEdit", "NotebookEdit", "Bash", "WebFetch", "WebSearch", "Task", "Agent", "mcp__*"],
+    "defaultMode": "default"
+  },
+  "disableAllHooks": true
+}

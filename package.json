@@ -20,6 +20,7 @@
     "test:flake:shifted": "node tools/flake-shifted.mjs",
     "e2e": "node tools/run-next.mjs build && playwright test",
     "mutate:changed": "node tools/mutate-changed.mjs",
+    "ai:once": "node ai-project/ai-once.mjs",
     "mutate:canary": "stryker run tools/test/__fixtures__/mutation-canary/stryker.canary.config.mjs"
   },
   "dependencies": {
