@@ -3,8 +3,8 @@
  "role": "spec",
  "note": "A517 data job done: type from generator, 28 entries, 4 data tests pass; loader tests wait for the build",
  "worker": "cloud-7bd520",
- "state": "reported",
- "at": "2026-10-03T20:26:47.280Z",
+ "state": "reopened",
+ "at": "2026-10-03T21:07:00.413Z",
  "mode": "turbo",
  "commit": "a55b9426",
  "validated": "6c10c281"
