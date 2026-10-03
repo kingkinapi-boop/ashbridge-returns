@@ -3,8 +3,8 @@
  "role": "spec",
  "note": "refit only; unit 2890 green",
  "worker": "cloud-1fcc74",
- "state": "reported",
- "at": "2026-10-03T15:43:55.751Z",
+ "state": "reopened",
+ "at": "2026-10-03T17:34:13.432Z",
  "mode": "turbo",
  "commit": "73fe6af4",
  "validated": "bd5ec11ac5684436e5a8e9e4ba972849afc1744e"
