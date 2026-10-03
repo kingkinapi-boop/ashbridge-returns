@@ -1995,7 +1995,8 @@
         "src/modules/ai/runner/**",
         "src/modules/ai/index.ts",
         "data/ai/approved.json",
-        "src/core/env.ts"
+        "src/core/env.ts",
+        "src/core/safe-read.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -2168,8 +2169,6 @@
         "ai-project/**",
         "src/modules/ai/project/**",
         "package.json",
-        "src/modules/ai/runner/schemas.ts",
-        "src/modules/ai/runner/engines.ts",
         "src/core/env.ts"
       ],
       "clauses": [
@@ -10413,6 +10412,25 @@
     },
     {
       "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "src/modules/jobs/queue.ts",
+        "src/modules/jobs/lease.acceptance.db.test.ts"
+      ],
+      "clauses": [
+        "ARC-5",
+        "ARC-22"
+      ],
+      "id": "FX15",
+      "title": "Job queue: complete and fail check the lease holder",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
+    },
+    {
+      "status": "carded",
       "spec": "bd0e2fe2",
       "deps": [
         "F02",
@@ -10614,6 +10632,30 @@
       "core": false,
       "security": true,
       "note": "From reports/DB16-findings-4.md, 3 Oct (A441)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "tools/test/fs-rules.test.mjs",
+        "tools/test/__fixtures__/fs-rules/**"
+      ],
+      "clauses": [
+        "SEC-10",
+        "SEC-11",
+        "ARC-22",
+        "ARC-15"
+      ],
+      "id": "SC12",
+      "title": "Exchange and file-system rules R93 to R97",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/A04-findings-5.md, 3 Oct (A446)."
     },
     {
       "status": "carded",

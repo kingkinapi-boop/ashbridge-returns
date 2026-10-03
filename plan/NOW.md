@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:46Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:00Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -20,7 +20,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:46Z by the Lea
 | Train | SC, CQ4, CQ5, FX10 boarded; head 12af2528; requested 08:50Z | cloud check full, test:flake, FX10 db x20; land if green |
 | SC3 | spec patch reported (22 of 22 with tags in); build round 2 open | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 4 check FAIL (4 security: path traversal, outbox reads, endless poll, isTest trust); findings review 5 running | verdict; A08 spec held for it |
+| A04 | findings 5 (A446): final round; refusal file back in A04; FX15, SC12 carded | spec patch (Opus), build round 5, check, security review; A08 spec after |
 | DB16 | final round: spec T1 to T5 reported; build round 5 open (A441) | build, check, security review |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:46Z by the Lea
 | FX12, FX14 | FX12 spec patch reported, build open; FX14 carded | FX12 build, check |
 | CQ6 to CQ8, SC10, A08 | CQ6, CQ7, CQ8 specs reported; A08 spec reported, refusal-file gap to its spec (A443) | CQ builds after CQ4 and CQ5 land; A08 after A04 |
 
-Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helpers: A04 findings review 5, phase 4 card review.
+Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helper: phase 4 card review.
 
 ## Next, in order
 
