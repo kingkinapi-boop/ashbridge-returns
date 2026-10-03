@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 13:20Z by the Lea
 | FX12, FX14, FX17, FX4, GL3 | FX12 build reported; FX14 spec working; FX17 spec refit reported; FX4 spec patch reported (A470); GL3 check FAIL (blanket grant execute) | FX12 check; FX17, FX4 builds; GL3 findings review |
 | CQ8, CQ9, CQ10, CQ11, SC10, A08 | CQ8 build reported (e09db959; its gaps to CQ11, A473); CQ9 spec reported; CQ10 spec local-2; CQ11 carded (0027); SC10 build after CQ6; A08 after A04 | CQ8 check; builds |
 
-Cloud runs: 4 fired 12:47Z (train df6f1249 checking, cloud-9e54a6). Local: local-2 CQ10 spec; local-1 and local-3 done. Main checkout needs `npm ci` (no `pg` since DB16) once local-2 ends.
+Cloud runs: 4 fired 12:47Z (train df6f1249 checking, cloud-9e54a6). Local: local-2 CQ10 spec, local-4 next check. Helpers: A04 spec review, GL3 findings, design-lane scout. Main checkout needs `npm ci` (no `pg` since DB16) once local-2 ends.
 
 ## Next, in order
 
