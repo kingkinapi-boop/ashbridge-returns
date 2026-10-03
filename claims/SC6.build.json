@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "c526b32d",
  "worker": "cloud-1ba1dc",
- "state": "reported",
- "at": "2026-10-03T21:30:24.689Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T21:39:42.319Z",
  "mode": "turbo",
- "note": "A518: spec-only round 3; check the spec commit against the stated grammar; Opus check"
+ "note": "FAIL: Opus read, 6 fail-open forms in R77/R78 (negation phrase, SPEC_OWNS nouns, possessive, participle, glued separators, regex.exec), see reports/SC6-check.md"
 }
