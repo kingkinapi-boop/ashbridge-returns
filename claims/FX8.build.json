@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "84810b04",
  "worker": "cloud-5a0e82",
- "state": "reopened",
- "at": "2026-10-03T08:19:15.191Z",
+ "state": "released",
+ "at": "2026-10-03T13:47:13.234Z",
  "mode": "turbo",
- "note": "round 2 build on claude/FX8-r2 from spec a9dd4aa3; cloud box (LF), see card"
+ "note": "wait: W00c's build takes known.json first (A481); FX8 is next after W00c",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"W16\"],\"depStatus\":[\"done\"]}"
 }
