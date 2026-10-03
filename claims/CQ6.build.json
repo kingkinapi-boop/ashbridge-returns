@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "f5a17f0",
  "worker": "local-2",
- "state": "reported",
- "at": "2026-10-03T11:42:00.036Z",
+ "state": "reopened",
+ "at": "2026-10-03T12:11:27.881Z",
  "mode": "turbo",
  "beat": "2026-10-03T11:30:47.991Z",
- "note": "13 of 13 acceptance tests pass"
+ "note": "A464: round 2, drop the setup-file exemption"
 }
