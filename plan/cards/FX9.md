@@ -18,3 +18,6 @@ One .gitattributes line for `*.csv` and `git add --renormalize` of the listed CS
 
 ## Check
 A checker who did neither: R37 green with no FX9 entry left; `node reference/sample-clients/verify.mjs` green; the diff ignoring line endings is empty.
+
+## Also (A463)
+W00c fixes the 15 sample-client CSVs and deletes their R37 entries; FX9 keeps reference/taxprep/**.

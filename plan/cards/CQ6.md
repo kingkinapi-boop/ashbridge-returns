@@ -1,5 +1,7 @@
 # CQ6 Mutation gate: core from slices.json and a Lead-kept harness list
 
+**Lead directive, 3 Oct 11:55Z (A464): spec patch, then build round 2 (reports/CQ6-build.md on claude/CQ6).** Spec: the pinned harness list names `src/core/db/vitest-setup.ts` (the real file) instead of the root `vitest-setup.ts`, which does not exist; add a test that every listed harness file exists. Build: drop the setup-file exemption from the import rule (the list is the one source); keep the missing-test-homes.json reading (empty list, strictest). The family-card gate (A430) moves to CQ9.
+
 Phase 0. Size S. Deps: CQ4. Where: local or cloud.
 Tags: none (queue tooling).
 Paths: tools/mutate-changed.mjs, tools/test-homes.json, tools/test/mutate-harness.test.mjs

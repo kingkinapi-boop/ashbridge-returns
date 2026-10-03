@@ -781,7 +781,12 @@
         "testworld/model/made-up-data.acceptance.test.ts",
         "testworld/model/kinds.ts",
         "testworld/model/__fixtures__/guard/**",
-        "testworld/clients/load.ts"
+        "testworld/clients/load.ts",
+        "testworld/generate.ts",
+        "testworld/model/guard.test.ts",
+        "testworld/clients/made-up-data.acceptance.test.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "SEC-11",
@@ -10074,9 +10079,7 @@
       ],
       "paths": [
         "testworld/model/checks.ts",
-        "testworld/model/load.ts",
         "testworld/model/faults.ts",
-        "testworld/model/money.ts",
         "testworld/model/schema.ts",
         "testworld/model/__fixtures__/**",
         "testworld/index.ts",
@@ -10097,7 +10100,9 @@
         "testworld/model/guard.test.ts",
         "testworld/model/kinds.ts",
         "testworld/model/checks.test.ts",
-        "testworld/model/faults.test.ts"
+        "testworld/model/faults.test.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "ARC-8",
