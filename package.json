@@ -17,6 +17,7 @@
     "test": "vitest run --project unit && vitest run --project db",
     "test:changed": "vitest run --changed --project unit && vitest run --changed --project db --passWithNoTests",
     "test:flake": "node tools/test-flake.mjs",
+    "test:flake:shifted": "node tools/flake-shifted.mjs",
     "e2e": "node tools/run-next.mjs build && playwright test",
     "mutate:changed": "node tools/mutate-changed.mjs",
     "mutate:canary": "stryker run tools/test/__fixtures__/mutation-canary/stryker.canary.config.mjs"
