@@ -1,12 +1,8 @@
 {
  "card": "SC",
  "role": "spec",
- "worker": "cloud-652d66",
- "state": "reopened",
- "at": "2026-10-03T04:23:16.244Z",
- "mode": "turbo",
- "beat": "2026-10-02T21:38:09.753Z",
- "note": "A407: seven fixes from reports/SC-findings.md; see bold directive on the card",
- "commit": "a069a19",
- "validated": "7b5d6c9"
+ "worker": "cloud-f25f3a",
+ "state": "working",
+ "at": "2026-10-03T04:24:03.265Z",
+ "mode": "turbo"
 }
