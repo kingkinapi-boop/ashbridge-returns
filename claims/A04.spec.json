@@ -1,10 +1,11 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "A474: G1 to G4 (card directive)",
+ "note": "wait: A477 split, Lead sets the spec",
  "reopenedFrom": "71a8efe8",
  "worker": "local-5",
- "state": "working",
- "at": "2026-10-03T13:13:22.848Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T13:17:49.953Z",
+ "mode": "turbo",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"F04\",\"F06\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
 }
