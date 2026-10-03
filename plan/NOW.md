@@ -13,11 +13,11 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| Train 4 | SC8, GL3, SC10 at 40e9173c, requested 23:06Z | land if green; next train: W00c on its mutation check, SC6, FX18 and SC11 on PASS |
+| Train 4 | SC8, GL3, SC10 at 40e9173c, checking (cloud-eced92) | land if green; next train: W00c on its mutation check, SC6, FX18 and SC11 on PASS |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
-| W00c | mutation check 3 could not finish on one box (A530): file groups across check sessions, lean test set | next check session takes group 1; land on 100 on all 11 files |
+| W00c | check 4 stalled on hanging mutants (A533): 5 s timeout in pass 1, line-range shards, 10-minute rate check | next check session takes json-keys.ts; land on 100 on all files |
 | SC10 | Opus read 2 PASS (A527) | boarded train 4 at 21:50Z; then the push guard for plan/cards and slices.json |
-| SC6 | round 3 check FAIL (6 fail-open forms): re-carded to R78 (A528); R77 moves to SC7 as a data rule | spec reopened (one patch, last round); then build marked reported; Opus read; board |
+| SC6 | R78-only spec reported (84 tests); build marked reported 23:35Z | check with an Opus read; board; a failure parks it (R78 to SC7) |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | SC11 | round 3 spec reported (21 tests); build reopened 21:07Z (B3 to B14) | Opus read; security review; board; then SC3 round 3 (A517) |
@@ -26,13 +26,14 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 | A08 | findings review 1 done (A529): round 2 spec S0 to S5 (S0 a cloud survivor map), then build B1 to B6 | spec reopened; build after it; Opus check; fresh security review |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
-| W00b, FX6, FX18, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
+| FX18 | check FAIL; findings review 1 done (A534): round 2, the last: spec S1 to S9, build B1 to B8 | spec reopened; build; cloud mutate --force; Opus read; security review |
+| W00b, FX6, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
-| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), its panel done (A516); designer 2 done (D03 B+, claude/design-source-viewer-3, A519), its panel done (A522, local branch panel-source-viewer-3); designer 3 done (D02 v3, claude/design-cpa-review-3, A531), its panel local; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
+| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), its panel done (A516); designer 2 done (D03 B+, claude/design-source-viewer-3, A519), its panel done (A522, local branch panel-source-viewer-3); designer 3 done (D02 v3, A531), its panel done (A532); designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
 
 ## Next, in order
 
-1. Poll claims and runs; A04C build, FX18 spec, SC8 build, A08 and SC5 specs, CQ11 build are open since A04 and CQ8 landed; board each PASS.
+1. Poll claims and runs; board each PASS; land train 4 if green.
 2. After each no-build spec patch reports (SC10, SC6, SC3): `claim.mjs update <card> build reported --worker lead` so the Opus check opens.
 3. W00c lands: W00b, S00, JH0, B04, SC2, FX7, FX8, W00d; SK0, W01 to W13 (decide reference/cpa-check.md item 43's flags before W01's spec, A499), W20, I40.
 4. Before SC7's spec: name the card that marks GL1's 6 auth files (A502). After SC10 lands: the push guard gains the card rules and schema contract rules files (A502).

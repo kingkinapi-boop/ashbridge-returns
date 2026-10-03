@@ -62,3 +62,9 @@ From SC10's findings review 1 and SC6's spec review (3 Oct, Opus; both reports s
 - R-luhn: R50 also flags a digit-sum table or `% 10 === 0` loop outside the one Luhn. Plant: A08's scan.ts at 9a152e7a.
 - R-forms: one table of sensitive forms in src/core/testing that every scanner runs (A08's scan, I00's redactText, W00b's guard, the logger's redaction). Plant: a scanner missing U+202F.
 - R-child-env: every child-env allowlist test imports one helper that adds libuv's Windows names on win32. Plant: a bare allowlist on win32.
+
+## Also (A534, FX18 findings review 1, 3 Oct)
+- R-B2 (extends R-B): Every `Stryker disable` in src and testworld other than the A515 `all` form is `next-line`, names its mutators, gives an equivalence or unreachability reason, and covers a line holding one statement; for ConditionalExpression and EqualityOperator the reason names the equivalent variant and the test that kills the other. Plants: the 75284762 forms of engines.ts:188, :241 and schemas.ts:34, each refused. The files above become KNOWN entries, each with an owner card.
+- Today's over-broad disables, each a KNOWN entry with its owner card (FX3 owns src/contracts/ai.ts and src/contracts/ids.ts): - src/contracts/ai.ts:12-30, 56, 67, 69, 75, 78 (same wrong "load crash survives" claim; `z.literal('ledger')` changed is killed) and contracts/ids.ts:9-52 (43-line MethodExpression range): owner FX3.
+- EqualityOperator also hides the negation (`<` to `>=`): contracts/reading.ts:14, :98; amount-grammar.ts:81, :87, :207; sheets/xlsx/index.ts:188; xlsx/raw.ts:102. ConditionalExpression also hides `if (true)` or the guard set false: contracts/taxprep.ts:561; xlsx/index.ts:97, :281; xlsx/raw.ts:163, :193; ocr/recorded/index.ts:41; ocr/textlayer/index.ts:69, :82; core/log.ts:44.
+- Fine: engines.ts:85; amount-grammar.ts:97, :163, :280; zip.ts:45; sheets.ts:83, :90; reading.ts:171; log.ts:40, :42; lifecycle/index.ts:2 (A515 form).

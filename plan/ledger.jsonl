@@ -709,3 +709,5 @@
 {"ts":"2026-10-03T23:04:21.220Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T23:04:21.827Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T23:04:22.354Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T23:04:47.781Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T23:34:09.776Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"FX18 findings review (Opus)","allowed":true}
