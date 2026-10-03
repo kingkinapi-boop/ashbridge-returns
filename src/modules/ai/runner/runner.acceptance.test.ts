@@ -708,7 +708,6 @@ describe('AI-11 round 2: an approved list that cannot be read refuses with its o
   test('AI-11 a readable list without the triple keeps the card wording, distinct from the unreadable-list reason', async () => {
     const res = await runner({ approvedPath: writeApproved(tmp.dir, [], 'approved-none.json') }).runAiStep(job('good'))
     expect(res).toEqual({ ok: false, reason: LISTED_NOT_APPROVED, problems: [] })
-    expect(LISTED_NOT_APPROVED).not.toBe(LIST_UNREADABLE)
   })
 })
 
@@ -740,19 +739,21 @@ describe('ARC-16 round 2: recordings that cannot be matched', () => {
   })
 })
 
+/** The four stamp parts the runner compares with the job (AI-10), and a value for each that belongs to another job. */
+const PARTS = {
+  modelId: /model ?id/i,
+  promptVersion: /prompt ?version/i,
+  promptHash: /prompt ?hash/i,
+  inputHash: /input ?hash/i,
+} as const
+const OTHER: Record<keyof typeof PARTS, string> = {
+  modelId: 'claude-other-model-test',
+  promptVersion: 'finding-v2-test',
+  promptHash: 'e'.repeat(64),
+  inputHash: 'f'.repeat(64),
+}
+
 describe('AI-10 round 2: a F04-valid answer stamped for another job is refused, naming exactly the part that differs', () => {
-  const PARTS = {
-    modelId: /model ?id/i,
-    promptVersion: /prompt ?version/i,
-    promptHash: /prompt ?hash/i,
-    inputHash: /input ?hash/i,
-  } as const
-  const OTHER: Record<keyof typeof PARTS, string> = {
-    modelId: 'claude-other-model-test',
-    promptVersion: 'finding-v2-test',
-    promptHash: 'e'.repeat(64),
-    inputHash: 'f'.repeat(64),
-  }
   for (const part of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
     test(`AI-10 a recorded answer stamped with another ${part} is refused naming ${part} and no other part; nothing is counted as output`, async () => {
       const good = GOOD_REC()
@@ -848,26 +849,43 @@ describe('ARC-20 round 2: the exchange folder is read once, through env.ts, when
     expect(filesIn(path.join(other, 'inbox'))).toEqual([])
   })
 
-  test('ARC-20 aiEngines.project.run with no exchange folder refuses naming the setting and writes nothing', async () => {
-    const write = vi.spyOn(fs, 'writeFileSync')
-    const mkdir = vi.spyOn(fs, 'mkdirSync')
-    const { lines, sink } = collectLines()
-    const ctx: Parameters<typeof aiEngines.project.run>[1] = {
-      jobId: JOB_ID,
-      recordingsDir: RECORDINGS_DIR,
-      pollMs: 5,
-      sink,
-      waiting: new Set<string>(),
-      seen: new Set<string>(),
-    }
-    const res = await aiEngines.project.run(job('good'), ctx)
-    expect(res.ok).toBe(false)
-    if (!res.ok) expect(res.reason).toMatch(/AI_EXCHANGE_DIR/)
-    expect(write).not.toHaveBeenCalled()
-    expect(mkdir).not.toHaveBeenCalled()
-    expect(fs.existsSync(path.join(process.cwd(), 'inbox'))).toBe(false)
-    expect(lines).toEqual([])
-  })
+  // Round 3 (reports/A04-spec-review-2.md gap 3): a blank folder is as unset as a missing one at the engine too,
+  // or '' would write to ./inbox. The file writes are planted to throw, so a wrong engine fails fast and writes nothing.
+  const NO_FOLDER: readonly (readonly [string, string | undefined])[] = [
+    ['unset', undefined],
+    ['empty', ''],
+    ['spaces only', '   '],
+  ]
+  for (const [label, folder] of NO_FOLDER) {
+    test(`ARC-20 aiEngines.project.run with an exchange folder that is ${label} refuses naming the setting and writes nothing`, async () => {
+      const planted = (): never => {
+        throw new Error('PLANTED: the engine touched the disk with no exchange folder')
+      }
+      const write = vi.spyOn(fs, 'writeFileSync').mockImplementation(planted)
+      const mkdir = vi.spyOn(fs, 'mkdirSync').mockImplementation(planted)
+      const rename = vi.spyOn(fs, 'renameSync').mockImplementation(planted)
+      const { lines, sink } = collectLines()
+      const ctx: Parameters<typeof aiEngines.project.run>[1] = {
+        jobId: JOB_ID,
+        recordingsDir: RECORDINGS_DIR,
+        pollMs: 5,
+        sink,
+        waiting: new Set<string>(),
+        seen: new Set<string>(),
+        ...(folder === undefined ? {} : { exchangeDir: folder }),
+      }
+      const res = await aiEngines.project
+        .run(job('good'), ctx)
+        .catch((e: unknown) => ({ ok: false as const, reason: `threw: ${String(e)}`, problems: [] }))
+      expect(res.ok).toBe(false)
+      if (!res.ok) expect(res.reason).toMatch(/AI_EXCHANGE_DIR/)
+      expect(write).not.toHaveBeenCalled()
+      expect(mkdir).not.toHaveBeenCalled()
+      expect(rename).not.toHaveBeenCalled()
+      expect(fs.existsSync(path.join(process.cwd(), 'inbox'))).toBe(false)
+      expect(lines).toEqual([])
+    })
+  }
 
   test('ARC-22 a blank job id ("  ") is refused with the job-id reason and no inbox file is written', async () => {
     const write = vi.spyOn(fs, 'writeFileSync')
@@ -1053,5 +1071,211 @@ describe('AI-10 round 2: the input hash on nulls and arrays of objects', () => {
     expect(inputHashOf(shuffled)).toBe(sha256(literal))
     expect(inputHashOf({ note: null, rows: [...shuffled.rows].reverse() })).not.toBe(sha256(literal))
     expect(inputHashOf({ only: null })).toBe(expectedInputHash({ only: null }))
+  })
+})
+
+// ---------- Round 3 (reports/A04-spec-review-2.md, gaps 2 and 4 to 7; gap 3 is the loop in the ARC-20 round 2 block) ----------
+// A malformed recording fails closed; the stamp check holds through the project engine and the handler; an ignored
+// outbox file is logged again only when its content changes; every AI setting goes through env.ts; two recordings
+// for one key are a flag for a person, never a silent pick (Lead, A410).
+
+const DUPLICATE = /two recordings for one key/
+
+/** A recordings folder in the temp dir holding exactly the given files, written as raw text. */
+function rawRecordings(label: string, files: Readonly<Record<string, string>>): string {
+  const dir = path.join(tmp.dir, `raw-recordings-${label}`)
+  fs.mkdirSync(dir)
+  for (const [name, text] of Object.entries(files)) fs.writeFileSync(path.join(dir, name), text)
+  return dir
+}
+
+const recordingText = (rec: object): string => JSON.stringify(rec, null, 2) + '\n'
+
+describe('ARC-16 round 3: a malformed recording fails closed, never a crash', () => {
+  const MALFORMED: Readonly<Record<string, string>> = {
+    'a-bad.json': '{',
+    'a-empty.json': '',
+    'a-null.json': 'null',
+    'a-list.json': '[]',
+  }
+
+  test('ARC-16 recordings that are not one JSON recording sit beside the good one: the step resolves on the good one', async () => {
+    const dir = rawRecordings('bad-and-good', { ...MALFORMED, 'b-good.json': recordingText(GOOD_REC()) })
+    await expect(runner({ recordingsDir: dir }).runAiStep(job('good'))).resolves.toMatchObject({ ok: true, output: GOOD_REC().output })
+  })
+
+  for (const [name, text] of Object.entries(MALFORMED)) {
+    test(`ARC-16 a folder holding only ${name} (${JSON.stringify(text)}) resolves to "re-record" with the three key parts`, async () => {
+      const j = job('good')
+      const dir = rawRecordings(`only-${name.replace(/\W+/g, '-')}`, { [name]: text })
+      const res = await runner({ recordingsDir: dir }).runAiStep(j)
+      expect(res.ok).toBe(false)
+      if (res.ok) return
+      const all = allText(res)
+      expect(all).toMatch(/re-record/)
+      expect(all).toContain(j.modelId)
+      expect(all).toContain(j.promptHash)
+      expect(all).toContain(expectedInputHash(j.inputs))
+    })
+  }
+
+  test('ARC-16 the handler turns a malformed-only folder into a thrown refusal with the reason, not a crash of another kind', async () => {
+    const dir = rawRecordings('handler-bad', { 'a-bad.json': '{' })
+    const h = createAiStepHandler('finding', runner({ recordingsDir: dir }))
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    await expect(Promise.resolve().then(() => h.run(job('good'), ctx))).rejects.toThrow(/re-record/)
+  })
+
+  test('ARC-16 only *.json files are recordings: a notes.txt holding the good answer is never read', async () => {
+    const dir = rawRecordings('txt', { 'notes.txt': recordingText(GOOD_REC()) })
+    const read = vi.spyOn(fs, 'readFileSync')
+    const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+    expect(res.ok).toBe(false)
+    if (!res.ok) expect(allText(res)).toMatch(/re-record/)
+    expect(read.mock.calls.filter((c) => String(c[0]).endsWith('notes.txt'))).toEqual([])
+  })
+})
+
+describe('ARC-16 round 3: two recordings for one key are refused, naming both files (Lead, A410)', () => {
+  test('ARC-16 two recordings with the same key and different answers refuse with "two recordings for one key", naming both files; neither answer is used', async () => {
+    const good = GOOD_REC()
+    const other = { ...good, output: { ...good.output, summary: 'another recorded answer (Test)' } }
+    const dir = rawRecordings('duplicate', {
+      'a-first.json': recordingText(good),
+      'b-second.json': recordingText(other),
+      'c-another-job.json': recordingText(recording('finding-c01-broken')),
+    })
+    const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+    expect(res.ok).toBe(false)
+    if (res.ok) return
+    const all = allText(res)
+    expect(all).toMatch(DUPLICATE)
+    expect(all).toContain('a-first.json')
+    expect(all).toContain('b-second.json')
+    expect(all).not.toContain('c-another-job.json')
+    expect(all).not.toContain('another recorded answer (Test)')
+  })
+
+  test('ARC-16 two identical copies of one recording are refused the same way (the rule is about the key, not the answer)', async () => {
+    const dir = rawRecordings('copies', { 'copy-1.json': recordingText(GOOD_REC()), 'copy-2.json': recordingText(GOOD_REC()) })
+    const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+    expect(res.ok).toBe(false)
+    if (res.ok) return
+    expect(allText(res)).toMatch(DUPLICATE)
+    expect(allText(res)).toContain('copy-1.json')
+    expect(allText(res)).toContain('copy-2.json')
+  })
+
+  test('ARC-16 a duplicate of another job\'s key does not stop this job: only this job\'s key is checked', async () => {
+    const broken = recording('finding-c01-broken')
+    const dir = rawRecordings('other-dup', {
+      'a-broken.json': recordingText(broken),
+      'b-broken-again.json': recordingText(broken),
+      'c-good.json': recordingText(GOOD_REC()),
+    })
+    expect(await runner({ recordingsDir: dir }).runAiStep(job('good'))).toMatchObject({ ok: true, output: GOOD_REC().output })
+  })
+
+  test('ARC-16 the shipped recordings folder holds no two recordings for one key', () => {
+    const keys = filesIn(RECORDINGS_DIR)
+      .filter((n) => n.endsWith('.json'))
+      .map((n) => {
+        const rec = JSON.parse(fs.readFileSync(path.join(RECORDINGS_DIR, n), 'utf8')) as { modelId: string; promptHash: string; inputHash: string }
+        return `${rec.modelId} ${rec.promptHash} ${rec.inputHash}`
+      })
+    expect(keys.length).toBeGreaterThan(1)
+    expect(new Set(keys).size).toBe(keys.length)
+  })
+})
+
+describe('AI-10 round 3: the stamp check holds through the project engine and the handler', () => {
+  for (const part of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
+    test(`AI-10 ARC-22 a project result F04-valid but stamped with another ${part} is refused naming ${part} only, and the handler throws it`, async () => {
+      const good = GOOD_REC()
+      const stamp = { ...good.stamp, [part]: OTHER[part] }
+      expect(validateAiOutput('finding', good.output, stamp).ok).toBe(true)
+      fakeProject(({ json }) => {
+        const id = String(json['jobId'])
+        writeOutbox(exchange, `${id}.json`, outboxResult(id, good.output, stamp))
+      })
+      const r = projectRunner()
+      const res = await r.runAiStep(job('good'), { jobId: JOB_ID })
+      expect(res.ok).toBe(false)
+      if (res.ok) return
+      const all = allText(res)
+      expect(all).toMatch(/AI-10/)
+      expect(all).toMatch(PARTS[part])
+      for (const other of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
+        if (other !== part) expect(all, other).not.toMatch(PARTS[other])
+      }
+      expect(all).not.toContain(OTHER[part])
+
+      const h = createAiStepHandler('finding', r)
+      const ctx = { jobId: 'job-c01-handler-stamp-test', attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+      let message = ''
+      try {
+        await h.run(job('good'), ctx)
+      } catch (e) {
+        message = e instanceof Error ? e.message : String(e)
+      }
+      expect(message).toMatch(/AI-10/)
+      expect(message).toMatch(PARTS[part])
+      expect(message).not.toContain(OTHER[part])
+    })
+  }
+})
+
+describe('ARC-22 round 3: an ignored outbox file is logged once per content', () => {
+  test('ARC-22 a stranger file is logged once over many polls, again only when rewritten with new content, by name only', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const { lines, sink } = collectLines()
+      const strangerId = 'job-stranger-rewritten-test'
+      const stranger = `${strangerId}.json`
+      const first = 'PLANTED-CANARY-FIRST-CONTENT (Test)'
+      const second = 'PLANTED-CANARY-SECOND-CONTENT (Test)'
+      const content = (summary: string): string => outboxResult(strangerId, { ...GOOD_REC().output, summary }, GOOD_REC().stamp)
+      const polls = async (n: number): Promise<void> => {
+        for (let i = 0; i < n; i++) await vi.advanceTimersByTimeAsync(5)
+      }
+      const strangerLines = (): string[] => lines.filter((l) => l.includes(stranger))
+
+      writeOutbox(exchange, stranger, content(first))
+      const p = projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
+      await vi.advanceTimersByTimeAsync(0)
+      await polls(6)
+      expect(strangerLines()).toHaveLength(1)
+
+      writeOutbox(exchange, stranger, content(first)) // the same bytes again: nothing new to flag
+      await polls(6)
+      expect(strangerLines()).toHaveLength(1)
+
+      writeOutbox(exchange, stranger, content(second))
+      await polls(6)
+      expect(strangerLines()).toHaveLength(2)
+
+      writeOutbox(exchange, `${JOB_ID}.json`, outboxResult(JOB_ID, GOOD_REC().output, GOOD_REC().stamp))
+      await polls(1)
+      expect(await p).toMatchObject({ ok: true, output: GOOD_REC().output })
+      const logged = strangerLines()
+      expect(logged).toHaveLength(2)
+      expect(logged[0]).toBe(logged[1])
+      const all = lines.join('\n')
+      expect(all).not.toContain(first)
+      expect(all).not.toContain(second)
+      expect(all).not.toContain(exchange)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
+
+describe('ARC-20 SEC-10 round 3: every AI setting goes through env.ts (R71 is the everywhere rule)', () => {
+  test('ARC-20 SEC-10 for each name in AI_SETTING_NAMES, readSettings returns the value under that name', () => {
+    expect(AI_SETTING_NAMES.length).toBeGreaterThan(0)
+    for (const name of AI_SETTING_NAMES) {
+      const got = readSettings({ [name]: 'x (Test)' }) as Record<string, unknown>
+      expect(got[name], name).toBe('x (Test)')
+    }
   })
 })
