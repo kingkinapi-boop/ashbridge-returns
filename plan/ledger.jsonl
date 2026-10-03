@@ -576,3 +576,5 @@
 {"ts":"2026-10-03T12:49:00.002Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker CQ8 build","allowed":true}
 {"ts":"2026-10-03T12:49:03.489Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker CQ10 spec","allowed":true}
 {"ts":"2026-10-03T12:49:08.269Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker SC12 spec","allowed":true}
+{"ts":"2026-10-03T12:50:14.900Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker next spec","allowed":true}
+{"ts":"2026-10-03T13:04:37.633Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Audit sampled cards G15 F07 DB16","allowed":true}
