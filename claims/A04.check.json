@@ -3,10 +3,12 @@
  "role": "check",
  "for": "2026-10-03T11:24:04.999Z",
  "worker": "cloud-1f7dcd",
- "state": "working",
- "at": "2026-10-03T11:44:18.230Z",
+ "state": "released",
+ "at": "2026-10-03T11:44:45.543Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "c93ed92557552635dd702c26b88f01c3242c53ec"
- }
+ },
+ "note": "wait: head e4d9714f already checked by cloud-e9d462 (reports/A04-check.md on claude/A04, c93ed925): FAIL on scope only (src/core/safe-read.test.ts outside Paths; engines.build.test.ts edited by build), no code failure. Needs Lead ruling on scope, not a re-check",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"F04\",\"F06\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
 }
