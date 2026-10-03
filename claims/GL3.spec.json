@@ -2,10 +2,9 @@
  "card": "GL3",
  "role": "spec",
  "note": "A498 round 4 spec patch S1 to S6 per the Lead directive at the top of the card; then the Lead reopens the build",
- "worker": "cloud-da95a7",
- "state": "reopened",
- "at": "2026-10-03T15:51:52.686Z",
- "mode": "turbo",
- "commit": "e93ad935",
- "validated": "8e4698a47e6564c0af4e2b7290eb823870729d7d"
+ "reopenedFrom": "e93ad935",
+ "worker": "cloud-97b8bd",
+ "state": "working",
+ "at": "2026-10-03T15:55:25.902Z",
+ "mode": "turbo"
 }
