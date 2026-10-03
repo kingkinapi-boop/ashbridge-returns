@@ -1,0 +1,16 @@
+// SC5 R88 plant (made up): A01's reading adapter refusal, which prints the value a person typed into the setting.
+import { readSettings } from '../../core/env'
+import { makeLogger, type Sink } from '../../core/log'
+
+export function createReadingAdapter(options: { env?: Record<string, string | undefined>; sink: Sink }) {
+  const settings = readSettings(options.env)
+  const engine = settings.OCR_ENGINE ?? 'textlayer'
+  const folder = readSettings(options.env).AI_EXCHANGE_DIR
+  makeLogger(options.sink).info(`exchange folder ${folder} read`)
+  switch (engine) {
+    case 'textlayer':
+      return { name: 'textlayer' }
+    default:
+      throw new Error(`reading engine "${engine}" is not available yet`)
+  }
+}

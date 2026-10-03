@@ -1,0 +1,17 @@
+// SC5 R71 clean twin (made up): the same forms as the plant, each naming a key of env.ts's schema.
+import { readSettings } from '../../../core/env'
+import { readEngine } from '../safe'
+
+export const AI_SETTING_NAMES = ['AI_EXCHANGE_DIR'] as const
+
+export function exchangeFolder(options: { env?: Record<string, string | undefined> }) {
+  return readSettings(options.env).AI_EXCHANGE_DIR
+}
+
+export function createDriveStandIn(options: { env?: Record<string, string | undefined> }) {
+  readEngine(options.env, 'STORAGE_DRIVE_ENGINE')
+  const settings: Record<string, string | undefined> = readSettings(options.env)
+  if (settings['NODE_ENV'] === 'production' && settings.OCR_ENGINE === undefined) throw new Error('OCR_ENGINE must be set in production')
+  const { AUTH_ENGINE } = readSettings(options.env)
+  return AUTH_ENGINE
+}

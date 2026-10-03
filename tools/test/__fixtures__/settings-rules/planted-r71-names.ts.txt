@@ -1,0 +1,17 @@
+// SC5 R71 plant (made up): main's own forms of a setting read, each with a name env.ts's schema does not hold.
+import { readSettings } from '../../../core/env'
+import { readEngine } from '../safe'
+
+export const AI_SETTING_NAMES = ['AI_EXCHANGE_FOLDER'] as const
+
+export function exchangeFolder(options: { env?: Record<string, string | undefined> }) {
+  return readSettings(options.env).AI_EXCHANGE_FOLDER
+}
+
+export function createDriveStandIn(options: { env?: Record<string, string | undefined> }) {
+  readEngine(options.env, 'STORAGE_DRIVE_ENGIN')
+  const settings = readSettings(options.env)
+  if (settings.NODE_ENV === 'production' && settings.OCR_ENGIN === undefined) throw new Error('OCR_ENGINE must be set in production')
+  const { QBO_ENGINE } = readSettings(options.env)
+  return QBO_ENGINE
+}

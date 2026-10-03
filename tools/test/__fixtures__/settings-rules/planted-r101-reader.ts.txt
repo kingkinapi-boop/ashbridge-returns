@@ -1,0 +1,8 @@
+// SC5 R101 plant (made up): G01's bank reader form, JSON.parse on a file with no repeated or reserved key scan.
+import fs from 'node:fs'
+import path from 'node:path'
+
+export function loadBank(dir: string) {
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json')).sort()
+  return files.map((file) => JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8')) as unknown)
+}

@@ -1,0 +1,14 @@
+// SC5 R101 clean twin (made up): the same reader, scanning the text for repeated and reserved keys first (W00c's form).
+import fs from 'node:fs'
+import path from 'node:path'
+import { repeatedKeys, reservedKeys } from './json-keys'
+
+export function loadBank(dir: string) {
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json')).sort()
+  return files.map((file) => {
+    const text = fs.readFileSync(path.join(dir, file), 'utf8')
+    const bad = [...repeatedKeys(text), ...reservedKeys(text)]
+    if (bad.length > 0) throw new Error(`${file}: the key ${bad[0]?.key ?? ''} is repeated or reserved`)
+    return JSON.parse(text) as unknown
+  })
+}

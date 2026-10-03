@@ -1,0 +1,14 @@
+// SC5 R72 clean twin (made up): booleans that are state or values, never a constant that gates a branch.
+const LIMIT = 3
+const LABEL = 'stand-in (Test)'
+const STRICT = true
+
+export function parse(text: string) {
+  let closed = false as boolean
+  let done = false
+  for (const ch of text) {
+    if (ch === ')') closed = true
+    if (closed && ch === ';') done = true
+  }
+  return { closed, done, limit: LIMIT, label: LABEL, options: { strict: STRICT } }
+}

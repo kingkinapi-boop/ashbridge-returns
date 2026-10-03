@@ -1,0 +1,26 @@
+// SC5 R73 clean twin (made up): the same reader with every object strict, a chained refine and an arrow factory.
+import fs from 'node:fs'
+import path from 'node:path'
+import { z } from 'zod'
+import { EngineStampSchema, ReadingResultSchema } from '../../../contracts/reading'
+
+const slotSchema = z
+  .strictObject({ name: z.string(), required: z.boolean() })
+  .refine((s) => s.name !== '', { message: 'a slot name (Test)' })
+
+const recordingSchema = () =>
+  z.strictObject({
+    fingerprint: z.string(),
+    recordedAt: z.iso.datetime({ offset: true }),
+    sourceEngine: EngineStampSchema,
+    slots: z.array(slotSchema),
+    result: ReadingResultSchema,
+  })
+
+export function load(folder: string, fingerprint: string) {
+  const text = fs.readFileSync(path.join(folder, `${fingerprint}.json`), 'utf8')
+  const parsed = recordingSchema().safeParse(JSON.parse(text))
+  const where = path.parse(folder)
+  if (!parsed.success) throw new Error(`recording for ${fingerprint} in ${where.name} is refused`)
+  return parsed.data
+}

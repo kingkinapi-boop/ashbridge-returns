@@ -1,0 +1,147 @@
+{
+  "entries": [
+    {
+      "rule": "R73",
+      "file": "src/modules/storage/drive/index.ts",
+      "problems": ["src/modules/storage/drive/index.ts: Index parses a file read from disk and is not strict (z.object( in Index)"],
+      "owner": "FX7",
+      "why": "The drive stand-in's index.json schema is a plain z.object at both levels, so a stray key is dropped (card SC5: owner FX7, A414)."
+    },
+    {
+      "rule": "R73-run",
+      "file": "src/modules/storage/drive/index.ts",
+      "problems": [
+        "src/modules/storage/drive/index.ts: a file with a stray key at the top level is read, not refused",
+        "src/modules/storage/drive/index.ts: a file with a stray key at the nested level is read, not refused"
+      ],
+      "owner": "FX7",
+      "why": "The same Index schema seen through getFile: an index.json with a stray key is read (card SC5: owner FX7, A414)."
+    },
+    {
+      "rule": "R84-run",
+      "file": "src/modules/ocr/recorded/index.ts",
+      "problems": ["src/modules/ocr/recorded/index.ts: a recording whose result.engine differs from its sourceEngine is read, not refused"],
+      "owner": "FX11",
+      "why": "A03's load never compares result.engine with sourceEngine (reports/A04-findings.md; card FX11 deletes this entry)."
+    },
+    {
+      "rule": "R88",
+      "file": "src/modules/ocr/index.ts",
+      "problems": ["src/modules/ocr/index.ts: a thrown or logged message interpolates ${engine}, a value read from a setting (name the setting, never its value)"],
+      "owner": "FX13",
+      "why": "A01's refusal for a mistyped OCR_ENGINE prints the value (reports/FX2-security.md, A435; card FX13 deletes this entry)."
+    },
+    {
+      "rule": "R88-run",
+      "file": "src/modules/ocr/index.ts",
+      "problems": [
+        "src/modules/ocr/index.ts: setting OCR_ENGINE to a made-up value prints the value in the refusal",
+        "src/modules/ocr/index.ts: the refusal for a made-up OCR_ENGINE does not name the setting"
+      ],
+      "owner": "FX13",
+      "why": "The same refusal run with a made-up OCR_ENGINE: the message carries the value and not the setting's name (A435)."
+    },
+    {
+      "rule": "R101-record",
+      "file": "src/contracts/records.ts",
+      "problems": ["src/contracts/records.ts: the z.record at VersionStampSchema takes the prototype names \"__proto__\", \"constructor\", \"prototype\" as keys"],
+      "owner": "FX16",
+      "why": "stampRecord (records.ts:37) is keyed by NonBlankSchema; a refine catches __proto__ before it, but the key schema takes all three names (A450)."
+    },
+    {
+      "rule": "R101-record",
+      "file": "src/contracts/bridge.ts",
+      "problems": ["src/contracts/bridge.ts: the z.record at BridgeHandoffRowSchema.slots takes the prototype names \"__proto__\", \"constructor\", \"prototype\" as keys"],
+      "owner": "FX16",
+      "why": "HANDOFF_ID_PATTERN starts with [A-Za-z0-9_], so __proto__, constructor and prototype are valid slot keys (W00c findings 3 named bridge.ts:115; FX16's Paths need this file)."
+    },
+    {
+      "rule": "R101-record",
+      "file": "src/modules/ai/runner/schemas.ts",
+      "problems": [
+        "src/modules/ai/runner/schemas.ts: the z.record at AiJobSchema.inputs takes the prototype names \"__proto__\", \"constructor\", \"prototype\" as keys",
+        "src/modules/ai/runner/schemas.ts: the z.record at InboxFileSchema.schema takes the prototype names \"__proto__\", \"constructor\", \"prototype\" as keys"
+      ],
+      "owner": "FX16",
+      "why": "A04's job inputs and inbox schema records are keyed by z.string() (found when SC5's spec was validated; FX16's Paths need this file)."
+    },
+    {
+      "rule": "R101-json",
+      "file": "src/modules/gaps/bank/index.ts",
+      "problems": [
+        "src/modules/gaps/bank/index.ts: parses JSON with no repeatedKeys( scan for a repeated key",
+        "src/modules/gaps/bank/index.ts: parses JSON with no reservedKeys( scan for a prototype-name key"
+      ],
+      "owner": "FX16",
+      "why": "The gaps bank reader (gaps/bank/index.ts:111) parses bank files with no repeated or reserved key scan (A450; card FX16)."
+    },
+    {
+      "rule": "R101-json",
+      "file": "src/modules/ai/runner/engines.ts",
+      "problems": [
+        "src/modules/ai/runner/engines.ts: parses JSON with no repeatedKeys( scan for a repeated key",
+        "src/modules/ai/runner/engines.ts: parses JSON with no reservedKeys( scan for a prototype-name key"
+      ],
+      "owner": "FX16",
+      "why": "A04's recordings and outbox files are parsed with no key scan (found when SC5's spec was validated; FX16's Paths need this file)."
+    },
+    {
+      "rule": "R101-json",
+      "file": "src/modules/ai/runner/runner.ts",
+      "problems": [
+        "src/modules/ai/runner/runner.ts: parses JSON with no repeatedKeys( scan for a repeated key",
+        "src/modules/ai/runner/runner.ts: parses JSON with no reservedKeys( scan for a prototype-name key"
+      ],
+      "owner": "FX16",
+      "why": "A04's approved list is parsed with no key scan (found when SC5's spec was validated; FX16's Paths need this file)."
+    },
+    {
+      "rule": "R101-json",
+      "file": "src/modules/ocr/recorded/index.ts",
+      "problems": [
+        "src/modules/ocr/recorded/index.ts: parses JSON with no repeatedKeys( scan for a repeated key",
+        "src/modules/ocr/recorded/index.ts: parses JSON with no reservedKeys( scan for a prototype-name key"
+      ],
+      "owner": "FX11",
+      "why": "A03's recording reader parses with no key scan; FX11 owns this reader (Paths src/modules/ocr/**)."
+    },
+    {
+      "rule": "R101-json",
+      "file": "src/modules/storage/drive/index.ts",
+      "problems": [
+        "src/modules/storage/drive/index.ts: parses JSON with no repeatedKeys( scan for a repeated key",
+        "src/modules/storage/drive/index.ts: parses JSON with no reservedKeys( scan for a prototype-name key"
+      ],
+      "owner": "FX7",
+      "why": "The drive stand-in's index.json is parsed with no key scan; FX7 owns this reader (Paths src/modules/storage/**, A446)."
+    },
+    {
+      "rule": "R101-run",
+      "file": "src/modules/gaps/bank/index.ts",
+      "problems": [
+        "src/modules/gaps/bank/index.ts: a JSON file with a key written twice in one object is read, not refused",
+        "src/modules/gaps/bank/index.ts: a JSON file with the key \"__proto__\" at the top level is read, not refused"
+      ],
+      "owner": "FX16",
+      "why": "Through loadBank: a repeated item key loads last-wins, and the hand-checked top level takes __proto__ (A450; card FX16)."
+    },
+    {
+      "rule": "R101-run",
+      "file": "src/modules/ocr/recorded/index.ts",
+      "problems": ["src/modules/ocr/recorded/index.ts: a JSON file with a key written twice in one object is read, not refused"],
+      "owner": "FX11",
+      "why": "Through the recorded engine: a repeated recordedAt reads last-wins (its strict schema already refuses the prototype names)."
+    },
+    {
+      "rule": "R101-run",
+      "file": "src/modules/storage/drive/index.ts",
+      "problems": [
+        "src/modules/storage/drive/index.ts: a JSON file with a key written twice in one object is read, not refused",
+        "src/modules/storage/drive/index.ts: a JSON file with the key \"__proto__\" at the top level is read, not refused",
+        "src/modules/storage/drive/index.ts: a JSON file with the key \"constructor\" in a nested object is read, not refused"
+      ],
+      "owner": "FX7",
+      "why": "Through getFile: the loose Index schema drops __proto__ and constructor, and a repeated key reads last-wins."
+    }
+  ]
+}

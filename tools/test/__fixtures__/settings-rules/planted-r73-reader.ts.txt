@@ -1,0 +1,7 @@
+// SC5 R73 plant (made up): the reader half of a two-file plant; the schema it parses lives in ./schemas.
+import { ApprovedListSchema, readUtf8 } from './schemas'
+
+export function readApproved(file: string) {
+  const list = ApprovedListSchema.safeParse(JSON.parse(readUtf8(file)))
+  return list.success ? list.data : null
+}

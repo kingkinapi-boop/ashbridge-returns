@@ -1,0 +1,20 @@
+// SC5 R73 plant (made up): A03's recording reader with its schema built with z.object, so a stray key is dropped.
+import fs from 'node:fs'
+import path from 'node:path'
+import { z } from 'zod'
+import { EngineStampSchema, ReadingResultSchema } from '../../../contracts/reading'
+
+const recordingSchema = () =>
+  z.object({
+    fingerprint: z.string(),
+    recordedAt: z.iso.datetime({ offset: true }),
+    sourceEngine: EngineStampSchema,
+    result: ReadingResultSchema,
+  })
+
+export function load(folder: string, fingerprint: string) {
+  const text = fs.readFileSync(path.join(folder, `${fingerprint}.json`), 'utf8')
+  const parsed = recordingSchema().safeParse(JSON.parse(text))
+  if (!parsed.success) throw new Error(`recording for ${fingerprint} is refused`)
+  return parsed.data
+}

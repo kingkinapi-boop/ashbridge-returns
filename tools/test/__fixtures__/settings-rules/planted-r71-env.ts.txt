@@ -1,0 +1,11 @@
+// SC5 R71 plant (made up): the pre-FX2 form of a stand-in factory, which reads process.env when no env is given.
+import { readSettings } from '../../core/env'
+
+export type QboStandInOptions = { env?: Record<string, string | undefined> }
+
+export function createQboStandIn(options: QboStandInOptions = {}) {
+  const env = options.env ?? process.env
+  const settings = readSettings(env)
+  if (settings.NODE_ENV === 'production') throw new Error('QBO_ENGINE must be set in production')
+  return { name: 'qbo stand-in (Test)' }
+}

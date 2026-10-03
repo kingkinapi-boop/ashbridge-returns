@@ -1,0 +1,16 @@
+// SC5 R73 plant (made up): strict at the top, but a nested helper is a plain z.object and the list is .passthrough().
+import fs from 'node:fs'
+import { z } from 'zod'
+
+export const readUtf8 = (file: string): string => new TextDecoder().decode(fs.readFileSync(file))
+
+const tripleSchema = z
+  .object({ stepType: z.string(), promptVersion: z.string(), modelId: z.string() })
+  .refine((t) => t.stepType !== '', { message: 'a step type (Test)' })
+
+export const ApprovedListSchema = z.strictObject({
+  triples: z.array(tripleSchema),
+  owner: z.strictObject({ name: z.string() }).passthrough(),
+})
+
+export const UnreadSchema = z.object({ note: z.string() })

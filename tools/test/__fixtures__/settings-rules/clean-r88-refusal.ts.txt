@@ -1,0 +1,13 @@
+// SC5 R88 clean twin (made up): the refusals name the setting, never its value (storage/safe.ts's form).
+import { readSettings } from '../../core/env'
+
+export function readEngine(env: Record<string, string | undefined> | undefined, name: string) {
+  const settings: Record<string, string | undefined> = readSettings(env)
+  const value = settings[name]
+  if (settings['NODE_ENV'] === 'production' && value === undefined) throw new Error(`${name} must be set in production`)
+  if (value === undefined || value === 'local') return 'local'
+  const kind = value === 'live' ? 'live' : 'other'
+  const label = `engine kind for ${name}`
+  if (kind === 'other') throw new Error('OCR_ENGINE names a reading engine that is not available yet')
+  return label === '' ? 'local' : 'live'
+}

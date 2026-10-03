@@ -1,0 +1,10 @@
+// SC5 R72 plant (made up): a boolean literal constant that hides the live branch from every test.
+import { createLiveQbo } from './live'
+import { createQboStandIn } from './standin'
+
+const GO_LIVE_ON = false as boolean
+
+export function createQbo() {
+  if (!GO_LIVE_ON) return createQboStandIn()
+  return createLiveQbo()
+}
