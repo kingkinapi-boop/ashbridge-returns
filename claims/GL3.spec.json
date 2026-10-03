@@ -3,8 +3,8 @@
  "role": "spec",
  "note": "12 tests added (G1 to G4); 85 GL3 acceptance tests, 29 red on tip by design; scratch B1 to B6 passes",
  "worker": "cloud-301e56",
- "state": "reported",
- "at": "2026-10-03T18:22:32.638Z",
+ "state": "reopened",
+ "at": "2026-10-03T19:51:03.880Z",
  "mode": "turbo",
  "commit": "c4a5a4bd",
  "validated": "b37a8e35"
