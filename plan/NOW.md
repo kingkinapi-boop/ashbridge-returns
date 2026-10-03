@@ -6,7 +6,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lea
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (46):** through A07C, A03, G17, A07D, A06, then CQ2 and SC4 (train 677e92f green with test:flake 5 of 5, landed 05:52Z as edd3af05). No train in flight.
+- **Landed (46):** through A07C, A03, G17, A07D, A06, then CQ2 and SC4 (train 677e92f green with test:flake 5 of 5, landed 05:52Z as edd3af05). Train: CQ3 boarded 06:45Z.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
@@ -26,9 +26,9 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lea
 | FX2 | spec refit reported; build open | build (one auth line), check, security review; lands before FX7 |
 | JH0 | spec reported | build after W00c lands |
 | FX10 | spec reported (cause: timeouts; 6 tests split into 22) | build, check, security review |
-| CQ3, CQ4 | CQ3 build reported, check working (local-3); CQ4 check FAIL (R82 flags files named in Spec prose), findings review running | board CQ3; CQ4 fix round |
+| CQ3, CQ4, CQ5 | CQ3 PASS, on the train; CQ4 check FAIL, findings review running; CQ5 carded (claims race, A428) | train; CQ4 fix round; CQ5 spec |
 
-Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-3 (CQ3 check), local-2 done. Helper: DB16 and CQ4 findings review. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
+Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-2 (FX10 spec); local-3 done (queue empty for it). Helper: DB16 and CQ4 findings review. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
 
 ## Next, in order
 

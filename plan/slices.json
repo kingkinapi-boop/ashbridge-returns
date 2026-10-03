@@ -9624,6 +9624,26 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ3"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-race.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ5",
+      "title": "claim.mjs: a claim is written on the tip it was decided on",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/CQ3-check.md, 3 Oct (A428)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [
