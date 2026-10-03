@@ -6062,11 +6062,16 @@
         "T04",
         "T07",
         "F02",
-        "N00"
+        "N00",
+        "L00",
+        "V00",
+        "FX5"
       ],
       "paths": [
         "src/modules/approval/**",
-        "db/schema/60_versions.sql"
+        "db/schema/60_versions.sql",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -6077,7 +6082,7 @@
       "id": "T08",
       "title": "Approval fingerprint and approval record",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "hard": true,
       "security": true,
       "core": true
@@ -6089,7 +6094,8 @@
         "F05",
         "L00",
         "SK0",
-        "F10"
+        "F10",
+        "T07"
       ],
       "paths": [
         "src/modules/checks/engine/**",
@@ -6111,7 +6117,7 @@
       "id": "Q00",
       "title": "Check engine",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "core": true
     },
     {
@@ -6899,7 +6905,8 @@
       ],
       "paths": [
         "src/modules/ai/checklist/_core/**",
-        "src/pipeline/steps/checks.ts"
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "AI-2",
@@ -7208,20 +7215,24 @@
       "spec": null,
       "deps": [
         "I00",
-        "T05",
         "T07",
-        "Q00"
+        "Q00",
+        "I01"
       ],
       "paths": [
         "src/modules/ai/redteam/**",
-        "src/pipeline/steps/checks.ts"
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts",
+        "db/schema/73_redteam.sql"
       ],
       "clauses": [
         "AI-3",
         "AI-1",
         "AI-4",
         "AI-5",
-        "AI-8"
+        "AI-6",
+        "AI-8",
+        "SEC-7"
       ],
       "id": "I30",
       "title": "Red team (a different model, raw documents)",
@@ -9662,6 +9673,28 @@
       "size": "M",
       "core": true,
       "note": "From reports/A07D-opus-read.md, 3 Oct (A393); landing rule: fallbacks are removals."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F02"
+      ],
+      "paths": [
+        "src/contracts/lifecycle.ts",
+        "src/modules/lifecycle/**"
+      ],
+      "clauses": [
+        "FLOW-4",
+        "EV-1",
+        "LL-1"
+      ],
+      "id": "FX5",
+      "title": "F02 move inside a caller transaction (for T08)",
+      "phase": 3,
+      "size": "S",
+      "core": true,
+      "note": "From reports/phase3-card-review-2026-10-03.md fix 2 (A397). L00 and N00 take the caller transaction in their own builds."
     },
     {
       "status": "carded",
