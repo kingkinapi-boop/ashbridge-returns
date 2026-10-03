@@ -1,11 +1,10 @@
 {
  "card": "SC6",
  "role": "spec",
- "worker": "cloud-e8594a",
- "state": "reopened",
- "at": "2026-10-03T04:25:15.758Z",
- "mode": "turbo",
  "note": "A408: gaps in reports/SC6-spec-review.md; see bold directive on the card",
- "commit": "839819f",
- "validated": "7eaf18c"
+ "reopenedFrom": "839819f",
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T06:35:36.658Z",
+ "mode": "turbo"
 }
