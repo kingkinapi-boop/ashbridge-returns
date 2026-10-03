@@ -10076,6 +10076,25 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "package.json",
+        "tools/flake-shifted.mjs",
+        "tools/test/flake-shifted.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ10",
+      "title": "Flake run with the date shifted",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/A04-findings-6.md, 3 Oct (A469)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "DG2"
       ],
