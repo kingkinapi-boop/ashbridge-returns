@@ -1,9 +1,8 @@
 {
  "card": "SC4",
  "role": "spec",
- "worker": "local-3",
- "state": "released",
- "at": "2026-10-03T04:16:51.415Z",
- "mode": "turbo",
- "note": "Laptop gap (exceljs, pdfjs-dist missing locally); re-offered to the same local worker, so stopping. Needs a cloud worker."
+ "worker": "cloud-a93d05",
+ "state": "working",
+ "at": "2026-10-03T04:17:13.314Z",
+ "mode": "turbo"
 }
