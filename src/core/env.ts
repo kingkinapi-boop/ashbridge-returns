@@ -2,10 +2,17 @@
 // Settings are read by name through zod and never printed (SEC-10).
 import { z } from 'zod'
 
+// A blank value reads as unset (FX2). The modules decide which names they accept.
+const blankIsUnset = z.preprocess((v) => (v === '' ? undefined : v), z.string().optional())
+
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   // ARC-6: which staff sign-in engine; unset or blank means the made-up users. No key is ever read (END-8).
   AUTH_ENGINE: z.preprocess((v) => (v === '' ? undefined : v), z.enum(['testusers', 'live']).optional()),
+  // FX2, ARC-6: the stand-in engines. Unset means the stand-in outside production; in production the module refuses (SEC-11).
+  OCR_ENGINE: blankIsUnset,
+  STORAGE_FILES_ENGINE: blankIsUnset,
+  STORAGE_DRIVE_ENGINE: blankIsUnset,
 })
 
 export type Settings = z.infer<typeof schema>
