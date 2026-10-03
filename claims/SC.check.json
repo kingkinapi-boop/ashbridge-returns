@@ -1,10 +1,9 @@
 {
  "card": "SC",
  "role": "check",
- "for": "2026-10-03T03:29:58.274Z",
- "worker": "cloud-e17d8e",
- "state": "failed",
- "at": "2026-10-03T04:16:25.996Z",
- "mode": "turbo",
- "note": "FAIL: KNOWN entries too broad (R43, R34 scan skip, whole-file exemptions), see reports/SC-check.md"
+ "for": "2026-10-03T06:23:57.040Z",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T06:26:11.557Z",
+ "mode": "turbo"
 }
