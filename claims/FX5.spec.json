@@ -2,8 +2,11 @@
  "card": "FX5",
  "role": "spec",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T03:48:42.544Z",
+ "state": "reported",
+ "at": "2026-10-03T04:05:56.386Z",
  "mode": "turbo",
- "beat": "2026-10-03T03:52:37.117Z"
+ "beat": "2026-10-03T03:52:37.117Z",
+ "note": "61 tests (34 db, 27 unit); round 2 closes 7 review gaps; reports/FX5-spec.md",
+ "commit": "bd0e2fe2",
+ "validated": "58b0bec6"
 }
