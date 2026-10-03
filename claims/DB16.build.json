@@ -1,11 +1,10 @@
 {
  "card": "DB16",
  "role": "build",
- "round": 4,
+ "round": 5,
  "spec": "d6f3a1b1",
- "worker": "cloud-f78eac",
- "state": "released",
- "at": "2026-10-03T05:02:39.870Z",
- "mode": "turbo",
- "note": "re-offered at once though spec is not reported; queue gate looks wrong for DB16 (early cloud build claim, NOW). Not built."
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T05:03:38.776Z",
+ "mode": "turbo"
 }
