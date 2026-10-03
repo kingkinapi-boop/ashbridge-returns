@@ -2,7 +2,10 @@
  "card": "CQ8",
  "role": "spec",
  "worker": "cloud-5dde9a",
- "state": "working",
- "at": "2026-10-03T08:06:03.964Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T08:09:00.549Z",
+ "mode": "turbo",
+ "note": "8 tests, 3 fail first",
+ "commit": "01c1194",
+ "validated": "0e39bb0cbf1f"
 }
