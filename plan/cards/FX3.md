@@ -5,7 +5,7 @@ Tags: core (permissions and citations: schemas, append-only tables, blank rules)
 Paths: db/schema/**, src/contracts/ids.ts, src/contracts/checks.ts, src/contracts/records.ts, src/contracts/jobs.ts, src/contracts/ai.ts, src/modules/gaps/index.ts, src/modules/gaps/bank/index.ts, src/modules/jobs/queue.ts, src/modules/bridge/run.ts, tools/test/__fixtures__/schema-contract/known.json
 Clauses: SEC-7, EV-1, ARC-10, EV-5, FLOW-1, ARC-15
 Read: `reports/SC-build.md` on claude/SC (every run), `plan/cards/SC.md`, `plan/cards/F01.md`, `plan/cards/F06.md`, `plan/cards/F07.md`, `src/contracts/text.ts` (the one blank rule, BL0).
-Spec commit: (spec-writer fills)
+Spec commit: 06469ba4 (validated on main b66f8428; reports/FX3-spec.md). Two deleted db entries (R42 and R43 on returns.client_handoff) cannot pass inside FX3: a Lead rule decision, see the report.
 
 ## Goal
 SC's rules fail on main for defects in files owned by cards that already landed (F01, F09/F01 records, G10/G11 gaps, F05 ai.ts, F06, F07). SC lands with these listed in KNOWN (owner FX3); this card fixes each and deletes its KNOWN entry, so the rule then holds on main.

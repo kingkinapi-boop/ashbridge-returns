@@ -1,6 +1,6 @@
 # FX3 spec report
 
-Worker cloud-22d057, 3 Oct 2026. Branch claude/FX3. Validated on main b66f8428.
+Worker cloud-22d057, 3 Oct 2026. Branch claude/FX3. Spec commit 06469ba4. Validated on main b66f8428.
 
 ## What the spec does
 
