@@ -6,31 +6,26 @@ import fs from 'node:fs'
 
 export type SafeRead = { ok: true; text: string } | { ok: false; reason: 'not-a-file' | 'too-big' | 'gone' }
 
-const GONE: SafeRead = { ok: false, reason: 'gone' }
-const NOT_A_FILE: SafeRead = { ok: false, reason: 'not-a-file' }
-const TOO_BIG: SafeRead = { ok: false, reason: 'too-big' }
-
-/** O_NONBLOCK where the platform defines it, so an open can never wait on a writer. */
-const NON_BLOCK: number = (fs.constants as Readonly<Record<string, number | undefined>>)['O_NONBLOCK'] ?? 0
-
 export function readRegularFile(file: string, maxBytes: number): SafeRead {
   let looked: fs.Stats
   try {
     looked = fs.lstatSync(file)
   } catch {
-    return GONE
+    return { ok: false, reason: 'gone' }
   }
-  if (!looked.isFile()) return NOT_A_FILE
+  if (!looked.isFile()) return { ok: false, reason: 'not-a-file' }
+  // O_NONBLOCK where the platform defines it, so an open can never wait on a writer
+  const nonBlock = (fs.constants as Readonly<Record<string, number | undefined>>)['O_NONBLOCK'] ?? 0
   let fd: number
   try {
-    fd = fs.openSync(file, fs.constants.O_RDONLY | NON_BLOCK)
+    fd = fs.openSync(file, fs.constants.O_RDONLY | nonBlock)
   } catch {
-    return GONE
+    return { ok: false, reason: 'gone' }
   }
   try {
     const opened = fs.fstatSync(fd)
-    if (opened.dev !== looked.dev || opened.ino !== looked.ino) return GONE
-    if (!opened.isFile()) return NOT_A_FILE
+    if (opened.dev !== looked.dev || opened.ino !== looked.ino) return { ok: false, reason: 'gone' }
+    if (!opened.isFile()) return { ok: false, reason: 'not-a-file' }
     const buffer = Buffer.alloc(maxBytes + 1)
     let total = 0
     while (total < buffer.length) {
@@ -38,7 +33,7 @@ export function readRegularFile(file: string, maxBytes: number): SafeRead {
       if (n === 0) break
       total += n
     }
-    if (total > maxBytes) return TOO_BIG
+    if (total > maxBytes) return { ok: false, reason: 'too-big' }
     return { ok: true, text: new TextDecoder().decode(buffer.subarray(0, total)) }
   } finally {
     fs.closeSync(fd)
