@@ -1,9 +1,11 @@
 {
  "card": "FX17",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: validated on main, 72 db + 11 unit tests, no assertion changed",
  "worker": "cloud-4b5725",
- "state": "working",
- "at": "2026-10-03T12:47:10.406Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T12:54:07.270Z",
+ "mode": "turbo",
+ "commit": "efe59740",
+ "validated": "5ba459ce97fcd7fb85d7ec11fe2bfdcbb5fedc75"
 }
