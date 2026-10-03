@@ -2,7 +2,11 @@
  "card": "W00c",
  "role": "spec",
  "worker": "cloud-a244c5",
- "state": "working",
- "at": "2026-10-03T11:48:09.182Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T12:05:33.463Z",
+ "mode": "turbo",
+ "note": "A463 rows 1,4,6,7,8,9 done (5c8d8469); rows 2 and 11 need Lead: KNOWN owner list accepts only FX3-FX9, see reports/W00c-spec.md",
+ "lastRelease": {
+  "tip": "bb8418d5417f7ea95d5d13c58c496625514abb1f"
+ }
 }
