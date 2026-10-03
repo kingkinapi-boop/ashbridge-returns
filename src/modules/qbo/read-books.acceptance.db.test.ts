@@ -1,5 +1,5 @@
 // B04 acceptance tests, the database side: snapshots and the normalised rows they hold in the card's schema file,
-// 35_qbo.sql (TB-10, TB-1, EV-1, EV-5, SEC-7, SEC-11). Spec-writer's file; builders never edit it. Each behaviour proven
+// 56_qbo.sql (TB-10, TB-1, EV-1, EV-5, SEC-7, SEC-11). Spec-writer's file; builders never edit it. Each behaviour proven
 // here through createDbSnapshotStore has a unit twin through createMemorySnapshotStore in read-books.acceptance.test.ts
 // (A04, A391); the table properties (row-level security, no policies, is_test, append-only, the return foreign key) are
 // schema facts with no TypeScript to mutate.
@@ -14,9 +14,8 @@
 //   qbo_journal_entries     snapshot_id, txn_id, memo, ...
 //   qbo_journal_lines       account_id, debit_cents, credit_cents, ... (tied to its entry by a column of the builder's choice)
 //   qbo_attachments         snapshot_id, attachment_id, sha256, ...
-// return_id is a foreign key to returns.returns(id) (EV-5, ARC-3; SC R43 and the records catalog test). returns.returns
-// is created by 50_returns.sql, after 35_qbo.sql, so that key cannot be declared in 35_qbo.sql alone: the Lead decides
-// where it is added (a Paths gap reported with this spec). The tests below seed the return they read for.
+// return_id is a foreign key to returns.returns(id) (EV-5, ARC-3; SC R43 and the records catalog test). The file is
+// 56_qbo.sql, after 50_returns.sql, so the key is real (A454). The tests below seed the return they read for.
 import fs from 'node:fs'
 import path from 'node:path'
 import type { PGlite } from '@electric-sql/pglite'
