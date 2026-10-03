@@ -1,11 +1,8 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "A06 landed: round 2 per reports/A04-findings.md and the card directive",
- "worker": "cloud-fb94ff",
- "state": "reopened",
- "at": "2026-10-03T04:03:46.308Z",
- "mode": "turbo",
- "commit": "ea5d29d",
- "validated": "33badd3"
+ "worker": "cloud-fd4d7f",
+ "state": "working",
+ "at": "2026-10-03T04:04:47.433Z",
+ "mode": "turbo"
 }
