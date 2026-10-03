@@ -4,8 +4,8 @@
  "round": 8,
  "spec": "d69ac553",
  "worker": "cloud-120dac",
- "state": "reported",
- "at": "2026-10-03T05:52:39.871Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T06:20:41.643Z",
  "mode": "turbo",
- "note": "duplicate build: branch head 512d833 (another worker's round 3) verified instead: typecheck clean, TEST_DB=pg16 db project 565 pass 1 skip; my duplicate not pushed"
+ "note": "FAIL: core files global-setup.ts and index.ts lack @mutate, see reports/DB16-check.md"
 }

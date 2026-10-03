@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-03T05:52:39.871Z",
  "worker": "cloud-a113b9",
- "state": "working",
- "at": "2026-10-03T05:56:02.884Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-03T06:20:41.643Z",
+ "mode": "turbo",
+ "note": "FAIL: core files global-setup.ts and index.ts lack @mutate, see reports/DB16-check.md"
 }
