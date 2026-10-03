@@ -2,7 +2,11 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-f6d708",
- "state": "working",
- "at": "2026-10-03T06:35:19.558Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T06:35:48.801Z",
+ "mode": "turbo",
+ "note": "W00c not landed: json-keys.ts and final load.ts missing; card says spec round 4 starts after W00c lands",
+ "lastRelease": {
+  "tip": "b3e3130015b43c41bb7ed395bea7af684089a0f0"
+ }
 }
