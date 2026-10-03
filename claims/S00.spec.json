@@ -1,9 +1,11 @@
 {
  "card": "S00",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: only the card's missing ../index fails typecheck/lint/tests; no stub (A402) added",
  "worker": "cloud-c5d3df",
- "state": "working",
- "at": "2026-10-03T16:12:09.699Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T16:16:59.050Z",
+ "mode": "turbo",
+ "commit": "a20a2f037e4e440645e7ee6b6290d2b930beb98b",
+ "validated": "de30610bf834ff3c9983fa5959913caad86faa7c"
 }
