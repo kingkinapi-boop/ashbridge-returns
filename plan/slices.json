@@ -1984,7 +1984,7 @@
     },
     {
       "status": "carded",
-      "spec": null,
+      "spec": "fb82b8c",
       "deps": [
         "F04",
         "F06",
@@ -3822,6 +3822,23 @@
       "hard": true
     },
     {
+      "status": "todo",
+      "spec": null,
+      "deps": [
+        "V00",
+        "D02",
+        "U02"
+      ],
+      "paths": [],
+      "clauses": [],
+      "id": "V15",
+      "title": "CPA review queue (/review): returns waiting for review, oldest first",
+      "phase": 3,
+      "size": "M",
+      "core": false,
+      "note": "No card owned the queue screen (reports/cards-V02-V13-draft.md, A421)."
+    },
+    {
       "status": "carded",
       "spec": null,
       "deps": [
@@ -4555,7 +4572,7 @@
       "params": {
         "screen": "exceptions"
       },
-      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A421: add RV-12 to the clauses; D08 also designs the CPA comments page V04 builds (RV-25 moved from V09 to V04)."
     },
     {
       "status": "parked",
@@ -7326,21 +7343,31 @@
       "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
         "T07",
         "X01",
         "Q46",
+        "T12",
         "D02",
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/review/brief/**"
+        "src/app/(staff)/review/brief/**",
+        "src/modules/review/brief/**",
+        "e2e/staff/review-brief.spec.ts"
       ],
       "clauses": [
         "RV-2",
+        "RV-1",
+        "RV-8",
+        "EX-4",
+        "EV-12",
+        "RT-17",
+        "RT-18",
+        "SEC-2",
         "RV-53",
         "RV-54"
       ],
@@ -7349,10 +7376,11 @@
       "phase": 3,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V02",
@@ -7364,40 +7392,70 @@
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/review/sections/**"
+        "src/app/(staff)/review/sections/**",
+        "src/app/(staff)/review/early/**",
+        "src/modules/review/marks/**",
+        "data/review/form-sections.json",
+        "db/schema/74_review.sql",
+        "e2e/staff/review-sections.spec.ts",
+        "e2e/staff/review-early.spec.ts"
       ],
       "clauses": [
         "RV-1",
         "RV-3",
+        "RV-4",
         "RV-5",
         "RV-6",
         "RV-8",
         "RV-9",
-        "RV-53",
-        "RV-54",
         "RV-10",
-        "RV-11"
+        "RV-11",
+        "EX-1",
+        "AI-7",
+        "SEC-2",
+        "SEC-3",
+        "SEC-7",
+        "RV-53",
+        "RV-54"
       ],
       "id": "V03",
       "title": "CPA review: sections, coverage, approve",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "screens": true,
-      "hard": true
+      "hard": true,
+      "security": true,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V03",
+        "V09",
         "U02",
-        "D02"
+        "D02",
+        "D08"
       ],
       "paths": [
-        "src/app/(staff)/review/comments/**"
+        "src/app/(staff)/review/comments/**",
+        "src/app/(staff)/review/changes/**",
+        "src/app/(staff)/prepare/comments/**",
+        "src/app/(staff)/review/sections/actions.tsx",
+        "src/modules/comments/**",
+        "db/schema/75_comments.sql",
+        "src/pipeline/deps.ts",
+        "e2e/staff/review-comments.spec.ts"
       ],
       "clauses": [
         "RV-7",
+        "RV-25",
+        "FLOW-2",
+        "FLOW-5",
+        "AI-7",
+        "SEC-2",
+        "SEC-7",
         "RV-53",
         "RV-54"
       ],
@@ -7406,25 +7464,38 @@
       "phase": 3,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V05",
+        "V12",
         "X00",
         "T04",
         "D08",
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/prepare/exceptions/**"
+        "src/app/(staff)/prepare/exceptions/**",
+        "src/modules/respond/**",
+        "src/pipeline/deps.ts",
+        "e2e/staff/exceptions.spec.ts"
       ],
       "clauses": [
         "RV-24",
-        "RV-25",
+        "EX-1",
+        "EX-2",
+        "EX-3",
+        "EX-4",
         "RT-16",
+        "RT-18",
+        "FLOW-2",
+        "AI-7",
+        "SEC-2",
         "RV-53",
         "RV-54"
       ],
@@ -7433,27 +7504,44 @@
       "phase": 3,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V04",
         "I00",
         "T01",
         "D02",
+        "D08",
         "U02"
       ],
       "paths": [
         "src/app/(staff)/review/fixes/**",
-        "src/modules/ai/fixes/**"
+        "src/app/(staff)/prepare/comments/comment-card.tsx",
+        "src/modules/ai/fixes/**",
+        "src/contracts/ai.ts",
+        "db/schema/76_fixes.sql",
+        "src/pipeline/steps/fix-drafts.ts",
+        "src/pipeline/handlers.ts",
+        "e2e/staff/fixes.spec.ts"
       ],
       "clauses": [
         "RV-12",
         "RV-7",
         "AI-1",
+        "AI-4",
+        "AI-6",
         "AI-7",
+        "AI-8",
+        "AI-10",
+        "RT-8",
+        "EV-8",
+        "SEC-2",
+        "SEC-7",
         "RV-53",
         "RV-54"
       ],
@@ -7462,7 +7550,10 @@
       "phase": 3,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": true,
+      "security": true,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
     },
     {
       "status": "carded",
@@ -9461,7 +9552,7 @@
       "size": "M"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ1"
@@ -9485,7 +9576,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "CQ1 follow-up plus what the Lead saw on 2 Oct evening."
+      "note": "CQ1 follow-up plus what the Lead saw on 2 Oct evening.",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9495,7 +9587,8 @@
       ],
       "paths": [
         "tools/claim.mjs",
-        "tools/test/claim-wait.test.mjs"
+        "tools/test/claim-wait.test.mjs",
+        "tools/test/claim.test.mjs"
       ],
       "clauses": [
         "ARC-15"
@@ -9681,7 +9774,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A07D"
@@ -9700,7 +9793,8 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393)."
+      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9836,6 +9930,46 @@
       "size": "S",
       "core": true,
       "note": "Split from FX7, 3 Oct (A415)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "src/modules/auth/auth.acceptance.db.test.ts",
+        "src/modules/auth/**"
+      ],
+      "clauses": [
+        "ARC-6",
+        "SEC-1"
+      ],
+      "id": "FX10",
+      "title": "Auth db test flaky under full-run load",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "Seen in DB16's spec run, 3 Oct (A421)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC5"
+      ],
+      "paths": [
+        "src/modules/ocr/**"
+      ],
+      "clauses": [
+        "AI-10",
+        "EV-5"
+      ],
+      "id": "FX11",
+      "title": "Recorded OCR: the engine named by the result matches the source (R84)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/A04-findings.md, 3 Oct (A426)."
     },
     {
       "status": "carded",
@@ -10021,7 +10155,7 @@
     },
     {
       "status": "carded",
-      "spec": "d6f3a1b1",
+      "spec": "d69ac553",
       "deps": [
         "A06"
       ],
