@@ -2,7 +2,10 @@
  "card": "FX5",
  "role": "spec",
  "worker": "cloud-7e015b",
- "state": "working",
- "at": "2026-10-03T03:38:41.014Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T03:40:41.494Z",
+ "mode": "turbo",
+ "note": "8 tests, 6 fail by timeout (nested transaction); 2 regression guards",
+ "commit": "ad79731d",
+ "validated": "f96bb895"
 }
