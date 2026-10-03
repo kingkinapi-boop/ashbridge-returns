@@ -14,9 +14,12 @@
 //     OUTBOX_MAX_BYTES = 4 MiB (4194304).
 //     OutboxRefusalSchema: { jobId, refusal: { reason (non-blank), problems: string[], stage: 'input' | 'run' |
 //       'output' } }, strict at every depth (A08 writes it; `stage` is new).
-//   createAiRunner options gain `now?: () => Date` (default: the system clock). runAiStep's ctx gains
-//     `deadline?: Date` (default: now() at the call + AI_JOB_LEASE_MS - 10 minutes); the ai:<step> handler passes
-//     ctx.now + AI_JOB_LEASE_MS - 10 minutes. Before every outbox read the engine compares now() with the deadline;
+//   createAiRunner options gain `now?: () => Date` (default: `now` from src/core/clock.ts, read at each call, so
+//     setClock moves it; never `new Date()` here). runAiStep's ctx gains `deadline?: Date` (default: now() at the call
+//     + AI_JOB_LEASE_MS - 10 minutes). Round 5c (A469, reports/A04-findings-6.md): one deadline, one clock. The
+//     ai:<step> handler passes only { jobId: ctx.jobId }, so its wait ends at the runner's now() at the call +
+//     AI_JOB_LEASE_MS - 10 minutes whatever ctx.now holds (F10 gives the queue and the runner one Clock).
+//     Before every outbox read the engine compares now() with the deadline;
 //     at or after it the step is refused with exactly DEADLINE below, problems [], not counted; the inbox file stays,
 //     and a later attempt takes a result already in the outbox at once.
 //   Once a step settles (a result, a refusal, an own-file failure, the deadline) its poll loop has stopped: no timer is
@@ -45,6 +48,7 @@ import fc from 'fast-check'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import type { z } from 'zod'
 import * as aiIndex from '../index'
+import { setClock, systemClock } from '../../../core/clock'
 import { readOwnSource } from '../../../core/testing/read-own-source'
 import { AI_JOB_LEASE_MS, createAiRunner, createAiStepHandler } from '../index'
 import { RECORDINGS_DIR, collectLines, filesIn, job, outboxResult, recording, tempDir, tripleOf, writeApproved, writeOutbox } from './__fixtures__/harness'
@@ -833,20 +837,48 @@ describe('ARC-22 the wait ends at the lease minus 10 minutes, on the pinned cloc
     await expectStopped()
   })
 
-  test('ARC-22 the handler sets the deadline from the job clock: ctx.now + AI_JOB_LEASE_MS - 10 minutes', async () => {
-    const claimedAt = T0 - 2 * HOUR // the queue's time, earlier than the runner's start, so the two defaults differ
-    const h = createAiStepHandler('finding', projectRunner())
-    const run = Promise.resolve().then(() => h.run(job('good'), { jobId: JOB_ID, attempt: 1, now: new Date(claimedAt), returnId: null }))
-    const t = track(run)
-    await polls(2)
-    clockMs = claimedAt + AI_JOB_LEASE_MS - MARGIN_MS - 1
-    await polls(2)
-    expect(t.settled()).toBe(false)
-    clockMs = claimedAt + AI_JOB_LEASE_MS - MARGIN_MS
-    await polls(1)
-    expect(t.settled()).toBe(true)
-    await expect(run).rejects.toThrow(DEADLINE)
-    await expectStopped()
+  // Round 5c (A469): ctx.now is the queue's snapshot at the claim; the wait runs on the runner's clock alone. The old
+  // case (ctx.now 2 hours earlier), the train 25ea2736 failure (2 days earlier) and a later ctx.now all wait the same.
+  for (const [label, offset] of [['2 hours before', -2 * HOUR], ['2 days before', -48 * HOUR], ['2 hours after', 2 * HOUR]] as const) {
+    test(`ARC-22 the handler waits on the runner's clock: with ctx.now ${label} it, the wait still ends at the runner's start + AI_JOB_LEASE_MS - 10 minutes`, async () => {
+      const h = createAiStepHandler('finding', projectRunner())
+      const run = Promise.resolve().then(() => h.run(job('good'), { jobId: JOB_ID, attempt: 1, now: new Date(T0 + offset), returnId: null }))
+      const t = track(run)
+      await polls(2)
+      expect(t.settled(), 'the step ended before the runner-clock deadline').toBe(false)
+      clockMs = T0 + AI_JOB_LEASE_MS - MARGIN_MS - 1
+      await polls(2)
+      expect(t.settled(), 'the step ended 1 ms before the runner-clock deadline').toBe(false)
+      clockMs = T0 + AI_JOB_LEASE_MS - MARGIN_MS
+      await polls(1)
+      expect(t.settled()).toBe(true)
+      await expect(run).rejects.toThrow(DEADLINE)
+      await expectStopped()
+    })
+  }
+
+  test('ARC-22 with no `now` option the runner reads src/core/clock.ts: the default deadline follows setClock', async () => {
+    const T1 = Date.parse('2031-05-17T06:30:00.000Z') // far from any real date, so the system clock cannot stand in
+    let coreMs = T1
+    setClock({ now: () => new Date(coreMs) })
+    try {
+      // R106 exception: the default clock is what this test proves.
+      const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5 })
+      expect(r.useEngine('project')).toEqual({ ok: true })
+      const t = track(start(r, JOB_ID))
+      await polls(2)
+      expect(t.settled()).toBe(false)
+      coreMs = T1 + AI_JOB_LEASE_MS - MARGIN_MS - 1
+      await polls(2)
+      expect(t.settled(), 'the step ended 1 ms before the core-clock deadline').toBe(false)
+      coreMs = T1 + AI_JOB_LEASE_MS - MARGIN_MS
+      await polls(1)
+      expect(t.settled(), 'the default deadline does not follow src/core/clock.ts').toBe(true)
+      expect(await t.promise).toEqual({ ok: false, reason: DEADLINE, problems: [] })
+      await expectStopped()
+    } finally {
+      setClock(systemClock)
+    }
   })
 
   test('ARC-22 the retry takes a result already in the outbox at once (unit twin of the db test): first attempt out of time, second done', async () => {

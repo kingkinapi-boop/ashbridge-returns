@@ -66,7 +66,7 @@ function projectRunner(): ReturnType<typeof createAiRunner> {
     env: { AI_EXCHANGE_DIR: exchange },
     pollMs: 5,
     now: () => new Date(T0),
-  } as Parameters<typeof createAiRunner>[0])
+  })
   expect(r.useEngine('project')).toEqual({ ok: true })
   return r
 }

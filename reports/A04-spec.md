@@ -149,3 +149,22 @@ Step 6b: I ran a throwaway stub in a separate worktree, then removed it; it was 
 
 ## For the build (round 5, as amended)
 This is the round 5 list plus the following. Stop polling once a step settles. Read the own file only through `readRegularFile(file, OUTBOX_MAX_BYTES)`. Import node:fs only as its default export in the runner folder and in safe-read.ts. In safe-read, fstat the opened descriptor and never stat the path. Refuse device names that include com0 and lpt0, and use no regex flags on the id grammar. Cloud check: quote the 8 Linux-only tests passing, plus the FIFO cases, which no longer hang.
+
+## Round 5c spec (A469, reports/A04-findings-6.md items 1 to 5; local-3, Opus 5.5)
+One deadline, one clock. Validated on main 0eccaccd (origin/main merged into claude/A04).
+- **Item 1 (exchange.acceptance):** the header now says the handler passes only `{ jobId: ctx.jobId }` and the default `now` is core/clock's. The old test 836 ("the handler sets the deadline from the job clock: ctx.now + lease - 10 minutes") is restated, not kept: the clause it pinned (two clocks) is the defect A469 supersedes. It is now 3 cases with ctx.now 2 hours before, 2 days before and 2 hours after the runner's clock. Each still waits 1 ms before `T0 + AI_JOB_LEASE_MS - 10 min` on the runner's clock and is refused with DEADLINE at it, then `expectStopped`. The "after" case is amber 5c-1: it kills a `max(ctx.now, now)` mutant.
+- **Item 2 (runner.acceptance):** the `runner()` helper pins `now` to RUNNER_NOW (2026-10-02T12:00Z), and every ctx.now in the file uses the same constant.
+- **Item 3 (exchange.acceptance):** new test. With no `now` option, `setClock` installs a mutable clock at 2031-05-17T06:30Z (far from any real date). The default deadline follows it: still waiting 1 ms before, refused at it. `finally` calls `setClock(systemClock)`.
+- **Item 4 (runner.acceptance):** a date-roll twin. For +2 days and +1 year after ctx.now, `vi.useFakeTimers({ toFake: ['Date'] })` and `vi.setSystemTime` are set, with the runner on its default clock (no `now`; amber 5c-2: a pinned runner would make the twin vacuous). The 7 handler stamp tests still name exactly their part and never DEADLINE. One sanity test per shift confirms the faked date. Total: 16 tests.
+- **Item 5:** a comment in src/pipeline/ai-exchange.acceptance.db.test.ts. No assertion changes.
+- Amber 5c-3: the two default-clock calls (item 3 and the twin's helper) carry an "R106 exception" comment. SC12's R106 (every test call to createAiRunner passes `now`) needs an allow marker for tests whose subject is the default clock.
+
+Counts (spec-owned, unit): runner.acceptance 140 (was 124), exchange.acceptance 93 (was 90). Fails first on the round 5b build (win32): 18. Exchange has 4 (3 restated plus the default-clock test), each "the step ended ... before the runner-clock deadline" or "the default deadline does not follow src/core/clock.ts". Runner has 14 (7 parts x 2 shifts), each with the DEADLINE reason instead of the part. The sanity tests pass first.
+Step 6b: the stub was runner.ts:69 `options.now ?? now` (core/clock) plus runner.ts:166 `{ jobId: ctx.jobId }`, applied in place and reverted, never committed. With it, every A04 test passes. Unit: 2996 passed and 36 failed, none of them A04 and none superseded. The failures are pg16.acceptance (33) and db.acceptance (the laptop node_modules lacks `pg` since DB16), real-parent ARC-6 symlink EPERM (2) and RV-52 (1), both laptop-only (A461), and a done-gate hook timeout under load. typecheck: 7 errors, all in src/core/db (missing `pg` types), none in A04 files. Lint is clean on the three changed files. The db project was not run here (no `pg`); its change is a comment only. Tests retired: none (836 restated per A469).
+
+## For the build (round 5c)
+Change runner.ts:166 so the handler passes `{ jobId: ctx.jobId }` only. At runner.ts:69 the default `now` is `now` from src/core/clock.ts (read at each call), never `new Date()`. Nothing else changes. Re-run unit, db on PGlite and pg16 (cloud), mutation 100 on all five `@mutate` files, and test:flake 5 of 5.
+
+## Frozen (A477, 3 Oct 14:05Z)
+
+The Lead froze the spec at round 5c (71a8efe8): the build round 5c is the last for A04. Review gaps G1 to G4 moved to card A04C (draft 6f94e3ac on claude/A04C-draft). No test changed in this commit.

@@ -131,7 +131,8 @@ async function world(sink?: (line: string) => void) {
   const db = await cloneTestDb()
   const clock = mutableClock(T0)
   const queue = createJobQueue(db, clock)
-  // Round 5: the runner reads the same pinned clock as the queue, so the wait's deadline (ctx.now + lease - 10 min) is on it.
+  // Round 5c (A469): the runner reads the same pinned clock as the queue (F10 wires one Clock). The wait's deadline is the
+  // runner's: its now() at the call + lease - 10 min; ctx.now does not set it.
   const options = { recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5, now: () => clock.now(), ...(sink ? { sink } : {}) }
   const ai = createAiRunner(options)
   expect(ai.useEngine('project')).toEqual({ ok: true })

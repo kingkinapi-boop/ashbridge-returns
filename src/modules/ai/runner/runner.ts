@@ -4,9 +4,11 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
+import { now as clockNow } from '../../../core/clock'
 import { readSettings } from '../../../core/env'
 import { makeLogger } from '../../../core/log'
 import { validateAiOutput, versionStampSchema, type VersionStamp } from '../../../contracts/ai'
+import { isBlank } from '../../../contracts/text'
 import type { Handler } from '../../../contracts/jobs'
 import { aiEngines, type EngineContext } from './engines'
 import { AiJobSchema, ApprovedListSchema, inputHashOf, readUtf8, type AiJob, type ApprovedList } from './schemas'
@@ -46,7 +48,7 @@ export interface AiRunner {
 }
 
 const refuse = (reason: string, problems: string[] = []): AiStepResult => ({ ok: false, reason, problems })
-const blank = (s: string | undefined): boolean => (s ?? '').trim() === ''
+const blank = (s: string | undefined): boolean => isBlank(s ?? '')
 
 /** The approved triples, or null when the list is missing or malformed (AI-11: a flag for a person, not a pass). */
 function approvedTriples(approvedPath: string): ApprovedList['triples'] | null {
@@ -65,7 +67,7 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
   })
   const approvedPath = options.approvedPath ?? DEFAULT_APPROVED
   const pollMs = options.pollMs ?? 1000
-  const now = options.now ?? ((): Date => new Date())
+  const now = options.now ?? ((): Date => clockNow())
   const waiting = new Map<string, number>()
   const seen = new Set<string>()
   const counts = new Map<string, number>()
@@ -162,7 +164,7 @@ export function createAiStepHandler(stepType: string, runner: AiRunner): Handler
     leaseMs: AI_JOB_LEASE_MS,
     versions: { handler: `ai:${stepType}`, runner: 'a04-1' },
     async run(input, ctx) {
-      const res = await runner.runAiStep(input, { jobId: ctx.jobId, deadline: new Date(ctx.now.getTime() + AI_JOB_LEASE_MS - AI_LEASE_MARGIN_MS) })
+      const res = await runner.runAiStep(input, { jobId: ctx.jobId })
       if (!res.ok) throw new Error([res.reason, ...res.problems].join(' '))
       return { output: res.output, stamp: res.stamp }
     },

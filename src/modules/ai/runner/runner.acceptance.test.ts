@@ -21,7 +21,10 @@
 //   aiEngines: { recorded: { run(...) }, project: { run(...) } }   the runner calls aiEngines[name].run at call time
 //   createAiStepHandler(stepType, runner): Handler (src/contracts/jobs.ts), kind `ai:<stepType>`, leaseMs 24 hours,
 //     run(input, ctx) = runAiStep(input, { jobId: ctx.jobId }); a result is { output, stamp }; a refusal throws an
-//     Error whose message holds the reason and the problems.
+//     Error whose message holds the reason and the problems. ctx.now never sets the wait's deadline (round 5c, A469):
+//     the runner's own clock does (its `now` option, default src/core/clock.ts).
+// Clocks (round 5c): the runner() helper pins `now` at RUNNER_NOW, the instant every ctx.now in this file holds, so
+//   every test here runs on one pinned clock; only the date-roll twin leaves it to the default clock on purpose.
 //   AI_JOB_LEASE_MS (24 hours), AI_SETTING_NAMES (every setting name the runner reads),
 //   inputHashOf(inputs): sha256 hex of the canonical JSON (keys sorted at every depth, no whitespace),
 //   InboxFileSchema and ApprovedListSchema (zod, strict at every depth).
@@ -40,6 +43,7 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { z } from 'zod'
 import { aiStepSchemas, validateAiOutput, versionStampSchema, type VersionStamp } from '../../../contracts/ai'
+import { setClock, systemClock } from '../../../core/clock'
 import { readSettings } from '../../../core/env'
 import { readOwnSource } from '../../../core/testing/read-own-source'
 import {
@@ -113,8 +117,11 @@ async function withinOnePoll<T>(step: Promise<T>): Promise<T> {
 
 type RunnerOptions = Parameters<typeof createAiRunner>[0]
 
+/** The one instant this file's clocks hold: the runner's pinned `now` and every handler ctx.now (round 5c, A469). */
+const RUNNER_NOW = '2026-10-02T12:00:00Z'
+
 function runner(extra: Partial<RunnerOptions> = {}) {
-  return createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: {}, pollMs: 5, ...extra })
+  return createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: {}, pollMs: 5, now: () => new Date(RUNNER_NOW), ...extra })
 }
 
 /** A runner switched to the project engine against the temp exchange folder. */
@@ -651,7 +658,7 @@ describe('ARC-22 the ai:<step> handler', () => {
 
   test('ARC-22 the handler returns { output, stamp } for a good job and throws the reason for a refusal', async () => {
     const h = createAiStepHandler('finding', runner())
-    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
     const out = (await h.run(job('good'), ctx)) as { output: unknown; stamp: unknown }
     expect(out).toMatchObject({ output: recording('finding-c01-good').output, stamp: recording('finding-c01-good').stamp })
     expect(h.result.safeParse(out).success).toBe(true)
@@ -826,7 +833,7 @@ function projectAnswering(stamp: VersionStamp): void {
 
 async function handlerMessage(r: ReturnType<typeof runner>): Promise<{ threw: boolean; message: string }> {
   const h = createAiStepHandler('finding', r)
-  const ctx = { jobId: 'job-c01-handler-stamp-test', attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+  const ctx = { jobId: 'job-c01-handler-stamp-test', attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
   try {
     await h.run(job('good'), ctx)
     return { threw: false, message: '' }
@@ -912,6 +919,44 @@ describe('AI-10 round 4: the runner compares every stamp part the contract has',
     expect(namedParts(allText(res))).toEqual(['ocrEngine', 'ocrEngineVersion'])
   })
 })
+
+// ---------- AI-10 ARC-22 round 5c (A469): the handler stamp tests again after the date rolls ----------
+// Train 25ea2736 went red when the real date passed ctx.now + 23 h 50 min: the deadline came from ctx.now while the
+// wait ran on the runner's clock. Here the runner keeps its default clock (src/core/clock.ts's system clock) and Date
+// is faked forward from the queue's ctx.now; each case must still reach the stamp check and name exactly its part.
+
+/** A project runner on the default clock (no `now` option; R106 exception: the default clock is what is tested). */
+function defaultClockProjectRunner() {
+  const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5 })
+  expect(r.useEngine('project')).toEqual({ ok: true })
+  return r
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000
+for (const [label, shiftMs] of [['2 days', 2 * DAY_MS], ['1 year', 365 * DAY_MS]] as const) {
+  describe(`AI-10 ARC-22 round 5c: the date is ctx.now + ${label}`, () => {
+    beforeEach(() => {
+      setClock(systemClock)
+      vi.useFakeTimers({ toFake: ['Date'] })
+      vi.setSystemTime(Date.parse(RUNNER_NOW) + shiftMs)
+    })
+
+    test(`ARC-22 the faked date holds: the default clock reads ctx.now + ${label}`, () => {
+      expect(Date.now()).toBe(Date.parse(RUNNER_NOW) + shiftMs)
+    })
+
+    for (const part of STAMP_PARTS) {
+      test(`AI-10 ARC-22 handler, date ctx.now + ${label}: a project result differing only at ${part} still throws naming exactly {${part}}`, async () => {
+        projectAnswering(stampWith(part))
+        const got = await handlerMessage(defaultClockProjectRunner())
+        expect(got.threw).toBe(true)
+        expect(got.message).not.toContain('before the lease ends')
+        expect(namedParts(got.message)).toEqual([part])
+        expect(got.message).not.toContain(OTHER[part])
+      })
+    }
+  })
+}
 
 describe('SEC-11 round 2: the is_test gate is for the project engine only', () => {
   test('SEC-11 a recorded-engine job for a return with is_test = false runs on its recorded answer', async () => {
@@ -1236,7 +1281,7 @@ describe('ARC-22 round 2: the log line and the handler, exactly', () => {
     if (expected.ok) throw new Error('fixture must be refused')
     expect(expected.problems.length).toBeGreaterThan(0)
     const h = createAiStepHandler('finding', runner())
-    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
     let message = ''
     try {
       await h.run(job('broken'), ctx)
@@ -1308,7 +1353,7 @@ describe('ARC-16 round 3: a malformed recording fails closed, never a crash', ()
   test('ARC-16 the handler turns a malformed-only folder into a thrown refusal with the reason, not a crash of another kind', async () => {
     const dir = rawRecordings('handler-bad', { 'a-bad.json': '{' })
     const h = createAiStepHandler('finding', runner({ recordingsDir: dir }))
-    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
     await expect(Promise.resolve().then(() => h.run(job('good'), ctx))).rejects.toThrow(/re-record/)
   })
 
@@ -1567,7 +1612,7 @@ describe('AI-1 AI-10 round 3: every refusal names its clause and every part it l
     const [firstProblem] = expected.problems
     if (firstProblem === undefined) throw new Error('fixture must list a problem')
     const h = createAiStepHandler('finding', runner())
-    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
     let message = ''
     try {
       await h.run(job('broken'), ctx)
