@@ -1,10 +1,14 @@
 {
  "card": "W00d",
  "role": "spec",
- "note": "222 tests, 147 fail by name on W00c 394db377 (RAW_SCHEMAS export missing or planted fault loads); 3 ranges.acceptance tests re-id'd (outside Paths, 6b); Paths gap: A507 adjusting-entry type not specced (needs sample data); see Lead",
+ "note": "A511 tests done (89 in w00d-types, 86 fail by name; spec 53e602df, report 1082fd82); NOT reported: Paths gap, answer keys must be generated: add reference/sample-clients/lib/engine.mjs, emit.mjs, kit.mjs and clients/*.mjs to W00d's Paths, then a data job adds the type (table in reports/W00d-spec.md); ARC-16 regenerate test breaks if keys are hand typed",
  "reopenedFrom": "ddece04b",
  "worker": "cloud-8c7eee",
- "state": "working",
- "at": "2026-10-03T19:24:18.371Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T19:56:35.961Z",
+ "mode": "turbo",
+ "commit": "53e602df",
+ "lastRelease": {
+  "tip": "1082fd82143c8bcf69a555873ca04c1d117a42b5"
+ }
 }
