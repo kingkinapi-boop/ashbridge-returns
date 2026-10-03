@@ -1,12 +1,10 @@
 {
  "card": "DB16",
  "role": "build",
- "round": 2,
+ "round": 3,
  "spec": "d6f3a1b1",
- "worker": "cloud-6aa4a3",
- "state": "released",
- "at": "2026-10-03T04:34:01.439Z",
- "mode": "turbo",
- "note": "wait: spec round 2 reopened 04:52Z (A411); a build started before it is void; reopen after the spec review",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
+ "worker": "cloud-f78eac",
+ "state": "working",
+ "at": "2026-10-03T05:02:15.503Z",
+ "mode": "turbo"
 }
