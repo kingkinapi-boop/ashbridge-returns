@@ -1,9 +1,11 @@
 {
  "card": "W00c",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: no toolchain file changed f980ffd9..18d267a59053c5144700d2e4c119148c3e754e30 (vitest, tsconfig, eslint, package.json, rules tests); round 3 spec e015bd7f stands, 296 tests",
  "worker": "cloud-0afb81",
- "state": "working",
- "at": "2026-10-03T10:26:01.557Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T10:26:18.258Z",
+ "mode": "turbo",
+ "commit": "963c78b7",
+ "validated": "18d267a59053c5144700d2e4c119148c3e754e30"
 }
