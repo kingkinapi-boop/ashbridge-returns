@@ -1,11 +1,9 @@
 {
  "card": "SC8",
  "role": "spec",
- "note": "A479 patch: shell regex fixed, 1 planted test added (5 cases); 25 egress tests pass; validated on main 2f472bdf; merge of newer main skipped (plan file conflicts, Lead-owned)",
+ "note": "toolchain refit",
  "worker": "cloud-c7f307",
- "state": "reported",
- "at": "2026-10-03T13:51:32.753Z",
- "mode": "turbo",
- "commit": "f788ca60",
- "validated": "2f472bdf"
+ "state": "working",
+ "at": "2026-10-03T13:51:35.922Z",
+ "mode": "turbo"
 }
