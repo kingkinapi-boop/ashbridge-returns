@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "1b555abb",
  "worker": "cloud-abfeb2",
- "state": "working",
- "at": "2026-10-02T21:45:26.264Z",
+ "state": "reported",
+ "at": "2026-10-03T02:27:17.461Z",
  "mode": "turbo",
- "beat": "2026-10-03T02:03:11.864Z"
+ "beat": "2026-10-03T02:03:11.864Z",
+ "note": "1975 of 1975 acceptance tests pass; mutation 100 on all files; scope: faults.test.ts outside Paths"
 }
