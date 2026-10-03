@@ -3847,7 +3847,7 @@
         "RV-54"
       ],
       "id": "V15",
-      "title": "CPA review queue (/review): returns waiting for review, oldest first",
+      "title": "CPA review queue (/review): returns waiting for review, in Zo's order (Z20-4)",
       "phase": 3,
       "size": "M",
       "core": false,
@@ -5089,7 +5089,8 @@
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
         "e2e/steps/skeleton-*.ts",
-        "tools/test/reading-rules.test.mjs"
+        "tools/test/reading-rules.test.mjs",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "RT-1",
@@ -5290,7 +5291,8 @@
         "src/modules/roundtrip/resolve/**",
         "src/modules/roundtrip/index.ts",
         "src/contracts/roundtrip.ts",
-        "db/schema/45_roundtrip.sql"
+        "db/schema/45_roundtrip.sql",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "RT-16",
@@ -5310,6 +5312,80 @@
       "hard": true,
       "core": true,
       "note": "Split from T04 on 2 Oct (reports/cards-phase2.md): T04 classes the cells, T12 resolves them and holds the sign-off gate."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "T09",
+        "E18",
+        "W29",
+        "N00",
+        "A05",
+        "T07"
+      ],
+      "paths": [
+        "src/modules/assessment/**",
+        "src/contracts/assessment.ts",
+        "db/schema/82_assessment.sql",
+        "data/assessment/**",
+        "src/pipeline/deps.ts",
+        "src/pipeline/handlers.ts"
+      ],
+      "clauses": [
+        "FLOW-8",
+        "FLOW-2",
+        "LL-1",
+        "RV-30",
+        "EV-2",
+        "AI-7",
+        "SEC-2",
+        "SEC-7"
+      ],
+      "id": "T13",
+      "title": "Notice of assessment: compare with the filed return and the move from filed to assessed",
+      "phase": 4,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Carded 3 Oct from the unowned gap in reports/phase3-card-review-2026-10-03b.md (fix 31, A433). Registers guard filed_to_assessed. Independent review before first spec."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "T13",
+        "T11",
+        "T09",
+        "T10",
+        "F02",
+        "F07",
+        "L00"
+      ],
+      "paths": [
+        "src/modules/amended/**",
+        "src/contracts/amended.ts",
+        "db/schema/83_amended.sql"
+      ],
+      "clauses": [
+        "FLOW-8",
+        "FLOW-1",
+        "FLOW-2",
+        "FLOW-9",
+        "EV-8",
+        "AI-7",
+        "SEC-2",
+        "SEC-7"
+      ],
+      "id": "T14",
+      "title": "Amended return: a new cycle at prepare linked to the filed return",
+      "phase": 4,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Carded 3 Oct from the second unowned gap in reports/phase3-card-review-2026-10-03b.md (FLOW-8's amended return). Independent review before first spec."
     },
     {
       "status": "carded",
@@ -6109,13 +6185,15 @@
         "N00",
         "L00",
         "V00",
-        "FX5"
+        "FX5",
+        "X00"
       ],
       "paths": [
         "src/modules/approval/**",
         "db/schema/60_versions.sql",
         "src/pipeline/steps/approval-watch.ts",
-        "src/pipeline/handlers.ts"
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -7367,7 +7445,10 @@
         "V00",
         "T07",
         "X01",
-        "Q46",
+        "B03",
+        "T05",
+        "Q00",
+        "X00",
         "T12",
         "D02",
         "U02"
@@ -7387,7 +7468,8 @@
         "RT-18",
         "SEC-2",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "SEC-3"
       ],
       "id": "V02",
       "title": "CPA review: the brief",
@@ -7395,7 +7477,8 @@
       "size": "M",
       "screens": true,
       "hard": false,
-      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "security": true
     },
     {
       "status": "carded",
@@ -7454,7 +7537,8 @@
         "V09",
         "U02",
         "D02",
-        "D08"
+        "D08",
+        "N00"
       ],
       "paths": [
         "src/app/(staff)/review/comments/**",
@@ -7475,16 +7559,20 @@
         "SEC-2",
         "SEC-7",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "RT-18",
+        "EX-1",
+        "RV-6"
       ],
       "id": "V04",
       "title": "CPA review: comments and rework view",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "screens": true,
       "hard": false,
       "security": true,
-      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "core": true
     },
     {
       "status": "carded",
@@ -7495,7 +7583,9 @@
         "X00",
         "T04",
         "D08",
-        "U02"
+        "U02",
+        "T12",
+        "V00"
       ],
       "paths": [
         "src/app/(staff)/prepare/exceptions/**",
@@ -7524,7 +7614,8 @@
       "screens": true,
       "hard": false,
       "core": true,
-      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "security": true
     },
     {
       "status": "carded",
@@ -7535,7 +7626,8 @@
         "T01",
         "D02",
         "D08",
-        "U02"
+        "U02",
+        "I40"
       ],
       "paths": [
         "src/app/(staff)/review/fixes/**",
@@ -7545,7 +7637,8 @@
         "db/schema/76_fixes.sql",
         "src/pipeline/steps/fix-drafts.ts",
         "src/pipeline/handlers.ts",
-        "e2e/staff/fixes.spec.ts"
+        "e2e/staff/fixes.spec.ts",
+        "data/ai/evals/sets/fix_draft.json"
       ],
       "clauses": [
         "RV-12",
@@ -7561,7 +7654,8 @@
         "SEC-2",
         "SEC-7",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "AI-11"
       ],
       "id": "V13",
       "title": "CPA review: AI-drafted fixes for simple comments, approved by the preparer",
@@ -9019,7 +9113,10 @@
         "TB-11",
         "FLOW-5",
         "TB-10",
-        "OUT-3"
+        "OUT-3",
+        "SEC-7",
+        "SEC-11",
+        "AI-7"
       ],
       "id": "B06",
       "title": "Books changed after approval: re-read QBO and compare with the approved snapshot",
@@ -9037,7 +9134,8 @@
         "T08",
         "T02",
         "B06",
-        "N00"
+        "N00",
+        "T11"
       ],
       "paths": [
         "src/modules/transmit/**",
@@ -9058,7 +9156,9 @@
         "LL-3",
         "AI-7",
         "SEC-7",
-        "OUT-3"
+        "OUT-3",
+        "TB-11",
+        "SEC-2"
       ],
       "id": "T09",
       "title": "The check before transmit: check export against the approval",
@@ -9077,7 +9177,9 @@
         "T07",
         "T11",
         "V04",
-        "A05"
+        "A05",
+        "T13",
+        "W29"
       ],
       "paths": [
         "src/modules/binder/**",
@@ -9094,7 +9196,9 @@
         "RT-11",
         "SEC-7",
         "FLOW-2",
-        "EV-1"
+        "EV-1",
+        "SEC-2",
+        "AI-7"
       ],
       "id": "T10",
       "title": "The frozen binder and retention",
@@ -9113,7 +9217,11 @@
         "F07",
         "F02",
         "T07",
-        "B03"
+        "B03",
+        "A05",
+        "E00",
+        "W20",
+        "G01"
       ],
       "paths": [
         "src/modules/clientsign/**",
@@ -9213,7 +9321,8 @@
       "id": "N01",
       "title": "Differences by natural key",
       "phase": 4,
-      "size": "M"
+      "size": "M",
+      "note": "T10 exempts returns.differences from the closed-return guard (99_closed.sql): N01 writes the CRA-assessed differences, causes and ranking after the return closes (reports/phase3-card-review-2026-10-03b.md fix 33). Insert rows only; never another table of a closed return."
     },
     {
       "status": "carded",
@@ -10315,22 +10424,25 @@
       "deps": [
         "SC",
         "CQ4",
-        "CQ6"
+        "CQ6",
+        "F02"
       ],
       "paths": [
         "tools/test/card-rules.test.mjs",
-        "tools/test/__fixtures__/card-rules/**"
+        "tools/test/__fixtures__/card-rules/**",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "ARC-15",
-        "ARC-16"
+        "ARC-16",
+        "FLOW-2"
       ],
       "id": "SC10",
-      "title": "Card rules R85 to R87: flags, harness, spec-owned files",
+      "title": "Card rules R85 to R87 and R89: flags, harness, spec-owned files, guard owners",
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "From the DB16 and CQ4 findings, 3 Oct (A430)."
+      "note": "From the DB16 and CQ4 findings, 3 Oct (A430). R89 added 3 Oct from C1 of reports/phase3-card-review-2026-10-03b.md."
     },
     {
       "status": "carded",
