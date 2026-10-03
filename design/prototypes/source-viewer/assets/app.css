@@ -1,0 +1,191 @@
+/* app- parts for the source viewer (D03). Every class here is listed with its reason in notes.md of each version.
+   No CSS zoom, no third-party fonts. Sizes in rem or px; colours from the Ashbridge palette. */
+
+:root { --app-pane-w: 480px; --app-ink: #15283b; --app-brand: #355b7d; --app-focus: #f5c94c; --app-line: #c5ced8; --app-soft: #f3f5f8; }
+[hidden] { display: none !important; }
+
+/* ---- shell: a fixed viewport app so the pane is full height beside the work (rule 20) ---- */
+html.govuk-template { height: 100%; background: #fff; }
+.app-shell { margin: 0; min-height: 100%; background: #fff; }
+.app-shell--stack { display: flex; flex-direction: column; }
+.app-wide { width: 100%; max-width: none; padding-left: 16px; padding-right: 16px; box-sizing: border-box; }
+.app-wide .moj-identity-bar__container,
+.app-wide .moj-sub-navigation__list { max-width: none; margin-left: 0; margin-right: 0; }
+.app-brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 700; font-size: 18px; line-height: 1; padding: 3px 0; }
+.app-brand:focus { outline: 3px solid var(--app-focus); background: var(--app-focus); color: var(--app-ink); }
+.app-brand svg { display: block; width: 22px; height: 22px; }
+.app-return { flex: none; }
+.app-shell .moj-identity-bar { margin-bottom: 0; padding-top: 0; padding-bottom: 0; }
+.app-shell .moj-sub-navigation { margin-bottom: 0; }
+.app-shell .moj-sub-navigation__list { padding-top: 0; }
+
+@media (min-width: 601px) {
+  html.govuk-template { overflow: hidden; }
+  .app-shell { height: 100%; overflow: hidden; }
+  .app-shell--stack > main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .app-split { height: 100%; }
+  .app-split__left { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+  .app-split__left > main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+}
+
+/* ---- split: work at the left, the source pane (splitter then viewer) at the right, never stacked above 600 px ---- */
+.app-split { display: grid; grid-template-columns: minmax(240px, 1fr) calc(var(--app-pane-w) + 24px); min-height: 0; }
+.app-split--no-pane { grid-template-columns: 1fr; }
+.app-split--no-pane .app-split__pane { display: none; }
+.app-split__work { flex: 1; overflow: auto; padding: 8px 16px 16px; min-width: 0; min-height: 0; scroll-padding: 80px 0; }
+.app-split__pane { min-width: 0; min-height: 0; height: 100%; display: grid; grid-template-columns: 24px minmax(0, 1fr); background: var(--app-soft); }
+.app-split__pane > .app-viewer-root { border-left: 1px solid var(--app-line); min-width: 0; }
+.app-splitter { width: 24px; cursor: col-resize; background: #fff; position: relative; box-sizing: border-box; border: 0; padding: 0; }
+.app-splitter::after { content: ""; position: absolute; left: 10px; top: 50%; height: 48px; margin-top: -24px; width: 4px; background: #627283; border-radius: 2px; }
+.app-splitter:hover::after { background: var(--app-ink); }
+.app-splitter:focus { outline: 3px solid var(--app-focus); outline-offset: -3px; background: var(--app-focus); }
+.app-splitter:focus::after { background: var(--app-ink); }
+
+/* ---- work list: heading, filter and window controls fold into as few rows as they can (rule 18: rows beside the pane) ---- */
+.app-worktop { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 16px; margin: 0 0 4px; }
+.app-worktop .govuk-heading-m { margin: 0; font-size: 1.5rem; line-height: 1.25; }
+.app-worktop .govuk-body, .app-counts, .app-done { margin: 0 0 6px; font-size: 1rem; line-height: 1.3; }
+.app-worktop .govuk-body { margin: 0; }
+.app-table-dense { margin-bottom: 8px; }
+.app-table-dense th, .app-table-dense td { padding: 4px 8px 4px 0; font-size: 1rem; line-height: 1.25; }
+.app-row--selected th, .app-row--selected td { background: #e6edf4; }
+.app-row--selected th:first-child { box-shadow: inset 4px 0 0 var(--app-brand); padding-left: 8px; }
+.app-what { display: block; font-size: 0.875rem; font-weight: 400; line-height: 1.2; }
+.app-button-compact { margin: 0; padding: 3px 10px; min-height: 0; font-size: 1rem; line-height: 1.25; box-shadow: 0 2px 0 #1f3a52; width: auto; white-space: normal; }
+.app-button-compact.govuk-button--secondary { box-shadow: 0 2px 0 #8aa0b4; }
+.app-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.app-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; margin: 0 0 6px; }
+.app-filter .govuk-label { margin: 0; font-size: 1rem; }
+.app-filter .govuk-input { width: 14rem; max-width: 100%; height: 32px; padding: 2px 8px; }
+.app-filter .govuk-hint { margin: 0; font-size: 1rem; }
+.app-key { display: inline-block; min-width: 1.4em; padding: 0 6px; border: 1px solid #627283; border-bottom-width: 2px; border-radius: 3px; background: #fff; color: var(--app-ink); font-family: inherit; font-size: 0.9em; text-align: center; }
+.app-summary-strip { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; background: var(--app-soft); border: 1px solid var(--app-line); padding: 4px 8px; margin-bottom: 6px; }
+.app-summary-strip p { margin: 0; font-size: 1rem; line-height: 1.3; }
+.app-summary-strip--window { display: none; }
+.app-split--no-pane .app-summary-strip--window { display: flex; }
+
+/* ---- the viewer: one row of chrome above the page (title and zoom), the steps, the source line, who and the words in the box ---- */
+.app-viewer { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.app-viewer--window { background: var(--app-soft); }
+.app-viewer__head { display: flex; align-items: center; gap: 8px; padding: 3px 8px; min-height: 34px; background: #fff; border-bottom: 1px solid var(--app-line); }
+.app-viewer__title { flex: 1 1 auto; min-width: 0; margin: 0; font-size: 1.0625rem; font-weight: 700; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-viewer--window .app-viewer__steps { flex: none; padding: 0; border: 0; }
+.app-viewer--window .app-viewer__title { flex: 1 1 8rem; }
+.app-viewer__zoom { display: flex; gap: 4px; align-items: center; flex: none; }
+.app-zoom-level { font-size: 0.875rem; min-width: 2.6em; text-align: right; }
+.app-viewer__steps { margin: 0; padding: 2px 8px; background: #fff; border-bottom: 1px solid var(--app-line); }
+.app-viewer__meta { margin: 0; padding: 3px 8px 0; background: #fff; font-size: 0.9375rem; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-viewer__who { margin: 0; padding: 0 8px 3px; background: #fff; border-bottom: 1px solid var(--app-line); font-size: 0.875rem; line-height: 1.3; color: #4f5f70; }
+.app-meta-who { display: inline; }
+.app-meta-ocr { margin-left: 10px; color: var(--app-ink); }
+.app-flagnote { margin: 0; padding: 2px 8px; background: #fff; border-bottom: 1px solid var(--app-line); font-size: 0.875rem; }
+.app-viewer__body { flex: 1; min-height: 0; display: flex; }
+.app-viewer__stage { flex: 1; min-width: 0; overflow: auto; padding: 6px; scroll-padding: 40px; }
+.app-viewer__stage:focus { outline: 3px solid var(--app-focus); outline-offset: -3px; }
+.app-viewer__empty { padding: 16px 12px; }
+.app-viewer__foot { padding: 6px 8px; background: #fff; border-top: 1px solid var(--app-line); display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.app-viewer__foot p, .app-viewer__foot .govuk-body-s { margin: 0; }
+.app-viewer__card { background: #fff; border: 1px solid var(--app-line); padding: 8px; }
+.app-viewer__card:focus { outline: 3px solid var(--app-focus); }
+.app-viewer__card .govuk-summary-list { margin-bottom: 0; }
+.app-viewer__card .govuk-summary-list__key { width: 36%; }
+.app-viewer__card h3 { margin-top: 0; }
+.app-viewer-root { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.app-scroll { overflow-x: auto; }
+
+/* numbered steps (TB-9) */
+.app-steps { display: flex; flex-wrap: wrap; gap: 3px 4px; list-style: none; margin: 0; padding: 0; align-items: center; }
+.app-steps__btn { margin: 0; padding: 1px 6px; min-height: 26px; font-family: inherit; font-size: 0.875rem; line-height: 1.25; background: #fff; color: var(--app-ink); border: 2px solid var(--app-brand); cursor: pointer; }
+.app-steps__btn[aria-current="step"] { background: var(--app-brand); color: #fff; font-weight: 700; }
+.app-steps__btn:focus { outline: 3px solid var(--app-focus); outline-offset: 0; background: var(--app-focus); color: var(--app-ink); }
+.app-steps__marked::after { content: " (marked)"; }
+
+/* buttons made to look like MOJ sub navigation links */
+.app-reset-button { font-family: inherit; background: none; border: 0; cursor: pointer; margin: 0; text-align: left; }
+.moj-sub-navigation__link.app-reset-button { padding-top: 4px; padding-bottom: 4px; }
+.app-viewer .moj-sub-navigation { margin-top: 0; margin-bottom: 0; }
+.app-viewer .moj-sub-navigation__list { padding-top: 0; flex-wrap: wrap; align-items: center; gap: 0 8px; }
+.app-viewer .moj-sub-navigation__item { margin-right: 10px; }
+
+/* page image and the box (rule 1 allows an inline style for the box position and the page width) */
+.app-page { position: relative; background: #fff; border: 1px solid #8b9dae; margin: 0; }
+.app-page img { display: block; width: 100%; height: auto; }
+.app-box { position: absolute; box-sizing: border-box; border: 4px solid var(--app-ink); outline: 2px solid #fff; background: rgba(245, 201, 76, 0.18); }
+.app-box:focus { outline: 4px solid var(--app-focus); }
+.app-box__label { position: absolute; left: -4px; bottom: 100%; margin-bottom: 2px; padding: 1px 6px; background: var(--app-ink); color: #fff; font-size: 0.8125rem; font-weight: 700; white-space: nowrap; line-height: 1.3; }
+.app-box--below .app-box__label { bottom: auto; top: 100%; margin: 2px 0 0; }
+.app-ocr { font-weight: 700; word-break: break-word; }
+.app-skeleton { position: absolute; inset: 0; background: linear-gradient(90deg, #e6edf4 25%, #f3f5f8 50%, #e6edf4 75%); opacity: 0; animation: app-appear 0s linear 300ms forwards; }
+@keyframes app-appear { to { opacity: 1; } }
+.app-page.is-loaded .app-skeleton { display: none; }
+.app-page.is-loading { min-height: 240px; }
+
+/* sheet grid (EV-14): a header and three rows that fit the pane without sideways scrolling, so no cell is half clipped */
+.app-sheet { border-collapse: collapse; font-size: 0.75rem; line-height: 1.25; width: 100%; }
+.app-sheet th, .app-sheet td { border: 1px solid #8b9dae; padding: 2px 4px; text-align: left; white-space: normal; overflow-wrap: anywhere; vertical-align: top; }
+.app-sheet thead th { background: var(--app-soft); }
+.app-sheet th[scope="row"] { background: var(--app-soft); text-align: right; font-weight: 400; }
+.app-sheet td.is-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.app-sheet td.app-cell-boxed { outline: 4px solid var(--app-ink); outline-offset: -3px; background: #fbf0c8; font-weight: 700; }
+.app-sheet td.app-cell-boxed:focus { outline-color: var(--app-focus); box-shadow: inset 0 0 0 5px var(--app-ink); }
+.app-sheet-wrap { overflow-x: auto; }
+
+/* narrow screens: one view at a time, with a Back control (brief, under 600 px) */
+.app-only-narrow { display: none; }
+@media (max-width: 600px) {
+  .app-only-narrow { display: inline-block; }
+  .app-shell { height: auto; }
+  .app-split { display: block; }
+  .app-splitter { display: none; }
+  .app-split[data-view="list"] .app-split__pane { display: none; }
+  .app-split[data-view="viewer"] .app-split__left > main { display: none; }
+  .app-split[data-view="viewer"] .app-split__pane { display: block; }
+  .app-split__work { overflow: visible; }
+  .app-split__pane > .app-viewer-root { border-left: 0; }
+  .app-viewer__stage { overflow-x: auto; overflow-y: visible; }
+  .app-viewer__title { white-space: normal; }
+  .app-viewer__head { flex-wrap: wrap; }
+  .app-viewer__meta { white-space: normal; }
+  .app-brand { font-size: 18px; }
+}
+
+/* the second window page */
+.app-window-main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.app-summary-strip--window-top { margin: 0; border-width: 0 0 1px; flex: none; padding: 2px 10px; }
+.app-summary-strip--window-top .govuk-heading-s { margin: 0; }
+.app-summary-strip--window-top .govuk-checkboxes__item { margin-bottom: 0; }
+.app-keys-inline { margin: 0 0 0 auto; }
+.app-keys-inline .govuk-details__summary { padding-top: 0; }
+
+/* ---- base look and compact chrome (dense desktop, RV-51) ---- */
+.govuk-template__body { font-family: Roboto, arial, sans-serif; color: var(--app-ink); }
+.app-shell button, .app-shell input, .app-shell textarea { font-family: inherit; }
+.govuk-generic-header { background: var(--app-brand); padding: 0; border-bottom: 0; }
+.govuk-generic-header__container { display: block; }
+.govuk-generic-header__logo { margin: 0; padding: 0; }
+.app-shell .moj-identity-bar__container { display: flex !important; flex-wrap: nowrap !important; align-items: center; min-height: 32px; width: 100%; float: none; max-width: none; }
+.app-shell .moj-identity-bar__container::before, .app-shell .moj-identity-bar__container::after { content: none; display: none; }
+.app-shell .moj-identity-bar__details { flex: 1 1 auto !important; width: auto !important; max-width: none !important; float: none !important; margin: 0; min-width: 0; font-size: 1rem; padding: 4px 0; }
+.app-shell .moj-identity-bar__title { display: block; font-size: 1rem; }
+.app-shell .moj-identity-bar__actions { flex: none; white-space: nowrap; width: auto; margin-left: auto; float: none; display: block; font-size: 1rem; }
+.app-shell .moj-sub-navigation__link { padding-top: 4px; padding-bottom: 4px; font-size: 1rem; }
+.app-shell .app-bar-link { display: inline-block; padding: 5px 4px; min-height: 24px; }
+.app-table-dense .govuk-tag, .app-viewer .govuk-tag, .app-summary-strip .govuk-tag { font-size: 0.875rem; line-height: 1.2; padding: 2px 6px; max-width: none; }
+.app-split__work:focus, .app-scroll:focus, .app-sheet-wrap:focus { outline: 3px solid var(--app-focus); outline-offset: -3px; box-shadow: inset 0 0 0 6px var(--app-ink); }
+.app-prototype-note { margin-top: 24px; }
+/* undo with a reason (version C, fix round 2): one field and two buttons, in place, in the row or the decision slot */
+.app-undo { flex: 1 1 100%; width: 100%; margin: 4px 0 0; }
+.app-undo .govuk-form-group { margin-bottom: 6px; }
+.app-undo .govuk-textarea { min-height: 0; padding: 3px 8px; }
+.app-undo-sum, .app-undo .govuk-error-summary { padding: 8px; margin-bottom: 8px; border-width: 4px; }
+.app-undo .govuk-error-summary__title { font-size: 1.0625rem; margin-bottom: 4px; }
+.app-undo .govuk-list { margin-bottom: 0; }
+.app-req { color: #b3413a; font-weight: 700; }
+/* B's cite form (the cite-or-reason part beside a Record button): the radios and the box on the left, the button at the right */
+.app-viewer__foot--cite { align-items: flex-end; flex-wrap: wrap; }
+.app-viewer__foot--cite .app-cor { flex: 1 1 16em; min-width: 0; margin: 0; }
+.app-cite__sum { flex: 1 1 100%; }
+.app-cite__sum .govuk-error-summary { padding: 8px; margin-bottom: 4px; border-width: 4px; }
+.app-cite__sum .govuk-error-summary__title { font-size: 1.0625rem; margin-bottom: 4px; }
+.app-cite__sum .govuk-list { margin-bottom: 0; }
+.app-viewer__foot--cite .app-cite__go { margin: 0; }
