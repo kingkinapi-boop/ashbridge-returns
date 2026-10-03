@@ -3,8 +3,8 @@
  "role": "spec",
  "note": "40 tests; owners to re-home (FX18, FX7, FX4, SC3, SC11, A04C G4); paths gap: auth.acceptance.db.test.ts createAuth calls need owner",
  "worker": "cloud-e9b38e",
- "state": "reported",
- "at": "2026-10-03T14:09:52.823Z",
+ "state": "reopened",
+ "at": "2026-10-03T14:27:44.081Z",
  "mode": "turbo",
  "commit": "b6bc226f",
  "validated": "2bb7db20"
