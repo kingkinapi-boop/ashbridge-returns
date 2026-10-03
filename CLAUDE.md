@@ -67,7 +67,7 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 
 ## Context and waits (decision 0024)
 
-- Sessions compact at 200k tokens (`CLAUDE_CODE_AUTO_COMPACT_WINDOW`). A SessionStart hook reloads NOW.md, the active claims and recent commits after every compaction.
+- Sessions compact at 300k tokens (`CLAUDE_CODE_AUTO_COMPACT_WINDOW`; decision 0025). A SessionStart hook reloads NOW.md, the active claims and recent commits after every compaction.
 - **Compact instructions:** every summary keeps Zo's words this session verbatim, every red or amber decided, what is in flight (card, role, branch, train head), the next step, and any refused action (never retried through another route).
 - No wait over 4.5 minutes inside a turn (use ScheduleWakeup); never revive a big helper, start a fresh one with a file to read.
 - Loop step 1 also reads the top of `reviews/CRITIC.md`: an "Approved, not applied" line is applied first, then marked "Applied".
