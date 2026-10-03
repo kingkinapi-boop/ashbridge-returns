@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "84810b04",
  "worker": "cloud-5a0e82",
- "state": "reported",
- "at": "2026-10-03T04:49:01.478Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T05:03:27.810Z",
  "mode": "turbo",
- "note": "17 of 17 pass; verify SEC-11 line added; ARC-16 old guards and R11 count settle at landing after W16"
+ "note": "FAIL: verify.mjs 3 fails (README R11 count 546, needs 549 after landing; ARC-16 freeze lines on branch), see reports/FX8-check.md"
 }

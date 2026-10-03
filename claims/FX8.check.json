@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-03T04:49:01.478Z",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T04:49:40.103Z",
+ "state": "failed",
+ "at": "2026-10-03T05:03:27.810Z",
  "mode": "turbo",
- "beat": "2026-10-03T04:53:12.304Z"
+ "beat": "2026-10-03T04:53:12.304Z",
+ "note": "FAIL: verify.mjs 3 fails (README R11 count 546, needs 549 after landing; ARC-16 freeze lines on branch), see reports/FX8-check.md"
 }
