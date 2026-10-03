@@ -125,7 +125,7 @@ describe('ARC-15 CQ1 rule 1: no offer for a done card or a build that passed its
   })
 })
 
-describe('ARC-15 CQ1 rule 2: a "wait:" release is not offered again until deps or status change', () => {
+describe('ARC-15 CQ1 rule 2: a "wait:" release is not offered again (until the Lead reopens it, CQ3)', () => {
   const waiting = [card('D', 'building', { spec: 'n/a', paths: ['src/d/**'] }), card('A', 'carded', { deps: ['D'], paths: ['src/a/**'] })]
 
   async function released(note) {
@@ -150,18 +150,8 @@ describe('ARC-15 CQ1 rule 2: a "wait:" release is not offered again until deps o
     expect(await nextBS(w, 'w2')).toBe('CLAIMED A spec')
   })
 
-  test('ARC-15 the wait lifts when a dep changes status', async () => {
-    const w = await released('wait: must not start until D lands')
-    expect(await nextBS(w, 'w2')).toBe('NOTHING')
-    await pushCards(w, [card('D', 'done', { spec: 'n/a', paths: ['src/d/**'] }), card('A', 'carded', { deps: ['D'], paths: ['src/a/**'] })])
-    expect(await nextBS(w, 'w3')).toBe('CLAIMED A spec')
-  })
-
-  test('ARC-15 the wait lifts when the card deps change', async () => {
-    const w = await released('wait: must not start until D lands')
-    await pushCards(w, [card('D', 'building', { spec: 'n/a', paths: ['src/d/**'] }), card('A', 'carded', { deps: [], paths: ['src/a/**'] })])
-    expect(await nextBS(w, 'w2')).toBe('CLAIMED A spec')
-  })
+  // CQ3 rule 2 retired "the wait lifts when a dep changes status" and "the wait lifts when the card deps
+  // change": a "wait:" release now holds until the Lead reopens it (tools/test/claim-wait.test.mjs).
 
   test('ARC-15 a build released with "wait:" is held the same way', async () => {
     const w = await world({ cards: [card('A', 'carded', { spec: 'abc123' })] })
@@ -170,13 +160,13 @@ describe('ARC-15 CQ1 rule 2: a "wait:" release is not offered again until deps o
     expect(await nextBS(w, 'w2')).toBe('NOTHING')
   })
 
-  test('ARC-15 next.mjs lists a held card under "waiting" and does not start it; it starts again once the wait lifts', async () => {
+  test('ARC-15 next.mjs lists a held card under "waiting" and does not start it; it starts again once the Lead reopens it (CQ3)', async () => {
     const w = await released('wait: must not start until D lands')
     const held = await run(w, 'next.mjs', ['10'])
     expect(held.code).toBe(0)
     expect(held.out).not.toMatch(/^START A\b/m)
     expect(held.out).toMatch(/^waiting \(released with wait:\): .*\bA\b/m)
-    await pushCards(w, [card('D', 'done', { spec: 'n/a', paths: ['src/d/**'] }), card('A', 'carded', { deps: ['D'], paths: ['src/a/**'] })])
+    await claim(w, ['update', 'A', 'spec', 'reopened', '--worker', 'lead'])
     const freed = await run(w, 'next.mjs', ['10'])
     expect(freed.out).toMatch(/^START A\b/m)
     expect(freed.out).not.toMatch(/^waiting \(released with wait:\)/m)
