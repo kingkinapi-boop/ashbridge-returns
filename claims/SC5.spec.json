@@ -2,10 +2,9 @@
  "card": "SC5",
  "role": "spec",
  "worker": "cloud-65d267",
- "state": "released",
- "at": "2026-10-03T08:10:10.064Z",
+ "state": "working",
+ "at": "2026-10-03T08:10:13.334Z",
  "mode": "turbo",
- "note": "deps SC and A04 not landed (no rule helper, no STAMP_PARTS_FROM_JOB on main); re-offer after they land",
  "lastRelease": {
   "tip": "none"
  }
