@@ -2,11 +2,9 @@
  "card": "SC6",
  "role": "spec",
  "note": "71 tests; only N01.md trips R77 (needs rewording on main, Lead); amber in reports/SC6-spec.md",
- "worker": "cloud-4863d0",
- "state": "reopened",
- "at": "2026-10-03T17:34:18.336Z",
- "mode": "turbo",
- "beat": "2026-10-03T15:35:16.544Z",
- "commit": "f64dedb0",
- "validated": "de30610b"
+ "reopenedFrom": "f64dedb0",
+ "worker": "cloud-3c6766",
+ "state": "working",
+ "at": "2026-10-03T18:42:32.582Z",
+ "mode": "turbo"
 }
