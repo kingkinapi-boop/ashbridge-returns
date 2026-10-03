@@ -204,19 +204,17 @@ async function withFixture(...names: string[]): Promise<PGlite> {
 }
 
 describe('R62 the AUTH_ENGINE factory refuses production silence (SEC-11, ARC-6, ARC-20)', () => {
-  test('R62 createAuth with NODE_ENV=production and AUTH_ENGINE unset or blank rejects naming the setting and seeds nothing', async () => {
-    for (const AUTH_ENGINE of [undefined, '']) {
-      const db = await cloneTestDb()
-      await expect(createAuth({ db, env: { NODE_ENV: 'production', ...(AUTH_ENGINE === undefined ? {} : { AUTH_ENGINE }) } })).rejects.toThrow(/AUTH_ENGINE/)
-      expect(await rowCount(db, 'staff_users')).toBe(0)
-    }
+  test.each([undefined, ''])('R62 createAuth with NODE_ENV=production and AUTH_ENGINE %j rejects naming the setting and seeds nothing', async (AUTH_ENGINE) => {
+    const db = await cloneTestDb()
+    await expect(createAuth({ db, env: { NODE_ENV: 'production', ...(AUTH_ENGINE === undefined ? {} : { AUTH_ENGINE }) } })).rejects.toThrow(/AUTH_ENGINE/)
+    expect(await rowCount(db, 'staff_users')).toBe(0)
   })
-  test('R62 createAuth works in production when AUTH_ENGINE is set, and unset outside production', async () => {
+  test('R62 createAuth works in production when AUTH_ENGINE is set', async () => {
     const db = await cloneTestDb()
     await expect(createAuth({ db, env: { NODE_ENV: 'production', AUTH_ENGINE: 'testusers' }, clock: clockAt(START) })).resolves.toBeDefined()
-    for (const NODE_ENV of ['development', 'test']) {
-      await expect(createAuth({ db: await cloneTestDb(), env: { NODE_ENV }, clock: clockAt(START) })).resolves.toBeDefined()
-    }
+  })
+  test.each(['development', 'test'])('R62 createAuth works with AUTH_ENGINE unset when NODE_ENV is %s', async (NODE_ENV) => {
+    await expect(createAuth({ db: await cloneTestDb(), env: { NODE_ENV }, clock: clockAt(START) })).resolves.toBeDefined()
   })
 })
 
@@ -244,7 +242,18 @@ describe('the tags in src equal the registries (R63 to R65, ARC-15 style: the ta
 })
 
 describe('R63 a stand-in that writes rows refuses a database holding a real row (SEC-11)', () => {
-  test('R63 rule: a planted seeder that does not look is caught, and one that refuses passes', async () => {
+  test('R63 rule: a planted seeder that does not look is caught', async () => {
+    const plantedSeed = async (db: PGlite): Promise<void> => {
+      await db.query("insert into returns.planted_people (id) values ('seeded-1')")
+    }
+    const row = "insert into returns.planted_people (id, is_test) values ('real-1', false)"
+    const a = await withFixture('planted-r63-seeder.sql')
+    expect(await standinProblems('planted#seed', 'planted_people', onDb(a, 'planted_people', row), () => plantedSeed(a))).toEqual([
+      'planted#seed: started on a database holding a real row in planted_people',
+      'planted#seed: wrote rows into planted_people next to a real row',
+    ])
+  })
+  test('R63 rule: a planted seeder that refuses passes', async () => {
     const plantedSeed = async (db: PGlite): Promise<void> => {
       await db.query("insert into returns.planted_people (id) values ('seeded-1')")
     }
@@ -254,11 +263,6 @@ describe('R63 a stand-in that writes rows refuses a database holding a real row 
       await plantedSeed(db)
     }
     const row = "insert into returns.planted_people (id, is_test) values ('real-1', false)"
-    const a = await withFixture('planted-r63-seeder.sql')
-    expect(await standinProblems('planted#seed', 'planted_people', onDb(a, 'planted_people', row), () => plantedSeed(a))).toEqual([
-      'planted#seed: started on a database holding a real row in planted_people',
-      'planted#seed: wrote rows into planted_people next to a real row',
-    ])
     const b = await withFixture('planted-r63-seeder.sql')
     expect(await standinProblems('planted#seed', 'planted_people', onDb(b, 'planted_people', row), () => clean(b))).toEqual([])
   })
@@ -269,10 +273,12 @@ describe('R63 a stand-in that writes rows refuses a database holding a real row 
 })
 
 describe('R64 an export tagged @once lets at most one of 8 parallel calls through (SEC-1, ARC-6)', () => {
-  test('R64 rule: a planted read-then-insert with no unique index lets many through, and the unique-index twin exactly one', async () => {
+  test('R64 rule: a planted read-then-insert with no unique index lets many through', async () => {
     const found = await onceProblems(plantedOnce(false), await cloneTestDb())
     expect(found).toHaveLength(1)
     expect(found[0]).toMatch(/^planted-r64#claim: [2-8] of 8 parallel calls got through, at most 1 allowed$/)
+  })
+  test('R64 rule: the unique-index twin of the planted read-then-insert lets exactly one through', async () => {
     expect(await onceProblems(plantedOnce(true), await cloneTestDb())).toEqual([])
   })
   test.each(ONCE)('R64 $key', async (entry) => {
@@ -281,10 +287,12 @@ describe('R64 an export tagged @once lets at most one of 8 parallel calls throug
 })
 
 describe('R65 an export tagged @limit N lets at most N of 2N parallel attempts through (SEC-1)', () => {
-  test('R65 rule: a planted check-then-record counter lets all through, and the serialised twin exactly 3', async () => {
+  test('R65 rule: a planted check-then-record counter lets all through', async () => {
     const found = await limitProblems(plantedLimit(false), 3, await cloneTestDb())
     expect(found).toHaveLength(1)
     expect(found[0]).toMatch(/^planted-r65#attempt: ([4-6]) of 6 parallel attempts got through, at most 3 allowed$/)
+  })
+  test('R65 rule: the serialised twin of the planted check-then-record counter lets exactly 3 through', async () => {
     expect(await limitProblems(plantedLimit(true), 3, await cloneTestDb())).toEqual([])
   })
   test.each(LIMIT)('R65 $entry.key evaluates at most $n of twice as many parallel attempts', async ({ entry, n, evaluated }) => {
@@ -294,8 +302,10 @@ describe('R65 an export tagged @limit N lets at most N of 2N parallel attempts t
 })
 
 describe('R66 every text column of an append-only table has a key, a list or format check, or a reviewed free-text line (FLOW-1, SEC-11)', () => {
-  test('R66 rule: a planted append-only user_id text with none is caught, and the keyed twin passes', async () => {
+  test('R66 rule: a planted append-only user_id text with none is caught', async () => {
     expect(planted(await freeTextColumns(await withFixture('planted-r66-append-only.sql')))).toEqual(['planted_events.user_id'])
+  })
+  test('R66 rule: the keyed twin of the planted append-only user_id passes', async () => {
     expect(planted(await freeTextColumns(await withFixture('clean-r66-append-only.sql')))).toEqual([])
   })
   test('R66 rule (item 1): a table guarded by a new function (not refuse_change) is append-only by what its triggers refuse, so its author text is caught', async () => {
