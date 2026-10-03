@@ -1,5 +1,7 @@
 # SC2 Test-world rules R57 to R61
 
+**Lead directive, 3 Oct 09:28Z (A450): spec patch.** The 75-test spec is kept; add the rules under "Also (A450)" at the bottom (R98 to R100, R102, R103) and reword R75. R76 KNOWN owner W00b confirmed.
+
 Phase 0. Size S. Deps: W00c. Where: cloud.
 Tags: core (the answer keys every later kind is checked against).
 Paths: tools/test/testworld-rules.test.mjs, tools/test/__fixtures__/testworld-rules/**
