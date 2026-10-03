@@ -3,8 +3,8 @@
  "role": "spec",
  "note": "8 tests, refit on main 66de2c9",
  "worker": "cloud-0ac9e9",
- "state": "reported",
- "at": "2026-10-03T12:20:56.481Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:51:41.190Z",
  "mode": "turbo",
  "commit": "503c520",
  "validated": "66de2c9"
