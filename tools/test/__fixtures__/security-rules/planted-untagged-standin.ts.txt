@@ -1,0 +1,11 @@
+// Planted (A452 item 8): a stand-in behind its factory that takes a database and carries no stand-in tag.
+import type { PGlite } from '@electric-sql/pglite'
+
+export interface PlantedOptions {
+  db: PGlite
+  label?: string
+}
+
+export function createPlantedStandIn(opts: PlantedOptions): { label: string } {
+  return { label: opts.label ?? 'planted (Test)' }
+}

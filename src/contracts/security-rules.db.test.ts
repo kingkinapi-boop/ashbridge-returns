@@ -1,17 +1,46 @@
 // SC3: security rules on a database (db project). Card plan/cards/SC3.md; clauses SEC-11, ARC-6, ARC-20, FLOW-1,
 // ARC-15. R62 (the AUTH_ENGINE factory), R63 (stand-ins refuse a database holding a real row), R64 (@once), R65
-// (@limit N) and R66 (free text in append-only tables). The settings rule for the adapters that need no database is
-// tools/test/security-rules.test.mjs. Each rule is first shown catching a planted fault (tools/test/__fixtures__/
+// (@limit N) and R66 (free text in append-only tables). The rule functions and reviewed lists live in
+// tools/test/__fixtures__/security-rules/harness.ts; tools/test/security-rules.test.mjs runs each on planted input in
+// the unit project (the twin, A391). Each rule is first shown catching a planted fault (tools/test/__fixtures__/
 // security-rules/), then applied to the repo. Clock pinned; races assert an invariant that holds for every interleaving.
 //
-// JSDoc tags on product exports (an owning card adds its own line to the registries below):
+// JSDoc tags on product exports (an owning card adds its tag, its key in harness.ts REGISTRY and its entry below):
 //   `@standin <name>`   a stand-in factory that writes rows (R63)
 //   `@once <name>`      an export that succeeds at most once however calls interleave (R64)
 //   `@limit <N> <name>` an export that lets at most N of 2N parallel attempts through (R65)
+// Each tag stands alone on its own line inside a multi-line JSDoc block; any other mention fails (A452 item 6).
 import fs from 'node:fs'
 import path from 'node:path'
 import type { PGlite } from '@electric-sql/pglite'
 import { describe, expect, test } from 'vitest'
+import {
+  APPEND_ONLY_SENTINEL,
+  FORMAT_FUNCTIONS,
+  FREE_TEXT,
+  KNOWN,
+  LANDING,
+  PARALLEL,
+  REGISTRY,
+  appendOnlyGuardProblems,
+  appendOnlyTables,
+  applyKnown,
+  checkVouches,
+  formatFunctionProblems,
+  freeText,
+  landingProblems,
+  limitProblems,
+  onceProblems,
+  r66Problems,
+  readSchema,
+  readSources,
+  standinProblems,
+  tableFiles,
+  tagProblems,
+  taggedExports,
+  type Catalog,
+  type Entry as HarnessEntry,
+} from '../../tools/test/__fixtures__/security-rules/harness'
 import { listTestUsers, testCredentials } from '../modules/auth/testing'
 import type { Clock } from '../core/clock'
 import { cloneTestDb } from '../core/db'
@@ -23,80 +52,11 @@ const fix = (name: string): string => fs.readFileSync(path.join(FIX, name), 'utf
 const START = new Date('2026-10-02T10:00:05-04:00').getTime()
 const USER = listTestUsers().find((u) => u.displayName.includes('(Test)'))?.id ?? ''
 const clockAt = (ms: number): Clock => ({ now: () => new Date(ms) })
+const SOURCES = (): { name: string; text: string }[] => readSources(ROOT, path.join(ROOT, 'src'))
 
-// ---------- the tag scan (R63 to R65 registries stay equal to the tags in src) ----------
-interface Tagged { key: string; n?: number }
-const SKIP = new Set(['node_modules', '.next', '.git', '__fixtures__', '__golden__', 'coverage', '.stryker-tmp'])
-function productFiles(dir: string, out: string[] = []): string[] {
-  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (SKIP.has(e.name)) continue
-    const p = path.join(dir, e.name)
-    if (e.isDirectory()) productFiles(p, out)
-    else if (/\.tsx?$/.test(e.name) && !/\.(test|spec)\.tsx?$/.test(e.name)) out.push(p)
-  }
-  return out
-}
-const relOf = (p: string): string => path.relative(ROOT, p).split(path.sep).join('/')
-
-/** Every JSDoc `@tag` line in the given sources: `@standin name`, `@once name`, `@limit N name`. */
-export function taggedExports(tag: 'standin' | 'once' | 'limit', files: { name: string; text: string }[]): Tagged[] {
-  const out: Tagged[] = []
-  for (const f of files) {
-    for (const block of f.text.matchAll(/\/\*\*[\s\S]*?\*\//g)) {
-      for (const line of block[0].split('\n')) {
-        const m = new RegExp(`^\\s*\\*?\\s*@${tag}\\s+(?:(\\d+)\\s+)?([A-Za-z_$][\\w$]*)\\s*(?:\\*/)?\\s*$`).exec(line)
-        if (!m) continue
-        const key = `${f.name}#${m[2] ?? ''}`
-        out.push(m[1] === undefined ? { key } : { key, n: Number(m[1]) })
-      }
-    }
-  }
-  return out
-}
-export function tagProblems(tagged: Tagged[], registry: { key: string; n?: number }[]): string[] {
-  const out: string[] = []
-  const reg = new Map(registry.map((r) => [r.key, r.n]))
-  for (const t of tagged) {
-    if (!reg.has(t.key)) out.push(`${t.key}: tagged but missing from the registry`)
-    else if (reg.get(t.key) !== t.n) out.push(`${t.key}: the tag says limit ${String(t.n)} but the registry says ${String(reg.get(t.key))}`)
-  }
-  for (const r of registry) if (!tagged.some((t) => t.key === r.key)) out.push(`${r.key}: in the registry but its export lacks the tag`)
-  return out
-}
-const SOURCES = (): { name: string; text: string }[] =>
-  productFiles(path.join(ROOT, 'src')).map((p) => ({ name: relOf(p), text: fs.readFileSync(p, 'utf8') }))
-
-// ---------- harnesses ----------
+// ---------- harnesses (harness.ts: onceProblems, limitProblems, standinProblems; the unit twin runs them on fakes) ----------
 type Ctx = { db: PGlite } & Record<string, unknown>
-interface Entry<T = Ctx> {
-  key: string
-  setup: (db: PGlite) => Promise<T>
-  /** One attempt; true when it got through. A rejection counts as refused. */
-  call: (ctx: T, i: number) => Promise<boolean>
-}
-const PARALLEL = 8
-
-async function gotThrough<T>(entry: Entry<T>, ctx: T, attempts: number): Promise<number> {
-  const results = await Promise.allSettled(Array.from({ length: attempts }, (_, i) => entry.call(ctx, i)))
-  return results.filter((r) => r.status === 'fulfilled' && r.value).length
-}
-
-/** R64: 8 parallel calls on one clone; exactly one gets through (none means the entry's setup is wrong). */
-export async function onceProblems<T>(entry: Entry<T>, db: PGlite): Promise<string[]> {
-  const n = await gotThrough(entry, await entry.setup(db), PARALLEL)
-  if (n > 1) return [`${entry.key}: ${String(n)} of ${String(PARALLEL)} parallel calls got through, at most 1 allowed`]
-  if (n === 0) return [`${entry.key}: no call got through, so the entry proves nothing`]
-  return []
-}
-/** R65: 2N parallel attempts; at most N are let through. */
-export async function limitProblems<T>(entry: Entry<T>, n: number, db: PGlite, count?: (db: PGlite) => Promise<number>): Promise<string[]> {
-  const ctx = await entry.setup(db)
-  const returned = await gotThrough(entry, ctx, 2 * n)
-  const through = count ? await count(db) : returned
-  if (through > n) return [`${entry.key}: ${String(through)} of ${String(2 * n)} parallel attempts got through, at most ${String(n)} allowed`]
-  if (through === 0) return [`${entry.key}: no attempt got through, so the entry proves nothing`]
-  return []
-}
+type Entry<T = Ctx> = HarnessEntry<PGlite, T>
 
 // ---------- planted faults ----------
 const plantedOnce = (clean: boolean): Entry => ({
@@ -133,7 +93,7 @@ const plantedLimit = (clean: boolean): Entry => ({
   },
 })
 
-// ---------- the registries (first entries: A06) ----------
+// ---------- the registries (first entries: A06; their keys equal harness.ts REGISTRY) ----------
 const AUTH_FILE = 'src/modules/auth/testusers/engine.ts'
 const finishSignIn: Entry<Ctx & { challenges: string[]; code: string }> = {
   key: `${AUTH_FILE}#finishSignIn`,
@@ -186,59 +146,61 @@ const STANDINS = [
 async function rowCount(db: PGlite, table: string): Promise<number> {
   return Number((await db.query<{ n: number }>(`select count(*)::int as n from returns.${table}`)).rows[0]?.n)
 }
-/** R63: a stand-in that writes rows refuses a database holding any is_test = false row, and writes nothing. */
-export async function standinProblems(key: string, table: string, realRow: string, start: (db: PGlite) => Promise<unknown>, db: PGlite): Promise<string[]> {
-  await db.query(realRow)
-  const before = await rowCount(db, table)
-  let refused = false
-  try {
-    await start(db)
-  } catch {
-    refused = true
-  }
-  const out: string[] = []
-  if (!refused) out.push(`${key}: started on a database holding a real row in ${table}`)
-  if ((await rowCount(db, table)) !== before) out.push(`${key}: wrote rows into ${table} next to a real row`)
-  return out
-}
+const onDb = (db: PGlite, table: string, realRow: string): { addRealRow: () => Promise<void>; count: () => Promise<number> } => ({
+  addRealRow: async () => {
+    await db.query(realRow)
+  },
+  count: () => rowCount(db, table),
+})
 
-// ---------- R66 ----------
-const R66_SQL = `
-select c.relname as t, a.attname as col
-from pg_class c
-join pg_namespace n on n.oid = c.relnamespace and n.nspname = 'returns'
-join pg_attribute a on a.attrelid = c.oid and a.attnum > 0 and not a.attisdropped
-where c.relkind = 'r'
-  and a.atttypid in ('text'::regtype, 'varchar'::regtype, 'text[]'::regtype)
-  and exists (select 1 from pg_trigger g join pg_proc p on p.oid = g.tgfoid
-              where g.tgrelid = c.oid and not g.tgisinternal and p.proname = 'refuse_change')
-  and not exists (select 1 from pg_constraint k where k.conrelid = c.oid and k.contype = 'f' and a.attnum = any (k.conkey))
-  and not exists (select 1 from pg_constraint k where k.conrelid = c.oid and k.contype = 'p' and k.conkey = array[a.attnum])
-  and not exists (select 1 from pg_constraint k where k.conrelid = c.oid and k.contype = 'c' and a.attnum = any (k.conkey)
-                  and pg_get_constraintdef(k.oid) ~ '(= ANY|~|<@)')
-order by 1, 2`
-/** Text columns of append-only tables with no key, no list or format check and no reviewed free-text line. */
-export async function freeTextColumns(db: PGlite): Promise<string[]> {
-  return (await db.query<{ t: string; col: string }>(R66_SQL)).rows.map((r) => `${r.t}.${r.col}`)
+// ---------- R66: the catalog, read once per clone; harness.ts decides ----------
+const USER_SCHEMA = "n.nspname not in ('pg_catalog', 'information_schema') and n.nspname not like 'pg\\_%'"
+const TABLE_NAME = "case when n.nspname = 'returns' then c.relname else n.nspname || '.' || c.relname end"
+const TRIGGERS_SQL = `
+select ${TABLE_NAME} as "table", p.proname as fn, g.tgtype::int as tgtype
+from pg_trigger g join pg_class c on c.oid = g.tgrelid join pg_namespace n on n.oid = c.relnamespace join pg_proc p on p.oid = g.tgfoid
+where not g.tgisinternal and ${USER_SCHEMA}`
+const FUNCTIONS_SQL = `
+select p.proname as name, p.prosrc as src from pg_proc p join pg_namespace n on n.oid = p.pronamespace where ${USER_SCHEMA}`
+// A column is text when its type, through any domains and array layers, reaches a string type (category S: text,
+// varchar, char, citext, name), so a domain over text or a varchar[] cannot escape (A452 item 3).
+const COLUMNS_SQL = `
+with recursive layers(rel, col, attnum, ty, depth) as (
+  select c.oid, a.attname, a.attnum, a.atttypid, 0
+  from pg_class c join pg_namespace n on n.oid = c.relnamespace
+  join pg_attribute a on a.attrelid = c.oid and a.attnum > 0 and not a.attisdropped
+  where c.relkind in ('r', 'p') and ${USER_SCHEMA}
+  union all
+  select l.rel, l.col, l.attnum, case when y.typtype = 'd' then y.typbasetype else y.typelem end, l.depth + 1
+  from layers l join pg_type y on y.oid = l.ty
+  where (y.typtype = 'd' or (y.typcategory = 'A' and y.typelem <> 0)) and l.depth < 16
+)
+select ${TABLE_NAME} as "table", l.col, l.attnum::int as attnum, bool_or(y.typcategory = 'S') as text
+from layers l join pg_type y on y.oid = l.ty join pg_class c on c.oid = l.rel join pg_namespace n on n.oid = c.relnamespace
+group by 1, 2, 3`
+const CONSTRAINTS_SQL = `
+select ${TABLE_NAME} as "table", k.contype as type, coalesce(k.conkey::int[], '{}') as cols, pg_get_constraintdef(k.oid) as def
+from pg_constraint k join pg_class c on c.oid = k.conrelid join pg_namespace n on n.oid = c.relnamespace
+where ${USER_SCHEMA}`
+
+/** The catalog snapshot harness.ts reads (triggers, functions, columns, constraints). */
+export async function readCatalog(db: PGlite): Promise<Catalog> {
+  return {
+    triggers: (await db.query<Catalog['triggers'][number]>(TRIGGERS_SQL)).rows,
+    functions: (await db.query<Catalog['functions'][number]>(FUNCTIONS_SQL)).rows,
+    columns: (await db.query<Catalog['columns'][number]>(COLUMNS_SQL)).rows,
+    constraints: (await db.query<Catalog['constraints'][number]>(CONSTRAINTS_SQL)).rows,
+  }
 }
-const APPEND_ONLY_SQL = `select c.relname as t from pg_class c join pg_namespace n on n.oid = c.relnamespace and n.nspname = 'returns'
-  where c.relkind = 'r' and exists (select 1 from pg_trigger g join pg_proc p on p.oid = g.tgfoid
-  where g.tgrelid = c.oid and not g.tgisinternal and p.proname = 'refuse_change') order by 1`
-// The reviewed free-text list: `table.column` and why free text is right there. A line is added only in a card that is reviewed.
-// A single-column primary key counts as keyed (amber: ids are generated by code, never typed).
-const FREE_TEXT: Record<string, string> = {
-  'approvals.fingerprint': 'a sha256 of the approved content, computed by code (FLOW-1); the value has no fixed list',
-  'entry_lines.qbo_account_id': 'the id QuickBooks gave the account; opaque to us and not ours to constrain',
-  'events.reason': 'the reason a person or the system gave for the change (FLOW-1); free by nature, non-blank is checked',
-  'events.record_id': 'the id of the record the event is about, in the table named beside it; a pointer across tables cannot be one key',
-  'events.record_table': 'the name of the table the event is about; the set grows with each card, so the owning card lists it',
-  'jobs.idempotency_key': 'built by code from the work it names (ARC-14), never typed; no fixed list',
-  'jobs.last_error': 'the error text of the last failed attempt, already redacted by the logger (SEC-10); free by nature',
-  'jobs.lease_holder': 'the name of the worker holding the lease, set by code; no fixed list',
-  'sign_in_events.reason': 'one of the fixed sentences the auth engine writes, never typed text (SEC-10); non-blank is checked',
-  'state_events.reason': 'the reason a person or the system gave for the transition (FLOW-1); free by nature, non-blank is checked',
-  'version_cells.cell_id': 'the Taxprep cell identifier, kept as the export spelled it (RT-13); the cell list lives in data, not in a check',
-  'version_cells.value': 'the cell value as exported, kept exactly as read (RT-3); any text is valid',
+/** Text columns of append-only tables with no key, no list or format check on the column, as `table.col`. */
+export async function freeTextColumns(db: PGlite): Promise<string[]> {
+  return freeText(await readCatalog(db))
+}
+const planted = (cols: string[]): string[] => cols.filter((c) => c.startsWith('planted_'))
+async function withFixture(...names: string[]): Promise<PGlite> {
+  const db = await cloneTestDb()
+  for (const n of names) await db.exec(fix(n))
+  return db
 }
 
 describe('R62 the AUTH_ENGINE factory refuses production silence (SEC-11, ARC-6, ARC-20)', () => {
@@ -259,17 +221,10 @@ describe('R62 the AUTH_ENGINE factory refuses production silence (SEC-11, ARC-6,
 })
 
 describe('the tags in src equal the registries (R63 to R65, ARC-15 style: the tag set is never silently empty)', () => {
-  test('R63 R64 R65 rule: a planted file with one tag of each kind is read, and a registry gap in either direction is caught', () => {
-    const files = [{ name: 'planted-tags.ts', text: fix('planted-tags.ts.txt') }]
-    expect(taggedExports('once', files)).toEqual([{ key: 'planted-tags.ts#claimOnce' }])
-    expect(taggedExports('limit', files)).toEqual([{ key: 'planted-tags.ts#tryThree', n: 3 }])
-    expect(taggedExports('standin', files)).toEqual([{ key: 'planted-tags.ts#seedPlanted' }])
-    expect(tagProblems(taggedExports('once', files), [])).toEqual(['planted-tags.ts#claimOnce: tagged but missing from the registry'])
-    expect(tagProblems([], [{ key: 'x.ts#f' }])).toEqual(['x.ts#f: in the registry but its export lacks the tag'])
-    expect(tagProblems(taggedExports('limit', files), [{ key: 'planted-tags.ts#tryThree', n: 4 }])).toEqual([
-      'planted-tags.ts#tryThree: the tag says limit 3 but the registry says 4',
-    ])
-    expect(tagProblems(taggedExports('limit', files), [{ key: 'planted-tags.ts#tryThree', n: 3 }])).toEqual([])
+  test('R63 R64 R65 the registries here hold exactly the keys of harness.ts REGISTRY', () => {
+    expect(STANDINS.map((s) => ({ key: s.key }))).toEqual(REGISTRY.standin)
+    expect(ONCE.map((e) => ({ key: e.key }))).toEqual(REGISTRY.once)
+    expect(LIMIT.map((l) => ({ key: l.entry.key, n: l.n }))).toEqual(REGISTRY.limit)
   })
   test('R63 every @standin export is in the stand-in registry and the other way round', () => {
     const files = SOURCES()
@@ -279,6 +234,10 @@ describe('the tags in src equal the registries (R63 to R65, ARC-15 style: the ta
   test('R64 every @once export is in the once registry and the other way round', () => {
     expect(tagProblems(taggedExports('once', SOURCES()), ONCE.map((e) => ({ key: e.key })))).toEqual([])
   })
+  test('R64 a card on the LANDING list that has landed its folder has a once entry under it (T08 approve, E00 intake)', () => {
+    expect(LANDING.map((l) => l.card).sort()).toEqual(['E00', 'T08'])
+    expect(landingProblems(LANDING, ONCE.map((e) => ({ key: e.key })), (d) => fs.existsSync(path.join(ROOT, d)))).toEqual([])
+  })
   test('R65 every @limit N export is in the limit registry with the same N, and the other way round', () => {
     expect(tagProblems(taggedExports('limit', SOURCES()), LIMIT.map((l) => ({ key: l.entry.key, n: l.n })))).toEqual([])
   })
@@ -286,35 +245,34 @@ describe('the tags in src equal the registries (R63 to R65, ARC-15 style: the ta
 
 describe('R63 a stand-in that writes rows refuses a database holding a real row (SEC-11)', () => {
   test('R63 rule: a planted seeder that does not look is caught, and one that refuses passes', async () => {
-    const planted = async (db: PGlite): Promise<void> => {
+    const plantedSeed = async (db: PGlite): Promise<void> => {
       await db.query("insert into returns.planted_people (id) values ('seeded-1')")
     }
     const clean = async (db: PGlite): Promise<void> => {
       const real = await db.query<{ n: number }>('select count(*)::int as n from returns.planted_people where is_test = false')
       if (Number(real.rows[0]?.n) > 0) throw new Error('refuses to start: the database holds a real row')
-      await planted(db)
+      await plantedSeed(db)
     }
     const row = "insert into returns.planted_people (id, is_test) values ('real-1', false)"
-    const a = await cloneTestDb()
-    await a.exec(fix('planted-r63-seeder.sql'))
-    expect(await standinProblems('planted#seed', 'planted_people', row, planted, a)).toEqual([
+    const a = await withFixture('planted-r63-seeder.sql')
+    expect(await standinProblems('planted#seed', 'planted_people', onDb(a, 'planted_people', row), () => plantedSeed(a))).toEqual([
       'planted#seed: started on a database holding a real row in planted_people',
       'planted#seed: wrote rows into planted_people next to a real row',
     ])
-    const b = await cloneTestDb()
-    await b.exec(fix('planted-r63-seeder.sql'))
-    expect(await standinProblems('planted#seed', 'planted_people', row, clean, b)).toEqual([])
+    const b = await withFixture('planted-r63-seeder.sql')
+    expect(await standinProblems('planted#seed', 'planted_people', onDb(b, 'planted_people', row), () => clean(b))).toEqual([])
   })
   test.each(STANDINS)('R63 $key refuses a database holding one is_test = false row and writes nothing', async (s) => {
-    expect(await standinProblems(s.key, s.table, s.realRow, s.start, await cloneTestDb())).toEqual([])
+    const db = await cloneTestDb()
+    expect(await standinProblems(s.key, s.table, onDb(db, s.table, s.realRow), () => s.start(db))).toEqual([])
   })
 })
 
 describe('R64 an export tagged @once lets at most one of 8 parallel calls through (SEC-1, ARC-6)', () => {
   test('R64 rule: a planted read-then-insert with no unique index lets many through, and the unique-index twin exactly one', async () => {
-    const planted = await onceProblems(plantedOnce(false), await cloneTestDb())
-    expect(planted).toHaveLength(1)
-    expect(planted[0]).toMatch(/^planted-r64#claim: [2-8] of 8 parallel calls got through, at most 1 allowed$/)
+    const found = await onceProblems(plantedOnce(false), await cloneTestDb())
+    expect(found).toHaveLength(1)
+    expect(found[0]).toMatch(/^planted-r64#claim: [2-8] of 8 parallel calls got through, at most 1 allowed$/)
     expect(await onceProblems(plantedOnce(true), await cloneTestDb())).toEqual([])
   })
   test.each(ONCE)('R64 $key', async (entry) => {
@@ -324,9 +282,9 @@ describe('R64 an export tagged @once lets at most one of 8 parallel calls throug
 
 describe('R65 an export tagged @limit N lets at most N of 2N parallel attempts through (SEC-1)', () => {
   test('R65 rule: a planted check-then-record counter lets all through, and the serialised twin exactly 3', async () => {
-    const planted = await limitProblems(plantedLimit(false), 3, await cloneTestDb())
-    expect(planted).toHaveLength(1)
-    expect(planted[0]).toMatch(/^planted-r65#attempt: ([4-6]) of 6 parallel attempts got through, at most 3 allowed$/)
+    const found = await limitProblems(plantedLimit(false), 3, await cloneTestDb())
+    expect(found).toHaveLength(1)
+    expect(found[0]).toMatch(/^planted-r65#attempt: ([4-6]) of 6 parallel attempts got through, at most 3 allowed$/)
     expect(await limitProblems(plantedLimit(true), 3, await cloneTestDb())).toEqual([])
   })
   test.each(LIMIT)('R65 $entry.key evaluates at most $n of twice as many parallel attempts', async ({ entry, n, evaluated }) => {
@@ -337,20 +295,75 @@ describe('R65 an export tagged @limit N lets at most N of 2N parallel attempts t
 
 describe('R66 every text column of an append-only table has a key, a list or format check, or a reviewed free-text line (FLOW-1, SEC-11)', () => {
   test('R66 rule: a planted append-only user_id text with none is caught, and the keyed twin passes', async () => {
-    const a = await cloneTestDb()
-    await a.exec(fix('planted-r66-append-only.sql'))
-    expect((await freeTextColumns(a)).filter((c) => c.startsWith('planted_'))).toEqual(['planted_events.user_id'])
-    const b = await cloneTestDb()
-    await b.exec(fix('clean-r66-append-only.sql'))
-    expect((await freeTextColumns(b)).filter((c) => c.startsWith('planted_'))).toEqual([])
+    expect(planted(await freeTextColumns(await withFixture('planted-r66-append-only.sql')))).toEqual(['planted_events.user_id'])
+    expect(planted(await freeTextColumns(await withFixture('clean-r66-append-only.sql')))).toEqual([])
   })
-  test('R66 every append-only table is found (sentinel: sign_in_events), and each of its free-text columns is on the reviewed list', async () => {
-    const db = await cloneTestDb()
-    const tables = (await db.query<{ t: string }>(APPEND_ONLY_SQL)).rows.map((r) => r.t)
-    expect(tables).toContain('sign_in_events')
-    const free = await freeTextColumns(db)
-    expect(free.filter((c) => !(c in FREE_TEXT))).toEqual([])
+  test('R66 rule (item 1): a table guarded by a new function (not refuse_change) is append-only by what its triggers refuse, so its author text is caught', async () => {
+    const db = await withFixture('planted-r66-other-guard.sql')
+    expect(appendOnlyTables(await readCatalog(db))).toContain('planted_ledger')
+    expect(planted(await freeTextColumns(db))).toEqual(['planted_ledger.author'])
+  })
+  test('R66 rule (item 1 sentinel): a table guarded by refuse_change on rows but open to TRUNCATE is named by the guard check', async () => {
+    const cat = await readCatalog(await withFixture('planted-r66-no-truncate.sql'))
+    expect(appendOnlyTables(cat)).not.toContain('planted_notes')
+    expect(appendOnlyGuardProblems(cat)).toEqual([
+      'planted_notes: guarded by refuse_change but not found append-only (no BEFORE ROW DELETE and BEFORE TRUNCATE pair)',
+    ])
+  })
+  test('R66 rule (item 2): a two-column CHECK, a !~ match, a negated match and a non-blank check do not vouch for a column; a format function does', async () => {
+    const db = await withFixture('planted-r66-checks.sql')
+    expect(planted(await freeTextColumns(db))).toEqual([
+      'planted_checks.anchored_any',
+      'planted_checks.any_char',
+      'planted_checks.blank_only',
+      'planted_checks.negated',
+      'planted_checks.neighbour',
+      'planted_checks.nonblank_match',
+      'planted_checks.not_format',
+      'planted_checks.not_match',
+    ])
+  })
+  test("R66 rule (A458 G1): a table refusing DELETE and TRUNCATE through one statement-level trigger, whose function never says append-only, is append-only, so its author text is caught", async () => {
+    const cat = await readCatalog(await withFixture('planted-r66-statement-guard.sql'))
+    expect(appendOnlyTables(cat)).toContain('planted_stmt')
+    expect(planted(freeText(cat))).toEqual(['planted_stmt.author'])
+  })
+  test('R66 rule (A458 G2): main\'s four inline matches (client_ref, token_hash, jobs.kind, the handoff id pattern) still vouch', async () => {
+    const cat = await readCatalog(await cloneTestDb())
+    const def = (name: string): string => cat.constraints.find((k) => k.def.includes(name))?.def ?? `no constraint on ${name}`
+    expect(checkVouches(def('client_ref ~'), 'client_ref')).toBe(true)
+    expect(checkVouches(def('token_hash ~'), 'token_hash')).toBe(true)
+    expect(checkVouches(def('kind ~'), 'kind')).toBe(true)
+    const handoff = cat.functions.find((f) => f.name === 'is_handoff_id')?.src ?? ''
+    expect(formatFunctionProblems({ ...cat, functions: cat.functions.filter((f) => f.name === 'is_handoff_id') }, ['is_handoff_id'])).toEqual([])
+    expect(handoff).toMatch(/~/)
+  })
+  test('R66 rule (item 3): a domain over text (and its array), varchar, varchar[] and char(n) are text', async () => {
+    const db = await withFixture('planted-r66-types.sql')
+    expect(planted(await freeTextColumns(db))).toEqual([
+      'planted_types.as_bpchar',
+      'planted_types.as_domain',
+      'planted_types.as_domain_array',
+      'planted_types.as_varchar',
+      'planted_types.as_varchar_array',
+    ])
+  })
+  test('R66 every append-only table is found (sentinel list), every append-only guard sits on one, and the format functions hold a match', async () => {
+    const cat = await readCatalog(await cloneTestDb())
+    const tables = appendOnlyTables(cat)
+    expect(APPEND_ONLY_SENTINEL.filter((t) => !tables.includes(t))).toEqual([])
+    expect(appendOnlyGuardProblems(cat)).toEqual([])
+    expect(formatFunctionProblems(cat)).toEqual([])
+    expect(Object.keys(FORMAT_FUNCTIONS).sort()).toEqual(['handoff_ids_ok', 'is_handoff_id'])
+  })
+  test('R66 every free-text column of an append-only table is on the reviewed list or an R66 KNOWN entry, and neither list holds a stale line', async () => {
+    const free = await freeTextColumns(await cloneTestDb())
+    expect(free.length).toBeGreaterThan(0)
+    const files = tableFiles(readSchema(ROOT))
+    expect(files.get('events')).toMatch(/\/20_ledger\.sql$/)
+    expect(applyKnown('R66', r66Problems(free, files), KNOWN)).toEqual([])
     expect(Object.keys(FREE_TEXT).filter((c) => !free.includes(c))).toEqual([])
-    for (const [col, reason] of Object.entries(FREE_TEXT)) expect(reason.trim().length, col).toBeGreaterThan(10)
+    const known = new Set(KNOWN.filter((k) => k.rule === 'R66').flatMap((k) => k.problems))
+    expect(Object.keys(FREE_TEXT).filter((c) => [...known].some((p) => p.startsWith(`${c} `)))).toEqual([])
   })
 })
