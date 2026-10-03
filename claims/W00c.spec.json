@@ -1,12 +1,8 @@
 {
  "card": "W00c",
  "role": "spec",
- "worker": "cloud-76c2f7",
- "state": "reopened",
- "at": "2026-10-03T03:49:08.073Z",
- "mode": "turbo",
- "beat": "2026-10-02T21:44:30.406Z",
- "note": "A403: round 2 tests from reports/W00c-findings.md; see bold directive on the card",
- "commit": "1b555abb",
- "validated": "7b5d6c94"
+ "worker": "cloud-4a3b74",
+ "state": "working",
+ "at": "2026-10-03T03:49:58.225Z",
+ "mode": "turbo"
 }
