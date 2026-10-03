@@ -2,9 +2,8 @@
  "card": "W00c",
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
- "worker": "cloud-6593f9",
- "state": "reopened",
- "at": "2026-10-03T23:03:59.819Z",
- "mode": "turbo",
- "note": "A530: continue: group 1 next (load.ts, json-keys.ts, ids.ts); lean test set; commit tables under reports/W00c-mutation/"
+ "worker": "cloud-944d6f",
+ "state": "working",
+ "at": "2026-10-03T23:04:41.876Z",
+ "mode": "turbo"
 }
