@@ -1,13 +1,10 @@
 {
-  "status": "red",
+  "status": "requested",
   "branch": "claude/train",
-  "head": "26e84345",
+  "head": "65f59a22",
   "cards": [
-    "DB16",
-    "FX15"
+    "DB16"
   ],
-  "requested_at": "2026-10-03T10:56:00Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). Both cards run on Postgres 16.5 or later: print select version() and run the db project on pg16 (TEST_DB=pg16) as well as PGlite. DB16 is core and security (CLEAN): mutate:changed for DB16. FX15 is core: mutate:changed for FX15. Run the db project 5 times on pg16 (DB16 changes pooled sessions).",
-  "by": "cloud-d9f338",
-  "report": "reports/train-20261003-1103.md"
+  "requested_at": "2026-10-03T11:25:00Z",
+  "note": "Train 26e84345 was red on SC R18 (FX15's runner.ts, SC3's engine.ts: fixed on main by A461; FX15 is off this train for its round 2) and blocked on pg16 and mutation by refused commands. This train is DB16 alone. Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462: start the cluster, set the local password, no pg_hba edit); print select version(); the db project on pg16 5 times. DB16 is core: mutate:changed for DB16. A refused command makes the train blocked, not red."
 }
