@@ -500,15 +500,6 @@
       "why": "the A05 log plant uses a Luhn-valid number; give it a non-Luhn one"
     },
     {
-      "rule": "R36",
-      "file": "src/modules/sheets/xlsx/index.ts",
-      "problems": [
-        "src/modules/sheets/xlsx/index.ts: float dollars to cents (Math.round(x * 100) or parseFloat)"
-      ],
-      "owner": "FX4",
-      "why": "float dollars to cents on a library number"
-    },
-    {
       "rule": "R37",
       "file": "reference/sample-clients/01-maple-ridge/taxprep/import.csv",
       "problems": [
@@ -908,15 +899,6 @@
     },
     {
       "rule": "R41",
-      "file": "src/contracts/sheets.ts",
-      "problems": [
-        "src/contracts/sheets.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
-      ],
-      "owner": "FX4",
-      "why": "a private blank rule; go through src/contracts/text.ts"
-    },
-    {
-      "rule": "R41",
       "file": "src/contracts/taxprep.ts",
       "problems": [
         "src/contracts/taxprep.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
@@ -1015,24 +997,6 @@
       "why": "the loader does not enforce the cite pattern"
     },
     {
-      "rule": "R46",
-      "file": "src/modules/sheets/xlsx/index.ts",
-      "problems": [
-        "src/modules/sheets/xlsx/index.ts: reads a library value's display text (.text); build the text from the typed value"
-      ],
-      "owner": "FX4",
-      "why": "library value to text without a typed switch"
-    },
-    {
-      "rule": "R46",
-      "file": "src/modules/sheets/xlsx/index.ts",
-      "problems": [
-        "src/modules/sheets/xlsx/index.ts: turns a library value into text with String(c) and no typed switch"
-      ],
-      "owner": "FX4",
-      "why": "library value to text without a typed switch"
-    },
-    {
       "rule": "R49",
       "file": "src/contracts/reading.ts",
       "problems": [
@@ -1049,69 +1013,6 @@
       ],
       "owner": "FX7",
       "why": "a wrong-kind container is not refused with a reason"
-    },
-    {
-      "rule": "R54",
-      "file": "src/modules/sheets/index.ts",
-      "problems": [
-        "A07: gzip bytes under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"30059ef26301a439799520701a8a4a316dd36b5965cfaf9187d19f77cf7df89b\",\"engine\":{\"nam)"
-      ],
-      "owner": "FX4",
-      "why": "a wrong-kind container is not refused with a reason"
-    },
-    {
-      "rule": "R54",
-      "file": "src/modules/sheets/index.ts",
-      "problems": [
-        "A07: MZ bytes under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"c2131f1b89445a0c2896cd16dd3083ea4796e1de50611cd97acb1747ba4cc063\",\"engine\":{\"nam)"
-      ],
-      "owner": "FX4",
-      "why": "a wrong-kind container is not refused with a reason"
-    },
-    {
-      "rule": "R54",
-      "file": "src/modules/sheets/index.ts",
-      "problems": [
-        "A07: a PDF header under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"7720602e8310e9e4b94f346ecbc162508fe0e5d7a5e411e4f4ca2e16c2fbaf1e\",\"engine\":{\"nam)"
-      ],
-      "owner": "FX4",
-      "why": "a wrong-kind container is not refused with a reason"
-    },
-    {
-      "rule": "R54",
-      "file": "src/modules/sheets/index.ts",
-      "problems": [
-        "A07: spanned-zip bytes under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"e57d211c84c30b3d479b584370a5f37b72243cfd140d4cb2c61e371dc7e28b45\",\"engine\":{\"nam)"
-      ],
-      "owner": "FX4",
-      "why": "a wrong-kind container is not refused with a reason"
-    },
-    {
-      "rule": "R54",
-      "file": "src/modules/sheets/index.ts",
-      "problems": [
-        "A07: empty bytes under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"engine\":{\"nam)"
-      ],
-      "owner": "FX4",
-      "why": "a wrong-kind container is not refused with a reason"
-    },
-    {
-      "rule": "R56",
-      "file": "src/modules/sheets/xlsx/raw.ts",
-      "problems": [
-        "src/modules/sheets/xlsx/raw.ts: a regex over raw XML that misses a self-closed element (<v>([\\s\\S]*?)<\\/v>)"
-      ],
-      "owner": "FX4",
-      "why": "a raw-XML regex that misses a self-closed element"
-    },
-    {
-      "rule": "R56",
-      "file": "src/modules/sheets/xlsx/raw.ts",
-      "problems": [
-        "src/modules/sheets/xlsx/raw.ts: a regex over raw XML that misses a self-closed element ( An empty stored value (<v></v>) is no value, as <)"
-      ],
-      "owner": "FX4",
-      "why": "a raw-XML regex that misses a self-closed element"
     }
   ],
   "db": [
