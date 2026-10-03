@@ -49,10 +49,20 @@ const RUN_ID_ENV = 'DB16_RUN_ID'
 const DB_PREFIX = 'ashbridge_t_'
 let dbCounter = 0
 
+const RUN_ID_SHAPE = /^[0-9a-z_]+$/
+
 /** The id of this run's databases: set once by the global setup, read by every worker. */
 export function pg16RunId(): string {
   const id = process.env[RUN_ID_ENV]
-  if (id !== undefined && id !== '') return id
+  if (id !== undefined && id !== '') {
+    if (!RUN_ID_SHAPE.test(id)) throw new Error(`${RUN_ID_ENV} must use only lowercase letters, digits and underscores`)
+    return id
+  }
+  return mintPg16RunId()
+}
+
+/** A new run id, put in DB16_RUN_ID for the workers; the global setup always mints one and never reuses an inherited id. */
+export function mintPg16RunId(): string {
   const fresh = `${String(process.pid)}_${Math.random().toString(36).slice(2, 8)}`
   process.env[RUN_ID_ENV] = fresh
   return fresh
@@ -87,6 +97,22 @@ function withDatabase(url: string, name: string): string {
   return u.toString()
 }
 
+const ISOLATION_LEVELS = ['read uncommitted', 'read committed', 'repeatable read', 'serializable']
+
+// A custom setting name: dotted parts, each plain (letters, digits, _ and $) or double-quoted.
+const NAME_PART = String.raw`(?:"(?:[^"]|"")+"|[\w$]+)`
+const SET_CONFIG_LITERAL = /set_config\s*\(\s*'([^']*\.[^']*)'/gi
+const SET_STATEMENT = new RegExp(String.raw`\bset\s+(?:session\s+)?(${NAME_PART}(?:\.${NAME_PART})+)\s*(?:=|\bto\b)`, 'gi')
+const CREATE_ROLE = new RegExp(String.raw`\bcreate\s+(?:role|user|group)\s+(?!mapping\b)(${NAME_PART})`, 'gi')
+
+function unquoteName(name: string): string {
+  return name.replace(/"((?:[^"]|"")+)"/g, (_m, inner: string) => inner.replaceAll('""', '"'))
+}
+
+function quoteIdent(name: string): string {
+  return `"${name.replaceAll('"', '""')}"`
+}
+
 interface QueryResult<T> {
   rows: T[]
   affectedRows: number
@@ -102,7 +128,7 @@ class PgDb {
   private readonly main: pg.Client
   private connected: Promise<unknown> | undefined
   constructor(
-    private readonly pool: pg.Pool,
+    readonly pool: pg.Pool,
     private readonly adminUrl: string,
     private readonly name: string,
     dbUrl: string,
@@ -120,38 +146,44 @@ class PgDb {
   }
 
   private readonly ownedRoles = new Set<string>()
-  private readonly customSettings = new Set<string>()
-
-  private async roleNames(c: { query: pg.Client['query'] }): Promise<Set<string>> {
-    const r = await c.query<{ rolname: string }>('select rolname from pg_roles')
-    return new Set(r.rows.map((x) => x.rolname))
-  }
+  readonly customSettings = new Set<string>()
 
   private opaque: string | undefined
   // Counts custom-setting statements: a connection that ran one is destroyed, because RESET leaves the name behind as ''.
   private customSeen = 0
 
-  /** Runs a statement; when it creates a role, remembers which one, so close drops only this handle's roles. */
+  /** Runs a statement; remembers the custom settings it sets and the roles it creates, so close drops only this handle's roles. */
   private async tracked<R>(c: pg.Client | pg.PoolClient, sql: string, params: unknown[] | undefined, run: () => Promise<R>): Promise<R> {
     // Custom settings (app.x) are not listed in pg_settings: remember the names a statement sets.
-    for (const m of sql.matchAll(/set_config\(\s*'([\w]+\.[\w.]+)'|\bset\s+(?:session\s+)?([\w]+\.[\w.]+)\s*(?:=|\bto\b)/gi)) {
-      this.customSettings.add((m[1] ?? m[2]) as string)
+    for (const m of sql.matchAll(SET_CONFIG_LITERAL)) {
+      this.customSettings.add(m[1] as string)
+      this.customSeen += 1
+    }
+    for (const m of sql.matchAll(SET_STATEMENT)) {
+      this.customSettings.add(unquoteName(m[1] as string))
       this.customSeen += 1
     }
     // set_config($n, ...): the name comes from the parameters.
-    for (const m of sql.matchAll(/set_config\(\s*\$(\d+)/gi)) {
+    for (const m of sql.matchAll(/set_config\s*\(\s*\$(\d+)/gi)) {
       const v = params?.[Number(m[1]) - 1]
       this.customSeen += 1
-      if (typeof v === 'string' && /^[\w]+\.[\w.]+$/.test(v)) this.customSettings.add(v)
+      if (typeof v === 'string' && /^[\w$]+\.[\w$.]+$/.test(v)) this.customSettings.add(v)
       else this.opaque = sql
     }
     // set_config(<anything but a literal or $n>, ...): a name this handle cannot carry.
-    if (/set_config\(\s*(?!'|\$\d)/i.test(sql)) this.opaque = sql
-    if (!/\bcreate\s+(role|user)\b/i.test(sql)) return run()
-    const before = await this.roleNames(c)
+    if (/set_config\s*\(\s*(?!'|\$\d)/i.test(sql)) this.opaque = sql
+    // Roles are named in the text (also inside a DO block): this handle owns the ones that did not exist before and do after.
+    const named = [...sql.matchAll(CREATE_ROLE)].map((m) => unquoteName(m[1] as string))
+    if (named.length === 0) return run()
+    const before = await this.rolesAmong(c, named)
     const out = await run()
-    for (const n of await this.roleNames(c)) if (!before.has(n)) this.ownedRoles.add(n)
+    for (const n of await this.rolesAmong(c, named)) if (!before.has(n)) this.ownedRoles.add(n)
     return out
+  }
+
+  private async rolesAmong(c: { query: pg.Client['query'] }, names: string[]): Promise<Set<string>> {
+    const r = await c.query<{ rolname: string }>('select rolname from pg_roles where rolname = any($1)', [names])
+    return new Set(r.rows.map((x) => x.rolname))
   }
 
   async query<T>(sql: string, params?: unknown[]): Promise<QueryResult<T>> {
@@ -165,6 +197,17 @@ class PgDb {
     await this.tracked(c, sql, undefined, () => c.query(sql))
   }
 
+  /** The begin statement: the session's read-only, isolation and deferrable defaults apply to the transaction. */
+  private async beginSql(): Promise<string> {
+    const main = await this.session()
+    const r = await main.query<{ ro: string; iso: string; d: string }>(
+      `select current_setting('default_transaction_read_only') as ro, current_setting('default_transaction_isolation') as iso, current_setting('default_transaction_deferrable') as d`,
+    )
+    const row = r.rows[0]
+    const iso = ISOLATION_LEVELS.find((l) => l === row?.iso) ?? 'read committed'
+    return `begin isolation level ${iso} ${row?.ro === 'on' ? 'read only' : 'read write'}${row?.d === 'on' ? ' deferrable' : ''}`
+  }
+
   /** Inside the open transaction: the handle's identity, role and settings, all transaction-local. */
   private async inheritSession(client: pg.PoolClient): Promise<void> {
     if (this.opaque !== undefined) {
@@ -174,9 +217,8 @@ class PgDb {
     const who = await main.query<{ u: string; s: string }>('select current_user as u, session_user as s')
     const row = who.rows[0]
     const login = await client.query<{ s: string }>('select session_user as s')
-    const quote = (n: string): string => `"${n.replaceAll('"', '""')}"`
-    if (row !== undefined && row.s !== login.rows[0]?.s) await client.query(`set local session authorization ${quote(row.s)}`)
-    if (row !== undefined && row.u !== row.s) await client.query(`set local role ${quote(row.u)}`)
+    if (row !== undefined && row.s !== login.rows[0]?.s) await client.query(`set local session authorization ${quoteIdent(row.s)}`)
+    if (row !== undefined && row.u !== row.s) await client.query(`set local role ${quoteIdent(row.u)}`)
     const r = await main.query<{ name: string; setting: string }>(
       `select name, setting from pg_settings where source = 'session'`,
     )
@@ -192,28 +234,38 @@ class PgDb {
 
   async transaction<T>(fn: (tx: PgTx) => Promise<T>): Promise<T> {
     const client = await this.pool.connect()
-    const state = { rolledBack: false }
+    // ended: commit, rollback or failure has begun; a tx method called after it is refused, never sent to the pooled connection.
+    const state = { rolledBack: false, ended: false }
     const seenBefore = this.customSeen
+    const refuseWhenEnded = (): void => {
+      if (state.ended) throw new Error('transaction already ended: this tx can no longer be used')
+    }
     const tx: PgTx = {
       query: async <R>(sql: string, params?: unknown[]): Promise<QueryResult<R>> => {
+        refuseWhenEnded()
         const r = await this.tracked(client, sql, params, () => client.query<Record<string, unknown>>(sql, params))
         return { rows: r.rows as R[], affectedRows: r.rowCount ?? 0 }
       },
       exec: async (sql: string): Promise<void> => {
+        refuseWhenEnded()
         await this.tracked(client, sql, undefined, () => client.query(sql))
       },
       rollback: async (): Promise<void> => {
+        refuseWhenEnded()
         state.rolledBack = true
+        state.ended = true
         await client.query('rollback')
       },
     }
     try {
-      await client.query('begin')
+      await client.query(await this.beginSql())
       await this.inheritSession(client)
       const out = await fn(tx)
+      state.ended = true
       if (!state.rolledBack) await client.query('commit')
       return out
     } catch (e) {
+      state.ended = true
       // A failed rollback is caught by the wipe below, which then destroys the connection.
       if (!state.rolledBack) {
         try {
@@ -224,6 +276,7 @@ class PgDb {
       }
       throw e
     } finally {
+      state.ended = true
       // Nothing set in this transaction's connection may reach the next one: wipe it, or destroy it.
       let failure: Error | boolean = this.customSeen !== seenBefore
       try {
@@ -237,12 +290,18 @@ class PgDb {
   }
 
   private async dropOwnedRoles(): Promise<void> {
+    // The session may sit in an open or aborted block: end it, or nothing below can run.
+    await this.main.query('rollback')
     await this.main.query('reset session authorization')
     await this.main.query('reset role')
-    for (const rolname of this.ownedRoles) {
+    const names = [...this.ownedRoles]
+    // A role made in a transaction that rolled back is gone already.
+    const present = names.length === 0 ? new Set<string>() : await this.rolesAmong(this.main, names)
+    for (const rolname of names) {
+      if (!present.has(rolname)) continue
       try {
-        await this.main.query(`drop owned by "${rolname}"`)
-        await this.main.query(`drop role if exists "${rolname}"`)
+        await this.main.query(`drop owned by ${quoteIdent(rolname)}`)
+        await this.main.query(`drop role if exists ${quoteIdent(rolname)}`)
       } catch (e) {
         throw new Error(`could not drop role ${rolname}: ${e instanceof Error ? e.message : String(e)}`, { cause: e })
       }
@@ -252,19 +311,28 @@ class PgDb {
   async close(): Promise<void> {
     if (this.closed_) return
     this.closed_ = true
-    let failure: Error | undefined
+    const failures: string[] = []
+    const note = (e: unknown): void => {
+      failures.push(e instanceof Error ? e.message : String(e))
+    }
+    // R90: a connection left dirty is named before its roles are dropped and before the pool ends.
+    try {
+      failures.push(...(await inspectIdle(this.pool, this.customSettings)))
+    } catch (e) {
+      note(e)
+    }
     // Roles belong to the cluster, not to a database: drop the ones this handle made, and only those.
     if (this.connected !== undefined) {
       try {
         await this.dropOwnedRoles()
       } catch (e) {
-        failure = e instanceof Error ? e : new Error(String(e))
+        note(e)
       }
       await this.main.end()
     }
     await this.pool.end()
     await dropDatabase(this.adminUrl, this.name)
-    if (failure !== undefined) throw failure
+    if (failures.length > 0) throw new Error(`database handle closed with problems:\n${failures.join('\n')}`)
   }
 }
 
@@ -392,4 +460,92 @@ export async function cloneTestDb(): Promise<PGlite> {
 export async function closeClones(): Promise<void> {
   const open = clones.splice(0)
   await Promise.all(open.filter((c) => !c.closed).map((c) => c.close()))
+}
+
+/** Problems of one idle pooled connection: what a test left on it. Ends any open block first, so an aborted block still shows its role. */
+async function inspectClient(c: pg.PoolClient, login: string | undefined, customNames: string[]): Promise<string[]> {
+  const out: string[] = []
+  try {
+    const r = await c.query<{ open: boolean }>('select now() <> statement_timestamp() as open')
+    if (r.rows[0]?.open === true) out.push('an open transaction')
+  } catch (e) {
+    if ((e as { code?: string }).code !== '25P02') throw e
+    out.push('an open transaction (aborted block)')
+  }
+  await c.query('rollback')
+  const who = await c.query<{ u: string; s: string; names: string[] }>(
+    `select current_user as u, session_user as s, coalesce((select json_agg(name order by name) from pg_settings where source = 'session' and name not in ('role', 'session_authorization')), '[]'::json) as names`,
+  )
+  const row = who.rows[0]
+  if (row === undefined) return out
+  if (login !== undefined && row.s !== login) out.push(`session authorization is set to ${quoteIdent(row.s)}`)
+  if (row.u !== row.s) out.push(`role is set to ${quoteIdent(row.u)}`)
+  for (const name of row.names) out.push(`session setting ${name} is set`)
+  for (const name of customNames) {
+    const v = await c.query<{ v: string | null }>('select current_setting($1, true) as v', [name])
+    const value = v.rows[0]?.v
+    if (value !== undefined && value !== null && value !== '') out.push(`custom setting ${name} is set to ${JSON.stringify(value)}`)
+  }
+  return out
+}
+
+/** Every idle connection of a pool, inspected; a dirty one is destroyed so it never serves another test. */
+async function inspectIdle(pool: pg.Pool, customNames: Iterable<string>): Promise<string[]> {
+  const login = pool.options.user
+  const names = [...customNames]
+  const clients: pg.PoolClient[] = []
+  for (let i = pool.idleCount; i > 0; i -= 1) clients.push(await pool.connect())
+  const problems: string[] = []
+  const dirty = new Set<pg.PoolClient>()
+  let failed = false
+  try {
+    for (const [n, c] of clients.entries()) {
+      const found = await inspectClient(c, login, names)
+      if (found.length > 0) dirty.add(c)
+      problems.push(...found.map((p) => `idle connection ${String(n + 1)}: ${p}`))
+    }
+  } catch (e) {
+    failed = true
+    throw e
+  } finally {
+    for (const c of clients) c.release(failed || dirty.has(c))
+  }
+  return problems
+}
+
+/**
+ * R90: what is left on the idle pooled connections of a handle (one string per problem); [] on PGlite, which has no pool,
+ * and on a closed handle.
+ */
+export async function idleConnectionProblems(db: unknown): Promise<string[]> {
+  const h = db as { pool?: pg.Pool; customSettings?: Set<string>; closed?: boolean }
+  if (h.pool === undefined || h.closed === true) return []
+  return inspectIdle(h.pool, h.customSettings ?? [])
+}
+
+/** R90: rejects naming every problem of every open clone made by cloneTestDb (the db project's afterEach, before the clones close). */
+export async function assertCleanClones(): Promise<void> {
+  const lines: string[] = []
+  for (const [n, c] of clones.entries()) {
+    for (const p of await idleConnectionProblems(c)) lines.push(`clone ${String(n + 1)}: ${p}`)
+  }
+  if (lines.length > 0) throw new Error(`a test left pooled connections dirty:\n${lines.join('\n')}`)
+}
+
+/** R91: the roles in after that were not in before, sorted. */
+export function leftoverRoles(before: Iterable<string>, after: Iterable<string>): string[] {
+  const had = new Set(before)
+  return [...new Set(after)].filter((r) => !had.has(r)).sort()
+}
+
+/** R91: every role of the cluster (the global setup and its teardown compare two lists). */
+export async function listRoles(url: string): Promise<string[]> {
+  const admin = new pg.Client(connOpts(url))
+  await admin.connect()
+  try {
+    const r = await admin.query<{ rolname: string }>('select rolname from pg_roles')
+    return r.rows.map((x) => x.rolname)
+  } finally {
+    await admin.end()
+  }
 }
