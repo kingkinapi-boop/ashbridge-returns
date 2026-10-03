@@ -1,11 +1,9 @@
 {
  "card": "FX4",
  "role": "spec",
- "note": "refit only: on main 8e4698a (node 24.21) the 43 failing tests are FX4's 4 spec files, 4 reading-rules and 5 SC rules naming FX4 files; the rest pass; typecheck clean; no test change",
- "worker": "cloud-beb1e2",
- "state": "reported",
- "at": "2026-10-03T15:28:51.580Z",
- "mode": "turbo",
- "commit": "ab6b660",
- "validated": "8e4698a"
+ "note": "toolchain refit",
+ "worker": "cloud-657654",
+ "state": "working",
+ "at": "2026-10-03T18:13:24.142Z",
+ "mode": "turbo"
 }
