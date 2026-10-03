@@ -21,7 +21,7 @@ Paths: src/contracts/facts.ts, src/contracts/reading.ts, src/contracts/amount-gr
 Harness: src/core/test-no-network.ts
 Clauses: EV-1, EV-5, ARC-10, ARC-15, SEC-11
 Read: `reports/SC-findings.md` (fix list step 3: the FX7 entries), `plan/cards/SC.md`, `src/contracts/text.ts` (the one blank rule).
-Spec commit: c12b1b12 (A511 patch; first spec 72aa3482), validated on main a677d7fe
+Spec commit: 6af02364 (A520 patch; A511 patch c12b1b12; first spec 72aa3482), validated on main b151c592
 
 ## Goal
 SC lands with exact KNOWN entries whose files belong to cards already done (F09, F09A/B, A01, A05, E03): R23 facts.ts; R41 reading.ts, facts.ts, amount-grammar.ts; R45 enum and cite keys; R38 the Node 24 setup check; R39 amountGroups; R49 reading.ts; R34 the A05 log plant; R54 the A01 MediaBox. This card fixes each at its source and deletes its KNOWN entry, so the rule then holds on main.
