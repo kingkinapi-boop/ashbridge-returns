@@ -1,11 +1,11 @@
 {
  "card": "W00c",
  "role": "spec",
- "note": "A450: round 3, see card directive",
- "reopenedFrom": "77bbbef0",
+ "note": "round 3: 296 tests (RC-A 186, RC-B 69, RC-C 23, reservedKeys 18); validated on main f980ffd9; 6b rewrote 16 tests, none retired; W00b: made-up-data:230 masked break, see reports/W00c-spec.md",
  "worker": "cloud-0afb81",
- "state": "working",
- "at": "2026-10-03T09:23:50.416Z",
+ "state": "reported",
+ "at": "2026-10-03T10:25:28.661Z",
  "mode": "turbo",
- "beat": "2026-10-03T09:26:51.788Z"
+ "beat": "2026-10-03T09:26:51.788Z",
+ "commit": "e015bd7f"
 }
