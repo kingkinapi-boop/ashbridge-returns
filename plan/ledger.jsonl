@@ -564,3 +564,7 @@
 {"ts":"2026-10-03T11:57:32.477Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T12:12:11.859Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T12:12:12.478Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T12:30:00.844Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"A04 clock findings review","allowed":true}
+{"ts":"2026-10-03T12:32:27.508Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"System numbers since last Critic","allowed":true}
+{"ts":"2026-10-03T12:32:40.474Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Progress and projection estimate","allowed":true}
+{"ts":"2026-10-03T12:32:45.515Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Outside world since 2 Oct","allowed":true}

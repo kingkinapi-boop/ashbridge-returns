@@ -535,7 +535,8 @@
       "phase": 0,
       "size": "S",
       "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it).",
-      "done": "2026-10-02"
+      "done": "2026-10-02",
+      "core": true
     },
     {
       "status": "done",
@@ -9307,7 +9308,7 @@
       "screens": true,
       "hard": false,
       "security": true,
-      "core": true
+      "core": false
     },
     {
       "status": "carded",
@@ -10165,7 +10166,7 @@
       "title": "Security rules R62 to R66",
       "phase": 0,
       "size": "M",
-      "core": true,
+      "core": false,
       "security": true,
       "note": "From reports/A06-findings.md, 2 Oct."
     },
