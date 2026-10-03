@@ -2,13 +2,9 @@
  "card": "W00d",
  "role": "spec",
  "note": "A511 tests done (89 in w00d-types, 86 fail by name; spec 53e602df, report 1082fd82); NOT reported: Paths gap, answer keys must be generated: add reference/sample-clients/lib/engine.mjs, emit.mjs, kit.mjs and clients/*.mjs to W00d's Paths, then a data job adds the type (table in reports/W00d-spec.md); ARC-16 regenerate test breaks if keys are hand typed",
- "reopenedFrom": "ddece04b",
  "worker": "cloud-8c7eee",
- "state": "released",
- "at": "2026-10-03T19:56:35.961Z",
+ "state": "reopened",
+ "at": "2026-10-03T19:58:18.065Z",
  "mode": "turbo",
- "commit": "53e602df",
- "lastRelease": {
-  "tip": "1082fd82143c8bcf69a555873ca04c1d117a42b5"
- }
+ "commit": "53e602df"
 }
