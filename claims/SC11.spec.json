@@ -1,11 +1,9 @@
 {
  "card": "SC11",
  "role": "spec",
- "worker": "cloud-b91986",
- "state": "reported",
- "at": "2026-10-03T12:08:15.179Z",
- "mode": "turbo",
- "note": "39 tests, refit on main 409d3309",
- "commit": "428cc413",
- "validated": "409d3309"
+ "note": "toolchain refit",
+ "worker": "cloud-f814e6",
+ "state": "working",
+ "at": "2026-10-03T12:47:13.471Z",
+ "mode": "turbo"
 }
