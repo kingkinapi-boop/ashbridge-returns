@@ -9774,6 +9774,35 @@
       "size": "M",
       "core": true,
       "note": "From reports/SC-build.md, 2 Oct."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06"
+      ],
+      "paths": [
+        "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/pg16.test.ts",
+        "vitest.config.ts",
+        "package.json",
+        "package-lock.json",
+        ".claude/agents/checker.md",
+        ".claude/cloud-worker-run.md"
+      ],
+      "clauses": [
+        "ARC-4",
+        "ARC-16",
+        "SEC-7"
+      ],
+      "id": "DB16",
+      "title": "The db test project runs on Postgres 16 in cloud checks",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From the train report of 3 Oct (A405)."
     }
   ]
 }
