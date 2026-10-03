@@ -637,3 +637,184 @@ describe('DB16 the planted race (ARC-4): only real Postgres runs two transaction
     RACE_WAIT_MS * 5,
   )
 })
+
+// ---- Round 5 (reports/DB16-findings-4.md, A441): nothing outlives its owner ----
+//
+// T1 to T5 fix the two root causes of findings review 4: state set on a pooled transaction connection
+// must never reach the next transaction (a failed cleanup destroys the connection, never returns it dirty),
+// and the copy of the handle's session to a transaction carries the whole identity (session authorization
+// as well as role) and every custom setting, however it was set, or refuses naming what it could not carry.
+// T1, T3 and T5 are Postgres 16 only: PGlite runs every transaction on the handle's own session, so a leak
+// there is the handle's state and the tests would be vacuous. T2 and T4 run on both (a guard on PGlite).
+// Role names carry the process id: roles belong to the whole cluster, so fixed names collide across runs.
+
+/** More transactions than the pool holds (pool max is 4 at 36672c88): a returned connection is reused. */
+const POOL_PROBE = 5
+const RUN_TAG = String(process.pid)
+
+type Who = { u: string; s: string; app: string | null }
+
+async function who(q: Queryable): Promise<Who> {
+  const r = await q.query<Who>(`select current_user::text as u, session_user::text as s, current_setting('app.db16', true) as app`)
+  const row = r.rows[0]
+  if (row === undefined) throw new Error('no session row')
+  return row
+}
+
+async function rolesNamed(db: Db, name: string): Promise<number> {
+  const r = await db.query<{ n: number }>('select count(*)::int as n from pg_roles where rolname = $1', [name])
+  return r.rows[0]?.n ?? -1
+}
+
+describe('DB16 ARC-16 round 5: a pooled transaction connection carries only what the handle has, and nothing outlives its owner', () => {
+  test.runIf(ON)(
+    'ARC-16 T1 poisoned cleanup: a transaction that rolls back, then sets a role and a setting and leaves an aborted block, leaks nothing; the next transactions (more than the pool holds) all run as the handle',
+    async () => {
+      const db = await cloneTestDb()
+      const role = `db16_t1_${RUN_TAG}`
+      await db.exec(`create role ${role} nologin`)
+      const handle = await who(db)
+      let poisonedPid = -1
+      await expect(
+        db.transaction(async (tx) => {
+          poisonedPid = (await tx.query<{ pid: number }>('select pg_backend_pid() as pid')).rows[0]?.pid ?? -1
+          await tx.rollback()
+          await tx.exec(`set role ${role}`)
+          await tx.query(`select set_config('app.db16', 'leak', false)`)
+          await tx.exec('begin; select 1/0')
+        }),
+      ).rejects.toThrow()
+      expect(poisonedPid, 'the poisoned transaction ran on a pooled connection').toBeGreaterThan(0)
+      const after: (Who & { pid: number } | { refused: string })[] = []
+      for (let i = 0; i < POOL_PROBE; i += 1) {
+        after.push(
+          await db
+            .transaction(async (tx) => ({
+              ...(await who(tx)),
+              pid: (await tx.query<{ pid: number }>('select pg_backend_pid() as pid')).rows[0]?.pid ?? -1,
+            }))
+            .catch((e: unknown) => ({ refused: e instanceof Error ? e.message : String(e) })),
+        )
+      }
+      // Whether the poisoned pid came back (reuse) or never did (destroyed), every row must be the handle's.
+      expect(
+        after.map((r) => ('refused' in r ? r : { u: r.u, s: r.s, app: r.app })),
+        `every later transaction runs as the handle (poisoned connection pid ${String(poisonedPid)}; pids seen ${after.map((r) => ('pid' in r ? String(r.pid) : 'none')).join(', ')})`,
+      ).toEqual(Array.from({ length: POOL_PROBE }, () => handle))
+      expect(await who(db), 'the handle itself is untouched').toEqual(handle)
+    },
+    BOOT_MS,
+  )
+
+  test(
+    'ARC-16 T2 set session authorization on the handle: the transaction runs as that user (current_user and session_user) and row-level security holds inside it (0 rows, never the superuser count), or it is refused naming the user',
+    async () => {
+      const db = await cloneTestDb()
+      const role = `db16_t2_${RUN_TAG}`
+      await db.exec(`create role ${role} nologin`)
+      await db.exec(
+        `create table public.db16_rls (id int primary key); insert into public.db16_rls values (1), (2), (3);
+         alter table public.db16_rls enable row level security; create policy db16_none on public.db16_rls using (false);
+         grant select on public.db16_rls to ${role};`,
+      )
+      const all = await db.query<{ n: number }>('select count(*)::int as n from public.db16_rls')
+      expect(all.rows[0]?.n, 'the login user (a superuser) sees every row').toBe(3)
+      await db.exec(`set session authorization ${role}`)
+      try {
+        const onHandle = await db.query<{ u: string; s: string; n: number }>(
+          'select current_user::text as u, session_user::text as s, (select count(*)::int from public.db16_rls) as n',
+        )
+        expect(onHandle.rows[0], 'on the handle the policy holds').toEqual({ u: role, s: role, n: 0 })
+        const got = await db
+          .transaction(async (tx) => {
+            const r = await tx.query<{ u: string; s: string; n: number }>(
+              'select current_user::text as u, session_user::text as s, (select count(*)::int from public.db16_rls) as n',
+            )
+            return r.rows[0]
+          })
+          .then(
+            (ran) => ran,
+            (e: unknown) => {
+              const msg = e instanceof Error ? e.message : String(e)
+              return msg.includes(role) ? 'refused naming the user' : `refused without naming the user: ${msg}`
+            },
+          )
+        if (typeof got === 'string') expect(got).toBe('refused naming the user')
+        else expect(got, 'the transaction runs as the handle\'s session user, under row-level security').toEqual({ u: role, s: role, n: 0 })
+      } finally {
+        await db.exec('reset session authorization')
+      }
+    },
+    BOOT_MS,
+  )
+
+  test.runIf(ON)(
+    'ARC-16 T3 set session authorization inside a committed transaction does not leak: the next transactions (more than the pool holds) run as the handle',
+    async () => {
+      const db = await cloneTestDb()
+      const role = `db16_t3_${RUN_TAG}`
+      await db.exec(`create role ${role} nologin`)
+      const handle = await who(db)
+      const inside = await db.transaction(async (tx) => {
+        await tx.exec(`set session authorization ${role}`)
+        return who(tx)
+      })
+      expect(inside.s, 'the statement took effect inside the transaction').toBe(role)
+      const after: (Who | { refused: string })[] = []
+      for (let i = 0; i < POOL_PROBE; i += 1) {
+        after.push(await db.transaction((tx) => who(tx)).catch((e: unknown) => ({ refused: e instanceof Error ? e.message : String(e) })))
+      }
+      expect(after, 'every later transaction runs as the handle').toEqual(Array.from({ length: POOL_PROBE }, () => handle))
+    },
+    BOOT_MS,
+  )
+
+  test(
+    'ARC-16 T4 a custom setting set on the handle through set_config($1, $2, false) reaches the transaction, or the transaction is refused naming it',
+    async () => {
+      const db = await cloneTestDb()
+      await db.query('select set_config($1, $2, false)', ['app.db16', 'x'])
+      expect((await sessionState(db)).s).toBe('x')
+      await expectTxFollowsHandle(db, ['app.db16'])
+    },
+  )
+
+  test(
+    'ARC-16 T4 a custom setting whose name is neither a literal nor a parameter (set_config(v.n, ...)) reaches the transaction, or the transaction is refused naming the statement',
+    async () => {
+      const db = await cloneTestDb()
+      const opaque = `select set_config(v.n, 'y', false) from (values ('app.db16b')) as v(n)`
+      await db.query(opaque)
+      const read = `select current_user::text as u, current_setting('app.db16b', true) as s`
+      const handle = (await db.query<SessionState>(read)).rows[0]
+      expect(handle?.s).toBe('y')
+      const got = await db.transaction(async (tx) => (await tx.query<SessionState>(read)).rows[0]).then(
+        (ran) => ({ ran }),
+        (e: unknown) => ({ refused: e instanceof Error ? e.message : String(e) }),
+      )
+      if ('refused' in got) expect(got.refused, 'the refusal names the statement it could not carry').toContain('app.db16b')
+      else expect(got.ran, 'the transaction sees the handle\'s setting').toEqual(handle)
+    },
+  )
+
+  test.runIf(ON)(
+    'ARC-4 T5 a handle that made a role and ran set session authorization to it closes with the role gone from the cluster',
+    async () => {
+      const role = `db16_t5_${RUN_TAG}`
+      const db = await cloneTestDb()
+      try {
+        await db.exec(`create role ${role} nologin`)
+        await db.exec(`set session authorization ${role}`)
+        expect((await who(db)).s).toBe(role)
+        await db.close()
+        const other = await cloneTestDb()
+        expect(await rolesNamed(other, role), `role ${role} is gone from pg_roles once its handle closed`).toBe(0)
+      } finally {
+        // A failing build leaves the role in the cluster: remove it so a rerun starts clean.
+        const sweep = await cloneTestDb()
+        await sweep.exec(`drop role if exists ${role}`)
+      }
+    },
+    BOOT_MS,
+  )
+})
