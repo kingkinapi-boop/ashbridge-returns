@@ -1,9 +1,8 @@
 {
  "card": "SC6",
  "role": "spec",
- "note": "W16 landed: spec per card (A408, R81)",
  "worker": "local-3",
- "state": "reopened",
- "at": "2026-10-03T07:57:18.754Z",
+ "state": "working",
+ "at": "2026-10-03T07:59:13.446Z",
  "mode": "turbo"
 }
