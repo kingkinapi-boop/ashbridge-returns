@@ -2,7 +2,9 @@
  "card": "FX18",
  "role": "spec",
  "worker": "cloud-c7f307",
- "state": "working",
- "at": "2026-10-03T13:49:12.675Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T13:49:27.777Z",
+ "mode": "turbo",
+ "note": "wait: dep A04 not merged; src/modules/ai/runner and src/core/safe-read.ts do not exist on main, no code base",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"carded\"]}"
 }
