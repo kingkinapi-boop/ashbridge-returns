@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "c526b32d",
  "worker": "cloud-1ba1dc",
- "state": "reported",
- "at": "2026-10-03T19:34:58.406Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T19:44:26.829Z",
  "mode": "turbo",
- "note": "A503: spec-only round; Opus check of the spec commit (landing form)"
+ "note": "FAIL: G2 verbs and forget/fail forms, G6 c main~N and chains, G6 a init reader; see reports/SC6-check.md"
 }
