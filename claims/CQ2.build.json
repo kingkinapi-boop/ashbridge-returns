@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "11df325",
  "worker": "cloud-2f8ae4",
- "state": "hold-findings",
- "at": "2026-10-02T21:38:12.780Z",
+ "state": "reopened",
+ "at": "2026-10-03T03:43:30.719Z",
  "mode": "turbo",
- "note": "FAIL: scope (2 files outside Paths, one a builder-written rule 6 test file); no code defect, see reports/CQ2-check.md"
+ "note": "rule 6 tests by the spec writer (934365e); make them pass, keep the rest"
 }
