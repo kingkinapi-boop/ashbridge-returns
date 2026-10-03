@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T08:03:21.118Z",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T08:04:34.078Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T08:04:44.707Z",
+ "mode": "turbo",
+ "note": "wait: cloud box only (Where: cloud; 20 db runs under load); offered back to local-1, left for a cloud worker",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[],\"depStatus\":[]}"
 }
