@@ -10,12 +10,16 @@
 //    only for the pinned list; a flag on that list is a cpa-judgment row.
 //  - R2 side: a flag's books net is the sum, in cents, of debits less credits on GIFI 1301, 2781 and 3261 over the
 //    `post` lines of its evidence transactions (a transaction with no `post` line, booked through an adjusting entry, adds
-//    nothing) and the lines of its evidence adjusting entries; a GIFI is read from the account's trial balance row.
+//    nothing) and the lines of its evidence adjusting entries; a GIFI is read from the account's trial balance row, and a
+//    posted account with no trial balance row throws (A505 F3) rather than reading as no GIFI, which R2 would skip.
 //  - R3 opener: a yes/no item without slots is an item whose answer shape is `yes_no` and whose slot list is empty; a
 //    flag has books rows when its evidence lists a transaction or an adjusting entry.
 //  - R6 side words are matched whole and case-blind ("personal" does not match inside "personally").
 //  - The rules are pure functions in this file, so the plants run on in-memory maps built from real flags, real bank
 //    items and the real card list, and the real map is checked the same way.
+//  - A505 F1, F2: no test asserts a live status, a live clause list or that a card file is absent. The plants set the
+//    owners they lean on (Q00, Q30, Q23, X00, F07) on a copy of the card list, as the Z99 plant does, and the family
+//    template path is proven on a card picked from plan/slices.json (a family card with no card file of its own).
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, test } from 'vitest'
@@ -148,7 +152,10 @@ function flagsOf(key: AnswerKey): Flag[] {
     for (const id of f.evidence.transactions) {
       const t = tx.get(id)
       if (t === undefined) throw new Error(`flag ${f.id}: evidence transaction ${id} is not in the answer key`)
-      for (const l of t.post ?? []) if (SHAREHOLDER_GIFI.has(gifi.get(l.a) ?? 0)) net += cents(l.dr) - cents(l.cr)
+      for (const l of t.post ?? []) {
+        if (!gifi.has(l.a)) throw new Error(`flag ${f.id}: evidence transaction ${id} posts to account ${l.a}, which has no trial balance row`)
+        if (SHAREHOLDER_GIFI.has(gifi.get(l.a) ?? 0)) net += cents(l.dr) - cents(l.cr)
+      }
     }
     for (const id of f.evidence.adjustingEntries) {
       const a = aje.get(id)
@@ -175,14 +182,21 @@ function loadWorld(): World {
   }
   const items = new Map<string, Item>()
   for (const i of loadItems()) items.set(i.id, i)
-  const slices = read('plan', 'slices.json') as { cards: { id: string; status: string; family?: string; clauses?: string[] }[] }
-  const cards = new Map<string, Card>()
-  for (const c of slices.cards) {
-    const own = fs.existsSync(path.join(ROOT, 'plan', 'cards', `${c.id}.md`))
-    const family = c.family !== undefined && fs.existsSync(path.join(ROOT, 'plan', 'cards', 'families', `${c.family}.md`))
-    cards.set(c.id, { status: c.status, clauses: c.clauses ?? [], hasCardFile: own || family })
-  }
+  const cards = cardsOf(slices.cards)
   return { flags, items, cards, cpaPinned: CPA_PINNED, openerPinned: OPENER_PINNED, creditSide: CREDIT_SIDE, debitSide: DEBIT_SIDE }
+}
+
+type SliceCard = { id: string; status: string; family?: string; clauses?: string[] }
+const slices = read('plan', 'slices.json') as { cards: SliceCard[] }
+const ownCardFile = (id: string): boolean => fs.existsSync(path.join(ROOT, 'plan', 'cards', `${id}.md`))
+const familyTemplate = (family: string | undefined): boolean =>
+  family !== undefined && fs.existsSync(path.join(ROOT, 'plan', 'cards', 'families', `${family}.md`))
+
+/** The card list as R1 reads it: a card file of its own or its family template counts as a card file. */
+function cardsOf(list: SliceCard[]): Map<string, Card> {
+  const cards = new Map<string, Card>()
+  for (const c of list) cards.set(c.id, { status: c.status, clauses: c.clauses ?? [], hasCardFile: ownCardFile(c.id) || familyTemplate(c.family) })
+  return cards
 }
 
 function loadItems(): Item[] {
@@ -223,7 +237,14 @@ const realItem = (id: string): Item => {
 function tiny(): { map: CoverageMap; w: World } {
   const items = new Map(world.items)
   items.set('Q-AAA-002', { id: 'Q-AAA-002', retired: true, opener: false, label: 'Retired item (Test)', resolves: 'qa.test.retired' })
-  const w: World = { ...world, flags: ['01-F02', '01-F05', '03-F03', '04-F06'].map(realFlag), items }
+  // A505 F2: the owners the plants lean on are set on a copy of the card list, never read live.
+  const cards = new Map(world.cards)
+  cards.set('Q00', { status: 'carded', clauses: ['CK-1', 'CK-2', 'CK-3', 'CK-4', 'CK-5', 'CK-6', 'EX-4'], hasCardFile: true })
+  cards.set('Q30', { status: 'carded', clauses: ['CK-30'], hasCardFile: true })
+  cards.set('Q23', { status: 'carded', clauses: ['CK-23'], hasCardFile: true })
+  cards.set('X00', { status: 'carded', clauses: ['EX-1', 'EX-2', 'EX-3', 'AI-7', 'SEC-7'], hasCardFile: true })
+  cards.set('F07', { status: 'done', clauses: ['END-1', 'ARC-2', 'FLOW-11', 'OUT-6', 'RT-5'], hasCardFile: true })
+  const w: World = { ...world, flags: ['01-F02', '01-F05', '03-F03', '04-F06'].map(realFlag), items, cards }
   const map: CoverageMap = {
     version: 1,
     flags: {
@@ -285,32 +306,38 @@ describe('G18 the map rule catches its plants', () => {
   })
 
   test('AI-12 R1 a check owned by a card that does not list its clause is caught: {Q00, CK-30}', () => {
-    expect(world.cards.get('Q00')?.clauses).not.toContain('CK-30')
     const { map, w } = tiny()
+    expect(w.cards.get('Q00')?.clauses).not.toContain('CK-30')
     map.flags['01-F02'] = { kind: 'check', owner: 'Q00', clause: 'CK-30', reason: 'CK-30 raises the unpaid loan from the books' }
     expect(problems(map, w)).toEqual(['flag 01-F02: the owner Q00 does not list clause CK-30'])
   })
-  test('AI-12 R1 a family card with no card file of its own passes through its template: {Q30, CK-30}', () => {
-    expect(fs.existsSync(path.join(ROOT, 'plan', 'cards', 'Q30.md'))).toBe(false)
-    const q30 = world.cards.get('Q30')
-    expect(q30?.status).not.toBe('parked')
-    expect(q30?.clauses).toContain('CK-30')
-    expect(q30?.hasCardFile).toBe(true)
+  test('AI-12 R1 a family card owner that lists the clause passes: {Q30, CK-30}', () => {
     const { map, w } = tiny()
     expect(map.flags['01-F02']).toMatchObject({ owner: 'Q30', clause: 'CK-30' })
     expect(problems(map, w)).toEqual([])
   })
-  test('AI-12 R1 a parked owner is caught, even one that lists the clause', () => {
-    const parked = [...world.cards].find(([, c]) => c.status === 'parked' && c.hasCardFile && c.clauses.length > 0)
-    expect(parked).toBeDefined()
-    const [owner, card] = parked ?? ['', { clauses: [''] }]
+  test('AI-12 R1 a family card with no card file of its own passes through its template, picked from plan/slices.json', () => {
+    const picked = slices.cards.find(
+      (c) => c.family !== undefined && !ownCardFile(c.id) && familyTemplate(c.family) && c.status !== 'parked' && (c.clauses ?? []).length > 0,
+    )
+    expect(picked, 'a family card with no card file of its own').toBeDefined()
+    const card = picked ?? { id: '', status: '', clauses: [''] }
+    expect(world.cards.get(card.id)?.hasCardFile).toBe(true)
     const { map, w } = tiny()
-    map.flags['01-F02'] = { kind: 'check', owner, clause: card.clauses[0] ?? '', reason: 'a rule check' }
-    expect(problems(map, w)).toEqual([`flag 01-F02: the owner ${owner} is parked`])
+    map.flags['01-F02'] = { kind: 'check', owner: card.id, clause: card.clauses?.[0] ?? '', reason: 'a rule check' }
+    expect(problems(map, w)).toEqual([])
+    w.cards = new Map(w.cards)
+    for (const [id, c] of cardsOf([{ ...card, family: 'no-such-family-test' }])) w.cards.set(id, c)
+    expect(problems(map, w)).toEqual([`flag 01-F02: the owner ${card.id} has no card file or family template`])
+  })
+  test('AI-12 R1 a parked owner is caught, even one that lists the clause', () => {
+    const { map, w } = tiny()
+    w.cards.set('Q30', { status: 'parked', clauses: ['CK-30'], hasCardFile: true })
+    expect(problems(map, w)).toEqual(['flag 01-F02: the owner Q30 is parked'])
   })
   test('AI-12 R1 a done owner that lists the clause is allowed', () => {
-    expect(world.cards.get('F07')?.status).toBe('done')
     const { map, w } = tiny()
+    expect(w.cards.get('F07')?.status).toBe('done')
     map.flags['01-F02'] = { kind: 'check', owner: 'F07', clause: 'END-1', reason: 'the ops-confirms item' }
     expect(problems(map, w)).toEqual([])
   })
@@ -348,6 +375,16 @@ describe('G18 the map rule catches its plants', () => {
   test('AI-12 R2 01-F02 nets to a debit of $13,211.58 on GIFI 1301, the amount its detail states', () => {
     expect(realFlag('01-F02').shareholderNetCents).toBe(1_321_158)
     expect(realFlag('01-F05').shareholderNetCents).toBe(-178_842)
+  })
+  test('AI-12 R2 a posted account with no trial balance row throws, never reads as no GIFI: a key copy with an unknown account', () => {
+    const key = read('reference', 'sample-clients', '01-maple-ridge', 'answer-key.json') as AnswerKey
+    expect(flagsOf(key).find((f) => f.id === '01-F02')?.shareholderNetCents).toBe(1_321_158)
+    const copy = structuredClone(key)
+    const tx = copy.transactions.find((t) => t.id === '01-CHQ-2025-02-0017')
+    const line = tx?.post?.find((l) => l.a === '1300')
+    expect(line).toBeDefined()
+    if (line !== undefined) line.a = '1309'
+    expect(() => flagsOf(copy)).toThrow('evidence transaction 01-CHQ-2025-02-0017 posts to account 1309, which has no trial balance row')
   })
   test('AI-12 R2 a credit-side question on a flag that nets to a debit is caught: 01-F02 to Q-SHL-002', () => {
     const { map, w } = tiny()
