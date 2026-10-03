@@ -38,3 +38,7 @@ These are superseded by the card's "each column refuses a value that is neither 
 
 ## Refit 2026-10-03
 Toolchain refit by cloud-4b5725: merged origin/main 5ba459c; typecheck and lint clean; unit suite 2824 pass, only the 11 FX17 twins fail; db project on pg16 fails only actors.acceptance.db.test.ts (50) and R66 (KNOWN entries deleted by design). No assertion changed. Old validated sha 9fec3666, new 5ba459c. Retired tests: none. Permission gaps: none. Model: Sonnet 5.5.
+
+## Toolchain refit (3 Oct 2026, cloud-1fcc74)
+Old validated sha 5ba459c; new validated on main 6c6d989. Merged origin/main; no assertion changed. Typecheck and lint green. Unit: 2908 pass, 12 fail: the 11 actors twin tests (expected) and tools/test/db-budget.test.mjs ARC-15 (CQ8's rule), which names six multi-world tests in SC3's src/contracts/security-rules.db.test.ts (R62 to R66). Those are SC3's file, not FX17's; SC3 needs a KNOWN entry or a split before it lands. Db on Postgres 16: 703 pass, 51 fail: the 50 actors db tests and the R66 test (expected).
+Permission gaps: none. Model: Sonnet 5.5.
