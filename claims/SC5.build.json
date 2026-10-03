@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "7f49fdb0",
  "worker": "cloud-8dacd4",
- "state": "working",
- "at": "2026-10-03T19:01:42.324Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T19:04:47.280Z",
+ "mode": "turbo",
+ "note": "42 of 42 acceptance tests pass; rules only, no product code added; see reports/SC5-build.md"
 }
