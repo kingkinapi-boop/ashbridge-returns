@@ -1,5 +1,7 @@
 # SC8 Source reads go through readOwnSource (R79)
 
+**Lead directive, 3 Oct 13:55Z (A479): spec patch, one item.** `src/core/egress-rules.acceptance.test.ts:167` flags `shell: false` written with a space (the regex `\bshell\s*:\s*(?!false\b)` backtracks over the space). The spec job makes it `\bshell\s*:(?!\s*false\b)` and plants: `shell: false` and `shell:false` pass; `shell: true`, `shell: 'bash'` and `shell: someVar` are flagged. Then the build after A04 lands, as before.
+
 **Lead directive, 3 Oct (A436): spec patch for gaps G1 to G6 in reports/SC8-spec-review.md (on claude/SC8), one planted file per gap as the review gives.** The rule follows local functions (wrapper parameters bound at call sites, return values, `.map`); catches aliased imports, `fs['readFileSync']`, `.call`/`.apply`, `open`/`openSync`, `process.cwd()`, `require.resolve`, `import.meta.resolve`, `new URL().pathname`, Vite `?raw` static, dynamic and glob imports; scans harnesses under `__fixtures__` and `src/core/testing`. Sentinels: the marked set holds all 8 files today's reads target; every listed test is still scanned; a baseline of titles and `expect(` counts from 25fc96d. Paths gain src/core/egress-rules.acceptance.test.ts and src/modules/auth/rules.acceptance.test.ts (their raw reads switch too); SC8 lands after FX2 and A04.
 
 Phase 0. Size S. Deps: SC, FX2, A04. Where: cloud.
@@ -7,7 +9,7 @@ Tags: core (mutation testing is the bar for money, tax and citation code; a raw 
 Paths: tools/test/source-read-rules.test.mjs, tools/test/__fixtures__/source-read-rules/**, src/core/testing/read-own-source.acceptance.test.ts, src/contracts/amount-grammar.acceptance.test.ts, src/contracts/reading.acceptance.test.ts, src/contracts/reading-strict.acceptance.test.ts, src/core/clock.acceptance.test.ts, src/core/env.acceptance.test.ts, src/core/ids.acceptance.test.ts, src/core/log.acceptance.test.ts, src/core/money.acceptance.test.ts, src/core/egress-rules.acceptance.test.ts, src/modules/auth/rules.acceptance.test.ts
 Clauses: ARC-15, ARC-16
 Read: `reports/FX2-findings.md` (RC2), `.claude/rules/testing.md`, `src/core/testing/` (readOwnSource).
-Spec commit: 9979144 (patch G1 to G6, validated on main 913ded6795563e5a7adc69dc24a5b54ca3575e76); first spec f91a3f6 (validated on main 25fc96d; branch carries SC e19dcdb and FX2 82f9b10 merged)
+Spec commit: (spec-writer fills)
 
 ## Goal
 testing.md says a test that reads a source file's text reads it through `readOwnSource`, because Stryker rewrites the file and its preamble holds `process.env`. Nothing enforces it: FX2's check failed on it, and eight more raw reads of `@mutate` files sit on main.
