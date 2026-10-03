@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 10:56Z by the Lea
 | FX12, FX14, FX17 | FX12 build open; FX14 carded; FX17 spec reported | builds, checks |
 | CQ6 to CQ8, SC10, A08 | CQ4 and CQ5 landed: CQ6, CQ7, CQ8 builds open; A08 waits for A04 | builds, checks |
 
-Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none (only cloud jobs open at 10:15Z). Cloud: 2 more at 10:15Z (SC11 spec, FX8 build).
+Cloud runs: 3 at 10:58Z (train 26e84345, A04 spec fix, CQ builds). Local: local-1, local-2 (any local job, 10:58Z).
 
 ## Next, in order
 
