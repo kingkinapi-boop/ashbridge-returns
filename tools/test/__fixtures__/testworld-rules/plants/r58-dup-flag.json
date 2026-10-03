@@ -1,0 +1,21 @@
+{
+  "rule": "R58",
+  "base": "C01",
+  "what": "the first flag written twice",
+  "edits": [
+    {
+      "op": "duplicate",
+      "file": "answer-key.json",
+      "path": [
+        "flags",
+        0
+      ]
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json flags: the id \"01-F01\" is listed twice"
+  ],
+  "loader": {
+    "needle": "01-F01"
+  }
+}

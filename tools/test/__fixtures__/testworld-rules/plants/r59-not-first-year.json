@@ -1,0 +1,22 @@
+{
+  "rule": "R59",
+  "base": "C09",
+  "what": "C09 incorporated a day before its fiscal year, so its empty opening is no longer a first year",
+  "edits": [
+    {
+      "op": "set",
+      "file": "onboarding.json",
+      "path": [
+        "corporation",
+        "incorporation_date"
+      ],
+      "value": "2025-04-14"
+    }
+  ],
+  "problems": [
+    "09-scarborough-robotics/answer-key.json trialBalance.opening.rows: the list is empty and the corporation was not incorporated on the fiscal year start 2025-04-15"
+  ],
+  "loader": {
+    "needle": "opening"
+  }
+}

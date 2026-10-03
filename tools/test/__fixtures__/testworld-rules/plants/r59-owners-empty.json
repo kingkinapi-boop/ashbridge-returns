@@ -1,0 +1,21 @@
+{
+  "rule": "R59",
+  "base": "C07",
+  "what": "onboarding lists no owners",
+  "edits": [
+    {
+      "op": "set",
+      "file": "onboarding.json",
+      "path": [
+        "owners"
+      ],
+      "value": []
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals/onboarding.json owners: the list is empty"
+  ],
+  "loader": {
+    "needle": "owners"
+  }
+}

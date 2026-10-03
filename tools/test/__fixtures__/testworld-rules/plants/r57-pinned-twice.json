@@ -1,0 +1,28 @@
+{
+  "rule": "R57",
+  "base": "C10",
+  "what": "one May row pinned twice in the catalogue",
+  "catalogue": [
+    {
+      "op": "set",
+      "id": "10-F01",
+      "path": [
+        "marker",
+        "rows",
+        1
+      ],
+      "value": {
+        "id": "10-CHQ-2025-05-0001",
+        "date": "2025-05-02",
+        "amountCents": 49007
+      }
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-05-0002: it carries missingFromExport and no fault catalogue entry pins it by id under that marker",
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-05-0001: the fault catalogue pins it more than once"
+  ],
+  "loader": {
+    "needle": "10-CHQ-2025-05-0001"
+  }
+}

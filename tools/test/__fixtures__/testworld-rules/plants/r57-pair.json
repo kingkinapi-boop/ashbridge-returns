@@ -1,0 +1,38 @@
+{
+  "rule": "R57",
+  "base": "C10",
+  "what": "a +1/-1 cent pair on two marked rows, so their count and sum are unchanged",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        {
+          "id": "10-CHQ-2025-05-0001"
+        },
+        "amount"
+      ],
+      "value": 490.08
+    },
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        {
+          "id": "10-CHQ-2025-05-0002"
+        },
+        "amount"
+      ],
+      "value": -584.28
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-05-0001 (10-F01): the answer key has 2025-05-02 49008 cents; the catalogue pins 2025-05-02 49007 cents",
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-05-0002 (10-F01): the answer key has 2025-05-02 -58428 cents; the catalogue pins 2025-05-02 -58427 cents"
+  ],
+  "loader": {
+    "needle": "10-CHQ-2025-05-0002"
+  }
+}

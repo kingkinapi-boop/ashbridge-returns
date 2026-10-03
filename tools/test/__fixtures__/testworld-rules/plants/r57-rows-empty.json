@@ -1,0 +1,24 @@
+{
+  "rule": "R57",
+  "base": "C10",
+  "what": "the 10-F01 marker lists no rows",
+  "catalogue": [
+    {
+      "op": "set",
+      "id": "10-F01",
+      "path": [
+        "marker",
+        "rows"
+      ],
+      "value": []
+    }
+  ],
+  "contains": [
+    "fault catalogue 10-F01: the marker lists no rows (each marked row is pinned by id, date and amount)",
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-05-0056: it carries missingFromExport and no fault catalogue entry pins it by id under that marker"
+  ],
+  "count": 57,
+  "loader": {
+    "needle": "10-F01"
+  }
+}

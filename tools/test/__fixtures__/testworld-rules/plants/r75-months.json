@@ -1,0 +1,20 @@
+{
+  "rule": "R75",
+  "base": "C09",
+  "what": "onboarding says 12 months for an account with 9",
+  "edits": [
+    {
+      "op": "set",
+      "file": "onboarding.json",
+      "path": [
+        "accounts_provided",
+        0,
+        "months"
+      ],
+      "value": 12
+    }
+  ],
+  "problems": [
+    "09-scarborough-robotics/onboarding.json accounts_provided[accounts/lakeview-chequing-9273.csv].months: written 12, computed 9"
+  ]
+}

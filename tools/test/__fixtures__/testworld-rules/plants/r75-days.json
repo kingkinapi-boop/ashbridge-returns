@@ -1,0 +1,19 @@
+{
+  "rule": "R75",
+  "base": "C09",
+  "what": "fiscalYear.days one too many",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "fiscalYear",
+        "days"
+      ],
+      "value": 262
+    }
+  ],
+  "problems": [
+    "09-scarborough-robotics/answer-key.json fiscalYear.days: written 262, computed 261"
+  ]
+}

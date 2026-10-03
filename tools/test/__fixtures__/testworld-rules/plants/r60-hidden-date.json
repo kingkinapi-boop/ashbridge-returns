@@ -1,0 +1,20 @@
+{
+  "rule": "R60",
+  "base": "C10",
+  "what": "an asset date the loader never reads set to 2022-02-30",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "assets",
+        0,
+        "availableForUse"
+      ],
+      "value": "2022-02-30"
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json assets.0.availableForUse: \"2022-02-30\" is date-shaped but not a calendar date, a month or a UTC time"
+  ]
+}

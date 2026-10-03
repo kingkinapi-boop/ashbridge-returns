@@ -1,0 +1,22 @@
+{
+  "rule": "R59",
+  "base": "C10",
+  "what": "the chequing account has no statement months",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "statementBalances",
+        "CHQ"
+      ],
+      "value": []
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json statementBalances.CHQ: the account has no statement months"
+  ],
+  "loader": {
+    "needle": "CHQ"
+  }
+}

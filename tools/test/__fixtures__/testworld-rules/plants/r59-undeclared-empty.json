@@ -1,0 +1,20 @@
+{
+  "rule": "R59",
+  "base": "C12",
+  "what": "the empty account list no longer declared by 12-F02",
+  "catalogue": [
+    {
+      "op": "delete",
+      "id": "12-F02",
+      "path": [
+        "empty"
+      ]
+    }
+  ],
+  "problems": [
+    "12-kensington-market-crafts/answer-key.json accounts: the list is empty and the fault catalogue does not declare it (empty: 'accounts')"
+  ],
+  "loader": {
+    "needle": "accounts"
+  }
+}

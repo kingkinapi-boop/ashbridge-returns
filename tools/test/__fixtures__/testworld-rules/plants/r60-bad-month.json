@@ -1,0 +1,21 @@
+{
+  "rule": "R60",
+  "base": "C01",
+  "what": "a statement month written 2025-13",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "statementBalances",
+        "CHQ",
+        0,
+        "month"
+      ],
+      "value": "2025-13"
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json statementBalances.CHQ.0.month: \"2025-13\" is date-shaped but not a calendar date, a month or a UTC time"
+  ]
+}

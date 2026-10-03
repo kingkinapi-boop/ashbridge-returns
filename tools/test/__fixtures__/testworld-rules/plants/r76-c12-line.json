@@ -1,0 +1,35 @@
+{
+  "rule": "R76",
+  "base": "C12",
+  "what": "a line of the adjusting entry with neither debit nor credit (C12 has no transactions, so its postings are its lines)",
+  "edits": [
+    {
+      "op": "delete",
+      "file": "answer-key.json",
+      "path": [
+        "adjustingEntries",
+        0,
+        "lines",
+        0,
+        "debit"
+      ]
+    },
+    {
+      "op": "delete",
+      "file": "answer-key.json",
+      "path": [
+        "adjustingEntries",
+        0,
+        "lines",
+        0,
+        "credit"
+      ]
+    }
+  ],
+  "problems": [
+    "12-kensington-market-crafts/answer-key.json adjustingEntries[12-AJE-01].lines[0]: it has neither debit nor credit"
+  ],
+  "loader": {
+    "needle": "adjustingEntries.0.lines.0"
+  }
+}

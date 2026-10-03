@@ -1,0 +1,20 @@
+{
+  "rule": "R61",
+  "base": "C10",
+  "what": "statementBalances with the key CHQ written twice",
+  "edits": [
+    {
+      "op": "text",
+      "file": "answer-key.json",
+      "find": "\"statementBalances\": {",
+      "replace": "\"statementBalances\": {\n    \"CHQ\": [],"
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json: the key \"CHQ\" is written twice in one object"
+  ],
+  "loader": {
+    "needle": "answer-key.json",
+    "check": "file"
+  }
+}

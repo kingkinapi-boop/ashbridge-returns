@@ -1,0 +1,31 @@
+{
+  "rule": "R60",
+  "base": "C07",
+  "what": "a 373-day fiscal year, with onboarding agreeing",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "fiscalYear",
+        "end"
+      ],
+      "value": "2026-01-08"
+    },
+    {
+      "op": "set",
+      "file": "onboarding.json",
+      "path": [
+        "corporation",
+        "financial_year_end"
+      ],
+      "value": "2026-01-08"
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals/answer-key.json fiscalYear: the year 2025-01-01 to 2026-01-08 is 373 days, longer than 371"
+  ],
+  "loader": {
+    "needle": "fiscalYear"
+  }
+}

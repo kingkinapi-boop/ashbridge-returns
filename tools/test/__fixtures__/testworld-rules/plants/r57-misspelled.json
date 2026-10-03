@@ -1,0 +1,23 @@
+{
+  "rule": "R57",
+  "base": "C10",
+  "what": "a duplicate row whose marker is spelled dupof",
+  "edits": [
+    {
+      "op": "rename",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        {
+          "id": "10-CHQ-2025-03-0009"
+        }
+      ],
+      "from": "dupOf",
+      "to": "dupof"
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-03-0009: it carries dupof, a misspelled marker field (dupOf)",
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-03-0009 (10-F02): it does not carry dupOf"
+  ]
+}

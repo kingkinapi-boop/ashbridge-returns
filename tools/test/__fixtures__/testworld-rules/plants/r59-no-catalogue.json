@@ -1,0 +1,24 @@
+{
+  "rule": "R59",
+  "base": "C07",
+  "what": "every catalogue entry of C07 and every flag of its answer key removed",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "flags"
+      ],
+      "value": []
+    }
+  ],
+  "catalogue": [
+    {
+      "op": "dropClient",
+      "client": "C07"
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals: the fault catalogue has no entry for this client"
+  ]
+}

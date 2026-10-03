@@ -1,0 +1,21 @@
+{
+  "rule": "R58",
+  "base": "C07",
+  "what": "a second catalogue entry with the id 07-F01",
+  "catalogue": [
+    {
+      "op": "add",
+      "entry": {
+        "id": "07-F01",
+        "client": "C07",
+        "flagId": "07-F01",
+        "planted": "repeat (Test)",
+        "expected": "repeat (Test)"
+      }
+    }
+  ],
+  "problems": [
+    "fault catalogue: the id 07-F01 is listed twice",
+    "fault catalogue C07: the flag 07-F01 is listed twice"
+  ]
+}

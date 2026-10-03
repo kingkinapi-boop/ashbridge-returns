@@ -1,0 +1,23 @@
+{
+  "rule": "R59",
+  "base": "C01",
+  "what": "the opening trial balance has no rows in a year that is not the first",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "trialBalance",
+        "opening",
+        "rows"
+      ],
+      "value": []
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json trialBalance.opening.rows: the list is empty and the corporation was not incorporated on the fiscal year start 2025-01-01"
+  ],
+  "loader": {
+    "needle": "opening"
+  }
+}

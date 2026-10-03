@@ -1,0 +1,20 @@
+{
+  "rule": "R75",
+  "base": "C01",
+  "what": "rowsInExport of the chequing account one too many",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "accounts",
+        0,
+        "rowsInExport"
+      ],
+      "value": 562
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json accounts[CHQ].rowsInExport: written 562, computed 561"
+  ]
+}

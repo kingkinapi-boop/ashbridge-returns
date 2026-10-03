@@ -1,0 +1,20 @@
+{
+  "rule": "R75",
+  "base": "C01",
+  "what": "the adjusted trial balance total debit one cent off",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "trialBalance",
+        "adjusted",
+        "totalDebit"
+      ],
+      "value": 194106.06
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json trialBalance.adjusted.totalDebit: written 19410606, computed 19410605"
+  ]
+}

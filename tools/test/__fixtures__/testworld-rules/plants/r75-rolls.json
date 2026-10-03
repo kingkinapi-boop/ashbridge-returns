@@ -1,0 +1,23 @@
+{
+  "rule": "R75",
+  "base": "C10",
+  "what": "the written rolls of CHQ May flipped to true",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "statementBalances",
+        "CHQ",
+        {
+          "month": "2025-05"
+        },
+        "rolls"
+      ],
+      "value": true
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json statementBalances.CHQ[2025-05].rolls: written true, computed false"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "rule": "R58",
+  "base": "C01",
+  "what": "the first transaction written twice",
+  "edits": [
+    {
+      "op": "duplicate",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        0
+      ]
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json transactions: the id \"01-CHQ-2025-01-0001\" is listed twice"
+  ],
+  "loader": {
+    "needle": "01-CHQ-2025-01-0001"
+  }
+}

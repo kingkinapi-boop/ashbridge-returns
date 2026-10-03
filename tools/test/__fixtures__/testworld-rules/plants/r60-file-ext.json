@@ -1,0 +1,25 @@
+{
+  "rule": "R60",
+  "base": "C01",
+  "what": "the chequing file named .txt in the answer key",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "accounts",
+        0,
+        "file"
+      ],
+      "value": "accounts/lakeview-chequing-4821.txt"
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json accounts.0.file: \"accounts/lakeview-chequing-4821.txt\" is not accounts/<name>.csv",
+    "01-maple-ridge/onboarding.json accounts_provided: accounts/lakeview-chequing-4821.txt is a file of the answer key's account CHQ but onboarding does not provide it",
+    "01-maple-ridge/onboarding.json accounts_provided: accounts/lakeview-chequing-4821.csv is provided but no account of the answer key has it"
+  ],
+  "loader": {
+    "needle": "CHQ file"
+  }
+}

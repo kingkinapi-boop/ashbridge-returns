@@ -1,0 +1,27 @@
+{
+  "rule": "R76",
+  "base": "C10",
+  "what": "a posting with neither dr nor cr",
+  "edits": [
+    {
+      "op": "delete",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        {
+          "id": "10-CHQ-2025-01-0001"
+        },
+        "post",
+        0,
+        "dr"
+      ]
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json transactions[10-CHQ-2025-01-0001].post[0]: it has neither dr nor cr"
+  ],
+  "loader": {
+    "needle": "10-CHQ-2025-01-0001",
+    "why": "a posting with neither side is read as 0"
+  }
+}

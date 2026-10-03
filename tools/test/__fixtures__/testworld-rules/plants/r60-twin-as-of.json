@@ -1,0 +1,22 @@
+{
+  "rule": "R60",
+  "base": "C07",
+  "what": "onboarding prior-year as_of two days before the fiscal year starts",
+  "edits": [
+    {
+      "op": "set",
+      "file": "onboarding.json",
+      "path": [
+        "prior_year_closing_balances",
+        "as_of"
+      ],
+      "value": "2024-12-30"
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals/onboarding.json prior_year_closing_balances.as_of: 2024-12-30, but the prior year closes the day before 2025-01-01"
+  ],
+  "loader": {
+    "needle": "as_of"
+  }
+}

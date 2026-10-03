@@ -1,0 +1,19 @@
+{
+  "rule": "R61",
+  "base": "C07",
+  "what": "onboarding.json cut short",
+  "edits": [
+    {
+      "op": "write",
+      "file": "onboarding.json",
+      "text": "{\"corporation\": {"
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals/onboarding.json: it is not valid JSON"
+  ],
+  "loader": {
+    "needle": "onboarding.json",
+    "check": "file"
+  }
+}

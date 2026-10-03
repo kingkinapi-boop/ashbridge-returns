@@ -1,0 +1,28 @@
+{
+  "rule": "R76",
+  "base": "C01",
+  "what": "a posting with both dr and cr",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        {
+          "id": "01-CHQ-2025-01-0001"
+        },
+        "post",
+        0,
+        "cr"
+      ],
+      "value": 250
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json transactions[01-CHQ-2025-01-0001].post[0]: it has both dr and cr"
+  ],
+  "loader": {
+    "needle": "01-CHQ-2025-01-0001",
+    "why": "a posting with both sides is read as their difference"
+  }
+}

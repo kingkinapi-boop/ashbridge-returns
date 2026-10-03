@@ -1,0 +1,21 @@
+{
+  "rule": "R75",
+  "base": "C07",
+  "what": "a written exportActivity one cent off",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "statementBalances",
+        "CHQ",
+        0,
+        "exportActivity"
+      ],
+      "value": 692.45
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals/answer-key.json statementBalances.CHQ[2025-01].exportActivity: written 69245, computed 69244"
+  ]
+}

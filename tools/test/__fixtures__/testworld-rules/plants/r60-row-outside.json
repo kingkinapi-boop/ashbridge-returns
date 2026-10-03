@@ -1,0 +1,25 @@
+{
+  "rule": "R60",
+  "base": "C10",
+  "what": "an unmarked row dated the day before the fiscal year",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        {
+          "id": "10-CHQ-2025-01-0001"
+        },
+        "date"
+      ],
+      "value": "2024-12-31"
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-01-0001: it is dated 2024-12-31, before the fiscal year starts on 2025-01-01"
+  ],
+  "loader": {
+    "needle": "10-CHQ-2025-01-0001"
+  }
+}

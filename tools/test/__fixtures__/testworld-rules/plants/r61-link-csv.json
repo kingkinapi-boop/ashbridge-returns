@@ -1,0 +1,19 @@
+{
+  "rule": "R61",
+  "base": "C10",
+  "what": "the chequing CSV a link to ../answer-key.json",
+  "edits": [
+    {
+      "op": "link",
+      "file": "accounts/harbourline-chequing-4460.csv",
+      "target": "../answer-key.json"
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/accounts/harbourline-chequing-4460.csv: it is a link; a client folder holds only regular files and folders"
+  ],
+  "loader": {
+    "needle": "CHQ file",
+    "check": "file"
+  }
+}

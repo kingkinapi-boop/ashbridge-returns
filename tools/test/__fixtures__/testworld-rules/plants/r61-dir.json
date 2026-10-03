@@ -1,0 +1,18 @@
+{
+  "rule": "R61",
+  "base": "C01",
+  "what": "answer-key.json replaced by a folder",
+  "edits": [
+    {
+      "op": "dir",
+      "file": "answer-key.json"
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json: it is not a regular file"
+  ],
+  "loader": {
+    "needle": "answer-key.json",
+    "check": "file"
+  }
+}

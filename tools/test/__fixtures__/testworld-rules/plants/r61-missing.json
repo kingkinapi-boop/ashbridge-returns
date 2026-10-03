@@ -1,0 +1,18 @@
+{
+  "rule": "R61",
+  "base": "C01",
+  "what": "onboarding.json removed",
+  "edits": [
+    {
+      "op": "remove",
+      "file": "onboarding.json"
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/onboarding.json: the file is missing"
+  ],
+  "loader": {
+    "needle": "onboarding.json",
+    "check": "file"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "rule": "R60",
+  "base": "C07",
+  "what": "onboarding financial_year_end a day before the fiscal year ends",
+  "edits": [
+    {
+      "op": "set",
+      "file": "onboarding.json",
+      "path": [
+        "corporation",
+        "financial_year_end"
+      ],
+      "value": "2025-12-30"
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals/onboarding.json corporation.financial_year_end: 2025-12-30, but the fiscal year ends 2025-12-31"
+  ],
+  "loader": {
+    "needle": "financial_year_end"
+  }
+}

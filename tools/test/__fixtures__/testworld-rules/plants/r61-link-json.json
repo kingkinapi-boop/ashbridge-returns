@@ -1,0 +1,25 @@
+{
+  "rule": "R61",
+  "base": "C07",
+  "what": "onboarding.json a link to a valid copy beside it",
+  "edits": [
+    {
+      "op": "copyFile",
+      "from": "onboarding.json",
+      "to": "onboarding-copy.json"
+    },
+    {
+      "op": "link",
+      "file": "onboarding.json",
+      "target": "onboarding-copy.json"
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals/onboarding.json: it is a link",
+    "07-riverdale-rentals/onboarding.json: it is a link; a client folder holds only regular files and folders"
+  ],
+  "loader": {
+    "needle": "onboarding.json",
+    "check": "file"
+  }
+}

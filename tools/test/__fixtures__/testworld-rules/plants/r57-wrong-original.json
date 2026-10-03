@@ -1,0 +1,24 @@
+{
+  "rule": "R57",
+  "base": "C10",
+  "what": "the catalogue pins another original for a duplicate row",
+  "catalogue": [
+    {
+      "op": "set",
+      "id": "10-F02",
+      "path": [
+        "marker",
+        "rows",
+        0,
+        "dupOf"
+      ],
+      "value": "10-CHQ-2025-03-0007"
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-03-0009 (10-F02): the answer key's original is 10-CHQ-2025-03-0008; the catalogue pins 10-CHQ-2025-03-0007"
+  ],
+  "loader": {
+    "needle": "10-CHQ-2025-03-0009"
+  }
+}

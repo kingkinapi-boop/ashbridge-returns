@@ -1,0 +1,47 @@
+{
+  "rule": "R58",
+  "base": "C07",
+  "what": "the chequing account keyed \"constructor\" everywhere it is named",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "accounts",
+        0,
+        "key"
+      ],
+      "value": "constructor"
+    },
+    {
+      "op": "rename",
+      "file": "answer-key.json",
+      "path": [
+        "statementBalances"
+      ],
+      "from": "CHQ",
+      "to": "constructor"
+    },
+    {
+      "op": "setAll",
+      "file": "answer-key.json",
+      "path": [
+        "transactions"
+      ],
+      "where": {
+        "acct": "CHQ"
+      },
+      "set": {
+        "acct": "constructor"
+      }
+    }
+  ],
+  "problems": [
+    "07-riverdale-rentals/answer-key.json accounts: the key \"constructor\" is the name of an Object.prototype member",
+    "07-riverdale-rentals/answer-key.json statementBalances: the key \"constructor\" is the name of an Object.prototype member",
+    "07-riverdale-rentals/answer-key.json transactions[].acct: \"constructor\" is the name of an Object.prototype member (150 rows)"
+  ],
+  "loader": {
+    "needle": "constructor"
+  }
+}

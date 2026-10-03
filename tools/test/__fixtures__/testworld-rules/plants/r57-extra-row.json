@@ -1,0 +1,25 @@
+{
+  "rule": "R57",
+  "base": "C10",
+  "what": "an extra row carrying missingFromExport that no entry pins",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        {
+          "id": "10-CHQ-2025-06-0001"
+        },
+        "missingFromExport"
+      ],
+      "value": true
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-06-0001: it carries missingFromExport and no fault catalogue entry pins it by id under that marker"
+  ],
+  "loader": {
+    "needle": "10-CHQ-2025-06-0001"
+  }
+}

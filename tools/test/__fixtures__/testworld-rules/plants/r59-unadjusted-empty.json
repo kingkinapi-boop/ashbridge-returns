@@ -1,0 +1,23 @@
+{
+  "rule": "R59",
+  "base": "C01",
+  "what": "the unadjusted trial balance has no rows",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "trialBalance",
+        "unadjusted",
+        "rows"
+      ],
+      "value": []
+    }
+  ],
+  "problems": [
+    "01-maple-ridge/answer-key.json trialBalance.unadjusted.rows: the list is empty"
+  ],
+  "loader": {
+    "needle": "unadjusted"
+  }
+}

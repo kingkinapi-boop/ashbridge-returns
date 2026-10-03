@@ -1,0 +1,40 @@
+{
+  "rule": "R57",
+  "base": "C10",
+  "what": "the 10-F01 marker pinned by a count and a sum instead of rows",
+  "catalogue": [
+    {
+      "op": "delete",
+      "id": "10-F01",
+      "path": [
+        "marker",
+        "rows"
+      ]
+    },
+    {
+      "op": "set",
+      "id": "10-F01",
+      "path": [
+        "marker",
+        "count"
+      ],
+      "value": 56
+    },
+    {
+      "op": "set",
+      "id": "10-F01",
+      "path": [
+        "marker",
+        "totalCents"
+      ],
+      "value": 0
+    }
+  ],
+  "contains": [
+    "fault catalogue 10-F01: the marker key count is not one of field, account, month, rows (a count or a sum never pins a row)",
+    "fault catalogue 10-F01: the marker key totalCents is not one of field, account, month, rows (a count or a sum never pins a row)",
+    "fault catalogue 10-F01: the marker lists no rows (each marked row is pinned by id, date and amount)",
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-05-0056: it carries missingFromExport and no fault catalogue entry pins it by id under that marker"
+  ],
+  "count": 59
+}

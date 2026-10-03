@@ -1,0 +1,25 @@
+{
+  "rule": "R57",
+  "base": "C10",
+  "what": "a marked row moved to another day of the same month",
+  "edits": [
+    {
+      "op": "set",
+      "file": "answer-key.json",
+      "path": [
+        "transactions",
+        {
+          "id": "10-CHQ-2025-05-0001"
+        },
+        "date"
+      ],
+      "value": "2025-05-20"
+    }
+  ],
+  "problems": [
+    "10-danforth-cleaning/answer-key.json 10-CHQ-2025-05-0001 (10-F01): the answer key has 2025-05-20 49007 cents; the catalogue pins 2025-05-02 49007 cents"
+  ],
+  "loader": {
+    "needle": "10-CHQ-2025-05-0001"
+  }
+}
