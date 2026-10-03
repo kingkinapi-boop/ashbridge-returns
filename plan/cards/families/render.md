@@ -1,5 +1,7 @@
 # Family: test documents ({doc})
 
+Phase (the card's own, in plan/slices.json). Where: cloud (scan bytes are compared on the cloud Linux runner, as W20).
+
 Cards W21 to W38. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 03 (documents) and `testworld/render/_core/` (W20).
 
 **Layouts first (decision 0024):** before W21's spec, a research pair and a research checker write `reference/layouts/<doc>.md` for each document kind from public pages only (bank statement guides and samples, CRA slips, payroll, loans): columns, formats, running balances, page carry-over. No client documents. Each render card cites its layout file; its check compares the rendered document with it.
