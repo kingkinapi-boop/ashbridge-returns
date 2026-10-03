@@ -1,10 +1,13 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "A455: spec patch for the A453 section, see card directive",
+ "note": "local box: cloud-only job (Where: cloud, Postgres 16)",
  "reopenedFrom": "05be2607",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T09:52:01.046Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T09:52:14.065Z",
+ "mode": "turbo",
+ "lastRelease": {
+  "tip": "05be26079f331955df5eff833c7dce5fd0ab1c26"
+ }
 }
