@@ -4,7 +4,7 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 ## 1. Needs you
 
-Nothing now. Thank you for landing the batch. Claude Code's auto mode may refuse the Lead's push to main again at the next landing; if it does, the exact two commands will be here for you to paste.
+Nothing now. Thank you for landing the batch.
 
 ## 2. What the Lead is doing now (3 Oct, 17:35 UTC)
 
