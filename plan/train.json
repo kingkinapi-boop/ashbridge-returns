@@ -1,15 +1,15 @@
 {
-  "status": "landed",
+  "status": "green",
   "branch": "claude/train",
-  "head": "5deca4a3",
+  "head": "12af2528",
   "cards": [
-    "CQ3",
-    "W16",
-    "FX2"
+    "SC",
+    "CQ4",
+    "CQ5",
+    "FX10"
   ],
-  "requested_at": "2026-10-03T07:17:08Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). W16 touches reference/sample-clients: run node reference/sample-clients/verify.mjs on the train head (A417). CQ3 changes claim.mjs: run every tools test. FX2 is security: run mutate:changed for FX2 (cloud; Stryker cannot run on the laptop). scope.mjs on FX2 flags only the spec job's report commit 22e1212 (known tool gap, CQ4): not a failure.",
-  "by": "cloud-91039f",
-  "report": "reports/train-20261003-0752.md",
-  "landed_at": "2026-10-03T07:55:19Z"
+  "requested_at": "2026-10-03T08:46:31Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). CQ4 and CQ5 change scope.mjs, lib.mjs and claim.mjs: run every tools test. SC adds the card rules: run them all; SC's known.json owners must all be open cards. FX10 card check: run the db project 20 times under load (its check ran test:flake 5 times only, A445). SC is core: mutate:changed for SC (cloud).",
+  "by": "cloud-915252",
+  "report": "reports/train-20261003-1041.md"
 }
