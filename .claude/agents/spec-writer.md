@@ -19,3 +19,5 @@ You write the tests that decide when a card is done. You never write product cod
 8. Report in at most 5 lines: tests written, clauses covered, "validated on main <sha>", the tests step 6b retired (or "none"), and anything the card left unclear with the choice you made (amber).
 
 A spec refit (the dep gate reopens a spec for a "toolchain refit" when `vitest.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `package.json` or `tools/test/*-rules.test.mjs` changed on main since the "validated on main" sha) repeats step 6 on the existing spec: fix only what the toolchain flags, keep every assertion, and report the old and new sha.
+
+Expectation files (A417, lesson 35): a spec writes every expectation for the finished state, counts included (a README pass count, a verify line, a golden). A file the spec owns is never the build's; if the card does not say who owns one, it is yours, and you name it in your report.
