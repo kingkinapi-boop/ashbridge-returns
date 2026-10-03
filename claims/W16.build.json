@@ -1,11 +1,10 @@
 {
  "card": "W16",
  "role": "build",
- "round": 1,
- "spec": "78a9fba1",
- "worker": "cloud-4c2861",
- "state": "reopened",
- "at": "2026-10-03T05:01:39.472Z",
- "mode": "turbo",
- "note": "A415: fixup spec GO (reports/W16-spec-review-3.md)"
+ "round": 2,
+ "spec": "6c428ac4",
+ "worker": "cloud-a113b9",
+ "state": "working",
+ "at": "2026-10-03T06:20:47.379Z",
+ "mode": "turbo"
 }
