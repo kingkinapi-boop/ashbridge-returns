@@ -1,0 +1,9 @@
+{
+ "card": "A08",
+ "role": "build",
+ "state": "released",
+ "worker": "lead",
+ "at": "2026-10-03T18:19:43.057Z",
+ "note": "wait: Opus spec review of A08 (local, from 18:21Z; core) before the build",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
+}
