@@ -2,7 +2,10 @@
  "card": "FX17",
  "role": "spec",
  "worker": "cloud-e9d462",
- "state": "working",
- "at": "2026-10-03T09:37:46.004Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T10:47:14.580Z",
+ "mode": "turbo",
+ "note": "72 db + 11 unit tests; SC3 harness FX17 KNOWN deleted; 4 db fixtures rewritten (seed actors); reports/FX17-spec.md",
+ "commit": "62567b09",
+ "validated": "9fec3666"
 }
