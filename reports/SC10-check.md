@@ -1,14 +1,13 @@
-# SC10 check: PASS (cloud-161fd8, Node 24.21.0)
+# SC10 check (round 2, landing form): PASS
+
+Worker cloud-2cc0af. Checked claude/SC10 merged with origin/main (6c10c28), SC10 set done in plan/slices.json (not committed). Node 24.21.0.
 
 - typecheck, lint, deps:check: clean.
-- tools tests: 426 of 426 pass; card-rules.test.mjs 27 of 27 (each plant fails by name; KNOWN exact: R86 FX7, R89 for E00, E01, G00 x2, Q00 as the card expects).
-- Spec files (tools/test) unchanged since spec commit e578b6e2. scope.mjs: SCOPE OK, 14 files.
-- unbuilt-guards.json: 17 guards (every PAIRS move; deps.ts does not exist yet), every owner is a card in slices.json.
-- No @mutate files and no db/schema/vitest.config.ts change: mutation, pg16 and flake runs not applicable.
-- Not run: e2e (tools-only card, no screens, no security tag).
+- tools/test (all 26 files): 539 of 539 pass; card-rules 78 of 78.
+- src/contracts/schema-rules.db.test.ts (db project, PGlite): 23 of 23.
+- scope.mjs SC10: OK, 18 files inside Paths. KNOWN is empty. R89 list = the 17 guards of MOVES; each owner is an open card with the list file in Paths.
+- Opus adversarial read (A496): PASS; 20 mutants over P2 to P7, each killed by a named test.
 
-## Permission gaps
-None.
+Non-blocking notes (fix forward before src/pipeline/deps.ts exists): codeOnly (card-rules.test.mjs:309-342) ignores regex literals, so a quote in one can hide createLifecycle; objectOf (:377-380) takes the first same-named const in any scope; nested type arguments in createLifecycle<...>( fail loudly although the header allows them; a guards option in a second argument is ignored; knownShape's subject test (:533) is a substring match ("V1" matches "V10").
 
-## Model
-Sonnet 5.5 (core adversarial Opus read not run: the rules file is test-only and I compared KNOWN, the starting list and owners by hand).
+Permission gaps: none. Model: Sonnet 5.5 checker; Opus 5.5 subagent for the read.
