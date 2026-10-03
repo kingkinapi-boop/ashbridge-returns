@@ -1,12 +1,15 @@
 {
-  "status": "checking",
+  "status": "landed",
   "branch": "claude/train",
-  "head": "677e92f",
+  "head": "5deca4a3",
   "cards": [
-    "CQ2",
-    "SC4"
+    "CQ3",
+    "W16",
+    "FX2"
   ],
-  "requested_at": "2026-10-03T05:25:26Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). SC4 is core: its Opus read is done (local-3). CQ2 changes the queue tools: run every tools test. No sample clients on board.",
-  "by": "cloud-8369bc"
+  "requested_at": "2026-10-03T07:17:08Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). W16 touches reference/sample-clients: run node reference/sample-clients/verify.mjs on the train head (A417). CQ3 changes claim.mjs: run every tools test. FX2 is security: run mutate:changed for FX2 (cloud; Stryker cannot run on the laptop). scope.mjs on FX2 flags only the spec job's report commit 22e1212 (known tool gap, CQ4): not a failure.",
+  "by": "cloud-91039f",
+  "report": "reports/train-20261003-0752.md",
+  "landed_at": "2026-10-03T07:55:19Z"
 }
