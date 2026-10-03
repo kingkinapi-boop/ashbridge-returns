@@ -53,3 +53,4 @@
 {"card":"CQ4","closed":"2026-10-03","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":10,"amber":0,"red":0,"accepted":true}
 {"card":"CQ5","closed":"2026-10-03","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":5,"amber":0,"red":0,"accepted":true}
 {"card":"FX10","closed":"2026-10-03","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":14,"amber":0,"red":0,"accepted":true}
+{"card":"DB16","closed":"2026-10-03","mode":"turbo","rounds":11,"check_fails":0,"train_fails":0,"jobs":31,"amber":3,"red":0,"accepted":true}

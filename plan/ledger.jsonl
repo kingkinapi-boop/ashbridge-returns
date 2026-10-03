@@ -556,3 +556,15 @@
 {"ts":"2026-10-03T11:31:29.118Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 3 (Opus)","allowed":true}
 {"ts":"2026-10-03T11:43:57.199Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T11:43:57.705Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T11:53:00.819Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"A04 round 5b security review","allowed":true}
+{"ts":"2026-10-03T11:53:04.457Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T11:53:05.095Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T11:53:05.699Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T11:57:32.031Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T11:57:32.477Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T12:12:11.859Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T12:12:12.478Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T12:30:00.844Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"A04 clock findings review","allowed":true}
+{"ts":"2026-10-03T12:32:27.508Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"System numbers since last Critic","allowed":true}
+{"ts":"2026-10-03T12:32:40.474Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Progress and projection estimate","allowed":true}
+{"ts":"2026-10-03T12:32:45.515Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Outside world since 2 Oct","allowed":true}
