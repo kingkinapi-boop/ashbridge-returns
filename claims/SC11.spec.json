@@ -2,10 +2,12 @@
  "card": "SC11",
  "role": "spec",
  "worker": "cloud-7e75a4",
- "state": "working",
- "at": "2026-10-03T09:08:13.643Z",
+ "state": "released",
+ "at": "2026-10-03T09:08:22.849Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "none"
- }
+ },
+ "note": "wait: Paths gap, Lead must add src/core/db/index.ts and vitest-setup.ts and pick spec file name; see reports/SC11-spec.md on claude/SC11-report",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"DB16\"],\"depStatus\":[\"carded\"]}"
 }
