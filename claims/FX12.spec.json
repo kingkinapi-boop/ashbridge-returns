@@ -1,11 +1,10 @@
 {
  "card": "FX12",
  "role": "spec",
- "worker": "cloud-d98b06",
- "state": "reopened",
- "at": "2026-10-03T08:25:32.768Z",
- "mode": "turbo",
  "note": "A443: see card directive",
- "commit": "afeebf8",
- "validated": "0e39bb0"
+ "reopenedFrom": "afeebf8",
+ "worker": "cloud-117624",
+ "state": "working",
+ "at": "2026-10-03T08:29:11.408Z",
+ "mode": "turbo"
 }
