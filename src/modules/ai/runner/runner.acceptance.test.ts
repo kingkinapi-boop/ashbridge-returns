@@ -407,7 +407,9 @@ describe('ARC-22 the project engine writes one inbox file in the fixed format an
       expect(res.reason).toContain('not one result or refusal')
       expect(res.reason).toMatch(/\bARC-22\b/)
       expect(res.problems).toEqual([])
+      expect(r.refusals('finding')).toBe(0)
       expect(allText(res) + lines.join('\n')).not.toContain(canary)
+      expect(allText(res) + lines.join('\n')).not.toContain(exchange)
     } finally {
       vi.useRealTimers()
     }
@@ -1098,6 +1100,32 @@ describe('ARC-22 round 2: outbox files the job is not waiting for', () => {
         if (typeof p === 'string') touched.push(path.resolve(p))
         return (openSync as (...a: unknown[]) => number)(p, ...rest)
       }))
+      // A04 spec review 5, G2: the callback, stream and promise forms too (pass-through), so no read is invisible.
+      const open = fs.open.bind(fs)
+      vi.spyOn(fs, 'open').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        ;(open as (...a: unknown[]) => void)(p, ...rest)
+      }))
+      const readFile = fs.readFile.bind(fs)
+      vi.spyOn(fs, 'readFile').mockImplementation(((p: unknown, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        ;(readFile as (...a: unknown[]) => void)(p, ...rest)
+      }))
+      const createReadStream = fs.createReadStream.bind(fs)
+      vi.spyOn(fs, 'createReadStream').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        return (createReadStream as (...a: unknown[]) => fs.ReadStream)(p, ...rest)
+      }))
+      const promisesOpen = fs.promises.open.bind(fs.promises)
+      vi.spyOn(fs.promises, 'open').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        return (promisesOpen as (...a: unknown[]) => unknown)(p, ...rest)
+      }) as typeof fs.promises.open)
+      const promisesReadFile = fs.promises.readFile.bind(fs.promises)
+      vi.spyOn(fs.promises, 'readFile').mockImplementation(((p: unknown, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        return (promisesReadFile as (...a: unknown[]) => unknown)(p, ...rest)
+      }) as typeof fs.promises.readFile)
       const p = projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
       await vi.advanceTimersByTimeAsync(0)
       for (let i = 0; i < 6; i++) await vi.advanceTimersByTimeAsync(5)
@@ -1106,6 +1134,8 @@ describe('ARC-22 round 2: outbox files the job is not waiting for', () => {
       expect(await p).toMatchObject({ ok: true, output: GOOD_REC().output })
       expect(lines.filter((l) => l.includes(folder))).toEqual([`ai exchange: ignored outbox file ${JSON.stringify(folder)}`])
       expect(touched).not.toContain(folderPath)
+      // liveness (G2): the own file is seen opening, so the spies are not blind
+      expect(touched).toContain(path.resolve(exchange, 'outbox', `${JOB_ID}.json`))
       expect(lines.join('\n')).not.toContain(exchange)
     } finally {
       vi.useRealTimers()

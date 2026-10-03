@@ -1,5 +1,6 @@
 // A04 round 5 acceptance tests: one safe way to read a file another process may have planted (spec-writer;
-// builders never edit this file). reports/A04-findings-5.md fix 4 and "Tests to add"; clauses SEC-10, ARC-22.
+// builders never edit this file). reports/A04-findings-5.md fix 4 and "Tests to add"; reports/A04-spec-review-5.md G4
+// (A456). Clause ARC-22 (the Claude project has no other way into Returns than its one result file).
 // FIFO and symlink cases need Linux: on win32 they show as skipped by name, and the check quotes them passing on
 // the cloud box.
 //
@@ -33,7 +34,8 @@ async function safeRead(): Promise<SafeReadModule> {
   return mod as SafeReadModule
 }
 
-const linuxOnly = process.platform === 'win32'
+/** True on Windows, where the FIFO and symlink cases are skipped by name (they run on the Linux cloud box). */
+const onWin32 = process.platform === 'win32'
 
 let dir: string
 beforeEach(() => {
@@ -100,6 +102,37 @@ function watchDescriptors(): { opened: number[]; closed: number[]; bytesRead: ()
   return { opened, closed, bytesRead: () => bytes }
 }
 
+/** G4: the descriptor openSync returned, every fd fstatSync was asked about, and how often a path stat was taken. */
+function watchStats(): { fds: number[]; fstatFds: number[]; pathStats: () => number } {
+  const fds: number[] = []
+  const fstatFds: number[] = []
+  let pathStats = 0
+  const openSync = fs.openSync.bind(fs)
+  vi.spyOn(fs, 'openSync').mockImplementation(((...a: unknown[]) => {
+    const fd = (openSync as (...b: unknown[]) => number)(...a)
+    fds.push(fd)
+    return fd
+  }))
+  const fstatSync = fs.fstatSync.bind(fs)
+  vi.spyOn(fs, 'fstatSync').mockImplementation(((fd: number, o?: unknown) => {
+    fstatFds.push(fd)
+    return (fstatSync as (f: number, p?: unknown) => fs.Stats)(fd, o)
+  }))
+  const statSync = fs.statSync.bind(fs)
+  vi.spyOn(fs, 'statSync').mockImplementation(((...a: unknown[]) => {
+    pathStats++
+    return (statSync as (...b: unknown[]) => unknown)(...a)
+  }) as typeof fs.statSync)
+  return { fds, fstatFds, pathStats: () => pathStats }
+}
+
+/** G4: the swap was found by fstat on the opened descriptor, never by a second look at the path. */
+function expectFstatOnTheDescriptor(w: ReturnType<typeof watchStats>): void {
+  expect(w.fds).toHaveLength(1)
+  expect(w.fstatFds).toEqual(w.fds)
+  expect(w.pathStats()).toBe(0)
+}
+
 /** A copy of real stats with one field changed (the prototype keeps isFile() and the rest). */
 function statsWith(file: string, change: Partial<Pick<fs.Stats, 'dev' | 'ino'>>): fs.Stats {
   const st = fs.lstatSync(file)
@@ -113,15 +146,15 @@ function pretendLstat(file: string, fake: fs.Stats): void {
     path.resolve(String(p)) === path.resolve(file) ? fake : (lstatSync as (q: fs.PathLike, r?: unknown) => fs.Stats)(p, o)))
 }
 
-describe('SEC-10 readRegularFile reads a regular file as UTF-8 text, up to the cap', () => {
-  test('SEC-10 a regular file under the cap comes back as its UTF-8 text', async () => {
+describe('ARC-22 readRegularFile reads a regular file as UTF-8 text, up to the cap', () => {
+  test('ARC-22 a regular file under the cap comes back as its UTF-8 text', async () => {
     const { readRegularFile } = await safeRead()
     const text = '{"summary":"Café Érable (Test)"}\n'
     fs.writeFileSync(at('a.json'), text, 'utf8')
     expect(readRegularFile(at('a.json'), 1024)).toEqual({ ok: true, text })
   })
 
-  test('SEC-10 the result is a value, never a promise (the outbox poll reads synchronously)', async () => {
+  test('ARC-22 the result is a value, never a promise (the outbox poll reads synchronously)', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('a.json'), '{}')
     const got: unknown = readRegularFile(at('a.json'), 10)
@@ -129,7 +162,7 @@ describe('SEC-10 readRegularFile reads a regular file as UTF-8 text, up to the c
     expect(got).toEqual({ ok: true, text: '{}' })
   })
 
-  test('SEC-10 exactly maxBytes bytes is read; maxBytes + 1 is too-big', async () => {
+  test('ARC-22 exactly maxBytes bytes is read; maxBytes + 1 is too-big', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('ten.json'), 'x'.repeat(10))
     fs.writeFileSync(at('eleven.json'), 'x'.repeat(11))
@@ -137,14 +170,14 @@ describe('SEC-10 readRegularFile reads a regular file as UTF-8 text, up to the c
     expect(readRegularFile(at('eleven.json'), 10)).toEqual({ ok: false, reason: 'too-big' })
   })
 
-  test('SEC-10 the cap counts bytes, not characters: "éé" is 4 bytes', async () => {
+  test('ARC-22 the cap counts bytes, not characters: "éé" is 4 bytes', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('e.json'), 'éé', 'utf8')
     expect(readRegularFile(at('e.json'), 3)).toEqual({ ok: false, reason: 'too-big' })
     expect(readRegularFile(at('e.json'), 4)).toEqual({ ok: true, text: 'éé' })
   })
 
-  test('SEC-10 an empty file reads as empty text, even with a cap of 0; one byte over a cap of 0 is too-big', async () => {
+  test('ARC-22 an empty file reads as empty text, even with a cap of 0; one byte over a cap of 0 is too-big', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('empty.json'), '')
     fs.writeFileSync(at('one.json'), 'x')
@@ -152,7 +185,7 @@ describe('SEC-10 readRegularFile reads a regular file as UTF-8 text, up to the c
     expect(readRegularFile(at('one.json'), 0)).toEqual({ ok: false, reason: 'too-big' })
   })
 
-  test('SEC-10 a big file is never read whole: at most maxBytes + 1 bytes are read, and never by readFileSync', async () => {
+  test('ARC-22 a big file is never read whole: at most maxBytes + 1 bytes are read, and never by readFileSync', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('big.json'), Buffer.alloc(1024 * 1024, 0x20))
     const whole = vi.spyOn(fs, 'readFileSync')
@@ -164,7 +197,7 @@ describe('SEC-10 readRegularFile reads a regular file as UTF-8 text, up to the c
     expect(whole).not.toHaveBeenCalled()
   })
 
-  test('SEC-10 a file that grows past what fstat saw is still cut at maxBytes + 1 (the read, not the size, decides)', async () => {
+  test('ARC-22 a file that grows past what fstat saw is still cut at maxBytes + 1 (the read, not the size, decides)', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('grows.json'), 'x'.repeat(5))
     const fstatSync = fs.fstatSync.bind(fs)
@@ -179,13 +212,13 @@ describe('SEC-10 readRegularFile reads a regular file as UTF-8 text, up to the c
   })
 })
 
-describe('SEC-10 readRegularFile opens only a regular file it has looked at', () => {
-  test('SEC-10 a missing file is gone', async () => {
+describe('ARC-22 readRegularFile opens only a regular file it has looked at', () => {
+  test('ARC-22 a missing file is gone', async () => {
     const { readRegularFile } = await safeRead()
     expect(readRegularFile(at('missing.json'), 10)).toEqual({ ok: false, reason: 'gone' })
   })
 
-  test('SEC-10 a folder is not-a-file and is never opened', async () => {
+  test('ARC-22 a folder is not-a-file and is never opened', async () => {
     const { readRegularFile } = await safeRead()
     fs.mkdirSync(at('a-dir.json'))
     const opens = watchOpens()
@@ -193,7 +226,7 @@ describe('SEC-10 readRegularFile opens only a regular file it has looked at', ()
     expect(opens.paths).not.toContain(path.resolve(at('a-dir.json')))
   })
 
-  test.skipIf(linuxOnly)('SEC-10 (Linux) a symlink to a regular file is not-a-file, and neither the link nor its target is opened', async () => {
+  test.skipIf(onWin32)('ARC-22 (Linux) a symlink to a regular file is not-a-file, and neither the link nor its target is opened', async () => {
     const { readRegularFile } = await safeRead()
     const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'a04-safe-read-outside-'))
     try {
@@ -210,7 +243,7 @@ describe('SEC-10 readRegularFile opens only a regular file it has looked at', ()
     }
   })
 
-  test.skipIf(linuxOnly)('SEC-10 (Linux) a FIFO is not-a-file at once and is never opened (an open would block)', async () => {
+  test.skipIf(onWin32)('ARC-22 (Linux) a FIFO is not-a-file at once and is never opened (an open would block)', async () => {
     const { readRegularFile } = await safeRead()
     mkfifo(at('pipe.json'))
     const opens = watchOpens()
@@ -218,7 +251,7 @@ describe('SEC-10 readRegularFile opens only a regular file it has looked at', ()
     expect(opens.paths).not.toContain(path.resolve(at('pipe.json')))
   }, 30_000) // mkfifo is a child process (testing.md: 30 s or more)
 
-  test('SEC-10 the file is opened read-only, with O_NONBLOCK where the platform defines it', async () => {
+  test('ARC-22 the file is opened read-only, with O_NONBLOCK where the platform defines it', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('a.json'), '{}')
     const flags: unknown[] = []
@@ -238,24 +271,36 @@ describe('SEC-10 readRegularFile opens only a regular file it has looked at', ()
     if (typeof nonBlock === 'number') expect(n & nonBlock).toBe(nonBlock)
   })
 
-  test('SEC-10 a file swapped between the look and the open (another inode) is gone', async () => {
+  test('ARC-22 a file swapped between the look and the open (another inode) is gone', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('a.json'), '{"swapped":"PLANTED (Test)"}')
     fs.writeFileSync(at('b.json'), '{}')
     const otherIno = fs.lstatSync(at('b.json')).ino
     pretendLstat(at('a.json'), statsWith(at('a.json'), { ino: otherIno }))
+    const w = watchStats()
     expect(readRegularFile(at('a.json'), 1024)).toEqual({ ok: false, reason: 'gone' })
+    expectFstatOnTheDescriptor(w)
   })
 
-  test('SEC-10 a file swapped for one on another device (same inode number, another dev) is gone', async () => {
+  test('ARC-22 a file swapped for one on another device (same inode number, another dev) is gone', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('a.json'), '{}')
     const real = fs.lstatSync(at('a.json'))
     pretendLstat(at('a.json'), statsWith(at('a.json'), { dev: real.dev + 1 }))
+    const w = watchStats()
     expect(readRegularFile(at('a.json'), 1024)).toEqual({ ok: false, reason: 'gone' })
+    expectFstatOnTheDescriptor(w)
   })
 
-  test('SEC-10 a file removed between the look and the open is gone', async () => {
+  test('ARC-22 a plain read also checks the opened descriptor with fstat, never the path with stat (G4 liveness)', async () => {
+    const { readRegularFile } = await safeRead()
+    fs.writeFileSync(at('a.json'), '{}')
+    const w = watchStats()
+    expect(readRegularFile(at('a.json'), 10)).toEqual({ ok: true, text: '{}' })
+    expectFstatOnTheDescriptor(w)
+  })
+
+  test('ARC-22 a file removed between the look and the open is gone', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('a.json'), '{}')
     vi.spyOn(fs, 'openSync').mockImplementation((() => {
@@ -266,7 +311,7 @@ describe('SEC-10 readRegularFile opens only a regular file it has looked at', ()
     expect(readRegularFile(at('a.json'), 1024)).toEqual({ ok: false, reason: 'gone' })
   })
 
-  test('SEC-10 every descriptor opened is closed: after a read, a too-big file and a swapped file', async () => {
+  test('ARC-22 every descriptor opened is closed: after a read, a too-big file and a swapped file', async () => {
     const { readRegularFile } = await safeRead()
     fs.writeFileSync(at('ok.json'), '{}')
     fs.writeFileSync(at('big.json'), 'x'.repeat(50))
