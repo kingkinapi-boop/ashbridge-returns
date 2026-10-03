@@ -5,8 +5,8 @@
  "spec": "ea5d29d",
  "worker": "cloud-186a3b",
  "state": "released",
- "at": "2026-10-02T21:41:58.052Z",
+ "at": "2026-10-03T04:24:12.142Z",
  "mode": "turbo",
- "note": "wait: round 2 (reports/A04-findings.md); spec round after A06 round 2 lands, then build",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"F04\",\"F06\"],\"depStatus\":[\"done\",\"done\"]}"
+ "note": "wait: core spec review (reports/A04-spec-review-2.md); build opens after GO",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"F04\",\"F06\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
 }
