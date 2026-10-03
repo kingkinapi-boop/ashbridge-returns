@@ -10164,7 +10164,7 @@
       "id": "CQ11",
       "title": "Queue: no re-offered checks after a wait, honest card counts",
       "phase": 0,
-      "size": "S",
+      "size": "M",
       "core": false,
       "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
     },
