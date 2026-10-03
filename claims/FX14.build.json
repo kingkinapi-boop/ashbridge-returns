@@ -1,8 +1,11 @@
 {
  "card": "FX14",
  "role": "build",
- "state": "reported",
+ "state": "released",
  "worker": "lead",
- "at": "2026-10-03T19:09:58.456Z",
- "note": "A504: spec-only patch (the whole split is in the spec); check the spec commit"
+ "at": "2026-10-03T21:06:31.382Z",
+ "note": "merged",
+ "lastRelease": {
+  "tip": "bed91318a8ac98a5d157ae3cbdbd409ce5f86858"
+ }
 }
