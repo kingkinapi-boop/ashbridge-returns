@@ -26,7 +26,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:40Z by the Lea
 | CQ2 | check PASS | board on the next train |
 | JH0 | spec reported | build after W00c lands |
 
-Cloud runs fired 04:28Z: 4 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). No local workers running: npm ci running 04:40Z, then up to 3 local Opus workers.
+Cloud runs fired 04:28Z: 4 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). npm ci done 04:45Z (exceljs, pdfjs-dist present). 3 local Opus workers (local-1 to local-3) started 04:46Z.
 
 ## Next, in order
 
