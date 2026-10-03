@@ -483,3 +483,41 @@ describe('ARC-15 CQ11 A493: the expectation class is case-blind for README and v
     expect(r.out).toMatch(/docs\/readme\.md/)
   })
 })
+
+// CQ11 (A500, R82): `git diff-tree --cc --name-only` names a file both parents changed in different places; a clean
+// two-sided merge takes every line from one parent, so it is not hand editing (SC11's merge 53c6a01, tools/test-homes.json).
+describe('ARC-15 CQ11 A500 R82: a clean two-sided merge of a Spec-named file is not flagged', () => {
+  const lines = (a, z) => ['top ' + a, 'l2', 'l3', 'l4', 'l5', 'l6', 'l7', 'l8', 'bottom ' + z, ''].join('\n')
+  async function twoSided(handEdit) {
+    const w = await world()
+    await commit(w, 'main has a long README', { 'README.md': lines('0', '0') })
+    await git(w, 'push', '-q', 'origin', 'main')
+    await commit(w, 'main edits the bottom', { 'README.md': lines('0', 'main') })
+    await git(w, 'push', '-q', 'origin', 'main')
+    await git(w, 'reset', '-q', '--hard', 'HEAD~1')
+    await branch(w, [
+      () => commit(w, 'spec(F): acceptance tests', { 'README.md': lines('spec', '0') }),
+      () => commit(w, 'build(F): code', code),
+      async () => {
+        await git(w, 'merge', '-q', '--no-commit', '--no-ff', 'origin/main')
+        if (handEdit) put(w, 'README.md', lines('spec', 'main').replace('l5', 'l5 by hand'))
+        await git(w, 'add', 'README.md')
+        await git(w, 'commit', '-q', '-m', 'Merge origin/main into claude/F')
+      }
+    ])
+    return w
+  }
+
+  test('ARC-15 R82 both parents changed README.md in different places and the merge took each line from one parent: SCOPE OK', async () => {
+    const r = await scope(await twoSided(false))
+    expect(r.code).toBe(0)
+    expect(r.out).toMatch(/SCOPE OK F/)
+    expect(r.out).not.toMatch(/README\.md in merge/)
+  })
+
+  test('ARC-15 R82 plant: the same two-sided merge with one line typed by hand is still flagged', async () => {
+    const r = await scope(await twoSided(true))
+    expect(r.code).toBe(1)
+    expect(r.out).toMatch(/README\.md in merge/)
+  })
+})
