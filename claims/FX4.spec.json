@@ -1,9 +1,11 @@
 {
  "card": "FX4",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: no assertion changed; 40 acceptance tests, 34 red by design + 9 rule tests naming FX4 files",
  "worker": "cloud-657654",
- "state": "working",
- "at": "2026-10-03T18:13:24.142Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T18:23:17.063Z",
+ "mode": "turbo",
+ "commit": "aeddb8a5",
+ "validated": "6e6f6348"
 }
