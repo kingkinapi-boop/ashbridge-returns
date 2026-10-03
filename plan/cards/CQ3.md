@@ -5,7 +5,7 @@ Tags: none (queue tooling).
 Paths: tools/claim.mjs, tools/test/claim-wait.test.mjs, tools/test/claim.test.mjs
 Clauses: ARC-15
 Read: `plan/cards/CQ2.md`, `.claude/skills/dispatch/SKILL.md`, `tools/claim.mjs`.
-Spec commit: 2f1a4298 (tools/test/claim-wait.test.mjs, 30 tests; retires 2 CQ1 wait-lift tests in tools/test/claim.test.mjs, rewrites 1), validated on main a50769da
+Spec commit: 2f1a4298 (tools/test/claim-wait.test.mjs, 30 tests; retires 2 CQ1 wait-lift tests in tools/test/claim.test.mjs, rewrites 1), validated on main 0f7e1cc4 (refit; first a50769da)
 
 ## Goal
 On 3 Oct the queue handed out DB16's build twice (a cloud worker, then local-3) while the Lead had reopened DB16's spec and released the build with a "wait:" note (A411, A416). Workers lose time and a build can land on old tests.
