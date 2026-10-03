@@ -25,20 +25,25 @@
 //   a refusal:  { jobId, refusal: { reason: string, problems: string[] } }  (no output, no stamp). A job whose id
 //               breaks the grammar is refused in `outbox/<inbox file stem>.json`.
 // Per-job folder: a fresh folder under the exchange folder, the working folder of the CLI call; it holds a copy of
-//   the job's inputs and, after an answer, `stamp.json` = the outbox stamp plus `ordersVersion` (sha256 hex of the
-//   bytes of ai-project/ORDERS.md followed by the bytes of ai-project/settings.json).
+//   the job's inputs. Temp files (the outbox write is a temp file then a rename) live outside `outbox/` (A420):
+//   `outbox/` only ever holds `<job id>.json` result files, even mid-run.
+// The run log (every `sink` line, and what `npm run ai:once` prints) carries the orders version: sha256 hex of the
+//   bytes of ai-project/ORDERS.md followed by the bytes of ai-project/settings.json. It is not in the stamp, which
+//   is exactly F04's 7 parts (A426); every table over the stamp's parts is derived from `versionStampSchema.shape`.
 // The CLI call: print mode, `--output-format json`, `--model <job model id>`, the orders as the system prompt
 //   (`--system-prompt` or `--system-prompt-file`), the project's settings (`--settings`), each input inside a
 //   `<data ...>...</data>` block in the prompt with every `<` inside the data escaped.
 // The model id the CLI reports is the key of `modelUsage` in its JSON (the fake prints it that way).
-// Amber choices: see the handback report of the A08 spec job (ordersVersion in the per-job stamp.json because
-//   A04's outbox and F04's stamp are strict; the refusal shape; the `<data>` wrapper; the reasons below).
+// Amber choices: see reports/A08-spec.md (the refusal shape; the `<data>` wrapper; the reasons below; the orders
+//   version as a run-log line).
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, describe, expect, test } from 'vitest'
-import { validateAiOutput } from '../../../contracts/ai'
+import { z } from 'zod'
+import { aiStepSchemas, validateAiOutput, versionStampSchema } from '../../../contracts/ai'
 import { readOwnSource } from '../../../core/testing/read-own-source'
+import { createAiRunner, InboxFileSchema, type AiJob } from '../index'
 import { runAiProjectOnce } from './index'
 import {
   AI_PROJECT_DIR,
@@ -64,7 +69,11 @@ import {
   outboxOf,
   outsideData,
   readJson,
-  sha256,
+  ordersVersionNow,
+  stampFromJob,
+  tripleOf,
+  watchNames,
+  writeApproved,
   type FakeCall,
   type FixtureName,
   type Json,
@@ -131,15 +140,7 @@ const refusalOf = (w: World, stem: string): { reason: string; problems: string[]
   return file['refusal'] as { reason: string; problems: string[] }
 }
 const golden = (file: Json): string => JSON.stringify(canonical(file), null, 2) + '\n'
-const stampOf = (j: Json, modelId = String(j['modelId'])): Json => ({
-  modelId,
-  promptVersion: j['promptVersion'],
-  promptHash: j['promptHash'],
-  inputHash: j['inputHash'],
-  ocrEngine: j['ocrEngine'],
-  ocrEngineVersion: j['ocrEngineVersion'],
-  mappingRelease: j['mappingRelease'],
-})
+const stampOf = (j: Json, modelId?: string): Json => stampFromJob(j, modelId)
 const isInside = (child: string, parent: string): boolean => {
   const rel = path.relative(fs.realpathSync(parent), fs.realpathSync(child))
   return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel))
@@ -261,6 +262,30 @@ describe('ARC-22 AI-1 one run answers the inbox once and stops', SLOW, () => {
     expect(listTree(w.outbox)).toEqual(FIXTURE_NAMES.map((n) => `${n}.json`).sort())
   })
 
+  test('ARC-22 A420 outbox/ only ever holds result files: no temp file appears there during the run, not even one renamed away', async () => {
+    const w = world()
+    fs.mkdirSync(w.outbox, { recursive: true })
+    const watch = watchNames(w.outbox)
+    await runOnce(w)
+    const seen = await watch.stop()
+    const results = FIXTURE_NAMES.map((n) => `${n}.json`)
+    // sentinel: the watcher saw the result files, so an empty list cannot pass
+    expect(seen).toEqual(expect.arrayContaining(['c01-clean.json', 'c01-unredacted.json']))
+    expect(seen.filter((n) => !results.includes(n))).toEqual([])
+    expect(listTree(w.outbox)).toEqual([...results].sort())
+  })
+
+  test('ARC-22 A420 rule: the outbox watch catches a temp file written in outbox/ and renamed to the result', async () => {
+    const w = world([])
+    fs.mkdirSync(w.outbox, { recursive: true })
+    const watch = watchNames(w.outbox)
+    fs.writeFileSync(path.join(w.outbox, 'c01-clean.json.tmp-planted'), '{}')
+    fs.renameSync(path.join(w.outbox, 'c01-clean.json.tmp-planted'), path.join(w.outbox, 'c01-clean.json'))
+    const seen = await watch.stop()
+    expect(seen).toContain('c01-clean.json.tmp-planted')
+    expect(listTree(w.outbox)).toEqual(['c01-clean.json'])
+  })
+
   test('ARC-22 a job that already has an outbox file is skipped: no call, and the file is left as it was', async () => {
     const w = world(['c01-clean', 'c01-injected'])
     fs.mkdirSync(w.outbox, { recursive: true })
@@ -294,6 +319,81 @@ describe('ARC-22 AI-1 one run answers the inbox once and stops', SLOW, () => {
     expect(w.calls()).toHaveLength(0)
     expect(r.out).not.toContain(PLANTED_SIN)
     expect(r.out).not.toContain(PLANTED_SIN_DIGITS)
+    // AI-10: the run log names the orders version on every run, even one where every job is refused
+    expect(r.out).toContain(ordersVersionNow())
+  })
+})
+
+// ---------- ARC-22, AI-10: A04's runner and this launcher together (unit twin of check 11's db test) ----------
+
+/** An A04 AI job from an inbox fixture: the inbox file minus what A04's runner adds (jobId, schema, inputHash). */
+function aiJobOf(name: FixtureName): AiJob {
+  const j = inboxJob(name)
+  delete j['jobId']
+  delete j['schema']
+  delete j['inputHash']
+  return j as unknown as AiJob
+}
+
+async function within<T>(p: Promise<T>, ms: number, label: string): Promise<T | string> {
+  let timer: NodeJS.Timeout | undefined
+  const late = new Promise<string>((resolve) => {
+    timer = setTimeout(() => {
+      resolve(`timed out: ${label}`)
+    }, ms)
+  })
+  try {
+    return await Promise.race([p, late])
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+describe('ARC-22 AI-10 A04 runner with the project engine and this launcher on one exchange folder', SLOW, () => {
+  test("ARC-22 AI-10 A04's runner writes the clean job's inbox file, the launcher answers it, and the runner accepts the answer with its F04 stamp", async () => {
+    const w = world([])
+    const ai = createAiRunner({
+      recordingsDir: path.join(w.root, 'no-recordings'),
+      approvedPath: w.approvedPath,
+      env: { AI_EXCHANGE_DIR: w.exchange },
+      pollMs: 5,
+      sink: () => undefined,
+    })
+    expect(ai.useEngine('project')).toEqual({ ok: true })
+    const pending = ai.runAiStep(aiJobOf('c01-clean'), { jobId: 'c01-clean' })
+    const until = Date.now() + 10_000
+    while (!fs.existsSync(path.join(w.inbox, 'c01-clean.json')) && Date.now() < until) await new Promise((r) => setTimeout(r, 5))
+    expect(InboxFileSchema.safeParse(readJson(path.join(w.inbox, 'c01-clean.json'))).success).toBe(true)
+    expect(await runOnce(w)).toMatchObject({ result: { ok: true } })
+    const got = await within(pending, 10_000, "A04's runner never accepted the launcher's outbox file")
+    expect(got).toEqual({ ok: true, output: VALID_OUTPUT, stamp: stampOf(inboxJob('c01-clean')) })
+    expect(w.calls()).toHaveLength(1)
+  })
+
+  test('ARC-22 AI-9 the unredacted job is refused by A04 with "inputs not redacted": no inbox file, no call, no outbox file', async () => {
+    const w = world([])
+    const ai = createAiRunner({
+      recordingsDir: path.join(w.root, 'no-recordings'),
+      approvedPath: w.approvedPath,
+      env: { AI_EXCHANGE_DIR: w.exchange },
+      pollMs: 5,
+      sink: () => undefined,
+    })
+    expect(ai.useEngine('project')).toEqual({ ok: true })
+    const got = await ai.runAiStep(aiJobOf('c01-unredacted'), { jobId: 'c01-unredacted' })
+    expect(got).toMatchObject({ ok: false, reason: expect.stringMatching(/inputs not redacted/) as unknown })
+    expect(await runOnce(w)).toMatchObject({ result: { ok: true } })
+    expect(listTree(w.exchange).filter((f) => f.startsWith('inbox/') || f.startsWith('outbox/'))).toEqual([])
+    expect(w.calls()).toEqual([])
+  })
+
+  test("ARC-22 every fixture but c01-unredacted is a valid A04 inbox file whose schema is F04's JSON Schema for its step today", () => {
+    for (const name of FIXTURE_NAMES) {
+      const j = inboxJob(name)
+      expect(InboxFileSchema.safeParse(j).success, name).toBe(name !== 'c01-unredacted')
+      expect(j['schema'], name).toEqual(z.toJSONSchema(aiStepSchemas.finding))
+      expect(j['inputHash'], name).toBe(inputHashOf(j['inputs']))
+    }
   })
 })
 
@@ -507,21 +607,48 @@ describe('AI-1 an answer that is not one JSON value, or breaks the schema, becom
 // ---------- AI-10: the stamp ----------
 
 describe('AI-10 every answer carries its versions', SLOW, () => {
-  test('AI-10 a clean result carries the model id, prompt version and hash, input hash, OCR engine and mapping release from the job', async () => {
+  test('AI-10 a clean result carries every F04 stamp part copied from the job, the model id as the CLI reported it', async () => {
     const w = world(['c01-clean'])
     await runOnce(w)
     expect(outboxOf(w, 'c01-clean')['stamp']).toEqual(stampOf(inboxJob('c01-clean')))
   })
 
-  test('AI-10 the per-job folder keeps the stamp with the orders version: sha256 of ORDERS.md then settings.json', async () => {
+  test("AI-10 the clean result's stamp parses with F04's versionStampSchema and holds exactly its parts (no orders version, nothing extra)", async () => {
     const w = world(['c01-clean'])
     await runOnce(w)
-    const [call] = w.calls()
-    expect(call).toBeDefined()
-    if (!call) return
-    const ordersVersion = sha256(Buffer.concat([fs.readFileSync(path.join(AI_PROJECT_DIR, 'ORDERS.md')), fs.readFileSync(path.join(AI_PROJECT_DIR, 'settings.json'))]))
-    const stamp = readJson(path.join(call.cwd, 'stamp.json'))
-    expect(stamp).toEqual({ ...stampOf(inboxJob('c01-clean')), ordersVersion })
+    const stamp = outboxOf(w, 'c01-clean')['stamp'] as Json
+    expect(versionStampSchema.safeParse(stamp).success).toBe(true)
+    expect(Object.keys(stamp).sort()).toEqual(Object.keys(versionStampSchema.shape).sort())
+    expect(stamp).not.toHaveProperty('ordersVersion')
+    expect(JSON.stringify(outboxOf(w, 'c01-clean'))).not.toContain(ordersVersionNow())
+  })
+
+  // A426: one row per stamp part, from the contract's shape. Each row plants a fresh value for that part in the job
+  // (approving the triple when the part is in it) and expects the outbox stamp to follow the job, not a constant.
+  test.each(Object.keys(versionStampSchema.shape))('AI-10 the stamp part %s is copied from this job', async (part) => {
+    const w = world([])
+    const planted = `${part}-planted-a08-test`
+    const job = addJob(w, 'c01-part', 'c01-clean', (j) => {
+      withText(`Aurora Card (Test) statement, meals total 1,850.00 (${part})`, `a08-part-${part}`)(j)
+      j['jobId'] = 'c01-part'
+      if (part !== 'inputHash') j[part] = planted
+    })
+    writeApproved(w.approvedPath, [tripleOf(job)])
+    await runOnce(w)
+    const file = outboxOf(w, 'c01-part')
+    expect(file, 'the job should be answered').toHaveProperty('stamp')
+    const stamp = file['stamp'] as Json
+    expect(stamp[part]).toBe(job[part])
+    expect(stamp[part]).not.toBe(inboxJob('c01-clean')[part])
+    expect(stamp).toEqual(stampOf(job))
+  })
+
+  test('AI-10 the run log carries the orders version: sha256 of the bytes of ORDERS.md then settings.json', async () => {
+    const w = world(['c01-clean'])
+    const { lines } = await runOnce(w)
+    const ordersVersion = ordersVersionNow()
+    expect(ordersVersion).toMatch(/^[0-9a-f]{64}$/)
+    expect(lines.filter((l) => l.includes(ordersVersion)).length).toBeGreaterThan(0)
   })
 
   test('AI-10 the model id in the stamp is the one the CLI reports', async () => {

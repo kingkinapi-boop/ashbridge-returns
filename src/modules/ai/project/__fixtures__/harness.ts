@@ -6,6 +6,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { versionStampSchema } from '../../../../contracts/ai'
 
 export const PROJECT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 export const FIXTURES_DIR = path.join(PROJECT_DIR, '__fixtures__')
@@ -123,6 +124,40 @@ export const inputHashOf = (inputs: unknown): string => sha256(JSON.stringify(ca
 /** Writes an approved list (the shape of data/ai/approved.json). */
 export function writeApproved(file: string, triples: readonly object[]): void {
   fs.writeFileSync(file, JSON.stringify({ triples }, null, 2) + '\n')
+}
+
+/** F04's stamp parts, from the contract's shape (A426), never a hand list. */
+export const STAMP_PARTS = Object.keys(versionStampSchema.shape)
+
+/**
+ * The stamp the launcher must write for an inbox job: every F04 part copied from the job under the same key, with
+ * `modelId` the id the CLI reported (by default the job's own). A part the inbox file lacks stays undefined, so a
+ * contract part A04's inbox does not carry fails loudly instead of being skipped.
+ */
+export const stampFromJob = (j: Json, modelId?: string): Json =>
+  Object.fromEntries(STAMP_PARTS.map((k) => [k, k === 'modelId' && modelId !== undefined ? modelId : j[k]]))
+
+/** The orders version the run log carries: sha256 hex of ai-project/ORDERS.md's bytes then settings.json's bytes. */
+export const ordersVersionNow = (): string =>
+  sha256(Buffer.concat([fs.readFileSync(path.join(AI_PROJECT_DIR, 'ORDERS.md')), fs.readFileSync(path.join(AI_PROJECT_DIR, 'settings.json'))]))
+
+/**
+ * Watches a folder and collects every file name the OS reports in it (created, renamed or changed), so a test can
+ * see a temp file that was written there and renamed away before the run ended. Call stop() after the run.
+ */
+export function watchNames(dir: string): { stop: () => Promise<string[]> } {
+  const seen = new Set<string>()
+  const watcher = fs.watch(dir, (_event, name) => {
+    if (name !== null) seen.add(name)
+  })
+  return {
+    stop: async () => {
+      // let the OS deliver events still queued from the last writes
+      await new Promise((r) => setTimeout(r, 300))
+      watcher.close()
+      return [...seen].sort()
+    },
+  }
 }
 
 export const tripleOf = (j: Json): Json => ({ stepType: j['stepType'], promptVersion: j['promptVersion'], modelId: j['modelId'] })

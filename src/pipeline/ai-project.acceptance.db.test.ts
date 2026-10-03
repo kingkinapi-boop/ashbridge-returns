@@ -17,6 +17,7 @@ import {
   VALID_OUTPUT,
   inboxJob,
   makeWorld,
+  stampFromJob,
   type FixtureName,
   type Json,
   type World,
@@ -104,10 +105,9 @@ describe('ARC-22 A04 runner and the A08 launcher together on one exchange folder
     const done = await row(db, queued.id)
     expect(done.status).toBe('done')
     expect(done.result?.output).toEqual(VALID_OUTPUT)
-    const stamp = done.result?.stamp as Json
-    expect(stamp['modelId']).toBe('claude-opus-5-5')
-    expect(stamp['promptVersion']).toBe(inboxJob('c01-clean')['promptVersion'])
-    expect(stamp['inputHash']).toBe(inboxJob('c01-clean')['inputHash'])
+    // A426: the whole stamp, every part from F04's shape, copied from the job
+    expect(done.result?.stamp).toEqual(stampFromJob(inboxJob('c01-clean')))
+    expect((done.result?.stamp as Json)['modelId']).toBe('claude-opus-5-5')
     expect(validateAiOutput('finding', done.result?.output, done.result?.stamp).ok).toBe(true)
     expect(w.calls()).toHaveLength(1)
   })

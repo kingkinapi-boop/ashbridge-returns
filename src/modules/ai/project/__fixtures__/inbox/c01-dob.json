@@ -9,22 +9,38 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "oneOf": [
       {
-        "additionalProperties": false,
+        "type": "object",
         "properties": {
+          "outcome": {
+            "type": "string",
+            "const": "answer"
+          },
+          "findingType": {
+            "type": "string",
+            "enum": [
+              "issue",
+              "missing"
+            ]
+          },
+          "summary": {
+            "type": "string"
+          },
           "citations": {
+            "minItems": 1,
+            "type": "array",
             "items": {
               "oneOf": [
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
-                    "recordId": {
-                      "type": "string"
+                    "source": {
+                      "type": "string",
+                      "const": "ledger"
                     },
                     "recordKind": {
                       "type": "string"
                     },
-                    "source": {
-                      "const": "ledger",
+                    "recordId": {
                       "type": "string"
                     }
                   },
@@ -33,38 +49,45 @@
                     "recordKind",
                     "recordId"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 },
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
+                    "source": {
+                      "type": "string",
+                      "const": "document"
+                    },
+                    "documentId": {
+                      "type": "string"
+                    },
                     "box": {
-                      "additionalProperties": false,
+                      "type": "object",
                       "properties": {
-                        "height": {
-                          "maximum": 1,
-                          "minimum": 0,
-                          "type": "number"
+                        "page": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
                         },
                         "left": {
-                          "maximum": 1,
+                          "type": "number",
                           "minimum": 0,
-                          "type": "number"
-                        },
-                        "page": {
-                          "maximum": 9007199254740991,
-                          "minimum": 1,
-                          "type": "integer"
+                          "maximum": 1
                         },
                         "top": {
-                          "maximum": 1,
+                          "type": "number",
                           "minimum": 0,
-                          "type": "number"
+                          "maximum": 1
                         },
                         "width": {
-                          "maximum": 1,
+                          "type": "number",
                           "minimum": 0,
-                          "type": "number"
+                          "maximum": 1
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         }
                       },
                       "required": [
@@ -74,16 +97,9 @@
                         "width",
                         "height"
                       ],
-                      "type": "object"
-                    },
-                    "documentId": {
-                      "type": "string"
+                      "additionalProperties": false
                     },
                     "quote": {
-                      "type": "string"
-                    },
-                    "source": {
-                      "const": "document",
                       "type": "string"
                     }
                   },
@@ -93,16 +109,16 @@
                     "box",
                     "quote"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 },
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
-                    "figureKey": {
-                      "type": "string"
-                    },
                     "source": {
-                      "const": "return_cell",
+                      "type": "string",
+                      "const": "return_cell"
+                    },
+                    "figureKey": {
                       "type": "string"
                     }
                   },
@@ -110,22 +126,22 @@
                     "source",
                     "figureKey"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 },
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
+                    "source": {
+                      "type": "string",
+                      "const": "page"
+                    },
                     "documentId": {
                       "type": "string"
                     },
                     "page": {
-                      "maximum": 9007199254740991,
+                      "type": "integer",
                       "minimum": 1,
-                      "type": "integer"
-                    },
-                    "source": {
-                      "const": "page",
-                      "type": "string"
+                      "maximum": 9007199254740991
                     }
                   },
                   "required": [
@@ -133,26 +149,10 @@
                     "documentId",
                     "page"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 }
               ]
-            },
-            "minItems": 1,
-            "type": "array"
-          },
-          "findingType": {
-            "enum": [
-              "issue",
-              "missing"
-            ],
-            "type": "string"
-          },
-          "outcome": {
-            "const": "answer",
-            "type": "string"
-          },
-          "summary": {
-            "type": "string"
+            }
           }
         },
         "required": [
@@ -161,25 +161,34 @@
           "summary",
           "citations"
         ],
-        "type": "object"
+        "additionalProperties": false
       },
       {
-        "additionalProperties": false,
+        "type": "object",
         "properties": {
+          "outcome": {
+            "type": "string",
+            "const": "cannot_tell"
+          },
+          "reason": {
+            "type": "string"
+          },
           "citations": {
+            "maxItems": 0,
+            "type": "array",
             "items": {
               "oneOf": [
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
-                    "recordId": {
-                      "type": "string"
+                    "source": {
+                      "type": "string",
+                      "const": "ledger"
                     },
                     "recordKind": {
                       "type": "string"
                     },
-                    "source": {
-                      "const": "ledger",
+                    "recordId": {
                       "type": "string"
                     }
                   },
@@ -188,38 +197,45 @@
                     "recordKind",
                     "recordId"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 },
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
+                    "source": {
+                      "type": "string",
+                      "const": "document"
+                    },
+                    "documentId": {
+                      "type": "string"
+                    },
                     "box": {
-                      "additionalProperties": false,
+                      "type": "object",
                       "properties": {
-                        "height": {
-                          "maximum": 1,
-                          "minimum": 0,
-                          "type": "number"
+                        "page": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
                         },
                         "left": {
-                          "maximum": 1,
+                          "type": "number",
                           "minimum": 0,
-                          "type": "number"
-                        },
-                        "page": {
-                          "maximum": 9007199254740991,
-                          "minimum": 1,
-                          "type": "integer"
+                          "maximum": 1
                         },
                         "top": {
-                          "maximum": 1,
+                          "type": "number",
                           "minimum": 0,
-                          "type": "number"
+                          "maximum": 1
                         },
                         "width": {
-                          "maximum": 1,
+                          "type": "number",
                           "minimum": 0,
-                          "type": "number"
+                          "maximum": 1
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         }
                       },
                       "required": [
@@ -229,16 +245,9 @@
                         "width",
                         "height"
                       ],
-                      "type": "object"
-                    },
-                    "documentId": {
-                      "type": "string"
+                      "additionalProperties": false
                     },
                     "quote": {
-                      "type": "string"
-                    },
-                    "source": {
-                      "const": "document",
                       "type": "string"
                     }
                   },
@@ -248,16 +257,16 @@
                     "box",
                     "quote"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 },
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
-                    "figureKey": {
-                      "type": "string"
-                    },
                     "source": {
-                      "const": "return_cell",
+                      "type": "string",
+                      "const": "return_cell"
+                    },
+                    "figureKey": {
                       "type": "string"
                     }
                   },
@@ -265,22 +274,22 @@
                     "source",
                     "figureKey"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 },
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
+                    "source": {
+                      "type": "string",
+                      "const": "page"
+                    },
                     "documentId": {
                       "type": "string"
                     },
                     "page": {
-                      "maximum": 9007199254740991,
+                      "type": "integer",
                       "minimum": 1,
-                      "type": "integer"
-                    },
-                    "source": {
-                      "const": "page",
-                      "type": "string"
+                      "maximum": 9007199254740991
                     }
                   },
                   "required": [
@@ -288,19 +297,10 @@
                     "documentId",
                     "page"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 }
               ]
-            },
-            "maxItems": 0,
-            "type": "array"
-          },
-          "outcome": {
-            "const": "cannot_tell",
-            "type": "string"
-          },
-          "reason": {
-            "type": "string"
+            }
           }
         },
         "required": [
@@ -308,7 +308,7 @@
           "reason",
           "citations"
         ],
-        "type": "object"
+        "additionalProperties": false
       }
     ]
   },
