@@ -4,7 +4,7 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
-import { loadIndex, IN_FLIGHT, pathsOverlap, depGate, ROOT } from './lib.mjs'
+import { loadIndex, IN_FLIGHT, pathsOverlap, depGate, cloudOnlyText, whereOf, newFileHolders, ROOT } from './lib.mjs'
 
 const slots = Math.max(0, Number(process.argv[2] ?? 3))
 const { cards } = loadIndex()
@@ -15,6 +15,8 @@ const inFlight = cards.filter((c) => IN_FLIGHT.has(c.status))
 // reported build, a build for every dep to be merged. Reported builds come from `claim.mjs list`.
 const reportedBuilds = new Set()
 const reportedSpecs = new Set()
+// CQ11 (A493): every card whose spec has reported (a refit one too) holds the new files its Paths name.
+const specHolders = new Set()
 const heldCards = new Set()
 // CQ2 rule 3: in flight, waiting on check and ready to board all come from the claims.
 const workingCards = new Set()
@@ -31,6 +33,7 @@ try {
   // A reported spec (a reopened one is listed as "reopened", so it is not here).
   // A spec that needs a toolchain refit is listed with that tag and counts as not reported.
   for (const m of listing.matchAll(/^(\S+) spec reported(?! \(toolchain refit\))/gm)) reportedSpecs.add(m[1])
+  for (const m of listing.matchAll(/^(\S+) spec reported/gm)) specHolders.add(m[1])
   // CQ1 rule 2: a job released with "wait:" and not yet lifted is listed as waiting, never started.
   for (const m of listing.matchAll(/^(\S+) (?:spec|build) released \(waiting\)/gm)) heldCards.add(m[1])
   for (const m of listing.matchAll(/^(\S+) (spec|build|check) working(?! \((?:stale|inactive)\))/gm)) {
@@ -45,17 +48,23 @@ try {
   for (const m of listing.matchAll(/^(\S+) (?:build (?:working|reported)|spec working) \|/gm)) pathHolders.add(m[1])
 } catch {}
 
-// CQ8 rule 3: the card's Where line says only "cloud" (the same reading as claim.mjs).
-const WHERE = /Where: ([^.(\n]*)/
+// CQ8 rule 3, CQ11 (A482): the card's Where line says only "cloud" in every role (the reader is in lib.mjs).
 function cloudOnly(c) {
-  if (typeof c.where === 'string') return c.where.trim().toLowerCase() === 'cloud'
-  for (const rel of [`plan/cards/${c.id}.md`, c.family ? `plan/cards/families/${c.family}.md` : null].filter(Boolean)) {
+  const text = (rel) => {
     try {
-      return (WHERE.exec(fs.readFileSync(path.join(ROOT, rel), 'utf8')) || [])[1]?.trim().toLowerCase() === 'cloud'
-    } catch {}
+      return fs.readFileSync(path.join(ROOT, rel), 'utf8')
+    } catch {
+      return ''
+    }
   }
-  return false
+  return cloudOnlyText(whereOf(text(`plan/cards/${c.id}.md`), c.family ? text(`plan/cards/families/${c.family}.md`) : '', c.where))
 }
+// CQ11 (A478 c): a card on a requested or checking train is never started.
+let trainCards = new Set()
+try {
+  const t = JSON.parse(fs.readFileSync(path.join(ROOT, 'plan', 'train.json'), 'utf8'))
+  if (['requested', 'checking'].includes(t.status)) trainCards = new Set(t.cards || [])
+} catch {}
 
 let taken = inFlight.flatMap((c) => c.paths || [])
 const picked = []
@@ -68,6 +77,7 @@ for (const c of cards) {
   if (c.status !== 'carded') continue
   if (c.lane === 'design') continue // CQ1 rule 3: the design lane has no spec or build job
   if (workingCards.has(c.id) || blockedBuild.has(c.id)) continue // CQ2 rule 3: already being worked, or its build has reported
+  if (trainCards.has(c.id)) continue
   if (heldCards.has(c.id)) {
     waitingHeld.push(c.id)
     continue
@@ -76,6 +86,11 @@ for (const c of cards) {
   const gate = depGate(c, c.spec || specReported ? 'build' : 'spec', status, reportedBuilds)
   if (!gate.ok) {
     if (gate.why !== 'parked' || gate.waiting.length) waitingOnDeps.push(`${c.id} (${gate.waiting.join(' ')}${gate.why === 'parked' ? ' parked' : ''})`)
+    continue
+  }
+  const fileHolders = newFileHolders(c, cards, c.spec || specReported ? new Set([...specHolders, ...cards.filter((k) => k.spec && k.spec !== 'n/a').map((k) => k.id)]) : specHolders)
+  if (fileHolders.length) {
+    heldByPaths.push(`${c.id} waiting on paths: ${fileHolders.join(' ')}`)
     continue
   }
   if (c.spec || specReported) {
