@@ -4,8 +4,8 @@
  "for": "2026-10-02T22:03:38.513Z",
  "worker": "cloud-abfeb2",
  "state": "reported",
- "at": "2026-10-03T02:38:38.688Z",
+ "at": "2026-10-03T02:44:02.364Z",
  "mode": "turbo",
  "beat": "2026-10-03T02:27:55.956Z",
- "note": "PASS (Opus read refused: Agent tool disabled; run one before boarding)"
+ "note": "PASS (Sonnet); Opus read found 5 findings, see reports/A07D-opus-read.md: Lead decides before boarding"
 }
