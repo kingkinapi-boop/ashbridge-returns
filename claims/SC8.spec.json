@@ -2,11 +2,11 @@
  "card": "SC8",
  "role": "spec",
  "worker": "cloud-f6d708",
- "state": "reported",
- "at": "2026-10-03T07:07:36.668Z",
+ "state": "reopened",
+ "at": "2026-10-03T07:19:37.857Z",
  "mode": "turbo",
  "beat": "2026-10-03T06:38:26.924Z",
- "note": "7 rule tests + 2 read-own-source tests; R79 fails on the 10 raw reads in 8 tests until built; SC and FX2 merged in",
+ "note": "A436: gaps G1 to G6 per reports/SC8-spec-review.md; see bold directive",
  "commit": "e4e63a5",
  "validated": "25fc96d"
 }
