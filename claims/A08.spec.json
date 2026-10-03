@@ -3,11 +3,10 @@
  "role": "spec",
  "note": "wait: A04 round 5 lands (A446 directive)",
  "worker": "cloud-42f06c",
- "state": "released",
- "at": "2026-10-03T08:52:54.921Z",
+ "state": "reopened",
+ "at": "2026-10-03T17:35:29.743Z",
  "mode": "turbo",
  "beat": "2026-10-03T08:02:10.659Z",
  "commit": "87231747",
- "validated": "6f3ce664",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"carded\"]}"
+ "validated": "6f3ce664"
 }
