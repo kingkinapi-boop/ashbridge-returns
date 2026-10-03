@@ -2,7 +2,8 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-aae833",
- "state": "working",
- "at": "2026-10-03T20:56:40.778Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T20:56:50.932Z",
+ "mode": "turbo",
+ "note": "wait: re-offered right after release; waits on W00c and FX8 landing (no card file W00b on main); needs Lead"
 }
