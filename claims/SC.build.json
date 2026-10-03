@@ -1,11 +1,10 @@
 {
  "card": "SC",
  "role": "build",
- "round": 52,
- "spec": "a069a19",
- "worker": "cloud-a93d05",
- "state": "reopened",
- "at": "2026-10-03T05:53:03.268Z",
- "mode": "turbo",
- "note": "A424: spec patch matches reports/SC-spec-review-3.md"
+ "round": 53,
+ "spec": "0884fdfa15e538d71674d6a6c65690e065b8c74c",
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T06:20:23.696Z",
+ "mode": "turbo"
 }
