@@ -127,12 +127,26 @@ class PgDb {
     return new Set(r.rows.map((x) => x.rolname))
   }
 
+  private opaque: string | undefined
+  // Counts custom-setting statements: a connection that ran one is destroyed, because RESET leaves the name behind as ''.
+  private customSeen = 0
+
   /** Runs a statement; when it creates a role, remembers which one, so close drops only this handle's roles. */
-  private async tracked<R>(c: pg.Client | pg.PoolClient, sql: string, run: () => Promise<R>): Promise<R> {
+  private async tracked<R>(c: pg.Client | pg.PoolClient, sql: string, params: unknown[] | undefined, run: () => Promise<R>): Promise<R> {
     // Custom settings (app.x) are not listed in pg_settings: remember the names a statement sets.
     for (const m of sql.matchAll(/set_config\(\s*'([\w]+\.[\w.]+)'|\bset\s+(?:session\s+)?([\w]+\.[\w.]+)\s*(?:=|\bto\b)/gi)) {
       this.customSettings.add((m[1] ?? m[2]) as string)
+      this.customSeen += 1
     }
+    // set_config($n, ...): the name comes from the parameters.
+    for (const m of sql.matchAll(/set_config\(\s*\$(\d+)/gi)) {
+      const v = params?.[Number(m[1]) - 1]
+      this.customSeen += 1
+      if (typeof v === 'string' && /^[\w]+\.[\w.]+$/.test(v)) this.customSettings.add(v)
+      else this.opaque = sql
+    }
+    // set_config(<anything but a literal or $n>, ...): a name this handle cannot carry.
+    if (/set_config\(\s*(?!'|\$\d)/i.test(sql)) this.opaque = sql
     if (!/\bcreate\s+(role|user)\b/i.test(sql)) return run()
     const before = await this.roleNames(c)
     const out = await run()
@@ -142,45 +156,51 @@ class PgDb {
 
   async query<T>(sql: string, params?: unknown[]): Promise<QueryResult<T>> {
     const c = await this.session()
-    const r = await this.tracked(c, sql, () => c.query<Record<string, unknown>>(sql, params))
+    const r = await this.tracked(c, sql, params, () => c.query<Record<string, unknown>>(sql, params))
     return { rows: r.rows as T[], affectedRows: r.rowCount ?? 0 }
   }
 
   async exec(sql: string): Promise<void> {
     const c = await this.session()
-    await this.tracked(c, sql, () => c.query(sql))
+    await this.tracked(c, sql, undefined, () => c.query(sql))
   }
 
-  /** A transaction connection starts with the handle's role and settings (set in the main session) and is wiped when it is returned. */
+  /** Inside the open transaction: the handle's identity, role and settings, all transaction-local. */
   private async inheritSession(client: pg.PoolClient): Promise<void> {
-    await client.query('reset role')
+    if (this.opaque !== undefined) {
+      throw new Error(`transaction refused: this handle set a custom setting by a name it cannot carry: ${this.opaque}`)
+    }
     const main = await this.session()
+    const who = await main.query<{ u: string; s: string }>('select current_user as u, session_user as s')
+    const row = who.rows[0]
+    const login = await client.query<{ s: string }>('select session_user as s')
+    const quote = (n: string): string => `"${n.replaceAll('"', '""')}"`
+    if (row !== undefined && row.s !== login.rows[0]?.s) await client.query(`set local session authorization ${quote(row.s)}`)
+    if (row !== undefined && row.u !== row.s) await client.query(`set local role ${quote(row.u)}`)
     const r = await main.query<{ name: string; setting: string }>(
       `select name, setting from pg_settings where source = 'session'`,
     )
     for (const { name, setting } of r.rows) {
-      if (name !== 'role') await client.query('select set_config($1, $2, false)', [name, setting])
+      if (name !== 'role' && name !== 'session_authorization') await client.query('select set_config($1, $2, true)', [name, setting])
     }
     for (const name of this.customSettings) {
       const v = await main.query<{ v: string | null }>('select current_setting($1, true) as v', [name])
       const value = v.rows[0]?.v
-      if (value !== undefined && value !== null) await client.query('select set_config($1, $2, false)', [name, value])
+      if (value !== undefined && value !== null) await client.query('select set_config($1, $2, true)', [name, value])
     }
-    const who = await main.query<{ u: string; s: string }>('select current_user as u, session_user as s')
-    const row = who.rows[0]
-    if (row !== undefined && row.u !== row.s) await client.query(`set role "${row.u.replaceAll('"', '""')}"`)
   }
 
   async transaction<T>(fn: (tx: PgTx) => Promise<T>): Promise<T> {
     const client = await this.pool.connect()
     const state = { rolledBack: false }
+    const seenBefore = this.customSeen
     const tx: PgTx = {
       query: async <R>(sql: string, params?: unknown[]): Promise<QueryResult<R>> => {
-        const r = await this.tracked(client, sql, () => client.query<Record<string, unknown>>(sql, params))
+        const r = await this.tracked(client, sql, params, () => client.query<Record<string, unknown>>(sql, params))
         return { rows: r.rows as R[], affectedRows: r.rowCount ?? 0 }
       },
       exec: async (sql: string): Promise<void> => {
-        await this.tracked(client, sql, () => client.query(sql))
+        await this.tracked(client, sql, undefined, () => client.query(sql))
       },
       rollback: async (): Promise<void> => {
         state.rolledBack = true
@@ -188,39 +208,63 @@ class PgDb {
       },
     }
     try {
-      await this.inheritSession(client)
       await client.query('begin')
+      await this.inheritSession(client)
       const out = await fn(tx)
       if (!state.rolledBack) await client.query('commit')
       return out
     } catch (e) {
-      if (!state.rolledBack) await client.query('rollback').catch(() => undefined)
+      // A failed rollback is caught by the wipe below, which then destroys the connection.
+      if (!state.rolledBack) {
+        try {
+          await client.query('rollback')
+        } catch {
+          // the wipe below fails too, and destroys the connection
+        }
+      }
       throw e
     } finally {
-      // Nothing set in this transaction's connection may reach the next one.
-      await client.query('reset role; reset all').catch(() => undefined)
-      client.release()
+      // Nothing set in this transaction's connection may reach the next one: wipe it, or destroy it.
+      let failure: Error | boolean = this.customSeen !== seenBefore
+      try {
+        await client.query('rollback')
+        await client.query('discard all')
+      } catch (de) {
+        failure = de instanceof Error ? de : new Error(String(de))
+      }
+      client.release(failure)
     }
   }
 
   private async dropOwnedRoles(): Promise<void> {
+    await this.main.query('reset session authorization')
     await this.main.query('reset role')
     for (const rolname of this.ownedRoles) {
-      await this.main.query(`drop owned by "${rolname}"`).catch(() => undefined)
-      await this.main.query(`drop role if exists "${rolname}"`).catch(() => undefined)
+      try {
+        await this.main.query(`drop owned by "${rolname}"`)
+        await this.main.query(`drop role if exists "${rolname}"`)
+      } catch (e) {
+        throw new Error(`could not drop role ${rolname}: ${e instanceof Error ? e.message : String(e)}`, { cause: e })
+      }
     }
   }
 
   async close(): Promise<void> {
     if (this.closed_) return
     this.closed_ = true
+    let failure: Error | undefined
     // Roles belong to the cluster, not to a database: drop the ones this handle made, and only those.
     if (this.connected !== undefined) {
-      await this.dropOwnedRoles().catch(() => undefined)
+      try {
+        await this.dropOwnedRoles()
+      } catch (e) {
+        failure = e instanceof Error ? e : new Error(String(e))
+      }
       await this.main.end()
     }
     await this.pool.end()
     await dropDatabase(this.adminUrl, this.name)
+    if (failure !== undefined) throw failure
   }
 }
 
