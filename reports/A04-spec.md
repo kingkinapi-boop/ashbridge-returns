@@ -28,3 +28,71 @@ None.
 
 ## Model
 Opus 5.5 (card is core and security).
+
+---
+
+# A04 spec, rounds 2 and 3 (local-1, 3 Oct 2026)
+
+Spec commit **fb82b8c** on `claude/A04` (round 2 was 439aa70; round 3 adds to it). Validated on main **b277a24** (merged into the branch at a3587ae). Round 3 answers the 7 gaps of reports/A04-spec-review-2.md and the Lead directive A410. File: `src/modules/ai/runner/runner.acceptance.test.ts` only (98 unit tests, was 75); the db test is unchanged (5 tests). Opus 5.5, by hand (local worker, no subagent tool).
+
+## Fails first (on the round 1 build, b277a24 merged): 20 fail, 78 pass
+Round 2, 10 fail first, each with its first failing assertion:
+1-3. AI-11 approved list missing, malformed JSON, wrong shape: `toEqual({ ok: false, reason: 'not approved: the approved list cannot be read (AI-11)' })` gets the "run the evaluation set first" reason (fix 5).
+4. ARC-16 SC R23 recording with a stray key: `res.ok` is true (RecordingSchema is `z.object`; fix 4).
+5. ARC-20 env.ts reads AI_EXCHANGE_DIR: `readSettings` drops it (fix 2).
+6. ARC-20 no `process.env` in the AI module: runner.ts:56 (fix 2).
+7. ARC-20 setting cleared after the switch: refused, the runner re-reads the setting at run time (fix 2).
+8. ARC-20 setting changed after the switch: the inbox file goes to the new folder (fix 2).
+9. ARC-22 a folder named `x.json` in the outbox: not logged (the unreadable entry is skipped silently; fix 4).
+10. ARC-22 no sink given: nothing reaches the core logger (default sink is a no-op; fix 4).
+
+Round 2, 19 pass first; each kills a round 1 survivor (findings RC1): readable list without the triple (the reason literal, runner 77); recordings folder missing (engines 38); the clean twin of the stray-key test (liveness); four AI-10 stamp parts on the recorded engine (runner 104-106); own stamp runs (liveness); SEC-11 recorded engine with `isTest = false` runs (runner 81); `aiEngines.project.run` with no folder (engines 94); blank job id `'  '` (engines 93); `A.json` holding job B (engines 83); two jobs waiting (engines 72, the waiting set); second file for a done job (the `finally` delete, 127); `pollMs` default 1000 (runner 59); the log line exact (runner 127); handler versions (runner 143); the thrown message (runner 146); `inputHashOf` on nulls and arrays (schemas canonicalize).
+
+Round 3, 24 tests (one replaces the round 2 no-folder engine test), 10 fail first:
+- Gap 3, blank exchange folder at the engine, `''` and `'   '`: reason is `threw: PLANTED...` (the engine goes on to `mkdirSync`, which the test plants to throw so nothing reaches `./inbox`). The `undefined` case passes (kept from round 2).
+- Gap 2, malformed recordings: `{` beside the good one, `{` alone, an empty file alone, and the handler on `{`: `JSON.parse` rejects the step (engines.ts:40). `null` alone and `[]` alone pass first (safeParse already refuses them), and so does "a notes.txt holding the good answer is never read".
+- Gap 7, two recordings for one key (different answers; identical copies): `res.ok` is true (the first match wins). Passing guards: another job's duplicate key does not stop this job; the shipped recordings folder has no duplicate key.
+- Gap 6, every name in `AI_SETTING_NAMES` through `readSettings`: `AI_EXCHANGE_DIR` reads as undefined.
+- Survivor, a `notes.txt` in the outbox is logged once by name: not logged (the outbox loop filters `.json`; amber R3-2).
+- Pass first (guards): gap 4, the four stamp parts through the project engine and the handler (the stamp check is engine-agnostic today); gap 5, a stranger outbox file logged once over many polls, not again for the same bytes, again for new content, by name only (fake timers); survivor tests: the F04 reason names AI-1, two wrong stamp parts each named apart, the handler message keeps reason and problems apart, and the shipped default approved list is read (exact "run the evaluation set first" reason, not the unreadable one).
+- Dropped: `expect(LISTED_NOT_APPROVED).not.toBe(LIST_UNREADABLE)` (two constants; review round 2). Tightened: the dup test asserts each file name stands on its own.
+
+## Mutation (`npm run mutate:changed -- A04`)
+The round 1 build cannot be mutation-run with these tests: Stryker's dry run refuses any failing test, and 20 fail. So, per spec-writer step 6b, a throwaway stub (fixes 2 to 5 plus the round 3 behaviours on top of the round 1 build; never committed, files restored) passed all 98 unit tests and the 5 db tests, and was mutation-run. First run: 26 survivors, of which 6 were test gaps, now covered by the survivor tests above (dup names run together, a non-`.json` outbox file, the AI-1 reason, the stamp-part separator, the handler join, the default approved path). Second run, `--force`, on the stub: env.ts 22/22, schemas.ts 26/27, engines.ts 122/130, runner.ts 161/167, index.ts no mutants. The 15 left are equivalents of the stub's own shape, for the builder to remove by rewrite or a reasoned disable (none is a behaviour):
+- engines: (the round 3 patch moved four out of this list: `existsSync ? readdir : []` to `["Stryker was here"]` and the three `catch { continue }` blocks emptied are NOT equivalents once a malformed recording is logged; G1's exact log lines and the missing-folder sink assert kill them, and the build keeps them live, never disabled) `'utf8'` to `''` twice (JSON.parse takes a Buffer); the `''` text key of an unreadable entry; the inbox file's trailing `'\n'`.
+- runner: `catch { return 'unreadable' }` emptied; `'utf8'` to `''`; `s === undefined` in `blank` (never called with undefined); `if (x !== undefined)` before setting `jobId` and `exchangeDir` (pass them plainly, fix 3); `dir === undefined ||` before `blank(dir)`.
+- schemas: `update(text, 'utf8')` to `''` (drop the argument).
+**Toolchain note for the Lead:** with `incremental: true` (stryker.config.mjs), the second run reused stale "Survived" results for six static mutants (runner.ts:19-20, the default approved path) after the test that kills them changed; only `--force` re-ran them. A builder or checker seeing survivors on static lines should rerun with `--force` before writing a survivor up.
+
+## Step 6b sweep (stub)
+`npm test` with the stub: unit 2588 pass, 3 fail, all unrelated and Windows-only (design/basis RV-52 `ERR_UNSUPPORTED_ESM_URL_SCHEME` on a `c:` path; storage real-parent A05 two `symlink` EPERM); db 550 pass, including `src/pipeline/ai-exchange.acceptance.db.test.ts` 5/5 with the outbox filter dropped. No other test contradicts the spec; none retired. typecheck and `npm run lint` green. The stub ran in this worktree (files restored with `git checkout --`), not in a second worktree: a local worker cannot remove a second node_modules junction.
+
+## Amber (round 3)
+- R3-1 Duplicate recordings refuse (Lead's choice, A410), also for identical copies: the rule is about the key, so a person deletes one. The reason holds "two recordings for one key" and each file name on its own; it does not count against the step's refusal counter (not pinned either way).
+- R3-2 A file in the outbox that is not `<job id>.json` and not a waiting job's file is logged once by name, whatever its extension (card: "files in outbox/ that match no running job ... are ignored and logged by name only"; tie-breaker: a flag for a person). The builder drops the `.json` filter on the outbox; the recordings folder keeps its `.json` filter (pinned by the notes.txt test there).
+- R3-3 (rewritten by the round 3 patch, A418) A malformed recording is skipped (fail closed: re-record if nothing else matches) and logged once by name with the reason, never its content or the folder path; logged again only when rewritten with other bytes.
+- R3-4 Every refusal names its clause: the F04-failure reason now must name AI-1 (the other refusals already name AI-9, AI-10, AI-11, SEC-11).
+
+## Round 3 patch (A420, reports/A04-spec-review-3.md G1 and G2; local-2, Opus 5.5)
+- G1, 8 new tests: each malformed kind beside the good recording (`{` holding a planted canary, empty, `null`, `[]`, a stray top-level key with a planted value, a key part of the wrong type, a folder named `a-dir.json`): the step resolves ok; `lines` is exactly one line naming the file plus `ai step finding: ok`; the line has a reason besides the name (`unparseable` for `{` and empty, `not one recording` for the four JSON kinds, never both); no canary, stray value, wrong value, folder path or folder name in any line; a second run adds no line for the file; rewritten with other bytes (text plus " \n") it is logged again. One more test: an unparseable file and a `null` file on one run log different reasons. The missing-folder test and the recordings notes.txt test now take a sink and assert `lines` is exactly `['ai step finding: refused']`. The file header says flagged files add one line each.
+- G2: the engine's blank-folder test now asserts `resolves.toMatchObject({ ok: false, reason: /AI_EXCHANGE_DIR/ })` (the `.catch` that turned a throw into a result is gone; the planted writes stay).
+- Unit file: 106 tests (was 98). Fails first on the round 1 build: 28 (was 20): the 8 new ones fail for the right reason (a `SyntaxError` or `EISDIR` rejects the step, or `expected [ 'ai step finding: ok' ] to have a length of 2`); the two edited sink tests pass on the round 1 build (it logs only the refusal there). A throwaway stub (per-file read and parse with the three reasons, logged once per name and content through the runner's `seen` set; reverted) passes all 8 except `a-stray.json`, which also needs the strict recording schema the existing SC R23 test already asks for.
+- Validated on main 77648178: tsc and eslint clean on the file; the AI module's other tests unchanged in outcome. Tests retired: none. No other assertion changed.
+- Amber: the reason words are `unparseable` and `not one recording` (the review's words); the unreadable `.json` entry needs only some reason besides its name.
+
+## For the build
+Fix list items 2 to 5 of reports/A04-findings.md, plus: the duplicate refusal, the malformed-recording skip logged once by name with its reason (each malformed recording logged, G1), the engine's blank-folder refusal returned, never thrown (G2), a blank folder at the engine refused, the outbox filter dropped, and the 15 equivalents removed. Then `mutate:changed -- A04` (with `--force` if a static line survives) at 100 on engines.ts, runner.ts, schemas.ts and env.ts, the db test on PGlite, and the fresh `/security-review`.
+
+# A04 spec, round 4 (A426, reports/A04-findings.md fix list item 2; cloud, Opus 5.5, 3 Oct 2026)
+
+Validated on main 1f88585c649809663de46bf53ec92623de1fd04f (merged into claude/A04). File: `src/modules/ai/runner/runner.acceptance.test.ts` only.
+
+- One stamp table, `STAMP_PARTS = Object.keys(versionStampSchema.shape)` (7 parts today); both hand `PARTS` tables are gone. Parts named in a refusal are parsed as an exact sorted set from `the answer's stamp does not match the job: <parts> (AI-10)` (the reason wording is unchanged), never matched by regex per part.
+- New describe "AI-10 round 4" (26 tests): for every part, an answer differing only there is refused naming exactly that part with no value printed, through the recorded engine, the project engine and the handler over the project engine (21); a meta test that `STAMP_PARTS_FROM_JOB` plus `STAMP_PARTS_FROM_ANSWER` (read by name from `./runner`) equal the shape's keys and are disjoint; planted faults for the meta check (a table missing `mappingRelease`, a part in both lists, a part twice, an extra `ordersVersion`) and for the parse (`ocrEngine` vs `ocrEngineVersion`); liveness (every planted value F04-valid and different from the job, the own-stamp answer runs); two differing OCR parts are both named.
+- Fails first on the round 3 build: 11 fail, 112 pass (9 = 3 OCR or mapping parts x 3 paths, the meta test because runner.ts lacks the exports, the two-OCR test). typecheck and lint green (the exports are read by name, so their absence fails a test, not tsc).
+- Step 6b (stub: `expected: VersionStamp` with all 7 parts, loop over the schema keys, the two lists exported; never committed): A04 126 of 126; `npm test` unit 2674 of 2674, db 550 of 550. No other test fails.
+- Rewritten in this commit (superseded by A426 / findings item 2, not weakened): "AI-10 round 2: a F04-valid answer stamped for another job..." (4 per-part tests and the own-stamp test, folded into round 4); "AI-10 round 3: the stamp check holds through the project engine and the handler" (4 per-part tests, now 14 in round 4); "AI-10 an answer stamped with another model id and another input hash..." now asserts the exact set {inputHash, modelId} instead of regexes. Tests retired with nothing in their place: none.
+- Amber: the handler cases run the handler over the project engine (the F10 path), as round 3 did; the planted values are `PLANTED-OTHER-STAMP-<i>-<part> (Test)` (non-hash text, F04 only asks for non-blank); `STAMP_PARTS_FROM_ANSWER` may be any string list as long as the two lists together cover the shape exactly once.
+
+## For the build (round 4)
+runner.ts only: `expected` typed `VersionStamp` with all 7 parts from the job, `wrong` iterates the schema keys, export `STAMP_PARTS_FROM_JOB` (all 7) and `STAMP_PARTS_FROM_ANSWER` (empty). Then unit, db, the golden inbox, `mutate:changed -- A04` at 100 on runner.ts, and the security review.

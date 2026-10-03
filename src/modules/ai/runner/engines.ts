@@ -1,7 +1,6 @@
 // @mutate
 // The two engines (ARC-6): `recorded` replays stored answers and is the default; `project` hands the job
 // to the Claude project through the exchange folder (ARC-22). There is no API engine (decision 0008).
-import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
@@ -11,6 +10,7 @@ import {
   OutboxFileSchema,
   RecordingSchema,
   inputHashOf,
+  readUtf8,
   type AiJob,
   type InboxFile,
 } from './schemas'
@@ -20,9 +20,9 @@ export type EngineResult =
   | { ok: false; reason: string; problems: string[] }
 
 export interface EngineContext {
-  jobId?: string
+  jobId?: string | undefined
   recordingsDir: string
-  exchangeDir?: string
+  exchangeDir?: string | undefined
   pollMs: number
   sink: (line: string) => void
   /** Job ids this runner is waiting on, so a file for another waiting job is not logged as a stranger. */
@@ -33,55 +33,103 @@ export interface EngineContext {
 
 const refuse = (reason: string, problems: string[] = []): EngineResult => ({ ok: false, reason, problems })
 
+type Read = { ok: true; text: string } | { ok: false; code: string | undefined }
+
+/** A file read, or why not (the error code only, never a path). */
+function tryRead(file: string): Read {
+  try {
+    return { ok: true, text: readUtf8(file) }
+  } catch (e) {
+    return { ok: false, code: (e as NodeJS.ErrnoException).code }
+  }
+}
+
+/** Logs a flagged file once per name and content (an unreadable entry: per name and error code). Names only, never content. */
+function logOnce(ctx: EngineContext, line: string, detail: string | undefined): void {
+  const key = JSON.stringify([line, detail])
+  if (ctx.seen.has(key)) return
+  ctx.seen.add(key)
+  ctx.sink(line)
+}
+
+type Json = { ok: true; value: unknown } | { ok: false }
+
+function tryParse(text: string): Json {
+  try {
+    return { ok: true, value: JSON.parse(text) }
+  } catch {
+    // Stryker disable next-line ObjectLiteral: callers read only `ok`, which is falsy on an empty object too
+    return { ok: false }
+  }
+}
+
+type Recording = z.infer<typeof RecordingSchema>
+
+/** One recording file, or undefined when it is not one (fail closed; the file is logged once by name with the reason). */
+function readRecording(ctx: EngineContext, name: string): Recording | undefined {
+  const read = tryRead(path.join(ctx.recordingsDir, name))
+  const flag = (reason: string, detail: string | undefined): void => {
+    logOnce(ctx, `ai exchange: ignored recording ${name}: ${reason}`, detail)
+  }
+  if (!read.ok) {
+    flag(String(read.code), read.code)
+    return undefined
+  }
+  const json = tryParse(read.text)
+  if (!json.ok) {
+    flag('unparseable', read.text)
+    return undefined
+  }
+  const parsed = RecordingSchema.safeParse(json.value)
+  if (!parsed.success) {
+    flag('not one recording', read.text)
+    return undefined
+  }
+  return parsed.data
+}
+
 function recordedRun(job: AiJob, ctx: EngineContext): EngineResult {
   const inputHash = inputHashOf(job.inputs)
-  const files = fs.existsSync(ctx.recordingsDir) ? fs.readdirSync(ctx.recordingsDir).filter((n) => n.endsWith('.json')).sort() : []
-  for (const name of files) {
-    const parsed = RecordingSchema.safeParse(JSON.parse(fs.readFileSync(path.join(ctx.recordingsDir, name), 'utf8')))
-    if (!parsed.success) continue
-    const rec = parsed.data
-    if (rec.modelId === job.modelId && rec.promptHash === job.promptHash && rec.inputHash === inputHash) {
-      return { ok: true, output: rec.output, stamp: rec.stamp }
-    }
+  const names = fs.existsSync(ctx.recordingsDir) ? fs.readdirSync(ctx.recordingsDir).filter((n) => n.endsWith('.json')).sort() : []
+  const hits: { name: string; rec: Recording }[] = []
+  for (const name of names) {
+    const rec = readRecording(ctx, name)
+    if (rec?.modelId === job.modelId && rec.promptHash === job.promptHash && rec.inputHash === inputHash) hits.push({ name, rec })
   }
-  return refuse(`no recorded answer: re-record (model id ${job.modelId}, prompt hash ${job.promptHash}, input hash ${inputHash})`)
+  const [hit, ...more] = hits
+  if (hit === undefined) {
+    return refuse(`no recorded answer: re-record (model id ${job.modelId}, prompt hash ${job.promptHash}, input hash ${inputHash})`)
+  }
+  if (more.length > 0) {
+    return refuse(`two recordings for one key (ARC-16): ${hits.map((h) => h.name).join(' and ')}; delete one`)
+  }
+  return { ok: true, output: hit.rec.output, stamp: hit.rec.stamp }
 }
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
 
-function logOnce(ctx: EngineContext, name: string, text: string): void {
-  const signature = `${name}:${crypto.createHash('sha256').update(text).digest('hex')}`
-  if (ctx.seen.has(signature)) return
-  ctx.seen.add(signature)
-  ctx.sink(`ai exchange: ignored outbox file ${name}`)
-}
-
 /** Reads the outbox for this job's file; returns its result once there is one valid JSON object for it. */
 function readOutbox(jobId: string, ctx: EngineContext, outbox: string): { output: unknown; stamp: unknown } | undefined {
-  if (!fs.existsSync(outbox)) return undefined
   let found: { output: unknown; stamp: unknown } | undefined
-  for (const name of fs.readdirSync(outbox).filter((n) => n.endsWith('.json')).sort()) {
-    let text: string
-    try {
-      text = fs.readFileSync(path.join(outbox, name), 'utf8')
-    } catch {
+  for (const name of fs.readdirSync(outbox)) {
+    const ignore = (detail: string | undefined): void => {
+      logOnce(ctx, `ai exchange: ignored outbox file ${name}`, detail)
+    }
+    const read = tryRead(path.join(outbox, name))
+    const detail = read.ok ? read.text : read.code
+    if (name !== `${jobId}.json`) {
+      if (!ctx.waiting.has(path.parse(name).name)) ignore(detail)
       continue
     }
-    const mine = name === `${jobId}.json`
-    if (!mine) {
-      if (!ctx.waiting.has(name.slice(0, -'.json'.length))) logOnce(ctx, name, text)
+    // Stryker disable next-line ConditionalExpression,BlockStatement: an unreadable file and one that is not JSON are ignored and logged the same way (the folder case is pinned by engines.build.test.ts)
+    if (!read.ok) {
+      ignore(detail)
       continue
     }
-    let value: unknown
-    try {
-      value = JSON.parse(text)
-    } catch {
-      logOnce(ctx, name, text)
-      continue
-    }
-    const result = OutboxFileSchema.safeParse(value)
-    if (!result.success || result.data.jobId !== jobId) {
-      logOnce(ctx, name, text)
+    const json = tryParse(read.text)
+    const result = json.ok ? OutboxFileSchema.safeParse(json.value) : undefined
+    if (result?.success !== true || result.data.jobId !== jobId) {
+      ignore(detail)
       continue
     }
     found = { output: result.data.output, stamp: result.data.stamp }
@@ -90,9 +138,9 @@ function readOutbox(jobId: string, ctx: EngineContext, outbox: string): { output
 }
 
 async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult> {
-  if (ctx.jobId === undefined || ctx.jobId.trim() === '') return refuse('the project engine needs a job id (the inbox file is named by it)')
-  if (ctx.exchangeDir === undefined) return refuse('the project engine is off: AI_EXCHANGE_DIR is not set')
-  const { jobId } = ctx
+  const { jobId, exchangeDir } = ctx
+  if (jobId === undefined || jobId.trim() === '') return refuse('the project engine needs a job id (the inbox file is named by it)')
+  if (exchangeDir === undefined || exchangeDir.trim() === '') return refuse('the project engine is off: AI_EXCHANGE_DIR is not set')
   const inboxFile: InboxFile = InboxFileSchema.parse({
     jobId,
     stepType: job.stepType,
@@ -108,13 +156,13 @@ async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult>
     mappingRelease: job.mappingRelease,
     inputs: job.inputs,
   })
-  const inbox = path.join(ctx.exchangeDir, 'inbox')
-  const outbox = path.join(ctx.exchangeDir, 'outbox')
+  const inbox = path.join(exchangeDir, 'inbox')
+  const outbox = path.join(exchangeDir, 'outbox')
   fs.mkdirSync(inbox, { recursive: true })
   fs.mkdirSync(outbox, { recursive: true })
   // written beside the inbox, then renamed in, so the project never reads half a file
-  const staging = path.join(ctx.exchangeDir, `.staging-${jobId}.json`)
-  fs.writeFileSync(staging, JSON.stringify(inboxFile, null, 2) + '\n')
+  const staging = path.join(exchangeDir, `.staging-${jobId}.json`)
+  fs.writeFileSync(staging, JSON.stringify(inboxFile, null, 2))
   fs.renameSync(staging, path.join(inbox, `${jobId}.json`))
   ctx.waiting.add(jobId)
   try {

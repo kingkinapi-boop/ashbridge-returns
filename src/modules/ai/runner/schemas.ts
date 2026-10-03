@@ -2,6 +2,7 @@
 // The shapes the AI runner reads and writes: the job, the inbox file, the outbox file and the
 // approved list. All strict at runtime (SC R23).
 import crypto from 'node:crypto'
+import fs from 'node:fs'
 import { z } from 'zod'
 import { aiStepTypes } from '../../../contracts/ai'
 import { NonBlankSchema } from '../../../contracts/text'
@@ -22,8 +23,11 @@ export function canonicalize(value: unknown): unknown {
 
 /** AI-10: sha256 hex of the canonical JSON of the inputs (keys sorted at every depth, no whitespace). */
 export function inputHashOf(inputs: unknown): string {
-  return crypto.createHash('sha256').update(JSON.stringify(canonicalize(inputs)), 'utf8').digest('hex')
+  return crypto.createHash('sha256').update(JSON.stringify(canonicalize(inputs))).digest('hex')
 }
+
+/** A file read as text (no encoding name to get wrong: a decoder reads UTF-8). */
+export const readUtf8 = (file: string): string => new TextDecoder().decode(fs.readFileSync(file))
 
 export const RedactionStampSchema = z.strictObject({ redactedBy: z.string(), redactorVersion: z.string() })
 
@@ -71,7 +75,7 @@ export const ApprovedListSchema = z.strictObject({
 export type ApprovedList = z.infer<typeof ApprovedListSchema>
 
 /** A recorded answer (ARC-16): matched on the model id, the prompt hash and the input hash. */
-export const RecordingSchema = z.object({
+export const RecordingSchema = z.strictObject({
   modelId: z.string(),
   promptHash: z.string(),
   inputHash: z.string(),

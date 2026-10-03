@@ -1,4 +1,8 @@
-# A04 build, fourth attempt (cloud-1fe112, 2 Oct 2026)
-RELEASED, same blocker: build complete, 45 of 46 unit tests pass (main merged, 44219cc). Only failure: ARC-22 inbox golden `src/modules/ai/runner/__golden__/inbox-finding-c01.json` still has 14 `"minLength": 1` lines that main's NonBlankSchema no longer emits (diff is only those lines).
-The golden is spec-owned; I did not edit it. The latest spec job (cloud-ae6ed2, "refit only") did not regenerate it. A spec job must run `vitest -u` on that test, confirm only minLength lines go, commit as a spec commit; then reopen the build.
-Permission gaps: none. Model: Sonnet 5.5.
+# A04 build, round 4 (worker cloud-42f06c)
+
+Branch claude/A04. Merged origin/main (one conflict in src/core/env.ts: kept both AI_EXCHANGE_DIR and the FX2 engine settings).
+Changed: src/modules/ai/runner/runner.ts only (plus the merge). `expected` typed `VersionStamp` with all 7 parts from the job; `wrong` iterates `Object.keys(versionStampSchema.shape)`; exported `STAMP_PARTS_FROM_JOB` (all 7) and `STAMP_PARTS_FROM_ANSWER` (empty). Reason wording unchanged.
+Results (Node 24.21): unit src/modules/ai 126 of 126 pass; db ai-exchange 5 of 5; typecheck, lint, deps:check clean; scope OK (24 files, all inside paths).
+Mutation (`mutate:changed -- A04`): 100.00 on runner.ts, engines.ts, schemas.ts, env.ts; 0 survivors.
+Not run: full suite, test:flake, security review (next jobs: check, then /security-review).
+Ambers: none. Permission gaps: none. Model: Sonnet 5.5.
