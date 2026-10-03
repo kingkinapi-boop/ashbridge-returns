@@ -4,9 +4,8 @@
  "round": 52,
  "spec": "a069a19",
  "worker": "cloud-a93d05",
- "state": "released",
- "at": "2026-10-03T04:49:06.123Z",
+ "state": "reopened",
+ "at": "2026-10-03T05:53:03.268Z",
  "mode": "turbo",
- "note": "wait: core spec review of the new spec (reports/SC-spec-review-3.md); build opens after GO",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"F01D\",\"F05M\",\"F09\",\"F09B\"],\"depStatus\":[\"done\",\"done\",\"done\",\"done\"]}"
+ "note": "A424: spec patch matches reports/SC-spec-review-3.md"
 }
