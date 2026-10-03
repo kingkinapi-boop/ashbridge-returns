@@ -22,7 +22,7 @@ Tags: security (the views and grants decide what this system can read of the cli
 Paths: db/bridge/**, src/modules/golive/bridge/**
 Clauses: ARC-2, LIVE-6, END-7, SEC-6
 Read: blueprint 09 (ARC-2, ARC-3), 10 (LIVE-4, LIVE-6), 00 (END-7), 08 (SEC-6); `reference/onboarding-contract.md` (all of it: section 1 the views and their columns with cites, section 3 never read, section 4 the shared table, U8 and U9), `src/contracts/bridge.ts` (`BRIDGE_CONTRACT`, `BRIDGE_SHAPES`), `plan/cards/F07.md`, `plan/cards/G01.md` (ids, slots, answer shapes; no sentence), `db/schema/05_bridge.sql` (`returns.client_handoff`), `plan/cards/GL2.md` (the live migration and its roles), `reports/phase4-card-review-2026-10-03.md` (C3).
-Spec commit: 9da00fbd, round 2 cd78aaf5 (validated on main 9ae027c4; 56 tests: 29 unit, 27 db); round 1 (validated on main f9da8e52; toolchain refit validated on main 164d8d66, no spec change; 54 tests: 29 unit, 25 db)
+Spec commit: 9da00fbd, round 2 cd78aaf5, round 4 c0528761 (validated on main de30610b; 17 new tests: 6 unit, 11 db; 73 tests: 35 unit, 38 db); round 2 (validated on main 9ae027c4; 56 tests: 29 unit, 27 db); round 1 (validated on main f9da8e52; toolchain refit validated on main 164d8d66, no spec change; 54 tests: 29 unit, 25 db)
 
 ## Goal
 The client repo's own Lead gets, at LIVE-6, a tested draft of everything this system needs from the client app's database: the read-only `bridge.*` views named in the contract, the grants that let this system read those views and nothing else, and the grant that lets the client app read the shared table. It is a draft only: this build never applies it to the client app, never touches the client repo, and reads only a made-up stand-in of the client app's tables.
