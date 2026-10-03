@@ -2,7 +2,11 @@
  "card": "SC8",
  "role": "spec",
  "worker": "cloud-f6d708",
- "state": "working",
- "at": "2026-10-03T06:35:51.660Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T06:36:08.036Z",
+ "mode": "turbo",
+ "note": "deps SC and FX2 not built or merged (SC build open, FX2 build open): no code base for R79 rule files or FX2's 6a8531b plant",
+ "lastRelease": {
+  "tip": "none"
+ }
 }
