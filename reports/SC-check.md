@@ -2,7 +2,7 @@
 
 FAIL. Branch claude/SC at b68ef0d (main is 68 commits ahead, not merged in; merge before the next round).
 
-Passed: typecheck, lint, deps:check, `npm test` (unit 2509, db 507), scope OK (52 files), spec files unchanged since the spec commit a069a19, no product code changed. Not completed: `npm run test:flake` printed no result in this run (rerun next round).
+Passed: typecheck, lint, deps:check, `npm test` (unit 2509, db 507), scope OK (52 files), spec files unchanged since the spec commit a069a19, no product code changed. `npm run test:flake`: 5 of 5 cold runs ok.
 
 Failures (Opus adversarial read of the diff, spot-checked 1 and 3):
 1. KNOWN entry R43 at `src/contracts/schema-rules.db.test.ts:53` matches `^returns\.[a-z_]+\.[a-z_]+_id: points at no built table...`, so any pointer column in any table, including future ones, passes without a FUTURE_POINTERS entry. Owner reads "F01 family", not FX3. List the covered columns by name.
