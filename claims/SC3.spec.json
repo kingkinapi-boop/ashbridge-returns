@@ -1,10 +1,10 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "refit: 14 tests, 3 fail by design",
+ "note": "A443: see card directive",
  "worker": "cloud-286042",
- "state": "reported",
- "at": "2026-10-03T06:44:13.268Z",
+ "state": "reopened",
+ "at": "2026-10-03T08:25:24.098Z",
  "mode": "turbo",
  "commit": "edf23e0",
  "validated": "d19d4bc"
