@@ -161,8 +161,15 @@ const isActive = (c) => (c.state === 'working' || c.state === 'reported') && !is
 // Write claims/<file> (one or several, in ONE commit) on top of the claims branch tip and push.
 // `files` is { name: object }. A refused push (someone else pushed first) waits a
 // jittered, growing time, re-fetches and returns 'retry'; after 6 tries it returns false.
-function writeClaims(files, attempt = 1) {
+// CQ5: `decidedTip` is the claims tip the caller decided on. If the tip moved since and any of the
+// files written changed in between, the decision is stale: nothing is written and 'retry' is returned.
+// A move that touched other jobs only is kept, and the new claim lands on top of it.
+function writeClaims(files, attempt = 1, decidedTip) {
   const tip = claimsTip()
+  if (decidedTip !== undefined && tip !== decidedTip) {
+    const blobAt = (t, f) => (t ? tryGit(['rev-parse', '--verify', '-q', `${t}:claims/${f}`]) : '') || ''
+    if (Object.keys(files).some((f) => blobAt(tip, f) !== blobAt(decidedTip, f))) return 'retry'
+  }
   const index = path.join(os.tmpdir(), `claims-index-${process.pid}-${attempt}`)
   const env = { ...process.env, ...ID, GIT_INDEX_FILE: index }
   const run = (a, input) => execFileSync('git', a, { cwd: ROOT, env, encoding: 'utf8', input, stdio: ['pipe', 'pipe', 'pipe'] }).trim()
@@ -192,7 +199,7 @@ function writeClaims(files, attempt = 1) {
     fs.rmSync(index, { force: true })
   }
 }
-const writeClaim = (file, obj, attempt) => writeClaims({ [file]: obj }, attempt)
+const writeClaim = (file, obj, attempt, decidedTip) => writeClaims({ [file]: obj }, attempt, decidedTip)
 
 // The protect-spec hook reads this to know whether we are building or checking.
 function setCurrentJob(job) {
@@ -222,7 +229,8 @@ function next() {
     const mode = modeNow()
     const cap = mode.mode === 'turbo' ? Number(mode.max_workers || 16) : CAPS[mode.mode] ?? 0
     const { cards } = JSON.parse(readMain('plan/slices.json'))
-    const claims = readClaims(claimsTip())
+    const decidedTip = claimsTip()
+    const claims = readClaims(decidedTip)
     const active = claims.filter(isActive)
     if (cap === 0) return out(`PAUSED ${mode.mode}`, 3)
     if (active.filter((c) => c.state === 'working').length >= cap) return out(`PAUSED ${mode.mode} (cap ${cap} reached)`, 3)
@@ -301,7 +309,7 @@ function next() {
     const was = claimFor0(claims, pick.card, pick.role)
     if (was && was.state === 'released' && was.lastRelease) claim.lastRelease = was.lastRelease
     const file = `${pick.card}.${pick.role}.json`
-    const res = writeClaim(file, claim, attempt)
+    const res = writeClaim(file, claim, attempt, decidedTip)
     if (res === true) {
       setCurrentJob({ card: pick.card, role: pick.role, worker })
       return out(`CLAIMED ${pick.card} ${pick.role}${pick.reopenedFrom && pick.note ? `\n${pick.note}` : ''}`, 0)
