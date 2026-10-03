@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-76ab27",
- "state": "working",
- "at": "2026-10-03T12:01:36.166Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T12:01:47.347Z",
+ "mode": "turbo",
+ "note": "wait: needs Lead, reopen CQ6 build round 2 (A464 spec patch unbuilt)",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
 }
