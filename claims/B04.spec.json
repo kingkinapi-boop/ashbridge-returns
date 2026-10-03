@@ -1,9 +1,8 @@
 {
  "card": "B04",
  "role": "spec",
- "worker": "cloud-77637e",
- "state": "reopened",
- "at": "2026-10-03T03:33:49.085Z",
- "mode": "turbo",
- "note": "A398: branch from origin/claude/W00c; see card directive"
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T03:35:05.808Z",
+ "mode": "turbo"
 }
