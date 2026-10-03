@@ -2,9 +2,9 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-a93d05",
- "state": "reported",
- "at": "2026-10-03T04:16:46.749Z",
+ "state": "reopened",
+ "at": "2026-10-03T04:28:18.815Z",
  "mode": "turbo",
- "note": "278 tests (242 kept, 36 added); validated on main aff351a on W00c f3b2213; 6b: none retired; C07 C09 C14 bare names still need the generator fix",
+ "note": "A409: gaps in reports/W00b-spec-review.md; see bold directive",
  "commit": "0445e9a"
 }
