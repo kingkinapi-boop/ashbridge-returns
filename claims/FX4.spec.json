@@ -2,10 +2,9 @@
  "card": "FX4",
  "role": "spec",
  "note": "A470: delete the 11 FX4 KNOWN rows (card directive)",
- "worker": "cloud-6ca6b4",
- "state": "reopened",
- "at": "2026-10-03T12:48:02.213Z",
- "mode": "turbo",
- "commit": "e92df82b",
- "validated": "b0f6ddd9"
+ "reopenedFrom": "e92df82b",
+ "worker": "cloud-247bf5",
+ "state": "working",
+ "at": "2026-10-03T12:52:01.934Z",
+ "mode": "turbo"
 }
