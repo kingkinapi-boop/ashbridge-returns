@@ -23,3 +23,5 @@ A spec refit (the dep gate reopens a spec for a "toolchain refit" when `vitest.c
 Expectation files (A417, lesson 35): a spec writes every expectation for the finished state, counts included (a README pass count, a verify line, a golden). A file the spec owns is never the build's; if the card does not say who owns one, it is yours, and you name it in your report.
 
 Contract tables (A426): a test table over a contract's fields (a stamp's parts, a schema's keys) is derived from the contract's shape (`Object.keys(schema.shape)`), never copied by hand from the code under test.
+
+Plant real forms first (A493): before inventing an example for a rule over cards or files, copy the phrasing that is really on main (for card rules, a real bold Lead directive, header and time included). SC6's round 1 planted a "**Build: ...**" form that no card uses and missed the real one.

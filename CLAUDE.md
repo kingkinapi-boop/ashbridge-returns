@@ -97,4 +97,4 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 
 ## Commands
 
-`npm run typecheck`, `npx vitest run <files or dirs>`, `npm run e2e` (cloud only), `node tools/status.mjs`, `node tools/next.mjs [slots]`, `node tools/claim.mjs next|update|list`, `node tools/matrix.mjs [--summary] [--plan]`, `node tools/metrics.mjs <card>`, `node tools/scope.mjs <card> [base]`, `node tools/heavy.mjs -- <cmd>`.
+`npm run typecheck`, `npx vitest run --project unit <files or dirs>` (and `--project db` for `*.db.test.ts`: one project per run until CQ12 lands, A495), `npm run e2e` (cloud only), `node tools/status.mjs`, `node tools/next.mjs [slots]`, `node tools/claim.mjs next|update|list`, `node tools/matrix.mjs [--summary] [--plan]`, `node tools/metrics.mjs <card>`, `node tools/scope.mjs <card> [base]`, `node tools/heavy.mjs -- <cmd>`.

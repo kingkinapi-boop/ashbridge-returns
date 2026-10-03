@@ -603,3 +603,47 @@
 {"ts":"2026-10-03T13:33:00.022Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"CQ8 findings review","allowed":true}
 {"ts":"2026-10-03T13:35:00.757Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
 {"ts":"2026-10-03T13:35:05.418Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}
+{"ts":"2026-10-03T13:47:58.056Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:47:58.562Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:47:59.089Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:47:59.685Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:48:00.331Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:48:00.847Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:49:01.508Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T13:53:18.340Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:53:18.839Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:58:13.088Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:58:13.616Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:03:30.532Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:03:31.173Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:03:31.776Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:03:32.384Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:03:33.032Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:03:33.654Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:03:34.122Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:07:11.626Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T14:07:47.651Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}
+{"ts":"2026-10-03T14:12:32.475Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"SC3 security re-review","allowed":true}
+{"ts":"2026-10-03T14:12:47.914Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Designer 1: D13 shell and D04 queue","allowed":true}
+{"ts":"2026-10-03T14:13:00.071Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Designer 2: D03 source viewer B+","allowed":true}
+{"ts":"2026-10-03T14:13:12.726Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Designer 3: D02 CPA review","allowed":true}
+{"ts":"2026-10-03T14:30:36.903Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T14:35:07.874Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":null,"where":"worktree","desc":"SC6 findings review","allowed":true}
+{"ts":"2026-10-03T14:35:16.078Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"A04 security review","allowed":true}
+{"ts":"2026-10-03T14:36:48.567Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:43:32.784Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"checker","model":"opus","where":"worktree","desc":"G18 Opus tax-content read","allowed":true}
+{"ts":"2026-10-03T14:43:58.569Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:43:58.883Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:17:45.601Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"GL3 security review (Opus)","allowed":true}
+{"ts":"2026-10-03T15:17:55.075Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"SC10 Opus adversarial read","allowed":true}
+{"ts":"2026-10-03T15:18:29.610Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T15:22:51.266Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:22:51.884Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:22:52.500Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:22:52.986Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:23:09.730Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"G18 findings review (Opus)","allowed":true}
+{"ts":"2026-10-03T15:29:40.334Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"GL3 findings review (Opus)","allowed":true}
+{"ts":"2026-10-03T15:30:28.166Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:30:28.793Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:30:29.339Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T15:38:42.161Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC10 findings review (Opus)","allowed":true}
