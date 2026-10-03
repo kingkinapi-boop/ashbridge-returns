@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "1b555abb",
  "worker": "cloud-abfeb2",
- "state": "reported",
- "at": "2026-10-03T02:27:17.461Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T03:35:10.296Z",
  "mode": "turbo",
  "beat": "2026-10-03T02:03:11.864Z",
- "note": "1975 of 1975 acceptance tests pass; mutation 100 on all files; scope: faults.test.ts outside Paths"
+ "note": "FAIL: RC3 empty accounts and reversed year, RC1 per-row markers, symlink statSync, see reports/W00c-check.md"
 }

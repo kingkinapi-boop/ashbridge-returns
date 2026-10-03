@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-03T02:27:17.461Z",
  "worker": "cloud-4c2861",
- "state": "working",
- "at": "2026-10-03T03:22:03.321Z",
+ "state": "failed",
+ "at": "2026-10-03T03:35:10.296Z",
  "mode": "turbo",
- "beat": "2026-10-03T03:34:37.592Z"
+ "beat": "2026-10-03T03:34:37.592Z",
+ "note": "FAIL: RC3 empty accounts and reversed year, RC1 per-row markers, symlink statSync, see reports/W00c-check.md"
 }
