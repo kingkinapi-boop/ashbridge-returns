@@ -1,11 +1,10 @@
 {
  "card": "A04",
  "role": "build",
- "round": 6,
- "spec": "ea5d29d",
- "worker": "cloud-186a3b",
- "state": "reopened",
- "at": "2026-10-03T05:25:08.824Z",
- "mode": "turbo",
- "note": "A421: spec patch 6fa39bb1 matches reports/A04-spec-review-3.md"
+ "round": 7,
+ "spec": "fb82b8c",
+ "worker": "cloud-88d9d7",
+ "state": "working",
+ "at": "2026-10-03T05:25:48.307Z",
+ "mode": "turbo"
 }
