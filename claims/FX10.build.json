@@ -1,13 +1,12 @@
 {
  "card": "FX10",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "0f8e76f6",
  "worker": "local-3",
- "state": "released",
- "at": "2026-10-03T07:58:25.512Z",
+ "state": "working",
+ "at": "2026-10-03T07:58:32.940Z",
  "mode": "turbo",
- "note": "skipped by local worker: card says Where: cloud (db runs, test:flake)",
  "lastRelease": {
   "tip": "8c21d0bc4f7fca0399f5781d06f4f8924c337ad4"
  }
