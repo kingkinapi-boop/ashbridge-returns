@@ -10130,7 +10130,8 @@
       "paths": [
         "package.json",
         "tools/flake-shifted.mjs",
-        "tools/test/flake-shifted.test.mjs"
+        "tools/test/flake-shifted.test.mjs",
+        "tools/test/__fixtures__/flake-shifted/**"
       ],
       "clauses": [
         "ARC-15"
