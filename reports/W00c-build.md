@@ -1,10 +1,9 @@
-# W00c build (finish round)
-Branch claude/W00c, builders 1 and 2 died; this run (cloud-abfeb2) verified RC1 to RC4 and closed the mutation gap.
-Files changed this run: testworld/clients/load.ts, testworld/model/checks.ts, testworld/model/schema.ts, testworld/clients/w00c-survivors.test.ts (new).
-Acceptance tests (6 files, walk-driven RC1 to RC4): 1975 of 1975 pass. Full suite: unit 4982 of 4982 (127 files), db 488 of 488.
-test:flake 5 of 5 ok (slowest boot 2743 ms). typecheck, lint, deps:check clean (182 modules, no violations).
-mutate:changed W00c: first run 98.80 overall but 3 files under 100 (ARC-15 per-file rule: load.ts 96.23, checks.ts 98.87, schema.ts 96.49); after fixes 100.00 on all 10 files.
-Fixes: tests for parent-folder link, qualifier shape (no space, trailing space, newline, trailing text, null key), repeated ids, priorYear boundaries, whole-text dates; simplified checks.ts (dupOf uses t.dupOf), load.ts (recordsOf, casts, includes).
-Three reasoned Stryker disables (equivalents): non-SyntaxError rethrow as root, non-list stand-in item, schema date regex anchors (the round trip already refuses extra text).
-node tools/scope.mjs W00c: FAIL on testworld/model/faults.test.ts only, outside Paths (as is checks.test.ts territory in the earlier build); the Lead should add it to Paths or accept.
-Ambers: none. Not done: nothing.
+# W00c build, round 2 (cloud-f27e32)
+
+Branch claude/W00c. Fix list RC1 to RC5 of reports/W00c-findings.md built in order; tests untouched.
+
+- Files: testworld/model/faults.ts (marker `rows` by id, date, amount, dupOf; `empty: 'accounts'` on 12-F02; rows typed as a non-empty tuple so the spec's cast stays needed and lint stays clean), testworld/model/checks.ts (row-by-row marker pins, empties, year range and out-of-year dates, priorYear window), testworld/clients/load.ts (lstat on JSON files and client folders, resolved-path account files, string-only qualifier records, onboarding twin dates, opening-empty only in a first year, linked client folder refused as a 'file' issue), new testworld/clients/json-keys.ts (`repeatedKeys(text)`).
+- Numbers: acceptance and unit `npm test`: unit 6858 of 6858, db 545 of 545. typecheck, lint, deps:check clean. scope.mjs: SCOPE OK (69 files).
+- NOT DONE: `npm run mutate:changed -- W00c` and `test:flake` 5 of 5. Stryker's initial test run times out at 5 minutes on this box (twice, once alone), so the 100 per `@mutate` file bar is unmeasured, json-keys.ts included. A checker needs a longer dry-run timeout or a bigger box.
+- Amber: marker `rows` typed `readonly [MarkedRow, ...MarkedRow[]]` (reverse: `readonly MarkedRow[]`, which makes lint fail on w00c-checks.test.ts:53). Messages: marker issues use the entry id as record and name the row id in the reason (checks.test needs record 'M').
+- Permission gaps: none. Model: Sonnet 5.5.
