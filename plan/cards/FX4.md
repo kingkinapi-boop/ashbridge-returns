@@ -1,8 +1,10 @@
 # FX4 Spreadsheet reader: the five A07D Opus findings
 
+**Lead directive, 3 Oct (A434): spec patch for the 11 gaps in reports/FX4-spec-review.md (on claude/FX4), then the build waits for SC to land and a second patch deletes FX4's entries in SC's known.json.** Export `snapSums(cells, limit)` returning `{visits, skipped:[{row,column,reason}]}` and `centText(cents)` so budgets are work counts, not wall time, and item 1 is testable (7053684657509001n ends `.01`). Cycles: range and cross-sheet edges, a 50,000-cell ring (no recursion), an acyclic SUM still snaps. Names: Unicode in any position (`B1Ü*2`, `ÉB1*2`), off-grid names past three letters; the generator draws unquoted 3D ranges (`SUM(Q1:Dec!B1)`). The whole-sheet range test must tell a snapped total from the cell's own text. A merge region over 1,000,000 cells is refused with a reason, never loaded (tested). ARC-10: the reader's engine version gains a rules suffix (`exceljs 4.4.0+rules.N`), bumped when derived text changes; tested. A whole-sheet merge ExcelJS would expand is a flag for a person, not a silent pass.**
+
 Phase 1. Size M. Hard. Deps: A07D, SC4, SC. Where: cloud.
 Tags: core (citations and amounts: every figure a spreadsheet gives is checked against this text).
-Paths: src/modules/sheets/**, src/contracts/sheets.ts, tools/test/reading-rules.test.mjs
+Paths: src/modules/sheets/**, src/contracts/sheets.ts, tools/test/reading-rules.test.mjs, tools/test/__fixtures__/schema-contract/known.json
 Clauses: EV-14, EV-5, EV-6, ARC-10, END-8
 Read: `reports/A07D-opus-read.md` (all), `plan/cards/A07D.md`, `plan/cards/SC4.md`, `.claude/rules/testing.md`.
 Spec commit: 63df226e (15 tests in src/modules/sheets/fx4-sums and fx4-slide acceptance files; FX4's 14 KNOWN entries removed from tools/test/reading-rules.test.mjs), validated on main 25fc96d0. SC's 11 FX4 entries in schema-contract/known.json wait for SC to land (reports/FX4-spec.md)

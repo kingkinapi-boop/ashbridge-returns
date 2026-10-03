@@ -1,8 +1,10 @@
 # SC8 Source reads go through readOwnSource (R79)
 
-Phase 0. Size S. Deps: SC, FX2. Where: cloud.
+**Lead directive, 3 Oct (A436): spec patch for gaps G1 to G6 in reports/SC8-spec-review.md (on claude/SC8), one planted file per gap as the review gives.** The rule follows local functions (wrapper parameters bound at call sites, return values, `.map`); catches aliased imports, `fs['readFileSync']`, `.call`/`.apply`, `open`/`openSync`, `process.cwd()`, `require.resolve`, `import.meta.resolve`, `new URL().pathname`, Vite `?raw` static, dynamic and glob imports; scans harnesses under `__fixtures__` and `src/core/testing`. Sentinels: the marked set holds all 8 files today's reads target; every listed test is still scanned; a baseline of titles and `expect(` counts from 25fc96d. Paths gain src/core/egress-rules.acceptance.test.ts and src/modules/auth/rules.acceptance.test.ts (their raw reads switch too); SC8 lands after FX2 and A04.
+
+Phase 0. Size S. Deps: SC, FX2, A04. Where: cloud.
 Tags: core (mutation testing is the bar for money, tax and citation code; a raw read breaks it).
-Paths: tools/test/source-read-rules.test.mjs, tools/test/__fixtures__/source-read-rules/**, src/core/testing/read-own-source.acceptance.test.ts, src/contracts/amount-grammar.acceptance.test.ts, src/contracts/reading.acceptance.test.ts, src/contracts/reading-strict.acceptance.test.ts, src/core/clock.acceptance.test.ts, src/core/env.acceptance.test.ts, src/core/ids.acceptance.test.ts, src/core/log.acceptance.test.ts, src/core/money.acceptance.test.ts
+Paths: tools/test/source-read-rules.test.mjs, tools/test/__fixtures__/source-read-rules/**, src/core/testing/read-own-source.acceptance.test.ts, src/contracts/amount-grammar.acceptance.test.ts, src/contracts/reading.acceptance.test.ts, src/contracts/reading-strict.acceptance.test.ts, src/core/clock.acceptance.test.ts, src/core/env.acceptance.test.ts, src/core/ids.acceptance.test.ts, src/core/log.acceptance.test.ts, src/core/money.acceptance.test.ts, src/core/egress-rules.acceptance.test.ts, src/modules/auth/rules.acceptance.test.ts
 Clauses: ARC-15, ARC-16
 Read: `reports/FX2-findings.md` (RC2), `.claude/rules/testing.md`, `src/core/testing/` (readOwnSource).
 Spec commit: (spec-writer fills)
