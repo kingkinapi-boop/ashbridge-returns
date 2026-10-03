@@ -1,5 +1,7 @@
 # GL3 Client-app views and the shared table grant (a draft for the client repo)
 
+**Lead directive, 3 Oct 13:45Z (A476): round 2 from reports/GL3-findings-1.md (635f92c0 on claude/GL3).** Spec first: one test that the draft gives `returns_app` no new right in schema `returns` (fails on e4d95939 first). Build: delete the blanket `grant execute` (0002_grants.sql line 20), keep the PUBLIC revoke (line 19), rewrite the line 18 comment; README lines on apply order, the flow_progress fallback (advisory A1) and views running with owner rights. `returns_app`'s rights in `returns` come only from GL2. A third failure parks the card.
+
 Phase 4. Size M. Deps: F07, G01. Where: cloud (Postgres 16; core: spec read and check by Opus; security: `/security-review` before boarding).
 Tags: security (the views and grants decide what this system can read of the client app's data; the never-read list stays out; nothing here is applied to the client app), core (permissions).
 Paths: db/bridge/**, src/modules/golive/bridge/**

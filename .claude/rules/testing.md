@@ -41,6 +41,6 @@ paths:
 - Prompt injection: test-world documents carry planted instructions; the expected result is no effect.
 
 ## A test is only good if it would fail without the feature
-Assert outcomes (a value, a state, a refusal with its reason), never just "does not throw". Do not mock our own modules in acceptance tests. A pass with zero tests is a failure.
+Assert outcomes (a value, a state, a refusal with its reason), never just "does not throw". Do not mock our own modules in acceptance tests. A pass with zero tests is a failure. A test that loops over a list first asserts the list is not empty (a loop over zero items asserts nothing); a source-scan test proves shape only and needs a behaviour test beside it (Review 3 Oct: expenses:114, jobs:52, blank-rule:407).
 - Source-scan tests (a test that reads its own module's text, for example a marker or a "no network import" scan) read the file through `readOwnSource` (`src/core/testing/read-own-source.ts`), so they still hold inside Stryker's sandbox (DG, ARC-15).
 - A KNOWN (expected-failure) entry in any rules file names one rule, one file, the exact problem strings (no regex) and an open owner card; an unlisted problem fails, a listed string no longer produced fails as stale, and every file scan asserts it read at least one file and a named sentinel (A407, reports/SC-findings.md).

@@ -576,3 +576,30 @@
 {"ts":"2026-10-03T12:49:00.002Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker CQ8 build","allowed":true}
 {"ts":"2026-10-03T12:49:03.489Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker CQ10 spec","allowed":true}
 {"ts":"2026-10-03T12:49:08.269Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker SC12 spec","allowed":true}
+{"ts":"2026-10-03T12:50:14.900Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker next spec","allowed":true}
+{"ts":"2026-10-03T13:04:37.633Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Audit sampled cards G15 F07 DB16","allowed":true}
+{"ts":"2026-10-03T13:08:51.529Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"A04 round 5c spec review","allowed":true}
+{"ts":"2026-10-03T13:08:59.012Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"scout","model":"sonnet","where":"local","desc":"Design lane state scout","allowed":true}
+{"ts":"2026-10-03T13:09:45.511Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"GL3 findings review","allowed":true}
+{"ts":"2026-10-03T13:09:54.085Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker next check","allowed":true}
+{"ts":"2026-10-03T13:10:17.377Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T13:10:21.865Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:10:22.723Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:10:23.171Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:10:23.459Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:13:00.101Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker A04 spec patch","allowed":true}
+{"ts":"2026-10-03T13:16:15.579Z","day":"2026-10-03","mode":"normal","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Build design base branch","allowed":false}
+{"ts":"2026-10-03T13:16:21.758Z","day":"2026-10-03","mode":"normal","tool":"Agent","type":"design-researcher","model":"sonnet","where":"local","desc":"Design brief re-check v1.2","allowed":false}
+{"ts":"2026-10-03T13:30:23.103Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:30:23.779Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:30:24.381Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:30:24.857Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:30:29.306Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:30:29.858Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:30:30.474Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:30:30.949Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:30:39.867Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"sonnet","where":"local","desc":"Build design base branch","allowed":true}
+{"ts":"2026-10-03T13:30:45.172Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"design-researcher","model":"sonnet","where":"local","desc":"Design brief re-check v1.2","allowed":true}
+{"ts":"2026-10-03T13:33:00.022Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"CQ8 findings review","allowed":true}
+{"ts":"2026-10-03T13:35:00.757Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T13:35:05.418Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}
