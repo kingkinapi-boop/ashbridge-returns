@@ -21,7 +21,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 17:35Z by the Lea
 | G18 | spec review GAPS (A505): three plant fixes | spec reopened 17:35Z (Opus); then the build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | FX14 | spec reopened 17:35Z (A504: the walker counts test.each bodies; build held) | build after the spec |
 | SC11 | round 2 build taken 16:59Z by cloud-7c6fec | Opus read; security review; board (scope note b accepted by hand, A500) |
-| GL3 | round 4 spec reported (6cf7b79b) | Opus spec review (local, from 16:58Z; the last round); then reopen the build (B1 to B6); Opus check; fresh security review |
+| GL3 | spec review 4 GAPS (A506): second spec patch G1 to G4 reopened | then reopen the build (B1 to B6); Opus check; fresh security review |
 | CQ11 | spec reopened (A500: R82 clean merges) | build after CQ8 lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | FX17, A04C | FX17 spec reported (re-merges main after SC3, A504); A04C spec reported | FX17 build after SC3 lands; A04C build after A04 lands, Opus check |
