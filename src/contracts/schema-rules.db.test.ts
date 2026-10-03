@@ -45,29 +45,66 @@ function stringLists(mod: Module): Record<string, readonly string[]> {
   return out
 }
 
-// ---------- known defects on main (validated 2 Oct), each owned by another card (none for the database rules yet) ----------
-const KNOWN: readonly { rule: string; match: RegExp; owner: string }[] = [
-  // Found when the spec was refitted on main 6d8efd6 (2 Oct, cloud-18d04e); each is added to its owner card.
-  { rule: 'R12', match: /^returns\.returns: refuses UPDATE or DELETE but not TRUNCATE$/, owner: 'F01 family (50_returns.sql: the returns table has no truncate refusal)' },
-  { rule: 'R15', match: /^returns\.exceptions\.status: no CHECK with a list of values$/, owner: 'F01 family (70_checks.sql and records.ts: exceptions.status has no list)' },
-  { rule: 'R43', match: /^returns\.[a-z_]+\.[a-z_]+_id: points at no built table and FUTURE_POINTERS does not name the card that builds it$/, owner: 'F01 family (ids.ts exports no FUTURE_POINTERS; each pointer to an unbuilt table names its card)' },
-  // Found by the SC build (2 Oct 20:45Z, reports/SC-build.md); owner FX3 fixes each and deletes its entry.
-  { rule: 'R13', match: /^returns\.(bridge_returns\.return_id|jobs\.(id|return_id|lease_holder|last_error)) accepts the blank /, owner: 'FX3 (F06/F07 tables: non-blank checks through text.ts)' },
-  { rule: 'R15', match: /^returns\.(client_handoff|jobs)\.status: its CHECK list \[.*\] equals no list in records\.ts$/, owner: 'FX3 (F06 jobs, G-family client_handoff: add the status list to records.ts)' },
-  { rule: 'R42', match: /^returns\.(bridge_ops_items|bridge_returns|client_handoff|client_refs|jobs): no record schema$/, owner: 'FX3 (add a record schema in records.ts for each table)' },
-  { rule: 'R43', match: /^returns\.client_handoff\.fact_id: returns\.facts exists, but it is not a foreign key to it$/, owner: 'FX3 (client_handoff.fact_id gets its foreign key)' },
-  { rule: 'R44', match: /^returns\.(bridge_ops_items|client_refs)\.seq: no before-insert guard refuses OVERRIDING SYSTEM VALUE$/, owner: 'FX3 (add the identity guard)' },
-  { rule: 'R44', match: /^returns\.client_handoff\.list_version: no before-insert guard refuses a gap or a jump$/, owner: 'FX3 (add the version guard)' },
-  { rule: 'R55', match: /^(version_stamp|sources): -?1\.797693134862315807937e308 is refused by SQL and accepted by JS$/, owner: 'F01 family (A367 landing rule: 00_schema.sql is_finite_number and records.ts disagree at the midpoint)' },
-  { rule: 'R55', match: /^(version_stamp|sources): (1e-400|9007199254740993) is accepted, but JS reads it back as /, owner: 'F01 family (A367 landing rule: 1e-400 and integers above 2^53 must be refused or read back unchanged)' },
-]
-function onlyKnown(rule: string, problems: readonly string[]): string[] {
-  const known = KNOWN.filter((k) => k.rule === rule)
-  const unknown = problems.filter((p) => !known.some((k) => k.match.test(p)))
-  const stale = known
-    .filter((k) => !problems.some((p) => k.match.test(p)))
-    .map((k) => `stale KNOWN entry ${k.rule} ${String(k.match)} (owner ${k.owner}): it no longer fails, remove it`)
-  return [...unknown, ...stale]
+// ---------- known defects on main: tools/test/__fixtures__/schema-contract/known.json, "db" side (A407) ----------
+// An entry is { rule, file, problems: [exact strings], owner, why }. For the database rules the file is the one
+// subject every problem string leads with (a table, a table.column, or the bound's label for R55). Any problem not
+// listed fails, a listed string no longer printed fails as stale, and the owner is an open card in plan/slices.json.
+type KnownEntry = { rule: string; file: string; problems: readonly string[]; owner: string; why?: string }
+const ROOT = path.join(HERE, '..', '..')
+const KNOWN_PATH = path.join(PLANTS, '..', 'known.json')
+const readJson = (abs: string): unknown => JSON.parse(fs.readFileSync(abs, 'utf8'))
+function knownDb(): unknown[] {
+  const all = readJson(KNOWN_PATH)
+  const db = all !== null && typeof all === 'object' ? (all as Record<string, unknown>)['db'] : undefined
+  return Array.isArray(db) ? (db as unknown[]) : []
+}
+const KNOWN = knownDb() as readonly KnownEntry[]
+const KNOWN_KEYS = new Set(['rule', 'file', 'problems', 'owner', 'why'])
+const CLOSED = new Set(['done', 'parked'])
+function cardStatuses(): Map<string, string> {
+  const slices = readJson(path.join(ROOT, 'plan', 'slices.json')) as { cards: { id: string; status: string }[] }
+  return new Map(slices.cards.map((c) => [c.id, c.status]))
+}
+/** The subject a database problem leads with: the text before the first ": " or space. */
+const leadingSubject = (p: string): string => /^[^\s:]+/.exec(p)?.[0] ?? ''
+const DB_RULES = (): Set<string> => new Set([...fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').matchAll(/onlyKnown\('([^']+)'/g)].map((m) => m[1] ?? ''))
+function knownShapeProblems(entries: readonly unknown[], statuses: Map<string, string>, rules: Set<string>): string[] {
+  const problems: string[] = []
+  const seen = new Set<string>()
+  entries.forEach((raw, i) => {
+    const k = (raw !== null && typeof raw === 'object' && !Array.isArray(raw) ? raw : {}) as Record<string, unknown>
+    const at = `KNOWN[${String(i)}] ${String(k['rule'])} ${String(k['file'])}`
+    for (const key of Object.keys(k)) if (!KNOWN_KEYS.has(key)) problems.push(`${at}: the key ${key} is not one of rule, file, problems, owner, why`)
+    const rule = k['rule']
+    if (typeof rule !== 'string' || !rules.has(rule)) problems.push(`${at}: the rule is not one whose test reads KNOWN`)
+    const file = k['file']
+    if (typeof file !== 'string' || !/^[a-z_][a-z0-9_]*(\.[a-z_][a-z0-9_]*){0,2}$/.test(file)) problems.push(`${at}: the file is not one table, table.column or label`)
+    const list = k['problems']
+    if (!Array.isArray(list) || list.length === 0) problems.push(`${at}: problems is not a non-empty list`)
+    for (const p of Array.isArray(list) ? (list as unknown[]) : []) {
+      if (typeof p !== 'string' || p === '') {
+        problems.push(`${at}: a problem that is not a literal string (${Object.prototype.toString.call(p)})`)
+        continue
+      }
+      if (seen.has(p)) problems.push(`${at}: the problem ${JSON.stringify(p)} is listed twice`)
+      seen.add(p)
+      if (leadingSubject(p) !== file) problems.push(`${at}: the problem names another subject (${leadingSubject(p)})`)
+    }
+    const owner = k['owner']
+    const status = typeof owner === 'string' ? statuses.get(owner) : undefined
+    if (status === undefined) problems.push(`${at}: the owner ${JSON.stringify(owner)} is not a card in plan/slices.json`)
+    else if (CLOSED.has(status)) problems.push(`${at}: the owner ${String(owner)} is ${status}, so it can never fix the defect`)
+  })
+  return problems
+}
+function onlyKnown(rule: string, problems: readonly string[], known: readonly KnownEntry[] = KNOWN): string[] {
+  const mine = known.filter((k) => k.rule === rule)
+  const listed = new Set(mine.flatMap((k) => k.problems))
+  const unknown = problems.filter((p) => !listed.has(p))
+  const stale = mine.flatMap((k) =>
+    k.problems.filter((s) => !problems.includes(s)).map((s) => `stale KNOWN entry ${k.rule} ${k.file} (owner ${k.owner}): ${JSON.stringify(s)} no longer fails; remove it`),
+  )
+  return [...new Set(unknown), ...stale]
 }
 
 // ---------- the catalog ----------
@@ -433,6 +470,41 @@ async function realCatalog(): Promise<{ db: PGlite; cat: Catalog }> {
 const NOTHING = 'nothing to check: no table in schema returns (F01 brings the schema)'
 
 // =====================================================================================================
+describe('SC KNOWN on the database side: every exemption is exact, owned and alive (findings SC RC1, RC4, A407)', () => {
+  test('ARC-15 KNOWN shape rule (db): a planted entry with a pattern, two tables, a done owner or a non-card owner is caught; the clean entry is not', () => {
+    const clean = { rule: 'R12', file: 'returns.returns', problems: ['returns.returns: refuses UPDATE or DELETE but not TRUNCATE'], owner: 'FX3' }
+    const planted: unknown[] = [
+      clean,
+      { rule: 'R43', file: 'returns.jobs', match: /^returns\.[a-z_]+\.[a-z_]+_id/, problems: ['returns.jobs: planted (Test)'], owner: 'FX3' },
+      { rule: 'R13', file: 'returns.jobs.id', problems: ['returns.jobs.id accepts the blank ""', 'returns.jobs.return_id accepts the blank ""'], owner: 'FX3' },
+      { rule: 'R42', file: 'returns.(jobs|client_refs)', problems: ['returns.jobs: no record schema'], owner: 'FX3' },
+      { rule: 'R44', file: 'returns.client_refs.seq', problems: ['returns.client_refs.seq: planted done owner (Test)'], owner: 'F01' },
+      { rule: 'R44', file: 'returns.bridge_ops_items.seq', problems: ['returns.bridge_ops_items.seq: planted prose owner (Test)'], owner: 'F01 family' },
+      { rule: 'R12', file: 'returns.returns', problems: ['returns.returns: refuses UPDATE or DELETE but not TRUNCATE'], owner: 'FX3' },
+    ]
+    expect(knownShapeProblems(planted, cardStatuses(), DB_RULES())).toEqual([
+      'KNOWN[1] R43 returns.jobs: the key match is not one of rule, file, problems, owner, why',
+      'KNOWN[2] R13 returns.jobs.id: the problem names another subject (returns.jobs.return_id)',
+      'KNOWN[3] R42 returns.(jobs|client_refs): the file is not one table, table.column or label',
+      'KNOWN[3] R42 returns.(jobs|client_refs): the problem names another subject (returns.jobs)',
+      'KNOWN[4] R44 returns.client_refs.seq: the owner F01 is parked, so it can never fix the defect',
+      'KNOWN[5] R44 returns.bridge_ops_items.seq: the owner "F01 family" is not a card in plan/slices.json',
+      'KNOWN[6] R12 returns.returns: the problem "returns.returns: refuses UPDATE or DELETE but not TRUNCATE" is listed twice',
+    ])
+    expect(knownShapeProblems([clean], cardStatuses(), DB_RULES())).toEqual([])
+  })
+  test('ARC-15 KNOWN rule (db): an entry cannot grow and a string the rule no longer prints is stale', () => {
+    const known: KnownEntry[] = [{ rule: 'R44', file: 'returns.jobs.seq', problems: ['returns.jobs.seq: planted gone (Test)'], owner: 'FX3' }]
+    expect(onlyKnown('R44', ['returns.jobs.seq: planted new (Test)'], known)).toEqual([
+      'returns.jobs.seq: planted new (Test)',
+      'stale KNOWN entry R44 returns.jobs.seq (owner FX3): "returns.jobs.seq: planted gone (Test)" no longer fails; remove it',
+    ])
+  })
+  test('ARC-15 KNOWN shape: every entry in known.json (db side) has one subject, one rule, exact strings and an open owner', () => {
+    expect(knownShapeProblems(KNOWN, cardStatuses(), DB_RULES())).toEqual([])
+  })
+})
+
 describe('SC R12 to R15: rules over every table in schema returns (SEC-7, EV-1, FLOW-1, ARC-10, EV-8, EV-10)', () => {
   test('SEC-7 EV-1 R12 rule: a planted table with update and delete triggers and no truncate trigger is caught', async () => {
     const { cat } = await plantedCatalog('r12-no-truncate.sql')

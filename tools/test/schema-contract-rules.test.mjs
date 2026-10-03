@@ -4,8 +4,8 @@
 // the catalog, R41's SQL side, R42 to R44) is src/contracts/schema-rules.db.test.ts.
 //
 // A rule that fails on main is a defect of the card that owns the file (card SC: "added to that card, never fixed
-// here"). Those found when the spec was validated are listed in KNOWN with their owner; an entry that no longer
-// matches fails too, so the list only shrinks. A rule that has nothing to check fails ("a pass with zero tests is a
+// here"). Those found when the spec was validated are listed in known.json with an open owner card and their exact
+// problem strings; a string no longer printed fails too, so the list only shrinks. A rule with nothing to check fails ("a pass with zero tests is a
 // failure"): on main before F01 lands, the rules that need records.ts fail by name for that reason.
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
@@ -26,56 +26,67 @@ const fix = (name) => fs.readFileSync(path.join(FIX, name), 'utf8')
 const exists = (rel) => fs.existsSync(path.join(ROOT, rel))
 const load = (rel) => import(pathToFileURL(path.join(ROOT, rel)).href)
 
-// ---------- known defects on main (validated 2 Oct), each owned by another card ----------
-const KNOWN = [
-  { rule: 'R23', match: /^src\/contracts\/checks\.ts#CheckRecordSchema: /, owner: 'F05M (next round; card SC check 10a)' },
-  { rule: 'R23', match: /^src\/contracts\/checks\.ts#ReconcilingItemSchema: /, owner: 'F05M (next round; card SC check 10a)' },
-  { rule: 'R23', match: /^src\/contracts\/checks\.ts#CheckExceptionSchema: /, owner: 'F05M (next round; card SC check 10a)' },
-  { rule: 'R23', match: /^src\/contracts\/facts\.ts#factEntrySchema: /, owner: 'E03' },
-  { rule: 'R30', match: /^src\/contracts\/taxprep\.ts#readBackMatches: a rate of 0\.5 read back as /, owner: 'F03R (R33: rates compare exact text against toFixed(4), not Number())' },
-  { rule: 'R28', match: /^src\/contracts\/taxprep\.ts: defines its own amount pattern/, owner: 'F03R (the thousands-separator fault pattern; the Lead may exempt the Taxprep grammar instead)' },
-  { rule: 'R32', match: /^"(\+1'234|\(1'234\)| 1'234|1'234 |1'234e3|--'12|1\u2019234)": passes as plain text/, owner: 'F03R (B1 apostrophe rule)' },
-  { rule: 'R34', match: /^tools\/test\/__fixtures__\/planted-interpolated-log\.ts\.txt: a Luhn-valid/, owner: 'A05 (the log-redaction plant uses the published specimen SIN; give it a non-Luhn number)' },
-  { rule: 'R37', match: /^reference\/sample-clients\/[^ ]+\/taxprep\/import\.csv: /, owner: 'W00 (A347: the .gitattributes line and the taxprep CSVs)' },
-  { rule: 'R37', match: /^reference\/taxprep\/[^ ]+\.csv: /, owner: 'W00 (A347)' },
-  { rule: 'R38', match: /^src\/contracts\/taxprep\.acceptance\.test\.ts: /, owner: 'F03R (spec refit; findings W00 r1)' },
-  { rule: 'R38', match: /^no Vitest setup file refuses a Node major below 24/, owner: 'TH (was TH R6)' },
-  { rule: 'R39', match: /^amountGroups joins words from two pages/, owner: 'F09B' },
-  { rule: 'R41', match: /^src\/contracts\/(reading|facts|checks|taxprep|amount-grammar)\.ts: /, owner: 'the file owner (F09B reading, E03 facts, F05M checks, F03R taxprep, F09A amount-grammar); F01 brings text.ts' },
-  { rule: 'R45', match: /^sensitiveKindForKey\("[^"]+"\) is "none"/, owner: 'E03' },
-  { rule: 'R45-enum', match: /^loadFactCatalogue accepts duplicate enum options/, owner: 'E03' },
-  // Found when the spec was refitted on main 6d8efd6 (2 Oct, cloud-18d04e); each is added to its owner card.
-  { rule: 'R15', match: /^src\/contracts\/records\.ts#ExceptionRecordSchema\.status: /, owner: 'F01 family (records.ts and 70_checks.sql: exceptions.status has no list)' },
-  { rule: 'R16', match: /^src\/modules\/lifecycle\/index\.ts: "order by occurred_at, id/, owner: 'F02 (order waits by the events identity seq)' },
-  { rule: 'R18', match: /^src\/modules\/gaps\/index\.ts: /, owner: 'G00 or G02 (core cards that list gaps/index.ts; G01 landed it unmarked)' },
-  { rule: 'R23', match: /^src\/contracts\/records\.ts#\w+RecordSchema: a stray key is accepted at \(top\)$/, owner: 'F01 family (records.ts record schemas use plain z.object)' },
-  { rule: 'R23', match: /^src\/contracts\/lifecycle\.ts#(ApprovalFingerprintSchema|ChangedItemSchema): a stray key is accepted at /, owner: 'F02' },
-  { rule: 'R41', match: /^src\/modules\/gaps\/bank\/index\.ts: /, owner: 'G01 (.trim() and z.string().min(1) in the question bank loader)' },
-  { rule: 'R49', match: /^src\/contracts\/reading\.ts: a z\.string\(\)\.trim\(\) transform/, owner: 'F09B (engine name and version, reading.ts:48-49)' },
-  { rule: 'R45-cite', match: /^loadFactCatalogue accepts a cra_form cite that is free text/, owner: 'E03 (the loader does not enforce the cite patterns; only tests do)' },
-  // Found by the SC build on main fae1588 and later (2 Oct 20:45Z, reports/SC-build.md); owner FX3 fixes each and deletes its entry.
-  { rule: 'R16', match: /^src\/modules\/jobs\/queue\.ts: "order by created_at, id/, owner: 'FX3 (F06 queue.ts: order by the identity seq first)' },
-  { rule: 'R18', match: /^src\/(contracts\/jobs\.ts|modules\/bridge\/run\.ts|modules\/gaps\/bank\/index\.ts|modules\/jobs\/queue\.ts): a core card lists it, but it has no \/\/ @mutate/, owner: 'FX3 (F06 jobs.ts and queue.ts, F07 run.ts, G01 gaps/bank/index.ts: add the marker)' },
-  { rule: 'R23', match: /^src\/contracts\/jobs\.ts#JobSchema: a stray key is accepted at \(top\)$/, owner: 'FX3 (F06 jobs.ts: .strict())' },
-  { rule: 'R41', match: /^src\/modules\/bridge\/run\.ts: a \.trim\(\) blank rule/, owner: 'FX3 (F07 run.ts: go through src/contracts/text.ts)' },
-  // Found when main 33badd3 (A07C landed at b80c251) was merged into the SC spec (2 Oct 21:00Z, cloud-186a3b); owner FX3.
-  { rule: 'R36', match: /^src\/modules\/sheets\/xlsx\/index\.ts: float dollars to cents /, owner: 'FX3 (A07C sheets/xlsx/index.ts:66: Math.round(x * 100) / 100 on a library number; money is read from the stored text)' },
-  { rule: 'R41', match: /^src\/contracts\/sheets\.ts: a \.trim\(\) blank rule/, owner: 'FX3 (A07C sheets.ts nonBlank: s.trim().length > 0; go through src/contracts/text.ts)' },
-  { rule: 'R46', match: /^src\/modules\/sheets\/xlsx\/index\.ts: (reads a library value's display text \(\.text\)|turns a library value into text with String\(c\) and no typed switch)/, owner: 'FX3 (A07C sheets/xlsx/index.ts: ExcelJS rich.text and String(c) on an address part; build text from the typed value)' },
-  { rule: 'R56', match: /^src\/modules\/sheets\/xlsx\/raw\.ts: a regex over raw XML that misses a self-closed element /, owner: 'FX3 (A07C sheets/xlsx/raw.ts:95 <v>([\\s\\S]*?)<\\/v> and the comment at :104; the module treats <v/> as no value, so FX3 either matches <v/> in the regex or the Lead rules the comment hit a false positive)' },
-  { rule: 'R47', match: /^src\/modules\/sheets: a reader adapter with no entry in the SC READERS registry/, owner: 'FX3 spec job (a READERS entry for src/modules/sheets: make, good bytes, names, routes; was PENDING under A07C)' },
-  { rule: 'R48', match: /^src\/modules\/sheets: its contract says hidden or never dropped, and no empty instance tests it$/, owner: 'FX3 spec job (the sheets READERS entry: blank and keeps for an empty hidden row or column)' },
-  { rule: 'R54', match: /^src\/modules\/sheets: a reader with no entry in the SC READERS registry \(R54\)$/, owner: 'FX3 spec job (the sheets READERS entry: wrongKind and refusal; was PENDING under A07C)' },
-  { rule: 'R54', match: /^A01: a zero-size MediaBox under statement \(Test\)\.pdf was not refused with a reason/, owner: 'A01 successor (A01-check-r3 note: a raw ZodError from ReadingResultSchema)' },
-]
+// ---------- known defects on main: tools/test/__fixtures__/schema-contract/known.json (A407) ----------
+// An entry is { rule, file, problems: [exact strings], owner, why }: one file, the exact problem strings the rule
+// prints for it (no pattern), and an open owner card from plan/slices.json. Any problem not listed fails, and a listed
+// string the rule no longer prints fails as stale, so no entry can grow and the list only shrinks. The owner fixes the
+// defect and deletes the entry. The database side keeps its entries under "db" in the same file.
+const KNOWN_REL = `${FIX_REL}/known.json`
+const KNOWN = JSON.parse(read(KNOWN_REL)).unit
+const KNOWN_KEYS = new Set(['rule', 'file', 'problems', 'owner', 'why'])
+const CLOSED = new Set(['done', 'parked'])
+const cardStatuses = () => new Map(JSON.parse(read('plan/slices.json')).cards.map((c) => [c.id, c.status]))
+/** The path a problem string leads with (up to "#" or ": "), when it leads with one. */
+const leadingPath = (p) => /^([^\s:#"]+\/[^:#]*?)(?:#|: )/.exec(p)?.[1] ?? null
+/**
+ * The KNOWN shape (A407): one file, one rule, a non-empty list of literal strings, an open owner card; every rule
+ * named is one whose test reads KNOWN; no string twice. `fileOk` says whether the file is real; `subjectOf` gives the
+ * file a problem string names (null: it names none).
+ */
+function knownShapeProblems(entries, { statuses, rules, fileOk, subjectOf }) {
+  const problems = []
+  const seen = new Set()
+  entries.forEach((k, i) => {
+    const at = `KNOWN[${String(i)}] ${String(k?.rule)} ${String(k?.file)}`
+    if (k === null || typeof k !== 'object' || Array.isArray(k)) {
+      problems.push(`${at}: not an object`)
+      return
+    }
+    for (const key of Object.keys(k)) if (!KNOWN_KEYS.has(key)) problems.push(`${at}: the key ${key} is not one of rule, file, problems, owner, why`)
+    if (typeof k.rule !== 'string' || !rules.has(k.rule)) problems.push(`${at}: the rule is not one whose test reads KNOWN`)
+    if (typeof k.file !== 'string' || k.file === '' || /[*?|,{}[\]\\^$]/.test(k.file)) problems.push(`${at}: the file is not one plain path`)
+    else if (!fileOk(k.file)) problems.push(`${at}: the file does not exist`)
+    if (!Array.isArray(k.problems) || k.problems.length === 0) problems.push(`${at}: problems is not a non-empty list`)
+    for (const p of Array.isArray(k.problems) ? k.problems : []) {
+      if (typeof p !== 'string' || p === '') {
+        problems.push(`${at}: a problem that is not a literal string (${Object.prototype.toString.call(p)})`)
+        continue
+      }
+      if (seen.has(p)) problems.push(`${at}: the problem ${JSON.stringify(p)} is listed twice`)
+      seen.add(p)
+      const subject = subjectOf(p)
+      if (subject !== null && subject !== k.file) problems.push(`${at}: the problem names another file (${subject})`)
+    }
+    const status = typeof k.owner === 'string' ? statuses.get(k.owner) : undefined
+    if (status === undefined) problems.push(`${at}: the owner ${JSON.stringify(k.owner)} is not a card in plan/slices.json`)
+    else if (CLOSED.has(status)) problems.push(`${at}: the owner ${String(k.owner)} is ${String(status)}, so it can never fix the defect`)
+  })
+  return problems
+}
+function onlyKnown(rule, problems, known = KNOWN) {
+  const mine = known.filter((k) => k.rule === rule)
+  const listed = new Set(mine.flatMap((k) => k.problems))
+  const unknown = problems.filter((p) => !listed.has(p))
+  const stale = mine.flatMap((k) =>
+    k.problems.filter((s) => !problems.includes(s)).map((s) => `stale KNOWN entry ${k.rule} ${k.file} (owner ${k.owner}): ${JSON.stringify(s)} no longer fails; remove it`),
+  )
+  return [...new Set(unknown), ...stale]
+}
 
-function onlyKnown(rule, problems) {
-  const known = KNOWN.filter((k) => k.rule === rule)
-  const unknown = problems.filter((p) => !known.some((k) => k.match.test(p)))
-  const stale = known
-    .filter((k) => !problems.some((p) => k.match.test(p)))
-    .map((k) => `stale KNOWN entry ${k.rule} ${String(k.match)} (owner ${k.owner}): it no longer fails, remove it`)
-  return [...unknown, ...stale]
+// ---------- file scans: never empty, and a named sentinel file is in each (findings SC RC3) ----------
+function scanProblems(label, files, sentinel) {
+  if (files.length === 0) return [`${label}: the scan read no file`]
+  return files.includes(sentinel) ? [] : [`${label}: the scan missed its sentinel ${sentinel}`]
 }
 
 // ---------- files ----------
@@ -289,8 +300,12 @@ function objectPaths(s, value, p = '', at = [], out = [], depth = 0) {
   return out
 }
 
+/** A deep copy that keeps functions by reference (a check record's appliesTo is a function; structuredClone refuses it). */
 function clone(v) {
-  return structuredClone(v)
+  if (typeof v === 'function' || v === null || typeof v !== 'object') return v
+  if (v instanceof Date) return new Date(v.getTime())
+  if (Array.isArray(v)) return v.map(clone)
+  return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, clone(x)]))
 }
 function getIn(v, at) {
   return at.reduce((x, k) => x[k], v)
@@ -346,6 +361,11 @@ const R23_SAMPLES = {
       cites: [{ kind: 'onboarding_contract', ref: 'corporation.legalName' }],
     },
   ],
+  // F05's check contract: the record's appliesTo is a function, and a reconciling item's code is on the fixed list.
+  'src/contracts/checks.ts#CheckRecordSchema': [
+    { id: 'CK-1', kind: 'tie', appliesTo: () => true, inputs: ['statement (Test)'], rule: 'ties to the dollar (Test)', sourceLink: 'blueprint 05 CK-1 (Test)', raises: 'an exception (Test)' },
+  ],
+  'src/contracts/checks.ts#ReconcilingItemSchema': [{ code: 'R01', amount: 100, source: 'statement page 1 (Test)', acceptedBy: 'cpa (Test)', note: 'timing (Test)' }],
   // A07C's sheets contract (landed after the spec was validated on 6d8efd6): a formula cell reaches .cached.
   'src/contracts/sheets.ts#CellSchema': [R23_FORMULA_CELL()],
   'src/contracts/sheets.ts#SheetSchema': [R23_SHEET()],
@@ -480,7 +500,7 @@ function orderByProblems(files, readFile) {
       const bad = terms.findIndex((t) => /(^|\.)(created_at|id)\b/i.test(t))
       if (bad < 0) continue
       const seqFirst = /(^|\.)(\w*_)?seq\b/i.test(terms[0] ?? '')
-      if (!seqFirst) problems.push(`${f}: "order by ${m[1].trim().slice(0, 60)}" orders by created_at or id with no identity seq first`)
+      if (!seqFirst) problems.push(`${f}: "order by ${m[1].trim().replace(/\s+/g, ' ').slice(0, 60)}" orders by created_at or id with no identity seq first`)
     }
   }
   return problems
@@ -514,11 +534,15 @@ function cardMeta(text) {
     .filter((p) => /^[\w.*/[\]-]+$/.test(p) && p.includes('/'))
   return { core: /^core\b/.test(tags.trim()), paths }
 }
-function coreUnmarkedProblems(cards, files, head) {
+/** The files under src/contracts and src/modules that a core card lists in its Paths line (test files left out). */
+function coreFiles(cards, files) {
   const coreGlobs = cards.filter((c) => c.core).flatMap((c) => c.paths)
   return files
     .filter((f) => /^src\/(contracts|modules)\//.test(f) && /\.tsx?$/.test(f) && !isTest(f) && !isFixture(f))
     .filter((f) => coreGlobs.some((g) => globToRe(g).test(f)))
+}
+function coreUnmarkedProblems(cards, files, head) {
+  return coreFiles(cards, files)
     .filter((f) => !/\/\/ @mutate\b/.test(head(f).split('\n').slice(0, 5).join('\n')))
     .map((f) => `${f}: a core card lists it, but it has no // @mutate in its first 5 lines`)
 }
@@ -876,29 +900,60 @@ function piiProblems(file, text, check = luhnValid) {
   return problems
 }
 const TEXT_EXT = /\.(csv|json|md|txt|ts|tsx|mjs|js|sql|yml|yaml|html|xml|tsv)$/i
-// Binary fixtures are allowed only on this reasoned list (findings W00 r2); they are still scanned as Latin-1 text.
+// Binary fixtures are allowed only on this reasoned list (findings W00 r2), one file per entry, never a pattern
+// (findings SC RC1); they are still scanned as Latin-1 text. An entry whose file is gone fails as stale.
+const A01_PDF = 'A01: a PDF written by textlayer/__fixtures__/make-fixtures.ts in raw PDF syntax from made-up lines'
+const A03_PDF = "A03: a byte-for-byte copy of A01's made-up textlayer PDF, copied by recorded/__fixtures__/make-fixtures.ts"
+const A05_PDF = 'A05: a placeholder PDF of under 100 bytes holding one made-up comment line'
+const A07_BOOK = 'A07B and A07C: written byte for byte by sheets/__fixtures__/make-fixtures.mjs from fixed made-up content'
 const BINARY_FIXTURES = [
-  { match: /^src\/modules\/ocr\/textlayer\/__fixtures__\/[a-z-]+\.pdf$/, reason: 'A01: PDFs written by make-fixtures.ts in raw PDF syntax from made-up lines' },
-  { match: /^src\/modules\/storage\/__fixtures__\/drive-[a-z0-9-]+\/.+\.pdf$/, reason: 'A05: placeholder PDFs of under 100 bytes holding one made-up comment line' },
-  {
-    match: /^src\/modules\/sheets\/__fixtures__\/(xlsx\/(tb-1900|tb-1904|cells-r2|protected)\.xlsx|xlsx\/old\.xls|containers\/(letter \(Test\)\.docx|no-workbook \(Test\)\.xlsx|notes \(Test\)\.zip))$/,
-    reason: 'A07B and A07C: workbooks, compound files and containers written byte for byte by sheets/__fixtures__/make-fixtures.mjs from fixed made-up content',
-  },
-  {
-    match: /^src\/modules\/ocr\/recorded\/__fixtures__\/(one-page|unrecorded)\.pdf$/,
-    reason: "A03: byte-for-byte copies of A01's made-up textlayer PDFs (one-page.pdf and two-pages.pdf), copied by recorded/__fixtures__/make-fixtures.ts",
-  },
+  ...['cf-only', 'encrypted', 'image-page', 'nel-only', 'not-a-pdf', 'one-page', 'rotated', 'scan-only', 'truncated', 'two-pages'].map((n) => ({
+    file: `src/modules/ocr/textlayer/__fixtures__/${n}.pdf`,
+    reason: A01_PDF,
+  })),
+  { file: 'src/modules/ocr/recorded/__fixtures__/one-page.pdf', reason: A03_PDF },
+  { file: 'src/modules/ocr/recorded/__fixtures__/unrecorded.pdf', reason: A03_PDF },
+  { file: 'src/modules/storage/__fixtures__/drive-c01/Maple Ridge Consulting Inc. (Test) (c01a0000)/2025/articles-of-incorporation (Test).pdf', reason: A05_PDF },
+  { file: 'src/modules/storage/__fixtures__/drive-no-test/Northgate Supplies Inc. (c02b0000)/2025/invoice-0001.pdf', reason: A05_PDF },
+  ...['xlsx/tb-1900.xlsx', 'xlsx/tb-1904.xlsx', 'xlsx/cells-r2.xlsx', 'xlsx/protected.xlsx', 'xlsx/old.xls', 'containers/letter (Test).docx', 'containers/no-workbook (Test).xlsx', 'containers/notes (Test).zip'].map(
+    (n) => ({ file: `src/modules/sheets/__fixtures__/${n}`, reason: A07_BOOK }),
+  ),
 ]
+/** Every folder of test data: sample clients, testworld, and every __fixtures__ and __golden__ (SC's own included). */
 function testDataFiles() {
-  return [
-    ...walk('reference/sample-clients'),
-    ...walk('testworld'),
-    ...walk('').filter((f) => isFixture(f) && !f.startsWith('reference/sample-clients/')),
-  ].filter((f) => !f.startsWith(`${FIX_REL}/`))
+  return [...walk('reference/sample-clients'), ...walk('testworld'), ...walk('').filter((f) => isFixture(f) && !f.startsWith('reference/sample-clients/'))]
+}
+// SC's own R34 plants and the KNOWN file that quotes their problem strings are scanned like every other file and
+// excused by name: each must raise exactly these problems, so the excuse also proves the rule (findings SC RC2).
+const R34_SIN = (f, n) => `${f}: a Luhn-valid nine-digit number ${JSON.stringify(n)} (a SIN or business number shape)`
+const R34_PLANTED = {
+  [`${FIX_REL}/planted-r34-pii.txt`]: {
+    why: 'the R34 rule plant: SINs plain, spaced and hyphenated, a business number, an e-mail and a phone',
+    problems: [
+      R34_SIN(`${FIX_REL}/planted-r34-pii.txt`, '271000002'),
+      R34_SIN(`${FIX_REL}/planted-r34-pii.txt`, '271 000 002'),
+      R34_SIN(`${FIX_REL}/planted-r34-pii.txt`, '271-000-002'),
+      R34_SIN(`${FIX_REL}/planted-r34-pii.txt`, '839000007RT0001'),
+      `${FIX_REL}/planted-r34-pii.txt: an e-mail outside the reserved domains "jordan.lee@realmail.ca"`,
+      `${FIX_REL}/planted-r34-pii.txt: a phone number outside 555-01xx "(416) 555-2368"`,
+    ],
+  },
+  [`${FIX_REL}/planted-r34-pii.json`]: {
+    why: 'the R34 widened plant: a SIN as a JSON number, mixed separators and exponent form',
+    problems: [
+      R34_SIN(`${FIX_REL}/planted-r34-pii.json`, '271000002'),
+      R34_SIN(`${FIX_REL}/planted-r34-pii.json`, '271 000-002'),
+      `${FIX_REL}/planted-r34-pii.json: a Luhn-valid nine-digit number in exponent form "2.71000002e8"`,
+    ],
+  },
+  [`${FIX_REL}/planted-r34-pii-dotted.txt`]: {
+    why: 'the R34 widened plant: dotted and no-break separators',
+    problems: [R34_SIN(`${FIX_REL}/planted-r34-pii-dotted.txt`, '271.000.002'), R34_SIN(`${FIX_REL}/planted-r34-pii-dotted.txt`, '271\u00a0000\u00a0002')],
+  },
 }
 function binaryListProblems(files) {
   return files
-    .filter((f) => !TEXT_EXT.test(f) && !BINARY_FIXTURES.some((b) => b.match.test(f)))
+    .filter((f) => !TEXT_EXT.test(f) && !BINARY_FIXTURES.some((b) => b.file === f))
     .map((f) => `${f}: a binary test-data file not on the reasoned BINARY_FIXTURES list`)
 }
 const readLatin1 = (rel) => fs.readFileSync(path.join(ROOT, rel), 'latin1')
@@ -971,25 +1026,31 @@ function blankRuleProblems(files, readFile) {
 }
 
 // ---------- subjects not on main yet (R35: "nothing to check" unless declared) ----------
-// A rule whose subject is not built yet is declared here with the card that brings it. When the subject lands the
-// rule runs on it at once (the entry then has no effect and the Lead may drop it); a missing subject with no entry
-// fails with "nothing to check".
+// A rule whose subject is not built yet is declared here with the open card that brings it. A row whose subject is on
+// main fails as stale (findings SC RC1): the rule then runs on the subject, and the spec job that adds its registry
+// entry deletes the row. A missing subject with no row fails with "nothing to check".
 const PENDING = [
-  { rule: 'R34-guard', subject: 'testworld/model/guard.ts', owner: 'W00b (guardFolder, guardValue)' },
-  { rule: 'R35', subject: 'testworld/model/checks.ts', owner: 'W00c (the model checks)' },
-  { rule: 'R50-guard', subject: 'testworld/model/guard.ts', owner: 'W00b (the guard Luhn)' },
-  { rule: 'R51', subject: 'testworld', owner: 'W00c and W00b (the test-world loaders)' },
-  { rule: 'R52-catalogue', subject: 'testworld/model/faults.ts', owner: 'W00c (the fault catalogue)' },
-  { rule: 'R47', subject: 'src/modules/ocr/tesseract', owner: 'A02' },
-  { rule: 'R47', subject: 'src/modules/ocr/recorded', owner: 'A03' },
-  { rule: 'R47', subject: 'src/modules/sheets', owner: 'A07 (A07C)' },
-  { rule: 'R47', subject: 'src/modules/qbo', owner: 'B04' },
-  { rule: 'R54', subject: 'src/modules/sheets', owner: 'A07 (A07C: gzip, %PDF, MZ and spanned zip under a .csv name; large-magnitude number noise)' },
-  { rule: 'R54', subject: 'src/modules/documents/intake', owner: 'E00' },
+  { rule: 'R34-guard', subject: 'testworld/model/guard.ts', owner: 'W00b', why: 'guardFolder and guardValue' },
+  { rule: 'R35', subject: 'testworld/model/checks.ts', owner: 'W00c', why: 'the model checks' },
+  { rule: 'R50-guard', subject: 'testworld/model/guard.ts', owner: 'W00b', why: 'the guard Luhn' },
+  { rule: 'R51', subject: 'testworld', owner: 'W00c', why: 'the test-world loaders (W00b brings the guard they call)' },
+  { rule: 'R52-catalogue', subject: 'testworld/model/faults.ts', owner: 'W00c', why: 'the fault catalogue' },
+  { rule: 'R47', subject: 'src/modules/ocr/tesseract', owner: 'A02', why: 'the Tesseract reader' },
+  { rule: 'R47', subject: 'src/modules/qbo', owner: 'B04', why: 'the QBO reader' },
+  { rule: 'R54', subject: 'src/modules/documents/intake', owner: 'E00', why: 'the intake reader' },
 ]
 function pendingOrNothing(rule, subject) {
   const p = PENDING.find((x) => x.rule === rule && x.subject === subject)
   return p === undefined ? `nothing to check: ${subject} is not on main and PENDING declares no card for ${rule}` : null
+}
+function stalePendingProblems(rows, { statuses, subjectExists }) {
+  const problems = []
+  for (const r of rows) {
+    if (subjectExists(r.subject)) problems.push(`stale PENDING row ${r.rule} ${r.subject} (owner ${r.owner}): the subject is on main, so the rule runs on it; delete the row`)
+    const status = statuses.get(r.owner)
+    if (status === undefined || CLOSED.has(status)) problems.push(`PENDING row ${r.rule} ${r.subject}: the owner ${String(r.owner)} is not an open card`)
+  }
+  return problems
 }
 
 // ---------- R35: every model or kind check has a planted failing test, and says "nothing to check" when empty ----------
@@ -1242,6 +1303,40 @@ const READERS = {
     ],
     refusal: a03Refusal,
   },
+  // A07 (A07B to A07D): one reader for .csv and .xlsx. Its read takes (bytes, fileName) and answers { ok, result } or
+  // { ok: false, reason }, so the entry adapts the call and reads a refusal from the outcome (amber, SC spec 3 Oct).
+  // The name routes bytes that are not a container: CSV text under a .pdf name is "unsupported file type".
+  A07: {
+    dir: 'src/modules/sheets',
+    make: async () => {
+      const reader = (await load('src/modules/sheets/index.ts')).createSheetsReader()
+      return { read: ({ fileName, bytes }) => reader.read(bytes, fileName) }
+    },
+    good: () => fs.readFileSync(path.join(ROOT, 'src/modules/sheets/__fixtures__/c01/lakeview-chequing-4821.csv')),
+    names: ['statement (Test).csv', 'statement (Test).txt'],
+    routes: [['statement (Test).csv', 'statement (Test).pdf']],
+    // cells-r2.xlsx: sheet TB has an empty hidden row 9 and empty hidden columns 8 and 9 past the data (A360).
+    blank: () => fs.readFileSync(path.join(ROOT, 'src/modules/sheets/__fixtures__/xlsx/cells-r2.xlsx')),
+    keeps: (o) => {
+      if (o?.ok !== true) return `the workbook was refused: ${JSON.stringify(o).slice(0, 120)}`
+      const tb = o.result.sheets.find((x) => x.name === 'TB')
+      if (tb === undefined) return 'the sheet TB was dropped'
+      if (!tb.hiddenRows.includes(9)) return `the empty hidden row 9 was dropped: hidden rows ${JSON.stringify(tb.hiddenRows)}`
+      if (!tb.hiddenColumns.includes(8) || !tb.hiddenColumns.includes(9)) return `the empty hidden columns 8 and 9 were dropped: hidden columns ${JSON.stringify(tb.hiddenColumns)}`
+      return null
+    },
+    wrongKind: [
+      ['gzip bytes', 'statement (Test).csv', WRONG_KIND.gzip],
+      ['MZ bytes', 'statement (Test).csv', WRONG_KIND.mz],
+      ['a PDF header', 'statement (Test).csv', WRONG_KIND.pdf],
+      ['spanned-zip bytes', 'statement (Test).csv', WRONG_KIND.spannedZip],
+      ['spanned-zip bytes under a workbook name', 'statement (Test).xlsx', WRONG_KIND.spannedZip],
+      ['zip bytes with no workbook', 'statement (Test).xlsx', WRONG_KIND.zip],
+      ['empty bytes', 'statement (Test).csv', WRONG_KIND.empty],
+      ['empty bytes under a workbook name', 'statement (Test).xlsx', WRONG_KIND.empty],
+    ],
+    refusal: (o) => (o.threw === undefined && o.value?.ok === false && typeof o.value.reason === 'string' && o.value.reason.trim() !== '' ? o.value.reason : null),
+  },
 }
 const READER_DIRS = ['src/modules/ocr/textlayer', 'src/modules/ocr/tesseract', 'src/modules/ocr/recorded', 'src/modules/sheets', 'src/modules/qbo']
 
@@ -1396,6 +1491,75 @@ function xmlAndToleranceProblems(files, readFile) {
 }
 
 // =====================================================================================================
+const THIS_FILE = 'tools/test/schema-contract-rules.test.mjs'
+const UNIT_RULES = () => new Set([...read(THIS_FILE).matchAll(/onlyKnown\('([^']+)'/g)].map((m) => m[1]))
+const UNIT_SHAPE = () => ({ statuses: cardStatuses(), rules: UNIT_RULES(), fileOk: exists, subjectOf: leadingPath })
+const R18_TEXT = 'a core card lists it, but it has no // @mutate in its first 5 lines'
+
+describe('SC KNOWN, PENDING and scans: every exemption is exact, owned and alive (findings SC RC1 to RC4, A407)', () => {
+  test('ARC-15 KNOWN shape rule: a planted entry with a pattern, two files, a done owner or a non-card owner is caught; the clean entry is not', () => {
+    const clean = { rule: 'R18', file: 'src/contracts/jobs.ts', problems: [`src/contracts/jobs.ts: ${R18_TEXT}`], owner: 'FX3', why: 'clean control (Test)' }
+    const planted = [
+      clean,
+      { rule: 'R41', match: /^src\/contracts\/.*/, file: 'src/contracts/reading.ts', problems: ['src/contracts/reading.ts: planted (Test)'], owner: 'FX7' },
+      { rule: 'R41', file: 'src/contracts/facts.ts', problems: [/^src\/contracts\/facts\.ts: /], owner: 'FX7' },
+      { rule: 'R18', file: 'src/contracts/ai.ts', problems: [`src/contracts/ai.ts: ${R18_TEXT}`, `src/modules/jobs/queue.ts: ${R18_TEXT}`], owner: 'FX3' },
+      { rule: 'R18', file: 'src/(contracts|modules)/jobs.ts', problems: ['planted two-file (Test)'], owner: 'FX3' },
+      { rule: 'R16', file: 'src/modules/lifecycle/index.ts', problems: ['src/modules/lifecycle/index.ts: planted done owner (Test)'], owner: 'F02' },
+      { rule: 'R46', file: 'src/modules/sheets/xlsx/index.ts', problems: ['src/modules/sheets/xlsx/index.ts: planted prose owner (Test)'], owner: 'FX3 spec job' },
+      { rule: 'R99', file: 'src/contracts/no-such-file (Test).ts', problems: [], owner: 'FX3' },
+      { rule: 'R18', file: 'src/contracts/jobs.ts', problems: [`src/contracts/jobs.ts: ${R18_TEXT}`], owner: 'FX3' },
+    ]
+    expect(knownShapeProblems(planted, UNIT_SHAPE())).toEqual([
+      'KNOWN[1] R41 src/contracts/reading.ts: the key match is not one of rule, file, problems, owner, why',
+      'KNOWN[2] R41 src/contracts/facts.ts: a problem that is not a literal string ([object RegExp])',
+      'KNOWN[3] R18 src/contracts/ai.ts: the problem names another file (src/modules/jobs/queue.ts)',
+      'KNOWN[4] R18 src/(contracts|modules)/jobs.ts: the file is not one plain path',
+      'KNOWN[5] R16 src/modules/lifecycle/index.ts: the owner F02 is done, so it can never fix the defect',
+      'KNOWN[6] R46 src/modules/sheets/xlsx/index.ts: the owner "FX3 spec job" is not a card in plan/slices.json',
+      'KNOWN[7] R99 src/contracts/no-such-file (Test).ts: the rule is not one whose test reads KNOWN',
+      'KNOWN[7] R99 src/contracts/no-such-file (Test).ts: the file does not exist',
+      'KNOWN[7] R99 src/contracts/no-such-file (Test).ts: problems is not a non-empty list',
+      `KNOWN[8] R18 src/contracts/jobs.ts: the problem ${JSON.stringify(`src/contracts/jobs.ts: ${R18_TEXT}`)} is listed twice`,
+    ])
+    expect(knownShapeProblems([clean], UNIT_SHAPE())).toEqual([])
+  })
+  test('ARC-15 KNOWN rule: an entry cannot grow (a new problem in its file fails) and a string the rule no longer prints is stale', () => {
+    const known = [{ rule: 'R18', file: 'src/contracts/jobs.ts', problems: [`src/contracts/jobs.ts: ${R18_TEXT}`, 'src/contracts/jobs.ts: planted gone (Test)'], owner: 'FX3' }]
+    expect(onlyKnown('R18', [`src/contracts/jobs.ts: ${R18_TEXT}`, 'src/contracts/jobs.ts: planted new (Test)'], known)).toEqual([
+      'src/contracts/jobs.ts: planted new (Test)',
+      'stale KNOWN entry R18 src/contracts/jobs.ts (owner FX3): "src/contracts/jobs.ts: planted gone (Test)" no longer fails; remove it',
+    ])
+    expect(onlyKnown('R18', [`src/contracts/jobs.ts: ${R18_TEXT}`, 'src/contracts/jobs.ts: planted gone (Test)'], known)).toEqual([])
+  })
+  test('ARC-15 KNOWN shape: every entry in known.json (unit side) has one file, one rule, exact strings and an open owner', () => {
+    expect(Array.isArray(KNOWN)).toBe(true)
+    expect(knownShapeProblems(KNOWN, UNIT_SHAPE())).toEqual([])
+  })
+
+  test('ARC-8 R35 PENDING rule: a planted row whose subject is on main is stale, and so is a row with a done owner', () => {
+    const rows = [
+      { rule: 'R47', subject: 'src/modules/sheets', owner: 'FX4', why: 'planted (Test)' },
+      { rule: 'R47', subject: 'src/modules/planted-unbuilt (Test)', owner: 'A07D', why: 'planted (Test)' },
+      { rule: 'R47', subject: 'src/modules/planted-unbuilt (Test)', owner: 'B04', why: 'clean (Test)' },
+    ]
+    expect(stalePendingProblems(rows, { statuses: cardStatuses(), subjectExists: exists })).toEqual([
+      'stale PENDING row R47 src/modules/sheets (owner FX4): the subject is on main, so the rule runs on it; delete the row',
+      'PENDING row R47 src/modules/planted-unbuilt (Test): the owner A07D is not an open card',
+    ])
+  })
+  test('ARC-8 R35 every PENDING row names a subject not yet on main and an open owner card', () => {
+    expect(PENDING.length).toBeGreaterThan(0)
+    expect(stalePendingProblems(PENDING, { statuses: cardStatuses(), subjectExists: exists })).toEqual([])
+  })
+
+  test('ARC-8 scan rule: a file scan that reads nothing, or misses its named sentinel, is caught', () => {
+    expect(scanProblems('planted', [], 'src/contracts/text.ts')).toEqual(['planted: the scan read no file'])
+    expect(scanProblems('planted', ['src/contracts/reading.ts'], 'src/contracts/text.ts')).toEqual(['planted: the scan missed its sentinel src/contracts/text.ts'])
+    expect(scanProblems('clean', ['src/contracts/text.ts'], 'src/contracts/text.ts')).toEqual([])
+  })
+})
+
 describe('SC R15 to R18: schema and contract rules on files (EV-8, EV-10, FLOW-1, EV-5, ARC-15)', () => {
   test('EV-8 EV-10 FLOW-1 R15 rule: a planted status enum with one value missing is caught (list side)', async () => {
     const mod = await import(pathToFileURL(path.join(FIX, 'planted-r15-lists.mjs')).href)
@@ -1416,8 +1580,11 @@ describe('SC R15 to R18: schema and contract rules on files (EV-8, EV-10, FLOW-1
     expect(orderByProblems(['clean-r16-view.sql.txt'], fix)).toEqual([])
   })
   test('FLOW-1 R16 no order by created_at or id in the schema folder or src/modules unless an identity seq comes first', () => {
-    const schemaFiles = walk(['db', 'schema'].join('/')).filter((f) => f.endsWith('.sql'))
+    const schemaDir = ['db', 'schema'].join('/')
+    const schemaFiles = walk(schemaDir).filter((f) => f.endsWith('.sql'))
     const files = [...schemaFiles, ...productTs(['src/modules'])]
+    expect(scanProblems('R16 schema folder', schemaFiles, `${schemaDir}/50_returns.sql`)).toEqual([])
+    expect(scanProblems('R16 src/modules', files, 'src/modules/jobs/queue.ts')).toEqual([])
     expect(onlyKnown('R16', orderByProblems(files, read))).toEqual([])
   })
 
@@ -1434,7 +1601,10 @@ describe('SC R15 to R18: schema and contract rules on files (EV-8, EV-10, FLOW-1
   test('EV-5 R17 one box shape: no x0/y0/x1/y1 object in src/contracts and every box field is F09\'s BoxSchema', async () => {
     const { BoxSchema } = await load('src/contracts/reading.ts')
     const entries = await exportedSchemas(contractFiles())
-    const problems = [...boxProblems(entries, BoxSchema), ...boxTextProblems(productTs(['src/contracts']), read)]
+    const files = productTs(['src/contracts'])
+    expect(scanProblems('R17', files, 'src/contracts/reading.ts')).toEqual([])
+    expect(entries.some((e) => e.key === 'src/contracts/reading.ts#BoxSchema')).toBe(true)
+    const problems = [...boxProblems(entries, BoxSchema), ...boxTextProblems(files, read)]
     expect(onlyKnown('R17', problems)).toEqual([])
   })
 
@@ -1455,6 +1625,7 @@ describe('SC R15 to R18: schema and contract rules on files (EV-8, EV-10, FLOW-1
     const cards = walk('plan/cards').filter((f) => f.endsWith('.md')).map((f) => cardMeta(read(f)))
     expect(cards.filter((c) => c.core).length, 'no core card found').toBeGreaterThan(0)
     const files = walk('src')
+    expect(scanProblems('R18 core files', coreFiles(cards, files), 'src/contracts/reading.ts')).toEqual([])
     expect(onlyKnown('R18', coreUnmarkedProblems(cards, files, read))).toEqual([])
   })
 })
@@ -1510,6 +1681,7 @@ describe('SC R24 to R28: money, converters, writers and the Taxprep tables (EV-6
     expect(r.problems).toContain(`${file}#plantedUntagged: in the R26 registry but its export has no @money tag`)
   })
   test('EV-6 R26 no @money function under src/contracts and src/modules returns -0 (fixed seed), and the tag set is never empty', async () => {
+    expect(scanProblems('R26', CONTRACT_AND_MODULE_FILES(), 'src/contracts/amount-grammar.ts')).toEqual([])
     const r = await moneyProblems(CONTRACT_AND_MODULE_FILES(), MONEY_REGISTRY)
     expect(r.checked).toBeGreaterThan(0)
     expect(tagged(CONTRACT_AND_MODULE_FILES(), 'money').map((t) => t.key)).toContain('src/contracts/amount-grammar.ts#normaliseAmount')
@@ -1544,6 +1716,7 @@ describe('SC R24 to R28: money, converters, writers and the Taxprep tables (EV-6
     expect((await writesProblems([file], {})).problems).toEqual([`${file}#plantedWrite: a @writes export missing from the R24 registry`])
   })
   test('RT-3 ARC-14 R24 every @writes export reads back what it was given (fixed seed, extreme values)', async () => {
+    expect(scanProblems('R24', CONTRACT_AND_MODULE_FILES(), 'src/contracts/taxprep.ts')).toEqual([])
     const r = await writesProblems(CONTRACT_AND_MODULE_FILES(), WRITES_REGISTRY)
     expect(r.checked, 'no @writes export found (F03R tags writeTaxprepCsv first)').toBeGreaterThan(0)
     expect(onlyKnown('R24', r.problems)).toEqual([])
@@ -1570,6 +1743,7 @@ describe('SC R24 to R28: money, converters, writers and the Taxprep tables (EV-6
     const d = day2Descriptions()
     expect(d.size).toBeGreaterThan(50)
     const files = productTs(['src']).filter((f) => f !== 'src/contracts/taxprep.ts')
+    expect(scanProblems('R25', files, 'src/contracts/reading.ts')).toEqual([])
     expect(onlyKnown('R25', taxprepListProblems(files, read, d))).toEqual([])
   })
 
@@ -1582,6 +1756,7 @@ describe('SC R24 to R28: money, converters, writers and the Taxprep tables (EV-6
     const files = ['src', 'testworld', 'e2e']
       .flatMap((d) => walk(d))
       .filter((f) => /\.(ts|tsx|mts|mjs|js)$/.test(f) && !isFixture(f) && !isTest(f) && f !== 'src/contracts/amount-grammar.ts')
+    expect(scanProblems('R28', files, 'src/contracts/reading.ts')).toEqual([])
     expect(onlyKnown('R28', amountFormatProblems(files, read))).toEqual([])
   })
 })
@@ -1624,6 +1799,7 @@ describe('SC R29 to R33: parsers and finding lists (RT-3, RT-9, EV-6, RT-13, RT-
   })
   test('RT-13 RT-23 R31 no two exported finding lists share an entry or a finding string, and each list carries one anchor', async () => {
     const modules = []
+    expect(scanProblems('R31', CONTRACT_AND_MODULE_FILES(), 'src/contracts/taxprep.ts')).toEqual([])
     for (const f of CONTRACT_AND_MODULE_FILES()) modules.push([f, await load(f)])
     const r = findingListProblems(modules)
     expect(r.checked).toBeGreaterThanOrEqual(2)
@@ -1650,7 +1826,21 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
   test('SEC-11 R34 sample clients, testworld, fixtures and goldens hold no Luhn-valid nine digits, real e-mail or real phone', () => {
     const files = testDataFiles()
     expect(files.length).toBeGreaterThan(50)
-    expect(onlyKnown('R34', [...files.flatMap((f) => piiProblems(f, dataText(f))), ...binaryListProblems(files)])).toEqual([])
+    expect(scanProblems('R34 sample clients', files, 'reference/sample-clients/lib/util.mjs')).toEqual([])
+    expect(scanProblems('R34 SC fixtures', files, `${FIX_REL}/planted-r34-pii.txt`)).toEqual([])
+    expect(scanProblems('R34 goldens', files, `${FIX_REL}/__golden__/refused-reading.json`)).toEqual([])
+    const problems = []
+    for (const f of files) {
+      const found = piiProblems(f, dataText(f))
+      const plant = R34_PLANTED[f]
+      if (f === KNOWN_REL) {
+        // known.json quotes the problem strings of its own R34 entries, so it raises exactly what those strings hold.
+        const quoted = KNOWN.filter((k) => k.rule === 'R34').flatMap((k) => k.problems).join('\n')
+        expect(found, `${f} may hold only what its R34 entries quote`).toEqual(piiProblems(f, quoted))
+      } else if (plant === undefined) problems.push(...found)
+      else expect(found, `${f} (${plant.why}) must raise exactly its listed problems`).toEqual(plant.problems)
+    }
+    expect(onlyKnown('R34', [...problems, ...binaryListProblems(files)])).toEqual([])
   })
   test('SEC-11 R34 rule (widened): a SIN as a JSON number, in exponent form, with mixed, dotted or no-break separators is caught; box fractions and money are not', () => {
     const json = piiProblems('planted.json', fix('planted-r34-pii.json'))
@@ -1671,6 +1861,18 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
     ])
     expect(BINARY_FIXTURES.every((b) => b.reason.trim().length > 20)).toBe(true)
   })
+  test('SEC-11 R34 the reasoned binary list names files, one per entry, and every one is on main (a gone file is a stale entry)', () => {
+    expect(BINARY_FIXTURES.length).toBeGreaterThan(0)
+    expect(BINARY_FIXTURES.filter((b) => typeof b.file !== 'string' || /[*?|{}[\]\\^$]/.test(b.file)).map((b) => String(b.file))).toEqual([])
+    expect(BINARY_FIXTURES.filter((b) => !exists(b.file)).map((b) => `stale BINARY_FIXTURES entry ${b.file}: not on main`)).toEqual([])
+    expect(new Set(BINARY_FIXTURES.map((b) => b.file)).size).toBe(BINARY_FIXTURES.length)
+  })
+  test('SEC-11 R34 each named plant raises its listed problems, and an excuse that names a file with no listed problem is refused', () => {
+    for (const [f, plant] of Object.entries(R34_PLANTED)) {
+      expect(plant.problems.length, `${f}: an excused plant must list the problems it raises`).toBeGreaterThan(0)
+      expect(piiProblems(f, dataText(f))).toEqual(plant.problems)
+    }
+  })
   test('SEC-11 R34 (widened) W00b guardFolder refuses the planted folder and passes sample clients, testworld, every __fixtures__ and __golden__', async () => {
     const subject = 'testworld/model/guard.ts'
     if (!exists(subject)) {
@@ -1687,7 +1889,12 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
       fs.rmSync(tmp, { recursive: true, force: true })
     }
     const dirs = [...new Set(['reference/sample-clients', 'testworld', ...testDataFiles().filter(isFixture).map((f) => f.replace(/(__fixtures__|__golden__)\/.*$/, '$1'))])]
-    const problems = dirs.map((d) => [d, guardOutcome(guardFolder, path.join(ROOT, d))]).filter(([, o]) => o !== null).map(([d, o]) => `${d}: ${String(o)}`)
+    // The folder holding SC's R34 plants is named here and must be refused, never skipped (findings SC RC2).
+    const PLANT_HOME = 'tools/test/__fixtures__'
+    expect(dirs).toContain(PLANT_HOME)
+    expect(guardOutcome(guardFolder, path.join(ROOT, PLANT_HOME)), `guardFolder passed ${PLANT_HOME}, which holds the R34 plants`).not.toBeNull()
+    const problems = dirs
+      .filter((d) => d !== PLANT_HOME).map((d) => [d, guardOutcome(guardFolder, path.join(ROOT, d))]).filter(([, o]) => o !== null).map(([d, o]) => `${d}: ${String(o)}`)
     expect(onlyKnown('R34-guard', problems)).toEqual([])
   }, 60_000)
 
@@ -1695,7 +1902,9 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
     expect(moneyFromNumberProblems(['planted-r36-money.ts.txt'], fix)).toHaveLength(2)
   })
   test('EV-6 R36 money is read from text only: no dollarsToCents(number) and no float dollars to cents in src', () => {
-    expect(onlyKnown('R36', moneyFromNumberProblems(productTs(['src', 'testworld']), read))).toEqual([])
+    const files = productTs(['src', 'testworld'])
+    expect(scanProblems('R36', files, 'src/contracts/amount-grammar.ts')).toEqual([])
+    expect(onlyKnown('R36', moneyFromNumberProblems(files, read))).toEqual([])
   })
 
   test('RT-9 R37 rule: a planted CRLF CSV under eol=lf is caught; a -text golden is not', () => {
@@ -1720,6 +1929,7 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
   })
   test('RT-9 R38 no test builds expected bytes with a non-UTF-8 TextDecoder or TextEncoder, and setup fails below Node 24', () => {
     const tests = ['src', 'tools', 'testworld', 'e2e', 'design'].flatMap((d) => walk(d)).filter((f) => isTest(f) && !isFixture(f))
+    expect(scanProblems('R38', tests, 'src/contracts/taxprep.acceptance.test.ts')).toEqual([])
     const problems = decoderProblems(tests, read)
     const config = read('vitest.config.ts')
     const setups = [...config.matchAll(/setupFiles:\s*\[([^\]]*)\]/g)].flatMap((m) => [...m[1].matchAll(/['"]([^'"]+)['"]/g)].map((x) => x[1]))
@@ -1756,7 +1966,9 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
     expect(blankRuleProblems(['planted-r41-blank.ts.txt'], fix)).toHaveLength(2)
   })
   test('EV-1 R41 one blank definition: no .trim() or z.string().min(1) non-blank rule in src/contracts or src/modules (text.ts is the one)', () => {
-    expect(onlyKnown('R41', blankRuleProblems(CONTRACT_AND_MODULE_FILES(), read))).toEqual([])
+    const files = CONTRACT_AND_MODULE_FILES()
+    expect(scanProblems('R41', files, 'src/contracts/text.ts')).toEqual([])
+    expect(onlyKnown('R41', blankRuleProblems(files, read))).toEqual([])
   })
 
   test('SEC-4 R45 the sensitive-key name rule covers bank transit, institution and account numbers, date of birth, SIN and business number', async () => {
@@ -1830,6 +2042,7 @@ describe('SC R35, R45 and R50 to R53: test-world checks, cites, one Luhn, loader
   test('SEC-11 R50 one Luhn: no Luhn check outside guard.ts and reference/sample-clients/lib/util.mjs', () => {
     const files = codeFiles()
     expect(files.length).toBeGreaterThan(100)
+    expect(scanProblems('R50', files, 'reference/sample-clients/lib/util.mjs')).toEqual([])
     expect(onlyKnown('R50', oneCheckDigitProblems(files, read))).toEqual([])
   }, 60_000)
   test('SEC-11 R50 the guard Luhn and lib/util.mjs agree on every nine-digit shape (fixed seed)', async () => {
@@ -1914,7 +2127,7 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
   })
   test('EV-14 R46 no module turns a library value into text through .text, String(x) or a template without a typed switch', () => {
     const files = productTs(['src/modules'])
-    expect(files.length).toBeGreaterThan(0)
+    expect(scanProblems('R46', files, 'src/modules/sheets/xlsx/index.ts')).toEqual([])
     expect(onlyKnown('R46', libraryTextProblems(files, read))).toEqual([])
   })
 
@@ -1971,7 +2184,9 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
     ])
   })
   test('EV-1 EV-14 R49 no z.string().trim() transform in src/contracts or src/modules', () => {
-    expect(onlyKnown('R49', trimTransformProblems(CONTRACT_AND_MODULE_FILES(), read))).toEqual([])
+    const files = CONTRACT_AND_MODULE_FILES()
+    expect(scanProblems('R49', files, 'src/contracts/text.ts')).toEqual([])
+    expect(onlyKnown('R49', trimTransformProblems(files, read))).toEqual([])
   })
 
   test('ARC-6 EV-14 R54 rule: a reader that lets a library error out with its URL is caught', async () => {
@@ -2002,6 +2217,9 @@ describe('SC R46 to R49, R54 and R56: readers, caches, empty instances, wrong ki
     expect(xmlAndToleranceProblems(['clean-r56-xml.ts.txt'], fix)).toEqual([])
   })
   test('EV-14 R56 every regex over raw sheet XML handles self-closed elements and every snap tolerance is relative to magnitude', () => {
-    expect(onlyKnown('R56', xmlAndToleranceProblems(CONTRACT_AND_MODULE_FILES(), read))).toEqual([])
+    const files = CONTRACT_AND_MODULE_FILES()
+    expect(scanProblems('R56', files, 'src/contracts/text.ts')).toEqual([])
+    expect(scanProblems('R56 raw sheet XML', files, 'src/modules/sheets/xlsx/raw.ts')).toEqual([])
+    expect(onlyKnown('R56', xmlAndToleranceProblems(files, read))).toEqual([])
   })
 })

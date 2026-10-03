@@ -1,0 +1,1643 @@
+{
+  "unit": [
+    {
+      "rule": "R15",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#ExceptionRecordSchema.status: not an enum of a list in src/contracts/records.ts"
+      ],
+      "owner": "FX3",
+      "why": "not an enum of a records.ts list"
+    },
+    {
+      "rule": "R16",
+      "file": "src/modules/jobs/queue.ts",
+      "problems": [
+        "src/modules/jobs/queue.ts: \"order by created_at, id limit 1 for update skip locked`, [now, kinds \" orders by created_at or id with no identity seq first"
+      ],
+      "owner": "FX3",
+      "why": "orders by created_at or id with no identity seq first"
+    },
+    {
+      "rule": "R16",
+      "file": "src/modules/jobs/queue.ts",
+      "problems": [
+        "src/modules/jobs/queue.ts: \"order by created_at, id`, [returnId],\" orders by created_at or id with no identity seq first"
+      ],
+      "owner": "FX3",
+      "why": "orders by created_at or id with no identity seq first"
+    },
+    {
+      "rule": "R16",
+      "file": "src/modules/lifecycle/index.ts",
+      "problems": [
+        "src/modules/lifecycle/index.ts: \"order by occurred_at, id`, [returnId],\" orders by created_at or id with no identity seq first"
+      ],
+      "owner": "FX5",
+      "why": "orders by created_at or id with no identity seq first"
+    },
+    {
+      "rule": "R18",
+      "file": "src/contracts/jobs.ts",
+      "problems": [
+        "src/contracts/jobs.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX3",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R18",
+      "file": "src/modules/bridge/run.ts",
+      "problems": [
+        "src/modules/bridge/run.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX3",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R18",
+      "file": "src/modules/gaps/bank/index.ts",
+      "problems": [
+        "src/modules/gaps/bank/index.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX3",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R18",
+      "file": "src/modules/gaps/index.ts",
+      "problems": [
+        "src/modules/gaps/index.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX3",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R18",
+      "file": "src/modules/jobs/queue.ts",
+      "problems": [
+        "src/modules/jobs/queue.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX3",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R18",
+      "file": "src/modules/storage/drive/index.ts",
+      "problems": [
+        "src/modules/storage/drive/index.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX7",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R18",
+      "file": "src/modules/storage/files/index.ts",
+      "problems": [
+        "src/modules/storage/files/index.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX7",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R18",
+      "file": "src/modules/storage/index.ts",
+      "problems": [
+        "src/modules/storage/index.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX7",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R18",
+      "file": "src/modules/storage/safe.ts",
+      "problems": [
+        "src/modules/storage/safe.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
+      ],
+      "owner": "FX7",
+      "why": "a core file without // @mutate"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/auth.ts",
+      "problems": [
+        "src/contracts/auth.ts#StaffUserSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX7",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/auth.ts",
+      "problems": [
+        "src/contracts/auth.ts#SessionSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX7",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/checks.ts",
+      "problems": [
+        "src/contracts/checks.ts#CheckRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/checks.ts",
+      "problems": [
+        "src/contracts/checks.ts#ReconcilingItemSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/checks.ts",
+      "problems": [
+        "src/contracts/checks.ts#CheckExceptionSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "src/contracts/facts.ts#factEntrySchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX7",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/jobs.ts",
+      "problems": [
+        "src/contracts/jobs.ts#JobSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/lifecycle.ts",
+      "problems": [
+        "src/contracts/lifecycle.ts#ApprovalFingerprintSchema: a stray key is accepted at (top)",
+        "src/contracts/lifecycle.ts#ApprovalFingerprintSchema: a stray key is accepted at cells.0",
+        "src/contracts/lifecycle.ts#ApprovalFingerprintSchema: a stray key is accepted at facts.0",
+        "src/contracts/lifecycle.ts#ApprovalFingerprintSchema: a stray key is accepted at entries.0",
+        "src/contracts/lifecycle.ts#ApprovalFingerprintSchema: a stray key is accepted at judgmentInputs.0"
+      ],
+      "owner": "FX5",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/lifecycle.ts",
+      "problems": [
+        "src/contracts/lifecycle.ts#ChangedItemSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX5",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#ReturnRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#DocumentRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#VersionRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#VersionCellRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#ApprovalRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#EventRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#FactRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#LinkRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#AccountRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#GifiMappingRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#AdjustingEntryRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#EntryLineRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#JudgmentInputRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#FigureRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#StateEventRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#HoldRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#CheckResultRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#ExceptionRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#AnswerRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#DifferenceRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R23",
+      "file": "src/contracts/records.ts",
+      "problems": [
+        "src/contracts/records.ts#LessonRecordSchema: a stray key is accepted at (top)"
+      ],
+      "owner": "FX3",
+      "why": "plain z.object: a stray key passes"
+    },
+    {
+      "rule": "R30",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "src/contracts/taxprep.ts#readBackMatches: a rate of 0.5 read back as \"0.50\" is accepted"
+      ],
+      "owner": "FX6",
+      "why": "rates compare by Number(), not exact toFixed(4) text (R33)"
+    },
+    {
+      "rule": "R30",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "src/contracts/taxprep.ts#readBackMatches: a rate of 0.5 read back as \"5e-1\" is accepted"
+      ],
+      "owner": "FX6",
+      "why": "rates compare by Number(), not exact toFixed(4) text (R33)"
+    },
+    {
+      "rule": "R28",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "src/contracts/taxprep.ts: defines its own amount pattern (/\\\\{1,2}d\\{1,3\\}/); import from src/contracts/amount-grammar.ts"
+      ],
+      "owner": "FX6",
+      "why": "its own amount pattern"
+    },
+    {
+      "rule": "R32",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "\"+1'234\": passes as plain text \"+1'234\" (neither a number nor a named fault)"
+      ],
+      "owner": "FX6",
+      "why": "number-like text with an apostrophe passes as plain text (B1)"
+    },
+    {
+      "rule": "R32",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "\"(1'234)\": passes as plain text \"(1'234)\" (neither a number nor a named fault)"
+      ],
+      "owner": "FX6",
+      "why": "number-like text with an apostrophe passes as plain text (B1)"
+    },
+    {
+      "rule": "R32",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "\" 1'234\": passes as plain text \" 1'234\" (neither a number nor a named fault)"
+      ],
+      "owner": "FX6",
+      "why": "number-like text with an apostrophe passes as plain text (B1)"
+    },
+    {
+      "rule": "R32",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "\"1'234 \": passes as plain text \"1'234 \" (neither a number nor a named fault)"
+      ],
+      "owner": "FX6",
+      "why": "number-like text with an apostrophe passes as plain text (B1)"
+    },
+    {
+      "rule": "R32",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "\"1'234e3\": passes as plain text \"1'234e3\" (neither a number nor a named fault)"
+      ],
+      "owner": "FX6",
+      "why": "number-like text with an apostrophe passes as plain text (B1)"
+    },
+    {
+      "rule": "R32",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "\"--'12\": passes as plain text \"--'12\" (neither a number nor a named fault)"
+      ],
+      "owner": "FX6",
+      "why": "number-like text with an apostrophe passes as plain text (B1)"
+    },
+    {
+      "rule": "R32",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "\"1’234\": passes as plain text \"1’234\" (neither a number nor a named fault)"
+      ],
+      "owner": "FX6",
+      "why": "number-like text with an apostrophe passes as plain text (B1)"
+    },
+    {
+      "rule": "R34",
+      "file": "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
+      "problems": [
+        "tools/test/__fixtures__/planted-interpolated-log.ts.txt: a Luhn-valid nine-digit number \"046454286\" (a SIN or business number shape)"
+      ],
+      "owner": "FX7",
+      "why": "the A05 log plant uses a Luhn-valid number; give it a non-Luhn one"
+    },
+    {
+      "rule": "R36",
+      "file": "src/modules/sheets/xlsx/index.ts",
+      "problems": [
+        "src/modules/sheets/xlsx/index.ts: float dollars to cents (Math.round(x * 100) or parseFloat)"
+      ],
+      "owner": "FX4",
+      "why": "float dollars to cents on a library number"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/01-maple-ridge/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/01-maple-ridge/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/02-halton-haulage/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/02-halton-haulage/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/03-bluewater-renovations/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/03-bluewater-renovations/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/04-lakeshore-eats/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/04-lakeshore-eats/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/05-eglinton-holdings/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/05-eglinton-holdings/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/06-eglinton-retail/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/06-eglinton-retail/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/07-riverdale-rentals/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/07-riverdale-rentals/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/08-queen-west-design/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/08-queen-west-design/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/09-scarborough-robotics/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/09-scarborough-robotics/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/10-danforth-cleaning/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/10-danforth-cleaning/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/11-humber-bay-software/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/11-humber-bay-software/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)",
+        "reference/sample-clients/11-humber-bay-software/taxprep/import.csv: CRLF in the index under text=auto eol=lf"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/12-kensington-market-crafts/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/12-kensington-market-crafts/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)",
+        "reference/sample-clients/12-kensington-market-crafts/taxprep/import.csv: CRLF in the index under text=auto eol=lf"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/13-sharma-medicine/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/13-sharma-medicine/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/14-rouge-valley-landscaping-2024/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/14-rouge-valley-landscaping-2024/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/sample-clients/15-rouge-valley-landscaping-2025/taxprep/import.csv",
+      "problems": [
+        "reference/sample-clients/15-rouge-valley-landscaping-2025/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-01-day1/exports/all-input-cells-return1-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-01-day1/exports/all-input-cells-return1-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-02-day2/exports/bs-forms-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-02-day2/exports/bs-forms-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-02-day2/exports/gifi-dict-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-02-day2/exports/gifi-dict-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-02-day2/exports/gifi-probe-typed.csv",
+      "problems": [
+        "reference/taxprep/2026-10-02-day2/exports/gifi-probe-typed.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-02-day2/exports/probe-enc-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-02-day2/exports/probe-enc-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-02-day2/exports/rt-07-imported-default.csv",
+      "problems": [
+        "reference/taxprep/2026-10-02-day2/exports/rt-07-imported-default.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-02-day2/exports/sched-forms-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-02-day2/exports/sched-forms-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-03-day3/exports/s8-s1-after-cca-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-03-day3/exports/s8-s1-after-cca-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-04-day4/autofill-edited-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-04-day4/autofill-edited-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-04-day4/autofill-entered-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-04-day4/autofill-entered-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-04-day4/autofill-imported-structure.csv",
+      "problems": [
+        "reference/taxprep/2026-10-04-day4/autofill-imported-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/schedules-all-structure-05.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/schedules-all-structure-05.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/schedules-all-structure-06.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/schedules-all-structure-06.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/schedules-input-structure-05.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/schedules-input-structure-05.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/schedules-input-structure-06.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/schedules-input-structure-06.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/settings-column-semicolon.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/settings-column-semicolon.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/settings-column-space.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/settings-column-space.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/settings-column-tab.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/settings-column-tab.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/settings-decimal-comma.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/settings-decimal-comma.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/settings-negatives-paren.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/settings-negatives-paren.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/settings-thousands-comma.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/settings-thousands-comma.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R37",
+      "file": "reference/taxprep/2026-10-05-day5/exports/settings-thousands-space.csv",
+      "problems": [
+        "reference/taxprep/2026-10-05-day5/exports/settings-thousands-space.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
+      ],
+      "owner": "FX7",
+      "why": "byte-compared CSV not -text in .gitattributes"
+    },
+    {
+      "rule": "R38",
+      "file": "src/contracts/taxprep.acceptance.test.ts",
+      "problems": [
+        "src/contracts/taxprep.acceptance.test.ts: a TextDecoder for windows-1252 (its table differs between Node versions)"
+      ],
+      "owner": "FX6",
+      "why": "windows-1252 TextDecoder or no Node 24 setup guard"
+    },
+    {
+      "rule": "R38",
+      "file": "src/core/test-no-network.ts",
+      "problems": [
+        "no Vitest setup file refuses a Node major below 24"
+      ],
+      "owner": "FX7",
+      "why": "windows-1252 TextDecoder or no Node 24 setup guard"
+    },
+    {
+      "rule": "R39",
+      "file": "src/contracts/amount-grammar.ts",
+      "problems": [
+        "amountGroups joins words from two pages: [123456]"
+      ],
+      "owner": "FX7",
+      "why": "amountGroups joins words across pages"
+    },
+    {
+      "rule": "R41",
+      "file": "src/contracts/amount-grammar.ts",
+      "problems": [
+        "src/contracts/amount-grammar.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
+      ],
+      "owner": "FX7",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R41",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "src/contracts/facts.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
+      ],
+      "owner": "FX7",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R41",
+      "file": "src/contracts/reading.ts",
+      "problems": [
+        "src/contracts/reading.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
+      ],
+      "owner": "FX7",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R41",
+      "file": "src/contracts/reading.ts",
+      "problems": [
+        "src/contracts/reading.ts: a z.string().min(1) non-blank rule (use NonBlankSchema)"
+      ],
+      "owner": "FX7",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R41",
+      "file": "src/contracts/sheets.ts",
+      "problems": [
+        "src/contracts/sheets.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
+      ],
+      "owner": "FX4",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R41",
+      "file": "src/contracts/taxprep.ts",
+      "problems": [
+        "src/contracts/taxprep.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
+      ],
+      "owner": "FX6",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R41",
+      "file": "src/modules/bridge/run.ts",
+      "problems": [
+        "src/modules/bridge/run.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
+      ],
+      "owner": "FX3",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R41",
+      "file": "src/modules/gaps/bank/index.ts",
+      "problems": [
+        "src/modules/gaps/bank/index.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
+      ],
+      "owner": "FX3",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R41",
+      "file": "src/modules/gaps/bank/index.ts",
+      "problems": [
+        "src/modules/gaps/bank/index.ts: a z.string().min(1) non-blank rule (use NonBlankSchema)"
+      ],
+      "owner": "FX3",
+      "why": "a private blank rule; go through src/contracts/text.ts"
+    },
+    {
+      "rule": "R45",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "sensitiveKindForKey(\"corp.bank.bank_transit\") is \"none\""
+      ],
+      "owner": "FX7",
+      "why": "the sensitive-key rule misses this key"
+    },
+    {
+      "rule": "R45",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "sensitiveKindForKey(\"corp.bank.institution_no\") is \"none\""
+      ],
+      "owner": "FX7",
+      "why": "the sensitive-key rule misses this key"
+    },
+    {
+      "rule": "R45",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "sensitiveKindForKey(\"owner.person.dob\") is \"none\""
+      ],
+      "owner": "FX7",
+      "why": "the sensitive-key rule misses this key"
+    },
+    {
+      "rule": "R45",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "sensitiveKindForKey(\"corp.identity.business_number\") is \"none\""
+      ],
+      "owner": "FX7",
+      "why": "the sensitive-key rule misses this key"
+    },
+    {
+      "rule": "R45",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "sensitiveKindForKey(\"corp.bank.transit_number\") is \"none\""
+      ],
+      "owner": "FX7",
+      "why": "the sensitive-key rule misses this key"
+    },
+    {
+      "rule": "R45-enum",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "loadFactCatalogue accepts duplicate enum options"
+      ],
+      "owner": "FX7",
+      "why": "the loader accepts duplicate enum options"
+    },
+    {
+      "rule": "R45-cite",
+      "file": "src/contracts/facts.ts",
+      "problems": [
+        "loadFactCatalogue accepts a cra_form cite that is free text"
+      ],
+      "owner": "FX7",
+      "why": "the loader does not enforce the cite pattern"
+    },
+    {
+      "rule": "R46",
+      "file": "src/modules/sheets/xlsx/index.ts",
+      "problems": [
+        "src/modules/sheets/xlsx/index.ts: reads a library value's display text (.text); build the text from the typed value"
+      ],
+      "owner": "FX4",
+      "why": "library value to text without a typed switch"
+    },
+    {
+      "rule": "R46",
+      "file": "src/modules/sheets/xlsx/index.ts",
+      "problems": [
+        "src/modules/sheets/xlsx/index.ts: turns a library value into text with String(c) and no typed switch"
+      ],
+      "owner": "FX4",
+      "why": "library value to text without a typed switch"
+    },
+    {
+      "rule": "R49",
+      "file": "src/contracts/reading.ts",
+      "problems": [
+        "src/contracts/reading.ts: a z.string().trim() transform rewrites the stored value (non-blank goes through text.ts)"
+      ],
+      "owner": "FX7",
+      "why": "a z.string().trim() transform"
+    },
+    {
+      "rule": "R54",
+      "file": "src/modules/ocr/textlayer/index.ts",
+      "problems": [
+        "A01: a zero-size MediaBox under statement (Test).pdf was not refused with a reason ({\"documentFingerprint\":\"r54-A01-a zero-size MediaBox (Test)\",\"engine\":{\"name\":\"textlayer\",\"version\":\"pdfjs-dist 6.3.289\")"
+      ],
+      "owner": "FX7",
+      "why": "a wrong-kind container is not refused with a reason"
+    },
+    {
+      "rule": "R54",
+      "file": "src/modules/sheets/index.ts",
+      "problems": [
+        "A07: gzip bytes under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"30059ef26301a439799520701a8a4a316dd36b5965cfaf9187d19f77cf7df89b\",\"engine\":{\"nam)"
+      ],
+      "owner": "FX4",
+      "why": "a wrong-kind container is not refused with a reason"
+    },
+    {
+      "rule": "R54",
+      "file": "src/modules/sheets/index.ts",
+      "problems": [
+        "A07: MZ bytes under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"c2131f1b89445a0c2896cd16dd3083ea4796e1de50611cd97acb1747ba4cc063\",\"engine\":{\"nam)"
+      ],
+      "owner": "FX4",
+      "why": "a wrong-kind container is not refused with a reason"
+    },
+    {
+      "rule": "R54",
+      "file": "src/modules/sheets/index.ts",
+      "problems": [
+        "A07: a PDF header under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"7720602e8310e9e4b94f346ecbc162508fe0e5d7a5e411e4f4ca2e16c2fbaf1e\",\"engine\":{\"nam)"
+      ],
+      "owner": "FX4",
+      "why": "a wrong-kind container is not refused with a reason"
+    },
+    {
+      "rule": "R54",
+      "file": "src/modules/sheets/index.ts",
+      "problems": [
+        "A07: spanned-zip bytes under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"e57d211c84c30b3d479b584370a5f37b72243cfd140d4cb2c61e371dc7e28b45\",\"engine\":{\"nam)"
+      ],
+      "owner": "FX4",
+      "why": "a wrong-kind container is not refused with a reason"
+    },
+    {
+      "rule": "R54",
+      "file": "src/modules/sheets/index.ts",
+      "problems": [
+        "A07: empty bytes under statement (Test).csv was not refused with a reason ({\"ok\":true,\"result\":{\"fileFingerprint\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"engine\":{\"nam)"
+      ],
+      "owner": "FX4",
+      "why": "a wrong-kind container is not refused with a reason"
+    },
+    {
+      "rule": "R56",
+      "file": "src/modules/sheets/xlsx/raw.ts",
+      "problems": [
+        "src/modules/sheets/xlsx/raw.ts: a regex over raw XML that misses a self-closed element (<v>([\\s\\S]*?)<\\/v>)"
+      ],
+      "owner": "FX4",
+      "why": "a raw-XML regex that misses a self-closed element"
+    },
+    {
+      "rule": "R56",
+      "file": "src/modules/sheets/xlsx/raw.ts",
+      "problems": [
+        "src/modules/sheets/xlsx/raw.ts: a regex over raw XML that misses a self-closed element ( An empty stored value (<v></v>) is no value, as <)"
+      ],
+      "owner": "FX4",
+      "why": "a raw-XML regex that misses a self-closed element"
+    }
+  ],
+  "db": [
+    {
+      "rule": "R12",
+      "file": "returns.returns",
+      "problems": [
+        "returns.returns: refuses UPDATE or DELETE but not TRUNCATE"
+      ],
+      "owner": "FX3",
+      "why": "no truncate refusal"
+    },
+    {
+      "rule": "R13",
+      "file": "returns.bridge_returns.return_id",
+      "problems": [
+        "returns.bridge_returns.return_id accepts the blank \"\""
+      ],
+      "owner": "FX3",
+      "why": "a text column with no non-blank check through returns.is_blank"
+    },
+    {
+      "rule": "R13",
+      "file": "returns.jobs.id",
+      "problems": [
+        "returns.jobs.id accepts the blank \"\""
+      ],
+      "owner": "FX3",
+      "why": "a text column with no non-blank check through returns.is_blank"
+    },
+    {
+      "rule": "R13",
+      "file": "returns.jobs.return_id",
+      "problems": [
+        "returns.jobs.return_id accepts the blank \"\""
+      ],
+      "owner": "FX3",
+      "why": "a text column with no non-blank check through returns.is_blank"
+    },
+    {
+      "rule": "R13",
+      "file": "returns.jobs.lease_holder",
+      "problems": [
+        "returns.jobs.lease_holder accepts the blank \"\""
+      ],
+      "owner": "FX3",
+      "why": "a text column with no non-blank check through returns.is_blank"
+    },
+    {
+      "rule": "R13",
+      "file": "returns.jobs.last_error",
+      "problems": [
+        "returns.jobs.last_error accepts the blank \"\""
+      ],
+      "owner": "FX3",
+      "why": "a text column with no non-blank check through returns.is_blank"
+    },
+    {
+      "rule": "R13",
+      "file": "returns.sign_in_events.id",
+      "problems": [
+        "returns.sign_in_events.id accepts the blank \"\""
+      ],
+      "owner": "FX3",
+      "why": "a text column with no non-blank check through returns.is_blank"
+    },
+    {
+      "rule": "R13",
+      "file": "returns.sign_in_events.user_id",
+      "problems": [
+        "returns.sign_in_events.user_id accepts the blank \"\""
+      ],
+      "owner": "FX3",
+      "why": "a text column with no non-blank check through returns.is_blank"
+    },
+    {
+      "rule": "R13",
+      "file": "returns.staff_sessions.user_id",
+      "problems": [
+        "returns.staff_sessions.user_id accepts the blank \"\""
+      ],
+      "owner": "FX3",
+      "why": "a text column with no non-blank check through returns.is_blank"
+    },
+    {
+      "rule": "R15",
+      "file": "returns.client_handoff.status",
+      "problems": [
+        "returns.client_handoff.status: its CHECK list [\"draft\",\"sent\",\"withdrawn\",\"closed\"] equals no list in records.ts"
+      ],
+      "owner": "FX3",
+      "why": "the status list is missing from records.ts or the CHECK"
+    },
+    {
+      "rule": "R15",
+      "file": "returns.exceptions.status",
+      "problems": [
+        "returns.exceptions.status: no CHECK with a list of values"
+      ],
+      "owner": "FX3",
+      "why": "the status list is missing from records.ts or the CHECK"
+    },
+    {
+      "rule": "R15",
+      "file": "returns.jobs.status",
+      "problems": [
+        "returns.jobs.status: its CHECK list [\"queued\",\"running\",\"done\",\"failed\",\"dead\"] equals no list in records.ts"
+      ],
+      "owner": "FX3",
+      "why": "the status list is missing from records.ts or the CHECK"
+    },
+    {
+      "rule": "R42",
+      "file": "returns.bridge_ops_items",
+      "problems": [
+        "returns.bridge_ops_items: no record schema"
+      ],
+      "owner": "FX3",
+      "why": "no record schema in records.ts for the table"
+    },
+    {
+      "rule": "R42",
+      "file": "returns.bridge_returns",
+      "problems": [
+        "returns.bridge_returns: no record schema"
+      ],
+      "owner": "FX3",
+      "why": "no record schema in records.ts for the table"
+    },
+    {
+      "rule": "R42",
+      "file": "returns.client_handoff",
+      "problems": [
+        "returns.client_handoff: no record schema"
+      ],
+      "owner": "FX3",
+      "why": "no record schema in records.ts for the table"
+    },
+    {
+      "rule": "R42",
+      "file": "returns.client_refs",
+      "problems": [
+        "returns.client_refs: no record schema"
+      ],
+      "owner": "FX3",
+      "why": "no record schema in records.ts for the table"
+    },
+    {
+      "rule": "R42",
+      "file": "returns.jobs",
+      "problems": [
+        "returns.jobs: no record schema"
+      ],
+      "owner": "FX3",
+      "why": "no record schema in records.ts for the table"
+    },
+    {
+      "rule": "R42",
+      "file": "returns.sign_in_events",
+      "problems": [
+        "returns.sign_in_events: no record schema"
+      ],
+      "owner": "FX3",
+      "why": "no record schema in records.ts for the table"
+    },
+    {
+      "rule": "R42",
+      "file": "returns.staff_sessions",
+      "problems": [
+        "returns.staff_sessions: no record schema"
+      ],
+      "owner": "FX3",
+      "why": "no record schema in records.ts for the table"
+    },
+    {
+      "rule": "R42",
+      "file": "returns.staff_users",
+      "problems": [
+        "returns.staff_users: no record schema"
+      ],
+      "owner": "FX3",
+      "why": "no record schema in records.ts for the table"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.accounts.qbo_snapshot_id",
+      "problems": [
+        "returns.accounts.qbo_snapshot_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.accounts.qbo_account_id",
+      "problems": [
+        "returns.accounts.qbo_account_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.adjusting_entries.qbo_snapshot_id",
+      "problems": [
+        "returns.adjusting_entries.qbo_snapshot_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.adjusting_entries.qbo_txn_id",
+      "problems": [
+        "returns.adjusting_entries.qbo_txn_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.bridge_ops_items.corporation_id",
+      "problems": [
+        "returns.bridge_ops_items.corporation_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.bridge_returns.corporation_id",
+      "problems": [
+        "returns.bridge_returns.corporation_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.bridge_returns.group_id",
+      "problems": [
+        "returns.bridge_returns.group_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.check_results.check_id",
+      "problems": [
+        "returns.check_results.check_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.client_handoff.corporation_id",
+      "problems": [
+        "returns.client_handoff.corporation_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.client_handoff.engagement_id",
+      "problems": [
+        "returns.client_handoff.engagement_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.client_handoff.item_id",
+      "problems": [
+        "returns.client_handoff.item_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.client_handoff.fact_id",
+      "problems": [
+        "returns.client_handoff.fact_id: returns.facts exists, but it is not a foreign key to it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.client_handoff.recommendation_id",
+      "problems": [
+        "returns.client_handoff.recommendation_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.client_handoff.reason_id",
+      "problems": [
+        "returns.client_handoff.reason_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.client_refs.corporation_id",
+      "problems": [
+        "returns.client_refs.corporation_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.differences.cell_id",
+      "problems": [
+        "returns.differences.cell_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.entry_lines.qbo_account_id",
+      "problems": [
+        "returns.entry_lines.qbo_account_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.events.record_id",
+      "problems": [
+        "returns.events.record_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.facts.source_qbo_snapshot_id",
+      "problems": [
+        "returns.facts.source_qbo_snapshot_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.facts.source_qbo_account_id",
+      "problems": [
+        "returns.facts.source_qbo_account_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.facts.source_qbo_txn_id",
+      "problems": [
+        "returns.facts.source_qbo_txn_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.facts.source_client_answer_id",
+      "problems": [
+        "returns.facts.source_client_answer_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.facts.source_cra_capture_id",
+      "problems": [
+        "returns.facts.source_cra_capture_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.facts.source_prior_return_id",
+      "problems": [
+        "returns.facts.source_prior_return_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.figures.cell_id",
+      "problems": [
+        "returns.figures.cell_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.judgment_inputs.cell_id",
+      "problems": [
+        "returns.judgment_inputs.cell_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.links.from_id",
+      "problems": [
+        "returns.links.from_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.links.to_id",
+      "problems": [
+        "returns.links.to_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R43",
+      "file": "returns.version_cells.cell_id",
+      "problems": [
+        "returns.version_cells.cell_id: points at no built table and FUTURE_POINTERS does not name the card that builds it"
+      ],
+      "owner": "FX3",
+      "why": "a pointer id: a foreign key, or a FUTURE_POINTERS entry in ids.ts naming the card"
+    },
+    {
+      "rule": "R44",
+      "file": "returns.bridge_ops_items.seq",
+      "problems": [
+        "returns.bridge_ops_items.seq: no before-insert guard refuses OVERRIDING SYSTEM VALUE"
+      ],
+      "owner": "FX3",
+      "why": "no before-insert guard"
+    },
+    {
+      "rule": "R44",
+      "file": "returns.client_refs.seq",
+      "problems": [
+        "returns.client_refs.seq: no before-insert guard refuses OVERRIDING SYSTEM VALUE"
+      ],
+      "owner": "FX3",
+      "why": "no before-insert guard"
+    },
+    {
+      "rule": "R44",
+      "file": "returns.sign_in_events.seq",
+      "problems": [
+        "returns.sign_in_events.seq: no before-insert guard refuses OVERRIDING SYSTEM VALUE"
+      ],
+      "owner": "FX3",
+      "why": "no before-insert guard"
+    },
+    {
+      "rule": "R44",
+      "file": "returns.client_handoff.list_version",
+      "problems": [
+        "returns.client_handoff.list_version: no before-insert guard refuses a gap or a jump"
+      ],
+      "owner": "FX3",
+      "why": "no before-insert guard"
+    },
+    {
+      "rule": "R55",
+      "file": "version_stamp",
+      "problems": [
+        "version_stamp: 1.797693134862315807937e308 is refused by SQL and accepted by JS",
+        "version_stamp: -1.797693134862315807937e308 is refused by SQL and accepted by JS"
+      ],
+      "owner": "FX3",
+      "why": "SQL and JS finiteness bounds disagree (A367 landing rule)"
+    },
+    {
+      "rule": "R55",
+      "file": "version_stamp",
+      "problems": [
+        "version_stamp: 1e-400 is accepted, but JS reads it back as 0"
+      ],
+      "owner": "FX3",
+      "why": "SQL and JS finiteness bounds disagree (A367 landing rule)"
+    },
+    {
+      "rule": "R55",
+      "file": "version_stamp",
+      "problems": [
+        "version_stamp: 9007199254740993 is accepted, but JS reads it back as 9007199254740992"
+      ],
+      "owner": "FX3",
+      "why": "SQL and JS finiteness bounds disagree (A367 landing rule)"
+    },
+    {
+      "rule": "R55",
+      "file": "sources",
+      "problems": [
+        "sources: 1.797693134862315807937e308 is refused by SQL and accepted by JS",
+        "sources: -1.797693134862315807937e308 is refused by SQL and accepted by JS"
+      ],
+      "owner": "FX3",
+      "why": "SQL and JS finiteness bounds disagree (A367 landing rule)"
+    },
+    {
+      "rule": "R55",
+      "file": "sources",
+      "problems": [
+        "sources: 1e-400 is accepted, but JS reads it back as 0"
+      ],
+      "owner": "FX3",
+      "why": "SQL and JS finiteness bounds disagree (A367 landing rule)"
+    },
+    {
+      "rule": "R55",
+      "file": "sources",
+      "problems": [
+        "sources: 9007199254740993 is accepted, but JS reads it back as 9007199254740992"
+      ],
+      "owner": "FX3",
+      "why": "SQL and JS finiteness bounds disagree (A367 landing rule)"
+    }
+  ]
+}
