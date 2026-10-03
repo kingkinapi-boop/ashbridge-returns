@@ -3,10 +3,7 @@
  "role": "check",
  "for": "2026-10-03T08:21:09.951Z",
  "worker": "cloud-a416a1",
- "state": "released",
- "at": "2026-10-03T08:51:47.540Z",
- "mode": "turbo",
- "beat": "2026-10-03T08:22:21.718Z",
- "note": "wait: all checks pass except mutate:changed (Stryker dry run times out 5 min) and Opus adversarial read, see reports/W00c-check.md",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
+ "state": "working",
+ "at": "2026-10-03T08:51:59.817Z",
+ "mode": "turbo"
 }
