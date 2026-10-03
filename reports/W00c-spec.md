@@ -47,7 +47,7 @@ No W00b test changes status: 494 W00b tests fail with or without W00c (guard not
 
 ## Round 3 patch: gaps 1 to 4 of reports/W00c-spec-review-4.md (A459)
 
-Spec patch commit: see the card's Spec commit line (`spec(W00c): round 3 patch, gaps 1 to 4`). Validated on main 78dd0eed (merged as 13faeae5). Every round 3 test is kept; no assertion is weakened.
+Spec patch commit: c9322aee (`spec(W00c): round 3 patch, gaps 1 to 4`). Validated on main 78dd0eed (merged as 13faeae5). Every round 3 test is kept; no assertion is weakened.
 
 Tests added (225; 7379 unit tests in all):
 - **Gap 1, date-walk (+18):** `2025.02.30` joins BAD_DATES (the 66 per-path tests now plant five values); per folder, seeded (20261003) string leaves holding no date today, outside the READ set and not a made-up name, one per file and one inside a carried block (its holding object is not a described one), each set to `2025-02-30` and `2025.02.30`, a 'schema' issue naming the path; each timestamp path found by the walk (1: onboarding engagements[].created_at, C14) set to `2025-02-30T09:00:00Z`, refused naming the path.
