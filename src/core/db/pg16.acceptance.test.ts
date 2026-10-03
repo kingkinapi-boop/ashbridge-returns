@@ -320,14 +320,51 @@ describe('DB16 no secret on the Postgres 16 path (SEC-10)', () => {
 
 const PGLITE_IMPORT = /import\s+(?!type\b)([^'";]*?)\s*from\s*['"]@electric-sql\/pglite(?:\/[^'"]*)?['"]/g
 const DYNAMIC_PGLITE = /(?:import|require)\s*\(\s*['"]@electric-sql\/pglite(?:\/[^'"]*)?['"]\s*\)/
+// Round 3 (review 2, test 6): the Postgres drivers. A second driver path would reach any host past the
+// switch's local-only refusal (decision 0003), so only src/core/db may load one.
+const PG_DRIVERS = ['pg', 'pg-pool', 'postgres'] as const
+const DRIVER_SPEC = `(${PG_DRIVERS.map((d) => d.replace(/-/g, '\\-')).join('|')})(?:/[^'"]*)?`
+const DRIVER_IMPORT = new RegExp(`import\\s+(?!type\\b)([^'";]*?)\\s*from\\s*['"]${DRIVER_SPEC}['"]`, 'g')
+const DRIVER_BARE_IMPORT = new RegExp(`import\\s*['"]${DRIVER_SPEC}['"]`, 'g')
+const DRIVER_DYNAMIC = new RegExp(`(?:import|require)\\s*\\(\\s*['"]${DRIVER_SPEC}['"]\\s*\\)`, 'g')
+const DRIVER_NEW = /\bnew\s+(?:[A-Za-z_$][\w$]*\s*\.\s*)?(?:Client|Pool)\s*\(/
+
+/** Code with the contents of string and template literals removed, for the `new X(` checks (a test title naming `new PGlite()` is not code). */
+function withoutStrings(code: string): string {
+  return code.replace(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g, "''")
+}
 
 /** The ways a file can build a database without going through src/core/db, as problem strings. */
 function databaseBuilds(text: string): string[] {
   const code = text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+  const bare = withoutStrings(code)
   const found: string[] = []
-  if (/\bnew\s+PGlite\s*\(/.test(code)) found.push('new PGlite(')
-  if (/\bPGlite\s*\.\s*create\s*\(/.test(code)) found.push('PGlite.create(')
+  if (/\bnew\s+PGlite\s*\(/.test(bare)) found.push('new PGlite(')
+  if (/\bPGlite\s*\.\s*create\s*\(/.test(bare)) found.push('PGlite.create(')
   if (DYNAMIC_PGLITE.test(code)) found.push('a dynamic import of @electric-sql/pglite')
+  const drivers = new Set<string>()
+  for (const m of code.matchAll(DRIVER_IMPORT)) {
+    const clause = m[1] ?? ''
+    const named = /\{([^}]*)\}/.exec(clause)?.[1] ?? ''
+    const outside = clause.replace(/\{[^}]*\}/, '').replace(/,/g, ' ').trim()
+    const valueNames = named
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s !== '' && !s.startsWith('type '))
+    if (outside !== '' || valueNames.length > 0) {
+      found.push(`a value import of ${m[2] ?? ''}`)
+      drivers.add(m[2] ?? '')
+    }
+  }
+  for (const m of code.matchAll(DRIVER_BARE_IMPORT)) {
+    found.push(`a value import of ${m[1] ?? ''}`)
+    drivers.add(m[1] ?? '')
+  }
+  for (const m of code.matchAll(DRIVER_DYNAMIC)) {
+    found.push(`a require or dynamic import of ${m[1] ?? ''}`)
+    drivers.add(m[1] ?? '')
+  }
+  if (drivers.size > 0 && DRIVER_NEW.test(bare)) found.push('new Client( or new Pool( from a Postgres driver')
   for (const m of code.matchAll(PGLITE_IMPORT)) {
     const clause = m[1] ?? ''
     const named = /\{([^}]*)\}/.exec(clause)?.[1] ?? ''
@@ -342,11 +379,20 @@ function databaseBuilds(text: string): string[] {
   return found
 }
 
+// Never scanned: installed packages, build output, Stryker sandboxes and the planted fixtures of rule tests.
+const SKIPPED_DIRS = /(?:^|\/)(?:node_modules|\.next|\.stryker-tmp|__fixtures__|coverage|test-results)\//
+
 function walk(dir: string): string[] {
   const abs = path.join(ROOT, dir)
   if (!fs.existsSync(abs)) return []
-  return fs.readdirSync(abs, { recursive: true, encoding: 'utf8' }).map((f) => `${dir}/${f.replace(/\\/g, '/')}`)
+  return fs
+    .readdirSync(abs, { recursive: true, encoding: 'utf8' })
+    .map((f) => `${dir}/${f.replace(/\\/g, '/')}`)
+    .filter((f) => !SKIPPED_DIRS.test(f))
 }
+
+const CODE_FILE = /\.(?:ts|tsx|mts|cts|js|mjs|cjs)$/
+const TEST_FILE = /\.(?:test|spec)\.[cm]?[jt]sx?$/
 
 function globToRegExp(glob: string): RegExp {
   const body = glob
@@ -356,15 +402,20 @@ function globToRegExp(glob: string): RegExp {
   return new RegExp(`^${body}$`)
 }
 
-function scannedFiles(): { db: string[]; code: string[] } {
+/**
+ * db: every db test file (the db include of tools/test-homes.json; the floor and sentinels of round 2).
+ * tests: every test file, unit too, under src, tools, design, e2e and testworld. code: the non-test code
+ * files under the same folders. tests and code exempt src/core/db: it is the one place that builds a database.
+ */
+function scannedFiles(): { db: string[]; tests: string[]; code: string[] } {
   const homes = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'test-homes.json'), 'utf8')) as { db: { include: string[] } }
   const dbGlobs = homes.db.include.map(globToRegExp)
-  const all = [...walk('src'), ...walk('testworld')].filter((f) => !f.includes('node_modules/'))
+  const all = ['src', 'tools', 'design', 'e2e', 'testworld'].flatMap(walk).filter((f) => CODE_FILE.test(f))
   const db = all.filter((f) => dbGlobs.some((g) => g.test(f)))
-  const code = all.filter(
-    (f) => f.startsWith('src/') && !f.startsWith('src/core/db/') && /\.(?:ts|tsx|mts|cts|js|mjs|cjs)$/.test(f) && !/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(f),
-  )
-  return { db, code }
+  const outside = all.filter((f) => !f.startsWith('src/core/db/'))
+  const tests = outside.filter((f) => TEST_FILE.test(f))
+  const code = outside.filter((f) => !TEST_FILE.test(f))
+  return { db, tests, code }
 }
 
 describe('DB16 only src/core/db builds a database (ARC-4: every path honours the switch)', () => {
@@ -389,15 +440,86 @@ describe('DB16 only src/core/db builds a database (ARC-4: every path honours the
     expect(databaseBuilds(text)).toEqual([])
   })
 
-  test('ARC-4 no db test file and no non-test file under src/ outside src/core/db builds a database', () => {
-    const { db, code } = scannedFiles()
+  test.each([
+    ["import pg from 'pg'", 'a value import of pg'],
+    ["import { Client } from 'pg'", 'a value import of pg'],
+    ["import pg, { type PoolConfig } from 'pg'", 'a value import of pg'],
+    ["import * as pg from 'pg'", 'a value import of pg'],
+    ["import Pool from 'pg-pool'", 'a value import of pg-pool'],
+    ["import postgres from 'postgres'", 'a value import of postgres'],
+    ["import { Client as C } from 'pg/lib/client'", 'a value import of pg'],
+    ["import 'pg'", 'a value import of pg'],
+    ["const pg = require('pg')", 'a require or dynamic import of pg'],
+    ["const { Pool } = require('pg-pool')", 'a require or dynamic import of pg-pool'],
+    ["const m = await import('postgres')", 'a require or dynamic import of postgres'],
+    ["import pg from 'pg'\nconst c = new pg.Client({ host: 'db.example.com' })", 'new Client( or new Pool( from a Postgres driver'],
+    ["const { Pool } = require('pg')\nconst p = new Pool()", 'new Client( or new Pool( from a Postgres driver'],
+  ])('ARC-4 planted: %s is flagged (a second driver path past the local-only switch)', (text, problem) => {
+    expect(databaseBuilds(text)).toContain(problem)
+  })
+
+  test.each([
+    ["import type { PoolClient } from 'pg'"],
+    ["import { type Client, type Pool } from 'pg'"],
+    ["import { Pool } from './worker-pool'\nconst p = new Pool(4)"],
+    ["import postgresql from 'postgresql-rules'"],
+    ["test('ARC-4 rule: a planted file with new PGlite() is caught', () => {})"],
+    ["// const pg = require('pg')"],
+  ])('ARC-4 clean: %s is not flagged', (text) => {
+    expect(databaseBuilds(text)).toEqual([])
+  })
+
+  test('ARC-4 no test file (unit or db) and no non-test file under src, tools, design, e2e or testworld, outside src/core/db, builds a database or loads a Postgres driver', () => {
+    const { db, tests, code } = scannedFiles()
     expect(db.length, 'the db include must reach every db test file').toBeGreaterThanOrEqual(9)
     expect(db).toContain('src/modules/auth/auth.acceptance.db.test.ts')
     expect(db).toContain('src/core/db/pg16.acceptance.db.test.ts')
+    expect(tests.length, 'every test file, unit too').toBeGreaterThanOrEqual(100)
+    expect(tests, 'every db test file outside src/core/db is scanned').toEqual(
+      expect.arrayContaining(db.filter((f) => !f.startsWith('src/core/db/'))),
+    )
+    expect(tests).toContain('tools/test/db-rules.test.mjs')
+    expect(tests).toContain('src/modules/auth/rules.acceptance.test.ts')
     expect(code).toContain('src/modules/auth/index.ts')
-    expect(code.some((f) => f.startsWith('src/core/db/'))).toBe(false)
-    const problems = [...db, ...code].flatMap((f) => databaseBuilds(readOwnSource(path.join(ROOT, f))).map((p) => `${f}: ${p}`))
+    expect(code).toContain('tools/claim.mjs')
+    expect([...tests, ...code].some((f) => f.startsWith('src/core/db/'))).toBe(false)
+    expect([...tests, ...code].some((f) => f.includes('__fixtures__/')), 'planted fixtures are not scanned').toBe(false)
+    const problems = [...new Set([...tests, ...code])].flatMap((f) =>
+      databaseBuilds(readOwnSource(path.join(ROOT, f))).map((p) => `${f}: ${p}`),
+    )
     expect(problems).toEqual([])
+  })
+})
+
+// ---- One cast (review 2, test 7): the Postgres 16 client is adapted to PGlite's shape in one place ----
+
+const CAST = /\bas\s+unknown\s+as\s+PGlite\b/g
+
+/** Every `as unknown as PGlite` in the given files, one entry per occurrence. */
+function castSites(files: { file: string; text: string }[]): string[] {
+  return files.flatMap(({ file, text }) => {
+    const code = text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+    return [...code.matchAll(CAST)].map(() => file)
+  })
+}
+
+describe('DB16 one cast (ARC-4: the adapter is typed as PGlite in src/core/db only)', () => {
+  test('ARC-4 planted: an `as unknown as PGlite` in another file is flagged, and a second one in index.ts is counted', () => {
+    expect(
+      castSites([
+        { file: 'src/core/db/index.ts', text: 'return new PgDb(pool) as unknown as PGlite' },
+        { file: 'src/modules/auth/index.ts', text: 'const db = handle as unknown as PGlite' },
+      ]),
+    ).toEqual(['src/core/db/index.ts', 'src/modules/auth/index.ts'])
+    expect(castSites([{ file: 'src/core/db/index.ts', text: 'a as unknown as PGlite; b as unknown\n  as PGlite' }])).toHaveLength(2)
+    expect(castSites([{ file: 'src/x.ts', text: '// x as unknown as PGlite\nconst y = z as PGlite' }])).toEqual([])
+  })
+
+  test('ARC-4 across the non-test files under src there is exactly one `as unknown as PGlite`, in src/core/db/index.ts', () => {
+    const files = walk('src').filter((f) => CODE_FILE.test(f) && !TEST_FILE.test(f))
+    expect(files).toContain('src/core/db/index.ts')
+    expect(files).toContain('src/modules/auth/index.ts')
+    expect(castSites(files.map((f) => ({ file: f, text: readOwnSource(path.join(ROOT, f)) })))).toEqual(['src/core/db/index.ts'])
   })
 })
 
