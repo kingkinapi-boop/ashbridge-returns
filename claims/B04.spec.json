@@ -1,9 +1,8 @@
 {
  "card": "B04",
  "role": "spec",
- "worker": "local-1",
- "state": "released",
- "at": "2026-10-03T03:35:44.742Z",
- "mode": "turbo",
- "note": "core card: needs Opus spec-writer subagent; local worker has no subagent tool, see reports/B04-spec.md"
+ "worker": "cloud-e9d462",
+ "state": "working",
+ "at": "2026-10-03T08:26:36.385Z",
+ "mode": "turbo"
 }
