@@ -87,6 +87,9 @@ export interface TestUsersOptions {
 type Q = Pick<PGlite, 'query'>
 class CodeReused extends Error {}
 
+/**
+ * @standin createTestUsersAuth
+ */
 export async function createTestUsersAuth(opts: TestUsersOptions): Promise<AuthAdapter> {
   const { db, clock } = opts
   const log = makeLogger(opts.sink)
@@ -158,6 +161,9 @@ export async function createTestUsersAuth(opts: TestUsersOptions): Promise<AuthA
   return {
     isLive: false,
 
+    /**
+     * @limit 5 startSignIn
+     */
     async startSignIn(userId, password) {
       const user = (await db.query<UserRow>('select id, display_name, roles from returns.staff_users where id = $1', [userId])).rows[0]
       // SEC-11: while go-live is off, only made-up users sign in.
@@ -177,6 +183,9 @@ export async function createTestUsersAuth(opts: TestUsersOptions): Promise<AuthA
       })
     },
 
+    /**
+     * @once finishSignIn
+     */
     async finishSignIn(challenge, code) {
       const pending = challenges.get(challenge)
       challenges.delete(challenge)
