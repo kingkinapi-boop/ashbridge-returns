@@ -1,11 +1,12 @@
 {
  "card": "SC6",
  "role": "spec",
- "note": "111 tests; validated a677d7fe; landing trap: JH0.md names e2e/_harness/kinds.spec.ts in Acceptance checks, reword before CQ11 lands; ambers in reports/SC6-spec.md",
- "reopenedFrom": "d208b8ee",
+ "note": "168 tests (57 new); 45 plants fail on 77d11040 readers; ambers in reports/SC6-spec.md Round 3",
  "worker": "cloud-7bd520",
- "state": "working",
- "at": "2026-10-03T20:26:53.987Z",
+ "state": "reported",
+ "at": "2026-10-03T21:09:20.609Z",
  "mode": "turbo",
- "beat": "2026-10-03T20:29:30.856Z"
+ "beat": "2026-10-03T20:29:30.856Z",
+ "commit": "affda694",
+ "validated": "b151c592"
 }
