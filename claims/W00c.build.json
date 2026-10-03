@@ -4,9 +4,10 @@
  "round": 1,
  "spec": "1b555abb",
  "worker": "cloud-abfeb2",
- "state": "hold-findings",
- "at": "2026-10-03T03:35:10.296Z",
+ "state": "released",
+ "at": "2026-10-03T04:48:55.367Z",
  "mode": "turbo",
  "beat": "2026-10-03T02:03:11.864Z",
- "note": "FAIL: RC3 empty accounts and reversed year, RC1 per-row markers, symlink statSync, see reports/W00c-check.md"
+ "note": "wait: core spec review of the new spec (reports/W00c-spec-review-3.md); build opens after GO",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
 }
