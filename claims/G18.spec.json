@@ -2,10 +2,9 @@
  "card": "G18",
  "role": "spec",
  "worker": "cloud-899fef",
- "state": "released",
- "at": "2026-10-03T13:49:52.081Z",
+ "state": "working",
+ "at": "2026-10-03T13:49:58.734Z",
  "mode": "turbo",
- "note": "Paths gap: coverage.json in data/question-bank is refused by loadBank; see reports/G18-spec.md on claude/G18",
  "lastRelease": {
   "tip": "0bb61ef902a3210ea8eceda1f1132ab2293215bb"
  }
