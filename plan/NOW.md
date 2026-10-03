@@ -5,7 +5,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 18:22Z by the Lea
 ## State
 
 - **Mode: turbo** (Zo, "turbo on" 13:26Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 78% of the week at 15:42Z, about 4% an hour: the limit comes about 21:00Z; then pause until Zo's saved reset and `go`.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims and `list_runs`). SC11's build cloud-7c6fec (cse_01BHfxxvYJHN5tJWuHXbzZJD) runs test:flake on pg16; 4 queue runs fired 17:36Z. Laptop (decision 0026): designers 1 to 3; A08 spec review (18:21Z).
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims and `list_runs`). 4 queue runs fired 17:36Z. Laptop (decision 0026): designers 1 to 3. 
 - **Landed (63):** train 2b (A04, CQ8, CQ9, CQ12; checked 092598f3) on main ba6d7ee5 at 17:30Z. Auto mode refused the Lead's landing push at 17:25Z; Zo ran the fast-forward and push himself. Never route around that refusal: at each next landing, put the commands in TODO-ZO and wait for Zo (or a settings rule he adds).
 - **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
 
@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 18:22Z by the Lea
 |---|---|---|
 | Train 3 | A04C (40169142, 18:00Z) | board each PASS; request at 6 cards or by 19:00Z |
 | B04 | spec review GAPS 9 (A507): second spec patch reopened | build after the patch and W00c; Opus check |
-| A08 | spec reported (121 tests; core, security) | Opus spec review (local, from 18:21Z); build held `wait:`; then Opus check and a security review |
+| A08 | spec review GAPS 11 (A509): spec patch reopened | build after it; then Opus check and a security review |
 | W00c | round 3 check FAIL on items 1 to 5 only: split to W00d (A501) | fresh check working (cloud-f09ae7, from 17:36Z); board on PASS |
 | SC10 | findings review 1 done (A502): Lead plan commit on main; round 2 spec patch P1 to P8, no build | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check on the landing form |
 | SC6 | spec review GAPS (A503): second spec patch G1 to G8 plus grammar coverage | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check |
