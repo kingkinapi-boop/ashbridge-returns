@@ -9439,7 +9439,9 @@
         "tools/scope.mjs",
         "tools/test/claim.test.mjs",
         "tools/test/scope.test.mjs",
-        "tools/test/__fixtures__/claims/**"
+        "tools/test/__fixtures__/claims/**",
+        "tools/test/claim-needs-lead.test.mjs",
+        ".claude/skills/merge/SKILL.md"
       ],
       "clauses": [
         "ARC-15"
@@ -9616,11 +9618,36 @@
         "ARC-10"
       ],
       "id": "SC4",
-      "title": "Reading rules R67 to R70, and the R56 exemption",
+      "title": "Reading rules R67 to R70, R74, and the R56 exemption",
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From reports/A07C-findings.md."
+      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A07D",
+        "SC4"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "FX4",
+      "title": "Spreadsheet reader: the five A07D Opus findings",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "note": "From reports/A07D-opus-read.md, 3 Oct (A393); landing rule: fallbacks are removals."
     },
     {
       "status": "carded",
