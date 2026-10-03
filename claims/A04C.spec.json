@@ -1,9 +1,11 @@
 {
  "card": "A04C",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: merged main (stale .claude/plan copies taken from main), typecheck, lint, runner tests 245 pass, assertions unchanged",
  "worker": "cloud-b1e6bc",
- "state": "working",
- "at": "2026-10-03T15:20:05.367Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T15:23:46.994Z",
+ "mode": "turbo",
+ "commit": "b89c603f",
+ "validated": "04dbb00461d26eabd815a4a68ecc6e7065944d59"
 }
