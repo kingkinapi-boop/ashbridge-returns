@@ -9,6 +9,7 @@ export const ACCOUNT_ROLES = ['bank', 'card', 'pcard', 'broker'] as const
 
 /** Is this a real calendar date written YYYY-MM-DD (it round-trips, so 2025-02-30 and 2025-03-99 are not)? */
 export function isCalendarDate(s: string): boolean {
+  // Stryker disable next-line Regex: the round trip below refuses any text around the date, so the two anchors cannot change the answer
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s)
   if (m === null) return false
   const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])))
