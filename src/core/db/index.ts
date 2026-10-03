@@ -116,12 +116,74 @@ function quoteIdent(name: string): string {
 // SC11 (R116, R117): every connection this file opens has an error listener that records, and a pool is ended only
 // by endPool, which waits for every connection the pool ever opened to close.
 const POOL_END_BOUND_MS = 5000
+const DROP_BOUND_MS = 5000
+/** SC11 S4: the bound of one cleanup step that names no bound of its own. */
+export const STEP_BOUND_MS = 3000
+/** SC11 S11: the bound of each step of PgDb.close, in order. With the assert step they stay inside 0.8 of the db hookTimeout. */
+export const CLOSE_BOUNDS_MS = {
+  inspectIdle: STEP_BOUND_MS,
+  dropOwnedRoles: STEP_BOUND_MS,
+  mainEnd: STEP_BOUND_MS,
+  endPool: POOL_END_BOUND_MS,
+  drop: DROP_BOUND_MS,
+}
 // Errors that arrive when no live handle can take them (after their pool ended): named by the next assertCleanClones.
 const lateErrors: string[] = []
+// Errors on a live connection whose creator named no owner (openPool without a sink): named "no owner" by assertCleanClones.
+const ownerlessErrors: string[] = []
 
 /** R116: the errors recorded after their pool or handle had ended, as strings with the code and message; cleared by the call. */
 export function takeLateErrors(): string[] {
   return lateErrors.splice(0)
+}
+
+const messageOf = (e: unknown): string => (e instanceof Error ? e.message : String(e))
+
+/** An error as text, with its code (a pg error carries one, 57P01 for a killed backend) after the message. */
+function errorText(e: unknown): string {
+  const code = (e as { code?: unknown } | null)?.code
+  return typeof code === 'string' ? `${messageOf(e)} (code ${code})` : messageOf(e)
+}
+
+interface SettleStep {
+  name: string
+  run: () => unknown
+  boundMs?: number
+}
+
+/**
+ * SC11 S4 (RC1): runs the steps one after another, each after the earlier ones settled, failed or hung. A step still running
+ * at its bound (its own, else opts.boundMs, else STEP_BOUND_MS) is named and left behind. Rejects naming every failure in
+ * order, a primary error first and as the cause; resolves when no step failed and no primary was given.
+ */
+export async function settleAll(label: string, steps: SettleStep[], opts: { primary?: unknown; boundMs?: number } = {}): Promise<void> {
+  const failures: { name: string; text: string; error: unknown }[] = []
+  for (const step of steps) {
+    const bound = step.boundMs ?? opts.boundMs ?? STEP_BOUND_MS
+    let timer: NodeJS.Timeout | undefined
+    try {
+      await Promise.race([
+        new Promise<unknown>((resolve) => {
+          resolve(step.run())
+        }),
+        new Promise<never>((_resolve, reject) => {
+          timer = setTimeout(() => {
+            reject(new Error(`did not finish within ${String(bound)} ms`))
+          }, bound)
+        }),
+      ])
+    } catch (e) {
+      failures.push({ name: step.name, text: errorText(e), error: e })
+    } finally {
+      clearTimeout(timer)
+    }
+  }
+  const primary = opts.primary
+  if (failures.length === 0 && primary === undefined) return
+  if (failures.length === 0) throw primary
+  const lines = failures.map((f) => `${f.name}: ${f.text}`)
+  if (primary !== undefined) throw new Error([`${label}: ${errorText(primary)}`, ...lines].join('\n'), { cause: primary })
+  throw new Error([`${label}:`, ...lines].join('\n'), { cause: failures[0]?.error })
 }
 
 function errorLine(label: string, e: unknown): string {
@@ -130,7 +192,7 @@ function errorLine(label: string, e: unknown): string {
   return `${label}: connection error${codeText}: ${e instanceof Error ? e.message : String(e)}`
 }
 
-/** One recorder per connection owner: a live owner keeps the problem, a finished one reports it late; one entry per error object. */
+/** One recorder per connection owner: a live owner keeps the problem, a finished one reports it late, a pool with no owner says so; one entry per error object. */
 function recorderFor(label: string, problems: string[] | undefined, isEnded: () => boolean): (e: unknown) => void {
   const seen = new WeakSet<object>()
   return (e) => {
@@ -139,7 +201,8 @@ function recorderFor(label: string, problems: string[] | undefined, isEnded: () 
       seen.add(e)
     }
     const line = errorLine(label, e)
-    if (problems === undefined || isEnded()) lateErrors.push(line)
+    if (isEnded()) lateErrors.push(line)
+    else if (problems === undefined) ownerlessErrors.push(line)
     else problems.push(line)
   }
 }
@@ -159,7 +222,7 @@ export function openPool(config: pg.PoolConfig, sink?: { label: string; problems
   const record = recorderFor(label, sink?.problems, () => tracker.ended)
   // A bare connection string gets the same fields (and the local test password) as every other connection here.
   const { connectionString, ...rest } = config
-  const pool = new pg.Pool(connectionString === undefined ? rest : { ...connOpts(connectionString), ...rest })
+  const pool = new pg.Pool({ connectionTimeoutMillis: STEP_BOUND_MS, ...(connectionString === undefined ? rest : { ...connOpts(connectionString), ...rest }) })
   trackers.set(pool, tracker)
   pool.on('error', (e: Error) => {
     record(e)
@@ -181,53 +244,51 @@ export function openPool(config: pg.PoolConfig, sink?: { label: string; problems
   return pool
 }
 
-/** R117: ends a pool and resolves only when every connection it ever opened has ended; fails, naming the pool, after 5 s. */
+/**
+ * R117: ends a pool made by openPool and resolves only when every connection it ever opened has ended; fails, naming the pool,
+ * after 5 s. The pool owns an error until its end has resolved, not from the moment ending starts (RC2).
+ */
 export async function endPool(pool: pg.Pool): Promise<void> {
   const tracker = trackers.get(pool)
-  if (tracker !== undefined) tracker.ended = true
-  const label = tracker?.label ?? 'pool'
-  let timer: NodeJS.Timeout | undefined
-  const bound = new Promise<'late'>((resolve) => {
-    timer = setTimeout(() => {
-      resolve('late')
-    }, POOL_END_BOUND_MS)
-  })
-  const finished = (async (): Promise<'done'> => {
-    await pool.end()
-    const ending: Promise<void>[] = tracker === undefined ? [] : [...tracker.open.values()]
-    await Promise.all(ending)
-    return 'done'
-  })()
+  if (tracker === undefined) throw new Error('endPool: this pool was not opened by openPool, so its connections are not tracked (R117)')
   try {
-    if ((await Promise.race([finished, bound])) === 'late') {
-      const n = tracker?.open.size ?? 0
-      throw new Error(
-        `pool ${label} did not end within ${String(POOL_END_BOUND_MS)} ms: ${String(n)} connection(s) still open (a client checked out and never released?)`,
-      )
-    }
+    await settleAll(`ending pool ${tracker.label}`, [
+      {
+        name: `endPool ${tracker.label}`,
+        boundMs: POOL_END_BOUND_MS,
+        run: () => pool.end().then(() => Promise.all([...tracker.open.values()])),
+      },
+    ])
   } finally {
-    clearTimeout(timer)
+    tracker.ended = true
   }
 }
 
-/** One admin connection: connect, run, end, with its errors recorded and rethrown. */
-async function withAdmin<T>(url: string, run: (admin: pg.Client) => Promise<T>): Promise<T> {
-  const admin = new pg.Client(connOpts(url))
+const ADMIN_CONNECT_BOUND_MS = 3000
+
+/** One admin connection: connect (bounded), run, end; every error recorded on it, with its code, is attached on every exit. */
+export async function withAdmin<T>(url: string, run: (admin: pg.Client) => Promise<T>): Promise<T> {
+  const admin = new pg.Client({ ...connOpts(url), connectionTimeoutMillis: ADMIN_CONNECT_BOUND_MS })
   const errors: unknown[] = []
   admin.on('error', (e: Error) => {
     errors.push(e)
   })
-  await admin.connect()
-  let out: T
+  const outcome: { value?: T; failure?: Error } = {}
   try {
-    out = await run(admin)
-  } finally {
-    await admin.end()
+    await admin.connect()
+    outcome.value = await run(admin)
+  } catch (e) {
+    outcome.failure = new Error(`admin query failed: ${errorText(e)}`, { cause: e })
   }
-  if (errors.length > 0) {
-    throw new Error(`admin connection error: ${errors.map((e) => errorLine('admin', e)).join('; ')}`, { cause: errors[0] })
+  let ending: unknown
+  try {
+    await settleAll('admin connection', [{ name: 'end', run: () => admin.end() }], { primary: outcome.failure })
+  } catch (e) {
+    ending = e
   }
-  return out
+  if (ending === undefined && errors.length === 0) return outcome.value as T
+  const lines = errors.map((e) => errorLine('admin', e))
+  throw new Error([ending === undefined ? 'admin connection error:' : messageOf(ending), ...lines].join('\n'), { cause: ending ?? errors[0] })
 }
 
 interface QueryResult<T> {
@@ -242,6 +303,8 @@ interface QueryResult<T> {
  */
 class PgDb {
   private closed_ = false
+  // Set when the session connection's end has resolved: until then its errors belong to this handle (RC2).
+  private mainEnded = false
   private readonly main: pg.Client
   private connected: Promise<unknown> | undefined
   constructor(
@@ -253,7 +316,7 @@ class PgDb {
     readonly problems: string[] = [],
   ) {
     this.main = new pg.Client(connOpts(dbUrl))
-    const record = recorderFor(name, problems, () => this.closed_)
+    const record = recorderFor(name, problems, () => this.mainEnded)
     this.main.on('error', (e: Error) => {
       record(e)
     })
@@ -403,8 +466,10 @@ class PgDb {
       // Nothing set in this transaction's connection may reach the next one: wipe it, or destroy it.
       let failure: Error | boolean = this.customSeen !== seenBefore
       try {
-        await client.query('rollback')
-        await client.query('discard all')
+        await settleAll(`wiping a connection of ${this.name}`, [
+          { name: 'rollback', run: () => client.query('rollback') },
+          { name: 'discard all', run: () => client.query('discard all') },
+        ])
       } catch (de) {
         failure = de instanceof Error ? de : new Error(String(de))
       }
@@ -413,54 +478,66 @@ class PgDb {
   }
 
   private async dropOwnedRoles(): Promise<void> {
-    // The session may sit in an open or aborted block: end it, or nothing below can run.
-    await this.main.query('rollback')
-    await this.main.query('reset session authorization')
-    await this.main.query('reset role')
     const names = [...this.ownedRoles]
-    // A role made in a transaction that rolled back is gone already.
-    const present = names.length === 0 ? new Set<string>() : await this.rolesAmong(this.main, names)
-    for (const rolname of names) {
-      if (!present.has(rolname)) continue
-      try {
-        await this.main.query(`drop owned by ${quoteIdent(rolname)}`)
-        await this.main.query(`drop role if exists ${quoteIdent(rolname)}`)
-      } catch (e) {
-        throw new Error(`could not drop role ${rolname}: ${e instanceof Error ? e.message : String(e)}`, { cause: e })
-      }
-    }
+    let present = new Set<string>()
+    // Every step runs, whatever an earlier one did: the failures are all named, none is left to R91 alone (RC1).
+    await settleAll(`dropping the roles of ${this.name}`, [
+      // The session may sit in an open or aborted block: end it, or nothing below can run.
+      { name: 'rollback', run: () => this.main.query('rollback') },
+      { name: 'reset session authorization', run: () => this.main.query('reset session authorization') },
+      { name: 'reset role', run: () => this.main.query('reset role') },
+      // A role made in a transaction that rolled back is gone already.
+      {
+        name: 'find roles',
+        run: async () => {
+          present = names.length === 0 ? new Set<string>() : await this.rolesAmong(this.main, names)
+        },
+      },
+      ...names.flatMap((rolname) => [
+        { name: `drop owned by ${rolname}`, run: () => (present.has(rolname) ? this.main.query(`drop owned by ${quoteIdent(rolname)}`) : undefined) },
+        { name: `drop role ${rolname}`, run: () => (present.has(rolname) ? this.main.query(`drop role if exists ${quoteIdent(rolname)}`) : undefined) },
+      ]),
+    ])
   }
 
   async close(): Promise<void> {
     if (this.closed_) return
     this.closed_ = true
-    const failures: string[] = []
-    const note = (e: unknown): void => {
-      failures.push(e instanceof Error ? e.message : String(e))
-    }
     // R90: a connection left dirty is named before its roles are dropped and before the pool ends.
+    const dirty: string[] = []
+    const connected = this.connected !== undefined
+    let failure: unknown
     try {
-      failures.push(...(await inspectIdle(this.pool, this.customSettings)))
+      await settleAll(`closing ${this.name}`, [
+        {
+          name: 'inspectIdle',
+          boundMs: CLOSE_BOUNDS_MS.inspectIdle,
+          run: async () => {
+            dirty.push(...(await inspectIdle(this.pool, this.customSettings)))
+          },
+        },
+        // Roles belong to the cluster, not to a database: drop the ones this handle made, and only those.
+        { name: 'dropOwnedRoles', boundMs: CLOSE_BOUNDS_MS.dropOwnedRoles, run: () => (connected ? this.dropOwnedRoles() : undefined) },
+        {
+          name: 'mainEnd',
+          boundMs: CLOSE_BOUNDS_MS.mainEnd,
+          run: () =>
+            connected
+              ? this.main.end().finally(() => {
+                  this.mainEnded = true
+                })
+              : undefined,
+        },
+        { name: 'endPool', boundMs: CLOSE_BOUNDS_MS.endPool, run: () => endPool(this.pool) },
+        { name: 'drop', boundMs: CLOSE_BOUNDS_MS.drop, run: () => dropDatabase(this.adminUrl, this.name) },
+      ])
     } catch (e) {
-      note(e)
+      failure = e
     }
-    // Roles belong to the cluster, not to a database: drop the ones this handle made, and only those.
-    if (this.connected !== undefined) {
-      try {
-        await this.dropOwnedRoles()
-      } catch (e) {
-        note(e)
-      }
-      await this.main.end()
-    }
-    try {
-      await endPool(this.pool)
-    } catch (e) {
-      note(e)
-    }
-    failures.push(...this.problems)
-    await dropDatabase(this.adminUrl, this.name)
-    if (failures.length > 0) throw new Error(`database handle closed with problems:\n${failures.join('\n')}`)
+    // Read last: an error that arrived while the steps ran belongs to this close, not to the next test.
+    this.mainEnded = true
+    const lines = [...dirty, ...(failure === undefined ? [] : [messageOf(failure)]), ...this.problems]
+    if (lines.length > 0) throw new Error(`database handle ${this.name} closed with problems:\n${lines.join('\n')}`)
   }
 }
 
@@ -476,14 +553,30 @@ async function dropDatabase(adminUrl: string, name: string): Promise<void> {
   })
 }
 
-/** Drops every database this run made (the global setup's teardown). */
+/** Drops every database this run made (the global setup's teardown); one that will not drop does not stop the others, and each is named. */
 export async function dropRunDatabases(url: string): Promise<void> {
-  await withAdmin(url, async (admin) => {
-    const r = await admin.query<{ datname: string }>('select datname from pg_database where datname like $1', [
-      `${DB_PREFIX}${pg16RunId().replaceAll('_', '\\_')}\\_%`,
-    ])
-    for (const { datname } of r.rows) await admin.query(`drop database if exists "${datname}" with (force)`)
-  })
+  const found: string[] = []
+  await settleAll('dropping the databases of this run', [
+    {
+      name: 'list',
+      run: () =>
+        withAdmin(url, async (admin) => {
+          const r = await admin.query<{ datname: string }>('select datname from pg_database where datname like $1', [
+            `${DB_PREFIX}${pg16RunId().replaceAll('_', '\\_')}\\_%`,
+          ])
+          found.push(...r.rows.map((x) => x.datname))
+        }),
+    },
+    {
+      name: 'drop',
+      boundMs: 7500,
+      run: () =>
+        settleAll(
+          'drop',
+          found.map((datname) => ({ name: `drop ${datname}`, boundMs: DROP_BOUND_MS, run: () => dropDatabase(url, datname) })),
+        ),
+    },
+  ])
 }
 
 async function createPg16Template(url: string, schemaDir: string): Promise<DbTemplate> {
@@ -493,24 +586,45 @@ async function createPg16Template(url: string, schemaDir: string): Promise<DbTem
   })
   const schemaProblems: string[] = []
   const schemaPool = openPool({ ...connOpts(withDatabase(url, tplName)), max: 1 }, { label: tplName, problems: schemaProblems })
+  let schemaError: unknown
   try {
     for (const f of schemaFiles(schemaDir)) {
       try {
         await schemaPool.query(fs.readFileSync(path.join(schemaDir, f), 'utf8'))
       } catch (e) {
-        throw new Error(`schema file ${f} failed: ${e instanceof Error ? e.message : String(e)}`, { cause: e })
+        throw new Error(`schema file ${f} failed: ${errorText(e)}`, { cause: e })
       }
     }
   } catch (e) {
-    await endPool(schemaPool)
-    await dropDatabase(url, tplName)
-    throw e
+    schemaError = e
   }
-  await endPool(schemaPool)
-  if (schemaProblems.length > 0) {
-    await dropDatabase(url, tplName)
-    throw new Error(`template database had connection problems:\n${schemaProblems.join('\n')}`)
-  }
+  // Failure or success, the pool ends, its recorded problems are read after it ended, and a broken template is dropped:
+  // every step runs and every failure is named, the schema error first (RC1).
+  let broken = schemaError !== undefined
+  await settleAll(
+    `template ${tplName}`,
+    [
+      {
+        name: 'endPool',
+        boundMs: CLOSE_BOUNDS_MS.endPool,
+        run: () =>
+          endPool(schemaPool).catch((e: unknown) => {
+            broken = true
+            throw e
+          }),
+      },
+      {
+        name: 'schemaProblems',
+        run: () => {
+          if (schemaProblems.length === 0) return
+          broken = true
+          throw new Error(`template database had connection problems:\n${schemaProblems.join('\n')}`)
+        },
+      },
+      { name: 'drop', boundMs: CLOSE_BOUNDS_MS.drop, run: () => (broken ? dropDatabase(url, tplName) : undefined) },
+    ],
+    { primary: schemaError },
+  )
   return {
     clone: async () => {
       const name = freshDbName('db')
@@ -534,18 +648,20 @@ export async function createTemplate(schemaDir: string = DEFAULT_SCHEMA_DIR): Pr
 
 async function createPgliteTemplate(schemaDir: string): Promise<DbTemplate> {
   const db = new PGlite()
+  let schemaError: unknown
   try {
     for (const f of schemaFiles(schemaDir)) {
       try {
         await db.exec(fs.readFileSync(path.join(schemaDir, f), 'utf8'))
       } catch (e) {
-        throw new Error(`schema file ${f} failed: ${e instanceof Error ? e.message : String(e)}`, { cause: e })
+        throw new Error(`schema file ${f} failed: ${messageOf(e)}`, { cause: e })
       }
     }
   } catch (e) {
-    await db.close()
-    throw e
+    schemaError = e
   }
+  // The schema error stays first; a failing close is named after it, never in its place.
+  if (schemaError !== undefined) await settleAll('pglite template', [{ name: 'close', run: () => db.close() }], { primary: schemaError })
   const template: DbTemplate = {
     clone: async () => (await db.clone()) as PGlite,
     close: () => db.close(),
@@ -574,10 +690,12 @@ export async function cloneTestDb(): Promise<PGlite> {
   return db
 }
 
-/** Closes every clone made since the last call (the db project's afterEach). */
+/** Closes every clone made since the last call (the db project's afterEach); every clone is closed and every failure is named. */
 export async function closeClones(): Promise<void> {
-  const open = clones.splice(0)
-  await Promise.all(open.filter((c) => !c.closed).map((c) => c.close()))
+  const open = clones.splice(0).filter((c) => !c.closed)
+  const results = await Promise.allSettled(open.map((c) => c.close()))
+  const failed = results.flatMap((r) => (r.status === 'rejected' ? [messageOf(r.reason)] : []))
+  if (failed.length > 0) throw new Error(`${String(failed.length)} of ${String(open.length)} clones did not close cleanly:\n${failed.join('\n')}`)
 }
 
 /** Problems of one idle pooled connection: what a test left on it. Ends any open block first, so an aborted block still shows its role. */
@@ -612,11 +730,12 @@ async function inspectIdle(pool: pg.Pool, customNames: Iterable<string>): Promis
   const login = pool.options.user
   const names = [...customNames]
   const clients: pg.PoolClient[] = []
-  for (let i = pool.idleCount; i > 0; i -= 1) clients.push(await pool.connect())
   const problems: string[] = []
   const dirty = new Set<pg.PoolClient>()
   let failed = false
   try {
+    // Taking the clients is inside the try: one that fails to connect releases the ones already taken (the pool bounds the wait).
+    for (let i = pool.idleCount; i > 0; i -= 1) clients.push(await pool.connect())
     for (const [n, c] of clients.entries()) {
       const found = await inspectClient(c, login, names)
       if (found.length > 0) dirty.add(c)
@@ -643,11 +762,14 @@ export async function idleConnectionProblems(db: unknown): Promise<string[]> {
 
 /** R90: rejects naming every problem of every open clone made by cloneTestDb (the db project's afterEach, before the clones close). */
 export async function assertCleanClones(): Promise<void> {
+  const results = await Promise.allSettled(clones.map((c) => idleConnectionProblems(c)))
   const lines: string[] = []
-  for (const [n, c] of clones.entries()) {
-    for (const p of await idleConnectionProblems(c)) lines.push(`clone ${String(n + 1)}: ${p}`)
+  for (const [n, r] of results.entries()) {
+    if (r.status === 'rejected') lines.push(`clone ${String(n + 1)}: could not be inspected: ${errorText(r.reason)}`)
+    else for (const p of r.value) lines.push(`clone ${String(n + 1)}: ${p}`)
   }
-  // R116: an error that arrived after its pool had ended is named here, by the next afterEach or afterAll.
+  // R116: an error that arrived with no owner, or after its pool had ended, is named here, by the next afterEach or afterAll.
+  for (const orphan of ownerlessErrors.splice(0)) lines.push(`no owner: ${orphan}`)
   for (const late of takeLateErrors()) lines.push(`late: ${late}`)
   if (lines.length > 0) throw new Error(`a test left pooled connections dirty:\n${lines.join('\n')}`)
 }
