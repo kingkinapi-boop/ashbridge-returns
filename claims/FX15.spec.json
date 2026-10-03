@@ -2,8 +2,11 @@
  "card": "FX15",
  "role": "spec",
  "worker": "cloud-06931b",
- "state": "working",
- "at": "2026-10-03T09:04:58.922Z",
+ "state": "reported",
+ "at": "2026-10-03T09:24:13.816Z",
  "mode": "turbo",
- "beat": "2026-10-03T09:05:30.938Z"
+ "beat": "2026-10-03T09:05:30.938Z",
+ "note": "23 tests (13 db, 10 unit twins); card line and stale report fixed; amber: refusal names job id and contains 'lease'",
+ "commit": "46f870ed",
+ "validated": "c2c7db54193ad68b9d75452e72ceeab4343bdfc4"
 }
