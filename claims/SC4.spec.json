@@ -1,9 +1,8 @@
 {
  "card": "SC4",
  "role": "spec",
- "note": "toolchain refit needs ExcelJS, which the laptop node_modules lacks: cloud worker runs the 3 ExcelJS tests, see reports/SC4-spec.md",
  "worker": "local-1",
- "state": "released",
- "at": "2026-10-03T04:14:56.536Z",
+ "state": "working",
+ "at": "2026-10-03T04:15:06.447Z",
  "mode": "turbo"
 }
