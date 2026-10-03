@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "05edddb6",
  "worker": "cloud-2cc0af",
- "state": "working",
- "at": "2026-10-03T20:33:04.681Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T21:21:35.397Z",
+ "mode": "turbo",
+ "note": "218 of 218 pass; head 9a152e7a; MUTATION NOT 100 (call.ts 57.38, index.ts 73.81, scan.ts 75.15): needs a spec round with more tests; settings-rules.test.mjs absent (SC5), env.ts unchanged; see reports/A08-build.md"
 }
