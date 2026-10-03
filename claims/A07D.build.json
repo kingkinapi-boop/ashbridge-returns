@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "54dc155",
  "worker": "cloud-4aa373",
- "state": "reported",
- "at": "2026-10-02T22:03:38.513Z",
+ "state": "released",
+ "at": "2026-10-03T04:02:55.699Z",
  "mode": "turbo",
  "beat": "2026-10-02T21:59:51.146Z",
- "note": "16 of 16 acceptance tests pass"
+ "note": "merged"
 }
