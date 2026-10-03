@@ -1,0 +1,174 @@
+/* Ashbridge Tax look for the CPA review prototypes.
+   In the build this comes from design/basis/settings.scss (GOV.UK Frontend functional colours); here the same values are set as CSS custom properties.
+   Colour map from reference/design-basis.md. Every app- class below is listed with its reason in reports/design-cpa-review.md. */
+:root {
+  --govuk-brand-colour: #355b7d;
+  --govuk-link-colour: #355b7d;
+  --govuk-link-hover-colour: #4d7092;
+  --govuk-link-visited-colour: #355b7d;
+  --govuk-text-colour: #15283b;
+  --govuk-secondary-text-colour: #627283;
+  --govuk-error-colour: #b3413a;
+  --govuk-focus-colour: #f5c94c;
+  --govuk-focus-text-colour: #15283b;
+  --govuk-success-colour: #1f6e50;
+  --govuk-font-family: Roboto, arial, sans-serif;
+}
+body, .govuk-template { font-family: Roboto, arial, sans-serif; }
+
+/* Wordmark standing in for the Ashbridge Tax logo file (the build uses the logo copy in design/basis/) */
+.app-wordmark { font-weight: 700; font-size: 1.5rem; letter-spacing: .01em; color: #fff; }
+.app-wordmark span { font-weight: 400; }
+
+/* Wide record page: laptop first, second monitor aware */
+.app-wide { max-width: 1680px; margin: 0 auto; padding: 0 20px; }
+.app-wide .govuk-width-container { max-width: none; margin: 0; }
+
+/* Numbers */
+.app-money { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+th.app-money { text-align: right; }
+.app-neg { }
+
+/* Dots: shape and words as well as colour (EV-11, rule 7) */
+.app-dot { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; font-size: 0.875rem; }
+.app-dot::before { content: ""; display: inline-block; width: 12px; height: 12px; flex: none; border: 2px solid currentColor; }
+.app-dot--green { color: #1f6e50; } .app-dot--green::before { background: currentColor; border-radius: 50%; }
+.app-dot--grey { color: #4c5b6b; } .app-dot--grey::before { background: #fff; border-radius: 50%; }
+.app-dot--amber { color: #8a5a00; } .app-dot--amber::before { background: currentColor; border-radius: 0; transform: rotate(45deg) scale(.85); }
+.app-dot--purple { color: #5a3a8c; } .app-dot--purple::before { background: currentColor; border-radius: 2px; }
+.app-flagmark { display: inline-block; font-weight: 700; color: #b3413a; border: 2px solid #b3413a; padding: 0 4px; font-size: .8125rem; text-decoration: none; margin-left: 4px; background: #fff; }
+a.app-flagmark:focus { color: #15283b; }
+
+/* Return table */
+.app-return { width: 100%; font-size: .9375rem; margin-bottom: 0; }
+.app-return th, .app-return td { padding: 6px 8px 6px 0; vertical-align: middle; }
+.app-return tr.app-row--sub th, .app-return tr.app-row--sub td { font-weight: 700; border-top: 2px solid #15283b; }
+.app-return tr.app-row--group th { background: #f3f5f8; font-weight: 700; }
+.app-return tr.app-row--flag > th:first-child { box-shadow: inset 6px 0 0 #b3413a; padding-left: 12px; }
+.app-return tr.app-row--changed > th:first-child { box-shadow: inset 6px 0 0 #8a5a00; padding-left: 12px; }
+.app-return tr.app-row--flag.app-row--changed > th:first-child { box-shadow: inset 6px 0 0 #b3413a, inset 12px 0 0 #fff, inset 18px 0 0 #8a5a00; padding-left: 24px; }
+.app-return tr.is-selected { background: #e9eff5; outline: 3px solid #15283b; outline-offset: -3px; }
+.app-return tr.is-selected th button { font-weight: 700; }
+.app-rowbtn { background: none; border: 0; padding: 4px 0; font: inherit; color: var(--govuk-link-colour); text-align: left; cursor: pointer; text-decoration: underline; min-height: 24px; }
+.app-rowbtn:focus { outline: 3px solid transparent; background: #f5c94c; color: #15283b; box-shadow: 0 -2px #f5c94c, 0 4px #15283b; text-decoration: none; }
+.app-change--big { font-weight: 700; }
+
+/* Panes */
+.app-panes { display: grid; gap: 12px; align-items: start; }
+.app-panes--3 { grid-template-columns: minmax(420px, 1.25fr) minmax(320px, 1fr) minmax(340px, 1fr); }
+.app-panes--2 { grid-template-columns: minmax(520px, 1.4fr) minmax(360px, 1fr); }
+.app-panes--split { grid-template-columns: minmax(340px, 5fr) minmax(480px, 7fr); }
+.app-pane { border: 1px solid #b1b4b6; background: #fff; display: flex; flex-direction: column; max-height: calc(100vh - 250px); min-height: 380px; }
+.app-pane__title { margin: 0; padding: 8px 12px; background: #f3f5f8; border-bottom: 1px solid #b1b4b6; font-size: 1.0625rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.app-pane__body { padding: 10px 12px; overflow: auto; flex: 1; }
+.app-pane__body:focus { outline: 3px solid #f5c94c; }
+.app-pane__foot { padding: 8px 12px; border-top: 1px solid #b1b4b6; background: #f3f5f8; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.app-pane .govuk-button { margin-bottom: 0; }
+.app-pane .govuk-summary-list { margin-bottom: 10px; font-size: .9375rem; }
+.app-pane h3 { margin: 12px 0 4px; font-size: 1rem; }
+.app-pane .govuk-table { font-size: .875rem; margin-bottom: 8px; }
+.app-btn-sm { font-size: .875rem; padding: 4px 10px 5px; margin: 0; min-height: 32px; }
+.app-scroll { max-height: 320px; overflow: auto; border: 1px solid #b1b4b6; }
+.app-scroll:focus { outline: 3px solid #f5c94c; }
+
+/* Source page image */
+.app-source { border: 1px solid #15283b; background: #fffefa; padding: 12px; font-family: "Courier New", monospace; font-size: .8125rem; }
+.app-source h4 { margin: 0 0 6px; font-family: Roboto, arial, sans-serif; font-size: .9375rem; }
+.app-source table { width: 100%; border-collapse: collapse; }
+.app-source td, .app-source th { padding: 3px 4px; text-align: left; font-weight: 400; }
+.app-source td.app-num { text-align: right; font-variant-numeric: tabular-nums; }
+.app-source tr.app-source__hit td { outline: 4px solid #15283b; outline-offset: -2px; background: #fff3b8; font-weight: 700; position: relative; }
+.app-source__label { display: inline-block; background: #15283b; color: #fff; padding: 1px 6px; font-family: Roboto, arial, sans-serif; font-size: .75rem; font-weight: 700; }
+.app-source__faded td { color: #5b6672; }
+.app-caption { font-weight: 700; margin: 0 0 8px; }
+.app-card { border: 1px solid #15283b; padding: 12px; background: #fff; }
+.app-card h4 { margin: 0 0 6px; }
+.app-card dl { margin: 0; }
+.app-card dt { font-weight: 700; margin-top: 6px; }
+.app-card dd { margin: 0; }
+.app-sheet td, .app-sheet th { border: 1px solid #b1b4b6; padding: 2px 6px; font-size: .8125rem; }
+.app-sheet th { background: #f3f5f8; text-align: center; }
+.app-sheet td.app-hit { outline: 4px solid #15283b; outline-offset: -2px; background: #fff3b8; font-weight: 700; }
+.app-skeleton { height: 14px; background: #e6e9ed; margin: 8px 0; }
+
+/* Keys legend and rail */
+.app-keys { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 6px 0; font-size: .875rem; align-items: center; }
+.app-keys kbd { background: #f3f5f8; border: 1px solid #15283b; border-bottom-width: 3px; padding: 0 6px; font-family: inherit; font-weight: 700; font-size: .8125rem; }
+.app-rail { list-style: none; margin: 0; padding: 0; border: 1px solid #b1b4b6; background: #fff; }
+.app-rail li { border-bottom: 1px solid #e6e9ed; padding: 8px 10px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.app-rail li:last-child { border-bottom: 0; }
+.app-rail a[aria-current] { font-weight: 700; color: #15283b; text-decoration: none; border-left: 4px solid #15283b; padding-left: 6px; margin-left: -10px; }
+.app-tile { border: 1px solid #b1b4b6; padding: 8px 12px; background: #fff; }
+.app-tile__value { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.app-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.app-brief { display: grid; grid-template-columns: minmax(520px, 1.1fr) minmax(420px, 1fr); gap: 16px; align-items: start; }
+.app-brief3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+.app-brief h2 { font-size: 1.125rem; margin: 0 0 6px; }
+.app-brief .govuk-table { font-size: .875rem; margin-bottom: 4px; }
+.app-brief .govuk-summary-list { font-size: .875rem; margin-bottom: 4px; }
+.app-lines { margin: 0; padding-left: 18px; font-size: .875rem; }
+.app-lines li { margin-bottom: 4px; }
+.app-strip { background: #f3f5f8; border: 1px solid #b1b4b6; padding: 6px 12px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; font-size: .9375rem; }
+.app-progress { display: inline-block; min-width: 140px; height: 12px; border: 2px solid #15283b; background: #fff; vertical-align: middle; }
+.app-progress > span { display: block; height: 100%; background: #15283b; }
+.app-sticky { position: sticky; top: 0; z-index: 2; background: #fff; }
+
+/* Two-monitor drawing */
+.app-monitors { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; }
+.app-monitor { border: 8px solid #15283b; border-radius: 6px; background: #fff; padding: 10px; position: relative; }
+.app-monitor--1 { width: 640px; }
+.app-monitor--2 { width: 480px; }
+.app-monitor__name { position: absolute; top: -34px; left: 0; font-weight: 700; }
+.app-monitor__box { border: 2px solid #15283b; padding: 6px; margin: 4px 0; font-size: .875rem; background: #f3f5f8; }
+.app-monitor__box--src { background: #fff3b8; }
+
+.app-follow { display: inline-flex; gap: 6px; align-items: center; font-size: .875rem; }
+
+/* Panes stack on narrow screens and at 400% zoom (rule 13) */
+@media (max-width: 1100px) {
+  .app-panes--3, .app-panes--2, .app-panes--split, .app-brief, .app-brief3, .app-tiles { grid-template-columns: 1fr; }
+  .app-pane { max-height: none; }
+}
+.js-enabled [data-js-hide] { display: none; }
+
+.app-entry { width: 100%; border-collapse: collapse; font-size: .8125rem; }
+.app-entry td, .app-entry th { padding: 3px 4px; text-align: left; font-weight: 400; }
+.app-entry td.app-num, .app-entry th.app-num { text-align: right; font-variant-numeric: tabular-nums; }
+.app-entry tr.app-source__hit td { outline: 4px solid #15283b; outline-offset: -2px; background: #fff3b8; font-weight: 700; }
+.app-required { color: #b3413a; }
+progress.app-progress { appearance: none; -webkit-appearance: none; height: 12px; width: 140px; border: 2px solid #15283b; background: #fff; vertical-align: middle; }
+progress.app-progress::-webkit-progress-bar { background: #fff; }
+progress.app-progress::-webkit-progress-value { background: #15283b; }
+progress.app-progress::-moz-progress-bar { background: #15283b; }
+.app-pane--short { min-height: 0; max-height: none; }
+
+/* Dense, desktop first (RV-51): one step smaller than GOV.UK's default on wide screens */
+@media (min-width: 1100px) { .govuk-template__body { zoom: 0.85; } }
+/* MOJ identity bar adapted to the wide container (quiet strip, RV-50) */
+.moj-identity-bar .moj-identity-bar__container { max-width: none; margin: 0; font-size: 1rem; text-align: left; }
+.moj-identity-bar .moj-identity-bar__container::after { display: none; }
+.moj-identity-bar__details { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; padding-top: 2px; padding-bottom: 2px; }
+.moj-identity-bar__details p { margin: 0; font-size: 1rem; }
+.moj-identity-bar__title { margin: 0; }
+.moj-sub-navigation__link { padding-left: 8px; padding-right: 8px; }
+.govuk-main-wrapper .govuk-tag, .moj-identity-bar .govuk-tag { font-size: 0.8125rem; line-height: 1.2; padding: 2px 6px; white-space: nowrap; max-width: none; }
+.moj-sub-navigation__link { font-size: 0.9375rem; }
+.moj-badge { font-size: 0.75rem; padding: 1px 6px; vertical-align: middle; }
+.moj-sub-navigation { margin-bottom: 8px; }
+.app-panes--3 { grid-template-columns: minmax(560px, 1.8fr) minmax(300px, 1fr) minmax(320px, 1fr); }
+.app-panes--2 { grid-template-columns: minmax(600px, 1.6fr) minmax(360px, 1fr); }
+.app-return th, .app-return td { padding: 4px 6px 4px 0; }
+.app-return { font-size: .875rem; }
+.app-source td:first-child, .app-source th:first-child { white-space: nowrap; }
+.app-pane .govuk-hint { font-size: .875rem; }
+@media (max-width: 1100px) { .app-panes--3, .app-panes--2 { grid-template-columns: 1fr; } }
+.app-panes--split { grid-template-columns: minmax(640px, 6fr) minmax(460px, 5fr); }
+.app-stack { display: grid; gap: 12px; }
+.app-stack .app-pane { min-height: 0; }
+.app-stack .app-pane--trace { max-height: 340px; }
+.app-stack .app-pane--source { max-height: 440px; }
+@media (max-width: 1100px) { .app-panes--split { grid-template-columns: 1fr; } .app-stack .app-pane--trace, .app-stack .app-pane--source { max-height: none; } }
+[data-source-window] .app-source { font-size: 1rem; } [data-source-window] .app-card { font-size: 1.0625rem; }
+.app-monitors { margin-top: 48px; }
+.app-monitor__row { display: flex; gap: 6px; }
+.app-monitor__row > .app-monitor__box { flex: 1; }
