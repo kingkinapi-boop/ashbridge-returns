@@ -21,7 +21,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 05:56Z by the Lea
 | SC | spec patch reported (110 tests); build open (A424) | build, check with Opus read and test:flake |
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | check FAIL (AI-10: runner compares 4 of 7 stamp parts); Opus findings review running | fix list into the card, spec patch, build round, check, security review |
+| A04 | findings done (A426): round 4 narrow patch, spec reopened | spec patch (21 stamp cases), build runner.ts, check, security review |
 | DB16 | round 3 build reported (565 db tests on Postgres 16) | check (cloud), security review, board |
 | FX2 | round 2 spec reported; build open | build (one auth line), check, security review; lands before FX7 |
 | JH0 | spec reported | build after W00c lands |
