@@ -2037,7 +2037,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2066,7 +2066,8 @@
       "title": "Staff sign-in stand-in and roles",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "parked",
@@ -9602,7 +9603,7 @@
       "note": "From reports/A06-findings.md, 2 Oct."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -9626,7 +9627,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals."
+      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals.",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
