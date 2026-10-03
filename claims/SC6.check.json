@@ -1,11 +1,9 @@
 {
  "card": "SC6",
  "role": "check",
- "for": "2026-10-03T21:30:24.689Z",
- "worker": "cloud-725535",
- "state": "failed",
- "at": "2026-10-03T21:39:42.319Z",
- "mode": "turbo",
- "beat": "2026-10-03T21:38:08.139Z",
- "note": "FAIL: Opus read, 6 fail-open forms in R77/R78 (negation phrase, SPEC_OWNS nouns, possessive, participle, glued separators, regex.exec), see reports/SC6-check.md"
+ "for": "2026-10-03T23:33:26.564Z",
+ "worker": "cloud-b04976",
+ "state": "working",
+ "at": "2026-10-03T23:43:13.600Z",
+ "mode": "turbo"
 }
