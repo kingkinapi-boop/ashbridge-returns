@@ -1,11 +1,10 @@
 {
  "card": "B04",
  "role": "spec",
- "worker": "cloud-e9d462",
- "state": "reopened",
- "at": "2026-10-03T09:41:51.290Z",
- "mode": "turbo",
- "beat": "2026-10-03T08:29:38.066Z",
  "note": "A454: rename to 56_qbo.sql",
- "commit": "9ba0e6a9"
+ "reopenedFrom": "9ba0e6a9",
+ "worker": "cloud-7c6fec",
+ "state": "working",
+ "at": "2026-10-03T17:41:04.546Z",
+ "mode": "turbo"
 }
