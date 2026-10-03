@@ -3827,16 +3827,34 @@
       "deps": [
         "V00",
         "D02",
-        "U02"
+        "U02",
+        "X01",
+        "V02",
+        "F02"
       ],
-      "paths": [],
-      "clauses": [],
+      "paths": [
+        "src/app/(staff)/review/queue/**",
+        "src/modules/review/queue/**",
+        "e2e/staff/review-queue.spec.ts"
+      ],
+      "clauses": [
+        "RV-8",
+        "FLOW-7",
+        "FLOW-2",
+        "SEC-2",
+        "RV-50",
+        "RV-53",
+        "RV-54"
+      ],
       "id": "V15",
       "title": "CPA review queue (/review): returns waiting for review, oldest first",
       "phase": 3,
       "size": "M",
       "core": false,
-      "note": "No card owned the queue screen (reports/cards-V02-V13-draft.md, A421)."
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card.",
+      "security": true,
+      "screens": true,
+      "hard": false
     },
     {
       "status": "carded",
@@ -8986,20 +9004,31 @@
       "deps": [
         "B04",
         "B05",
+        "B01",
         "T08"
       ],
       "paths": [
-        "src/modules/books/recheck/**"
+        "src/modules/books/recheck/**",
+        "src/modules/books/index.ts",
+        "src/contracts/books.ts",
+        "db/schema/77_recheck.sql",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "TB-11",
-        "FLOW-5"
+        "FLOW-5",
+        "TB-10",
+        "OUT-3"
       ],
       "id": "B06",
       "title": "Books changed after approval: re-read QBO and compare with the approved snapshot",
       "phase": 4,
       "size": "M",
-      "hard": true
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
       "status": "todo",
@@ -9007,43 +9036,74 @@
       "deps": [
         "T08",
         "T02",
-        "B06"
+        "B06",
+        "N00"
       ],
       "paths": [
-        "src/modules/transmit/**"
+        "src/modules/transmit/**",
+        "src/contracts/transmit.ts",
+        "db/schema/78_transmit.sql",
+        "data/transmit/**",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "RT-19",
         "END-4",
-        "FLOW-5"
+        "FLOW-5",
+        "FLOW-2",
+        "RT-20",
+        "LL-1",
+        "LL-3",
+        "AI-7",
+        "SEC-7",
+        "OUT-3"
       ],
       "id": "T09",
       "title": "The check before transmit: check export against the approval",
       "phase": 4,
-      "size": "M",
+      "size": "L",
       "hard": true,
-      "security": true
+      "security": true,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
       "status": "todo",
       "spec": null,
       "deps": [
         "T09",
-        "T07"
+        "T07",
+        "T11",
+        "V04",
+        "A05"
       ],
       "paths": [
-        "src/modules/binder/**"
+        "src/modules/binder/**",
+        "src/contracts/binder.ts",
+        "db/schema/81_binder.sql",
+        "db/schema/99_closed.sql",
+        "src/pipeline/steps/binder.ts",
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts"
       ],
       "clauses": [
         "FLOW-9",
         "SEC-8",
-        "RT-11"
+        "RT-11",
+        "SEC-7",
+        "FLOW-2",
+        "EV-1"
       ],
       "id": "T10",
       "title": "The frozen binder and retention",
       "phase": 4,
-      "size": "M",
-      "security": true
+      "size": "L",
+      "security": true,
+      "core": true,
+      "hard": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
       "status": "todo",
@@ -9051,22 +9111,37 @@
       "deps": [
         "T08",
         "F07",
-        "F02"
+        "F02",
+        "T07",
+        "B03"
       ],
       "paths": [
-        "src/modules/clientsign/**"
+        "src/modules/clientsign/**",
+        "src/contracts/clientsign.ts",
+        "db/schema/79_clientsign.sql",
+        "data/clientsign/**",
+        "src/pipeline/deps.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "FLOW-2",
+        "FLOW-5",
         "FLOW-8",
         "RV-30",
         "SEC-8",
-        "END-7"
+        "END-7",
+        "ARC-2",
+        "AI-7",
+        "SEC-7"
       ],
       "id": "T11",
       "title": "Approval summary data and the T183CORP record (client wording stays in the client app)",
       "phase": 4,
-      "size": "S"
+      "size": "M",
+      "core": true,
+      "security": true,
+      "hard": false,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
       "status": "todo",
