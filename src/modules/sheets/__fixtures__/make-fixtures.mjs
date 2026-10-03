@@ -341,7 +341,7 @@ const CELLS_R2 = [
       t('A1', 'Account (Test)'), t('B1', 'Debit'), t('C1', 'Credit'),
       t('A2', 'Float noise (Test)'), numAs('B2', '1234.5600000000001', '1234.56'),
       t('A3', 'Sum noise (Test)'), typedFormula('B3', '0.1+0.2', undefined, '0.30000000000000004', { type: 'number', text: '0.3' }),
-      t('A4', 'Large (Test)'), numAs('B4', '1E+21', '1000000000000000000000'),
+      t('A4', 'Large (Test)'), numAs('B4', '1E+21', '1e+21'),
       t('A5', 'Zero total (Test)'), typedFormula('B5', 'B2-B2', undefined, '0', { type: 'number', text: '0' }),
       t('A6', 'Flags (Test)'),
       typedFormula('B6', 'B5=0', 'b', '1', { type: 'boolean', text: 'TRUE' }),

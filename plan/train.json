@@ -1,12 +1,9 @@
 {
-  "status": "checking",
+  "status": "boarding",
   "branch": "claude/train",
-  "head": "25bde2a",
+  "head": null,
   "cards": [
-    "A07D",
-    "A06"
+    "CQ2"
   ],
-  "requested_at": "2026-10-03T03:42:49Z",
-  "note": "A07D core (Opus read done, findings carded to FX4 and SC4, A393). A06 security: run the A06 db tests (src/modules/auth/*.db.test.ts) on the preinstalled PostgreSQL 16 as well as PGlite and report both (A396). Run gitleaks over HEAD if available.",
-  "by": "cloud-d8b04b"
+  "note": "Boarding since 04:31Z. Request at 6 cards or 05:30Z. Run test:flake this time (A405)."
 }
