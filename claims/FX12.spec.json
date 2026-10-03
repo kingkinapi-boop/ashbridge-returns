@@ -2,10 +2,10 @@
  "card": "FX12",
  "role": "spec",
  "worker": "cloud-d98b06",
- "state": "reported",
- "at": "2026-10-03T08:15:18.644Z",
+ "state": "reopened",
+ "at": "2026-10-03T08:25:32.768Z",
  "mode": "turbo",
- "note": "17 tests, 6 fail by design; FX13 owner card needed",
+ "note": "A443: see card directive",
  "commit": "afeebf8",
  "validated": "0e39bb0"
 }
