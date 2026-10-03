@@ -1,10 +1,10 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "A443 patch: 6 FX2 KNOWN entries dropped, factory list fitted; 22 of 22 pass with the engine tags already in; build round 2 needs no code",
+ "note": "A452: patch, see card directive",
  "worker": "cloud-a98eee",
- "state": "reported",
- "at": "2026-10-03T08:29:14.577Z",
+ "state": "reopened",
+ "at": "2026-10-03T09:34:15.923Z",
  "mode": "turbo",
  "commit": "72943edb",
  "validated": "f770560870a7594b351bbce4e8118676d645e8f4"
