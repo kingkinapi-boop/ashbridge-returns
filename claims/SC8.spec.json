@@ -1,11 +1,9 @@
 {
  "card": "SC8",
  "role": "spec",
- "note": "refit, no spec change",
- "worker": "cloud-da95a7",
- "state": "reported",
- "at": "2026-10-03T15:44:20.286Z",
- "mode": "turbo",
- "commit": "845d8ee2",
- "validated": "bd5ec11ac5684436e5a8e9e4ba972849afc1744e"
+ "note": "toolchain refit",
+ "worker": "cloud-07698b",
+ "state": "working",
+ "at": "2026-10-03T19:00:27.994Z",
+ "mode": "turbo"
 }
