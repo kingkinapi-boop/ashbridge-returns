@@ -2,7 +2,8 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-8a46bb",
- "state": "working",
- "at": "2026-10-03T03:23:38.334Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T03:23:44.259Z",
+ "mode": "turbo",
+ "note": "refit blocked (same note): needs Lead rebase onto W00c; do not re-offer until W00c lands"
 }
