@@ -4,8 +4,11 @@
  "round": 10,
  "spec": "d69ac553",
  "worker": "cloud-feb1e6",
- "state": "reported",
- "at": "2026-10-03T08:59:21.266Z",
+ "state": "released",
+ "at": "2026-10-03T11:56:29.160Z",
  "mode": "turbo",
- "note": "571 of 571 pg16 acceptance and unit tests pass, T1 to T5 included; head fc7b45df"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "a561fc624b7edaa254bc7ebbf227ae6a87cf80b1"
+ }
 }
