@@ -11004,7 +11004,9 @@
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",
-        "tools/test-homes.json"
+        "tools/test-homes.json",
+        "src/core/db/pool-rules.acceptance.test.ts",
+        "src/core/db/__fixtures__/**"
       ],
       "clauses": [
         "ARC-6",
