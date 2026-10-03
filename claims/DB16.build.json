@@ -1,12 +1,10 @@
 {
  "card": "DB16",
  "role": "build",
- "round": 9,
+ "round": 10,
  "spec": "d69ac553",
- "worker": "cloud-d137a3",
- "state": "reopened",
- "at": "2026-10-03T08:44:40.363Z",
- "mode": "turbo",
- "beat": "2026-10-03T06:52:18.492Z",
- "note": "final round 5 per A441 directive; spec T1 to T5 reported"
+ "worker": "cloud-feb1e6",
+ "state": "working",
+ "at": "2026-10-03T08:45:45.743Z",
+ "mode": "turbo"
 }
