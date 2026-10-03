@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, test } from 'vitest'
 import { SAMPLE_ROOT, walkClients } from '../model/__fixtures__/sample-walk'
+import { genericOf, pattern } from '../model/__fixtures__/w00c-r3-walk'
 import { objectNodes } from '../model/__fixtures__/w00c-walk'
 
 type Scan = (text: string) => readonly { key: string }[]
@@ -71,4 +72,42 @@ describe('W00c RC-A reservedKeys', () => {
       }
     }
   })
+
+  // Spec review 4, gap 3: the onboarding walk reaches depth 5 only; answer keys go deeper. For each object path of the
+  // answer keys (array indexes as [], statementBalances account keys and trial balance names as "*"), the first node of
+  // the first folder that has it is given each name as a key.
+  const keyPaths = (() => {
+    const out = new Map<string, { id: string; folder: string; path: readonly (string | number)[] }>()
+    for (const c of clients) {
+      const json = JSON.parse(readFileSync(join(SAMPLE_ROOT, c.folder, 'answer-key.json'), 'utf8')) as unknown
+      for (const n of objectNodes(json)) {
+        const label = pattern(genericOf(n.path))
+        if (!out.has(label)) out.set(label, { id: c.id, folder: c.folder, path: n.path })
+      }
+    }
+    return [...out]
+  })()
+
+  test('ARC-8 the walk finds the answer-key object paths (88 on the spec probe, path depth up to 6; never fewer)', () => {
+    expect(keyPaths.length).toBeGreaterThanOrEqual(88)
+    expect(Math.max(...keyPaths.map(([, n]) => n.path.length))).toBeGreaterThanOrEqual(6)
+  })
+
+  test.each(keyPaths.map(([label, n]): [string, string, readonly (string | number)[], string] => [label === '' ? '(top)' : label, n.id, n.path, n.folder]))(
+    'ARC-8 answer-key.json %s (first in %s): each reserved name written as a key of that object is found once',
+    async (_label, id, path, folder) => {
+      const { reservedKeys } = await scanners()
+      const json = JSON.parse(readFileSync(join(SAMPLE_ROOT, folder, 'answer-key.json'), 'utf8')) as unknown
+      let node: unknown = json
+      for (const s of path) node = (node as Record<string | number, unknown>)[s]
+      const hole = 'w00c_reserved_hole_(Test)'
+      ;(node as Record<string, unknown>)[hole] = 0
+      const text = JSON.stringify(json)
+      for (const name of NAMES) {
+        const planted = text.replace(JSON.stringify(hole), JSON.stringify(name))
+        expect(keysOf(reservedKeys(planted)), `${id} answer-key.json at ${path.join('.') || '(root)'} with "${name}"`).toEqual([name])
+      }
+    },
+    30_000,
+  )
 })

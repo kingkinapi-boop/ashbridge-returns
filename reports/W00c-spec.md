@@ -44,3 +44,26 @@ No W00b test changes status: 494 W00b tests fail with or without W00c (guard not
 5. `reservedKeys` returns `{ key }[]` like `repeatedKeys`.
 6. 16 reference paths, not the findings' 14; 66 date paths, not 80 (floors, never exact).
 7. A swapped fiscal year keeps days as written (two fiscal-year issues may both speak).
+
+## Round 3 patch: gaps 1 to 4 of reports/W00c-spec-review-4.md (A459)
+
+Spec patch commit: see the card's Spec commit line (`spec(W00c): round 3 patch, gaps 1 to 4`). Validated on main 78dd0eed (merged as 13faeae5). Every round 3 test is kept; no assertion is weakened.
+
+Tests added (225; 7379 unit tests in all):
+- **Gap 1, date-walk (+18):** `2025.02.30` joins BAD_DATES (the 66 per-path tests now plant five values); per folder, seeded (20261003) string leaves holding no date today, outside the READ set and not a made-up name, one per file and one inside a carried block (its holding object is not a described one), each set to `2025-02-30` and `2025.02.30`, a 'schema' issue naming the path; each timestamp path found by the walk (1: onboarding engagements[].created_at, C14) set to `2025-02-30T09:00:00Z`, refused naming the path.
+- **Gap 2, id-walk (+15):** per folder with transactions (14), a seeded answer-key string leaf holding no id today and one inside a carried block, each set to `<nn>-<tag of its first transaction>-<its yyyy-mm>-9999` and `<nn>-AJE-99`, refused naming the value or the path.
+- **Gap 3, reserved-keys (+91) and strict-read (+90):** reservedKeys finds each of the three names at the first node of every answer-key object path (90 on this probe, statementBalances and trial balance names merged; path depth to 6); `prototype` joins the loader plants at statementBalances, the first transaction and the onboarding top (+44), and each name at the deepest answer-key object of each folder is a 'file' issue (+45, plus one depth fixture test).
+- **Gap 4, strict-read (+11):** DESCRIBED gains flags[].evidence, t2Inputs.schedule1, t2Inputs.schedule1.addBacks[] and addBacks[].source (rename and added-key cases follow, +8); the `onboarding` key renamed one character off at flags[].evidence, addBacks[].source and adjustingEntries[].source, each a 'schema' issue naming the path and the new key (+3).
+- Shared: DESCRIBED, READ, READ_ONBOARDING, pattern, SEED and pick move into testworld/model/__fixtures__/w00c-r3-walk.ts (strict-read imports them, values unchanged; the new DESCRIBED rows go last so earlier seeded picks keep their index).
+
+On the branch today: 560 unit tests fail, all the card's own (date-walk 75, id-walk 31, reserved-keys 108, strict-read 277, load.test 1, marker-pins 68); each new one fails for the right reason (every gap 1 and 2 plant probed one by one: the load succeeds; no reservedKeys export; unknown keys stripped). typecheck and lint clean; toolchain-rules green (one literal-count hit in a new line was split).
+
+Step 6b: a throwaway stub (reservedKeys and its 'file' issue, a date walk and an id walk over every string leaf, strict evidence objects; never committed) passes all new tests; unit 7220 of 7379 (the 159 left are round 3 behaviours the stub skipped: strict objects, twins, exportRows, dotted evidence), db 545 of 545, and no test that passes today fails on it. **Tests retired or rewritten: none.**
+
+**For the Lead (not fixed here):** origin/main moved to 6ca8b48f (SC landed) during this job. Merging it into claude/W00c makes 11 SC rule tests fail on the branch (tools/test/schema-contract-rules.test.mjs): stale PENDING rows (W00c's R35, R51, R52-catalogue and W00b's R34-guard, R50-guard; A415 says this spec job deletes W00c's rows, but then R35, R51 and R52 run on the subjects), R18, R28, R34 (35 problems), R34-widened and R50 (W00b's guard exports), R37 (17), R38 and R51. Several need product edits or KNOWN rows owned by other cards (W00b, FX9), so per A414 this patch is not merged with 6ca8b48f and is validated on 78dd0eed only.
+
+Amber choices:
+1. "Outside READ" uses strict-read's READ set; leaves holding a made-up name ("(Test)") are left out too, since the guard refuses a change there whatever the walks do.
+2. "Inside a carried block" means the object holding the leaf is not a DESCRIBED object (hst, t2Inputs parts, prior_year, assets, suggestedPost, prior_year_closing_balances.accounts and so on).
+3. The onboarding-rename cases cover adjustingEntries[].source too (the third evidence place fix 5 names).
+4. Answer-key object paths are counted with statementBalances account keys and trial balance names merged (90; the review's 88 is the floor).

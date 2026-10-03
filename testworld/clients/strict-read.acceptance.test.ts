@@ -17,15 +17,21 @@
 //   CSV lines) and rowsMissingFromExport, fiscalYear.days, each adjusting entry's amount. Account.exportRows takes the
 //   written rowsInExport.
 //
-// The objects the loader describes (amber, spec round 3): the objects holding a key the Client model is built from,
-// a fix 3 twin, or a name the made-up-data guard reads; t2Inputs and trialBalance because fix 2 names their carried
-// parts. Objects only W00c's later cards read (cra_program_accounts, related_entities, t2Inputs.schedule50) are not
-// listed here: the builder may describe or carry them.
-import fc from 'fast-check'
+// The objects the loader describes are DESCRIBED in w00c-r3-walk.ts (amber, spec round 3; spec review 4 adds the
+// evidence objects flags[].evidence, t2Inputs.schedule1, its addBacks[] and their source). Objects only W00c's later
+// cards read (cra_program_accounts, related_entities, t2Inputs.schedule50) are not listed: the builder may describe or
+// carry them.
+//
+// Spec review 4 (reports/W00c-spec-review-4.md): gap 3 plants "prototype" too, and each name at the deepest object of
+// each folder's answer key; gap 4 adds the evidence objects and renames their "onboarding" key.
 import { afterAll, afterEach, describe, expect, test } from 'vitest'
 import { Sandbox, cents, dollars, walkClients, type WalkClient } from '../model/__fixtures__/sample-walk'
 import {
+  DESCRIBED,
   JSON_FILES,
+  READ,
+  READ_ONBOARDING,
+  SEED,
   addKey,
   expectSome,
   jsonOf,
@@ -35,6 +41,8 @@ import {
   namesPath,
   objects,
   oneCharOff,
+  pattern,
+  pick,
   refused,
   renameKey,
   setLeaf,
@@ -53,21 +61,11 @@ afterAll(() => {
   sb.dispose()
 })
 
-const SEED = 20261003
-const pick = (n: number, seed: number): number => fc.sample(fc.integer({ min: 0, max: n - 1 }), { seed, numRuns: 1 })[0] ?? 0
 const clients = walkClients()
 const byId = (cs: WalkClient[]): [string, WalkClient][] => cs.map((c): [string, WalkClient] => [c.id, c])
 const SLOW = 120_000
-
-/** A generic path with each statementBalances account key and each trial balance name written as "*". */
-const pattern = (generic: string): string =>
-  generic.replace(/^statementBalances\.[^.[]+/, 'statementBalances.*').replace(/^trialBalance\.(opening|unadjusted|adjusted)(?=\.rows|\.total)/, 'trialBalance.*')
-
-const DESCRIBED: readonly { file: JsonFile; generic: string }[] = [
-  ...['', 'fiscalYear', 'accounts[]', 'transactions[]', 'transactions[].post[]', 'statementBalances.*[]', 'adjustingEntries[]', 'adjustingEntries[].lines[]'].map((g) => ({ file: 'answer-key.json' as const, generic: g })),
-  ...['adjustingEntries[].source', 'trialBalance', 'trialBalance.opening', 'trialBalance.unadjusted', 'trialBalance.adjusted', 'trialBalance.*.rows[]', 'flags[]', 'parties[]', 't2Inputs'].map((g) => ({ file: 'answer-key.json' as const, generic: g })),
-  ...['', 'corporation', 'prior_year_closing_balances', 'owners[]', 'shares', 'shares.holders[]', 'shareholder_loans[]', 'spouse'].map((g) => ({ file: 'onboarding.json' as const, generic: g })),
-]
+/** The prototype names fix 1 refuses as keys (spec review 4, gap 3, adds prototype to the plants). */
+const NAMES = ['__proto__', 'constructor', 'prototype'] as const
 
 /** For each described object path: the first folder that has it, its first node there, and every key written at that path in any folder. */
 function describedNodes(): { label: string; c: WalkClient; file: JsonFile; path: Path; keys: string[]; allKeys: Set<string> }[] {
@@ -138,6 +136,25 @@ describe('W00c RC-A every described object refuses a key it does not declare', (
       sb.restore()
     }
   })
+
+  // Spec review 4, gap 4: the evidence objects round 3 starts reading (fix 5). Carried as z.unknown and read raw, a
+  // misspelt "onboarding" key would drop the evidence without a word (RC-A inside RC-C).
+  const EVIDENCE_PLACES = ['flags[].evidence', 't2Inputs.schedule1.addBacks[].source', 'adjustingEntries[].source'] as const
+  test.each(EVIDENCE_PLACES.map((g): [string] => [g]))(
+    'ARC-8 %s: in the first folder whose object there writes an onboarding key, that key renamed by one character is refused, naming the object path and the new key',
+    (generic) => {
+      const hit = clients
+        .flatMap((c) => objects(c.key).map((o) => ({ c, ...o })))
+        .find((o) => pattern(genericOf(o.path)) === generic && Object.hasOwn(o.node, 'onboarding'))
+      if (hit === undefined) throw new Error(`fixture: no folder writes an onboarding key at ${generic}`)
+      const allKeys = new Set(clients.flatMap((c) => objects(c.key).filter((o) => pattern(genericOf(o.path)) === generic).flatMap((o) => Object.keys(o.node))))
+      const to = freshName(allKeys, oneCharOff('onboarding'))
+      renameKey(sb, hit.c, 'answer-key.json', hit.path, 'onboarding', to)
+      const issues = refused(sb, hit.c, `answer-key.json ${hit.path.join('.')} with "onboarding" written "${to}"`)
+      expectSome(issues, (x) => x.check === 'schema' && namesPath(x, 'answer-key.json', hit.path) && mentions(x, to), `${hit.c.id}: a 'schema' issue naming answer-key.json ${hit.path.join('.')} and "${to}"`)
+    },
+    SLOW,
+  )
 })
 
 describe('W00c RC-A prototype names written as keys are refused (fix 1)', () => {
@@ -149,18 +166,40 @@ describe('W00c RC-A prototype names written as keys are refused (fix 1)', () => 
   const cases = clients.flatMap((c) =>
     places.flatMap((p) => {
       const path = p.path(c)
-      return path === undefined ? [] : ['__proto__', 'constructor'].map((name): [string, string, string, WalkClient, JsonFile, Path] => [c.id, name, p.label, c, p.file, path])
+      return path === undefined ? [] : NAMES.map((name): [string, string, string, WalkClient, JsonFile, Path] => [c.id, name, p.label, c, p.file, path])
     }),
   )
 
   test('ARC-8 every folder gives at least two places (C12 has no transactions)', () => {
-    expect(cases.length).toBeGreaterThanOrEqual(clients.length * 4)
+    expect(cases.length).toBeGreaterThanOrEqual(clients.length * 2 * NAMES.length)
   })
 
   test.each(cases)('ARC-8 %s: "%s" written as a key of %s is a file issue naming the file and the key', (_id, name, _p, c, file, path) => {
     writeRawKey(sb, c, file, path, name)
     const issues = refused(sb, c, `"${name}" in ${file} ${path.join('.')}`)
     expectSome(issues, (x) => x.check === 'file' && mentions(x, file) && mentions(x, name), `a 'file' issue naming ${file} and "${name}"`)
+  })
+
+  // Spec review 4, gap 3: a depth-limited scan passes the places above (depth 0 to 2). The deepest object node of each
+  // answer key (the first one in document order at the greatest depth) is found by this file's walk.
+  const deepest = (c: WalkClient): Path => {
+    let best: Path = []
+    for (const o of objects(c.key)) if (o.path.length > best.length) best = o.path
+    return best
+  }
+  const deepCases = clients.flatMap((c) => NAMES.map((name): [string, string, number, WalkClient, Path] => [c.id, name, deepest(c).length, c, deepest(c)]))
+
+  test('ARC-8 the deepest answer-key object of every folder lies at depth 4 or more', () => {
+    for (const c of clients) {
+      const depth = deepest(c).length
+      expect(depth, `${c.id} deepest object`).toBeGreaterThanOrEqual(4)
+    }
+  })
+
+  test.each(deepCases)('ARC-8 %s: "%s" written as a key of the deepest answer-key object (path depth %i) is a file issue naming the file and the key', (_id, name, _d, c, path) => {
+    writeRawKey(sb, c, 'answer-key.json', path, name)
+    const issues = refused(sb, c, `"${name}" in answer-key.json ${path.join('.')}`)
+    expectSome(issues, (x) => x.check === 'file' && mentions(x, 'answer-key.json') && mentions(x, name), `a 'file' issue naming answer-key.json and "${name}"`)
   })
 })
 
@@ -235,25 +274,6 @@ describe('W00c RC-A exportRows is the written rowsInExport', () => {
 })
 
 // ---- the pinned-seed property ----
-
-/**
- * The leaves the loader reads (amber, spec round 3): each one is held by the Client model or checked as a fix 3 twin
- * or a fiscal-year twin, so changing it must either refuse the load or change the model. Leaves only the guard reads
- * (names) are left out: changing a name need not change either.
- */
-const READ: ReadonlySet<string> = new Set([
-  ...['name', 'fiscalYear.start', 'fiscalYear.end', 'fiscalYear.days'],
-  ...['key', 'role', 'currency', 'file', 'qboFile', 'glAccount', 'openingBalance', 'closingBalance', 'rowsInExport', 'rowsMissingFromExport'].map((f) => `accounts[].${f}`),
-  ...['id', 'acct', 'date', 'amount', 'account', 'accountNo', 'missingFromExport', 'dupOf', 'priorYear', 'post[].a', 'post[].dr', 'post[].cr'].map((f) => `transactions[].${f}`),
-  ...['month', 'opening', 'closing', 'rolls', 'exportActivity'].map((f) => `statementBalances.*[].${f}`),
-  ...['id', 'date', 'reason', 'amount', 'source.transactions[]', 'source.onboarding[]'].map((f) => `adjustingEntries[].${f}`),
-  ...['account', 'gifi', 'gifiStatus', 'debit', 'credit'].flatMap((f) => [`adjustingEntries[].lines[].${f}`, `trialBalance.*.rows[].${f}`]),
-  ...['trialBalance.*.totalDebit', 'trialBalance.*.totalCredit'],
-  ...['id', 'rule', 'detail', 'severity', 'action'].map((f) => `flags[].${f}`),
-].map((g) => `answer-key.json ${g}`))
-const READ_ONBOARDING: ReadonlySet<string> = new Set(
-  ['corporation.business_number', 'corporation.financial_year_end', 'corporation.fiscal_year_start', 'corporation.incorporation_date', 'prior_year_closing_balances.as_of', 'owners[].name'].map((g) => `onboarding.json ${g}`),
-)
 
 /** One unit of change: a letter added to a string, one cent (or one, for a whole number) added, a boolean flipped. */
 function changed(v: unknown): unknown {

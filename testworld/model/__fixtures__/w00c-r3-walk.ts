@@ -5,6 +5,7 @@
 // node at a described path, with this file's own code. Nothing here imports the module under test except through the
 // public loader in sample-walk.ts.
 import { readFileSync, writeFileSync } from 'node:fs'
+import fc from 'fast-check'
 import { expect } from 'vitest'
 import { TestWorldLoadError } from '../index'
 import { loadClient } from '../../index'
@@ -95,8 +96,13 @@ export const isTimestamp = (s: string): boolean => /^\d{4}-\d{2}-\d{2}T/.test(s)
 export const isDateLeaf = (l: Leaf): l is Leaf & { value: string } =>
   typeof l.value === 'string' && (isDate(l.value) || isMonth(l.value) || isTimestamp(l.value))
 
-/** The four bad values of the findings (RC-B): a day past the month, month 13, no zero padding, and day/month/year. */
-export const BAD_DATES: readonly string[] = ['2025-02-30', '2025-13', '2025-2-3', '03/02/2025']
+/**
+ * The bad values of the findings (RC-B): a day past the month, month 13, no zero padding, day/month/year, and (spec
+ * review 4, gap 1) a day past the month written with dots, which the fix 4 shape takes as a three-part date.
+ */
+export const BAD_DATES: readonly string[] = ['2025-02-30', '2025-13', '2025-2-3', '03/02/2025', '2025.02.30']
+/** The two values spec review 4 (gap 1) plants at leaves that hold no date today. */
+export const NEW_DATES: readonly string[] = ['2025-02-30', '2025.02.30']
 
 // ---- ids (RC-C) ----
 
@@ -111,6 +117,73 @@ export const isReference = (l: Leaf): l is Leaf & { value: string } =>
   ID_SHAPED.test(l.value) &&
   l.generic !== 'transactions[].id' &&
   l.generic !== 'adjustingEntries[].id'
+
+// ---- described objects and read leaves (shared by strict-read, date-walk and id-walk) ----
+
+export const SEED = 20261003
+/** A seeded index in [0, n) (fast-check, so the pick is pinned and reproducible). */
+export const pick = (n: number, seed: number): number => fc.sample(fc.integer({ min: 0, max: n - 1 }), { seed, numRuns: 1 })[0] ?? 0
+
+/** A generic path with each statementBalances account key and each trial balance name written as "*". */
+export const pattern = (generic: string): string =>
+  generic.replace(/^statementBalances\.[^.[]+/, 'statementBalances.*').replace(/^trialBalance\.(opening|unadjusted|adjusted)(?=\.rows|\.total)/, 'trialBalance.*')
+
+/**
+ * The objects the loader describes (amber, spec round 3): the objects holding a key the Client model is built from,
+ * a fix 3 twin, or a name the made-up-data guard reads; t2Inputs and trialBalance because fix 2 names their carried
+ * parts. Spec review 4 (gap 4) adds the evidence objects round 3 starts reading (fix 5): flags[].evidence,
+ * t2Inputs.schedule1, its addBacks[] and their source. New entries go last, so the seeded picks of the others keep
+ * their index.
+ */
+export const DESCRIBED: readonly { file: JsonFile; generic: string }[] = [
+  ...['', 'fiscalYear', 'accounts[]', 'transactions[]', 'transactions[].post[]', 'statementBalances.*[]', 'adjustingEntries[]', 'adjustingEntries[].lines[]'].map((g) => ({ file: 'answer-key.json' as const, generic: g })),
+  ...['adjustingEntries[].source', 'trialBalance', 'trialBalance.opening', 'trialBalance.unadjusted', 'trialBalance.adjusted', 'trialBalance.*.rows[]', 'flags[]', 'parties[]', 't2Inputs'].map((g) => ({ file: 'answer-key.json' as const, generic: g })),
+  ...['', 'corporation', 'prior_year_closing_balances', 'owners[]', 'shares', 'shares.holders[]', 'shareholder_loans[]', 'spouse'].map((g) => ({ file: 'onboarding.json' as const, generic: g })),
+  ...['flags[].evidence', 't2Inputs.schedule1', 't2Inputs.schedule1.addBacks[]', 't2Inputs.schedule1.addBacks[].source'].map((g) => ({ file: 'answer-key.json' as const, generic: g })),
+]
+const DESCRIBED_LABELS: ReadonlySet<string> = new Set(DESCRIBED.map((d) => `${d.file} ${d.generic}`))
+
+/**
+ * The leaves the loader reads (amber, spec round 3): each one is held by the Client model or checked as a fix 3 twin
+ * or a fiscal-year twin, so changing it must either refuse the load or change the model. Leaves only the guard reads
+ * (names) are left out: changing a name need not change either.
+ */
+export const READ: ReadonlySet<string> = new Set([
+  ...['name', 'fiscalYear.start', 'fiscalYear.end', 'fiscalYear.days'],
+  ...['key', 'role', 'currency', 'file', 'qboFile', 'glAccount', 'openingBalance', 'closingBalance', 'rowsInExport', 'rowsMissingFromExport'].map((f) => `accounts[].${f}`),
+  ...['id', 'acct', 'date', 'amount', 'account', 'accountNo', 'missingFromExport', 'dupOf', 'priorYear', 'post[].a', 'post[].dr', 'post[].cr'].map((f) => `transactions[].${f}`),
+  ...['month', 'opening', 'closing', 'rolls', 'exportActivity'].map((f) => `statementBalances.*[].${f}`),
+  ...['id', 'date', 'reason', 'amount', 'source.transactions[]', 'source.onboarding[]'].map((f) => `adjustingEntries[].${f}`),
+  ...['account', 'gifi', 'gifiStatus', 'debit', 'credit'].flatMap((f) => [`adjustingEntries[].lines[].${f}`, `trialBalance.*.rows[].${f}`]),
+  ...['trialBalance.*.totalDebit', 'trialBalance.*.totalCredit'],
+  ...['id', 'rule', 'detail', 'severity', 'action'].map((f) => `flags[].${f}`),
+].map((g) => `answer-key.json ${g}`))
+export const READ_ONBOARDING: ReadonlySet<string> = new Set(
+  ['corporation.business_number', 'corporation.financial_year_end', 'corporation.fiscal_year_start', 'corporation.incorporation_date', 'prior_year_closing_balances.as_of', 'owners[].name'].map((g) => `onboarding.json ${g}`),
+)
+/** Is this leaf one the loader reads (READ or READ_ONBOARDING)? */
+export const isRead = (l: Leaf): boolean => {
+  const label = `${l.file} ${pattern(l.generic)}`
+  return READ.has(label) || READ_ONBOARDING.has(label)
+}
+
+/**
+ * Does the made-up-data guard read this leaf: a made-up name, written ending in "(Test)" (SEC-11)? A change there is
+ * refused by the guard whatever the date or id walks do, so the walk plants of spec review 4 leave these leaves out.
+ */
+export const isMadeUpName = (l: Leaf): boolean => typeof l.value === 'string' && l.value.endsWith('(Test)')
+
+/** The concrete path of the object that holds a leaf: trailing array indexes dropped, then the leaf's own key. */
+export function holderPath(path: Path): Path {
+  let end = path.length
+  while (end > 0 && typeof path[end - 1] === 'number') end--
+  return path.slice(0, Math.max(0, end - 1))
+}
+/**
+ * Is this leaf inside a carried block: the object that holds it is not one the loader describes (hst, ohip, loan,
+ * t2Inputs.schedule8, prior_year and so on, whose whole subtree round 3 carries unread)?
+ */
+export const inCarriedBlock = (l: Leaf): boolean => !DESCRIBED_LABELS.has(`${l.file} ${pattern(genericOf(holderPath(l.path)))}`)
 
 // ---- first occurrences ----
 

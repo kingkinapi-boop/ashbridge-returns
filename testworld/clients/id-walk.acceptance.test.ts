@@ -12,17 +12,29 @@
 // dotted path own key by own key ("corporation.financial_year_end"), beside the "(...)" qualifier and the answers'
 // question_asked ids it reads today. Each refusal is a LoadIssue whose record or reason names the planted value or
 // the JSON path of the leaf ("answer-key.json flags.0.evidence.transactions.0").
+//
+// Spec review 4 (reports/W00c-spec-review-4.md, gap 2): a list of the 16 reference paths would pass every test above,
+// since each plant sits on a leaf that holds an id today. So each folder with transactions also gets an unknown id of
+// its own shape and <nn>-AJE-99 at seeded answer-key string leaves that hold no id today and that the loader does not
+// read (one anywhere, one inside a carried block).
 import { afterAll, afterEach, describe, expect, test } from 'vitest'
 import { Sandbox, walkClients, type WalkClient } from '../model/__fixtures__/sample-walk'
 import {
   AJE_ID,
+  ID_SHAPED,
+  SEED,
   TX_ID,
   dotted,
   expectSome,
   firstByGeneric,
+  inCarriedBlock,
+  isMadeUpName,
+  isRead,
   isReference,
+  leaves,
   load,
   mentions,
+  pick,
   refused,
   setLeaf,
   show,
@@ -170,5 +182,47 @@ describe('W00c RC-C onboarding evidence paths resolve own key by own key', () =>
       setLeaf(sb, hit.c, 'answer-key.json', hit.e.path, bad)
       expectSome(refused(sb, hit.c, `${where} evidence "${bad}"`), (i) => mentions(i, bad), `an issue naming "${bad}"`)
     },
+  )
+})
+
+describe('W00c RC-C the walk is by shape, not by a list of reference paths (spec review 4, gap 2)', () => {
+  /** Answer-key string leaves that hold no id-shaped value today, that the loader does not read and that are no made-up name. */
+  const quiet = (c: WalkClient): Leaf[] => leaves('answer-key.json', c.key).filter((l) => typeof l.value === 'string' && !ID_SHAPED.test(l.value) && !isRead(l) && !isMadeUpName(l))
+  const withTx = clients.filter((c) => c.key.transactions.length > 0)
+  const cases = withTx.map((c, n): [string, WalkClient, Leaf[], string[]] => {
+    const all = quiet(c)
+    const carried = all.filter(inCarriedBlock)
+    if (all.length === 0 || carried.length === 0) throw new Error(`fixture: ${c.id} has no quiet answer-key string leaf (or none inside a carried block)`)
+    const plants = [all[pick(all.length, SEED + 200 + 2 * n)] as Leaf, carried[pick(carried.length, SEED + 201 + 2 * n)] as Leaf]
+    const first = c.key.transactions[0] as { id: string; acct: string; date: string }
+    const tag = (c.key.accounts as unknown as { key: string; tag: string }[]).find((a) => a.key === first.acct)?.tag ?? ''
+    const unknown = `${c.id.slice(1)}-${tag}-${first.date.slice(0, 7)}-9999`
+    const aje = `${c.id.slice(1)}-AJE-99`
+    return [c.id, c, plants, [unknown, aje]]
+  })
+
+  test('ARC-8 every folder with transactions gives two plants (one inside a carried block) and two ids it does not have', () => {
+    expect(cases.length).toBeGreaterThanOrEqual(14)
+    for (const [id, c, plants, [unknown, aje]] of cases) {
+      expect(plants[1] !== undefined && inCarriedBlock(plants[1]), `${id}: the second plant is inside a carried block`).toBe(true)
+      expect(TX_ID.test(unknown ?? '') && !txIdsOf(c).has(unknown ?? ''), `${id}: ${String(unknown)} has the id shape and is not a transaction`).toBe(true)
+      expect(AJE_ID.test(aje ?? '') && !ajeIdsOf(c).has(aje ?? ''), `${id}: ${String(aje)} is not an adjusting entry`).toBe(true)
+    }
+  })
+
+  test.each(cases)(
+    'ARC-8 %s: a seeded answer-key string leaf and one inside a carried block, none holding an id today, set to an unknown id of this client\'s shape and to <nn>-AJE-99, are each refused naming the value or the path',
+    (_id, c, plants, ids) => {
+      for (const leaf of plants) {
+        for (const value of ids) {
+          setLeaf(sb, c, leaf.file, leaf.path, value)
+          const where = `${leaf.file} ${dotted(leaf.path)}`
+          const issues = refused(sb, c, `${where} (held ${JSON.stringify(leaf.value)}) = ${value}`)
+          expectSome(issues, (i) => mentions(i, value) || mentions(i, where), `${c.id} ${where} (held ${JSON.stringify(leaf.value)}) = ${value}: an issue naming the value or the path`)
+          sb.restore()
+        }
+      }
+    },
+    120_000,
   )
 })
