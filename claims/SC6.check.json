@@ -1,10 +1,9 @@
 {
  "card": "SC6",
  "role": "check",
- "for": "2026-10-03T19:34:58.406Z",
- "worker": "cloud-165f9c",
- "state": "failed",
- "at": "2026-10-03T19:44:26.829Z",
- "mode": "turbo",
- "note": "FAIL: G2 verbs and forget/fail forms, G6 c main~N and chains, G6 a init reader; see reports/SC6-check.md"
+ "for": "2026-10-03T21:30:24.689Z",
+ "worker": "cloud-725535",
+ "state": "working",
+ "at": "2026-10-03T21:32:27.998Z",
+ "mode": "turbo"
 }
