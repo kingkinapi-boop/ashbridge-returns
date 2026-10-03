@@ -5,10 +5,11 @@
  "spec": "e45532b1",
  "worker": "cloud-64f020",
  "state": "released",
- "at": "2026-10-03T11:28:07.571Z",
+ "at": "2026-10-03T11:52:47.903Z",
  "mode": "turbo",
- "note": "BLOCKED: mutation 100 needs unit twins of the db tests (queue.ts 14, runner.ts 0, jobs.ts 70; jobs.ts also needs the marker); spec reopen or Lead amber, see reports/FX15-build.md",
+ "note": "A465: round 1 PASS stands; boards the next train",
  "lastRelease": {
   "tip": "bc0b8953e3501206fdab75b51f47a6c792818737"
- }
+ },
+ "needsLead": true
 }
