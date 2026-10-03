@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "6c428ac4",
  "worker": "cloud-a113b9",
- "state": "working",
- "at": "2026-10-03T06:20:47.379Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T06:22:44.412Z",
+ "mode": "turbo",
+ "note": "541 verify passes on claude/W16-r2; scope.mjs reads retired claude/W16, see reports/W16-build.md"
 }
