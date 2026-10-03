@@ -21,7 +21,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:25Z by the Lea
 | SC3 | findings done (A452): spec patch (10 items, now core), no build change; FX17 carded | spec, re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | findings 5 (A446): final round; refusal file back in A04; FX15, SC12 carded | spec patch (Opus), build round 5, check, security review; A08 spec after |
-| DB16 | final round: build 5 reported (571 pg16 incl. T1 to T5) | check, security review, board |
+| DB16 | check PASS, security CLEAN (lows and parity cases to SC11, A453) | board on the next train (this one is checking) |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
