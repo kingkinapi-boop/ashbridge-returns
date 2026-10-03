@@ -1,11 +1,11 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:40Z by the Lead (Zo's `turbo on` 03:20Z; mode already turbo). Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lead (Zo's `turbo on` 03:20Z; mode already turbo). Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:30Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core only. One local Opus helper: A06 security review.
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 2 local workers (0018), non-core only. Local helpers: A06 security review (Opus), X00/X01 drafting (Sonnet), phase 3 card review (Opus).
 - **Landed (42):** through A07C, plus A03 and G17 (train 3c3de19, 21:08Z; A388). Train claude/train boarding: A07D.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
@@ -14,15 +14,17 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:40Z by the Lea
 | Card | State | Next action |
 |---|---|---|
 | A07D | on train claude/train 2c59925 (A393: Opus findings to FX4, SC4 R74) | train check when due (hourly or 6 cards) |
-| A06 round 2 | check PASS; local Opus security review fired 03:40Z | board if clean; then FX2 spec, A04 round 2 spec |
+| A06 round 2 | check PASS; local Opus security review fired 03:22Z | board if clean; then FX2 spec, A04 round 2 spec |
 | W00c | build reported; check job open | cloud run; then W00b spec on W00c, S00, JH0, B04, SC2 |
 | SC | build reopened | cloud run |
 | W16 | spec reported | build, cloud run |
 | CQ2 | spec reopened for rule 6 (A394) | spec, build, check |
 | SC4 | startable (A07D built) | spec, then FX4 |
 | A04, A08 | held on A06, then A04 | as before |
+| X00, X01 | local Sonnet drafting helper (03:24Z) | Lead reviews, slices.json status carded, amber |
+| Phase 3 cards | local Opus card review (03:24Z), reports/phase3-card-review-2026-10-03.md | fix cards before their first spec |
 
-Cloud runs fired 03:40Z: 6 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
+Cloud runs fired 03:22Z: 6 (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
 
 ## Next, in order
 
