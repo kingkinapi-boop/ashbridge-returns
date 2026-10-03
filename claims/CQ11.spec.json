@@ -1,9 +1,11 @@
 {
  "card": "CQ11",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: merged main clean, typecheck and lint green, 47 failing by design in the 4 CQ11 test files only, assertions unchanged",
  "worker": "cloud-b1e6bc",
- "state": "working",
- "at": "2026-10-03T15:23:49.584Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T15:29:17.932Z",
+ "mode": "turbo",
+ "commit": "cc4bc6f4",
+ "validated": "8e4698a47e6564c0af4e2b7290eb823870729d7d"
 }
