@@ -22,7 +22,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | spec round 3 reported (98 tests); Opus re-review running, build held (A418) | GO: reopen build; security review before boarding |
-| DB16 | spec round 2 reported (60 tests); Opus re-review running, build held | GO: reopen build (cloud, Postgres 16) |
+| DB16 | spec round 3 reopened (A419: 7 tests, roles and settings in transactions); build held | spec, review, build in the cloud on Postgres 16 |
 | FX2 | round 2 spec reopened (A414: Paths fixed, readOwnSource, auth line); SC8 carded (R79) | spec, build, check, security review; lands before FX7 |
 | CQ2, SC4 | on the train (claude/train 677e92f1); CQ3 carded (A416) | request the train at 6 cards or 05:30Z, with test:flake |
 | JH0 | spec reported | build after W00c lands |
