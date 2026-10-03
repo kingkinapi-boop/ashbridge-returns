@@ -34,6 +34,7 @@ Agent tool, `run_in_background: true`, `subagent_type: worker`, `isolation: work
 Research and design helpers can run as cloud sessions too: `claude --cloud "<the helper's orders file and its question>"`.
 
 ## After a job is reported
+- Until W00c lands, no new repair card (FX, CQ, SC) without a red or a measured waste: a number from the ledger, the claims or the metrics, cited in the card (decision 0027).
 - spec reported (`update <card> spec reported --worker <name> --commit <sha> --validated <origin/main sha>`): the build job opens by itself. Without `--validated`, or when the toolchain changed since that sha, the queue re-offers it as a "toolchain refit" spec job.
 - core card, spec reported: before the build opens, one Opus findings reviewer reads the spec against its clauses (missing cases; a rule tested by examples instead of by class, such as one blank or Unicode case for a whole family). Gaps go back to the spec job first. Most round 3 failures (F09A, F01, A01, A07) were spec gaps the check found after a build (Review 2 Oct).
 - build reported: a check job opens by itself for a different worker.

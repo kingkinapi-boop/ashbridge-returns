@@ -10096,6 +10096,31 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ8"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/metrics.mjs",
+        "tools/test/claim-wait-check.test.mjs",
+        "tools/test/metrics-counts.test.mjs",
+        "tools/next.mjs",
+        "tools/lib.mjs",
+        "tools/test/next-paths.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ11",
+      "title": "Queue: no re-offered checks after a wait, honest card counts",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [
