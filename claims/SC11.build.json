@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "ffa2f8f",
  "worker": "cloud-7c6fec",
- "state": "working",
- "at": "2026-10-03T16:59:32.707Z",
+ "state": "reported",
+ "at": "2026-10-03T17:40:52.430Z",
  "mode": "turbo",
- "beat": "2026-10-03T17:08:44.794Z"
+ "beat": "2026-10-03T17:08:44.794Z",
+ "note": "R116, R117 built; spec tests pass (unit 98, pg16 rules 44, PGlite db 678); flake 5/5 pg16; see reports/SC11-build.md"
 }
