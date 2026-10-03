@@ -1,10 +1,12 @@
 {
  "card": "W16",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit of 31e0de5 on main 0f7e1cc4; verify 531 pass, 10 build-dependent fail; reports/W16-spec.md",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T05:56:14.601Z",
+ "state": "reported",
+ "at": "2026-10-03T06:20:17.416Z",
  "mode": "turbo",
- "beat": "2026-10-03T06:16:50.559Z"
+ "beat": "2026-10-03T06:16:50.559Z",
+ "commit": "6c428ac4",
+ "validated": "0f7e1cc4"
 }
