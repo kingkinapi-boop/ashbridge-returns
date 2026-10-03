@@ -9,3 +9,6 @@ Trigger: tools/test/schema-contract-rules.test.mjs landed on main (SC) after a4c
 typecheck and lint clean. mutate-harness.test.mjs: the same 8 fail by name, 5 pass.
 Other failures, all reproduced on plain main (164d8d6, no code change to 35483b5), none from this spec: SC R18 (src/modules/auth/testusers/engine.ts and src/modules/jobs/runner.ts lack @mutate), db SC R13 (schema-rules.db.test.ts), RV-52 and ARC-6 (Windows-only: ESM path scheme, symlink EPERM). R31 and R34 time out only under full-suite laptop load and pass alone.
 Old validated sha a4c79912, new 35483b50.
+
+## Spec patch (A464), cloud-a244c5
+Harness list now names src/core/db/vitest-setup.ts (root vitest-setup.ts does not exist). Added: every harness entry exists in the repo; an import of src/core/db/vitest-setup from a product module fails; skip count is 5. 14 tests: 11 pass, 3 fail for the right reason (test-homes.json still lists root vitest-setup.ts; build round 2 fixes it). Validated on main 3e9f1c8. Step 6b: stub is a one-line json edit, no other test retired. Permission gaps: none. Model: Sonnet 5.5.

@@ -15,7 +15,7 @@ const TOOLS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const HARNESS = [
   'src/core/db/index.ts',
   'src/core/db/global-setup.ts',
-  'vitest-setup.ts',
+  'src/core/db/vitest-setup.ts',
   'src/core/test-no-network.ts',
   'src/core/testing/read-own-source.ts',
 ]
@@ -108,6 +108,11 @@ describe('ARC-15 CQ6 rule 2: the Lead-kept harness list is skipped and printed',
     expect([...homes.harness].sort()).toEqual([...HARNESS].sort())
   })
 
+  test('ARC-15 every file on the harness list exists in the repo (the list names real files, not guesses)', () => {
+    const homes = JSON.parse(fs.readFileSync(path.join(TOOLS, 'test-homes.json'), 'utf8'))
+    for (const f of homes.harness) expect(fs.existsSync(path.join(TOOLS, '..', f)), f).toBe(true)
+  })
+
   test('ARC-15 an unmarked harness file on a core card is not "core file without @mutate" and is printed "harness, not mutated"', async () => {
     const w = await world({
       branch: { 'src/core/db/global-setup.ts': unmarked, 'src/core/db/index.ts': unmarked, 'src/core/money.ts': marked },
@@ -120,13 +125,13 @@ describe('ARC-15 CQ6 rule 2: the Lead-kept harness list is skipped and printed',
     expect(r.out).toMatch(/mutating: src\/core\/money\.ts\s*$/m)
   })
 
-  test('ARC-15 every one of the five listed files is skipped, wherever it sits (root vitest-setup.ts included)', async () => {
-    const files = Object.fromEntries(HARNESS.filter((f) => f.startsWith('src/')).map((f) => [f, unmarked]))
+  test('ARC-15 every one of the five listed files is skipped (src/core/db/vitest-setup.ts included)', async () => {
+    const files = Object.fromEntries(HARNESS.map((f) => [f, unmarked]))
     const w = await world({ branch: { ...files, 'src/core/money.ts': marked } })
     const r = await run(w)
     expect(r.err).not.toMatch(/core file without @mutate/)
-    for (const f of HARNESS.filter((x) => x.startsWith('src/'))) expect(r.out).toContain(`${f}`)
-    expect(r.out.match(/harness, not mutated/g)).toHaveLength(4)
+    for (const f of HARNESS) expect(r.out).toContain(`${f}`)
+    expect(r.out.match(/harness, not mutated/g)).toHaveLength(5)
   })
 
   test('ARC-15 a file that only looks like a harness file (same name in another folder) is still gated', async () => {
@@ -163,6 +168,7 @@ describe('ARC-15 CQ6 rule 3: a product module importing a harness file fails', (
       "import { a } from '../../core/db/index.js'\n",
       "export * from '../../core/testing/read-own-source.ts'\n",
       "export const l = () => import('../../core/db/global-setup')\n",
+      "import '../../core/db/vitest-setup'\n",
     ]) {
       const w = await world({ branch: { 'src/core/money.ts': marked, 'src/modules/m/thing.ts': line } })
       const r = await run(w)
