@@ -2,7 +2,8 @@
  "card": "SC4",
  "role": "spec",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T04:15:06.447Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T04:15:15.532Z",
+ "mode": "turbo",
+ "note": "toolchain refit needs ExcelJS (absent on the laptop): cloud only; local-1 stopped so the queue stops re-offering it here"
 }
