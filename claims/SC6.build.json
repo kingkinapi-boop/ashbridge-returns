@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "c526b32d",
  "worker": "cloud-1ba1dc",
- "state": "hold-findings",
- "at": "2026-10-03T14:12:37.440Z",
+ "state": "reported",
+ "at": "2026-10-03T19:34:58.406Z",
  "mode": "turbo",
- "note": "FAIL: R77/R78/R81 gaps (landing-trap sentinel, bold-directive wording, case, multi-line git, goldens), see reports/SC6-check.md"
+ "note": "A503: spec-only round; Opus check of the spec commit (landing form)"
 }
