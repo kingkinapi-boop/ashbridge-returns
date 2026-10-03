@@ -30,3 +30,6 @@ The fixes themselves: FX2 (ocr, storage, auth index), A04 round 2 (runner), FX7 
 
 ## KNOWN shape (3 Oct, A407)
 Every KNOWN entry names one rule, one file, the exact problem strings (no regex) and an open owner card; any problem not listed fails, and a listed string not produced fails as stale. Every file scan asserts it read at least one file and a named sentinel.
+
+## Also (A450)
+- **R101** every `z.record` in src/** and testworld/** has keys that refuse prototype names, and every JSON read from disk is scanned for repeated and reserved keys. Expected KNOWN: src/contracts/records.ts (owner FX16) and the gaps bank reader (owner FX16).

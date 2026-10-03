@@ -19,3 +19,6 @@ A checker who did neither: the helper's tests, `npm test`.
 ## R80 (A414, reports/FX2-findings.md)
 The helper also refuses a KNOWN entry whose file is outside its owner card's Paths, or whose owner is not open in plan/slices.json. Planted: SC5's R73 entry owned by FX2 as first carded; A06 (done) owning auth/index.ts.
 An entry whose fix is a file in its owner's Paths other than the flagged file (R37: FX9's .gitattributes fixes the CSVs) names that fix file, and R80 accepts it.
+
+## Also (A452)
+A rule: no KNOWN, allow or PENDING entry in any rules file carries a postponed reason ("waits on", "later") without an open owner card id; reading-rules' regex KNOWN, SC11's R92 allow list and SC9's PENDING list are its first subjects.

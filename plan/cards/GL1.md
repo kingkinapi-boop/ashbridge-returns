@@ -1,6 +1,6 @@
 # GL1 Live adapters, switched off, no keys; the go-live switch
 
-Phase 4. Size L. Deps: A01, A02, A04, A05, A06, A08, B04. Where: cloud (Postgres 16 for the lock-out and pool tests; security: `/security-review` before boarding).
+Phase 4. Size L. Deps: A01, A02, A04, A05, A06, A08, B04, SC3, SC5, SC11, FX7, FX10, FX11, FX13. Where: cloud (Postgres 16 for the lock-out and pool tests; security: `/security-review` before boarding).
 Tags: security (the one switch between made-up and real data; stand-ins refuse real data and live engines refuse until go-live; no key in the repo; staff sign-in), core (permissions).
 Paths: src/modules/live/**, src/core/env.ts, src/core/golive.ts, src/core/engines.ts, src/instrumentation.ts, src/modules/auth/**, src/modules/ai/runner/**, src/modules/ai/project/**, src/modules/ocr/index.ts, src/modules/storage/**, src/modules/qbo/**, data/live/**, tools/golive-check.mjs
 Clauses: ARC-6, END-8, LIVE-3, SEC-9, ARC-20, SEC-1, SEC-10, SEC-11, LIVE-5, AI-7
@@ -39,4 +39,4 @@ One setting, `GO_LIVE`, is the only switch between the build (made-up data, free
 By a third worker (Opus read): acceptance tests unchanged since the spec commit, mutation 100 on golive.ts, the db tests on PGlite and Postgres 16 (lock-out and pool), A01, A02, A04, A05, A06, A08 and B04's tests unchanged and green, SC3 and SC5 rules green, `/security-review` clean, scope clean.
 
 ## Not in this card
-Turning go-live on, adding real staff, connecting any real service or database (LIVE items, each Zo's yes). Choosing vendors and the OCR benchmark (LIVE-3, GL6). The live schema migration (GL2). Two-factor enrolment screens (a V card at go-live).
+Turning go-live on, adding real staff, connecting any real service or database (LIVE items, each Zo's yes). Choosing vendors and the OCR benchmark (LIVE-3, GL6). The live schema migration (GL2). Two-factor enrolment screens (a V card at go-live). LIVE-8: the go-live run reruns the J journeys with the live engines in test mode; JH0's harness takes the engine settings as input.
