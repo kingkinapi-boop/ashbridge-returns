@@ -4,10 +4,8 @@
  "round": 2,
  "spec": "bd0e2fe2",
  "worker": "cloud-aab122",
- "state": "working",
- "at": "2026-10-03T10:50:37.809Z",
+ "state": "reported",
+ "at": "2026-10-03T10:53:04.426Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "b26392a74de721b39538808841e478e0e1fc98d0"
- }
+ "note": "174 of 174 lifecycle tests pass (61 spec)"
 }
