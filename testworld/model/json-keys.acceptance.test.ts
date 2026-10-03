@@ -9,10 +9,16 @@
 // that appears twice in any one object (keys compared after JSON string escapes are decoded); a repeat is a 'file'
 // issue naming the file and the key. Equal keys in different objects are fine, and text inside a string value is
 // never a key.
+//
+// Spec review 3, gap 3: the repeat is refused at any depth, not only at the three typed positions. The scanner itself is
+// a pure function exported from testworld/clients/json-keys.ts (W00b imports it); its own walk over every object node
+// is in testworld/clients/json-keys.acceptance.test.ts. Here the loader is driven on a pinned-seed sample: in every
+// folder, for both files, one object node per depth present (fast-check seed 20261003).
 import { readFileSync } from 'node:fs'
+import fc from 'fast-check'
 import { afterAll, afterEach, describe, expect, test } from 'vitest'
 import { Sandbox, expectLoads, markersOf, refusal, walkClients, type RawTx, type WalkClient } from './__fixtures__/sample-walk'
-import { Planter, expectNamed } from './__fixtures__/w00c-walk'
+import { Planter, expectNamed, objectNodes, repeatFirstKey, sampleNodes, type ObjectNode } from './__fixtures__/w00c-walk'
 
 const clients = walkClients()
 const sb = new Sandbox()
@@ -120,5 +126,41 @@ describe('W00c RC5 text inside a string value is never a key (every folder with 
       return JSON.stringify(t)
     })
     await expectLoads(sb, c.id)
+  })
+})
+
+describe('W00c RC5 a repeated key at any depth is refused by the loader (spec review 3, gap 3: every folder, both files, one node per depth)', () => {
+  const SEED = 20261003
+  const pick = (n: number, seed: number): number => fc.sample(fc.integer({ min: 0, max: n - 1 }), { seed, numRuns: 1 })[0] ?? 0
+  const FILES = ['answer-key.json', 'onboarding.json'] as const
+  const raw = (c: WalkClient, name: string): unknown => JSON.parse(readFileSync(sb.path(c, name), 'utf8')) as unknown
+  const cases = clients.flatMap((c, ci) =>
+    FILES.flatMap((name) =>
+      sampleNodes(objectNodes(raw(c, name)), SEED + ci * 100, 0, pick).map((n): [string, string, number, string, { c: WalkClient; n: ObjectNode }] => [
+        c.id,
+        name,
+        n.depth,
+        n.path.join('.') || '(root)',
+        { c, n },
+      ]),
+    ),
+  )
+
+  test('ARC-8 the sample takes one node per depth present in each file of each folder, the root included', () => {
+    for (const c of clients) {
+      for (const name of FILES) {
+        const depths = new Set(objectNodes(raw(c, name)).map((n) => n.depth))
+        const sampled = cases.filter(([id, file]) => id === c.id && file === name).map(([, , d]) => d)
+        expect(new Set(sampled), `${c.id} ${name}`).toEqual(depths)
+        expect(sampled, `${c.id} ${name}`).toContain(0)
+      }
+    }
+  })
+
+  test.each(cases)("ARC-8 %s %s at depth %i, the object at %s written with its first key twice (a decoy first), is refused with a 'file' issue naming the file and the key", async (_l, name, _d, _p, { c, n }) => {
+    const { text, key } = repeatFirstKey(raw(c, name), n.path)
+    expect(key).toBe(n.firstKey)
+    planter.replaceText(c, name, text)
+    expectNamed(await refusal(sb, c.id), 'file', [name, key])
   })
 })

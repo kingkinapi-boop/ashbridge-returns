@@ -175,6 +175,91 @@ export function fiscalMonths(k: RawKey): string[] {
   return out
 }
 
+// ---- repeated JSON keys (spec review 3, gap 3) ----
+
+export type JsonPath = (string | number)[]
+export interface ObjectNode {
+  /** Keys and array indexes from the file's root to the node ([] for the root object). */
+  path: JsonPath
+  /** path.length: how deep the node sits (array levels count). */
+  depth: number
+  firstKey: string
+}
+
+/** Every object node (not an array) with at least one key, in document order, found by this file's own walk. */
+export function objectNodes(json: unknown): ObjectNode[] {
+  const out: ObjectNode[] = []
+  const walk = (v: unknown, path: JsonPath): void => {
+    if (Array.isArray(v)) {
+      v.forEach((x, i) => {
+        walk(x, [...path, i])
+      })
+      return
+    }
+    if (v === null || typeof v !== 'object') return
+    const keys = Object.keys(v)
+    const first = keys[0]
+    if (first !== undefined) out.push({ path, depth: path.length, firstKey: first })
+    for (const k of keys) walk((v as Record<string, unknown>)[k], [...path, k])
+  }
+  walk(json, [])
+  return out
+}
+
+const KEY_HOLE = '__W00C_KEY_HOLE_(Test)__'
+
+/** A decoy of the same JSON type as the real value, so a last-wins parse gives back exactly the original file. */
+function decoyFor(v: unknown): string {
+  if (Array.isArray(v)) return '[]'
+  if (v === null) return 'null'
+  if (typeof v === 'object') return '{}'
+  if (typeof v === 'string') return '""'
+  if (typeof v === 'number') return '0'
+  return 'false'
+}
+
+/**
+ * The file's JSON text (2-space, as the sample files are written) with the node at `path` writing its first key twice:
+ * a decoy value first, then the node's own keys unchanged. JSON.parse (last wins) reads it back as the original.
+ */
+export function repeatFirstKey(json: unknown, path: JsonPath): { text: string; key: string } {
+  const copy = structuredClone(json)
+  let parent: unknown = undefined
+  let node: unknown = copy
+  for (const step of path) {
+    parent = node
+    node = (node as Record<string | number, unknown>)[step]
+  }
+  if (node === null || typeof node !== 'object' || Array.isArray(node)) throw new Error(`fixture: no object at ${path.join('.')}`)
+  const key = Object.keys(node)[0]
+  if (key === undefined) throw new Error(`fixture: the object at ${path.join('.')} has no key`)
+  const value = (node as Record<string, unknown>)[key]
+  const written = `{${JSON.stringify(key)}: ${decoyFor(value)}, ${JSON.stringify(node).slice(1)}`
+  const last = path[path.length - 1]
+  if (last === undefined) return { text: written + '\n', key }
+  ;(parent as Record<string | number, unknown>)[last] = KEY_HOLE
+  const out = JSON.stringify(copy, null, 2)
+  const text = out.replace(JSON.stringify(KEY_HOLE), () => written)
+  if (text === out) throw new Error('fixture: the key hole was not placed')
+  return { text: text + '\n', key }
+}
+
+/** One node per depth present (seeded pick, the same every run), then `extra` more seeded picks over all nodes. */
+export function sampleNodes(nodes: ObjectNode[], seed: number, extra: number, pick: (n: number, seed: number) => number): ObjectNode[] {
+  const depths = [...new Set(nodes.map((n) => n.depth))].sort((a, b) => a - b)
+  const out: ObjectNode[] = []
+  for (const d of depths) {
+    const atDepth = nodes.filter((n) => n.depth === d)
+    const hit = atDepth[pick(atDepth.length, seed + d)]
+    if (hit !== undefined) out.push(hit)
+  }
+  for (let i = 0; i < extra; i++) {
+    const hit = nodes[pick(nodes.length, seed + 1000 + i)]
+    if (hit !== undefined) out.push(hit)
+  }
+  return out
+}
+
 // ---- issues ----
 
 const text = (i: Issue): string => `${i.record} ${i.reason}`
@@ -247,6 +332,21 @@ export class Planter {
     this.undos.push(() => {
       rmSync(p, { force: true })
       renameSync(real, p)
+    })
+  }
+
+  /**
+   * The whole client folder renamed to "linked-(Test)-<folder>" (a name with no two-digit number, so it is never a
+   * client folder itself) and the folder's own name made a link to it, beside it in the sample root (spec review 3, gap 2).
+   */
+  clientFolderAsLink(c: WalkClient): void {
+    const p = join(this.sb.root, c.folder)
+    const realName = `linked-(Test)-${c.folder}`
+    renameSync(p, join(this.sb.root, realName))
+    symlinkSync(realName, p)
+    this.undos.push(() => {
+      rmSync(p, { force: true })
+      renameSync(join(this.sb.root, realName), p)
     })
   }
 

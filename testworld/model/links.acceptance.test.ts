@@ -10,7 +10,12 @@
 //   An account file: its real path, relative to the client folder's real path, must itself be `<dir>/<name>.csv`
 //   (accounts/ for `file`, qbo/ for `qboFile`) and a regular file; otherwise a 'file' issue naming the account key
 //   and the field. A link inside the same subfolder to one of its own CSVs is still fine (load-files.test.ts).
+//   A client folder that is itself a link (lstat) is not listed by clientFolders, and loading its id is a
+//   TestWorldLoadError with a 'file' issue naming the folder (spec review 3, gap 2; amber: "refused by clientFolders"
+//   read as "not listed", since the other folders must still list); every other folder still lists and loads.
+import { join } from 'node:path'
 import { afterAll, afterEach, describe, expect, test } from 'vitest'
+import { clientFolders } from '../index'
 import { Sandbox, expectLoads, refusal, walkClients, type RawAccount, type WalkClient } from './__fixtures__/sample-walk'
 import { Planter, expectNamed } from './__fixtures__/w00c-walk'
 
@@ -98,4 +103,20 @@ describe('W00c RC4 the client JSON files are regular files, never links (every f
   test.each(byId(clients))('END-9 %s loads unchanged (no link anywhere in the sample folders)', async (_l, c) => {
     await expectLoads(sb, c.id)
   })
+})
+
+describe('W00c RC4 a client folder that is itself a link is refused (spec review 3, gap 2: every folder)', () => {
+  test.each(byId(clients))("ARC-8 %s with its client folder a link to a renamed copy beside it is not listed by clientFolders, and its load is refused with a 'file' issue naming the folder", async (_l, c) => {
+    planter.clientFolderAsLink(c)
+    const listed = clientFolders(sb.root)
+    expect(listed.has(c.id as `C${string}`), `${c.id} is a link and must not be listed`).toBe(false)
+    expect(listed.size).toBe(clients.length - 1)
+    for (const o of clients.filter((x) => x !== c)) expect(listed.get(o.id as `C${string}`), o.id).toBe(join(sb.root, o.folder))
+    expectNamed(await refusal(sb, c.id), 'file', [c.folder])
+  })
+
+  test.each(byId(clients))('END-9 with %s a linked client folder, every other folder still loads', async (_l, c) => {
+    planter.clientFolderAsLink(c)
+    for (const o of clients.filter((x) => x !== c)) await expectLoads(sb, o.id)
+   }, 30_000)
 })
