@@ -26,6 +26,8 @@ Big reads go to a helper that writes a file and returns 10 lines. A research que
 ## Write
 Rewrite `reviews/CRITIC.md` below the line "## Latest run
 
+**Approved, not applied.** Zo, 3 Oct 2026 about 12:50Z, in the Critic chat: "critic ok" (proposals 1, 2 and 3 below). Lead: apply, then mark this line "Applied".
+
 Last run's proposals: approved (0024), applied 2 Oct.
 
 **3 Oct 2026, 13:00Z** (since 2 Oct 20:50Z).
