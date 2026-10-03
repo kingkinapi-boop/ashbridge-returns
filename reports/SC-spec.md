@@ -1,3 +1,15 @@
+# SC spec, patch A415 re-validated (cloud, 3 Oct): the 5 gaps of reports/SC-spec-review-3.md
+
+Spec commit: see the `spec(SC): acceptance tests, patch A415` commit on claude/SC (its hash is in the Lead's claim note and the line below once pushed). Validated on main edd3af05 (origin/main merged into claude/SC; one plan/cards/SC4.md conflict taken from main). The five gaps were already closed by round 3 (348528d6, below); this patch re-ran every check on the new main (CQ2 and SC4 landed: tools/claim.mjs, scope.mjs, next.mjs, reading-rules fixtures). No spec file changed, no assertion changed, no KNOWN entry added or removed. Retired tests (step 6b): none (SC is rules only, the stub is empty, and the full suite is green).
+
+## Checks on edd3af05 (Node 24.21.0, npm ci on the box)
+- `npm run typecheck`: exit 0. `npm run lint`: exit 0, no output.
+- Unit SC file: 87 passed (87). Db SC file (`--project db`): 23 passed (23). Not run on Postgres 16 (DB16 has not landed).
+- `npm test`: unit Test Files 112 passed, Tests 2635 passed; db Test Files 10 passed, Tests 568 passed; exit 0.
+- `npm run test:flake`: runs 1 to 5 ok (219540, 210982, 222721, 209382, 204200 ms), slowest boot 3310 ms, exit 0.
+
+---
+
 # SC spec, round 3 (cloud-93197d, 3 Oct): the 5 gaps of reports/SC-spec-review-3.md (A415)
 
 Spec commit 348528d6 on claude/SC, validated on main 61cb3bc7 (origin/main merged; the full suite ran on 2288da55, and 2288da55..61cb3bc7 changes only plan, reports and .claude docs; both SC files re-ran green after the second merge). 110 rule tests: 87 unit in tools/test/schema-contract-rules.test.mjs, 23 db in src/contracts/schema-rules.db.test.ts (round 2 had 83 and 22). Spec files diffed against 1267a0fb: removed lines are only return types widened with a `seen` or `keys` list, the plant tests' live statuses swapped for pinned ones, and the R34-guard block replaced by a stricter one; no assertion was dropped. Retired tests (step 6b): none. SC is rules only, so the stub is empty, and the full suite with the new tests is green.
