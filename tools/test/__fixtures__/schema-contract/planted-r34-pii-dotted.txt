@@ -1,0 +1,2 @@
+Planted (SC R34, widened): a .txt file with a dotted SIN 271.000.002 and an NBSP SIN 271 000 002.
+Clean: a box fraction 0.490196078 and money 2,710,000.02.

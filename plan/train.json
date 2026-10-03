@@ -1,14 +1,12 @@
 {
   "status": "checking",
   "branch": "claude/train",
-  "head": "12af2528",
+  "head": "26e84345",
   "cards": [
-    "SC",
-    "CQ4",
-    "CQ5",
-    "FX10"
+    "DB16",
+    "FX15"
   ],
-  "requested_at": "2026-10-03T08:46:31Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). CQ4 and CQ5 change scope.mjs, lib.mjs and claim.mjs: run every tools test. SC adds the card rules: run them all; SC's known.json owners must all be open cards. FX10 card check: run the db project 20 times under load (its check ran test:flake 5 times only, A445). SC is core: mutate:changed for SC (cloud).",
-  "by": "cloud-915252"
+  "requested_at": "2026-10-03T10:56:00Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). Both cards run on Postgres 16.5 or later: print select version() and run the db project on pg16 (TEST_DB=pg16) as well as PGlite. DB16 is core and security (CLEAN): mutate:changed for DB16. FX15 is core: mutate:changed for FX15. Run the db project 5 times on pg16 (DB16 changes pooled sessions).",
+  "by": "cloud-d9f338"
 }

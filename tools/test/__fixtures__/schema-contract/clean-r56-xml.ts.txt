@@ -1,0 +1,4 @@
+// Clean (SC R56): the cell regex accepts a self-closed element; the tolerance scales with the magnitude.
+const CELL = /<c r="([A-Z]+\d+)"[^>]*?(?:\/>|>(.*?)<\/c>)/g
+export const cells = (xml: string): string[] => [...xml.matchAll(CELL)].map((m) => m[1] ?? '')
+export const snapped = (a: number, b: number): boolean => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b))

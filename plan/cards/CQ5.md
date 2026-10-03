@@ -5,7 +5,7 @@ Tags: none (queue tooling).
 Paths: tools/claim.mjs, tools/test/claim-race.test.mjs
 Clauses: ARC-15
 Read: `reports/CQ3-check.md` on claude/CQ3 (the race note), `plan/cards/CQ3.md`, `tools/claim.mjs`.
-Spec commit: (spec-writer fills)
+Spec commit: 756760ac (validated on main 50fcaf43)
 
 ## Goal
 On 3 Oct 05:56Z local-3's W16 spec claim (0ec70d0a) overwrote cloud-03268d's claim made 7 seconds earlier (3ba6da28) with no RACE warning: `next` picks from one claims tip, but `writeClaims` re-reads `refs/remotes/origin/claude/claims`, which another local worker's fetch can move in between (worktrees share refs). Two workers can then hold one job (A428).

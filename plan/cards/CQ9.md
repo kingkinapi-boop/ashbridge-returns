@@ -20,3 +20,6 @@ The config and the pass-through; nothing else.
 
 ## Check
 A checker who did neither: the new tests and every tools test pass; scope clean.
+
+## Also (A460, reports/train-20261003 for 12af2528)
+`mutate:changed <card>` for a core card whose Paths hold no product file under src/ (SC: tests, tools and fixtures only) prints "no product code to mutate" and exits 0, instead of exit 1. Planted: SC's Paths.

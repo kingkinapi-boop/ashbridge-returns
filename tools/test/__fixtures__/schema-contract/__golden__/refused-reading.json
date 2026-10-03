@@ -1,0 +1,751 @@
+{
+  "parser": "BoxSchema, WordSchema and ReadingResultSchema (src/contracts/reading.ts)",
+  "recordedOn": "2026-10-02",
+  "inputs": [
+    {
+      "name": "page 0",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 0,
+        "left": 0.1,
+        "top": 0.1,
+        "width": 0.2,
+        "height": 0.05
+      }
+    },
+    {
+      "name": "page 1.5",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1.5,
+        "left": 0.1,
+        "top": 0.1,
+        "width": 0.2,
+        "height": 0.05
+      }
+    },
+    {
+      "name": "left below 0",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1,
+        "left": -0.1,
+        "top": 0.1,
+        "width": 0.2,
+        "height": 0.05
+      }
+    },
+    {
+      "name": "width above 1",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1,
+        "left": 0.1,
+        "top": 0.1,
+        "width": 1.1,
+        "height": 0.05
+      }
+    },
+    {
+      "name": "runs off the right",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1,
+        "left": 0.9,
+        "top": 0.1,
+        "width": 0.2,
+        "height": 0.05
+      }
+    },
+    {
+      "name": "runs off the bottom",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1,
+        "left": 0.1,
+        "top": 0.99,
+        "width": 0.2,
+        "height": 0.05
+      }
+    },
+    {
+      "name": "stray key",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1,
+        "left": 0.1,
+        "top": 0.1,
+        "width": 0.2,
+        "height": 0.05,
+        "x0": 0
+      }
+    },
+    {
+      "name": "missing height",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1,
+        "left": 0,
+        "top": 0,
+        "width": 0.1
+      }
+    },
+    {
+      "name": "corner box",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1,
+        "x0": 0,
+        "y0": 0,
+        "x1": 0.1,
+        "y1": 0.1
+      }
+    },
+    {
+      "name": "string number",
+      "schema": "BoxSchema",
+      "value": {
+        "page": 1,
+        "left": "0.1",
+        "top": 0.1,
+        "width": 0.2,
+        "height": 0.05
+      }
+    },
+    {
+      "name": "blank text: empty",
+      "schema": "WordSchema",
+      "value": {
+        "text": "",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: space",
+      "schema": "WordSchema",
+      "value": {
+        "text": " ",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: tab",
+      "schema": "WordSchema",
+      "value": {
+        "text": "\t",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: nbsp",
+      "schema": "WordSchema",
+      "value": {
+        "text": " ",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: zero width space",
+      "schema": "WordSchema",
+      "value": {
+        "text": "​",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: nel",
+      "schema": "WordSchema",
+      "value": {
+        "text": "",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: ideographic space",
+      "schema": "WordSchema",
+      "value": {
+        "text": "　",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: word joiner",
+      "schema": "WordSchema",
+      "value": {
+        "text": "⁠",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: bom",
+      "schema": "WordSchema",
+      "value": {
+        "text": "﻿",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: soft hyphen",
+      "schema": "WordSchema",
+      "value": {
+        "text": "­",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "blank text: spaces and zwsp",
+      "schema": "WordSchema",
+      "value": {
+        "text": " ​ ",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "confidence 2",
+      "schema": "WordSchema",
+      "value": {
+        "text": "1,234.56",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 2,
+        "order": 0
+      }
+    },
+    {
+      "name": "confidence -0.1",
+      "schema": "WordSchema",
+      "value": {
+        "text": "1,234.56",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": -0.1,
+        "order": 0
+      }
+    },
+    {
+      "name": "order 1.5",
+      "schema": "WordSchema",
+      "value": {
+        "text": "1,234.56",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 1.5
+      }
+    },
+    {
+      "name": "stray key",
+      "schema": "WordSchema",
+      "value": {
+        "text": "1,234.56",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0,
+        "font": "x"
+      }
+    },
+    {
+      "name": "box off page",
+      "schema": "WordSchema",
+      "value": {
+        "text": "1,234.56",
+        "box": {
+          "page": 1,
+          "left": 0.95,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "box stray key",
+      "schema": "WordSchema",
+      "value": {
+        "text": "1,234.56",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05,
+          "extra": 1
+        },
+        "confidence": 0.9,
+        "order": 0
+      }
+    },
+    {
+      "name": "missing order",
+      "schema": "WordSchema",
+      "value": {
+        "text": "x",
+        "box": {
+          "page": 1,
+          "left": 0.1,
+          "top": 0.1,
+          "width": 0.2,
+          "height": 0.05
+        },
+        "confidence": 1
+      }
+    },
+    {
+      "name": "word beyond page count",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": "stand-in (Test)",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 1,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 612,
+            "heightPt": 792,
+            "hasTextLayer": true
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 2,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "pages not 1..n",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": "stand-in (Test)",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 2,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 612,
+            "heightPt": 792,
+            "hasTextLayer": true
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "page count 0",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": "stand-in (Test)",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 0,
+        "pages": [],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "blank engine name",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": " ",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 1,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 612,
+            "heightPt": 792,
+            "hasTextLayer": true
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "readAt without offset",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": "stand-in (Test)",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00",
+        "pageCount": 1,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 612,
+            "heightPt": 792,
+            "hasTextLayer": true
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "empty fingerprint",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "",
+        "engine": {
+          "name": "stand-in (Test)",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 1,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 612,
+            "heightPt": 792,
+            "hasTextLayer": true
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "stray key",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": "stand-in (Test)",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 1,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 612,
+            "heightPt": 792,
+            "hasTextLayer": true
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ],
+        "extra": true
+      }
+    },
+    {
+      "name": "engine stray key",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": "x",
+          "version": "1",
+          "build": "2"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 1,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 612,
+            "heightPt": 792,
+            "hasTextLayer": true
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "page stray key",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": "stand-in (Test)",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 1,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 612,
+            "heightPt": 792,
+            "hasTextLayer": true,
+            "rotation": 0
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "page width 0",
+      "schema": "ReadingResultSchema",
+      "value": {
+        "documentFingerprint": "fp-test",
+        "engine": {
+          "name": "stand-in (Test)",
+          "version": "1"
+        },
+        "readAt": "2026-10-02T12:00:00-04:00",
+        "pageCount": 1,
+        "pages": [
+          {
+            "number": 1,
+            "widthPt": 0,
+            "heightPt": 792,
+            "hasTextLayer": true
+          }
+        ],
+        "words": [
+          {
+            "text": "1,234.56",
+            "box": {
+              "page": 1,
+              "left": 0.1,
+              "top": 0.1,
+              "width": 0.2,
+              "height": 0.05
+            },
+            "confidence": 0.9,
+            "order": 0
+          }
+        ]
+      }
+    }
+  ]
+}
