@@ -3,7 +3,8 @@
   "branch": "claude/train",
   "head": null,
   "cards": [
-    "CQ2"
+    "CQ2",
+    "SC4"
   ],
   "note": "Boarding since 04:31Z. Request at 6 cards or 05:30Z. Run test:flake this time (A405)."
 }
