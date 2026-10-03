@@ -1,0 +1,546 @@
+{
+  "version": 1,
+  "flags": {
+    "01-F01": {
+      "kind": "cpa-judgment",
+      "reason": "Personal services business signs are a person's call",
+      "owner": "X00"
+    },
+    "01-F02": {
+      "questions": [
+        "Q-SHL-001",
+        "Q-SHL-002"
+      ]
+    },
+    "01-F03": {
+      "kind": "cpa-judgment",
+      "reason": "Whether repay and reborrow is a series is a person's call",
+      "owner": "X00"
+    },
+    "01-F04": {
+      "questions": [
+        "Q-SHL-002"
+      ]
+    },
+    "01-F05": {
+      "questions": [
+        "Q-EXP-001"
+      ]
+    },
+    "01-F06": {
+      "kind": "check",
+      "reason": "Meals 50% limit is computed from the books",
+      "owner": "Q00"
+    },
+    "01-F07": {
+      "questions": [
+        "Q-EXP-002",
+        "Q-EXP-004",
+        "Q-EXP-005",
+        "Q-VHO-002"
+      ]
+    },
+    "01-F08": {
+      "questions": [
+        "Q-SHD-006",
+        "Q-SHD-007",
+        "Q-SHD-008"
+      ]
+    },
+    "01-F09": {
+      "questions": [
+        "Q-CRA-002",
+        "Q-CRA-003"
+      ]
+    },
+    "02-F01": {
+      "kind": "check",
+      "reason": "Financed asset addition read from the books",
+      "owner": "Q00"
+    },
+    "02-F02": {
+      "questions": [
+        "Q-EXP-001"
+      ]
+    },
+    "02-F03": {
+      "questions": [
+        "Q-CRA-006"
+      ]
+    },
+    "02-F04": {
+      "kind": "check",
+      "reason": "Late-filing penalty read from the CRA record and books",
+      "owner": "Q00"
+    },
+    "02-F05": {
+      "kind": "cpa-judgment",
+      "reason": "Worker status and PSB signs are a person's call",
+      "owner": "X00"
+    },
+    "02-F06": {
+      "kind": "check",
+      "reason": "Year end read from the books, confirmed by ops",
+      "owner": "G00"
+    },
+    "02-F07": {
+      "questions": [
+        "Q-CRA-002",
+        "Q-CRA-003"
+      ]
+    },
+    "03-F01": {
+      "questions": [
+        "Q-PAY-002"
+      ]
+    },
+    "03-F02": {
+      "kind": "check",
+      "reason": "Deposit for a later job read from the books",
+      "owner": "Q00"
+    },
+    "03-F03": {
+      "questions": [
+        "Q-PAY-001"
+      ]
+    },
+    "03-F04": {
+      "kind": "check",
+      "reason": "CCA additions read from the books",
+      "owner": "Q00"
+    },
+    "03-F05": {
+      "kind": "check",
+      "reason": "Subcontractor payments read from the books",
+      "owner": "Q00"
+    },
+    "03-F06": {
+      "kind": "check",
+      "reason": "Unpaid premium accrual read from the books",
+      "owner": "Q00"
+    },
+    "04-F01": {
+      "questions": [
+        "Q-CRA-003"
+      ]
+    },
+    "04-F02": {
+      "questions": [
+        "Q-REV-002"
+      ]
+    },
+    "04-F03": {
+      "questions": [
+        "Q-PAY-001"
+      ]
+    },
+    "04-F04": {
+      "questions": [
+        "Q-SHD-009",
+        "Q-SHD-003"
+      ]
+    },
+    "04-F05": {
+      "kind": "check",
+      "reason": "Equipment addition read from the books",
+      "owner": "Q00"
+    },
+    "04-F06": {
+      "kind": "check",
+      "reason": "Lease type read from the lease record",
+      "owner": "Q00"
+    },
+    "05-F01": {
+      "kind": "cpa-judgment",
+      "reason": "Investment income and the business limit are a person's call",
+      "owner": "X00"
+    },
+    "05-F02": {
+      "kind": "cpa-judgment",
+      "reason": "Capital dividend election is a person's call",
+      "owner": "X00"
+    },
+    "05-F03": {
+      "kind": "cpa-judgment",
+      "reason": "Eligible dividend against GRIP is a person's call",
+      "owner": "X00"
+    },
+    "05-F04": {
+      "kind": "check",
+      "reason": "Business limit allocation compared across the group",
+      "owner": "Q00"
+    },
+    "05-F05": {
+      "kind": "cpa-judgment",
+      "reason": "Connected-corporation dividends are a person's call",
+      "owner": "X00"
+    },
+    "05-F06": {
+      "kind": "check",
+      "reason": "Capital gain read from the books",
+      "owner": "Q00"
+    },
+    "05-F07": {
+      "questions": [
+        "Q-CRA-001"
+      ]
+    },
+    "06-F01": {
+      "kind": "cpa-judgment",
+      "reason": "Shared business limit is a person's call",
+      "owner": "X00"
+    },
+    "06-F02": {
+      "questions": [
+        "Q-REV-002"
+      ]
+    },
+    "06-F03": {
+      "questions": [
+        "Q-REV-003"
+      ]
+    },
+    "06-F04": {
+      "kind": "check",
+      "reason": "Inventory count read from the books",
+      "owner": "Q00"
+    },
+    "06-F05": {
+      "questions": [
+        "Q-SHD-001",
+        "Q-SHD-002"
+      ]
+    },
+    "06-F06": {
+      "questions": [
+        "Q-REV-002"
+      ]
+    },
+    "07-F01": {
+      "kind": "cpa-judgment",
+      "reason": "Specified investment business is a person's call",
+      "owner": "X00"
+    },
+    "07-F02": {
+      "kind": "check",
+      "reason": "Capital against repair read from the books",
+      "owner": "Q00"
+    },
+    "07-F03": {
+      "kind": "check",
+      "reason": "Prepaid insurance read from the books",
+      "owner": "Q00"
+    },
+    "07-F04": {
+      "questions": [
+        "Q-SHL-002"
+      ]
+    },
+    "07-F05": {
+      "kind": "check",
+      "reason": "Rent arrears read from the books",
+      "owner": "Q00"
+    },
+    "07-F06": {
+      "kind": "check",
+      "reason": "Mortgage interest and principal read from the books",
+      "owner": "Q00"
+    },
+    "07-F07": {
+      "questions": [
+        "Q-CRA-001"
+      ]
+    },
+    "08-F01": {
+      "kind": "check",
+      "reason": "Bad debt read from the books",
+      "owner": "Q00"
+    },
+    "08-F02": {
+      "kind": "check",
+      "reason": "Prepaid insurance read from the books",
+      "owner": "Q00"
+    },
+    "08-F03": {
+      "kind": "check",
+      "reason": "Accrued fee read from the books",
+      "owner": "Q00"
+    },
+    "08-F04": {
+      "questions": [
+        "Q-PAY-001"
+      ]
+    },
+    "08-F05": {
+      "questions": [
+        "Q-REV-003"
+      ]
+    },
+    "08-F06": {
+      "questions": [
+        "Q-EXP-001"
+      ]
+    },
+    "08-F07": {
+      "kind": "check",
+      "reason": "CCA additions read from the books",
+      "owner": "Q00"
+    },
+    "08-F08": {
+      "kind": "check",
+      "reason": "Meals 50% limit is computed from the books",
+      "owner": "Q00"
+    },
+    "08-F09": {
+      "questions": [
+        "Q-CRA-002"
+      ]
+    },
+    "09-F01": {
+      "kind": "check",
+      "reason": "Short first year proration is computed from the dates",
+      "owner": "Q00"
+    },
+    "09-F02": {
+      "kind": "check",
+      "reason": "Loss year read from the books",
+      "owner": "Q00"
+    },
+    "09-F03": {
+      "questions": [
+        "Q-SHL-002"
+      ]
+    },
+    "09-F04": {
+      "kind": "cpa-judgment",
+      "reason": "Grant treatment is a person's call",
+      "owner": "X00"
+    },
+    "09-F05": {
+      "questions": [
+        "Q-CRA-001"
+      ]
+    },
+    "09-F06": {
+      "kind": "cpa-judgment",
+      "reason": "Research cost eligibility is a person's call",
+      "owner": "X00"
+    },
+    "09-F07": {
+      "kind": "cpa-judgment",
+      "reason": "Legal fees: expense or class 14.1 is a person's call",
+      "owner": "X00"
+    },
+    "10-F01": {
+      "kind": "check",
+      "reason": "Missing month found by the bank-line check",
+      "owner": "B07"
+    },
+    "10-F02": {
+      "kind": "check",
+      "reason": "Duplicate lines found by the bank-line check",
+      "owner": "B07"
+    },
+    "10-F03": {
+      "kind": "check",
+      "reason": "Prior-year statement found by the bank-line check",
+      "owner": "B07"
+    },
+    "10-F04": {
+      "kind": "check",
+      "reason": "Personal spending read from the bank lines",
+      "owner": "B07"
+    },
+    "10-F05": {
+      "questions": [
+        "Q-PAY-001"
+      ]
+    },
+    "10-F06": {
+      "questions": [
+        "Q-EXP-003",
+        "Q-VHO-001"
+      ]
+    },
+    "10-F07": {
+      "questions": [
+        "Q-CRA-002"
+      ]
+    },
+    "10-F08": {
+      "kind": "cpa-judgment",
+      "reason": "Contract worker status is a person's call",
+      "owner": "X00"
+    },
+    "11-F01": {
+      "kind": "check",
+      "reason": "CCA addition read from the books",
+      "owner": "Q00"
+    },
+    "11-F02": {
+      "questions": [
+        "Q-PAY-001"
+      ]
+    },
+    "11-F03": {
+      "kind": "check",
+      "reason": "Prior-year return identified from the records",
+      "owner": "B03"
+    },
+    "11-F04": {
+      "questions": [
+        "Q-CRA-002"
+      ]
+    },
+    "11-F05": {
+      "kind": "check",
+      "reason": "Instalment option read from the prior-year return",
+      "owner": "B03"
+    },
+    "12-F01": {
+      "kind": "check",
+      "reason": "Missing third-party evidence found by the gap pass",
+      "owner": "G00"
+    },
+    "12-F02": {
+      "kind": "check",
+      "reason": "Missing bank statement found by the gap pass",
+      "owner": "G00"
+    },
+    "12-F03": {
+      "questions": [
+        "Q-EXP-002",
+        "Q-EXP-004"
+      ]
+    },
+    "12-F04": {
+      "questions": [
+        "Q-EXP-003",
+        "Q-EXP-006",
+        "Q-EXP-007"
+      ]
+    },
+    "12-F05": {
+      "questions": [
+        "Q-SHL-001",
+        "Q-SHL-002"
+      ]
+    },
+    "13-F01": {
+      "kind": "check",
+      "reason": "Accrual after year end read from the books",
+      "owner": "Q00"
+    },
+    "13-F02": {
+      "kind": "check",
+      "reason": "Recovery of a prior payment read from the books",
+      "owner": "Q00"
+    },
+    "13-F03": {
+      "kind": "check",
+      "reason": "Resubmitted claim read from the books",
+      "owner": "Q00"
+    },
+    "13-F04": {
+      "questions": [
+        "Q-CRA-001"
+      ]
+    },
+    "13-F05": {
+      "questions": [
+        "Q-CRA-001"
+      ]
+    },
+    "13-F06": {
+      "questions": [
+        "Q-PAY-001"
+      ]
+    },
+    "13-F07": {
+      "kind": "check",
+      "reason": "Equipment addition read from the books",
+      "owner": "Q00"
+    },
+    "14-F01": {
+      "kind": "check",
+      "reason": "Catch-up filing order read from the filing record",
+      "owner": "B03"
+    },
+    "14-F02": {
+      "kind": "check",
+      "reason": "Second return waits for the first, a filing order check",
+      "owner": "B03"
+    },
+    "14-F03": {
+      "kind": "check",
+      "reason": "Year end to be confirmed by ops",
+      "owner": "G00"
+    },
+    "14-F04": {
+      "kind": "check",
+      "reason": "Double purchase read from the books",
+      "owner": "Q00"
+    },
+    "14-F05": {
+      "kind": "check",
+      "reason": "Late-filing exposure read from the filing record",
+      "owner": "B03"
+    },
+    "14-F06": {
+      "kind": "check",
+      "reason": "Loss carry-forward read from the books",
+      "owner": "Q00"
+    },
+    "14-F07": {
+      "kind": "check",
+      "reason": "CCA additions read from the books",
+      "owner": "Q00"
+    },
+    "14-F08": {
+      "questions": [
+        "Q-SHL-001",
+        "Q-SHL-002"
+      ]
+    },
+    "15-F01": {
+      "kind": "check",
+      "reason": "Catch-up filing order read from the filing record",
+      "owner": "B03"
+    },
+    "15-F02": {
+      "kind": "check",
+      "reason": "Second return waits for the first, a filing order check",
+      "owner": "B03"
+    },
+    "15-F03": {
+      "kind": "check",
+      "reason": "Year end to be confirmed by ops",
+      "owner": "G00"
+    },
+    "15-F04": {
+      "kind": "check",
+      "reason": "Double purchase read from the books",
+      "owner": "Q00"
+    },
+    "15-F05": {
+      "kind": "check",
+      "reason": "Late-filing exposure read from the filing record",
+      "owner": "B03"
+    },
+    "15-F06": {
+      "kind": "check",
+      "reason": "Opening balances read from the prior-year return",
+      "owner": "B03"
+    },
+    "15-F07": {
+      "kind": "check",
+      "reason": "Loss carry-forward read from the prior-year return",
+      "owner": "B03"
+    },
+    "15-F08": {
+      "questions": [
+        "Q-SHL-001"
+      ]
+    }
+  }
+}
