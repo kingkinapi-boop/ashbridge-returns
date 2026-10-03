@@ -8,7 +8,7 @@ description: How checked cards reach main through the train (a batch branch test
 Main only ever moves to a commit that passed the full suite and every journey in the cloud. Cards reach it in batches (the train), so the expensive cloud run happens once per batch, not once per card. All train work happens in its own worktree, `.claude/worktrees/train`: the main checkout stays on `main`, clean, because Zo reads his to-do from it.
 
 ## 1. Board the train
-A card boards when, on its latest commit: check PASS (from a worker that did not spec or build it); GitHub checks green (typecheck and unit tests); `node tools/scope.mjs <card>` clean; its acceptance tests unchanged since the spec commit; and, for a card marked `security`, a clean security review.
+A card boards when, on its latest commit: check PASS (from a worker that did not spec or build it); GitHub checks green (typecheck and unit tests); `node tools/scope.mjs <card>` clean (run it from any checkout: it reads `origin/claude/<card>` and exits 2 if that branch is missing); its acceptance tests unchanged since the spec commit; and, for a card marked `security`, a clean security review.
 ```
 W=.claude/worktrees/train
 git fetch -q origin
