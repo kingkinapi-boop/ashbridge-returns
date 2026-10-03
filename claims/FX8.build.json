@@ -4,9 +4,8 @@
  "round": 1,
  "spec": "84810b04",
  "worker": "cloud-5a0e82",
- "state": "released",
- "at": "2026-10-03T05:12:14.672Z",
+ "state": "reopened",
+ "at": "2026-10-03T08:19:15.191Z",
  "mode": "turbo",
- "note": "wait: W16 lands, then round 2 spec on claude/FX8-r2 (A417)",
- "waitKey": "{\"status\":\"carded\",\"deps\":[],\"depStatus\":[]}"
+ "note": "round 2 build on claude/FX8-r2 from spec a9dd4aa3; cloud box (LF), see card"
 }
