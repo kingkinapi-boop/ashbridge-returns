@@ -1,12 +1,10 @@
 {
  "card": "W00c",
  "role": "build",
- "round": 1,
- "spec": "1b555abb",
- "worker": "cloud-abfeb2",
- "state": "reopened",
- "at": "2026-10-03T05:53:09.176Z",
- "mode": "turbo",
- "beat": "2026-10-03T02:03:11.864Z",
- "note": "A424: spec patch matches reports/W00c-spec-review-3.md"
+ "round": 2,
+ "spec": "77bbbef0",
+ "worker": "cloud-f27e32",
+ "state": "working",
+ "at": "2026-10-03T07:57:59.234Z",
+ "mode": "turbo"
 }
