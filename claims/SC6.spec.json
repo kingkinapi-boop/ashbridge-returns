@@ -2,7 +2,11 @@
  "card": "SC6",
  "role": "spec",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T07:59:13.446Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T07:59:46.795Z",
+ "mode": "turbo",
+ "note": "local worker skip: card says Where: cloud; nothing pushed",
+ "lastRelease": {
+  "tip": "839819ffc6b6fd492d5a15717710a571885de850"
+ }
 }
