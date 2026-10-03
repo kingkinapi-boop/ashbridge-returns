@@ -1,8 +1,10 @@
 # SC3 Security rules R62 to R66
 
+**Lead directive, 3 Oct 08:30Z (A443): spec patch.** FX2 landed (758d0b06): drop the six FX2 KNOWN entries in tools/test/security-rules.test.mjs (OCR_ENGINE, STORAGE_DRIVE_ENGINE, STORAGE_FILES_ENGINE under declared and production) and fit the factory list to the landed ocr/index.ts shape. No rule weakened. Then build round 2 (the three JSDoc tags on engine.ts are already in).
+
 Phase 0. Size M. Deps: A06, FX2. Where: cloud.
 Tags: security (stand-ins in production, once-only and at-most-N rules, append-only text).
-Paths: tools/test/security-rules.test.mjs, src/contracts/security-rules.db.test.ts, tools/test/__fixtures__/security-rules/**
+Paths: tools/test/security-rules.test.mjs, src/modules/auth/testusers/engine.ts, src/contracts/security-rules.db.test.ts, tools/test/__fixtures__/security-rules/**
 Clauses: SEC-11, ARC-6, ARC-20, FLOW-1, ARC-15
 Read: `reports/A06-findings.md` ("Rule tests for everywhere", risks), `reports/A06-security.md`, `plan/cards/SC.md` (rule style, R26 registry), `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
