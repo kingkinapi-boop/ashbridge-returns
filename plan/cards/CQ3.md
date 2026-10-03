@@ -2,7 +2,7 @@
 
 Phase 0. Size S. Deps: CQ2. Where: local or cloud.
 Tags: none (queue tooling).
-Paths: tools/claim.mjs, tools/test/claim-wait.test.mjs
+Paths: tools/claim.mjs, tools/test/claim-wait.test.mjs, tools/test/claim.test.mjs
 Clauses: ARC-15
 Read: `plan/cards/CQ2.md`, `.claude/skills/dispatch/SKILL.md`, `tools/claim.mjs`.
 Spec commit: (spec-writer fills)
