@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:16Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -16,18 +16,19 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:16Z by the Lea
 | W00c | spec patch reported (A413); build open (A424) | build round 2, check; unblocks W00b round 4, JH0, B04, SC2 |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
-| W16 | fixup spec GO (A415); build open | build, check; then SC6, FX9 |
+| W16 | build reported on claude/W16-r2 | check (scope by hand, A427); then SC6, FX8, FX9 |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| SC | spec patch reported (110 tests); build open (A424) | build, check with Opus read and test:flake |
+| SC | build reported (110 of 110) | check on a cloud box (npm test, db, test:flake) with Opus read |
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | findings done (A426): round 4 narrow patch, spec reopened | spec patch (21 stamp cases), build runner.ts, check, security review |
-| DB16 | round 3 build reported (565 db tests on Postgres 16) | check (cloud), security review, board |
-| FX2 | round 2 spec reported; build open | build (one auth line), check, security review; lands before FX7 |
+| A04 | round 4 spec reported (26 tests, 11 fail); build open (A427) | build runner.ts, check, security review |
+| DB16 | check FAIL (two core db files lack @mutate; scope note); Opus findings review running with CQ4 | fix list, round, check, board |
+| FX2 | spec refit reported; build open | build (one auth line), check, security review; lands before FX7 |
 | JH0 | spec reported | build after W00c lands |
-| CQ3, CQ4 | specs reported (CQ3 Paths gain claim.test.mjs) | build, check |
+| FX10 | spec reported (cause: timeouts; 6 tests split into 22) | build, check, security review |
+| CQ3, CQ4 | CQ3 build reported, check working (local-3); CQ4 check FAIL (R82 flags files named in Spec prose), findings review running | board CQ3; CQ4 fix round |
 
-Cloud runs: 3 at 05:56Z, 2 at 06:16Z. Local (Opus): local-1 (CQ3 refit), local-3 (W16 refit), local-2 (FX10 spec). The CQ2 landing set off toolchain refits on every reported spec (06:15Z): for the Critic, a refit only when a spec's own commands changed.
+Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-3 (CQ3 check), local-2 done. Helper: DB16 and CQ4 findings review. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
 
 ## Next, in order
 
