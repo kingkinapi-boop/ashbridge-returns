@@ -1,10 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-a93d05",
- "state": "reopened",
- "at": "2026-10-03T04:28:18.815Z",
- "mode": "turbo",
- "note": "A409: gaps in reports/W00b-spec-review.md; see bold directive",
- "commit": "0445e9a"
+ "worker": "cloud-f0768b",
+ "state": "working",
+ "at": "2026-10-03T04:33:25.905Z",
+ "mode": "turbo"
 }
