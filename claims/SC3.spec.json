@@ -1,10 +1,11 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "toolchain refit: six multi-world db tests split (db-budget); pg16 R65 serialised twin still fails (build, A500)",
- "reopenedFrom": "f0dde579",
+ "note": "round 3 S1 to S3 (A504): unit 67, rules 511, pg16 db 31 of 31; OPEN: test:flake pg16 fails 4 of 5 on auth.acceptance.db SEC-1 scrypt count (isolate:false, SC3 db file loads auth before its vi.mock; also at 139fd96e); fix is in A06's auth test or vitest config, outside SC3 Paths",
  "worker": "cloud-6345e6",
- "state": "working",
- "at": "2026-10-03T18:04:22.419Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T18:46:43.176Z",
+ "mode": "turbo",
+ "commit": "3e27033a",
+ "validated": "b37a8e35"
 }
