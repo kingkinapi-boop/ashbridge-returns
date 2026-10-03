@@ -1,10 +1,12 @@
 {
  "card": "A04C",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: tests unchanged (G1 to G4), runner.acceptance 141, exchange.acceptance 95; typecheck, lint, unit 3178 green on main f73707b8; pass on landed A04 so no build needed",
  "worker": "cloud-6345e6",
- "state": "working",
- "at": "2026-10-03T17:36:48.060Z",
+ "state": "reported",
+ "at": "2026-10-03T17:41:39.372Z",
  "mode": "turbo",
- "beat": "2026-10-03T17:38:27.461Z"
+ "beat": "2026-10-03T17:38:27.461Z",
+ "commit": "b18e932c",
+ "validated": "f73707b82c4b871f3ca94d47e2d15e91f04b6d74"
 }
