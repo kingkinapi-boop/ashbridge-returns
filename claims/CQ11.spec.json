@@ -1,11 +1,9 @@
 {
  "card": "CQ11",
  "role": "spec",
- "note": "A493: 10 new tests failing by design (7 class + 1 scope plant + 2 new-file holds; 2 controls pass); 14 fail in these two files in all (4 A465)",
+ "note": "toolchain refit",
  "worker": "cloud-b1e6bc",
- "state": "reported",
- "at": "2026-10-03T15:19:56.350Z",
- "mode": "turbo",
- "commit": "3f87758",
- "validated": "b589aa6c8c25e4d8d20f8f01cbe29a497059c25a"
+ "state": "working",
+ "at": "2026-10-03T15:23:49.584Z",
+ "mode": "turbo"
 }
