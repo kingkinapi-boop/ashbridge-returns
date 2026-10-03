@@ -205,20 +205,20 @@ function handleFor(pool: pg.Pool, drop: () => Promise<void>): unknown {
           ...methods(client),
           rollback: async (): Promise<void> => {
             if (!state.done) {
-              done = true
+              state.done = true
               await client.query('rollback')
             }
           },
         }
         const out = await work(tx as unknown as Transaction)
         if (!state.done) {
-          done = true
+          state.done = true
           await client.query('commit')
         }
         return out
       } catch (e) {
         if (!state.done) {
-          done = true
+          state.done = true
           await client.query('rollback').catch(() => undefined)
         }
         throw e
