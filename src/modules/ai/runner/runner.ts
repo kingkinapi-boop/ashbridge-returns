@@ -2,7 +2,6 @@
 // The AI runner (A04): one way for any AI step to run. A job goes in; F04-checked output with its stamp,
 // or a refusal with the reason, comes out. Nothing here repairs an output (AI-1). No paid API, no key.
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 import { now as clockNow } from '../../../core/clock'
 import { readSettings } from '../../../core/env'
@@ -10,8 +9,8 @@ import { makeLogger } from '../../../core/log'
 import { validateAiOutput, versionStampSchema, type VersionStamp } from '../../../contracts/ai'
 import { isBlank } from '../../../contracts/text'
 import type { Handler } from '../../../contracts/jobs'
-import { aiEngines, type EngineContext } from './engines'
-import { AiJobSchema, ApprovedListSchema, inputHashOf, readUtf8, type AiJob, type ApprovedList } from './schemas'
+import { OUTPUT_CHECK_REASON, aiEngines, type EngineContext } from './engines'
+import { AiJobSchema, ApprovedListSchema, EXCHANGE_LIMITS, REPO_ROOT, inputHashOf, isRedacted, readUtf8, type AiJob, type ApprovedList } from './schemas'
 
 export const AI_JOB_LEASE_MS = 24 * 60 * 60 * 1000
 /** AI-10: every stamp part is compared; the parts come from the stamp contract, never a hand list. */
@@ -24,7 +23,6 @@ export const DECISION_0008 = 'AI runs only through the Claude project (decision 
 const NOT_APPROVED = 'not approved: run the evaluation set first (AI-11)'
 const LIST_UNREADABLE = 'not approved: the approved list cannot be read (AI-11)'
 
-const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
 const DEFAULT_APPROVED = path.join(REPO_ROOT, 'data', 'ai', 'approved.json')
 
 export type AiStepResult =
@@ -63,13 +61,14 @@ function approvedTriples(approvedPath: string): ApprovedList['triples'] | null {
 export function createAiRunner(options: AiRunnerOptions): AiRunner {
   const logger = makeLogger()
   const sink = options.sink ?? ((line: string): void => {
-    logger.info(line)
+    logger.info('ai runner', { line })
   })
   const approvedPath = options.approvedPath ?? DEFAULT_APPROVED
   const pollMs = options.pollMs ?? 1000
   const now = options.now ?? ((): Date => clockNow())
   const waiting = new Map<string, number>()
   const seen = new Set<string>()
+  // R104 bounded: the keys are step types, which the job schema limits to the aiStepTypes list
   const counts = new Map<string, number>()
   let current: 'recorded' | 'project' = 'recorded'
   // ARC-20: the folder is read once, when the project engine is switched on, and never again.
@@ -81,10 +80,7 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
 
   async function run(job: AiJob, ctx: { jobId?: string; deadline?: Date }): Promise<AiStepResult> {
     // AI-9: no redaction stamp, no engine.
-    const stamp = job.redaction
-    if (stamp === undefined || blank(stamp.redactedBy) || blank(stamp.redactorVersion)) {
-      return refuse('inputs not redacted (AI-9)')
-    }
+    if (!isRedacted(job)) return refuse('inputs not redacted (AI-9)')
     // AI-11: only approved triples run.
     const triples = approvedTriples(approvedPath)
     if (triples === null) return refuse(LIST_UNREADABLE)
@@ -108,7 +104,7 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
     const checked = validateAiOutput(job.stepType, got.output, got.stamp)
     if (!checked.ok) {
       count(job.stepType)
-      return refuse('the answer failed the output check (AI-1)', checked.problems)
+      return refuse(OUTPUT_CHECK_REASON, checked.problems)
     }
     const { version } = checked.data
     // AI-10: the stamp must describe this very job; a late result is accepted only on a matching input hash.
@@ -153,19 +149,29 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
   }
 }
 
+/** One line for jobs.last_error: control characters (code points 0 to 31 and 127 to 159) removed, then cut to the cap (AI-9, ARC-22). */
+export function lastErrorLine(text: string, maxChars: number): string {
+  const kept = Array.from(text).filter((c) => {
+    const code = c.codePointAt(0) ?? 0
+    return !(code <= 31 || (code >= 127 && code <= 159))
+  })
+  return kept.join('').slice(0, maxChars)
+}
+
 const resultSchema = z.strictObject({ output: z.unknown(), stamp: versionStampSchema })
 
 /** The `ai:<step>` handler F10 registers: a 24-hour lease, the result is { output, stamp }, a refusal throws. */
 export function createAiStepHandler(stepType: string, runner: AiRunner): Handler<AiJob, z.infer<typeof resultSchema>> {
   return {
     kind: `ai:${stepType}`,
-    input: AiJobSchema,
+    // ARC-22 N2: a job of another step type is refused here, naming the rule
+    input: AiJobSchema.extend({ stepType: z.literal(stepType as AiJob['stepType'], { error: 'the job is not a step of this handler (ARC-22)' }) }),
     result: resultSchema,
     leaseMs: AI_JOB_LEASE_MS,
     versions: { handler: `ai:${stepType}`, runner: 'a04-1' },
     async run(input, ctx) {
       const res = await runner.runAiStep(input, { jobId: ctx.jobId })
-      if (!res.ok) throw new Error([res.reason, ...res.problems].join(' '))
+      if (!res.ok) throw new Error(lastErrorLine([res.reason, ...res.problems].join(' '), EXCHANGE_LIMITS.lastErrorMaxChars))
       return { output: res.output, stamp: res.stamp }
     },
   }

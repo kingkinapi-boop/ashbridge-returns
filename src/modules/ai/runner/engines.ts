@@ -5,17 +5,20 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
-import { aiStepSchemas } from '../../../contracts/ai'
+import { aiStepSchemas, validateAiOutput } from '../../../contracts/ai'
 import { readRegularFile } from '../../../core/safe-read'
 import { isBlank } from '../../../contracts/text'
 import {
   AiJobIdSchema,
+  EXCHANGE_LIMITS,
   InboxFileSchema,
   OUTBOX_MAX_BYTES,
   OutboxFileSchema,
   OutboxRefusalSchema,
+  REPO_ROOT,
   RecordingSchema,
   inputHashOf,
+  isRedacted,
   readUtf8,
   type AiJob,
   type InboxFile,
@@ -54,10 +57,21 @@ function tryRead(file: string): Read {
   }
 }
 
-/** Logs a flagged file once per name and content (an unreadable entry: per name and error code). Names only, never content. */
-function logOnce(ctx: EngineContext, line: string, detail: string | undefined): void {
+/**
+ * Logs a flagged file once per name and content (an unreadable entry: per name and error code). Names only, never content.
+ * At most seenMax are held and logged by name (R104); the first one over is answered with one line saying the rest are not.
+ */
+function logOnce(ctx: EngineContext, line: string, detail: string | undefined, what: 'recordings' | 'outbox files'): void {
   const key = JSON.stringify([line, detail])
   if (ctx.seen.has(key)) return
+  if (ctx.seen.size >= EXCHANGE_LIMITS.seenMax) {
+    const more = `ai exchange: more than ${String(EXCHANGE_LIMITS.seenMax)} ${what} ignored; the rest are not logged by name (ARC-22)`
+    const moreKey = JSON.stringify([more])
+    if (ctx.seen.has(moreKey)) return
+    ctx.seen.add(moreKey)
+    ctx.sink(more)
+    return
+  }
   ctx.seen.add(key)
   ctx.sink(line)
 }
@@ -79,7 +93,7 @@ type Recording = z.infer<typeof RecordingSchema>
 function readRecording(ctx: EngineContext, name: string): Recording | undefined {
   const read = tryRead(path.join(ctx.recordingsDir, name))
   const flag = (reason: string, detail: string | undefined): void => {
-    logOnce(ctx, `ai exchange: ignored recording ${name}: ${reason}`, detail)
+    logOnce(ctx, `ai exchange: ignored recording ${name}: ${reason}`, detail, 'recordings')
   }
   if (!read.ok) {
     flag(String(read.code), read.code)
@@ -119,67 +133,141 @@ function recordedRun(job: AiJob, ctx: EngineContext): EngineResult {
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
 
 export const DEADLINE_REASON = 'no result from the Claude project before the lease ends (ARC-22)'
+/** AI-1: the one sentence for an answer that fails the output check; the runner uses it for every engine. */
+export const OUTPUT_CHECK_REASON = 'the answer failed the output check (AI-1)'
 const REFUSED_BY_PROJECT = 'the Claude project refused the job: '
+const NOT_REDACTED = 'inputs not redacted (AI-9)'
+const MKDIR_FAILED = 'the exchange folder could not be made (ARC-22)'
+const INBOX_WRITE_FAILED = 'the inbox file could not be written (ARC-22)'
+const OUTBOX_READ_FAILED = 'the exchange outbox could not be read (ARC-22)'
+const INBOX_NOT_REAL = 'the exchange inbox folder is not a real folder (ARC-22)'
+const OUTBOX_NOT_REAL = 'the exchange outbox folder is not a real folder (ARC-22)'
+const INSIDE_REPO = 'the exchange folder is inside the repository (ARC-22)'
+const NOT_AN_INBOX_FILE = 'the job does not fit the inbox file (ARC-22)'
 
 /** The own file is not what a result looks like: the job fails at once, naming the file and the cause (never content). */
-const ownFails = (jobId: string, cause: string): EngineResult => refuse(`the outbox file ${jobId}.json is ${cause} (ARC-22)`)
+const ownFails = (jobId: string, cause: string): EngineResult => refuse(`the outbox file ${jobId}.json ${cause} (ARC-22)`)
 
 /** This job's own outbox file: a result or a refusal ends the wait; anything else at that name fails the job; none yet is undefined. */
 function readOwn(jobId: string, outbox: string): EngineResult | undefined {
   const read = readRegularFile(path.join(outbox, `${jobId}.json`), OUTBOX_MAX_BYTES)
   if (!read.ok) {
     if (read.reason === 'gone') return undefined
-    return ownFails(jobId, read.reason === 'too-big' ? `too big (more than ${String(OUTBOX_MAX_BYTES)} bytes)` : 'not a file')
+    if (read.reason === 'many-links') return ownFails(jobId, 'has more than one link')
+    return ownFails(jobId, read.reason === 'too-big' ? `is too big (more than ${String(OUTBOX_MAX_BYTES)} bytes)` : 'is not a file')
   }
   const json = tryParse(read.text)
-  if (!json.ok) return ownFails(jobId, 'not JSON')
+  if (!json.ok) return ownFails(jobId, 'is not JSON')
   const result = OutboxFileSchema.safeParse(json.value)
   if (result.success) {
-    if (result.data.jobId !== jobId) return ownFails(jobId, 'for another job')
+    if (result.data.jobId !== jobId) return ownFails(jobId, 'is for another job')
     return { ok: true, output: result.data.output, stamp: result.data.stamp }
   }
   const refusal = OutboxRefusalSchema.safeParse(json.value)
-  if (!refusal.success) return ownFails(jobId, 'not one result or refusal')
-  if (refusal.data.jobId !== jobId) return ownFails(jobId, 'for another job')
+  if (!refusal.success) return ownFails(jobId, 'is not one result or refusal')
+  if (refusal.data.jobId !== jobId) return ownFails(jobId, 'is for another job')
   const { reason, problems, stage } = refusal.data.refusal
   return { ok: false, reason: `${REFUSED_BY_PROJECT}${reason}`, problems, counted: stage === 'output' }
 }
 
-/** Every other entry in the outbox is looked at, never opened, and logged once by quoted name, size and time. */
-function logStrangers(ctx: EngineContext, outbox: string): void {
-  for (const name of fs.readdirSync(outbox)) {
-    if (ctx.waiting.has(path.parse(name).name)) continue
-    let looked: fs.Stats
-    try {
-      looked = fs.lstatSync(path.join(outbox, name))
-    } catch {
-      continue
+/** SEC-11: the project engine checks what it gets back against the step's schema itself, so it is safe to call on its own. */
+function checkedOutput(job: AiJob, got: { output: unknown; stamp: unknown }): EngineResult {
+  const checked = validateAiOutput(job.stepType, got.output, got.stamp)
+  if (!checked.ok) return { ok: false, reason: OUTPUT_CHECK_REASON, problems: checked.problems, counted: true }
+  return { ok: true, output: checked.data.output, stamp: checked.data.version }
+}
+
+/** An entry named for a job this runner waits on (its own `<id>.json`): never a stranger, whoever is waiting for it. */
+const isWaitedJsonFile = (ctx: EngineContext, name: string): boolean => name.endsWith('.json') && ctx.waiting.has(name.slice(0, -'.json'.length))
+
+/** One other entry of the outbox: looked at, never opened, and logged once by quoted name, size and time. */
+function lookAtStranger(ctx: EngineContext, outbox: string, name: string): void {
+  let looked: fs.Stats
+  try {
+    looked = fs.lstatSync(path.join(outbox, name))
+  } catch {
+    return
+  }
+  logOnce(ctx, `ai exchange: ignored outbox file ${JSON.stringify(name)}`, `${String(looked.size)}:${String(looked.mtimeMs)}`, 'outbox files')
+}
+
+/**
+ * One poll's look at the other entries of the outbox, in a bounded batch (R104): at most strangerBatch are looked at, and
+ * the next poll carries on after them (the cursor); the listing is read in buffers of the same size. False when it cannot be read.
+ */
+function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: number }): boolean {
+  const { strangerBatch } = EXCHANGE_LIMITS
+  let dir: fs.Dir
+  try {
+    dir = fs.opendirSync(outbox, { bufferSize: strangerBatch })
+  } catch {
+    return false
+  }
+  try {
+    let met = 0
+    let looked = 0
+    for (let entry = dir.readSync(); entry !== null; entry = dir.readSync()) {
+      if (isWaitedJsonFile(ctx, entry.name)) continue
+      met++
+      if (met <= cursor.passed) continue
+      if (looked === strangerBatch) {
+        cursor.passed += looked
+        return true
+      }
+      lookAtStranger(ctx, outbox, entry.name)
+      looked++
     }
-    logOnce(ctx, `ai exchange: ignored outbox file ${JSON.stringify(name)}`, `${String(looked.size)}:${String(looked.mtimeMs)}`)
+    cursor.passed = 0
+    return true
+  } catch {
+    return false
+  } finally {
+    dir.closeSync()
   }
 }
 
-/** A folder of the exchange that must be a real folder inside the exchange folder's real path (made when missing). */
-// Stryker disable BlockStatement: the catch block returns what an empty one would fall through to
-function realFolder(root: string, name: 'inbox' | 'outbox'): string | undefined {
+/** The real path a folder has, or would have: the nearest folder that exists, resolved, with the missing names put back. */
+function realPathOrAncestor(folder: string): string {
+  try {
+    return fs.realpathSync(folder)
+  } catch {
+    const up = path.dirname(folder)
+    return up === folder ? folder : path.join(realPathOrAncestor(up), path.basename(folder))
+  }
+}
+
+/** N6: the exchange folder (by real path) lies inside the repository, where a commit could pick it up. */
+function insideRepo(exchangeDir: string): boolean {
+  const rel = path.relative(realPathOrAncestor(REPO_ROOT), realPathOrAncestor(path.resolve(exchangeDir)))
+  return !(rel === '..' || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel))
+}
+
+/**
+ * A folder of the exchange that must be a real folder inside the exchange folder's real path. Made first when `make` is set
+ * (mode 0700); a poll or a rename only looks, so a folder that has gone is refused, never made again (L3).
+ */
+function realFolder(root: string, name: 'inbox' | 'outbox', make: boolean): string | undefined {
   const dir = path.join(root, name)
   try {
-    fs.mkdirSync(dir, { recursive: true })
+    if (make) fs.mkdirSync(dir, { recursive: true, mode: 0o700 })
     if (fs.realpathSync(dir) === path.join(fs.realpathSync(root), name)) return dir
+    // Stryker disable next-line BlockStatement: the catch block returns what an empty one would fall through to
   } catch {
     return undefined
   }
   return undefined
 }
-// Stryker restore BlockStatement
 
 async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult> {
   const { jobId, exchangeDir } = ctx
+  // AI-9, SEC-11: no redaction stamp, no exchange file, whoever calls the engine.
+  if (!isRedacted(job)) return refuse(NOT_REDACTED)
   if (jobId === undefined || isBlank(jobId)) return refuse('the project engine needs a job id (the inbox file is named by it)')
   if (exchangeDir === undefined || isBlank(exchangeDir)) return refuse('the project engine is off: AI_EXCHANGE_DIR is not set')
   // SEC-10: the id becomes a file name in a folder another process writes; it is never printed.
   if (!AiJobIdSchema.safeParse(jobId).success) return refuse('the job id is not a safe file name (SEC-10)')
-  const inboxFile: InboxFile = InboxFileSchema.parse({
+  if (insideRepo(exchangeDir)) return refuse(INSIDE_REPO)
+  const inboxText = InboxFileSchema.safeParse({
     jobId,
     stepType: job.stepType,
     promptVersion: job.promptVersion,
@@ -194,27 +282,48 @@ async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult>
     mappingRelease: job.mappingRelease,
     inputs: job.inputs,
   })
-  fs.mkdirSync(exchangeDir, { recursive: true })
-  const inbox = realFolder(exchangeDir, 'inbox')
-  if (inbox === undefined) return refuse('the exchange inbox folder is not a real folder (ARC-22)')
-  const outbox = realFolder(exchangeDir, 'outbox')
-  if (outbox === undefined) return refuse('the exchange outbox folder is not a real folder (ARC-22)')
+  if (!inboxText.success) return refuse(NOT_AN_INBOX_FILE)
+  const inboxFile: InboxFile = inboxText.data
+  // the system's own errors carry the exchange path, so each step answers with a fixed sentence naming the step, never the error
+  try {
+    fs.mkdirSync(exchangeDir, { recursive: true, mode: 0o700 })
+  } catch {
+    return refuse(MKDIR_FAILED)
+  }
+  const inbox = realFolder(exchangeDir, 'inbox', true)
+  if (inbox === undefined) return refuse(INBOX_NOT_REAL)
+  const outbox = realFolder(exchangeDir, 'outbox', true)
+  if (outbox === undefined) return refuse(OUTBOX_NOT_REAL)
   // written beside the inbox under a name nobody can predict (flag wx: never into an existing file or link), then renamed in
   const staging = path.join(exchangeDir, `.staging-${jobId}-${crypto.randomBytes(8).toString('hex')}.json`)
-  fs.writeFileSync(staging, JSON.stringify(inboxFile, null, 2), { flag: 'wx' })
-  fs.renameSync(staging, path.join(inbox, `${jobId}.json`))
+  try {
+    fs.writeFileSync(staging, JSON.stringify(inboxFile, null, 2), { flag: 'wx', mode: 0o600 })
+  } catch {
+    return refuse(INBOX_WRITE_FAILED)
+  }
+  // L3: both folders are looked at again just before the rename, in case one was swapped for a link since the first look
+  if (realFolder(exchangeDir, 'inbox', false) === undefined) return refuse(INBOX_NOT_REAL)
+  if (realFolder(exchangeDir, 'outbox', false) === undefined) return refuse(OUTBOX_NOT_REAL)
+  try {
+    fs.renameSync(staging, path.join(inbox, `${jobId}.json`))
+  } catch {
+    return refuse(INBOX_WRITE_FAILED)
+  }
   const pollers = (by: 1 | -1): void => {
     const n = (ctx.waiting.get(jobId) ?? 0) + by
     if (n > 0) ctx.waiting.set(jobId, n)
     else ctx.waiting.delete(jobId)
   }
+  const cursor = { passed: 0 }
   pollers(1)
   try {
     for (;;) {
-      if (ctx.now().getTime() >= ctx.deadline.getTime()) return refuse(DEADLINE_REASON)
+      // N3: a deadline or clock that is not a valid date compares false, so the wait ends as expired
+      if (!(ctx.now().getTime() < ctx.deadline.getTime())) return refuse(DEADLINE_REASON)
+      if (realFolder(exchangeDir, 'outbox', false) === undefined) return refuse(OUTBOX_NOT_REAL)
       const own = readOwn(jobId, outbox)
-      if (own !== undefined) return own
-      logStrangers(ctx, outbox)
+      if (own !== undefined) return own.ok ? checkedOutput(job, own) : own
+      if (!logStrangers(ctx, outbox, cursor)) return refuse(OUTBOX_READ_FAILED)
       await sleep(ctx.pollMs)
     }
   } finally {

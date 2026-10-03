@@ -1,0 +1,6 @@
+{
+  "outboxMaxBytes": 4194304,
+  "seenMax": 200,
+  "strangerBatch": 50,
+  "lastErrorMaxChars": 600
+}
