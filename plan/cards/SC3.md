@@ -1,5 +1,7 @@
 # SC3 Security rules R62 to R66
 
+**Lead directive, 3 Oct 08:30Z (A443): spec patch.** FX2 landed (758d0b06): drop the six FX2 KNOWN entries in tools/test/security-rules.test.mjs (OCR_ENGINE, STORAGE_DRIVE_ENGINE, STORAGE_FILES_ENGINE under declared and production) and fit the factory list to the landed ocr/index.ts shape. No rule weakened. Then build round 2 (the three JSDoc tags on engine.ts are already in).
+
 Phase 0. Size M. Deps: A06, FX2. Where: cloud.
 Tags: security (stand-ins in production, once-only and at-most-N rules, append-only text).
 Paths: tools/test/security-rules.test.mjs, src/contracts/security-rules.db.test.ts, tools/test/__fixtures__/security-rules/**
@@ -20,3 +22,6 @@ Each rule first shown failing on its planted fixture, then passing on main:
 
 ## Check
 A checker who did neither: the five rules fail on the planted fixtures and pass on main after A06 round 2 and FX2; a `/security-review` of the rule harness.
+
+## KNOWN shape (3 Oct, A407)
+Every KNOWN entry names one rule, one file, the exact problem strings (no regex) and an open owner card; any problem not listed fails, and a listed string not produced fails as stale. Every file scan asserts it read at least one file and a named sentinel.

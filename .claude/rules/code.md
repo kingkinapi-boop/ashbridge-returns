@@ -25,3 +25,5 @@ Loaded automatically when you touch code. Each is also checked by the checker. S
 - **Server code:** data access goes through one data-access layer that checks the role (SEC-2); data code imports `server-only`; server actions are treated as public endpoints.
 - **No redirect or link built from `request.url`:** use relative paths.
 - **Strict TypeScript** (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) and typed lint (`strict-type-checked`, no floating promises).
+
+- A pooled database connection carries only transaction-local state (`set local`, `set_config(..., true)`), or it is destroyed on release; never swallow a failed reset (A441, DB16).
