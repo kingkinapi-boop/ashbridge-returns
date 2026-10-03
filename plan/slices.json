@@ -3604,7 +3604,7 @@
         "G17"
       ],
       "paths": [
-        "data/question-bank/coverage.json",
+        "data/question-coverage.json",
         "data/question-bank/*.json",
         "src/modules/gaps/bank/coverage.acceptance.test.ts"
       ],
@@ -10041,7 +10041,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ4"
@@ -10059,10 +10059,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/DB16-findings.md, 3 Oct (A430)."
+      "note": "From reports/DB16-findings.md, 3 Oct (A430).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ5"
@@ -10079,7 +10080,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/CQ5-spec.md, 3 Oct (A431)."
+      "note": "From reports/CQ5-spec.md, 3 Oct (A431).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10620,7 +10622,7 @@
       "note": "From reports/FX12-spec.md, 3 Oct (A443)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10639,7 +10641,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
+      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
