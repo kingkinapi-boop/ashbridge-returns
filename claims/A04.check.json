@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-03T05:42:28.232Z",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T05:42:57.697Z",
+ "state": "failed",
+ "at": "2026-10-03T05:51:42.703Z",
  "mode": "turbo",
- "beat": "2026-10-03T05:49:16.646Z"
+ "beat": "2026-10-03T05:49:16.646Z",
+ "note": "FAIL: AI-10 runner compares 4 of 7 stamp parts; OCR engine, version and mapping release from the answer pass unchecked, see reports/A04-check.md"
 }
