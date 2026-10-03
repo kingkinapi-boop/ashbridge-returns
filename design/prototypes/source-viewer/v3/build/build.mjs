@@ -263,7 +263,7 @@ ${scripts.map((s) => `  <script src="${s}"></script>`).join('\n')}
 const alertSvg = '<svg class="moj-alert__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" height="30" width="30" aria-hidden="true" focusable="false"><path d="M20.1 26.5H9.9c-.9 0-1.5-.9-1.1-1.7L13.9 5.2c.4-.8 1.6-.8 2 0l5.1 19.6c.4.8-.2 1.7-1.1 1.7z" fill="currentcolor"/></svg>'
 const voidAlert = `    <div class="moj-alert moj-alert--warning app-void" role="region" aria-label="Approval void" data-module="moj-alert" data-void-only hidden>
       <div>${alertSvg}</div>
-      <div class="moj-alert__content"><strong>Approval void.</strong> The books changed after approval on ${story.approvedDay}; the return is back in trace and there is nothing to decide here.
+      <div class="moj-alert__content"><strong>Approval void.</strong> The books changed after approval on ${story.approvedDay}, so the return is back in trace.
         <span data-void-note="workbench">The changed cells are below.</span><span data-void-note="other" hidden>The changed cells are on the <a class="govuk-link" href="workbench.html?state=void" data-route="workbench">Workbench tab</a>.</span></div>
     </div>
 `

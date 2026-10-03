@@ -56,5 +56,5 @@ Results page: `app-results`, `app-results-wrap`.
 - Tags and key caps are 16 px (GOV.UK tag is smaller). Text below 16 px appears only in the sheet grid (13 px, source text, 12 px or more) and the "Boxed figure" label (13 px on a dark ground).
 - Made-up additions for the test world: the adjusting entry `01-AJE-01` and its sources, QBO Transaction ID 2188, snapshot fingerprints, flag `01-F10`, a client answer, a written reason. Money prints in whole dollars, as the test world does.
 - The MOJ identity bar's text alignment is overridden (the official class centres it); the bar is the one shell for every role.
-- Header search is a stand-in: it searches this prototype's figures, values, exceptions, items and sources and shows a results page when more than one thing matches.
+- Header search is a stand-in: it searches this prototype's figures, values, exceptions, items and sources, in the format shown on the pages (so a value copied from a row finds it), and always shows the results page, even for one hit (the build may go straight to a single hit). The results page sits outside the return shell, with the Generic header and its own search box.
 - A separate "Prototype only: load page images slowly" check box under Keyboard shortcuts lets the panel see the loading state; it is session storage and not part of the design.

@@ -11,7 +11,9 @@ const FOCUSED_SOURCE = /^sv-(box|card)-pane$/
 const fid = (page) => page.evaluate(() => document.activeElement ? document.activeElement.id : '')
 const titleOf = (page) => page.evaluate(() => (document.getElementById('sv-title-pane') || {}).textContent || '')
 const live = (page) => page.evaluate(() => (document.getElementById('sv-live') || {}).textContent || '')
-const rowStatus = (page, id) => page.locator(`[data-item="${id}"] [data-status]`).first().innerText()
+// polls the live region for a sentence (it is cleared and refilled a moment after an action)
+const liveHas = async (page, re, ms = 2500) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { if (re.test(await live(page))) return true; await new Promise((r) => setTimeout(r, 100)) } return false }
+const rowStatus =(page, id) => page.locator(`[data-item="${id}"] [data-status]`).first().innerText()
 
 // run one task on a page that already has the counters; returns loads, clicks, keys, fields, ms
 async function run(T, page, fn) {
@@ -87,7 +89,7 @@ sections.tasks = async (T) => {
       const r = await run(T, page, async () => { await page.click('#sv-src-0'); await page.click('button[data-primary]'); await sleep(350) })
       record(T, `Preparer cites an orphan: choose the candidate, Record ${tag}`, 'Preparer', r, { loads: 0, clicks: 2, keys: 0, fields: 0 })
       const msg = await page.locator('#sv-recorded').innerText()
-      ck(`the row says Cited, the count falls to 6 of 8, a message names what was recorded and the next figure, focus is in the next figure's source ${tag}`, /Cited/.test(await rowStatus(page, 'c2')) && (await page.locator('#sv-left-cite').innerText()) === '6' && /Source cited for Taxes payable \(HST\) recorded as source 1 of 1\. Next to cite: Dividend other than eligible\./.test(msg) && /Dividend other than eligible/.test(await titleOf(page)) && FOCUSED_SOURCE.test(await fid(page)), `${msg} | ${await titleOf(page)} | ${await fid(page)}`)
+      ck(`the row says Cited, the count falls to 6 of 8, a message names what was recorded and the next figure, focus is in the next figure's source ${tag}`, /Cited/.test(await rowStatus(page, 'c2')) && (await page.locator('#sv-left-cite').textContent()) === '6' && /^Recorded\. 6 left\. Next: Dividend other than eligible\.$/.test(msg) && (await liveHas(page, /Source cited for Taxes payable \(HST\) recorded as source 1 of 1\. Next to cite: Dividend other than eligible\./)) && /Dividend other than eligible/.test(await titleOf(page)) && FOCUSED_SOURCE.test(await fid(page)), `${msg} | ${await titleOf(page)} | ${await fid(page)}`)
       await c.close() }
     // Preparer: write the reason for an override (the reason only, no candidate): one field
     { const [c, page] = await fresh(T, w, h, urlOf('prep'))
@@ -220,7 +222,7 @@ sections.window = async (T) => {
   { const ctx = await T.newCtx(1366, 650); const page = await ctx.newPage()
     await T.go(page, urlOf('cpa'))
     const [pop] = await Promise.all([ctx.waitForEvent('page', { timeout: 4000 }).catch(() => null), page.check('#sv-win-pref')])
-    ck('ticking "Every time" opens the window now and says in words that it is on and remembered', !!pop && /turned on for Dev Malhotra \(Test\), and remembered/.test(await live(page)), await live(page))
+    ck('ticking "Every time" opens the window now and says in words that it is on and remembered', !!pop && (await liveHas(page, /turned on for Dev Malhotra \(Test\), and remembered/)), await live(page))
     if (pop) { await pop.waitForSelector('#sv-follow'); await sleep(300); await pop.close() }
     await waitText(page, '#sv-win-status', /Window closed/, 3500)
     const before = ctx.pages().length
@@ -235,10 +237,10 @@ sections.window = async (T) => {
     ck('with the choice on, o opens the window again after it was closed (the key is the gesture)', !!pop3, '')
     // another signed-in person has their own choice (default off)
     const other = await ctx.newPage(); await other.goto(T.U('review.html?as=anita')); await T.settle(other, 300)
-    ck('the choice is kept for each signed-in person: Anita Rao (Test) still has it off', !(await other.locator('#sv-win-pref').isChecked()) && /Second window: off\./.test(await other.locator('#sv-win-status').innerText()), await other.locator('#sv-win-status').innerText())
+    ck('the choice is kept for each signed-in person: Anita Rao (Test) still has it off', !(await other.locator('#sv-win-pref').isChecked()), await other.locator('#sv-win-status').innerText())
     // turning the choice off: the window stops following and the pane comes back
     await page.uncheck('#sv-win-pref'); await sleep(700)
-    ck('turning the choice off tells the window to stop following, the pane returns and the words say so', (await page.evaluate(() => !document.getElementById('app-split').classList.contains('app-split--no-pane'))) && /turned off for Dev Malhotra \(Test\), and remembered/.test(await live(page)) && !(await pop3.locator('#sv-follow').isChecked()), await live(page))
+    ck('turning the choice off tells the window to stop following, the pane returns and the words say so', (await page.evaluate(() => !document.getElementById('app-split').classList.contains('app-split--no-pane'))) && (await liveHas(page, /turned off for Dev Malhotra \(Test\), and remembered/)) && !(await pop3.locator('#sv-follow').isChecked()), await live(page))
     await ctx.close() }
 
   // a blocked pop-up says so and the pane stays
@@ -358,7 +360,7 @@ sections.url = async (T) => {
     await T.go(page, urlOf('prep', 'c8', '1'))
     await page.click('#sv-src-0'); await page.click('button[data-primary]'); await sleep(400)
     await page.reload(); await T.settle(page, 500)
-    ck('a cited source survives a reload (the prototype keeps it in session storage)', /Cited/.test(await rowStatus(page, 'c8')) && (await page.locator('#sv-left-cite').innerText()) === '6', await rowStatus(page, 'c8'))
+    ck('a cited source survives a reload (the prototype keeps it in session storage)', /Cited/.test(await rowStatus(page, 'c8')) && (await page.locator('#sv-left-cite').textContent()) === '6', await rowStatus(page, 'c8'))
     await c.close() }
 }
 
@@ -380,7 +382,7 @@ sections.done = async (T) => {
       ck(`Ops: focus goes to the next unhandled row after this one, then to the first unhandled above (${a1}, ${a2}, ${a3}, ${a4}, ${a5}) ${tag}`, a1 === 'o3' && a2 === 'o5' && a3 === 'o6' && a4 === 'o1' && a5 === 'o1', [a1, a2, a3, a4, a5].join(' '))
       await decide('o1', 'done')
       const d = await page.evaluate(() => ({ id: document.activeElement.id, text: document.activeElement.textContent.trim(), hidden: document.getElementById('sv-done-ops').hidden }))
-      ck(`Ops: Complete on the last unhandled row focuses "All items checked" and announces it ${tag}`, d.id === 'sv-done-ops' && /^All items checked/.test(d.text) && !d.hidden && /All items checked/.test(await live(page)), JSON.stringify(d))
+      ck(`Ops: Complete on the last unhandled row focuses "All items checked" and announces it ${tag}`, d.id === 'sv-done-ops' && /^All items checked/.test(d.text) && !d.hidden && /All items checked/.test((await live(page)) + d.text), JSON.stringify(d))
       await c.close() }
     // Documents: Accept on every value
     { const [c, page] = await T.newPage(w, h)

@@ -129,7 +129,14 @@
     }
     function nounOf() { return (tabs[tab] || {}).noun || 'number' }
     function moveItem(d) { return moveRow(visibleRows(), d, nounOf()) }
-    function moveFlag(d) { return moveRow(visibleRows().filter(function (r) { return r.hasAttribute('data-flagged') }), d, 'flag') }
+    /* the next flag after the number in hand, in list order, even when that number is not flagged itself */
+    function moveFlag(d) {
+      var all = visibleRows(), at = -1, i
+      for (i = 0; i < all.length; i++) if (all[i].getAttribute('data-item') === viewer.itemId) at = i
+      var flags = all.filter(function (r, k) { return r.hasAttribute('data-flagged') && (at < 0 || (d > 0 ? k > at : k < at)) })
+      if (!flags.length) { announce(d > 0 ? 'Last flag in the list' : 'First flag in the list'); return false }
+      return moveRow([d > 0 ? flags[0] : flags[flags.length - 1]], 0, 'flag')
+    }
     function backToList() {
       if (narrow.matches) split.setAttribute('data-view', 'list')
       if (origin) origin.focus()
@@ -213,7 +220,7 @@
     var status = document.getElementById('sv-win-status')
     var openBtn = document.getElementById('sv-open-window')
     var pref = document.getElementById('sv-win-pref')
-    var lastText = ''
+    var lastText = '', quietUntil = 0 // after the person changes the choice, the sentence about it is the one announced
     function setWinText(st, follow) {
       follow = follow !== false
       var hide = st === 'open' && follow && !narrow.matches
@@ -226,7 +233,7 @@
         closed: 'Window closed, open again.',
         blocked: 'The browser blocked the second window. Allow pop-ups for this site, then open it again.',
       }[st || 'none']
-      if (status && msg !== lastText) { status.textContent = msg; announce(msg) }
+      if (status && msg !== lastText) { status.textContent = msg; if (Date.now() > quietUntil) announce(msg) }
       lastText = msg
       if (cfg.onWindowState) cfg.onWindowState(st, follow)
     }
@@ -242,10 +249,13 @@
       pref.checked = SV.winPref()
       pref.addEventListener('change', function () {
         SV.setWinPref(pref.checked)
+        quietUntil = Date.now() + 2500
         if (pref.checked) { if (win.alive) win.attach(); win.open() } // a click is a user gesture: turning it on opens it now, or brings it forward
         else win.detach()
         setWinText(win.state || 'none', win.follow)
-        announce(pref.checked ? 'Second window turned on for ' + SV.person().name + ', and remembered.' : 'Second window turned off for ' + SV.person().name + ', and remembered.')
+        var said = pref.checked ? 'Second window turned on for ' + SV.person().name + ', and remembered.' : 'Second window turned off for ' + SV.person().name + ', and remembered.'
+        announce(said)
+        setTimeout(function () { announce(said) }, 700) // the source change that follows is quiet; this sentence is the one left in the live region
       })
     }
 

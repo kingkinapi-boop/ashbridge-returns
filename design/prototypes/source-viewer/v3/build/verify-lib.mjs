@@ -171,7 +171,7 @@ export const targets = () => {
   const vis = (e) => e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden'
   const small = []
   document.querySelectorAll('button, summary, a[href], textarea, input:not([type=hidden]):not([type=checkbox]):not([type=radio]), [role=separator], [tabindex="0"]').forEach((e) => {
-    if (!vis(e) || e.closest('.govuk-visually-hidden')) return
+    if (!vis(e) || e.closest('.govuk-visually-hidden') || e.matches('.govuk-skip-link')) return // the skip link is off screen until focused; the keyboard walk measures it focused
     if (e.matches('a') && e.closest('p, li > a:only-child') && !e.closest('.moj-sub-navigation, .govuk-generic-header, .app-bar-link')) { /* an inline link in a sentence is exempt */ if (e.closest('p')) return }
     const b = e.getBoundingClientRect()
     if (b.width < 23.5 || b.height < 23.5) small.push((e.id || e.tagName.toLowerCase() + ':' + (e.textContent || '').trim().slice(0, 18)) + ' ' + Math.round(b.width) + 'x' + Math.round(b.height))

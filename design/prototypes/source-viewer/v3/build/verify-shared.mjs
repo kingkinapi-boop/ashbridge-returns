@@ -126,7 +126,7 @@ const STATES = [
   ['Workbench, candidates, none chosen (c2)', urlOf('prep', 'c2')],
   ['Workbench, override with a reason only (c5)', urlOf('prep', 'c5')],
   ['Workbench, dropped cell (c6)', urlOf('prep', 'c6')],
-  ['Workbench, cited figure (c7)', urlOf('prep', 'c7', '1')],
+  ['Workbench, cited figure (c7)', urlOf('prep', 'c7', '1'), { primary: '[data-evidence]' }],
   ['Documents, an extracted value (v1)', urlOf('verify', 'v1')],
   ['Exceptions, as the CPA (x2)', urlOf('risks', 'x2')],
   ['Exceptions, as the preparer, read only (x2)', 'exceptions.html?as=anita&item=x2', { primary: '[data-evidence]' }],
@@ -183,7 +183,7 @@ sections.popup = async (T) => {
     rk(T, `Second window as a full page ${tag}: the evidence is in view with no scroll`, await R.V3(pop, { primary: '[data-evidence]' }))
     rk(T, `Second window as a full page ${tag}: every count names its scope`, await R.V5(pop))
     rk(T, `Second window as a full page ${tag}: ] and [ move to a source and focus lands in its box`, await R.V4(pop, null, { shortcuts: [{ key: ']', selector: BOXES }, { key: '[', selector: BOXES }] }))
-    await domReport(T, pop, `second window ${tag}`, { shell: true, title: /^Source window, / })
+    await domReport(T, pop, `second window ${tag}`, { shell: true, title: /^Source window[:,] / })
     await ctx.close()
   }
 }

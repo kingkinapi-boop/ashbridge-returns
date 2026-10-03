@@ -52,7 +52,7 @@
     }
     viewer.show(m.item, m.idx || 0, { silent: true, focusIn: !!focus })
     var it = SV.itemOf(m.list, m.item)
-    document.title = 'Source window: ' + (it ? it.name : 'figure') + ', ' + D.client.name + base
+    document.title = 'Source window: ' + (it ? it.name : 'figure') + ', ' + D.client.name + ', year end ' + D.client.ye + base
     SV.syncErrorTitle() // the title was just rewritten: it starts "Error: " again while the failed page image shows
     say(followingText())
   }

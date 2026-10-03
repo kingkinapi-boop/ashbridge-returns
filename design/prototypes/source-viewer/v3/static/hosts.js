@@ -64,9 +64,13 @@
     var nowN = v.ids().length
     refreshAll()
     var nxt = api.nextUnhandled(it.id, citedDone)
-    var msg = what + ' for ' + it.name + ' recorded as source ' + nowN + ' of ' + nowN + '. ' + (nxt ? 'Next to cite: ' + nxt.querySelector('th').firstChild.textContent + '.' : 'Nothing is left to cite.')
+    var leftN = D.lists.prep.filter(function (x) { return !isCited(x) }).length
+    var nextName = nxt ? nxt.querySelector('th').firstChild.textContent : ''
+    var msg = what + ' for ' + it.name + ' recorded as source ' + nowN + ' of ' + nowN + '. ' + (nxt ? 'Next to cite: ' + nextName + '.' : 'Nothing is left to cite.')
+    // the visible line is one line (the table below keeps its three rows beside the pane); the full sentence is announced
+    var shortMsg = 'Recorded. ' + (nxt ? leftN + ' left. Next: ' + nextName + '.' : 'Nothing is left to cite.')
     var note = document.getElementById('sv-recorded')
-    if (note) { note.textContent = msg; note.hidden = false }
+    if (note) { note.textContent = shortMsg; note.hidden = false }
     if (!api.advance(it.id, citedDone, { focusViewer: true })) {
       v.show(it.id, nowN - 1, { silent: true })
       if (note) note.focus({ preventScroll: true })
@@ -98,7 +102,7 @@
       var g = it.cand[v.idx] ? it.cand[v.idx].group : 'exact'
       radios.appendChild(h('div', { class: 'govuk-radios__item' },
         h('input', { class: 'govuk-radios__input', id: 'sv-src-0', name: 'sv-src', type: 'radio', value: 'source' }),
-        h('label', { class: 'govuk-label govuk-radios__label', for: 'sv-src-0' }, 'This candidate (' + (v.idx + 1) + ' of ' + it.cand.length + ', ' + GROUPWORD[g] + ')')))
+        h('label', { class: 'govuk-label govuk-radios__label', for: 'sv-src-0' }, 'This candidate (' + (v.idx + 1) + ' of ' + it.cand.length + ')', vis(', ' + GROUPWORD[g]))))
       reasonRadio = h('input', { class: 'govuk-radios__input', id: 'sv-src-reason', name: 'sv-src', type: 'radio', value: 'reason', 'data-cor-reason-radio': '' })
       reasonGroup = h('div', { class: 'govuk-form-group app-cor__reason', id: 'sv-reason-group' })
       ta = h('textarea', { class: 'govuk-textarea', id: 'sv-reason', name: 'reason', rows: '1', 'data-cor-reason': '' })
@@ -106,6 +110,7 @@
       reasonGroup.appendChild(ta)
       radios.appendChild(h('div', { class: 'govuk-radios__item app-cor__row' }, reasonRadio, h('label', { class: 'govuk-label govuk-radios__label', for: 'sv-src-reason' }, 'A written reason'), reasonGroup))
       fs.appendChild(radios)
+      radios.addEventListener('change', function (ev) { form.setAttribute('data-choice', ev.target.value) }) // the form says which way it will record
       group.appendChild(fs)
     } else {
       reasonGroup = h('div', { class: 'govuk-form-group app-cor__reason', id: 'sv-reason-group' })
@@ -225,7 +230,7 @@
     var form = h('form', { class: 'app-undo', id: pre, novalidate: 'novalidate', hidden: true, 'aria-label': 'Undo the decision on ' + it.name })
     var box = h('div', { class: 'govuk-form-group' },
       h('label', { class: 'govuk-label', for: pre + '-why' }, 'Reason for undoing this decision ', h('span', { class: 'app-req', 'aria-hidden': 'true', text: '*' }), vis(' (required)')),
-      h('textarea', { class: 'govuk-textarea', id: pre + '-why', name: 'reason', rows: '2' }))
+      h('textarea', { class: 'govuk-textarea', id: pre + '-why', name: 'reason', rows: '1' }))
     form.appendChild(box)
     form.appendChild(h('div', { class: 'app-actions' },
       h('button', { type: 'submit', class: 'govuk-button govuk-button--warning app-button-compact' }, 'Undo the decision', vis(' on ' + it.name)),
@@ -247,9 +252,11 @@
         ta.setAttribute('aria-describedby', pre + '-err')
         if (!/^Error: /.test(document.title)) document.title = 'Error: ' + document.title
         sum.focus({ preventScroll: true })
+        form.scrollIntoView({ block: 'nearest' })
         return
       }
       document.title = document.title.replace(/^Error: /, '')
+      SV.syncErrorTitle()
       var was = STORE[list].get(it.id)
       STORE[list].clear(it.id)
       undoLog.push({ list: list, id: it.id, was: was && was.st, reason: why, by: WHO, on: TODAY })
@@ -266,19 +273,23 @@
   }
   function closeUndo(form, where, id) {
     form.hidden = true
+    var tr = form.closest('tr'); if (tr) tr.hidden = true
     var ta = form.querySelector('textarea'); ta.value = ''
     var s = form.querySelector('.app-undo-sum'); if (s) s.remove()
     var m = form.querySelector('.govuk-error-message'); if (m) m.remove()
     form.querySelector('.govuk-form-group').classList.remove('govuk-form-group--error')
     ta.classList.remove('govuk-textarea--error')
     document.title = document.title.replace(/^Error: /, '')
+    SV.syncErrorTitle() // another error summary (a failed page image) may still show
     var b = document.querySelector('[data-item="' + id + '"] [data-undo]')
     if (b) { b.setAttribute('aria-expanded', 'false'); b.focus({ preventScroll: true }) }
   }
   function openUndo(form, btn) {
     form.hidden = false
+    var tr = form.closest('tr'); if (tr) tr.hidden = false
     btn.setAttribute('aria-expanded', 'true')
     form.querySelector('textarea').focus({ preventScroll: true })
+    form.scrollIntoView({ block: 'nearest' }) // the whole form shows, the list keeps its place otherwise
   }
   function undoButton(it, where, form) {
     var b = h('button', { type: 'button', class: 'govuk-button govuk-button--secondary app-button-compact', 'data-undo': '', 'aria-expanded': 'false', onclick: function () { if (form.hidden) openUndo(form, b); else closeUndo(form, where, it.id) } }, 'Undo', vis(' the decision on ' + it.name))
@@ -296,10 +307,14 @@
       if (decided && allowed && !u) {
         var f = undoForm(it, 'row', list)
         box.appendChild(undoButton(it, 'row', f))
-        box.parentNode.appendChild(f)
+        // the form sits in a full-width row under the decided row, not in the narrow actions cell
+        var tr2 = document.createElement('tr'); tr2.className = 'govuk-table__row'; tr2.hidden = true
+        var td2 = document.createElement('td'); td2.className = 'govuk-table__cell'; td2.colSpan = row.children.length
+        td2.appendChild(f); tr2.appendChild(td2)
+        row.parentNode.insertBefore(tr2, row.nextSibling)
       } else if ((!decided || !allowed) && u) {
-        var f2 = box.parentNode.querySelector('.app-undo')
-        u.remove(); if (f2) f2.remove()
+        var f2 = document.getElementById('undo-row-' + it.id)
+        u.remove(); if (f2) f2.closest('tr').remove()
       }
     })
   }
@@ -503,4 +518,9 @@
     },
   })
   refreshAll()
+  // in the void state the changed cells are what matters: the list opens scrolled to them, so the first rows show beside the pane
+  if (void_ && document.body.getAttribute('data-tab') === 'workbench') {
+    var vsec = document.querySelector('section[data-void-only]'), vwk = document.querySelector('.app-split__work')
+    if (vsec && vwk) vwk.scrollTop = vsec.getBoundingClientRect().top - vwk.getBoundingClientRect().top + vwk.scrollTop - 4
+  }
 })()

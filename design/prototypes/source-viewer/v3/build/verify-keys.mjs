@@ -220,7 +220,8 @@ sections.keyboard = async (T) => {
     await T.go(page, urlOf('cpa', 'f1', '1'))
     const names = []
     for (let i = 0; i < 25; i++) { await page.keyboard.press('Tab'); names.push(await page.evaluate(() => { const e = document.activeElement; return e.className.toString().includes('skip') ? 'skip' : e.id === 'sv-search' ? 'search' : e.id === 'sv-signout' ? 'signout' : e.closest('.moj-sub-navigation') && !e.closest('.app-viewer') ? 'tabs' : e.id === 'sv-filter' ? 'filter' : e.closest('.app-tools') ? 'tools' : e.closest('[data-item]') ? 'rows' : e.closest('.app-viewer') ? 'viewer' : e.id === 'app-splitter' ? 'splitter' : e.className.toString().includes('brand') ? 'brand' : 'other' })) }
-    const order = names.filter((n, i) => n !== names[i - 1])
+    // the search button and the scrollable work region are neither named group: they sit between named stops, in order
+    const order = names.filter((n) => n !== 'other').filter((n, i, a) => n !== a[i - 1])
     const want = ['skip', 'brand', 'search', 'signout', 'tabs', 'filter', 'tools', 'rows']
     ck('the walk follows the page top to bottom: skip link, header, search, sign out, record tabs, filter, tools, rows', want.every((n, i) => order[i] === n), order.join(' > '))
     await c.close() }

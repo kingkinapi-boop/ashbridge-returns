@@ -357,7 +357,7 @@
         var tr = h('tr', {}, h('th', { scope: 'row', text: String(r.line) }))
         r.cells.forEach(function (c, ci) {
           var boxed = r.line === s.boxRow && ci === s.boxCol
-          var td = h('td', { class: (s.numCols.indexOf(ci) >= 0 && r.line > 1 ? 'app-num' : '') + (boxed ? ' app-cell-boxed' : ''), id: boxed ? 'sv-box-' + self.role : null, tabindex: boxed ? '-1' : null, 'aria-label': boxed ? 'Boxed figure, row ' + r.line + ', column ' + letters[ci] + ': ' + c : null }, c)
+          var td = h('td', { class: (s.numCols.indexOf(ci) >= 0 ?'app-num' : '') + (boxed ? ' app-cell-boxed' : ''), id: boxed ? 'sv-box-' + self.role : null, tabindex: boxed ? '-1' : null, 'aria-label': boxed ? 'Boxed figure, row ' + r.line + ', column ' + letters[ci] + ': ' + c : null }, c)
           if (boxed) td.appendChild(h('span', { class: 'govuk-visually-hidden', text: ' (Boxed figure)' }))
           tr.appendChild(td)
         })

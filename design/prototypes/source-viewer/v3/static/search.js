@@ -56,6 +56,7 @@
     var terms = q.toLowerCase().split(/\s+/).map(function (t) { return t.replace(/[,.;:]+$/, '') }).filter(Boolean)
     if (!terms.length) {
       countEl.textContent = 'Type a figure, a value, an exception, an item or a source in the search box to see results.'
+      countEl.removeAttribute('data-count'); countEl.removeAttribute('data-scope') // no number here: it is an instruction, not a count
       document.title = 'Search results, ' + ret + base
       box.appendChild(h('p', { class: 'govuk-body', text: 'Nothing has been searched yet. A value is found in the way it is shown on the page, for example 13,212 or 12,000.00.' }))
       return
@@ -64,11 +65,13 @@
     document.title = 'Search results for ' + q + ', ' + ret + base
     if (!hits.length) {
       countEl.textContent = '0 results for "' + q + '".'
+      countEl.setAttribute('data-scope', 'for "' + q + '"') // one search is one scope
       box.appendChild(h('p', { class: 'govuk-body', text: 'Nothing matches that search. Check the spelling, or search for a value in the way it is shown on the page, for example 13,212.' }))
       box.appendChild(h('p', { class: 'govuk-body' }, h('a', { class: 'govuk-link', href: 'review.html' }, 'Back to the return record')))
       return
     }
     countEl.textContent = hits.length + (hits.length === 1 ? ' result for "' : ' results for "') + q + '".'
+    countEl.setAttribute('data-scope', 'for "' + q + '"')
     var tbl = h('table', { class: 'govuk-table app-table-dense' })
     tbl.appendChild(h('caption', { class: 'govuk-table__caption govuk-visually-hidden', text: 'Results for ' + q + ', figures, values, exceptions, items and sources' }))
     tbl.appendChild(h('thead', { class: 'govuk-table__head' }, h('tr', { class: 'govuk-table__row' },
