@@ -2,7 +2,10 @@
  "card": "CQ4",
  "role": "spec",
  "worker": "cloud-f0768b",
- "state": "working",
- "at": "2026-10-03T05:12:58.884Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T05:14:11.857Z",
+ "mode": "turbo",
+ "note": "7 tests (4 fail for R82, 3 controls pass)",
+ "commit": "41ba7869",
+ "validated": "37bded65"
 }
