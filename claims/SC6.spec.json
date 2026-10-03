@@ -1,10 +1,11 @@
 {
  "card": "SC6",
  "role": "spec",
- "note": "A408: gaps in reports/SC6-spec-review.md; see bold directive on the card",
+ "note": "wait: W16 lands (directive: KNOWN ends empty, so R78 passes on main only after W16); card Where: cloud",
  "reopenedFrom": "839819f",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T06:35:36.658Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T06:36:17.444Z",
+ "mode": "turbo",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\",\"W16\"],\"depStatus\":[\"carded\",\"carded\"]}"
 }
