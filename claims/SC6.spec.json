@@ -2,8 +2,11 @@
  "card": "SC6",
  "role": "spec",
  "worker": "cloud-e9b38e",
- "state": "working",
- "at": "2026-10-03T13:30:57.693Z",
+ "state": "reported",
+ "at": "2026-10-03T13:50:20.268Z",
  "mode": "turbo",
- "beat": "2026-10-03T13:33:22.708Z"
+ "beat": "2026-10-03T13:33:22.708Z",
+ "note": "33 tests; paths gap: verify.mjs items (R11 missing N known, * bullets) need a card with verify.mjs in Paths",
+ "commit": "c526b32d",
+ "validated": "931d08fa"
 }
