@@ -1,10 +1,11 @@
 {
  "card": "SC12",
  "role": "spec",
- "note": "40 tests; owners to re-home (FX18, FX7, FX4, SC3, SC11, A04C G4); paths gap: auth.acceptance.db.test.ts createAuth calls need owner",
+ "note": "wait: card directive (A488) says the patch waits for SC3 and SC11 to land (their Paths); neither is on main",
  "reopenedFrom": "b6bc226f",
  "worker": "cloud-e6a4bc",
- "state": "working",
- "at": "2026-10-03T14:41:13.870Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T14:41:31.590Z",
+ "mode": "turbo",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"carded\"]}"
 }
