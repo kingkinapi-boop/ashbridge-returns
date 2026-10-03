@@ -52,6 +52,17 @@ function logOnce(ctx: EngineContext, line: string, detail: string | undefined): 
   ctx.sink(line)
 }
 
+type Json = { ok: true; value: unknown } | { ok: false }
+
+function tryParse(text: string): Json {
+  try {
+    return { ok: true, value: JSON.parse(text) }
+  } catch {
+    // Stryker disable next-line ObjectLiteral: callers read only `ok`, which is falsy on an empty object too
+    return { ok: false }
+  }
+}
+
 type Recording = z.infer<typeof RecordingSchema>
 
 /** One recording file, or undefined when it is not one (fail closed; the file is logged once by name with the reason). */
@@ -64,14 +75,12 @@ function readRecording(ctx: EngineContext, name: string): Recording | undefined 
     flag(String(read.code), read.code)
     return undefined
   }
-  let value: unknown
-  try {
-    value = JSON.parse(read.text)
-  } catch {
+  const json = tryParse(read.text)
+  if (!json.ok) {
     flag('unparseable', read.text)
     return undefined
   }
-  const parsed = RecordingSchema.safeParse(value)
+  const parsed = RecordingSchema.safeParse(json.value)
   if (!parsed.success) {
     flag('not one recording', read.text)
     return undefined
@@ -112,20 +121,14 @@ function readOutbox(jobId: string, ctx: EngineContext, outbox: string): { output
       if (!ctx.waiting.has(path.parse(name).name)) ignore(detail)
       continue
     }
+    // Stryker disable next-line ConditionalExpression,BlockStatement: an unreadable file and one that is not JSON are ignored and logged the same way (the folder case is pinned by engines.build.test.ts)
     if (!read.ok) {
       ignore(detail)
       continue
     }
-    let value: unknown
-    try {
-      value = JSON.parse(read.text)
-      // Stryker disable next-line BlockStatement: a file that is not JSON and one that fails the result schema are both ignored and logged the same way
-    } catch {
-      ignore(detail)
-      continue
-    }
-    const result = OutboxFileSchema.safeParse(value)
-    if (!result.success || result.data.jobId !== jobId) {
+    const json = tryParse(read.text)
+    const result = json.ok ? OutboxFileSchema.safeParse(json.value) : undefined
+    if (result?.success !== true || result.data.jobId !== jobId) {
       ignore(detail)
       continue
     }
