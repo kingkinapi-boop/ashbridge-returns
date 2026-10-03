@@ -1,0 +1,51 @@
+BUDGET at 1366 x 650
+  1366x650 Preparer queue A, My returns (Aisha): 18 rows; first row top 281, bottom 360; 6 rows whole in view; first row wholly inside the first screen; 7 columns
+  1366x650 Preparer queue B, My returns (Aisha): 18 rows; first row top 295, bottom 374; 5 rows whole in view; first row wholly inside the first screen; 7 columns
+  1366x650 Preparer queue A, empty (Casey): 0 rows; empty message 230 to 295; 0 rows whole in view; empty message wholly inside the first screen; 0 columns
+  1366x650 Preparer queue B, empty (Casey): 0 rows; empty message 244 to 309; 0 rows whole in view; empty message wholly inside the first screen; 0 columns
+  1366x650 Preparer queue A, everyone (Dana): 108 rows; first row top 267, bottom 324; 6 rows whole in view; first row wholly inside the first screen; 7 columns
+  1366x650 Preparer queue B, everyone (Dana): 108 rows; first row top 281, bottom 338; 6 rows whole in view; first row wholly inside the first screen; 7 columns
+  1366x650 Review queue (Dana): 44 rows; first row top 341, bottom 398; 5 rows whole in view; first row wholly inside the first screen; 8 columns
+  1366x650 Ops queue (Priti): 46 rows; first row top 341, bottom 398; 5 rows whole in view; first row wholly inside the first screen; 8 columns
+  1366x650 New returns (Priti): 63 rows; first row top 327, bottom 384; 5 rows whole in view; first row wholly inside the first screen; 8 columns
+  1366x650 Board (Owen): 300 rows; first row top 566, bottom 623; 1 rows whole in view; first row wholly inside the first screen; 8 columns; state strip 193 to 367
+  1366x650 Record, Aisha, Halton Haulage (Workbench, since strip): landing tab Workbench; identity bar 110 to 208; since strip 218 to 256; tabs 266 to 304; first block (p.govuk-body) 314 to 336; 7 facts; first block wholly inside the first screen
+  1366x650 Record, Aisha, Maple Ridge (Workbench): landing tab Workbench; identity bar 110 to 199; since strip 209 to 247; tabs 257 to 295; first block (p.govuk-body) 305 to 327; 7 facts; first block wholly inside the first screen
+  1366x650 Record, Dana, Maple Ridge (Review): landing tab Review; identity bar 110 to 199; since strip 209 to 247; tabs 257 to 295; first block (div) 305 to 327; 7 facts; first block wholly inside the first screen
+  1366x650 Record, Priti, Riverdale Rentals (Overview, approved): landing tab Overview; identity bar 110 to 199; tabs 207 to 245; first block (div.moj-alert) 255 to 342; alert 255 to 342; 7 facts; first block wholly inside the first screen
+  1366x650 Record, Owen, Riverdale Rentals (Overview, approved): landing tab Overview; identity bar 110 to 199; tabs 207 to 245; first block (div.moj-alert) 255 to 342; alert 255 to 342; 7 facts; first block wholly inside the first screen
+  1366x650 Record, Aisha, Willow Landscaping 012 (Workbench, approval void): landing tab Workbench; identity bar 110 to 208; tabs 216 to 254; first block (p.govuk-body) 264 to 286; 7 facts; first block wholly inside the first screen
+  1366x650 Record, Dana, Eglinton Holdings (Review, rework): landing tab Review; identity bar 110 to 219; since strip 229 to 267; tabs 277 to 315; first block (div) 325 to 347; 8 facts; first block wholly inside the first screen
+  1366x650 Record, Priti, Scarborough Robotics (Overview, ready to file): landing tab Overview; identity bar 110 to 199; tabs 207 to 245; first block (div.moj-alert) 255 to 342; alert 255 to 342; 7 facts; first block wholly inside the first screen
+  1366x650 Record, Aisha, Danforth Cleaning (Workbench, waiting on client): landing tab Workbench; identity bar 110 to 208; tabs 216 to 254; first block (p.govuk-body) 264 to 286; 7 facts; first block wholly inside the first screen
+  1366x650 sign-in.html: form 130 to 290, button bottom 342, wholly inside the first screen
+  1366x650 sign-in-error.html: form 241 to 441, button bottom 493, wholly inside the first screen
+  1366x650 code.html: form 164 to 294, button bottom 346, wholly inside the first screen
+  1366x650 code-error.html: form 275 to 445, button bottom 497, wholly inside the first screen
+  1366x650 Documents (Halton): viewer beside the list true; viewer 264 to 898 (height 634); cited line 378 to 413 inside its box true; Send to second window bottom 311; page scrolled 0 px
+BUDGET at 1093 x 525
+  1093x525 Preparer queue A, My returns (Aisha): 18 rows; first row top 281, bottom 360; 3 rows whole in view; first row wholly inside the first screen; 7 columns
+  1093x525 Preparer queue B, My returns (Aisha): 18 rows; first row top 295, bottom 374; 3 rows whole in view; first row wholly inside the first screen; 7 columns
+  1093x525 Preparer queue A, empty (Casey): 0 rows; empty message 230 to 295; 0 rows whole in view; empty message wholly inside the first screen; 0 columns
+  1093x525 Preparer queue B, empty (Casey): 0 rows; empty message 244 to 309; 0 rows whole in view; empty message wholly inside the first screen; 0 columns
+  1093x525 Preparer queue A, everyone (Dana): 108 rows; first row top 281, bottom 360; 3 rows whole in view; first row wholly inside the first screen; 7 columns
+  1093x525 Preparer queue B, everyone (Dana): 108 rows; first row top 295, bottom 374; 3 rows whole in view; first row wholly inside the first screen; 7 columns
+  1093x525 Review queue (Dana): 44 rows; first row top 341, bottom 398; 3 rows whole in view; first row wholly inside the first screen; 8 columns
+  1093x525 Ops queue (Priti): 46 rows; first row top 341, bottom 420; 2 rows whole in view; first row wholly inside the first screen; 8 columns
+  1093x525 New returns (Priti): 63 rows; first row top 341, bottom 398; 3 rows whole in view; first row wholly inside the first screen; 8 columns
+  1093x525 Board (Owen): 300 rows; first row top 549, bottom 628; 0 rows whole in view; first row below the fold; 8 columns; state strip 193 to 350
+  1093x525 Record, Aisha, Halton Haulage (Workbench, since strip): landing tab Workbench; identity bar 110 to 228; since strip 238 to 276; tabs 286 to 324; first block (p.govuk-body) 334 to 356; 7 facts; first block wholly inside the first screen
+  1093x525 Record, Aisha, Maple Ridge (Workbench): landing tab Workbench; identity bar 110 to 219; since strip 229 to 267; tabs 277 to 315; first block (p.govuk-body) 325 to 347; 7 facts; first block wholly inside the first screen
+  1093x525 Record, Dana, Maple Ridge (Review): landing tab Review; identity bar 110 to 219; since strip 229 to 267; tabs 277 to 315; first block (div) 325 to 347; 7 facts; first block wholly inside the first screen
+  1093x525 Record, Priti, Riverdale Rentals (Overview, approved): landing tab Overview; identity bar 110 to 219; tabs 227 to 265; first block (div.moj-alert) 275 to 362; alert 275 to 362; 7 facts; first block wholly inside the first screen
+  1093x525 Record, Owen, Riverdale Rentals (Overview, approved): landing tab Overview; identity bar 110 to 219; tabs 227 to 265; first block (div.moj-alert) 275 to 362; alert 275 to 362; 7 facts; first block wholly inside the first screen
+  1093x525 Record, Aisha, Willow Landscaping 012 (Workbench, approval void): landing tab Workbench; identity bar 110 to 241; tabs 249 to 287; first block (p.govuk-body) 297 to 319; 7 facts; first block wholly inside the first screen
+  1093x525 Record, Dana, Eglinton Holdings (Review, rework): landing tab Review; identity bar 110 to 219; since strip 229 to 267; tabs 277 to 315; first block (div) 325 to 347; 8 facts; first block wholly inside the first screen
+  1093x525 Record, Priti, Scarborough Robotics (Overview, ready to file): landing tab Overview; identity bar 110 to 199; tabs 207 to 245; first block (div.moj-alert) 255 to 342; alert 255 to 342; 7 facts; first block wholly inside the first screen
+  1093x525 Record, Aisha, Danforth Cleaning (Workbench, waiting on client): landing tab Workbench; identity bar 110 to 241; tabs 249 to 287; first block (p.govuk-body) 297 to 319; 7 facts; first block wholly inside the first screen
+  1093x525 sign-in.html: form 130 to 290, button bottom 342, wholly inside the first screen
+  1093x525 sign-in-error.html: form 241 to 441, button bottom 493, wholly inside the first screen
+  1093x525 code.html: form 164 to 294, button bottom 346, wholly inside the first screen
+  1093x525 code-error.html: form 275 to 445, button bottom 497, wholly inside the first screen
+  1093x525 Documents (Halton): viewer beside the list true; viewer 284 to 793 (height 509); cited line 418 to 453 inside its box true; Send to second window bottom 331; page scrolled 0 px
+PAGE ERRORS: 0

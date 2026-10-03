@@ -1,0 +1,7 @@
+AXE 1366 x 650: 312 page states, 0 violations, 0 incomplete
+CLASSES 1366 x 650: 0 classes without govuk-, moj- or app- ; 0 app- classes in the live page not listed in basis.md ; 51 app- classes seen
+STYLES 1366 x 650: 0 inline style attributes in live pages 
+AXE 1093 x 525: 312 page states, 0 violations, 0 incomplete
+CLASSES 1093 x 525: 0 classes without govuk-, moj- or app- ; 0 app- classes in the live page not listed in basis.md ; 51 app- classes seen
+STYLES 1093 x 525: 0 inline style attributes in live pages 
+PAGE ERRORS: 0

@@ -1,0 +1,32 @@
+  WALK nobody: index.html: 33 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a Start at Sign in > div Test usersUser IDNameRol
+  WALK nobody: sign-in.html: 6 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > input#user-id  > input#password 
+  WALK nobody: sign-in-error.html: 6 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Sign-in failed. Check wh > input#user-id  > input#password 
+  WALK nobody: code.html: 5 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a Back > input#code 
+  WALK nobody: code-error.html: 4 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Sign-in failed. Check wh > input#code  > button Verify
+  WALK nobody: sign-in-ended.html?next=queue-a.html: 6 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > input#user-id  > input#password 
+  WALK nobody: signed-out.html: 3 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a Sign in again > a Prototype guide, test us
+  WALK aisha: queue-a.html: 38 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: queue-b.html: 35 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: queue-b.html#view=all&q=halton: 19 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK casey: queue-a-empty.html: 12 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: search.html?q=landscaping: 9 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Annex Landscaping 167 In > a Annex Landscaping 177 In > a Rouge Landscaping 022 In
+  WALK dana: queue-a.html: 131 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK dana: queue-cpa.html: 69 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK priti: queue-ops.html: 68 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK priti: queue-new.html: 126 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Annex Logistics 057 Inc. > input#returns-filler-284  > a Beaches Studio 284 Inc. 
+  WALK owen: board.html: 341 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: rec-halton-haulage.html#workbench: 23 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: rec-halton-haulage.html#documents/1: 26 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: rec-danforth-cleaning.html#history: 20 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: rec-filler-012.html#overview: 26 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: rec-eglinton-retail.html#overview: 29 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK dana: rec-maple-ridge.html#review: 22 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK dana: rec-maple-ridge.html#documents: 30 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK dana: rec-lakeshore-eats.html#history: 24 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK dana: rec-halton-haulage.html#overview: 34 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK priti: rec-scarborough-robotics.html#ops: 19 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK priti: rec-riverdale-rentals.html#ops: 18 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK owen: rec-riverdale-rentals.html#overview: 27 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+  WALK aisha: source.html?n=Chequing+statements&s=Maplestone+Bank+(Test)&st=Read&r=Halton+Haulage+Ltd.+(Test)&y=31+Mar+2026: 9 tab stops, 0 without a visible focus style, 0 hidden or covered, no trap; first stops: a Skip to main content > a  > input#header-search 
+WALK: 30 pages walked by Tab alone, 0 with a problem
+PAGE ERRORS: 0

@@ -1,0 +1,242 @@
+/* Version 3 prototype stylesheet, loaded after static/basis.css (GOV.UK Frontend 6.5.1 and MOJ Frontend 11.1.0 with the Ashbridge Tax settings).
+   Only layout and density live here; the brand (colours, Roboto) comes from basis.css. Every app- class below is listed in v3/basis.md with its reason.
+   No zoom, no import, no web font. */
+
+/* One guard for every hidden part: GOV.UK and MOJ set display on their error, banner and summary classes, which would beat the hidden attribute (V1). */
+[hidden] { display: none !important; }
+/* a list page can end in a sticky bar (bulk assign and its result): a focused control is scrolled clear of it. Record pages have no sticky foot, so focus alone scrolls nothing there. */
+html:has(body.app-list) { scroll-padding-bottom: 7rem; }
+.govuk-template { background-color: #fff; }
+.govuk-template__body { font-family: Roboto, arial, sans-serif; }
+/* the wide container gets a gutter: basis.css gives it none between 1020 px and its 1600 px maximum */
+.app-width-container--wide { margin-left: 30px; margin-right: 30px; }
+@media (min-width: 1660px) { .app-width-container--wide { margin-left: auto; margin-right: auto; } }
+@media (max-width: 40.0525em) { .app-width-container--wide { margin-left: 15px; margin-right: 15px; } }
+
+/* ---------- focus: programmatic focus targets are visible too (rule 11) ---------- */
+[tabindex="-1"]:focus { outline: 3px solid #f5c94c; outline-offset: 0; box-shadow: 0 0 0 5px #15283b; }
+.app-tablewrap:focus, .app-viewer__scroll:focus, .app-viewer:focus { outline: 3px solid #f5c94c; outline-offset: 0; box-shadow: 0 0 0 5px #15283b; }
+.app-linkbutton:focus, .app-pipe:focus { outline: 3px solid #f5c94c; outline-offset: 0; background: #f5c94c; color: #15283b; box-shadow: 0 -2px #f5c94c, 0 4px #15283b; text-decoration: none; }
+
+/* ---------- the header: logo and search on one row ---------- */
+/* app-header-row, app-search, app-search__label, app-search__input, app-search__button: the staff search sits in the Generic header beside the logo (GOV.UK has no staff search) */
+.app-header-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; }
+.app-header-row .govuk-header__logo { margin: 0; padding: 8px 0; float: none; width: auto; }
+.app-header-row .govuk-header__homepage-link { display: block; margin: 0; line-height: 0; }
+.app-search { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px 8px; margin: 0; padding: 4px 0; }
+.app-search__label { margin: 0; color: #fff; font-size: 1rem; line-height: 1.25; }
+.app-search__input { width: 14rem; max-width: 100%; min-height: 36px; height: 36px; padding: 4px 8px; }
+.app-search__button { margin: 0; min-height: 36px; padding: 4px 14px; }
+.app-search .govuk-button { margin-bottom: 0; }
+
+/* service navigation: the role's lists and Sign out last; the signed-in line sits at the far end of the same bar */
+.govuk-service-navigation { font-size: 1rem; }
+.app-header-user { margin: 0 0 0 auto; padding: 8px 0; font-size: 1rem; line-height: 1.5; color: #15283b; }
+@media (min-width: 40.0625em) {
+  .govuk-service-navigation__item, .govuk-service-navigation__service-name { padding: 8px 0; line-height: 1.5; }
+  .govuk-service-navigation__item--active { padding-bottom: 3px; }
+  .govuk-service-navigation__item:not(:last-child), .govuk-service-navigation__service-name:not(:last-child) { margin-right: 16px; }
+  .app-header-user { padding-left: 28px; }
+}
+@media (max-width: 40.0525em) { .app-header-user { margin: 0; padding: 4px 0 8px; } }
+.govuk-service-navigation__link { font-size: 1rem; }
+
+/* ---------- density: repeat desk work, 16 px text, tighter blocks ---------- */
+.govuk-main-wrapper { padding-bottom: 24px; }
+body[data-page="app"] .govuk-body, body[data-page="app"] .govuk-table, body[data-page="app"] .govuk-label, body[data-page="app"] .govuk-hint,
+body[data-page="app"] .govuk-radios__label, body[data-page="app"] .govuk-checkboxes__label, body[data-page="app"] .govuk-input, body[data-page="app"] .govuk-select,
+body[data-page="app"] .govuk-button, body[data-page="app"] .govuk-inset-text, body[data-page="app"] .govuk-task-list, body[data-page="app"] .govuk-error-message,
+body[data-page="app"] .govuk-fieldset__legend, body[data-page="app"] .govuk-file-upload, body[data-page="app"] .govuk-notification-banner__content,
+body[data-page="app"] .govuk-error-summary__body { font-size: 1rem; line-height: 1.375; }
+body[data-page="app"] .govuk-heading-l { font-size: 1.75rem; line-height: 1.15; }
+body[data-page="app"] .govuk-heading-m { font-size: 1.25rem; line-height: 1.2; }
+body[data-page="app"] .govuk-heading-s { font-size: 1rem; line-height: 1.3; }
+body[data-page="app"] .govuk-body { margin-bottom: 10px; }
+body[data-page="app"] .govuk-table { margin-bottom: 12px; }
+body[data-page="app"] .govuk-table__cell, body[data-page="app"] .govuk-table__header { padding: 6px 10px 6px 0; vertical-align: top; }
+body[data-page="app"] .govuk-table__header--numeric, body[data-page="app"] .govuk-table__cell--numeric { text-align: right; padding-right: 14px; padding-left: 10px; }
+body[data-page="app"] .govuk-form-group { margin-bottom: 12px; }
+body[data-page="app"] .govuk-button { margin-bottom: 12px; padding: 6px 14px; min-height: 36px; }
+body[data-page="app"] .govuk-inset-text { margin: 10px 0; padding: 8px 14px; border-left-width: 5px; }
+body[data-page="app"] .govuk-tag { font-size: 1rem; line-height: 1.25; max-width: none; padding: 1px 6px 2px; white-space: nowrap; }
+#returns tbody th.govuk-table__header { min-width: 13rem; }
+#returns th[data-col="days"] { min-width: 6.5rem; }
+#returns td[data-col="wflag"] .govuk-tag, #returns td[data-col="block"] .govuk-tag { white-space: normal; }
+/* short facts stay on one line so the table fits a 1093 px window; names, blockers and column headings wrap */
+#returns td[data-col="state"], #returns td[data-col="tier"], #returns td[data-col="filing"], #returns td[data-col="balance"], #returns td[data-col="days"], #returns td[data-col="flags"] { white-space: nowrap; }
+body[data-page="app"] .govuk-notification-banner { margin-bottom: 12px; }
+body[data-page="app"] .govuk-task-list { margin-bottom: 12px; }
+body[data-page="app"] .govuk-task-list__item { padding-top: 6px; padding-bottom: 6px; }
+/* MOJ's sort buttons are 22 px high at this text size: 24 px so every target meets rule 12 */
+[aria-sort] button { min-height: 24px; }
+[aria-sort] button, [aria-sort] button:hover { color: var(--govuk-link-colour); }
+[aria-sort] button:focus { color: var(--govuk-focus-text-colour); }
+.app-money { font-variant-numeric: tabular-nums; }
+kbd { font-family: ui-monospace, Consolas, monospace; background: #fff; border: 1px solid #8a97a5; padding: 0 6px; }
+
+/* app-width-container--wide is defined in basis.css. app-shortcuts: the Keyboard shortcuts list in the footer (rule 10) */
+.govuk-footer { padding: 12px 0; margin-top: 0; }
+.app-shortcuts { margin: 0 0 10px; }
+.app-shortcuts .govuk-details__text { max-width: 44rem; }
+
+/* ---------- lists ---------- */
+/* app-list: marks a list page; app-tablewrap: a scrollable labelled region so a wide table scrolls inside it at 320 px (rule 13) */
+.app-tablewrap { overflow-x: auto; }
+body.app-list h1.govuk-heading-l { margin-bottom: 8px; }
+body.app-list .moj-sub-navigation { margin-bottom: 8px; }
+body.app-list .govuk-table { margin-bottom: 0; }
+body.app-list [data-list-status] { margin-bottom: 8px; }
+.moj-sub-navigation { margin-bottom: 8px; }
+.moj-sub-navigation__item { font-size: 1rem; margin-right: 18px; }
+.moj-sub-navigation__link { padding-top: 6px; padding-bottom: 8px; }
+.moj-sub-navigation__link[aria-current="page"] { font-weight: 700; }
+/* the current tab's bar: MOJ draws it with an absolutely positioned ::before, which leaves axe unable to read the contrast of the text and the count badge inside the link
+   ("pseudo element", reported as incomplete). The same bar is drawn as an inset shadow, black while the link has focus, as in MOJ. */
+.moj-sub-navigation__link[aria-current="page"]::before, .moj-sub-navigation__link[aria-current="page"]:focus::before { content: none; }
+.moj-sub-navigation__link[aria-current="page"] { box-shadow: inset 5px 0 0 var(--govuk-link-colour, #355b7d); }
+.moj-sub-navigation__link[aria-current="page"]:focus { box-shadow: inset 5px 0 0 #0b0c0c; }
+@media (min-width: 40.0625em) {
+  .moj-sub-navigation__link[aria-current="page"] { box-shadow: inset 0 -5px 0 var(--govuk-link-colour, #355b7d); }
+  .moj-sub-navigation__link[aria-current="page"]:focus { box-shadow: inset 0 -5px 0 #0b0c0c; }
+}
+.moj-sub-navigation .moj-badge { margin-left: 2px; }
+.moj-badge--grey { background-color: #e4e8ed; color: #15283b; }
+@media (max-width: 40.0525em) { .moj-sub-navigation__item { margin-right: 0; } .moj-sub-navigation__link { padding-top: 8px; padding-bottom: 8px; } }
+
+/* app-listbar, app-listbar__field, app-listbar__input: the "Show" menu and the filter box on one line (MOJ's filter reloads the page, so this is composed) */
+.app-listbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 24px; margin: 0 0 8px; }
+.app-listbar__field { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 0; }
+.app-listbar__field .govuk-label { margin: 0; }
+.app-listbar__input { width: 18rem; max-width: 100%; min-height: 36px; padding: 4px 8px; }
+.app-listbar .govuk-select { min-height: 36px; padding: 4px 8px; }
+@media (max-width: 40.0525em) { .app-listbar { flex-direction: column; align-items: stretch; } .app-listbar__field { flex-direction: column; align-items: stretch; } .app-listbar__input { width: 100%; } }
+
+/* app-linkbutton: a real button drawn as a link; it is used where choosing something is an action (a document, Clear the filter), not navigation */
+.app-linkbutton { font: inherit; background: none; border: 0; padding: 2px 0; color: var(--govuk-link-colour); text-decoration: underline; cursor: pointer; text-align: left; min-height: 24px; }
+.app-linkbutton:hover { color: var(--govuk-link-hover-colour); }
+.app-linkbutton[aria-pressed="true"] { font-weight: 700; }
+.app-linkbutton[aria-pressed="true"]::after { content: " (open in the viewer)"; font-weight: 400; }
+
+/* app-pipeline, app-pipe, app-pipe--zero, app-pipe__count, app-pipe__label, app-pipe__age: the Board's state strip, real buttons that narrow the list below (owner, RV-40) */
+.app-pipeline { list-style: none; margin: 0 0 10px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 6px; }
+.app-pipeline li { margin: 0; }
+.app-pipe { font: inherit; display: block; width: 100%; text-align: left; padding: 3px 8px; border: 2px solid #627283; background: #fff; color: #15283b; cursor: pointer; min-height: 24px; }
+.app-pipe:hover { border-color: #355b7d; }
+.app-pipe[aria-pressed="true"] { border-color: #15283b; box-shadow: inset 0 -4px 0 #f5c94c; }
+.app-pipe[aria-pressed="true"] .app-pipe__label::after { content: " (chosen)"; font-weight: 400; }
+.app-pipe__count { display: block; font-size: 1.375rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.app-pipe__label { display: block; font-weight: 700; font-size: .9375rem; }
+.app-pipe__age { display: block; color: #3f4f60; font-size: .875rem; }
+.app-pipe--zero { background: #f4f8fb; }
+
+/* app-bulkbar, app-bulkbar__row, app-bulkbar__field, app-bulkbar__summary, app-bulkresult: bulk assign appears only when rows are chosen (no disabled button), sticky at the foot of the window (rule 19) */
+.app-bulkbar { position: sticky; bottom: 0; z-index: 5; display: flex; flex-direction: column; align-items: stretch; gap: 6px; background: #fff; border: 2px solid #355b7d; padding: 8px 12px; margin: 10px 0; box-shadow: 0 -3px 8px rgba(21, 40, 59, .2); }
+.app-bulkbar__row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 6px 16px; }
+.app-bulkbar__field { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; }
+.app-bulkbar__field .govuk-label { margin: 0; }
+.app-bulkbar__field .govuk-error-message { margin: 0; }
+.app-bulkbar__field .govuk-select { min-height: 36px; height: 36px; }
+.app-bulkbar .govuk-button { margin-bottom: 0; }
+.app-bulkbar__summary { margin: 0; padding: 8px 12px; border-width: 4px; }
+.app-bulkbar__summary > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 16px; }
+.app-bulkbar__summary .govuk-error-summary__title { font-size: 1.125rem; margin: 0 0 4px; }
+.app-bulkbar__summary .govuk-error-summary__body { margin: 0; }
+.app-bulkbar__summary .govuk-error-summary__list { margin: 0; }
+.app-bulkresult { position: sticky; bottom: 0; z-index: 5; background: #fff; border: 2px solid #1f6e50; padding: 8px 12px; margin: 10px 0; }
+/* app-result: the result of an in-place action on a record (an Ops step, a chase) in the same green frame as the bulk result, one or two lines, in the flow where the person acted (rule 19).
+   GOV.UK's success banner is 100 to 170 px tall at this width and would fall below the 1093 x 525 fold under a form. */
+.app-result { margin: 0 0 10px; padding: 8px 12px; background: #fff; border: 2px solid #1f6e50; }
+
+/* ---------- the record: one shell for every role ---------- */
+/* app-record: marks a record page. app-tabrow holds the record tabs and, at the far end, app-listnav: Back, Previous and Next follow the list the person came from (rule 21) */
+.app-tabrow { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 0 24px; margin-bottom: 10px; box-shadow: inset 0 -1px 0 #cecece; }
+.app-tabrow .moj-sub-navigation { flex: 1 1 auto; margin-bottom: 0; }
+.app-tabrow .moj-sub-navigation__list { box-shadow: none; }
+.app-listnav { margin: 0; padding: 6px 0 8px; display: flex; flex-wrap: wrap; gap: 0 20px; font-size: 1rem; line-height: 1.5; }
+.moj-identity-bar { margin-bottom: 8px; padding: 8px 12px; background-color: #f4f8fb; border: 1px solid #cecece; border-left: 5px solid #355b7d; box-shadow: none; }
+/* the identity bar is a grid: the title and tags, the actions beside them, then the facts across the full width */
+.moj-identity-bar__container { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 4px 16px; max-width: none; margin: 0; padding: 0; font-size: 1rem; text-align: left; }
+.moj-identity-bar__container::after { display: none; }
+.moj-identity-bar__details { display: contents; }
+.moj-identity-bar__actions { display: block; grid-column: 2; grid-row: 1; }
+.moj-identity-bar__menu { display: block; margin: 0; }
+.moj-identity-bar .moj-button-menu { margin: 0; }
+body[data-page="app"] .moj-identity-bar .govuk-button { margin-bottom: 0; }
+/* app-identity-title: the corporation and year end as the page's one h1, with its state and tier words beside it */
+.app-identity-title { grid-column: 1; grid-row: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+h1.moj-identity-bar__title { display: block; margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; color: #15283b; }
+/* app-facts, app-fact: the identity bar's facts as label and value pairs that wrap, at most ten (budget) */
+.app-facts { grid-column: 1 / -1; grid-row: 2; display: flex; flex-wrap: wrap; gap: 2px 22px; margin: 0; padding: 0; }
+.app-fact { margin: 0; display: block; }
+.app-fact dt { display: inline; font-weight: 400; color: #3f4f60; }
+.app-fact dt::after { content: ":"; }
+.app-fact dd { display: inline; margin: 0; font-weight: 700; }
+.app-fact dd a { font-weight: 700; }
+.moj-identity-bar__details > p[role="status"] { grid-column: 1 / -1; grid-row: 3; margin: 0; }
+/* app-since: "Since you last opened this return", one strip under the identity bar; it shows on the landing tab and Overview */
+.app-since { margin: 0 0 8px; padding: 6px 12px; background: #fff; }
+.app-since p { margin: 0; }
+/* app-panel: one tab's content */
+.app-panel .govuk-grid-row { margin-bottom: 4px; }
+.moj-timeline { margin-bottom: 8px; }
+/* the line is a border, as wide and the same colour as MOJ's absolutely positioned ::before bar, which leaves axe unable to read the background behind the text ("pseudo element", reported as incomplete);
+   the ticks stay MOJ's own small ::before marks, shortened by the width of the border */
+.moj-timeline::before { content: none; }
+.moj-timeline { border-left: 5px solid var(--govuk-brand-colour, #355b7d); }
+.moj-timeline__item { padding-bottom: 8px; padding-left: 15px; }
+.moj-timeline__item::before { width: 10px; }
+.moj-timeline__header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 10px; }
+.moj-timeline__title { margin: 0; font-size: 1rem; line-height: 1.3; }
+.moj-timeline__byline { font-size: 1rem; line-height: 1.3; color: #3f4f60; }
+.moj-timeline__date { margin: 0; color: #3f4f60; }
+.moj-alert { margin-bottom: 10px; }
+@media (max-width: 40.0525em) { .moj-identity-bar__container { grid-template-columns: minmax(0, 1fr); } .moj-identity-bar__actions { grid-column: 1; grid-row: 3; } h1.moj-identity-bar__title { font-size: 1.375rem; } }
+
+/* app-docs, app-docs__list, app-viewer, app-viewer__head, app-viewer__meta, app-viewer__send, app-viewer__scroll, app-viewer--page, app-sourcepage, app-src__hit:
+   the document list with the source viewer beside it, never below (rule 20). Stand-in for D03; the cited line is set at the top of the scroll box and the box stays in view. */
+.app-docs { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px; align-items: start; }
+.app-viewer { box-sizing: border-box; position: sticky; top: 8px; display: flex; flex-direction: column; max-height: calc(100vh - 16px); overflow: hidden; background: #fff; border: 1px solid #8a97a5; padding: 8px 12px; }
+.app-viewer [data-viewer-body] { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.app-viewer__head { flex: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 12px; padding-bottom: 6px; }
+.app-viewer__head h3 { flex: 1 1 8rem; min-width: 0; margin: 0; }
+.app-viewer__meta { flex-basis: 100%; margin: 0; }
+.app-viewer__send { flex: none; min-height: 32px; padding: 2px 12px; margin: 0; }
+.app-viewer__head [role="status"]:empty { display: none; }
+.app-viewer__scroll { flex: 1 1 auto; min-height: 0; overflow: auto; border-top: 1px solid #cecece; }
+.app-viewer__scroll thead th { position: sticky; top: 0; background: #fff; }
+.app-viewer__scroll .govuk-table__cell, .app-viewer__scroll .govuk-table__header { padding-top: 4px; padding-bottom: 4px; }
+.app-src__hit td { background: #fdf3d0; }
+.app-src__hit td:first-child { box-shadow: inset 4px 0 0 #15283b; }
+.app-src__hit .govuk-tag { white-space: nowrap; }
+.app-sourcepage .app-viewer { position: static; max-height: calc(100vh - 140px); }
+@media (max-width: 48em) { .app-docs { grid-template-columns: minmax(0, 1fr); } .app-viewer { position: static; max-height: none; overflow: visible; } .app-viewer__scroll { max-height: 22rem; } }
+
+/* app-steps, app-step, app-step__head, app-step__name, app-step__status, app-opsform: the Ops tab's checklist; each step holds its own in-place form of three fields or fewer (rules 9, 19).
+   app-opsform also lays out the chase form on the History tab (three radios and one button): the field and the button on one row, a one-line error summary above them. */
+.app-steps { list-style: none; margin: 0; padding: 0; }
+.app-step { border-top: 1px solid #cecece; padding: 8px 0; }
+.app-step__head { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 16px; flex-wrap: wrap; }
+.app-step__name { font-weight: 700; }
+.app-step__status { flex: none; }
+.app-opsform { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0 12px; max-width: 46rem; margin-top: 4px; }
+/* the summary is a full-width flex item: border-box so its padding and border stay inside the form's width (rule 13) */
+.app-opsform .govuk-error-summary { box-sizing: border-box; flex: 0 0 100%; min-width: 0; margin-bottom: 8px; padding: 8px 12px; border-width: 4px; }
+.app-opsform .govuk-error-summary > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 16px; }
+.app-opsform .govuk-error-summary__title { font-size: 1.125rem; margin: 0 0 4px; }
+.app-opsform .govuk-error-summary__body { margin: 0; }
+.app-opsform .govuk-error-summary__list { margin: 0; }
+.app-opsform .govuk-form-group { flex: 0 1 min(24rem, 100%); min-width: 0; margin-bottom: 8px; }
+.app-opsform .govuk-button { flex: none; margin-bottom: 8px; }
+.app-opsform .govuk-hint { margin-bottom: 4px; }
+.app-opsform .govuk-file-upload, .app-opsform .govuk-input { max-width: 100%; }
+
+/* ---------- sign-in pages ---------- */
+body[data-page="auth"] .govuk-main-wrapper { padding-top: 24px; }
+body[data-page="auth"] .govuk-error-summary { margin-bottom: 16px; padding: 12px 16px; }
+body[data-page="auth"] .govuk-error-summary__title { margin-bottom: 6px; }
+body[data-page="auth"] .govuk-error-summary__body { margin: 0; }
+body[data-page="auth"] .govuk-error-summary__list { margin: 0; }
+body[data-page="auth"] .govuk-form-group { margin-bottom: 14px; }
+body[data-page="auth"] .govuk-heading-l { margin-bottom: 16px; }
+/* the Back link is 24 px high (rule 12): GOV.UK's is 20 px at this size, so two px of padding above and below, and two px less margin above */
+body[data-page="auth"] .govuk-back-link { margin-top: 10px; margin-bottom: 0; padding-top: 2px; padding-bottom: 2px; }

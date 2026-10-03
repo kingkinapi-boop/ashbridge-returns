@@ -1,0 +1,75 @@
+TASKS at 1366 x 650
+  PASS Sign in: 1 load, 2 fields, 1 submit: 1 load, 2 fields, 121 ms
+  PASS Sign in: autofill attributes, and paste is not blocked in either field
+  PASS Sign in: the focus is on the first field or the page start (a person can type at once)
+  PASS Enter submits the sign-in form; 1 load to the code page: 1 load, 62 ms
+  PASS Two-step code: 1 field, numeric, one-time-code, paste not blocked
+  PASS A code with spaces pasted in is accepted; Aisha lands on My returns, 1 load: 1 load, 158 ms
+  PASS Sign in fails (wrong password): the one message, summary focused, title starts "Error: ": Sign-in failed. Check what you entered, then try again.
+  PASS Sign in fails (unknown user): the one message, summary focused, title starts "Error: ": Sign-in failed. Check what you entered, then try again.
+  PASS Sign in fails (empty form): the one message, summary focused, title starts "Error: ": Sign-in failed. Check what you entered, then try again.
+  PASS Six wrong passwords in a row give the same message and never a locked state (QR2)
+  PASS A wrong code gives the same message, with no resend control
+  PASS aisha lands on the list and a record opens on workbench; navigation: My returns, Sign out
+  PASS casey lands on the list; no row to open ; navigation: My returns, Sign out
+  PASS dana lands on the list and a record opens on review; navigation: Review queue, Preparer queue, Ops queue, New returns, Board, Sign out
+  PASS priti lands on the list and a record opens on overview; navigation: Ops queue, New returns, Sign out
+  PASS owen lands on the list and a record opens on overview; navigation: Board, Review queue, Preparer queue, Ops queue, New returns, Sign out
+  PASS Session ends after 30 minutes idle: sign-in page "Sign in", the asked-for address kept, 2 submits as at any sign-in, the selection restored: #view=waiting&sort=3d waiting -> #view=waiting&sort=3d waiting 3
+  PASS Session ends after 12 hours in all: sign-in page "Sign in", the asked-for address kept, 2 submits as at any sign-in, the selection restored: #view=waiting&sort=3d waiting -> #view=waiting&sort=3d waiting 3
+  PASS No session: the asked-for record address is kept for after the sign-in: next=rec-halton-haulage.html#documents/2
+  PASS After the code the person lands on that record, Documents, source 2 open: #documents/2
+  PASS Sign out: 1 click, 1 load, the second window closes: 1 load, second window "Chequing statements Apr 2025 to Mar 2026" closed: true
+  PASS After Sign out an old address needs a sign-in again
+  PASS Next return to work: 1 click from the landing list (sorted by filing due) opens the first row on Workbench, 1 load: rec-rouge-valley-landscaping-2024.html, 1 load, 150 ms
+  PASS Tab switch: 1 click each, 0 page loads, the header and identity bar stay, own URL: 0 loads, slowest 60 ms
+  PASS Each tab names itself in the title and the panel heading: Exceptions - Halton Haulage Ltd. (Test), year end 31 Mar 2026 - Ashbridge Tax
+  PASS Choosing the tab that is open says so and keeps the focus on it
+  PASS Open a source from Documents: 1 click, no page load, no history entry, focus in the viewer, under 1 s: 68 ms
+  PASS The URL names the source (#documents/2) so a reload or a second window restores it
+  PASS Send to second window opens it by script with the chosen document: Business card statements
+  PASS The second window follows the next document: Equipment finance amortisation table
+  PASS The second window stays open after a tab change
+  PASS Key s moves focus to the search box and repeats a visible control
+  PASS Find a return: s, type, Enter (3 actions) opens the single match on Workbench; the search page redirects before it finishes loading, so one page load completes: 1 completed page load
+  PASS SEC-2: a preparer searching a return that is not hers finds nothing: No return matches that search
+  PASS SEC-2: the address of a return that is not hers answers "not found"
+  PASS Several matches show a results table, sorted by corporation name, first result focused: 8 rows, 8 returns match "landscaping"
+  PASS Dana finds returns by business number "779886143": rec-halton-haulage.html#review
+  PASS Dana finds returns by year end "31 Mar 2026": search.html?q=31+Mar+2026
+  PASS Dana finds returns by year end partial "2026-03": search.html?q=2026-03
+  PASS Filter, view change and sort run in the page: 0 loads, each under 200 ms: filter 1 ms, view 2 ms, sort 19 ms
+  PASS The view, the filter and the sort are in the address: #view=all&q=a&sort=1a
+  PASS Reload restores the same view, filter and sort
+  PASS A record opened from a list offers Back to that list, Previous and Next: {"back":"Back to My returns","prev":true,"next":true,"tab":"#workbench"}
+  PASS Next opens the next row of that filtered, sorted list and keeps the tab: Cedar Print 265 Inc. (Test), year end 31 Jan 2026 -> Agincourt Landscaping 065 Inc. (Test), year end 31 Mar 2026
+  PASS Back to the list restores filter, sort, scroll and puts focus on the row left: {"q":"a","sort":"1","y":120,"focusRow":"filler-265","rows":36} wanted row filler-265, scroll 120
+  PASS dana: list to record in 1 click, 1 load, under 1 s, landing #review; 8 columns (at most 8); 7 facts (at most 10): 265 ms
+  PASS priti: list to record in 1 click, 1 load, under 1 s, landing #overview; 8 columns (at most 8); 7 facts (at most 10): 279 ms
+  PASS owen: list to record in 1 click, 1 load, under 1 s, landing #overview; 8 columns (at most 8); 8 facts (at most 10): 338 ms
+  PASS queue-a.html: QR8 columns in order, 7 (at most 8): Corporation and year end, State, Tier, Filing due, Balance due, Held by, Blocked by
+  PASS queue-b.html: QR8 columns in order, 7 (at most 8): Corporation and year end, State, Tier, Filing due, Balance due, Held by, Blocked by
+  PASS The caption states the default order (RV-20)
+  PASS aisha: queue-a.html opens in 1 page load, under 1 s, every row of the list in the page (253 rows in the page, the widest view is 36; no pagination): 193 ms, "Showing 18 of 18 returns in To do now."
+  PASS aisha: queue-b.html opens in 1 page load, under 1 s, every row of the list in the page (253 rows in the page, the widest view is 36; no pagination): 188 ms, "Showing 18 of 18 returns in To do now."
+  PASS dana: queue-cpa.html opens in 1 page load, under 1 s, every row of the list in the page (86 rows in the page, the widest view is 86; no pagination): 166 ms, "Showing 44 of 44 returns in Ready to review."
+  PASS priti: queue-ops.html opens in 1 page load, under 1 s, every row of the list in the page (80 rows in the page, the widest view is 80; no pagination): 168 ms, "Showing 46 of 46 returns in Next ops step."
+  PASS priti: queue-new.html opens in 1 page load, under 1 s, every row of the list in the page (63 rows in the page, the widest view is 63; no pagination): 220 ms, "Showing 63 of 63 returns in New returns."
+  PASS owen: board.html opens in 1 page load, under 1 s, every row of the list in the page (300 rows in the page, the widest view is 300; no pagination): 296 ms, "Showing 300 of 300 returns in All returns."
+  PASS Halton: held by you, ends 14:20 if idle
+  PASS Release the hold: in place, announced, the fact changes, focus on the fact
+  PASS Take the hold: ends four hours on (15:20 if idle), History gains an entry: Hold taken by Aisha Rahman (Test)by Aisha Rahman (Test)8 Jun 2026, 11:20
+  PASS Eglinton Retail: an ended hold says when and why (FLOW-10, A11): Ended 6 Jun 2026, 18:41: Aisha Rahman (Test) was idle for 4 hours.
+  PASS Dana reads that Aisha holds Halton and sees no Take or Release action
+  PASS Chase with nothing chosen: error summary focused at the form, same message at the field, title starts "Error: ", no load
+  PASS Chase recorded: a dated note on the return (nothing sent), banner focused, History gains an entry, no load
+  PASS Scarborough: the Ops tab leads with the open step, the later steps wait
+  PASS Ops step with no file: error summary in the form, focused, field error, no load
+  PASS Ops step saved: result announced and focused, the next step opens, no load
+  PASS No checkbox on a row flagged for a person (waiting on client, a blocker or a red tier): 0 flagged rows with a box; 1 rows without a box
+  PASS The bulk bar is absent until a row is chosen
+  PASS Choosing rows shows the bar with what is selected, no load
+  PASS Assign with nobody chosen: summary focused in the bar, field error, title starts "Error: ", scroll unchanged
+  PASS Assign to a preparer: result announced, bar gone, focus on the next row, no load
+TASKS: 72 of 72 pass
+PAGE ERRORS: 0

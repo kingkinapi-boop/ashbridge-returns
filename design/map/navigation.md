@@ -4,17 +4,18 @@ The service navigation by role, the identity bar, where each control leads, what
 
 ## Service navigation by role
 
-The GOV.UK service navigation sits under the header on every screen and shows only what the role may open (SEC-2). Sign out is its last item.
+The GOV.UK service navigation sits under the header on every screen and shows only what the role may open (SEC-2). Sign out is its last item. Search is the box in the header on every screen (key `s`), not a navigation item. There is no Today page (A485).
 
-- Preparer: Today, Queue (Preparer queue), Search.
-- Ops: Today, Ops work (Ops queue, New returns), Search.
-- CPA: Today, Review (CPA queue), Queue, Ops work, Board, Search. The CPA sees everything.
-- Owner: Today, Board (Pipeline, Weekly lessons, Measures), Review, Queue, Ops work, Search. The owner sees everything.
-- Inside a return, every role sees the same record tabs (Z20-6; the approved record, version A, Z20-1). Each role lands on its own tab: the preparer on Workbench, the CPA on Review, ops on Overview (A387).
+- Preparer: My returns (Preparer queue).
+- Ops: Ops queue, New returns.
+- CPA: Review queue (CPA queue), Preparer queue, Ops queue, New returns, Board. The CPA sees everything.
+- Owner: Board (Pipeline, Weekly lessons, Measures), Review queue, Preparer queue, Ops queue, New returns. The owner sees everything.
+- After sign-in a person lands on the page they asked for, else on their own list: preparer Preparer queue, CPA CPA queue, ops Ops queue, owner Pipeline.
+- Inside a return, every role sees the same record tabs: Overview, Workbench, Review, Documents, Exceptions, History, Ops (Z20-6; the approved record, version A, Z20-1). Each role lands on its own tab: the preparer on Workbench, the CPA on Review, ops and the owner on Overview (A387, A485).
 
 ## Identity bar
 
-The MOJ identity bar sits on every return screen: the corporation name and year end first, then state and tier as tags with words, the filing due date and balance-due date, who holds the return, and a button menu for the actions that role can take. It is the same on every return screen for every role (RV-50), and an "approval void" alert appears under it when FLOW-5 applies.
+The MOJ identity bar sits on every return screen: the corporation name and year end first, then state and tier as tags with words, the waiting-on-client flag or a Blocked tag when either applies, the filing due date and balance-due date, the hold in words (not held, held by you until a time, held by another with the time it ends, or ended), and a button menu for the actions that role can take (take or release the hold, record a chase). It is the same on every return screen for every role (RV-50), and an "approved" or "approval void" alert appears under it when FLOW-5 applies.
 
 ## Back
 
@@ -25,15 +26,13 @@ Back always returns to the list you came from, with its filter, sort and scroll 
 | From | Control | Leads to | Back goes to |
 | --- | --- | --- | --- |
 | Sign in | Continue | Two-step code | Sign in |
-| Two-step code | Verify | Today | Sign in |
-| Today | Search | Search results | Today |
-| Today | Open return | Return overview | Today |
-| Today | Sign out | Sign in | Sign in |
+| Two-step code | Verify | Return overview | Sign in |
+| Two-step code | Back | Sign in | Sign in |
 | Search results | Open return | Return overview | Search results |
-| Search results | Today | Today | Today |
+| Search results | Sign out | Sign in | Sign in |
 | Return overview | Open source | Source viewer | Return overview |
-| Return overview | Search | Search results | Today |
-| Return overview | Today | Today | Today |
+| Return overview | Search | Search results | Return overview |
+| Return overview | Sign out | Sign in | Sign in |
 | Source viewer | Next source | Source viewer | Return overview |
 | Source viewer | Previous source | Source viewer | Return overview |
 | Source viewer | Close source | Return overview | Return overview |
@@ -43,8 +42,8 @@ Back always returns to the list you came from, with its filter, sort and scroll 
 | Preparer queue | Exceptions | Exceptions and orphans | Preparer queue |
 | Preparer queue | CPA comments | CPA comments | Preparer queue |
 | Preparer queue | Judgment inputs | Judgment inputs | Preparer queue |
-| Preparer queue | Search | Search results | Today |
-| Preparer queue | Today | Today | Today |
+| Preparer queue | Search | Search results | Preparer queue |
+| Preparer queue | Sign out | Sign in | Sign in |
 | Gap review | Open source | Source viewer | Gap review |
 | Gap review | Sign question list | Preparer queue | Gap review |
 | Gap review | Overview | Return overview | Preparer queue |
@@ -67,8 +66,8 @@ Back always returns to the list you came from, with its filter, sort and scroll 
 | CPA comments | Sign and send to review | Preparer queue | CPA comments |
 | CPA queue | Review return | Return brief | CPA queue |
 | CPA queue | Open return | Return overview | CPA queue |
-| CPA queue | Search | Search results | Today |
-| CPA queue | Today | Today | Today |
+| CPA queue | Search | Search results | CPA queue |
+| CPA queue | Sign out | Sign in | Sign in |
 | Return brief | Full return | Full return | Return brief |
 | Return brief | Open flag | Three-pane view | Return brief |
 | Return brief | See changed cells | Rework changes | Return brief |
@@ -100,8 +99,8 @@ Back always returns to the list you came from, with its filter, sort and scroll 
 | Ops queue | Filing confirmation | Filing confirmation | Ops queue |
 | Ops queue | Notice of assessment | Notice of assessment | Ops queue |
 | Ops queue | Open return | Return overview | Ops queue |
-| Ops queue | Search | Search results | Today |
-| Ops queue | Today | Today | Today |
+| Ops queue | Search | Search results | Ops queue |
+| Ops queue | Sign out | Sign in | Sign in |
 | New returns | Start CRA capture | CRA data capture | New returns |
 | New returns | Open return | Return overview | New returns |
 | CRA data capture | Open source | Source viewer | CRA data capture |
@@ -115,30 +114,26 @@ Back always returns to the list you came from, with its filter, sort and scroll 
 | Pipeline | Weekly lessons | Weekly lessons | Pipeline |
 | Pipeline | Measures | Measures | Pipeline |
 | Pipeline | Open return | Return overview | Pipeline |
-| Pipeline | Search | Search results | Today |
-| Pipeline | Today | Today | Today |
+| Pipeline | Search | Search results | Pipeline |
+| Pipeline | Sign out | Sign in | Sign in |
 | Weekly lessons | Pipeline | Pipeline | Pipeline |
 | Weekly lessons | Measures | Measures | Pipeline |
 | Measures | Pipeline | Pipeline | Pipeline |
 | Measures | Weekly lessons | Weekly lessons | Pipeline |
 
-The Approve control appears only when every section is marked (RV-10); until then the Full return screen lists the unmarked sections as links, and the Unmarked section control leads to them. Sign out, Search and Today are in the service navigation on every screen and are listed once from the screens where the work starts.
+The Approve control appears only when every section is marked (RV-10); until then the Full return screen lists the unmarked sections as links, and the Unmarked section control leads to them. Sign out (service navigation) and Search (header) are on every screen and are listed once from the screens where the work starts. After Verify a person lands on the asked-for address if there is one (any screen they may see, shown here as Return overview), else on their own list: preparer Preparer queue, CPA CPA queue, ops Ops queue, owner Pipeline (Entry points). A session that ends (30 minutes idle, 12 hours in all) sends the next request on any screen to Sign in with the asked-for address kept; after the code the person lands there with the selection restored from the URL.
 
 ## Entry points
 
 | Role | Screen |
 | --- | --- |
-| preparer | Today |
 | preparer | Preparer queue |
-| ops | Today |
 | ops | Ops queue |
 | ops | New returns |
-| cpa | Today |
 | cpa | CPA queue |
 | cpa | Preparer queue |
 | cpa | Ops queue |
 | cpa | Pipeline |
-| owner | Today |
 | owner | Pipeline |
 | owner | CPA queue |
 | owner | Preparer queue |
@@ -171,7 +166,6 @@ One list for the whole app. Every shortcut repeats a visible control, is a singl
 flowchart TD
   n0["Sign in"]
   n1["Two-step code"]
-  n2["Today"]
   n3["Search results"]
   n4["Return overview"]
   n5["Source viewer"]
@@ -200,15 +194,9 @@ flowchart TD
   n28["Weekly lessons"]
   n29["Measures"]
   n0 --> n1
-  n1 --> n2
-  n2 --> n3
-  n2 --> n4
-  n2 --> n0
   n3 --> n4
-  n3 --> n2
   n4 --> n5
   n4 --> n3
-  n4 --> n2
   n5 --> n4
   n6 --> n4
   n6 --> n7
@@ -217,7 +205,6 @@ flowchart TD
   n6 --> n12
   n6 --> n9
   n6 --> n3
-  n6 --> n2
   n7 --> n5
   n7 --> n6
   n7 --> n4
@@ -240,7 +227,6 @@ flowchart TD
   n13 --> n14
   n13 --> n4
   n13 --> n3
-  n13 --> n2
   n14 --> n15
   n14 --> n16
   n14 --> n18
@@ -265,7 +251,6 @@ flowchart TD
   n20 --> n26
   n20 --> n4
   n20 --> n3
-  n20 --> n2
   n21 --> n22
   n21 --> n4
   n22 --> n5
@@ -280,9 +265,20 @@ flowchart TD
   n27 --> n29
   n27 --> n4
   n27 --> n3
-  n27 --> n2
   n28 --> n27
   n28 --> n29
   n29 --> n27
   n29 --> n28
+  n1 --> n4
+  n1 --> n6
+  n1 --> n13
+  n1 --> n20
+  n1 --> n27
+  n1 --> n0
+  n4 --> n0
+  n3 --> n0
+  n6 --> n0
+  n13 --> n0
+  n20 --> n0
+  n27 --> n0
 ```

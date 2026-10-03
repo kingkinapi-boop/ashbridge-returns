@@ -1,0 +1,140 @@
+RULES at 1093 x 525
+  PASS V1 no early error on load or after input, 292 page states
+  PASS V1 sign-in.html: nothing wrong before Continue
+  PASS V1 code.html: nothing wrong before Continue
+  PASS V1 sign-in-error.html: the error shows once submitted, in the summary and at the field, title starts "Error: "
+  PASS V1 code-error.html: the error shows once submitted, in the summary and at the field, title starts "Error: "
+  PASS V2 list: choose a view tab
+  PASS V2 list: sort
+  PASS V2 list: the logo starts the list afresh
+  PASS V2 list B: filter
+  PASS V2 list B: Show menu
+  PASS V2 Board: a state in the strip
+  PASS V2 bulk Assign, nobody chosen
+  PASS V2 bulk Assign to a preparer
+  PASS V2 a row with a next row in view exists in the middle of the New returns list
+  PASS V2 bulk Assign in the middle of the list: scroll moved 0 px, next row focused and in view
+  PASS V2 bulk error with the list scrolled to 500: scroll moved 0 px, summary in view
+  PASS V2 record: release the hold
+  PASS V2 record: take the hold
+  PASS V2 record: tab documents
+  PASS V2 record: tab exceptions
+  PASS V2 record: tab history
+  PASS V2 record: tab overview
+  PASS V2 chase: error in place
+  PASS V2 chase: recorded in place
+  PASS V2 identity bar, one action (Dana): Record a chase
+  PASS V2 identity bar, two actions (Aisha): open the Actions menu
+  PASS V2 identity bar, two actions (Aisha): Record a chase
+  PASS V2 Ops form: error in place
+  PASS V2 Ops form: saved in place
+  PASS V2 Ops step without fields: saved in place
+  PASS V2 Documents: open a source
+  PASS V2 Documents: open another source
+  PASS V3 sign-in.html: the form and Continue are in the first screen
+  PASS V3 sign-in-error.html: the form and Continue are in the first screen
+  PASS V3 code.html: the form and Continue are in the first screen
+  PASS V3 code-error.html: the form and Continue are in the first screen
+  PASS V3 Documents with a source open, halton-haulage (aisha)
+  PASS V3 Documents with a source open, maple-ridge (dana)
+  PASS V3 Documents with a source open, riverdale-rentals (dana)
+  PASS V3 Documents with a source open, eglinton-retail (aisha)
+  PASS V3 Ops tab, an open step, scarborough-robotics (priti)
+  PASS V3 Ops tab, an open step, riverdale-rentals (priti)
+  PASS V3 Ops tab, an open step, queen-west-design (priti)
+  ops pages with no open step (nothing to decide): 3; with one: 3
+  PASS V3 Ops tab in the error state (summary above the field)
+  PASS V3 bulk bar: what is selected and Assign
+  PASS V3 History: the chase form is in the first screen
+  PASS V4 sign-in error: focus on the error summary on load
+  PASS V4 code error: focus on the error summary on load
+  PASS V4 Documents: focus on the viewer heading; key s
+  PASS V4 bulk error: focus on the summary
+  PASS V4 bulk success: focus on the next row
+  PASS V4 Ops error: focus on the summary
+  PASS V4 Ops success: focus on the result
+  PASS V4 chase error: focus on the summary
+  PASS V4 chase recorded: focus on the banner
+  PASS V4 identity bar chase (one action): focus on the first choice
+  PASS V4 Actions menu opened: focus stays on the menu button
+  PASS V4 identity bar chase (Actions menu): focus on the first choice
+  PASS V4 hold released: focus on the hold fact
+  PASS V4 hold taken: focus on the hold fact
+  PASS V4 tab change: focus stays on the tab
+  PASS V4 Board: focus stays on the chosen state; key s
+  PASS V4 list: Clear puts focus on the filter; key s
+  PASS V4 list: focus stays on the chosen view tab
+  PASS V4 list: the logo puts focus on the status line
+  PASS V4 Back to the list: focus on the row you came from
+  PASS V5 aisha: every visible count has a scope word or "N of M", 4 pages, 19 counts
+  PASS V5 aisha: the same name and scope is the same number on every page
+  PASS V5 aisha: the number on each view tab or state button (5 names) is the same on every page that shows it
+  PASS V5 casey: every visible count has a scope word or "N of M", 2 pages, 7 counts
+  PASS V5 casey: the same name and scope is the same number on every page
+  PASS V5 casey: the number on each view tab or state button (5 names) is the same on every page that shows it
+  PASS V5 dana: every visible count has a scope word or "N of M", 6 pages, 41 counts
+  PASS V5 dana: the same name and scope is the same number on every page
+  PASS V5 dana: the number on each view tab or state button (35 names) is the same on every page that shows it
+  PASS V5 priti: every visible count has a scope word or "N of M", 2 pages, 9 counts
+  PASS V5 priti: the same name and scope is the same number on every page
+  PASS V5 priti: the number on each view tab or state button (7 names) is the same on every page that shows it
+  PASS V5 owen: every visible count has a scope word or "N of M", 5 pages, 40 counts
+  PASS V5 owen: the same name and scope is the same number on every page
+  PASS V5 owen: the number on each view tab or state button (35 names) is the same on every page that shows it
+  PASS V5 My returns and the Preparer queue never share a count name (A252, K4)
+  PASS V5 Board status line follows the state chosen
+  PASS V5 Board status reads "Showing 20 of 300 returns in All returns, state Rework." with a visible Clear, and the number is the one on the state button (20)
+  PASS V5 list filter updates its count line
+  PASS V5 the open view tab count equals the "of M" of its list
+  PASS V6 search by name "Halton Haulage Ltd. (Test)", number "779886143", year end "31 Mar 2026", "Mar 2026", "2026-03"
+  PASS V6 a preparer finds her own by name and year end
+  PASS V7 every control does something on aisha: queue-a.html
+  PASS V7 the skip link works by keyboard on queue-a.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on aisha: queue-b.html
+  PASS V7 the skip link works by keyboard on queue-b.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on casey: queue-a-empty.html
+  PASS V7 the skip link works by keyboard on queue-a-empty.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on dana: queue-a.html
+  PASS V7 the skip link works by keyboard on queue-a.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on dana: queue-cpa.html
+  PASS V7 the skip link works by keyboard on queue-cpa.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on priti: queue-ops.html
+  PASS V7 the skip link works by keyboard on queue-ops.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on priti: queue-new.html
+  PASS V7 the skip link works by keyboard on queue-new.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on owen: board.html
+  PASS V7 the skip link works by keyboard on board.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on dana: search.html?q=rouge+valley
+  PASS V7 the skip link works by keyboard on search.html?q=rouge+valley: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on nobody: sign-in.html
+  PASS V7 the skip link works by keyboard on sign-in.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on nobody: sign-in-error.html
+  PASS V7 the skip link works by keyboard on sign-in-error.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on nobody: code.html
+  PASS V7 the skip link works by keyboard on code.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on nobody: code-error.html
+  PASS V7 the skip link works by keyboard on code-error.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on nobody: sign-in-ended.html?next=queue-a.html
+  PASS V7 the skip link works by keyboard on sign-in-ended.html?next=queue-a.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on nobody: signed-out.html
+  PASS V7 the skip link works by keyboard on signed-out.html: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on aisha: rec-halton-haulage.html#documents/1
+  PASS V7 the skip link works by keyboard on rec-halton-haulage.html#documents/1: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on aisha: rec-danforth-cleaning.html#history
+  PASS V7 the skip link works by keyboard on rec-danforth-cleaning.html#history: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on priti: rec-scarborough-robotics.html#ops
+  PASS V7 the skip link works by keyboard on rec-scarborough-robotics.html#ops: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on dana: rec-maple-ridge.html#overview
+  PASS V7 the skip link works by keyboard on rec-maple-ridge.html#overview: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on aisha: rec-eglinton-retail.html#overview
+  PASS V7 the skip link works by keyboard on rec-eglinton-retail.html#overview: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on owen: rec-riverdale-rentals.html#overview
+  PASS V7 the skip link works by keyboard on rec-riverdale-rentals.html#overview: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 every control does something on dana: rec-lakeshore-eats.html#history
+  PASS V7 the skip link works by keyboard on rec-lakeshore-eats.html#history: focus moves to the main block and the address (tab, view, filter, sort) is unchanged
+  PASS V7 sign-in-error.html: Continue with correct entries moves on to the code page
+  PASS V7 code-error.html: Verify with the right code signs in and opens the list
+  PASS V8 not applicable: no field in this family is tied to an option (the bulk assign is one select and one button; the chase is three radios and one button)
+  RULES at 1093 x 525: 135 of 135 pass so far
+RULES: 135 of 135 pass
+PAGE ERRORS: 0
