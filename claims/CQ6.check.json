@@ -3,9 +3,7 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-76ab27",
- "state": "released",
- "at": "2026-10-03T12:01:33.881Z",
- "mode": "turbo",
- "note": "wait: build round 2 not done (3 of 14 fail at f134477c); Lead must reopen the build",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
+ "state": "working",
+ "at": "2026-10-03T12:01:36.166Z",
+ "mode": "turbo"
 }
