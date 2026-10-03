@@ -1,10 +1,9 @@
 {
  "card": "W00c",
  "role": "spec",
- "note": "wait: this session ran long (4 jobs claimed); spec patch for the 4 gaps (A459) untouched, take it fresh",
+ "note": "A459 and A463: see card directives",
  "worker": "cloud-dfeb44",
- "state": "released",
- "at": "2026-10-03T11:18:17.611Z",
- "mode": "turbo",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
+ "state": "reopened",
+ "at": "2026-10-03T11:43:46.721Z",
+ "mode": "turbo"
 }
