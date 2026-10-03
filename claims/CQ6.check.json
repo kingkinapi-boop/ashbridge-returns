@@ -3,9 +3,7 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-3c9204",
- "state": "released",
- "at": "2026-10-03T11:44:39.735Z",
- "mode": "turbo",
- "note": "wait: spec reopened by A464 (real setup path) and build round 2 ordered; round 1 build is stale",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
+ "state": "working",
+ "at": "2026-10-03T11:44:41.943Z",
+ "mode": "turbo"
 }
