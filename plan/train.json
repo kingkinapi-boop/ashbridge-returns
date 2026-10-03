@@ -1,5 +1,5 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "725bc456",
   "cards": [
@@ -8,5 +8,6 @@
     "CQ10"
   ],
   "requested_at": "2026-10-03T14:03:00Z",
-  "note": "FX5 first: its PASS build holds known.json, which W00c's last build round needs (A481). Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462): print select version(); npm test with TEST_DB=pg16 and once on PGlite. FX5 is core: mutate:changed for its @mutate files at 100. FX5's GitHub check failed at 10:53Z on R18 for src/modules/jobs/runner.ts and src/modules/auth/testusers/engine.ts: a main-side card state since fixed (A465), not FX5's files; R18 passes on main now. FX12 changes vitest.config.ts and the db time budget: every db test on pg16 and PGlite. CQ10 adds npm run test:flake:shifted: run it once on the train (its card's Check) and put any DIFFERS lines in the report. A refused command makes the train blocked, not red."
+  "note": "FX5 first: its PASS build holds known.json, which W00c's last build round needs (A481). Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462): print select version(); npm test with TEST_DB=pg16 and once on PGlite. FX5 is core: mutate:changed for its @mutate files at 100. FX5's GitHub check failed at 10:53Z on R18 for src/modules/jobs/runner.ts and src/modules/auth/testusers/engine.ts: a main-side card state since fixed (A465), not FX5's files; R18 passes on main now. FX12 changes vitest.config.ts and the db time budget: every db test on pg16 and PGlite. CQ10 adds npm run test:flake:shifted: run it once on the train (its card's Check) and put any DIFFERS lines in the report. A refused command makes the train blocked, not red.",
+  "by": "cloud-bdd6e0"
 }
