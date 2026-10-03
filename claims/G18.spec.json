@@ -2,10 +2,12 @@
  "card": "G18",
  "role": "spec",
  "worker": "cloud-899fef",
- "state": "working",
- "at": "2026-10-03T13:49:58.734Z",
+ "state": "released",
+ "at": "2026-10-03T13:50:06.078Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "0bb61ef902a3210ea8eceda1f1132ab2293215bb"
- }
+ },
+ "note": "wait: Paths gap, Lead must change card Paths (see reports/G18-spec.md on claude/G18)",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"G10\",\"G11\",\"G12\",\"G13\",\"G14\",\"G15\",\"G16\",\"G17\"],\"depStatus\":[\"done\",\"done\",\"done\",\"done\",\"done\",\"done\",\"done\",\"done\"]}"
 }
