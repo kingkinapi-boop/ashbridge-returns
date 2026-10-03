@@ -1,7 +1,10 @@
 // F06 acceptance tests, unit side: the jobs contract and the module's source rules (spec-writer;
 // builders never edit this file). The database behaviour is in src/modules/jobs/jobs.acceptance.db.test.ts.
+import type { PGlite } from '@electric-sql/pglite'
 import { describe, expect, test } from 'vitest'
+import { fixedClock } from '../core/clock'
 import { readOwnSource } from '../core/testing/read-own-source'
+import { createJobQueue } from '../modules/jobs/queue'
 import { JobSchema, JobStatusSchema } from './jobs'
 
 const rowOk = {
@@ -55,5 +58,29 @@ describe('ARC-16 and ARC-5 the module source rules', () => {
 
   test('ARC-5 the queue has no DELETE path', () => {
     expect(readOwnSource('src/modules/jobs/queue.ts')).not.toMatch(/\bdelete\s+from\b/i)
+  })
+
+  test('ARC-5 behaviour twin: every queue call (enqueue, claim, complete, fail both ways, status) sends no DELETE or TRUNCATE to the database', async () => {
+    const sent: string[] = []
+    const running = { ...rowOk, status: 'running', attempts: 1, lease_holder: 'w-1', lease_until: new Date('2026-03-02T15:10:00.000Z') }
+    const candidate = { id: 'j-1', kind: 'read:page', status: 'queued', attempts: 0, max_attempts: 3 }
+    const fake = {
+      query: (sql: string) => {
+        sent.push(sql)
+        if (/for update skip locked/i.test(sql)) return Promise.resolve({ rows: [candidate] })
+        if (/count\(\*\)|status = 'dead' order|min\(created_at\)/i.test(sql)) return Promise.resolve({ rows: [] })
+        return Promise.resolve({ rows: [running] })
+      },
+      transaction: (fn: (tx: unknown) => Promise<unknown>) => fn(fake),
+    }
+    const queue = createJobQueue(fake as unknown as PGlite, fixedClock('2026-03-02T15:00:00.000Z'))
+    await queue.enqueue('read:page', 'k-1', { n: 1 }, 'r-1')
+    expect((await queue.claim('w-1', ['read:page']))?.id).toBe('j-1')
+    await queue.complete('j-1', 'w-1', { ok: true }, { handler: 'twin', version: 1 })
+    await queue.fail('j-1', 'w-1', 'boom')
+    await queue.fail('j-1', 'w-1', 'boom', { retry: false })
+    await queue.statusForReturn('r-1')
+    expect(sent.length).toBeGreaterThan(6)
+    expect(sent.filter((q) => /\b(delete|truncate)\b/i.test(q))).toEqual([])
   })
 })

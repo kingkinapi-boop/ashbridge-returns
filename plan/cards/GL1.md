@@ -49,3 +49,8 @@ Returns does not delete a finished AI job's exchange files today (the stand-in k
 
 ## The live bridge reader (A498, 3 Oct)
 The live bridge reader is not carded yet. When it is, it refuses a marker answer row holding anything but `given` (GL3's views mask them; this is the second lock).
+
+## Also (A504, SC3's findings review 1, 3 Oct)
+- SC3 leaves two R62-inventory KNOWN entries for createAiRunner owned by this card: delete them when the runner calls `assertEngineAllowed`, and list createAiRunner as a factory or a registry-gated adapter.
+- Register Taxprep's simulator (S00's createSimulator, ARC-6's Taxprep stand-in) in the engine registry; delete any KNOWN entry for it that SC3 or S00 left with this card as owner.
+- Rule test, the ARC-6 anchor: every ARC-6 adapter row has registered engines and a gated factory. Plant: the Taxprep row with none.

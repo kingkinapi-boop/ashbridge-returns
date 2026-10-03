@@ -1,12 +1,14 @@
 # FX5 F02 move inside a caller transaction (for T08)
 
+**Lead note, 3 Oct 17:07Z (A502, SC10's R89):** a move added or renamed in `src/modules/lifecycle/moves.ts` adds its guard row, with an open owner card, to `data/lifecycle/unbuilt-guards.json`.
+
 **Lead directive, 3 Oct 15:04Z (A494): round 3, a small one, after FX4 in the known.json order (A481); the Lead reopens the spec.** Round 2's code landed with train 725bc456. The card stays open because tools/test/__fixtures__/schema-contract/known.json still names it as owner of three entries its build did not fix (A407 below): R16, the order by occurred_at, id with no identity seq first in src/modules/lifecycle/index.ts; R18 and R23, plain z.object (a stray key passes) in src/contracts/lifecycle.ts for ApprovalFingerprintSchema and ChangedItemSchema. Spec: delete the three entries (the rule tests then fail on them). Build: identity seq first in the order; strict schemas. Nothing else.
 
 **Lead note, 3 Oct (A410): round 2 spec bd0e2fe2 reviewed GO (reports/FX5-spec-review-2.md). Build to it: rule refusals return `{ ok: false }`, database errors throw.**
 
 Phase 3. Size S. Deps: F02, SC. Where: cloud.
 Tags: core (a return's state moves; approval voids).
-Paths: src/contracts/lifecycle.ts, src/modules/lifecycle/**, tools/test/__fixtures__/schema-contract/known.json
+Paths: src/contracts/lifecycle.ts, src/modules/lifecycle/**, tools/test/__fixtures__/schema-contract/known.json, data/lifecycle/unbuilt-guards.json (A502)
 Clauses: FLOW-1, FLOW-4
 Read: `reports/phase3-card-review-2026-10-03.md` (fix 2), `plan/cards/F02.md`, `plan/cards/T08.md`, `src/modules/lifecycle/index.ts` (the move and its own `db.transaction`).
 Spec commit: bd0e2fe2
