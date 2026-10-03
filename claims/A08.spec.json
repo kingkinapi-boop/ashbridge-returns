@@ -1,12 +1,13 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "A443: see card directive",
+ "note": "wait: A04 findings review 5 decides where the refusal-file reading goes",
  "worker": "cloud-42f06c",
- "state": "reopened",
- "at": "2026-10-03T08:25:28.531Z",
+ "state": "released",
+ "at": "2026-10-03T08:45:14.491Z",
  "mode": "turbo",
  "beat": "2026-10-03T08:02:10.659Z",
  "commit": "87231747",
- "validated": "6f3ce664"
+ "validated": "6f3ce664",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"carded\"]}"
 }
