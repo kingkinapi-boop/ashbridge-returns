@@ -3,7 +3,7 @@
  "role": "build",
  "state": "released",
  "worker": "lead",
- "at": "2026-10-03T04:17:49.289Z",
- "note": "wait: core spec review (reports/W00b-spec-review.md); build opens after GO",
+ "at": "2026-10-03T04:28:23.086Z",
+ "note": "wait: W00c round 2 and FX8 land, then the round 3 spec",
  "waitKey": "{\"status\":\"carded\",\"deps\":[\"W00c\"],\"depStatus\":[\"carded\"]}"
 }
