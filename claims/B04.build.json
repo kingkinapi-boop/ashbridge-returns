@@ -3,7 +3,7 @@
  "role": "build",
  "state": "released",
  "worker": "lead",
- "at": "2026-10-03T17:58:20.256Z",
- "note": "wait: Opus spec review of B04 (local, from 18:00Z) before the build",
+ "at": "2026-10-03T18:41:41.523Z",
+ "note": "wait: W00c lands first (B04 reads the test world); then an Opus check",
  "waitKey": "{\"status\":\"carded\",\"deps\":[\"A05\",\"F00T\",\"F01D\",\"W00c\"],\"depStatus\":[\"done\",\"done\",\"done\",\"carded\"]}"
 }
