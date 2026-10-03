@@ -1,10 +1,11 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "A452: patch, see card directive",
- "reopenedFrom": "72943edb",
+ "note": "A443 patch already on branch (KNOWN empty); merged main, typecheck, lint, 22 tests green",
  "worker": "cloud-e9d462",
- "state": "working",
- "at": "2026-10-03T09:36:20.698Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T09:37:30.831Z",
+ "mode": "turbo",
+ "commit": "d206a153c1cb40f08cb4ce26c2baace8129f4176",
+ "validated": "f9da8e525a892f8d4ab2ca8287b35642d688c8a7"
 }
