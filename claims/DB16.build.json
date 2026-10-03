@@ -1,11 +1,10 @@
 {
  "card": "DB16",
  "role": "build",
- "round": 8,
+ "round": 9,
  "spec": "d69ac553",
- "worker": "cloud-120dac",
- "state": "reopened",
- "at": "2026-10-03T06:48:12.587Z",
- "mode": "turbo",
- "note": "A430: round 4 per reports/DB16-findings.md; see bold directive on the card"
+ "worker": "cloud-d137a3",
+ "state": "working",
+ "at": "2026-10-03T06:48:57.885Z",
+ "mode": "turbo"
 }
