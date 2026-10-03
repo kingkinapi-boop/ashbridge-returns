@@ -4,9 +4,9 @@
  "round": 8,
  "spec": "fb82b8c",
  "worker": "cloud-88d9d7",
- "state": "hold-findings",
- "at": "2026-10-03T05:51:42.703Z",
+ "state": "reopened",
+ "at": "2026-10-03T06:34:29.588Z",
  "mode": "turbo",
  "beat": "2026-10-03T05:32:01.057Z",
- "note": "FAIL: AI-10 runner compares 4 of 7 stamp parts; OCR engine, version and mapping release from the answer pass unchecked, see reports/A04-check.md"
+ "note": "A427: round 4 spec matches reports/A04-findings.md tests (21 stamp cases, meta, liveness); build runner.ts only"
 }
