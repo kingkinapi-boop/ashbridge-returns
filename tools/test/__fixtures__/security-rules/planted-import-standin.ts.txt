@@ -1,0 +1,4 @@
+// Planted (A452 item 8): a page reaching a stand-in directly instead of through its factory.
+import { createPlantedStandIn } from '../modules/planted/standin'
+
+export const page = (): string => createPlantedStandIn({ db: undefined as never }).label

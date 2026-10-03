@@ -1,0 +1,12 @@
+// Planted (R62, A452 item 7): engine settings read in shapes the first scan missed (a destructured name, a name
+// built in a template literal, a name built by concatenation).
+export function destructured(env: Record<string, string | undefined>): string | undefined {
+  const { DESTRUCTURED_ENGINE } = env
+  return DESTRUCTURED_ENGINE
+}
+export function templated(env: Record<string, string | undefined>, kind: string): string | undefined {
+  return env[`${kind}_ENGINE`]
+}
+export function concatenated(env: Record<string, string | undefined>, kind: string): string | undefined {
+  return env[kind + '_ENGINE']
+}

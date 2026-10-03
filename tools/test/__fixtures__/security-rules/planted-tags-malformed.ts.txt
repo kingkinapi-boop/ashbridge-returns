@@ -1,0 +1,21 @@
+// Planted (A452 item 6): tag mentions that do not parse strictly. None may count as a tag; each is a problem.
+/** @once oneLine */
+export async function oneLine(): Promise<boolean> { return true }
+
+/**
+ * @once trailing and more
+ */
+export async function trailing(): Promise<boolean> { return true }
+
+/**
+ * @limit bare
+ */
+export async function bare(): Promise<boolean> { return true }
+
+// @standin slashed
+export async function slashed(): Promise<void> {}
+
+/*
+ * @once plainBlock
+ */
+export async function plainBlock(): Promise<boolean> { return true }

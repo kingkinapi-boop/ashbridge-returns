@@ -8,3 +8,5 @@ create table returns.planted_events (
 );
 create trigger planted_events_append_only before update or delete on returns.planted_events
   for each row execute function returns.refuse_change();
+create trigger planted_events_no_truncate before truncate on returns.planted_events
+  for each statement execute function returns.refuse_change();
