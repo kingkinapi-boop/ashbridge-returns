@@ -218,6 +218,95 @@ async function sharedTableProblems(db: PGlite): Promise<string[]> {
   return out
 }
 
+/**
+ * Every privilege returns_app holds on schema returns and on each object in it (every table, view, sequence and
+ * function, from the catalog), as "<privilege> on returns.<name>" keys, two ways: effective (has_*_privilege, any
+ * route, PUBLIC included) and direct (an ACL entry naming returns_app or a role it belongs to, PUBLIC excluded).
+ * Both are needed: Postgres lets PUBLIC execute every function, so a blanket grant to returns_app paired with the
+ * PUBLIC revoke leaves the effective right unchanged and shows only as a new direct grant (findings 1, RC1).
+ */
+interface ReturnsAppRights {
+  effective: string[]
+  direct: string[]
+  tables: string[]
+  functions: string[]
+}
+
+async function returnsAppRights(db: PGlite): Promise<ReturnsAppRights> {
+  const A = 'returns_app'
+  const effective: string[] = []
+  const direct: string[] = []
+  for (const p of ['usage', 'create']) {
+    const e = (await rows<{ x: boolean }>(db, `select has_schema_privilege($1::name, 'returns'::text, $2::text) as x`, [A, p]))[0]
+    if (e?.x === true) effective.push(`${p} on schema returns`)
+  }
+  const ns = await rows<{ p: string }>(
+    db,
+    `select a.privilege_type as p from pg_namespace n, aclexplode(coalesce(n.nspacl, acldefault('n', n.nspowner))) a
+     where n.nspname = 'returns' and a.grantee <> 0 and pg_has_role($1::name, a.grantee, 'MEMBER')`,
+    [A],
+  )
+  for (const r of ns) direct.push(`${r.p.toLowerCase()} on schema returns`)
+
+  const rels = await rows<{ oid: number; name: string; kind: string }>(
+    db,
+    `select c.oid::int as oid, c.relname as name, c.relkind::text as kind from pg_class c join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'returns' and c.relkind in ('r', 'p', 'v', 'm', 'f', 'S') order by c.relname`,
+  )
+  const tables = rels.filter((r) => r.kind !== 'S').map((r) => r.name)
+  for (const rel of rels) {
+    const seq = rel.kind === 'S'
+    const privs = seq ? ['usage', 'select', 'update'] : ['select', 'insert', 'update', 'delete', 'truncate', 'references', 'trigger']
+    for (const p of privs) {
+      const sql = seq
+        ? `select has_sequence_privilege($1::name, $2::int::oid, $3::text) as x`
+        : ['select', 'insert', 'update', 'references'].includes(p)
+          ? `select has_table_privilege($1::name, $2::int::oid, $3::text) or has_any_column_privilege($1::name, $2::int::oid, $3::text) as x`
+          : `select has_table_privilege($1::name, $2::int::oid, $3::text) as x`
+      const e = (await rows<{ x: boolean }>(db, sql, [A, rel.oid, p]))[0]
+      if (e?.x === true) effective.push(`${p} on returns.${rel.name}`)
+    }
+    const d = await rows<{ p: string }>(
+      db,
+      `select a.privilege_type as p from pg_class c, aclexplode(coalesce(c.relacl, acldefault('${seq ? 's' : 'r'}', c.relowner))) a
+       where c.oid = $2::int::oid and a.grantee <> 0 and pg_has_role($1::name, a.grantee, 'MEMBER')
+       union
+       select a.privilege_type || ' (' || t.attname || ')' as p from pg_attribute t, aclexplode(t.attacl) a
+       where t.attrelid = $2::int::oid and t.attnum > 0 and not t.attisdropped and t.attacl is not null
+         and a.grantee <> 0 and pg_has_role($1::name, a.grantee, 'MEMBER')`,
+      [A, rel.oid],
+    )
+    for (const r of d) direct.push(`${r.p.toLowerCase()} on returns.${rel.name}`)
+  }
+
+  const fns = await rows<{ oid: number; name: string }>(
+    db,
+    `select p.oid::int as oid, p.oid::regprocedure::text as name from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'returns' order by 2`,
+  )
+  for (const f of fns) {
+    const label = f.name.replace(/^returns\./, '')
+    const e = (await rows<{ x: boolean }>(db, `select has_function_privilege($1::name, $2::int::oid, 'execute') as x`, [A, f.oid]))[0]
+    if (e?.x === true) effective.push(`execute on returns.${label}`)
+    const d = await rows<{ p: string }>(
+      db,
+      `select a.privilege_type as p from pg_proc p, aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+       where p.oid = $2::int::oid and a.grantee <> 0 and pg_has_role($1::name, a.grantee, 'MEMBER')`,
+      [A, f.oid],
+    )
+    for (const r of d) direct.push(`${r.p.toLowerCase()} on returns.${label}`)
+  }
+  return { effective, direct, tables, functions: fns.map((f) => f.name.replace(/^returns\./, '')) }
+}
+
+/** What the draft gave returns_app in schema returns: every right, effective or direct, held after and not before. */
+function grantedByDraft(before: ReturnsAppRights, after: ReturnsAppRights): string[] {
+  const out: string[] = []
+  for (const k of after.effective) if (!before.effective.includes(k)) out.push(`the draft grants returns_app ${k}`)
+  for (const k of after.direct) if (!before.direct.includes(k)) out.push(`the draft grants returns_app ${k} (direct)`)
+  return out
+}
+
 /** Four made-up question rows of one list, one per status (written as the superuser, who owns the table). */
 async function seedHandoff(db: PGlite): Promise<void> {
   const statuses = ['draft', 'sent', 'withdrawn', 'closed']
@@ -504,6 +593,37 @@ describe('GL3 the shared table (ARC-2, END-7)', () => {
     } finally {
       await db.exec('alter role client_app_reader nobypassrls')
     }
+  })
+})
+
+describe('GL3 returns_app in schema returns (ARC-2; findings 1, round 2)', () => {
+  // returns_app's rights in schema returns come only from GL2's migration; the draft revokes PUBLIC's execute
+  // there and grants returns_app nothing (reports/GL3-findings-1.md, fix list item 1).
+  test('ARC-2 the draft grants returns_app nothing in schema returns', async () => {
+    const db = await standIn()
+    const before = await returnsAppRights(db)
+    await applyDraft(db)
+    const after = await returnsAppRights(db)
+    expect(after.tables.length).toBeGreaterThan(0)
+    expect(after.tables).toContain('client_handoff')
+    expect(after.functions.length).toBeGreaterThan(0)
+    expect(after.functions.some((f) => f.startsWith('is_blank('))).toBe(true)
+    expect(grantedByDraft(before, after)).toEqual([])
+  })
+
+  test('ARC-2 rule: a restored blanket execute grant to returns_app, a planted table grant and a planted schema grant are each caught by name', async () => {
+    const db = await standIn()
+    const before = await returnsAppRights(db)
+    await applyDraft(db)
+    await db.exec(`
+      grant execute on all functions in schema returns to returns_app;
+      grant select on returns.client_refs to returns_app;
+      grant create on schema returns to returns_app;
+    `)
+    const p = grantedByDraft(before, await returnsAppRights(db))
+    expect(p.some((k) => k.startsWith('the draft grants returns_app execute on returns.is_blank(') && k.endsWith('(direct)'))).toBe(true)
+    expect(p).toContain('the draft grants returns_app select on returns.client_refs')
+    expect(p).toContain('the draft grants returns_app create on schema returns')
   })
 })
 
