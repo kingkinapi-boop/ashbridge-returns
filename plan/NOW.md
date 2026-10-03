@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| Train 4 | SC8 boarded 21:08Z (69dd4084; scope flag by design, A523) | add SC10, GL3 on PASS of their Opus reads, W00c on its mutation check; request at 6 cards or hourly |
+| Train 4 | SC8 and GL3 boarded (5de37d09) (69dd4084; scope flag by design, A523) | add SC10, GL3 on PASS of their Opus reads, W00c on its mutation check; request at 6 cards or hourly |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
 | A08 | spec review GAPS 11 (A509): spec patch reopened | build after it; then Opus check and a security review |
 | W00c | findings review 4 done (A521): no build round; mutation-only check of 75556283 in shards, union of kills | check opened (cloud); land on 100 on all 11 files; W00d makes the method a tool |
@@ -22,7 +22,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lea
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | SC11 | round 3 spec reported (21 tests); build reopened 21:07Z (B3 to B14) | Opus read; security review; board; then SC3 round 3 (A517) |
-| GL3 | check PASS (cloud) | Opus read and fresh security review (local, from 21:10Z); board on PASS |
+| GL3 | Opus read and security review PASS (A525) | boarded train 4 at 21:15Z |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
 | A08 | A509 spec patch reported (218 tests) | build working (cloud-2cc0af); then Opus check and security review |
 | FX7, W00d, FX16 | FX7 A520 patch reported (94 tests): second Opus spec review (local, from 21:10Z), build held `wait:`; W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
