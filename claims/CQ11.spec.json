@@ -2,10 +2,9 @@
  "card": "CQ11",
  "role": "spec",
  "note": "A500: spec patch, R82 clean-merge item per the Lead directive at the top of plan/cards/CQ11.md; build after CQ8 lands",
- "worker": "cloud-b1e6bc",
- "state": "reopened",
- "at": "2026-10-03T16:24:08.907Z",
- "mode": "turbo",
- "commit": "cc4bc6f4",
- "validated": "8e4698a47e6564c0af4e2b7290eb823870729d7d"
+ "reopenedFrom": "cc4bc6f4",
+ "worker": "cloud-019852",
+ "state": "working",
+ "at": "2026-10-03T16:25:20.696Z",
+ "mode": "turbo"
 }
