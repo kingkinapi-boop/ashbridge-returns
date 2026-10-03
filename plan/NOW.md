@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:58Z by the Lea
 | FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
 | CQ4 to CQ8, SC10 | CQ3 landed; CQ4 build round 2 working (local-1); CQ5 build open; CQ6, CQ7, CQ8, SC10 carded | CQ4 lands before the S00 and DB16 checks |
 
-Cloud runs: 2 at 07:42Z (SC check, DB16 check); 4 at 08:02Z (A04, FX10, W00c, CQ5 builds; FX8, SC6 specs reopened). Local: local-1 (CQ4 build), local-2 and local-3 (Opus, from 08:03Z).
+Cloud runs: 2 at 07:42Z (SC check, DB16 check); 4 at 08:02Z (A04, FX10, W00c, CQ5 builds; FX8, SC6 specs reopened). 2 more at 08:08Z (FX10 build reopened, SC6 spec). Local: local-1 (CQ4 build), local-2 (FX8 spec); local-3 done (nothing local to take).
 
 ## Next, in order
 
@@ -56,5 +56,5 @@ Cloud runs: 2 at 07:42Z (SC check, DB16 check); 4 at 08:02Z (A04, FX10, W00c, CQ
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`.
 - Commit no new Taxprep CSV to main before FX9 lands (SC's R37, A415).
-- A check released twice at one tip is held "needs Lead": re-release it with a note starting "wait:" to offer it again (07:40Z).
+- A job released twice at one tip is held "needs Lead": re-release a check with a note starting "wait:", reopen a spec or build (07:40Z). Local workers skip Where: cloud cards (FX10, SC6): tell them to leave those untouched.
 - Never kill processes by name. Another Lead works in ashbridge-app: read-only there.
