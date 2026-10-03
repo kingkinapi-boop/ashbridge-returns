@@ -38,7 +38,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { z } from 'zod'
-import { aiStepSchemas, validateAiOutput } from '../../../contracts/ai'
+import { aiStepSchemas, validateAiOutput, versionStampSchema, type VersionStamp } from '../../../contracts/ai'
 import { readSettings } from '../../../core/env'
 import { readOwnSource } from '../../../core/testing/read-own-source'
 import {
@@ -69,6 +69,7 @@ import {
   writeApproved,
   writeOutbox,
 } from './__fixtures__/harness'
+import * as runnerTs from './runner'
 
 const NOT_REDACTED = /inputs not redacted/
 const DECISION_0008 = 'AI runs only through the Claude project (decision 0008)'
@@ -742,43 +743,132 @@ describe('ARC-16 round 2: recordings that cannot be matched', () => {
   })
 })
 
-/** The four stamp parts the runner compares with the job (AI-10), and a value for each that belongs to another job. */
-const PARTS = {
-  modelId: /model ?id/i,
-  promptVersion: /prompt ?version/i,
-  promptHash: /prompt ?hash/i,
-  inputHash: /input ?hash/i,
-} as const
-const OTHER: Record<keyof typeof PARTS, string> = {
-  modelId: 'claude-other-model-test',
-  promptVersion: 'finding-v2-test',
-  promptHash: 'e'.repeat(64),
-  inputHash: 'f'.repeat(64),
+// ---------- AI-10 round 4 (A426): the stamp table is derived from F04's contract, never copied from the runner ----------
+
+/** Every stamp part, from the contract's shape (spec-writer, A426): a part added to F04 joins every test below. */
+const STAMP_PARTS: readonly (keyof VersionStamp)[] = Object.keys(versionStampSchema.shape) as (keyof VersionStamp)[]
+/** For each part, a F04-valid value that belongs to another job (never printed in a refusal). */
+const OTHER: Readonly<Record<keyof VersionStamp, string>> = Object.fromEntries(
+  STAMP_PARTS.map((k, i) => [k, `PLANTED-OTHER-STAMP-${String(i)}-${k} (Test)`]),
+) as Record<keyof VersionStamp, string>
+/** runner.ts read by name, so a missing export fails its test by name (round 4: the build exports the two lists). */
+const runnerModule: Readonly<Record<string, unknown>> = runnerTs
+const STAMP_MISMATCH = /the answer's stamp does not match the job: ([^\n]*?) \(AI-10\)/
+
+/** The parts a refusal names, as an exact set parsed from the AI-10 reason (never a regex per part: /ocr ?engine/ also matches ocrEngineVersion). */
+function namedParts(text: string): string[] {
+  const m = STAMP_MISMATCH.exec(text)
+  if (m === null) return []
+  return (m[1] ?? '').split(',').map((s) => s.trim()).filter((s) => s !== '').sort()
 }
 
-describe('AI-10 round 2: a F04-valid answer stamped for another job is refused, naming exactly the part that differs', () => {
-  for (const part of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
-    test(`AI-10 a recorded answer stamped with another ${part} is refused naming ${part} and no other part; nothing is counted as output`, async () => {
-      const good = GOOD_REC()
-      const stamp = { ...good.stamp, [part]: OTHER[part] }
-      expect(validateAiOutput('finding', good.output, stamp).ok).toBe(true)
-      const dir = recordingsWith(`stamp-${part}`, [{ ...good, stamp }])
-      const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+/** True when the runner's two lists cover the contract's parts exactly, once each. */
+function coversContract(fromJob: readonly string[], fromAnswer: readonly string[], keys: readonly string[]): boolean {
+  const all = [...fromJob, ...fromAnswer]
+  const disjoint = fromJob.every((k) => !fromAnswer.includes(k))
+  return disjoint && new Set(all).size === all.length && [...all].sort().join(',') === [...keys].sort().join(',')
+}
+
+function stampWith(part: keyof VersionStamp): VersionStamp {
+  const stamp: VersionStamp = versionStampSchema.parse(GOOD_REC().stamp)
+  stamp[part] = OTHER[part]
+  return stamp
+}
+
+/** The fake project answers every inbox file with the good output under the given stamp. */
+function projectAnswering(stamp: VersionStamp): void {
+  fakeProject(({ json }) => {
+    const id = String(json['jobId'])
+    writeOutbox(exchange, `${id}.json`, outboxResult(id, GOOD_REC().output, stamp))
+  })
+}
+
+async function handlerMessage(r: ReturnType<typeof runner>): Promise<{ threw: boolean; message: string }> {
+  const h = createAiStepHandler('finding', r)
+  const ctx = { jobId: 'job-c01-handler-stamp-test', attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+  try {
+    await h.run(job('good'), ctx)
+    return { threw: false, message: '' }
+  } catch (e) {
+    return { threw: true, message: e instanceof Error ? e.message : String(e) }
+  }
+}
+
+describe('AI-10 round 4: the runner compares every stamp part the contract has', () => {
+  test('AI-10 the stamp table is the contract: STAMP_PARTS_FROM_JOB plus STAMP_PARTS_FROM_ANSWER equal versionStampSchema keys, disjoint', () => {
+    const lists = z
+      .strictObject({ fromJob: z.array(z.string()).readonly(), fromAnswer: z.array(z.string()).readonly() })
+      .safeParse({ fromJob: runnerModule['STAMP_PARTS_FROM_JOB'], fromAnswer: runnerModule['STAMP_PARTS_FROM_ANSWER'] })
+    expect(lists.success, 'runner.ts exports STAMP_PARTS_FROM_JOB and STAMP_PARTS_FROM_ANSWER as string lists').toBe(true)
+    if (!lists.success) return
+    expect(new Set([...lists.data.fromJob, ...lists.data.fromAnswer])).toEqual(new Set(STAMP_PARTS))
+    expect(coversContract(lists.data.fromJob, lists.data.fromAnswer, STAMP_PARTS)).toBe(true)
+  })
+
+  test('AI-10 planted: a table missing mappingRelease, a part in both lists, or a part twice is caught by the meta check', () => {
+    expect(STAMP_PARTS).toContain('mappingRelease')
+    expect(coversContract(STAMP_PARTS, [], STAMP_PARTS)).toBe(true)
+    expect(coversContract(STAMP_PARTS.filter((k) => k !== 'mappingRelease'), [], STAMP_PARTS)).toBe(false)
+    expect(coversContract(STAMP_PARTS, ['mappingRelease'], STAMP_PARTS)).toBe(false)
+    expect(coversContract([...STAMP_PARTS, 'modelId'], [], STAMP_PARTS)).toBe(false)
+    expect(coversContract([...STAMP_PARTS, 'ordersVersion'], [], STAMP_PARTS)).toBe(false)
+  })
+
+  test('AI-10 planted: the exact-set parse tells ocrEngine from ocrEngineVersion and reads nothing from an unrelated reason', () => {
+    expect(namedParts("the answer's stamp does not match the job: ocrEngineVersion (AI-10)")).toEqual(['ocrEngineVersion'])
+    expect(namedParts("the answer's stamp does not match the job: ocrEngine, ocrEngineVersion (AI-10)")).toEqual(['ocrEngine', 'ocrEngineVersion'])
+    expect(namedParts('inputs not redacted (AI-9)')).toEqual([])
+  })
+
+  test('AI-10 the table is live: every OTHER value is F04-valid, differs from the job, and the own-stamp answer runs', async () => {
+    expect(STAMP_PARTS.length).toBeGreaterThan(0)
+    for (const part of STAMP_PARTS) {
+      expect(validateAiOutput('finding', GOOD_REC().output, stampWith(part)).ok, part).toBe(true)
+      expect(OTHER[part], part).not.toBe(GOOD_REC().stamp[part])
+    }
+    const dir = recordingsWith('stamp-own', [GOOD_REC()])
+    expect((await runner({ recordingsDir: dir }).runAiStep(job('good'))).ok).toBe(true)
+  })
+
+  for (const part of STAMP_PARTS) {
+    test(`AI-10 recorded engine: an answer differing from the job only at ${part} is refused naming exactly {${part}}, no value printed`, async () => {
+      const dir = recordingsWith(`stamp-${part}`, [{ ...GOOD_REC(), stamp: stampWith(part) }])
+      const r = runner({ recordingsDir: dir })
+      const res = await r.runAiStep(job('good'))
       expect(res.ok).toBe(false)
       if (res.ok) return
-      const text = allText(res)
-      expect(text).toMatch(/AI-10/)
-      expect(text).toMatch(PARTS[part])
-      for (const other of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
-        if (other !== part) expect(text, other).not.toMatch(PARTS[other])
-      }
-      expect(text).not.toContain(OTHER[part])
+      const all = allText(res)
+      expect(namedParts(all)).toEqual([part])
+      expect(all).not.toContain(OTHER[part])
+    })
+
+    test(`AI-10 ARC-22 project engine: a result differing from the job only at ${part} is refused naming exactly {${part}}, no value printed`, async () => {
+      projectAnswering(stampWith(part))
+      const res = await projectRunner().runAiStep(job('good'), { jobId: JOB_ID })
+      expect(res.ok).toBe(false)
+      if (res.ok) return
+      const all = allText(res)
+      expect(namedParts(all)).toEqual([part])
+      expect(all).not.toContain(OTHER[part])
+    })
+
+    test(`AI-10 ARC-22 handler: a project result differing from the job only at ${part} throws naming exactly {${part}}, no value printed`, async () => {
+      projectAnswering(stampWith(part))
+      const got = await handlerMessage(projectRunner())
+      expect(got.threw).toBe(true)
+      expect(namedParts(got.message)).toEqual([part])
+      expect(got.message).not.toContain(OTHER[part])
     })
   }
 
-  test('AI-10 the same recording with its own stamp runs (the stamp tests are live)', async () => {
-    const dir = recordingsWith('stamp-own', [GOOD_REC()])
-    expect((await runner({ recordingsDir: dir }).runAiStep(job('good'))).ok).toBe(true)
+  test('AI-10 an answer differing at both OCR parts is refused naming exactly {ocrEngine, ocrEngineVersion}', async () => {
+    const stamp = { ...GOOD_REC().stamp, ocrEngine: OTHER.ocrEngine, ocrEngineVersion: OTHER.ocrEngineVersion }
+    expect(validateAiOutput('finding', GOOD_REC().output, stamp).ok).toBe(true)
+    const dir = recordingsWith('stamp-two-ocr', [{ ...GOOD_REC(), stamp }])
+    const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+    expect(res.ok).toBe(false)
+    if (res.ok) return
+    expect(namedParts(allText(res))).toEqual(['ocrEngine', 'ocrEngineVersion'])
   })
 })
 
@@ -1282,43 +1372,6 @@ describe('ARC-16 round 3: two recordings for one key are refused, naming both fi
   })
 })
 
-describe('AI-10 round 3: the stamp check holds through the project engine and the handler', () => {
-  for (const part of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
-    test(`AI-10 ARC-22 a project result F04-valid but stamped with another ${part} is refused naming ${part} only, and the handler throws it`, async () => {
-      const good = GOOD_REC()
-      const stamp = { ...good.stamp, [part]: OTHER[part] }
-      expect(validateAiOutput('finding', good.output, stamp).ok).toBe(true)
-      fakeProject(({ json }) => {
-        const id = String(json['jobId'])
-        writeOutbox(exchange, `${id}.json`, outboxResult(id, good.output, stamp))
-      })
-      const r = projectRunner()
-      const res = await r.runAiStep(job('good'), { jobId: JOB_ID })
-      expect(res.ok).toBe(false)
-      if (res.ok) return
-      const all = allText(res)
-      expect(all).toMatch(/AI-10/)
-      expect(all).toMatch(PARTS[part])
-      for (const other of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
-        if (other !== part) expect(all, other).not.toMatch(PARTS[other])
-      }
-      expect(all).not.toContain(OTHER[part])
-
-      const h = createAiStepHandler('finding', r)
-      const ctx = { jobId: 'job-c01-handler-stamp-test', attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
-      let message = ''
-      try {
-        await h.run(job('good'), ctx)
-      } catch (e) {
-        message = e instanceof Error ? e.message : String(e)
-      }
-      expect(message).toMatch(/AI-10/)
-      expect(message).toMatch(PARTS[part])
-      expect(message).not.toContain(OTHER[part])
-    })
-  }
-})
-
 describe('ARC-22 round 3: an ignored outbox file is logged once per content', () => {
   test('ARC-22 a stranger file is logged once over many polls, again only when rewritten with new content, by name only', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
@@ -1396,9 +1449,7 @@ describe('AI-1 AI-10 round 3: every refusal names its clause and every part it l
     if (res.ok) return
     const all = allText(res)
     expect(all).toMatch(/AI-10/)
-    expect(all).toMatch(/model ?id\W+input ?hash|input ?hash\W+model ?id/i)
-    expect(all).not.toMatch(PARTS.promptVersion)
-    expect(all).not.toMatch(PARTS.promptHash)
+    expect(namedParts(all)).toEqual(['inputHash', 'modelId'])
   })
 
   test('ARC-22 the handler message keeps the reason and each problem apart (never run together)', async () => {

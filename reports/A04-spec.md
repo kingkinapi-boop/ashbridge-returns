@@ -82,3 +82,17 @@ The round 1 build cannot be mutation-run with these tests: Stryker's dry run ref
 
 ## For the build
 Fix list items 2 to 5 of reports/A04-findings.md, plus: the duplicate refusal, the malformed-recording skip logged once by name with its reason (each malformed recording logged, G1), the engine's blank-folder refusal returned, never thrown (G2), a blank folder at the engine refused, the outbox filter dropped, and the 15 equivalents removed. Then `mutate:changed -- A04` (with `--force` if a static line survives) at 100 on engines.ts, runner.ts, schemas.ts and env.ts, the db test on PGlite, and the fresh `/security-review`.
+
+# A04 spec, round 4 (A426, reports/A04-findings.md fix list item 2; cloud, Opus 5.5, 3 Oct 2026)
+
+Validated on main 1f88585c649809663de46bf53ec92623de1fd04f (merged into claude/A04). File: `src/modules/ai/runner/runner.acceptance.test.ts` only.
+
+- One stamp table, `STAMP_PARTS = Object.keys(versionStampSchema.shape)` (7 parts today); both hand `PARTS` tables are gone. Parts named in a refusal are parsed as an exact sorted set from `the answer's stamp does not match the job: <parts> (AI-10)` (the reason wording is unchanged), never matched by regex per part.
+- New describe "AI-10 round 4" (26 tests): for every part, an answer differing only there is refused naming exactly that part with no value printed, through the recorded engine, the project engine and the handler over the project engine (21); a meta test that `STAMP_PARTS_FROM_JOB` plus `STAMP_PARTS_FROM_ANSWER` (read by name from `./runner`) equal the shape's keys and are disjoint; planted faults for the meta check (a table missing `mappingRelease`, a part in both lists, a part twice, an extra `ordersVersion`) and for the parse (`ocrEngine` vs `ocrEngineVersion`); liveness (every planted value F04-valid and different from the job, the own-stamp answer runs); two differing OCR parts are both named.
+- Fails first on the round 3 build: 11 fail, 112 pass (9 = 3 OCR or mapping parts x 3 paths, the meta test because runner.ts lacks the exports, the two-OCR test). typecheck and lint green (the exports are read by name, so their absence fails a test, not tsc).
+- Step 6b (stub: `expected: VersionStamp` with all 7 parts, loop over the schema keys, the two lists exported; never committed): A04 126 of 126; `npm test` unit 2674 of 2674, db 550 of 550. No other test fails.
+- Rewritten in this commit (superseded by A426 / findings item 2, not weakened): "AI-10 round 2: a F04-valid answer stamped for another job..." (4 per-part tests and the own-stamp test, folded into round 4); "AI-10 round 3: the stamp check holds through the project engine and the handler" (4 per-part tests, now 14 in round 4); "AI-10 an answer stamped with another model id and another input hash..." now asserts the exact set {inputHash, modelId} instead of regexes. Tests retired with nothing in their place: none.
+- Amber: the handler cases run the handler over the project engine (the F10 path), as round 3 did; the planted values are `PLANTED-OTHER-STAMP-<i>-<part> (Test)` (non-hash text, F04 only asks for non-blank); `STAMP_PARTS_FROM_ANSWER` may be any string list as long as the two lists together cover the shape exactly once.
+
+## For the build (round 4)
+runner.ts only: `expected` typed `VersionStamp` with all 7 parts from the job, `wrong` iterates the schema keys, export `STAMP_PARTS_FROM_JOB` (all 7) and `STAMP_PARTS_FROM_ANSWER` (empty). Then unit, db, the golden inbox, `mutate:changed -- A04` at 100 on runner.ts, and the security review.
