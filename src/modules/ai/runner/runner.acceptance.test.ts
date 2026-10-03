@@ -7,7 +7,8 @@
 //   createAiRunner(options): AiRunner
 //     options: { recordingsDir: string; approvedPath?: string (default data/ai/approved.json at the repo root);
 //                env?: Record<string, string | undefined> (default process.env; settings read by name, values never
-//                printed); sink?: (line: string) => void (one log line per call); pollMs?: number (outbox poll) }
+//                printed); sink?: (line: string) => void (one log line per call, plus one line for each flagged file:
+//                a malformed recording or a non-result outbox file, once per name and content); pollMs?: number (outbox poll) }
 //   AiRunner: {
 //     engine(): 'recorded' | 'project'                 'recorded' until switched
 //     useEngine(name: string): { ok: true } | { ok: false; reason: string }
@@ -712,10 +713,12 @@ describe('AI-11 round 2: an approved list that cannot be read refuses with its o
 })
 
 describe('ARC-16 round 2: recordings that cannot be matched', () => {
-  test('ARC-16 a recordings folder that does not exist fails with re-record and the three key parts; no engine but the recorded one runs', async () => {
+  test('ARC-16 a recordings folder that does not exist fails with re-record and the three key parts; no engine but the recorded one runs; the only log line is the refusal', async () => {
     const proj = vi.spyOn(aiEngines.project, 'run')
     const j = job('good')
-    const res = await runner({ recordingsDir: path.join(tmp.dir, 'no-recordings-here') }).runAiStep(j)
+    const { lines, sink } = collectLines()
+    const res = await runner({ recordingsDir: path.join(tmp.dir, 'no-recordings-here'), sink }).runAiStep(j)
+    expect(lines, 'a missing folder is not a malformed recording').toEqual(['ai step finding: refused'])
     expect(res.ok).toBe(false)
     if (res.ok) return
     const text = allText(res)
@@ -874,11 +877,9 @@ describe('ARC-20 round 2: the exchange folder is read once, through env.ts, when
         seen: new Set<string>(),
         ...(folder === undefined ? {} : { exchangeDir: folder }),
       }
-      const res = await aiEngines.project
-        .run(job('good'), ctx)
-        .catch((e: unknown) => ({ ok: false as const, reason: `threw: ${String(e)}`, problems: [] }))
-      expect(res.ok).toBe(false)
-      if (!res.ok) expect(res.reason).toMatch(/AI_EXCHANGE_DIR/)
+      // G2 (reports/A04-spec-review-3.md): the refusal comes back as a result; a thrown error fails here.
+      const pending = Promise.resolve().then(() => aiEngines.project.run(job('good'), ctx))
+      await expect(pending).resolves.toMatchObject({ ok: false, reason: expect.stringMatching(/AI_EXCHANGE_DIR/) as unknown })
       expect(write).not.toHaveBeenCalled()
       expect(mkdir).not.toHaveBeenCalled()
       expect(rename).not.toHaveBeenCalled()
@@ -1126,13 +1127,104 @@ describe('ARC-16 round 3: a malformed recording fails closed, never a crash', ()
     await expect(Promise.resolve().then(() => h.run(job('good'), ctx))).rejects.toThrow(/re-record/)
   })
 
-  test('ARC-16 only *.json files are recordings: a notes.txt holding the good answer is never read', async () => {
+  test('ARC-16 only *.json files are recordings: a notes.txt holding the good answer is never read, and the only log line is the refusal', async () => {
     const dir = rawRecordings('txt', { 'notes.txt': recordingText(GOOD_REC()) })
     const read = vi.spyOn(fs, 'readFileSync')
-    const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+    const { lines, sink } = collectLines()
+    const res = await runner({ recordingsDir: dir, sink }).runAiStep(job('good'))
     expect(res.ok).toBe(false)
     if (!res.ok) expect(allText(res)).toMatch(/re-record/)
     expect(read.mock.calls.filter((c) => String(c[0]).endsWith('notes.txt'))).toEqual([])
+    expect(lines, 'a non-JSON file is not a malformed recording').toEqual(['ai step finding: refused'])
+  })
+})
+
+// ---------- G1 (Lead, A418; reports/A04-spec-review-3.md): a malformed recording is skipped and logged once by
+// name with the reason, never its content or the folder path. Reasons: "unparseable" (not JSON at all) and
+// "not one recording" (JSON, but not one recording) are told apart; a .json entry that cannot be read (a folder)
+// is flagged too. Logged again only when the file is rewritten with other bytes (the outbox rule, amber). ----------
+
+const UNPARSEABLE = /unparseable/i
+const NOT_ONE_RECORDING = /not one recording/i
+const BAD_CANARY = 'PLANTED-CANARY-BAD-RECORDING (Test)'
+const STRAY_VALUE = 'PLANTED-STRAY-VALUE (Test)'
+const WRONG_TYPE_VALUE = 4242424242
+
+type MalformedKind = { name: string; text: string | null; reason: RegExp | null; secret: string | null }
+
+const MALFORMED_KINDS: readonly MalformedKind[] = [
+  { name: 'a-bad.json', text: `{ "summary": "${BAD_CANARY}"`, reason: UNPARSEABLE, secret: BAD_CANARY },
+  { name: 'a-empty.json', text: '', reason: UNPARSEABLE, secret: null },
+  { name: 'a-null.json', text: 'null', reason: NOT_ONE_RECORDING, secret: null },
+  { name: 'a-list.json', text: '[]', reason: NOT_ONE_RECORDING, secret: null },
+  { name: 'a-stray.json', text: recordingText({ ...GOOD_REC(), note: STRAY_VALUE }), reason: NOT_ONE_RECORDING, secret: STRAY_VALUE },
+  { name: 'a-wrong-type.json', text: recordingText({ ...GOOD_REC(), modelId: WRONG_TYPE_VALUE }), reason: NOT_ONE_RECORDING, secret: String(WRONG_TYPE_VALUE) },
+  // A folder named like a recording: the unreadable-entry branch (text null: made with mkdir).
+  { name: 'a-dir.json', text: null, reason: null, secret: null },
+]
+
+describe('ARC-16 A418: a malformed recording is skipped and logged once by name with the reason', () => {
+  for (const kind of MALFORMED_KINDS) {
+    test(`ARC-16 ${kind.name} beside the good recording: the step resolves ok, the file is logged once by name with its reason, never its content or the folder path`, async () => {
+      const dir = path.join(tmp.dir, `recordings-folder-canary-${kind.name.replace(/\W+/g, '-')}`)
+      fs.mkdirSync(dir)
+      const at = path.join(dir, kind.name)
+      if (kind.text === null) fs.mkdirSync(at)
+      else fs.writeFileSync(at, kind.text)
+      fs.writeFileSync(path.join(dir, 'b-good.json'), recordingText(GOOD_REC()))
+      const { lines, sink } = collectLines()
+      const r = runner({ recordingsDir: dir, sink })
+      const named = (): string[] => lines.filter((l) => l.includes(kind.name))
+
+      await expect(r.runAiStep(job('good'))).resolves.toMatchObject({ ok: true, output: GOOD_REC().output })
+      expect(lines).toHaveLength(2)
+      expect(lines).toContain('ai step finding: ok')
+      expect(named(), 'one line names the file').toHaveLength(1)
+      const line = named()[0] ?? ''
+      expect(line.replace(kind.name, '').trim().length, 'the line gives a reason besides the name').toBeGreaterThan(0)
+      if (kind.reason === UNPARSEABLE) {
+        expect(line).toMatch(UNPARSEABLE)
+        expect(line).not.toMatch(NOT_ONE_RECORDING)
+      }
+      if (kind.reason === NOT_ONE_RECORDING) {
+        expect(line).toMatch(NOT_ONE_RECORDING)
+        expect(line).not.toMatch(UNPARSEABLE)
+      }
+      if (kind.secret !== null) expect(lines.join('\n')).not.toContain(kind.secret)
+      expect(lines.join('\n')).not.toContain(dir)
+      expect(lines.join('\n')).not.toContain('folder-canary')
+
+      // once: the same file on the next run adds no line for it
+      await expect(r.runAiStep(job('good'))).resolves.toMatchObject({ ok: true })
+      expect(named()).toHaveLength(1)
+      expect(lines).toHaveLength(3)
+      expect(lines.filter((l) => l === 'ai step finding: ok')).toHaveLength(2)
+
+      // rewritten with other bad bytes: logged again (amber; reverse by dropping this block)
+      if (kind.text !== null) {
+        fs.writeFileSync(at, `${kind.text} \n`)
+        await expect(r.runAiStep(job('good'))).resolves.toMatchObject({ ok: true })
+        expect(named()).toHaveLength(2)
+        expect(lines).toHaveLength(5)
+        if (kind.secret !== null) expect(lines.join('\n')).not.toContain(kind.secret)
+      }
+    })
+  }
+
+  test('ARC-16 the two reasons are told apart: an unparseable file and a file that is not one recording log different reasons', async () => {
+    const dir = path.join(tmp.dir, 'recordings-two-reasons')
+    fs.mkdirSync(dir)
+    fs.writeFileSync(path.join(dir, 'x-bad.json'), '{')
+    fs.writeFileSync(path.join(dir, 'y-null.json'), 'null')
+    fs.writeFileSync(path.join(dir, 'z-good.json'), recordingText(GOOD_REC()))
+    const { lines, sink } = collectLines()
+    await expect(runner({ recordingsDir: dir, sink }).runAiStep(job('good'))).resolves.toMatchObject({ ok: true })
+    const bad = (lines.find((l) => l.includes('x-bad.json')) ?? '').replace('x-bad.json', '')
+    const notOne = (lines.find((l) => l.includes('y-null.json')) ?? '').replace('y-null.json', '')
+    expect(bad).toMatch(UNPARSEABLE)
+    expect(notOne).toMatch(NOT_ONE_RECORDING)
+    expect(bad).not.toBe(notOne)
+    expect(lines).toHaveLength(3)
   })
 })
 
