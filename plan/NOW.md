@@ -6,7 +6,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:46Z by the Lea
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (49):** through A07D, A06, CQ2, SC4, then CQ3, W16 and FX2 (train 5deca4a green, test:flake 5 of 5, verify 541; landed 07:57Z as 758d0b06). No train in flight.
+- **Landed (49):** through A07D, A06, CQ2, SC4, then CQ3, W16 and FX2 (train 5deca4a green, test:flake 5 of 5, verify 541; landed 07:57Z as 758d0b06). Train 12af2528 requested 08:50Z.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
@@ -17,7 +17,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:46Z by the Lea
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| SC, CQ4, CQ5 | checks PASS; boarded (train f164b1b) | train with A04 if it passes, about 09:00Z |
+| Train | SC, CQ4, CQ5, FX10 boarded; head 12af2528; requested 08:50Z | cloud check full, test:flake, FX10 db x20; land if green |
 | SC3 | spec patch reported (22 of 22 with tags in); build round 2 open | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | round 4 check FAIL (4 security: path traversal, outbox reads, endless poll, isTest trust); findings review 5 running | verdict; A08 spec held for it |
@@ -25,10 +25,10 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:46Z by the Lea
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
-| FX10, FX12, FX14 | FX10 check PASS, security review running; FX12 spec patch reported, build open; FX14 carded | board FX10; FX12 build |
+| FX12, FX14 | FX12 spec patch reported, build open; FX14 carded | FX12 build, check |
 | CQ6 to CQ8, SC10, A08 | CQ6, CQ7, CQ8 specs reported; A08 spec reported, refusal-file gap to its spec (A443) | CQ builds after CQ4 and CQ5 land; A08 after A04 |
 
-Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helpers: A04 findings review 5, FX10 security review.
+Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helpers: A04 findings review 5, phase 4 card review.
 
 ## Next, in order
 
