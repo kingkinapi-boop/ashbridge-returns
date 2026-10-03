@@ -1,13 +1,12 @@
 {
  "card": "FX5",
  "role": "build",
- "round": 1,
+ "round": 2,
  "spec": "bd0e2fe2",
- "worker": "local-1",
- "state": "released",
- "at": "2026-10-03T10:50:31.668Z",
+ "worker": "cloud-aab122",
+ "state": "working",
+ "at": "2026-10-03T10:50:37.809Z",
  "mode": "turbo",
- "note": "Card says Where: cloud; local worker leaves it for a cloud box",
  "lastRelease": {
   "tip": "b26392a74de721b39538808841e478e0e1fc98d0"
  }
