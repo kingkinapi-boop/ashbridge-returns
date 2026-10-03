@@ -37,8 +37,10 @@ import { z } from 'zod'
 import { aiStepTypes } from '../../../contracts/ai'
 import * as aiIndex from '../index'
 import { AI_JOB_LEASE_MS, AiJobSchema, createAiRunner, createAiStepHandler, InboxFileSchema } from '../index'
+import { lastErrorLine } from './runner'
 import { readRegularFile } from '../../../core/safe-read'
 import { readOwnSource } from '../../../core/testing/read-own-source'
+import * as engines from './engines'
 import { aiEngines, type EngineContext } from './engines'
 import { REPO_ROOT, RECORDINGS_DIR, collectLines, job, outboxResult, recording, tempDir, tripleOf, writeApproved, writeOutbox } from './__fixtures__/harness'
 
@@ -315,19 +317,62 @@ describe('ARC-22 (c) the mutation disable comment in engines.ts covers only the 
     expect([...covered].sort((x, y) => x - y)).toEqual([3, 6])
   })
 
-  test('ARC-22 in engines.ts no disabled BlockStatement line is a function line or a mkdir, realpath or if line, and the cover is at most 5 lines', () => {
-    const text = readOwnSource('src/modules/ai/runner/engines.ts')
-    const lines = text.split('\n')
-    const covered = blockStatementDisabled(text)
-    expect(lines.some((l) => l.includes('function realFolder'))).toBe(true)
-    expect(covered.size).toBeLessThanOrEqual(5)
-    for (const n of covered) {
-      const line = lines[n - 1] ?? ''
-      expect(line, `line ${String(n)} is covered by a BlockStatement disable`).not.toMatch(/\bfunction\b|mkdirSync|realpathSync|lstatSync|^\s*(if|const)\b/)
+  test('ARC-22 S1 every one-line disable in engines.ts and schemas.ts covers one line, which is an empty-catch line or holds no try', () => {
+    for (const file of ['src/modules/ai/runner/engines.ts', 'src/modules/ai/runner/schemas.ts']) {
+      const lines = readOwnSource(file).split('\n')
+      lines.forEach((line, i) => {
+        if (!/Stryker disable next-line\b/.test(line)) return
+        const covered = lines[i + 1] ?? ''
+        const ok = /^\s*(\} )?catch \{/.test(covered) || !/\btry\b/.test(covered)
+        expect(ok, `${file}:${String(i + 2)} is covered by a disable but holds a try: ${covered.trim()}`).toBe(true)
+      })
     }
-    lines.forEach((line, i) => {
-      if (/function realFolder|mkdirSync|realpathSync/.test(line)) expect(covered.has(i + 1), `line ${String(i + 1)}: ${line.trim()}`).toBe(false)
-    })
+  })
+
+  test('ARC-22 S1 the scanner shape rule catches a one-line try and catch under a disable (the plant)', () => {
+    const planted = ['// Stryker disable next-line BlockStatement: why it is the same thing here', 'try { return fn() } catch { return undefined }']
+    const covered = planted[1] ?? ''
+    expect(/^\s*(\} )?catch \{/.test(covered) || !/\btry\b/.test(covered)).toBe(false)
+  })
+
+  test('ARC-22 S1 attempt() gives the value of fn, and undefined when fn throws', () => {
+    const attempt = (engines as unknown as { attempt?: <T>(fn: () => T) => T | undefined }).attempt
+    expect(typeof attempt, 'engines.ts exports attempt for this test (FX18 round 2, B1)').toBe('function')
+    expect(attempt?.(() => 7)).toBe(7)
+    const thrower = (): number => {
+      throw new Error('planted (Test)')
+    }
+    expect(attempt?.(thrower)).toBeUndefined()
+    expect(attempt?.(() => 0)).toBe(0)
+  })
+
+  test('ARC-22 S2 schemas.ts has no range disable: every Stryker disable there is a next-line one', () => {
+    const lines = readOwnSource('src/modules/ai/runner/schemas.ts').split('\n')
+    for (const [i, line] of lines.entries()) {
+      if (/Stryker disable\b/.test(line)) expect(line, `schemas.ts:${String(i + 1)}`).toMatch(/Stryker disable next-line\b/)
+      expect(line, `schemas.ts:${String(i + 1)}`).not.toMatch(/Stryker restore\b/)
+    }
+  })
+
+  test('ARC-22 S3 the cross-drive test of insideRepo is a pure helper: an absolute relative path (another Windows drive) is outside', () => {
+    const relIsInside = (engines as unknown as { relIsInside?: (rel: string, p?: typeof path) => boolean }).relIsInside
+    expect(typeof relIsInside, 'engines.ts exports relIsInside(rel, p = path) (FX18 round 2, B2)').toBe('function')
+    expect(relIsInside?.('D:\\x', path.win32)).toBe(false)
+    expect(relIsInside?.('..\\x', path.win32)).toBe(false)
+    expect(relIsInside?.('..', path.win32)).toBe(false)
+    expect(relIsInside?.('a\\b', path.win32)).toBe(true)
+    expect(relIsInside?.('..a\\b', path.win32)).toBe(true)
+    expect(relIsInside?.('', path.win32)).toBe(true)
+    expect(relIsInside?.('/x', path.posix)).toBe(false)
+    expect(relIsInside?.('../x', path.posix)).toBe(false)
+    expect(relIsInside?.('..', path.posix)).toBe(false)
+    expect(relIsInside?.('a/b', path.posix)).toBe(true)
+    expect(relIsInside?.('..a/b', path.posix)).toBe(true)
+    expect(relIsInside?.('a/b')).toBe(true)
+  })
+
+  test('ARC-22 S3 engines.ts disables no ConditionalExpression or BooleanLiteral mutant for insideRepo', () => {
+    expect(readOwnSource('src/modules/ai/runner/engines.ts')).not.toMatch(/Stryker disable[^\n]*(ConditionalExpression|BooleanLiteral)/)
   })
 
   test('ARC-22 every Stryker disable comment in engines.ts and safe-read.ts gives a reason', () => {
@@ -964,5 +1009,157 @@ describe('ARC-22 OUTBOX_MAX_BYTES comes from data/ai/exchange-limits.json, besid
     writeOutbox(exchange, `${JOB_ID}.json`, pad(0))
     const exact = await within(start(projectRunner()), 2)
     expect(exact).toMatchObject({ ok: true, output: GOOD().output })
+  })
+})
+
+// ---------- round 2 (A534): state kept per wait, one line, cleanup on every refusal, folders tightened, the engine's own gate ----------
+
+describe('ARC-22 S4 S5 (b) a stranger is logged once per wait, and the waited-id file is never silenced by other strangers', () => {
+  const ignoredLine = (name: string): string => `ai exchange: ignored outbox file ${JSON.stringify(name)}`
+
+  test('ARC-22 S4 a second wait on the same job id in a new step on the same runner logs <id>.txt again', async () => {
+    const name = `${JOB_ID}.txt`
+    fs.mkdirSync(outbox(), { recursive: true })
+    fs.writeFileSync(path.join(outbox(), name), 'PLANTED-WAIT (Test)')
+    const { lines, sink } = collectLines()
+    const r = projectRunner({ sink })
+    const first = track(start(r))
+    await polls(3)
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    await polls(1)
+    expect(first.settled()).toBe(true)
+    expect(lines.filter((l) => l === ignoredLine(name))).toHaveLength(1)
+    fs.rmSync(own())
+    const second = track(start(r))
+    await polls(3)
+    expect(lines.filter((l) => l === ignoredLine(name))).toHaveLength(2)
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    await polls(1)
+    expect(second.settled()).toBe(true)
+  })
+
+  test('ARC-22 S5 one stranger rewritten seenMax + 1 times does not silence <id>.txt: it is still logged once', async () => {
+    const { seenMax } = limits()
+    const stranger = 'job-stranger-rewritten-test.bin'
+    fs.mkdirSync(outbox(), { recursive: true })
+    const { lines, sink } = collectLines()
+    const t = track(start(projectRunner({ sink })))
+    for (let i = 0; i <= seenMax; i++) {
+      fs.writeFileSync(path.join(outbox(), stranger), 'x'.repeat(i + 1))
+      await polls(1)
+    }
+    const waited = `${JOB_ID}.txt`
+    fs.writeFileSync(path.join(outbox(), waited), 'PLANTED-WAIT (Test)')
+    await polls(3)
+    expect(t.settled()).toBe(false)
+    expect(lines.filter((l) => l === ignoredLine(waited))).toHaveLength(1)
+    expect(lines.filter((l) => l === ignoredLine(stranger))).toHaveLength(1)
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    await polls(1)
+    expect(t.settled()).toBe(true)
+  })
+})
+
+/** No lone surrogate: encoding to UTF-8 and back changes nothing. */
+const wellFormed = (text: string): boolean => new TextDecoder().decode(new TextEncoder().encode(text)) === text
+
+describe('AI-9 S6 L5 the one line has no line breaks, no format or bidi characters, and no lone surrogate; the cap counts code points', () => {
+  test('AI-9 S6 U+2028, a right-to-left override and an isolate are removed, the letters kept', () => {
+    const out = lastErrorLine('a b‮c⁦d', 99)
+    expect(out).toBe('abcd')
+    for (const bad of [' ', ' ', '‮', '⁦', '​', '﻿']) expect(lastErrorLine(`x${bad}y`, 99)).toBe('xy')
+  })
+
+  test('AI-9 S6 a cut through an emoji leaves no lone surrogate, and the cap counts code points', () => {
+    const cut = lastErrorLine('a\u{1F600}b', 2)
+    expect(wellFormed(cut)).toBe(true)
+    expect(Array.from(cut)).toEqual(['a', '\u{1F600}'])
+    const many = lastErrorLine('\u{1F600}'.repeat(10), 4)
+    expect(Array.from(many)).toHaveLength(4)
+    expect(wellFormed(many)).toBe(true)
+  })
+
+  test('AI-9 S6 plain text under the cap passes whole (no false alarm)', () => {
+    expect(lastErrorLine('the answer failed (AI-1) café', 99)).toBe('the answer failed (AI-1) café')
+  })
+})
+
+describe('ARC-22 S7 S8 L3 N6 cleanup on every refusal, and folders that already exist are tightened', () => {
+  const stagingLeft = (): string[] => fs.readdirSync(exchange).filter((n) => n.startsWith('.staging-'))
+
+  test('ARC-22 S7 the rename into the inbox fails: no staging file is left in the exchange folder', async () => {
+    const real = fs.renameSync.bind(fs)
+    vi.spyOn(fs, 'renameSync').mockImplementation(((from: fs.PathLike, to: fs.PathLike) => {
+      if (typeof to === 'string' && to.startsWith(exchange)) throw planted('EXDEV', to)
+      real(from, to)
+    }))
+    const res = await within(start(projectRunner()), 3)
+    expect(res).toEqual({ ok: false, reason: INBOX_WRITE_FAILED, problems: [] })
+    expect(stagingLeft()).toEqual([])
+  })
+
+  test.skipIf(onWin32)('ARC-22 S7 the inbox swapped for a link after the staging write: the refusal leaves no staging file', async () => {
+    const behind = path.join(tmp.dir, 'behind-inbox-s7')
+    fs.mkdirSync(behind)
+    const real = fs.writeFileSync.bind(fs)
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+      ;(real as (...a: unknown[]) => void)(p, ...rest)
+      if (typeof p === 'string' && p.includes('.staging-')) {
+        fs.rmSync(path.join(exchange, 'inbox'), { recursive: true })
+        fs.symlinkSync(behind, path.join(exchange, 'inbox'))
+      }
+    }) as typeof fs.writeFileSync)
+    const res = await within(start(projectRunner()), 3)
+    expect(res).toEqual({ ok: false, reason: INBOX_NOT_REAL, problems: [] })
+    expect(stagingLeft()).toEqual([])
+  })
+
+  test.skipIf(onWin32)('ARC-22 S8 an inbox and outbox made earlier with 0755 are 0700 after a run', async () => {
+    for (const name of ['inbox', 'outbox']) {
+      fs.mkdirSync(path.join(exchange, name), { mode: 0o755 })
+      fs.chmodSync(path.join(exchange, name), 0o755)
+    }
+    const t = track(start(projectRunner()))
+    await polls(2)
+    const mode = (p: string): number => fs.statSync(p).mode & 0o777
+    expect(mode(path.join(exchange, 'inbox'))).toBe(0o700)
+    expect(mode(path.join(exchange, 'outbox'))).toBe(0o700)
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    await polls(1)
+    expect(t.settled()).toBe(true)
+  })
+})
+
+describe('SEC-11 S9 the project engine repeats the isTest gate itself, whoever calls it', () => {
+  const SEC11 = 'the project engine runs only made-up returns until go-live (SEC-11)'
+  const ctx = (): EngineContext => ({
+    jobId: JOB_ID,
+    recordingsDir: RECORDINGS_DIR,
+    exchangeDir: exchange,
+    pollMs: 5,
+    sink: () => undefined,
+    waiting: new Map<string, number>(),
+    seen: new Set<string>(),
+    now,
+    deadline: new Date(T0 + 60 * 60_000),
+  })
+
+  test('SEC-11 S9 run directly with isTest false: refused with the runner\'s sentence, and no inbox file is written', async () => {
+    const res = await within(aiEngines.project.run({ ...job('good'), isTest: false }, ctx()), 2)
+    expect(res).toEqual({ ok: false, reason: SEC11, problems: [] })
+    expect(fs.readdirSync(exchange)).toEqual([])
+  })
+
+  test('SEC-11 S9 through the runner the same sentence comes back (one sentence, two gates)', async () => {
+    const r = projectRunner()
+    const res = await within(r.runAiStep({ ...job('good'), isTest: false }, { jobId: JOB_ID }), 2)
+    expect(res).toEqual({ ok: false, reason: SEC11, problems: [] })
+    expect(fs.readdirSync(exchange)).toEqual([])
+  })
+
+  test('SEC-11 S9 run directly with isTest true still runs (no false alarm)', async () => {
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    const res = await within(aiEngines.project.run(job('good'), ctx()), 2)
+    expect(res).toMatchObject({ ok: true })
   })
 })
