@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 |---|---|---|
 | W00c | round 2 spec patch reopened (A413: 4 gaps); build held | spec, build, check; unblocks W00b, JH0, B04, SC2 |
 | W00b | spec round 3 working (cloud, A409); build waits on W00c and FX8 | spec review, then build after both land |
-| FX8 | check FAIL (verify.mjs README count and whole-folder lines); Opus findings review running | fix round; lands before W00b's build |
+| FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
 | W16 | fixup spec GO (A415); build open | build, check; then SC6, FX9 |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
 | SC | spec patch reopened (A415: 5 gaps; R37 to FX9; SC9 carded for walker escapes) | spec, build, check with Opus read and test:flake |
