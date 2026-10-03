@@ -46,3 +46,6 @@ SC3's second-reader rule (G5) refuses a second file that names a registered `*_E
 
 ## Exchange files after a job (A492, 3 Oct)
 Returns does not delete a finished AI job's exchange files today (the stand-in keeps them for tests). Who deletes them before go-live, and when, is asked with the go-live questions: it is the retention of client data in the exchange folder, so it may be red then.
+
+## The live bridge reader (A498, 3 Oct)
+The live bridge reader is not carded yet. When it is, it refuses a marker answer row holding anything but `given` (GL3's views mask them; this is the second lock).
