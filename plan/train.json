@@ -1,5 +1,5 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "12af2528",
   "cards": [
@@ -9,5 +9,6 @@
     "FX10"
   ],
   "requested_at": "2026-10-03T08:46:31Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). CQ4 and CQ5 change scope.mjs, lib.mjs and claim.mjs: run every tools test. SC adds the card rules: run them all; SC's known.json owners must all be open cards. FX10 card check: run the db project 20 times under load (its check ran test:flake 5 times only, A445). SC is core: mutate:changed for SC (cloud)."
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). CQ4 and CQ5 change scope.mjs, lib.mjs and claim.mjs: run every tools test. SC adds the card rules: run them all; SC's known.json owners must all be open cards. FX10 card check: run the db project 20 times under load (its check ran test:flake 5 times only, A445). SC is core: mutate:changed for SC (cloud).",
+  "by": "cloud-915252"
 }
