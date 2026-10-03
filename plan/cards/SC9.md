@@ -21,3 +21,6 @@ A checker who did neither: every planted escape is found; the walker's result on
 
 ## Also (A440, from reports/SC-check.md)
 Shape tests the SC check asked for: NO_FILE_HOMES (tools/test/rules.test.mjs), READERS, PENDING rows (rule name and why), FUTURE_POINTERS staleness (src/core/db/db.test.ts); KNOWN_KEYS allows only the keys SC uses. The spec job owns these test lines.
+
+## Also (A452, reports/SC3-findings.md)
+Plant the file-walker escapes SC3's review found (copied walkers that skip a folder or extension) and text inside jsonb columns.

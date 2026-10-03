@@ -639,7 +639,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F01D",
@@ -666,7 +666,8 @@
       "title": "Schema and contract rules",
       "phase": 0,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -2428,7 +2429,8 @@
         "src/modules/ledger/core/**",
         "src/modules/ledger/index.ts",
         "src/contracts/ledger.ts",
-        "db/schema/20_ledger.sql"
+        "db/schema/20_ledger.sql",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "EV-1",
@@ -3058,7 +3060,7 @@
       "paths": [
         "src/modules/qbo/**",
         "src/contracts/qbo.ts",
-        "db/schema/35_qbo.sql",
+        "db/schema/56_qbo.sql",
         "testworld/qbo/export.ts",
         "src/core/env.ts"
       ],
@@ -3097,7 +3099,8 @@
         "src/modules/books/index.ts",
         "src/contracts/books.ts",
         "db/schema/30_books.sql",
-        "src/pipeline/steps/books.ts"
+        "src/pipeline/steps/books.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "TB-1",
@@ -6195,7 +6198,8 @@
         "db/schema/60_versions.sql",
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
-        "src/pipeline/deps.ts"
+        "src/pipeline/deps.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -9937,7 +9941,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ2"
@@ -9955,10 +9959,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX8-findings.md, 3 Oct (A417)."
+      "note": "From reports/FX8-findings.md, 3 Oct (A417).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ3"
@@ -9975,7 +9980,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/CQ3-check.md, 3 Oct (A428)."
+      "note": "From reports/CQ3-check.md, 3 Oct (A428).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10153,7 +10159,7 @@
       "title": "Security rules R62 to R66",
       "phase": 0,
       "size": "M",
-      "core": false,
+      "core": true,
       "security": true,
       "note": "From reports/A06-findings.md, 2 Oct."
     },
@@ -10380,7 +10386,7 @@
       "note": "Split from FX7, 3 Oct (A415)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10397,7 +10403,8 @@
       "size": "S",
       "core": false,
       "security": true,
-      "note": "Seen in DB16's spec run, 3 Oct (A421)."
+      "note": "Seen in DB16's spec run, 3 Oct (A421).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10530,6 +10537,30 @@
       "core": false,
       "security": true,
       "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC3"
+      ],
+      "paths": [
+        "db/schema/94_actor_keys.sql",
+        "src/contracts/actors.acceptance.db.test.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
+      ],
+      "clauses": [
+        "SEC-1",
+        "SEC-7",
+        "ARC-13"
+      ],
+      "id": "FX17",
+      "title": "Actor columns name a staff user or a named system actor",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From reports/SC3-findings.md, 3 Oct (A452). Schema file number 94: N19 holds 93."
     },
     {
       "status": "carded",

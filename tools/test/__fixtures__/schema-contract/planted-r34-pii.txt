@@ -1,0 +1,5 @@
+Planted (SC R34): one of each kind of real-looking personal data, all made up.
+SIN plain 271000002 and spaced 271 000 002 and hyphenated 271-000-002 and business number 839000007RT0001.
+E-mail jordan.lee@realmail.ca outside the reserved domains.
+Phone (416) 555-2368 outside 555-01xx.
+Clean (not caught): 271000000 fails Luhn, owner@example.com, help@clinic.test, (613) 555-0142.
