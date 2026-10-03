@@ -4,7 +4,11 @@
  "round": 1,
  "spec": "bbe1318c",
  "worker": "cloud-ddf73a",
- "state": "working",
- "at": "2026-10-03T14:15:31.721Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T14:16:24.946Z",
+ "mode": "turbo",
+ "note": "spec patch needed: 3 stale R85 KNOWN entries (F00T, V10, SC3), see reports/SC10-build.md",
+ "lastRelease": {
+  "tip": "92d45151deaa3c4eedceaa85b7b069802f4bab01"
+ }
 }
