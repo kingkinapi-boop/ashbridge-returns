@@ -483,3 +483,4 @@
 {"ts":"2026-10-03T07:14:48.305Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T07:14:52.546Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"FX2 security review","allowed":true}
 {"ts":"2026-10-03T07:15:00.617Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"local","desc":"SC8 Opus spec review","allowed":true}
+{"ts":"2026-10-03T07:17:15.295Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}

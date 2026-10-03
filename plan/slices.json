@@ -10257,7 +10257,8 @@
       "spec": null,
       "deps": [
         "SC",
-        "FX2"
+        "FX2",
+        "A04"
       ],
       "paths": [
         "tools/test/source-read-rules.test.mjs",
@@ -10270,7 +10271,9 @@
         "src/core/env.acceptance.test.ts",
         "src/core/ids.acceptance.test.ts",
         "src/core/log.acceptance.test.ts",
-        "src/core/money.acceptance.test.ts"
+        "src/core/money.acceptance.test.ts",
+        "src/core/egress-rules.acceptance.test.ts",
+        "src/modules/auth/rules.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-15",
