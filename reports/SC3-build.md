@@ -7,3 +7,5 @@ Failing (all in tools/test/security-rules.test.mjs, the R62 KNOWN list): FX2 lan
 Needs: a spec patch that drops the six FX2 KNOWN entries and fits the factory list to the landed FX2 code. I did not edit the tests.
 Ambers: tags placed as JSDoc on the methods of the returned adapter object (name line form, per the spec report).
 Permission gaps: none. Model: Sonnet 5.5.
+
+Re-confirmed cloud-a416a1 (3 Oct): Node 24.21, npm ci, vitest on tools/test/security-rules.test.mjs: 4 failed, 4 passed. All 4 are the R62 KNOWN list (FX2 landed). Released: needs a spec patch (drop the FX2 KNOWN entries, fit the factory list), then build again; the 3 JSDoc tags on engine.ts are already in.
