@@ -1,10 +1,12 @@
 {
  "card": "CQ3",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "30 tests (refit: 8 fail for R, validated on 0f7e1cc4, was a50769da)",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T05:56:18.997Z",
+ "state": "reported",
+ "at": "2026-10-03T06:15:26.255Z",
  "mode": "turbo",
- "beat": "2026-10-03T06:09:33.101Z"
+ "beat": "2026-10-03T06:09:33.101Z",
+ "commit": "8e11109b",
+ "validated": "0f7e1cc49f6489857b33bf1c64612182d36005bf"
 }
