@@ -1492,7 +1492,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -1518,7 +1518,8 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9766,7 +9767,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ2"
@@ -9784,7 +9785,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From the DB16 double offer, 3 Oct (A416)."
+      "note": "From the DB16 double offer, 3 Oct (A416).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9986,7 +9988,7 @@
       "note": "From reports/A06-findings.md, 2 Oct."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A06"
@@ -10012,7 +10014,8 @@
       "size": "S",
       "core": false,
       "security": true,
-      "note": "From reports/A06-findings.md, 2 Oct."
+      "note": "From reports/A06-findings.md, 2 Oct.",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
