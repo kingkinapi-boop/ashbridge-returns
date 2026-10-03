@@ -2,10 +2,10 @@
  "card": "SC2",
  "role": "spec",
  "worker": "cloud-7e75a4",
- "state": "reported",
- "at": "2026-10-03T09:06:05.679Z",
+ "state": "reopened",
+ "at": "2026-10-03T09:12:38.474Z",
  "mode": "turbo",
- "note": "75 tests (51 fail until harness.mjs built); R57-R61 R75 R76; amber: R76 KNOWN owner W00b (confirm)",
+ "note": "A450: patch, see card directive",
  "commit": "aba1c99d",
  "validated": "73a78186150affb06c7b1b556add590c06429a4f"
 }
