@@ -3,9 +3,7 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-1f7dcd",
- "state": "released",
- "at": "2026-10-03T11:45:16.311Z",
- "mode": "turbo",
- "note": "wait: still pending A464 spec patch and build round 2; not checked",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
+ "state": "working",
+ "at": "2026-10-03T11:45:18.711Z",
+ "mode": "turbo"
 }
