@@ -195,16 +195,13 @@ function dbTestFiles() {
 }
 
 // KNOWN: tests that still build more than one database. One entry per test: file, exact title, the count
-// and an owner card that splits it (card FX14, to be written by the Lead: these files are outside FX12's
-// paths). Any problem not listed fails; a listed one not produced fails as stale.
+// and an owner. FX14 split the four tests that could be split. The three left are the harness's own isolation
+// tests (a table in one database is not in the other; one database's roles outlive another's close): they need
+// two live databases by definition, so their owner is the reviewed rule ARC4 (amber, FX14 spec). Any problem not listed fails; a listed one not produced fails as stale.
 const KNOWN = [
-  { file: 'src/core/db/db.db.test.ts', title: 'ARC-4 a database is created from the schema folder and cloned per test', worlds: 2, owner: 'FX14' },
-  { file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'RT-5 the number is never built from client data: names, business numbers and quote references change nothing', worlds: 2, owner: 'FX14' },
-  { file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'END-1 a year end the client never confirmed becomes an ops-confirms item and no return', worlds: 2, owner: 'FX14' },
-  { file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-16 two runs of the same scenario give identical rows (no randomness in the backoff)', worlds: 2, owner: 'FX14' },
-  { file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-5 given the same jobs, handlers and clock both runners end with deep-equal statuses and results', worlds: 2, owner: 'FX14' },
-  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 two test databases are isolated: a table made in one is not in the other', worlds: 2, owner: 'FX14' },
-  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: "ARC-4 closing one test database never drops a role another open test database made and uses; each database's roles go when it closes", worlds: 3, owner: 'FX14' },
+  { file: 'src/core/db/db.db.test.ts', title: 'ARC-4 a database is created from the schema folder and cloned per test', worlds: 2, owner: 'ARC4' },
+  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 two test databases are isolated: a table made in one is not in the other', worlds: 2, owner: 'ARC4' },
+  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: "ARC-4 closing one test database never drops a role another open test database made and uses; each database's roles go when it closes", worlds: 3, owner: 'ARC4' },
 ]
 const knownStrings = KNOWN.map((k) => `${k.file}: "${k.title}" builds ${k.worlds} databases`)
 
@@ -287,14 +284,14 @@ describe('ARC-15 FX12: no db test builds more than one database', () => {
 // test budget, or named with the owner card that splits or speeds it. The check re-measures with
 // `npm run test:flake` and the Lead refreshes the numbers; this test keeps the table honest.
 const MEASURED = [
-  { ms: 4506, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'RT-5 property (fixed seed): any order of runs gives unique, stable, contiguous refs numbered in order of first sight', owner: 'FX14' },
-  { ms: 1998, file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-16 two runs of the same scenario give identical rows (no randomness in the backoff)' },
+  { ms: 4506, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'RT-5 property (fixed seed) case 1 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', owner: 'FX14' },
+  { ms: 1998, file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-16 the first run of the scenario gives the pinned rows (no randomness in the backoff)' },
   { ms: 1404, file: 'src/modules/auth/auth.acceptance.db.test.ts', title: 'SEC-1 a mix of wrong passwords and wrong codes counts toward the five' },
   { ms: 1378, file: 'src/contracts/records.acceptance.db.test.ts', title: 'EV-1 returns.is_blank agrees with isBlank on every code point except U+0000 and the surrogates' },
-  { ms: 1317, file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-5 given the same jobs, handlers and clock both runners end with deep-equal statuses and results' },
+  { ms: 1317, file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-5 given the same jobs, handlers and clock the in-process runner ends with the pinned statuses and results' },
   { ms: 1312, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'OUT-6 a T1-only client and a company with no T2 are skipped; the rest of the batch still goes through' },
   { ms: 1305, file: 'src/core/db/db.db.test.ts', title: 'ARC-4 a database is created from the schema folder and cloned per test' },
-  { ms: 1239, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'RT-5 the number is never built from client data: names, business numbers and quote references change nothing' },
+  { ms: 1239, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'RT-5 the number is never built from client data: a name with digits and a business number change nothing' },
   { ms: 1172, file: 'src/modules/auth/auth.acceptance.db.test.ts', title: 'SEC-1 an unknown user, a locked user, a non-test user and a wrong password each cost exactly one scrypt call' },
   { ms: 1114, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'END-1 a year end the client never confirmed becomes an ops-confirms item and no return' },
 ]

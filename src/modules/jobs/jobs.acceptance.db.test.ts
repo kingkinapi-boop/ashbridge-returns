@@ -480,11 +480,84 @@ async function scenario(make: typeof createRunner) {
   }))
 }
 
+// One world per test (FX14): each run is compared with the same pinned rows, so equal runs are equal to each other.
+const SCENARIO_ROWS = [
+  {
+    key: 'a',
+    kind: 'read:page',
+    status: 'done',
+    attempts: 1,
+    result: {
+      ok: true
+    },
+    error: null,
+    stamp: {
+      handler: 'jobs-test',
+      version: 1
+    },
+    runAfter: 1772463600000,
+    finished: 1772463600000
+  },
+  {
+    key: 'b',
+    kind: 'read:page',
+    status: 'done',
+    attempts: 1,
+    result: {
+      ok: false
+    },
+    error: null,
+    stamp: {
+      handler: 'jobs-test',
+      version: 1
+    },
+    runAfter: 1772463600000,
+    finished: 1772463600000
+  },
+  {
+    key: 'c',
+    kind: 'diff:run',
+    status: 'done',
+    attempts: 2,
+    result: {
+      ok: true
+    },
+    error: 'first try fails',
+    stamp: {
+      handler: 'jobs-test',
+      version: 1
+    },
+    runAfter: 1772463660000,
+    finished: 1772464800000
+  },
+  {
+    key: 'd',
+    kind: 'ai:read',
+    status: 'dead',
+    attempts: 3,
+    result: null,
+    error: 'model unavailable',
+    stamp: null,
+    runAfter: 1772465040000,
+    finished: 1772466000000
+  },
+  {
+    key: 'e',
+    kind: 'mystery:step',
+    status: 'failed',
+    attempts: 1,
+    result: null,
+    error: 'no handler for mystery:step',
+    stamp: null,
+    runAfter: 1772463600000,
+    finished: 1772463600000
+  }
+]
+
 describe('ARC-5 the in-process runner and the test runner agree', () => {
-  test('ARC-5 given the same jobs, handlers and clock both runners end with deep-equal statuses and results', async () => {
+  test('ARC-5 given the same jobs, handlers and clock the in-process runner ends with the pinned statuses and results', async () => {
     const a = await scenario(createRunner)
-    const b = await scenario(createSyncRunner)
-    expect(b).toEqual(a)
+    expect(a).toEqual(SCENARIO_ROWS)
     expect(a.map((r) => [r.key, r.status])).toEqual([
       ['a', 'done'],
       ['b', 'done'],
@@ -494,10 +567,16 @@ describe('ARC-5 the in-process runner and the test runner agree', () => {
     ])
   })
 
-  test('ARC-16 two runs of the same scenario give identical rows (no randomness in the backoff)', async () => {
-    const a = await scenario(createRunner)
-    const b = await scenario(createRunner)
-    expect(b).toEqual(a)
+  test('ARC-5 given the same jobs, handlers and clock the test runner ends with the same pinned statuses and results', async () => {
+    expect(await scenario(createSyncRunner)).toEqual(SCENARIO_ROWS)
+  })
+
+  test('ARC-16 the first run of the scenario gives the pinned rows (no randomness in the backoff)', async () => {
+    expect(await scenario(createRunner)).toEqual(SCENARIO_ROWS)
+  })
+
+  test('ARC-16 a second run of the scenario gives the same pinned rows (no randomness in the backoff)', async () => {
+    expect(await scenario(createRunner)).toEqual(SCENARIO_ROWS)
   })
 })
 

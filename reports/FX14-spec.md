@@ -1,0 +1,6 @@
+# FX14 spec (cloud-4b5725, 3 Oct)
+- Branch claude/FX14 (on claude/FX12). Split by the spec job, so the build is none: bridge RT-5 names (2 tests), END-1 year end (2), jobs ARC-5 (2, each against pinned SCENARIO_ROWS) and ARC-16 (2, same pinned rows), bridge RT-5 property (same seed 20261002, same 8 cases drawn once with fc.sample, 8 tests, one world each). Every old assertion kept; the equal-to-each-other comparisons became equal-to-the-same-pinned-rows.
+- db-budget.test.mjs: the four split KNOWN entries deleted; titles in MEASURED renamed. Typecheck, lint clean; unit 2795 pass; db project 619 pass on PGlite and 624 on pg16; db-budget 17 of 17.
+- **Amber:** three KNOWN entries stay (db.db ARC-4 clone isolation, pg16 isolation, pg16 roles): they test the harness's two-live-databases behaviour, so one world cannot prove them. Owner renamed from FX14 to ARC4 (reviewed exemption). Reverse: give them a card. Lead may prefer a marker comment instead.
+- Amber: the property loses fast-check shrinking (sample, not assert); the MEASURED RT-5 row keeps its old 4506 ms and FX14 owner until the check re-measures with test:flake.
+- Not run: test:flake 5 of 5 (check). Permission gaps: none. Model: Sonnet 5.5 (not core).

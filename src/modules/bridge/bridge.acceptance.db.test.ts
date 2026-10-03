@@ -133,17 +133,27 @@ describe('F07 one clean company becomes one return (END-1)', () => {
 
 describe('F07 what the client app leaves unclear is never guessed (END-1)', () => {
   test('END-1 a year end the client never confirmed becomes an ops-confirms item and no return', async () => {
-    for (const over of [{ financial_year_end_confirmed: false }, { financial_year_end: null }]) {
-      const db = await cloneTestDb()
-      const entity = company(1, over)
-      const res = await runBridge(db, snapshot(entity))
-      expect(res.created).toEqual([])
-      expect(res.items).toHaveLength(1)
-      expect(res.items[0]).toMatchObject({ kind: 'year_end_unconfirmed', corporationId: entity.corporation?.id, taxYear: 2025 })
-      expect(await count(db, 'returns')).toBe(0)
-      expect(await listBridgeReturns(db)).toEqual([])
-      expect(await listOpsItems(db)).toHaveLength(1)
-    }
+    const db = await cloneTestDb()
+    const entity = company(1, { financial_year_end_confirmed: false })
+    const res = await runBridge(db, snapshot(entity))
+    expect(res.created).toEqual([])
+    expect(res.items).toHaveLength(1)
+    expect(res.items[0]).toMatchObject({ kind: 'year_end_unconfirmed', corporationId: entity.corporation?.id, taxYear: 2025 })
+    expect(await count(db, 'returns')).toBe(0)
+    expect(await listBridgeReturns(db)).toEqual([])
+    expect(await listOpsItems(db)).toHaveLength(1)
+  })
+
+  test('END-1 a year end that is missing becomes an ops-confirms item and no return', async () => {
+    const db = await cloneTestDb()
+    const entity = company(1, { financial_year_end: null })
+    const res = await runBridge(db, snapshot(entity))
+    expect(res.created).toEqual([])
+    expect(res.items).toHaveLength(1)
+    expect(res.items[0]).toMatchObject({ kind: 'year_end_unconfirmed', corporationId: entity.corporation?.id, taxYear: 2025 })
+    expect(await count(db, 'returns')).toBe(0)
+    expect(await listBridgeReturns(db)).toEqual([])
+    expect(await listOpsItems(db)).toHaveLength(1)
   })
 
   test('END-1 unfiled years held only as text become an ops-confirms item, and no return is guessed for them', async () => {
@@ -336,13 +346,16 @@ describe('F07 client_ref (RT-5, onboarding contract U6)', () => {
     expect((await listBridgeReturns(db)).map((r) => r.clientRef)).toEqual(['ASH-0001', 'ASH-0002'])
   })
 
-  test('RT-5 the number is never built from client data: names, business numbers and quote references change nothing', async () => {
-    const dbA = await cloneTestDb()
-    const dbB = await cloneTestDb()
-    await runBridge(dbA, snapshot(company(1, { legal_name: 'Alpha 123456789 Inc. (Test)', business_number: '123456789' })))
-    await runBridge(dbB, snapshot(company(1, { legal_name: 'Zeta Inc. (Test)', business_number: '987654321' })))
-    expect((await listClientRefs(dbA))[0]?.clientRef).toBe('ASH-0001')
-    expect((await listClientRefs(dbB))[0]?.clientRef).toBe('ASH-0001')
+  test('RT-5 the number is never built from client data: a name with digits and a business number change nothing', async () => {
+    const db = await cloneTestDb()
+    await runBridge(db, snapshot(company(1, { legal_name: 'Alpha 123456789 Inc. (Test)', business_number: '123456789' })))
+    expect((await listClientRefs(db))[0]?.clientRef).toBe('ASH-0001')
+  })
+
+  test('RT-5 the number is never built from client data: a different name and business number give the same first number', async () => {
+    const db = await cloneTestDb()
+    await runBridge(db, snapshot(company(1, { legal_name: 'Zeta Inc. (Test)', business_number: '987654321' })))
+    expect((await listClientRefs(db))[0]?.clientRef).toBe('ASH-0001')
   })
 
   test('RT-5 numbering goes on past 9999 with more digits', async () => {
@@ -379,35 +392,67 @@ describe('F07 client_ref (RT-5, onboarding contract U6)', () => {
     expect(await rows(db, 'select client_ref from returns.client_refs')).toEqual([{ client_ref: 'ASH-0001' }])
   })
 
-  test('RT-5 property (fixed seed): any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
-    const pool = [1, 2, 3, 4, 5, 6]
-    const runArb = fc.shuffledSubarray(pool, { minLength: 1, maxLength: 6 })
-    await fc.assert(
-      fc.asyncProperty(fc.array(runArb, { minLength: 1, maxLength: 4 }), async (runs) => {
-        const db = await cloneTestDb()
-        try {
-          const expected = new Map<string, string>()
-          for (const run of runs) {
-            await runBridge(db, snapshot(...run.map((n) => company(n))))
-            for (const n of run) {
-              if (!expected.has(uuid(100 + n))) expected.set(uuid(100 + n), `ASH-${String(expected.size + 1).padStart(4, '0')}`)
-            }
-            const refs = await listClientRefs(db)
-            // stable: every ref seen so far equals what first sight gave it
-            expect(new Map(refs.map((r) => [r.corporationId, r.clientRef]))).toEqual(expected)
-            expect(new Set(refs.map((r) => r.clientRef)).size).toBe(refs.length)
-          }
-          // two returns of one corporation share its ref: here one return per corporation, carrying that ref
-          const list = await listBridgeReturns(db)
-          expect(list).toHaveLength(expected.size)
-          for (const r of list) expect(r.clientRef).toBe(expected.get(r.corporationId))
-        } finally {
-          await db.close()
+  // FX14: the old property ran 8 cases of a fixed seed in one test (4506 ms of a 6000 ms budget). The same 8 cases of the
+  // same seed are now drawn once and each runs as its own test with its own world, so none is near the budget.
+  const RT5_RUNS = fc.array(fc.shuffledSubarray([1, 2, 3, 4, 5, 6], { minLength: 1, maxLength: 6 }), { minLength: 1, maxLength: 4 })
+  const RT5_CASES = fc.sample(RT5_RUNS, { seed: 20261002, numRuns: 8 })
+
+  async function checkRefsInOrderOfFirstSight(runs: number[][]): Promise<void> {
+    expect(runs.length, 'the pinned seed gave a case').toBeGreaterThan(0)
+    const db = await cloneTestDb()
+    try {
+      const expected = new Map<string, string>()
+      for (const run of runs) {
+        await runBridge(db, snapshot(...run.map((n) => company(n))))
+        for (const n of run) {
+          if (!expected.has(uuid(100 + n))) expected.set(uuid(100 + n), `ASH-${String(expected.size + 1).padStart(4, '0')}`)
         }
-      }),
-      { seed: 20261002, numRuns: 8 },
-    )
-  }, 120_000)
+        const refs = await listClientRefs(db)
+        // stable: every ref seen so far equals what first sight gave it
+        expect(new Map(refs.map((r) => [r.corporationId, r.clientRef]))).toEqual(expected)
+        expect(new Set(refs.map((r) => r.clientRef)).size).toBe(refs.length)
+      }
+      // two returns of one corporation share its ref: here one return per corporation, carrying that ref
+      const list = await listBridgeReturns(db)
+      expect(list).toHaveLength(expected.size)
+      for (const r of list) expect(r.clientRef).toBe(expected.get(r.corporationId))
+    } finally {
+      await db.close()
+    }
+  }
+
+  test('RT-5 property (fixed seed) case 1 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
+    await checkRefsInOrderOfFirstSight(RT5_CASES[0] ?? [])
+  })
+
+  test('RT-5 property (fixed seed) case 2 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
+    await checkRefsInOrderOfFirstSight(RT5_CASES[1] ?? [])
+  })
+
+  test('RT-5 property (fixed seed) case 3 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
+    await checkRefsInOrderOfFirstSight(RT5_CASES[2] ?? [])
+  })
+
+  test('RT-5 property (fixed seed) case 4 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
+    await checkRefsInOrderOfFirstSight(RT5_CASES[3] ?? [])
+  })
+
+  test('RT-5 property (fixed seed) case 5 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
+    await checkRefsInOrderOfFirstSight(RT5_CASES[4] ?? [])
+  })
+
+  test('RT-5 property (fixed seed) case 6 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
+    await checkRefsInOrderOfFirstSight(RT5_CASES[5] ?? [])
+  })
+
+  test('RT-5 property (fixed seed) case 7 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
+    await checkRefsInOrderOfFirstSight(RT5_CASES[6] ?? [])
+  })
+
+  test('RT-5 property (fixed seed) case 8 of 8: any order of runs gives unique, stable, contiguous refs numbered in order of first sight', async () => {
+    await checkRefsInOrderOfFirstSight(RT5_CASES[7] ?? [])
+  })
+
 })
 
 describe('F07 the hand-off table (ARC-2)', () => {
