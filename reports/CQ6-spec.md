@@ -12,3 +12,6 @@ Old validated sha a4c79912, new 35483b50.
 
 ## Spec patch (A464), cloud-a244c5
 Harness list now names src/core/db/vitest-setup.ts (root vitest-setup.ts does not exist). Added: every harness entry exists in the repo; an import of src/core/db/vitest-setup from a product module fails; skip count is 5. 14 tests: 11 pass, 3 fail for the right reason (test-homes.json still lists root vitest-setup.ts; build round 2 fixes it). Validated on main 3e9f1c8. Step 6b: stub is a one-line json edit, no other test retired. Permission gaps: none. Model: Sonnet 5.5.
+
+## Toolchain refit (cloud-0ac9e9, 3 Oct 2026)
+Merged origin/main 66de2c9; no assertion changed. Typecheck and lint clean; unit project 2789 of 2792 pass, the only 3 failures are the card's own harness-list tests (test-homes.json not yet fixed; build round 2). Old validated sha 3e9f1c8, new 66de2c9. Permission gaps: none. Model: Sonnet 5.5.
