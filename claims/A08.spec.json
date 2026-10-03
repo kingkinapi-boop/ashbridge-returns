@@ -2,11 +2,9 @@
  "card": "A08",
  "role": "spec",
  "note": "218 tests (215 unit, 3 db); see reports/A08-spec.md",
- "worker": "cloud-8c7eee",
- "state": "reopened",
- "at": "2026-10-03T23:03:50.941Z",
- "mode": "turbo",
- "beat": "2026-10-03T18:43:25.136Z",
- "commit": "05edddb6",
- "validated": "702b5892"
+ "reopenedFrom": "05edddb6",
+ "worker": "cloud-3fa261",
+ "state": "working",
+ "at": "2026-10-03T23:05:06.800Z",
+ "mode": "turbo"
 }
