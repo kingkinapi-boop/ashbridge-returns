@@ -1150,6 +1150,24 @@
     },
     "netIncomeLossBeforeTax": 214960.27
   },
+  "assets": [
+    {
+      "description": "Floor machines and vacuums brought forward",
+      "glAccount": "1530",
+      "accumAccount": "1531",
+      "class": "8",
+      "cost": 9800,
+      "availableForUse": "2022-01-01",
+      "book": {
+        "method": "straight-line",
+        "years": 5,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    }
+  ],
   "t2Inputs": {
     "netIncomeLossPerBooksBeforeTax": 214960.27,
     "schedule1": {
@@ -1190,7 +1208,7 @@
       "openingUcc": [
         {
           "class": "8",
-          "ucc": 2940,
+          "ucc": 4390.4,
           "note": "made-up"
         }
       ],

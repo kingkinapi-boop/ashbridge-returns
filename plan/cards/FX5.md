@@ -4,7 +4,7 @@
 
 Phase 3. Size S. Deps: F02, SC. Where: cloud.
 Tags: core (a return's state moves; approval voids).
-Paths: src/contracts/lifecycle.ts, src/modules/lifecycle/**
+Paths: src/contracts/lifecycle.ts, src/modules/lifecycle/**, tools/test/__fixtures__/schema-contract/known.json
 Clauses: FLOW-1, FLOW-4
 Read: `reports/phase3-card-review-2026-10-03.md` (fix 2), `plan/cards/F02.md`, `plan/cards/T08.md`, `src/modules/lifecycle/index.ts` (the move and its own `db.transaction`).
 Spec commit: bd0e2fe2
