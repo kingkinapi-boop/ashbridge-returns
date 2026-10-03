@@ -1,0 +1,16 @@
+// SC12 R106 plant: A04 round 4's helper. ctx.now is fixed, the runner's clock is not, and the queue has no clock.
+import { createAiRunner } from '../../src/modules/ai/runner/runner'
+import { createJobQueue } from '../../src/modules/jobs/queue'
+
+const ctx = { jobId: 'job-1 (Test)', attempt: 1, now: new Date('2026-10-02T12:00:00.000Z') }
+
+function runner() {
+  return createAiRunner({ recordingsDir: 'recordings', env: {}, pollMs: 5 })
+}
+
+test('a handler result', async () => {
+  const queue = createJobQueue(db)
+  // R106 exception:
+  const bare = createAiRunner({ recordingsDir: 'recordings', env: {} })
+  expect([runner(), queue, bare, ctx]).toHaveLength(4)
+})

@@ -1,0 +1,11 @@
+// SC12 R105 plant: queries that read the database's clock instead of a time passed from the injected one.
+import type { PGlite } from '@electric-sql/pglite'
+
+export async function dueJobs(db: PGlite): Promise<unknown[]> {
+  const r = await db.query('select id from returns.jobs where lease_until <= now()')
+  return r.rows
+}
+
+export async function touch(db: PGlite, id: string): Promise<void> {
+  await db.query(`update returns.jobs set seen_at = current_timestamp where id = $1`, [id])
+}

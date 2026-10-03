@@ -1,0 +1,43 @@
+// SC12 R106 clean example: every clock-taking factory gets a clock, or carries a reasoned exception marker.
+import { createAiRunner } from '../../src/modules/ai/runner/runner'
+import { createJobQueue } from '../../src/modules/jobs/queue'
+import { createRunner } from '../../src/modules/jobs/runner'
+import { fixedClock, setClock, systemClock } from '../../src/core/clock'
+
+const T0 = Date.parse('2026-10-02T12:00:00.000Z')
+const now = (): Date => new Date(T0)
+const clock = fixedClock('2026-10-02T12:00:00.000Z')
+
+function pinned() {
+  return createAiRunner({ recordingsDir: 'recordings', env: {}, now: () => new Date(T0) })
+}
+
+function shorthand() {
+  return createAiRunner({ recordingsDir: 'recordings', now })
+}
+
+function fromOptions() {
+  const options = { recordingsDir: 'recordings', env: {}, pollMs: 5, now }
+  return createAiRunner(options)
+}
+
+/** A runner on the default clock (R106 exception: the default clock is what is tested; Date is faked by the caller). */
+function defaultClockRunner() {
+  const r = createAiRunner({ recordingsDir: 'recordings', env: {} })
+  return r
+}
+
+test('the default deadline follows setClock', () => {
+  setClock(fixedClock('2031-05-17T06:30:00.000Z'))
+  // R106 exception: the default clock is what this test proves.
+  const r = createAiRunner({ recordingsDir: 'recordings', env: {} })
+  const q = createAiRunner({ recordingsDir: 'recordings' }) // R106 exception: the default clock again, on the call line
+  setClock(systemClock)
+  expect([r, q, pinned(), shorthand(), fromOptions(), defaultClockRunner()]).toHaveLength(6)
+})
+
+test('queue and runner share one clock', () => {
+  const queue = createJobQueue(db, clock)
+  const runner = createRunner({ queue, handlers: {}, clock, workerId: 'worker (Test)' })
+  expect(runner).toBeDefined()
+})

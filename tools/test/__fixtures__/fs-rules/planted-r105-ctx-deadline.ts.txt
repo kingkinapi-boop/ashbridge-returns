@@ -1,0 +1,17 @@
+// SC12 R105 plant: A04 round 5's handler hands on a deadline built from ctx.now, which the runner then compares with
+// its own clock (train 25ea2736 went red when the real date passed ctx.now + 23 h 50 min).
+import type { Handler } from '../../contracts/jobs'
+import type { AiRunner } from './runner'
+
+const AI_JOB_LEASE_MS = 24 * 60 * 60 * 1000
+const AI_LEASE_MARGIN_MS = 10 * 60 * 1000
+
+export function createStepHandler(runner: AiRunner): Handler {
+  return {
+    kind: 'ai:finding',
+    async run(input, ctx) {
+      const res = await runner.runAiStep(input, { jobId: ctx.jobId, deadline: new Date(ctx.now.getTime() + AI_JOB_LEASE_MS - AI_LEASE_MARGIN_MS) })
+      return res
+    },
+  }
+}

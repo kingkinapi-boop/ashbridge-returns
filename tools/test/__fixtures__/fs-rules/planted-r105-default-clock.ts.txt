@@ -1,0 +1,9 @@
+// SC12 R105 plant: A04 round 5's runner default, a factory whose clock falls back to the system clock.
+export interface PollerOptions {
+  now?: () => Date
+}
+
+export function createPoller(options: PollerOptions) {
+  const now = options.now ?? (() => new Date())
+  return { at: (): Date => now() }
+}

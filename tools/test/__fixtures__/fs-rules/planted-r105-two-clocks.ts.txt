@@ -1,0 +1,16 @@
+// SC12 R105 plant: a handler builds a deadline from ctx.now (the queue's snapshot) and waits on the system clock.
+import type { Handler } from '../../contracts/jobs'
+
+const LEASE_MS = 60_000
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
+
+export const handler: Handler = {
+  kind: 'x:wait',
+  async run(input, ctx) {
+    const deadline = ctx.now.getTime() + LEASE_MS
+    while (Date.now() < deadline) {
+      await sleep(10)
+    }
+    return { input }
+  },
+}

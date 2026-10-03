@@ -1,0 +1,45 @@
+// SC12 R104 plant: four containers that grow per poll, per file or per call and are never capped.
+import fs from 'node:fs'
+
+interface WatchContext {
+  /** Outbox names already logged (handed in by the runner, as A04's runner hands `seen` to its engines). */
+  seen: Set<string>
+  log: (line: string) => void
+}
+
+const lines: string[] = []
+
+export function remember(line: string): void {
+  lines.push(line)
+}
+
+export function logOnce(ctx: WatchContext, name: string): void {
+  if (ctx.seen.has(name)) return
+  ctx.seen.add(name)
+  ctx.log(JSON.stringify(name))
+}
+
+export function createOutboxWatcher(dir: string, log: (line: string) => void) {
+  const seen = new Set<string>()
+  return {
+    poll(): number {
+      let fresh = 0
+      for (const name of fs.readdirSync(dir)) {
+        if (seen.has(name)) continue
+        seen.add(name)
+        log(JSON.stringify(name))
+        fresh += 1
+      }
+      return fresh
+    },
+  }
+}
+
+export class ReadingCache {
+  private readonly byFingerprint = new Map<string, string>()
+
+  read(fingerprint: string, text: string): string {
+    this.byFingerprint.set(fingerprint, text)
+    return text
+  }
+}

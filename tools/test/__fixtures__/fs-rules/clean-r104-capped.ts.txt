@@ -1,0 +1,47 @@
+// SC12 R104 clean example: every long-lived container is capped from data, evicts, or is filled once.
+import fs from 'node:fs'
+import { LIMITS } from './limits'
+
+const SEEN_CAP = LIMITS.seenCap
+
+const CODES = new Map<number, number>()
+;[0x20ac, 0x201a].forEach((cp, i) => {
+  CODES.set(0x80 + i, cp)
+})
+
+export function createOutboxWatcher(dir: string, log: (line: string) => void) {
+  const seen = new Set<string>()
+  const waiting = new Map<string, number>()
+  const kinds: string[] = []
+  ;['json', 'txt'].forEach((k) => kinds.push(k))
+  // R104 bounded: one entry per step type on the approved list (data/ai/approved.json)
+  const counts = new Map<string, number>()
+  return {
+    poll(): void {
+      for (const name of fs.readdirSync(dir)) {
+        if (seen.size >= SEEN_CAP) return
+        seen.add(name)
+        log(JSON.stringify(name))
+      }
+    },
+    wait(id: string, by: number): void {
+      const n = (waiting.get(id) ?? 0) + by
+      if (n > 0) waiting.set(id, n)
+      else waiting.delete(id)
+    },
+    count(stepType: string): void {
+      counts.set(stepType, (counts.get(stepType) ?? 0) + 1)
+    },
+  }
+}
+
+export function parse(text: string): string[] {
+  const out: string[] = []
+  for (const line of text.split('\n')) out.push(line)
+  return out
+}
+
+export interface Ctx {
+  /** Read, never grown, here. */
+  seen: Set<string>
+}

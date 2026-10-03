@@ -1,0 +1,25 @@
+// SC12 R105 clean example: every time comes from src/core/clock.ts or is passed in.
+// A comment may say new Date() or Date.now() or now(): comments are not code.
+import type { PGlite } from '@electric-sql/pglite'
+import { now } from '../../core/clock'
+
+export function stampOf(iso: string): { at: Date; readAt: string; later: Date } {
+  return { at: new Date(iso), readAt: now().toISOString(), later: new Date(now().getTime() + 1000) }
+}
+
+/** The engines' check: one clock (ctx.now() is the runner's) against a deadline made on that same clock. */
+export function expired(ctx: { now: () => Date; deadline: Date }): boolean {
+  return ctx.now().getTime() >= ctx.deadline.getTime()
+}
+
+/** A handler that only reports the queue's snapshot. */
+export async function report(input: unknown, ctx: { attempt: number; now: Date }): Promise<unknown> {
+  return { input, attempt: ctx.attempt, at: ctx.now.toISOString() }
+}
+
+export async function dueJobs(db: PGlite, at: Date): Promise<unknown[]> {
+  const r = await db.query('select id from returns.jobs where lease_until <= $1', [at.toISOString()])
+  return r.rows
+}
+
+export const HINT = 'try again now'
