@@ -1,0 +1,22 @@
+{
+  "note": "Planted (SC R52, R53): a made-up answer key (Test). Faults: March missing (a gap), April opens at a figure February never closed at, a duplicate whose original is not in the key, a last-year row dated inside the year, one missing row more than the account says, and a marker field no catalogue names.",
+  "fiscalYear": { "start": "2025-01-01", "end": "2025-04-30" },
+  "accounts": [
+    { "key": "CHQ", "balanceMeaning": "cash balance", "openingBalance": 100.00, "closingBalance": 140.00, "rowsInExport": 4, "rowsMissingFromExport": 0 }
+  ],
+  "statementBalances": {
+    "CHQ": [
+      { "month": "2025-01", "opening": 100.00, "closing": 110.00 },
+      { "month": "2025-02", "opening": 110.00, "closing": 120.00 },
+      { "month": "2025-04", "opening": 125.00, "closing": 140.00 }
+    ]
+  },
+  "transactions": [
+    { "id": "T-1", "acct": "CHQ", "date": "2025-01-10", "description": "SALE (Test)", "amount": 10.00 },
+    { "id": "T-2", "acct": "CHQ", "date": "2025-02-10", "description": "SALE (Test)", "amount": 10.00 },
+    { "id": "T-3", "acct": "CHQ", "date": "2025-02-10", "description": "SALE (Test)", "amount": 10.00, "dupOf": "T-9" },
+    { "id": "T-4", "acct": "CHQ", "date": "2025-04-03", "description": "SALE (Test)", "amount": 15.00, "priorYear": true },
+    { "id": "T-5", "acct": "CHQ", "date": "2025-04-04", "description": "SALE (Test)", "amount": 0.00, "missingFromExport": true },
+    { "id": "T-6", "acct": "CHQ", "date": "2025-04-05", "description": "FEE (Test)", "amount": 0.00, "fudged": true }
+  ]
+}

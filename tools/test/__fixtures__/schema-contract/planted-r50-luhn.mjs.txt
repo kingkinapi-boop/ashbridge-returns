@@ -1,0 +1,10 @@
+// Planted (SC R50): a second Luhn check outside guard.ts and reference/sample-clients/lib/util.mjs.
+export function checkDigitOk(s) {
+  let sum = 0
+  for (let i = 0; i < s.length; i++) {
+    let d = Number(s[s.length - 1 - i])
+    if (i % 2 === 1) { d *= 2; if (d > 9) d -= 9 }
+    sum += d
+  }
+  return sum % 10 === 0
+}

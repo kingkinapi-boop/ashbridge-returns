@@ -1,41 +1,41 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:58Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 10:56Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (49):** through A07D, A06, CQ2, SC4, then CQ3, W16 and FX2 (train 5deca4a green, test:flake 5 of 5, verify 541; landed 07:57Z as 758d0b06). No train in flight.
+- **Landed (53):** through FX2, then SC, CQ4, CQ5 and FX10 (train 12af2528 green: unit 2703, db 587, flake 5 of 5, FX10 db x20 20 of 20; landed 10:52Z as 6ca8b48f). Train 26e84345 (DB16, FX15) requested 10:56Z.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | spec patch reported (A413); build open (A424) | build round 2, check; unblocks W00b round 4, JH0, B04, SC2 |
+| W00c | round 3 spec review: 4 gaps (A459), spec patch reopened | spec, build round 3, mutation on cloud, check |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
-| FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
+| FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| SC | build reported (110 of 110) | check on a cloud box (npm test, db, test:flake) with Opus read |
-| SC3 | spec reported (security) | build, check, security review |
+| Train | DB16, FX15 on 26e84345, requested 10:56Z | cloud check full on pg16, flake, mutation; land; then SC11 and GL3 (need DB16) |
+| SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 4 spec reported (26 tests, 11 fail); build open (A427) | build runner.ts, check, security review |
-| DB16 | round 4 build reported (target.ts 100, pg16 565, flake 5 of 5) | check (Opus read), security review, board |
-| JH0 | spec reported | build after W00c lands |
+| A04 | round 5 build reported (mutation 100); lint fails on a spec cast: spec lint fix (A460) | spec fix, build re-report, check, security review; A08 after |
+| DB16, SC11, GL3 | DB16 PASS, CLEAN; SC11 spec reported (39 tests, A453 in); GL3 build waits for DB16 on main (pg16) | board DB16 next train; SC11 build; GL3 pg16 re-run, check |
+| JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
-| SC6, FX8 | W16 landed: their wait lifts | spec (FX8 on claude/FX8-r2) |
-| FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
-| CQ4 to CQ8, SC10 | CQ3 landed; CQ4 build round 2 working (local-1); CQ5 build open; CQ6, CQ7, CQ8, SC10 carded | CQ4 lands before the S00 and DB16 checks |
+| SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
+| FX12, FX14, FX17 | FX12 build open; FX14 carded; FX17 spec reported | builds, checks |
+| CQ6 to CQ8, SC10, A08 | CQ4 and CQ5 landed: CQ6, CQ7, CQ8 builds open; A08 waits for A04 | builds, checks |
 
-Cloud runs: 2 at 07:42Z (SC check, DB16 check); 4 at 08:02Z (A04, FX10, W00c, CQ5 builds; FX8, SC6 specs reopened). 2 more at 08:08Z (FX10 build reopened, SC6 spec). Local: local-1 (CQ4 build), local-2 (FX8 spec); local-3 done (nothing local to take).
+Cloud runs: 3 at 10:58Z (train 26e84345, A04 spec fix, CQ builds). Local: local-1, local-2 (any local job, 10:58Z).
 
 ## Next, in order
 
 1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
 2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
 3. FX2 and A04 round 2 specs, then SC3, SC5 (R71 to R73); DB16.
-4. Phase 3 cards reviewed (reports/phase3-card-review-2026-10-03b.md) and fixed (A437, A438); T13 (notice of assessment, phase 4) and T14 (amended return) carded. Specs follow as deps land. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
+4. Phase 3 and 4 cards reviewed and fixed (A437, A438, A447: 28 fixes, cpa-check items 34 and 35). N19, GL2 to GL6 carded (A448). Go-live reds (SEC-9, LIVE-3, LL-8, amended-return client view) wait for the go-live questions.
 5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
 6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).

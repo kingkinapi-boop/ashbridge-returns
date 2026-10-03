@@ -18,3 +18,6 @@ Fix each defect at its source; never weaken a rule or widen KNOWN (A329). A defe
 
 ## Check
 A checker who did neither: SC's rules green with no FX7 entry in KNOWN, `npm test`, an Opus read of the contract changes.
+
+## Also (A446, reports/A04-findings-5.md RC1)
+The drive stand-in (storage/drive) reads through `readRegularFile` with a size cap and a regular-file check; the files store gains the size cap. R94's KNOWN entries for storage/drive and storage/files are owned by FX7.

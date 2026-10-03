@@ -49,3 +49,7 @@
 {"card":"CQ3","closed":"2026-10-03","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":9,"amber":0,"red":0,"accepted":true}
 {"card":"W16","closed":"2026-10-03","mode":"turbo","rounds":2,"check_fails":0,"train_fails":0,"jobs":12,"amber":1,"red":0,"accepted":true}
 {"card":"FX2","closed":"2026-10-03","mode":"turbo","rounds":4,"check_fails":0,"train_fails":0,"jobs":13,"amber":0,"red":0,"accepted":true}
+{"card":"SC","closed":"2026-10-03","mode":"turbo","rounds":55,"check_fails":0,"train_fails":0,"jobs":86,"amber":0,"red":0,"accepted":true}
+{"card":"CQ4","closed":"2026-10-03","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":10,"amber":0,"red":0,"accepted":true}
+{"card":"CQ5","closed":"2026-10-03","mode":"turbo","rounds":1,"check_fails":0,"train_fails":0,"jobs":5,"amber":0,"red":0,"accepted":true}
+{"card":"FX10","closed":"2026-10-03","mode":"turbo","rounds":3,"check_fails":0,"train_fails":0,"jobs":14,"amber":0,"red":0,"accepted":true}
