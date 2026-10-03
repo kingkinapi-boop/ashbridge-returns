@@ -1,11 +1,10 @@
 {
  "card": "CQ2",
  "role": "build",
- "round": 1,
- "spec": "11df325",
- "worker": "cloud-2f8ae4",
- "state": "reopened",
- "at": "2026-10-03T03:43:30.719Z",
- "mode": "turbo",
- "note": "rule 6 tests by the spec writer (934365e); make them pass, keep the rest"
+ "round": 2,
+ "spec": "934365e",
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T03:45:24.574Z",
+ "mode": "turbo"
 }
