@@ -31,3 +31,5 @@ Compare lists (A426): in the adversarial read, compare every hand-written list o
 Scope (A430): when the build lives on `claude/<id>-r2`, run `node tools/scope.mjs <id> --branch claude/<id>-r2`. Until CQ4 lands, scope.mjs counts the spec job's own later commits (reports, wip, the Spec commit line) as build edits: read those lines by hand and say so in the report.
 
 Postgres 16 (A453): the db project needs Postgres 16.5 or later (CVE-2024-10978 changes how `discard all` resets session authorization); print `select version()` in the report.
+
+KNOWN lists (A491): a card that owns entries in a KNOWN list (tools/test/__fixtures__/security-rules/harness.ts, tools/test/__fixtures__/schema-contract/known.json, tools/test/fs-rules.test.mjs, tools/test/card-rules.test.mjs and the like) changes that file only by deleting its own KNOWN lines, unless a Lead directive on the card names the change. Any other changed line (a rule function, another owner's entry, a pinned list) is a failure (A329).
