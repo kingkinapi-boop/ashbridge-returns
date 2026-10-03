@@ -11,3 +11,6 @@
 - **SC R47 PENDING (A415):** SC holds `PENDING { rule: 'R47', subject: 'src/modules/qbo', owner: 'B04' }`, and SC is not on main. Whichever lands second removes the row.
 - **R94:** `readRegularFile` (src/core/safe-read.ts) comes with A04 round 5. The tests check only the behaviour (links refused, ids checked), so the build can wait for A04 or use its own lstat check.
 - **SC3 R62:** QBO_ENGINE is in env.ts with no default, so `readSettings({NODE_ENV:'production'})` is unchanged. Production with the setting unset refuses, naming it.
+
+## Patch A454 (cloud-7c6fec, 3 Oct)
+Renamed 35_qbo.sql to 56_qbo.sql in the db test's header and return_id note (the only mentions in tests); no assertion changed. Merged origin/main (plan files taken from main). Typecheck and lint: errors only in the card's own qbo acceptance tests (modules not built); nothing else. Not run: npm test (W00c not landed, branch still carries its files). The card text's Paths and Build lines still say 35_qbo.sql: the Lead must change them to 56_qbo.sql before the build (scope.mjs). Opus spec review still owed (core). Model: Sonnet 5.5.
