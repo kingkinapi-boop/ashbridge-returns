@@ -4,7 +4,8 @@
  "round": 2,
  "spec": "c6ed0a6",
  "worker": "cloud-0ac9e9",
- "state": "working",
- "at": "2026-10-03T12:20:58.958Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T12:30:43.535Z",
+ "mode": "turbo",
+ "note": "pg16 db 638 pass, unit 2820, R41 fixed"
 }
