@@ -2,7 +2,8 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-06d0d7",
- "state": "working",
- "at": "2026-10-03T08:27:19.468Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T08:27:25.225Z",
+ "mode": "turbo",
+ "note": "needs Lead: queue re-offers W00b spec though deps W00c and FX8 are not on main; hold until both land"
 }
