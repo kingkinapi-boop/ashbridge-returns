@@ -1,7 +1,9 @@
-# CQ4 build
-Branch claude/CQ4. Worker cloud-03268d. File changed: tools/scope.mjs (only).
-- Files the card's Spec section names (backticked or bare name with extension, matched by path or trailing path) count as spec files from the start: a non-spec commit touching one fails by name.
-- Merge commits: `git diff-tree --cc` lists files whose content matches neither parent; one that is Spec-named fails ("spec file edited by hand in a merge"). Clean merges of main are not flagged.
-- Tests: scope-spec-files 7 of 7; all tools tests 255 of 255; typecheck, lint, deps:check clean; `scope.mjs CQ4` OK.
-- Planted: `scope.mjs FX8` (005070e8) now fails on reference/sample-clients/verify.mjs.
-Ambers: none. Permission gaps: none. Model: Sonnet 5.5.
+# CQ4 build, round 2 (A430, reports/CQ4-findings.md items 2 to 5)
+
+- Branch claude/CQ4, build commit f104b127 (main 83737283 merged in). Worker local-1 (Opus 5.5, laptop).
+- Files: tools/lib.mjs (exports `isExpectationFile`, `cardSection`, `sectionNames`, `specOwnedFiles`: the R82 set is the Spec section's names in the expectation class, minus files the Build section names), tools/scope.mjs (card read from the base ref, printed fallback to the checkout; `--branch <name>`; reports/** and plan/** never spec edits; a non-spec edit a later spec commit rewrote prints `note: superseded by <sha7>` and passes; the `--cc` merge check covers every spec-owned file, R82 and spec-touched alike).
+- Acceptance: 14 of 14 in tools/test/scope-spec-files.test.mjs; every tools test 262 of 262 (15 files, scope.test.mjs and done-gate.test.mjs R19 unchanged and green).
+- typecheck 0 errors; lint 0 errors (tools/*.mjs is outside eslint's set); deps:check no violations (197 modules); `scope.mjs CQ4` SCOPE OK (8 files).
+- Scope on the named branches: FX8 (005070e) SCOPE FAIL on reference/sample-clients/verify.mjs and README.md, as the findings expect; DB16 SCOPE OK with two `note: superseded by d69ac55` lines (b14182c); S00 SCOPE OK; `--branch claude/FX8-r2-note` FX8 SCOPE OK. FX2, claude/W16-r2 and claude/FX8-r2 have no remote branch today, so they could not be run.
+- Amber: a hand merge in a spec file that a later spec commit (a descendant of the merge) rewrote is a superseded note too, not a failure (same rule as plain commits; reverse by dropping the `later` lookup in the merge loop). The checkout fallback prints one line.
+- Not done: no unit tests of my own for the lib.mjs exports, as no test file beside the spec's is in Paths (the rule tests of SC10 will import them). Not a core card, so no mutation run.
