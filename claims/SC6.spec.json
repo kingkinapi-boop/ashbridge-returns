@@ -1,12 +1,10 @@
 {
  "card": "SC6",
  "role": "spec",
- "worker": "cloud-e9b38e",
- "state": "reopened",
- "at": "2026-10-03T15:04:59.335Z",
- "mode": "turbo",
- "beat": "2026-10-03T13:33:22.708Z",
  "note": "33 tests; paths gap: verify.mjs items (R11 missing N known, * bullets) need a card with verify.mjs in Paths",
- "commit": "c526b32d",
- "validated": "931d08fa"
+ "reopenedFrom": "c526b32d",
+ "worker": "cloud-4863d0",
+ "state": "working",
+ "at": "2026-10-03T15:31:57.182Z",
+ "mode": "turbo"
 }
