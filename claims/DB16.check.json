@@ -1,10 +1,9 @@
 {
  "card": "DB16",
  "role": "check",
- "for": "2026-10-03T05:25:59.747Z",
- "worker": "cloud-88d9d7",
- "state": "released",
- "at": "2026-10-03T05:26:26.739Z",
- "mode": "turbo",
- "note": "DB16 spec round 3 is still being worked by local-1 and the reported build predates it (branch head 1c44c5b6 moved under the claim); check after the round 3 build"
+ "for": "2026-10-03T05:50:14.591Z",
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T05:51:56.018Z",
+ "mode": "turbo"
 }
