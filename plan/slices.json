@@ -9044,7 +9044,7 @@
       "params": {
         "screen": "ops"
       },
-      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A444: the brief gains bulk assign on New returns, Close follow-up and Start amended return on the notice page (CPA and owner), and the staff-recorded client dispute form (V10)."
     },
     {
       "status": "parked",
@@ -9068,10 +9068,10 @@
       "params": {
         "screen": "board"
       },
-      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A444: the brief gains Mark fixed (owner and CPA, with a card id) and the period filter (V11)."
     },
     {
-      "status": "todo",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D02",
@@ -9082,13 +9082,18 @@
         "D08",
         "D09",
         "D10",
-        "D12"
+        "D12",
+        "D13"
       ],
       "paths": [
         "design/review/**"
       ],
       "clauses": [
-        "RV-53"
+        "RV-53",
+        "RV-50",
+        "RV-52",
+        "RV-54",
+        "RV-55"
       ],
       "id": "D11",
       "title": "Design review pack for Zo (one look, all screens)",
@@ -9255,7 +9260,7 @@
       "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
@@ -9263,16 +9268,28 @@
         "T11",
         "E19",
         "D09",
-        "U02"
+        "U02",
+        "T13",
+        "T14",
+        "E00",
+        "N01"
       ],
       "paths": [
-        "src/app/(staff)/ops/**"
+        "src/app/(staff)/ops/**",
+        "src/modules/ops/**",
+        "src/modules/access/assign.ts",
+        "e2e/staff/ops.spec.ts"
       ],
       "clauses": [
         "RV-30",
         "FLOW-8",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "FLOW-2",
+        "FLOW-7",
+        "SEC-2",
+        "RV-50",
+        "LL-6"
       ],
       "id": "V10",
       "title": "Ops screens",
@@ -9282,7 +9299,7 @@
       "hard": false
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
@@ -9291,13 +9308,20 @@
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/board/**"
+        "src/app/(staff)/board/**",
+        "src/modules/board/**",
+        "e2e/staff/board.spec.ts"
       ],
       "clauses": [
         "RV-40",
         "LL-9",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "FLOW-7",
+        "SEC-2",
+        "RV-50",
+        "LL-7",
+        "LL-8"
       ],
       "id": "V11",
       "title": "Owner board",
@@ -9307,25 +9331,39 @@
       "hard": false
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "N00"
+        "N00",
+        "X00",
+        "I00"
       ],
       "paths": [
         "src/modules/learning/diffs/**",
-        "db/schema/90_learning.sql"
+        "db/schema/90_learning.sql",
+        "src/contracts/learning.ts",
+        "src/modules/learning/causes/_core/**",
+        "src/modules/learning/index.ts",
+        "db/schema/91_differences.sql",
+        "data/learning/earliest-stage.json",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "LL-3",
         "LL-5",
-        "LL-6"
+        "LL-6",
+        "LL-1",
+        "LL-2",
+        "LL-4",
+        "SEC-7",
+        "ARC-13"
       ],
       "id": "N01",
       "title": "Differences by natural key",
       "phase": 4,
-      "size": "M",
-      "note": "T10 exempts returns.differences from the closed-return guard (99_closed.sql): N01 writes the CRA-assessed differences, causes and ranking after the return closes (reports/phase3-card-review-2026-10-03b.md fix 33). Insert rows only; never another table of a closed return."
+      "size": "L",
+      "note": "T10 exempts returns.differences from the closed-return guard (99_closed.sql): N01 writes the CRA-assessed differences, causes and ranking after the return closes (reports/phase3-card-review-2026-10-03b.md fix 33). Insert rows only; never another table of a closed return.",
+      "core": true
     },
     {
       "status": "carded",
@@ -9520,6 +9558,26 @@
       "status": "todo",
       "spec": null,
       "deps": [
+        "N01",
+        "I00",
+        "A04",
+        "I40"
+      ],
+      "paths": [],
+      "clauses": [
+        "LL-4"
+      ],
+      "id": "N19",
+      "title": "AI cause proposal, unconfirmed (LL-4)",
+      "phase": 4,
+      "size": "M",
+      "core": true,
+      "note": "No card owned LL-4's last sentence: AI proposes a cause only when no rule applies, marked unconfirmed (reports/cards-D11-GL1-draft.md, A444)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "N10",
         "N11",
         "N12",
@@ -9528,21 +9586,35 @@
         "N15",
         "N16",
         "N17",
-        "N18"
+        "N18",
+        "I30",
+        "I40"
       ],
       "paths": [
-        "src/modules/learning/ranking/**"
+        "src/modules/learning/ranking/**",
+        "src/modules/learning/measures/**",
+        "db/schema/92_lessons.sql",
+        "data/learning/ranking.json",
+        "data/learning/lesson-templates/**",
+        "tools/lessons.mjs",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "LL-7",
         "LL-8",
         "LL-9",
-        "END-5"
+        "END-5",
+        "LL-5",
+        "LL-6",
+        "ARC-13",
+        "SEC-11"
       ],
       "id": "N20",
       "title": "Ranking, weekly list and lesson cards",
       "phase": 4,
-      "size": "M"
+      "size": "L",
+      "core": true,
+      "security": true
     },
     {
       "status": "carded",
@@ -9590,31 +9662,51 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A01",
         "A02",
         "A04",
         "A05",
-        "A06"
+        "A06",
+        "A08",
+        "B04"
       ],
       "paths": [
-        "src/modules/live/**"
+        "src/modules/live/**",
+        "src/core/env.ts",
+        "src/core/golive.ts",
+        "src/core/engines.ts",
+        "src/instrumentation.ts",
+        "src/modules/auth/**",
+        "src/modules/ai/runner/**",
+        "src/modules/ai/project/**",
+        "src/modules/ocr/index.ts",
+        "src/modules/storage/**",
+        "src/modules/qbo/**",
+        "data/live/**",
+        "tools/golive-check.mjs"
       ],
       "clauses": [
         "ARC-6",
         "END-8",
         "LIVE-3",
         "SEC-9",
-        "ARC-20"
+        "ARC-20",
+        "SEC-1",
+        "SEC-10",
+        "SEC-11",
+        "LIVE-5",
+        "AI-7"
       ],
       "id": "GL1",
       "title": "Live adapters, switched off, no keys",
       "phase": 4,
-      "size": "M",
+      "size": "L",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED. From the FX2 security review (3 Oct, A435): a production host with NODE_ENV unset defaults to development and starts every stand-in; the go-live check refuses to start unless NODE_ENV is set explicitly. A441: the live database adapter follows code.md: a pooled connection carries only transaction-local state, or it is destroyed on release; never swallow a failed reset."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED. From the FX2 security review (3 Oct, A435): a production host with NODE_ENV unset defaults to development and starts every stand-in; the go-live check refuses to start unless NODE_ENV is set explicitly. A441: the live database adapter follows code.md: a pooled connection carries only transaction-local state, or it is destroyed on release; never swallow a failed reset.",
+      "core": true
     },
     {
       "status": "todo",
