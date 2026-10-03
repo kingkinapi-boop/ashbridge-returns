@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | round 2 spec reported (2210 tests); Opus spec review running, build held | GO: reopen build; unblocks W00b, JH0, B04, SC2 |
+| W00c | round 2 spec patch reopened (A413: 4 gaps); build held | spec, build, check; unblocks W00b, JH0, B04, SC2 |
 | W00b | spec round 3 working (cloud, A409); build waits on W00c and FX8 | spec review, then build after both land |
 | FX8 | spec reported (non-core); build working (cloud) | check, board |
 | W16 | fixup spec reported; Opus re-review (with SC) running, build held | GO: reopen build |
