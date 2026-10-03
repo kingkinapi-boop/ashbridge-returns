@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "6ac7457",
  "worker": "cloud-fd4d7f",
- "state": "reported",
- "at": "2026-10-03T04:27:11.806Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T04:34:36.904Z",
  "mode": "turbo",
- "note": "tests pass (both files, suite 3065); mutation dry run blocked by spec text test seeing Stryker instrumentation, see report"
+ "note": "FAIL: scope (3 storage files not in card Paths) and mutation dry run blocked by spec source-text test, see reports/FX2-check.md"
 }

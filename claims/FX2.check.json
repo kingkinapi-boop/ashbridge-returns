@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-03T04:27:11.806Z",
  "worker": "cloud-12baf5",
- "state": "working",
- "at": "2026-10-03T04:29:12.831Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-03T04:34:36.904Z",
+ "mode": "turbo",
+ "note": "FAIL: scope (3 storage files not in card Paths) and mutation dry run blocked by spec source-text test, see reports/FX2-check.md"
 }
