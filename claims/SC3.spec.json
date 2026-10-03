@@ -1,14 +1,14 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "needs Lead: Paths decision for S4 (src/core/db/index.ts), see reports/SC3-spec-s4-gap.md",
+ "note": "wait: SC11 lands first (A517), then index.ts joins SC3's Paths",
  "reopenedFrom": "3e27033a",
  "worker": "cloud-3c6766",
  "state": "released",
- "at": "2026-10-03T19:48:47.542Z",
+ "at": "2026-10-03T19:58:22.823Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "6306cb64ad0b1fc300ff8ca64d5b42daedbea103"
  },
- "needsLead": true
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\",\"FX2\"],\"depStatus\":[\"done\",\"done\"]}"
 }
