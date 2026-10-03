@@ -1,12 +1,9 @@
 {
  "card": "GL3",
  "role": "spec",
- "note": "2 tests (card total 56), fails on line 20 only; validated on main 9ae027c4",
- "worker": "cloud-1ba1dc",
- "state": "reported",
- "at": "2026-10-03T13:52:49.889Z",
- "mode": "turbo",
- "beat": "2026-10-03T13:33:26.783Z",
- "commit": "cd78aaf5",
- "validated": "9ae027c4a5f2567479e2966ad2e6c04104e1e40c"
+ "note": "toolchain refit",
+ "worker": "cloud-da95a7",
+ "state": "working",
+ "at": "2026-10-03T15:29:37.925Z",
+ "mode": "turbo"
 }
