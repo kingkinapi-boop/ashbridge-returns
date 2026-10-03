@@ -1,10 +1,10 @@
 {
  "card": "W00c",
  "role": "spec",
- "note": "toolchain refit: typecheck and lint clean; only W00c's own tests fail (unbuilt)",
+ "note": "A450: round 3, see card directive",
  "worker": "cloud-03268d",
- "state": "reported",
- "at": "2026-10-03T06:09:03.211Z",
+ "state": "reopened",
+ "at": "2026-10-03T09:12:10.034Z",
  "mode": "turbo",
  "commit": "77bbbef0",
  "validated": "0f7e1cc4"
