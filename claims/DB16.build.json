@@ -4,7 +4,9 @@
  "round": 6,
  "spec": "d6f3a1b1",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T05:06:48.439Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T05:07:17.036Z",
+ "mode": "turbo",
+ "note": "wait: spec open",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
 }
