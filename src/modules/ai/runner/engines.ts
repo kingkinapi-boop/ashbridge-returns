@@ -180,29 +180,30 @@ function checkedOutput(job: AiJob, got: { output: unknown; stamp: unknown }): En
 /** An entry named for a job this runner waits on (its own `<id>.json`): never a stranger, whoever is waiting for it. */
 const isWaitedJsonFile = (ctx: EngineContext, name: string): boolean => name.endsWith('.json') && ctx.waiting.has(name.slice(0, -'.json'.length))
 
+/**
+ * What `fn` returns, or undefined when it throws: the error is dropped, because the system's message carries the exchange path.
+ * The one place a failed look is turned into "nothing there".
+ */
+function attempt<T>(fn: () => T): T | undefined {
+  // Stryker disable next-line BlockStatement: the catch block returns what an empty one would fall through to; an emptied try block returns the same undefined
+  try { return fn() } catch { return undefined }
+}
+
 /** One other entry of the outbox: looked at, never opened, and logged once by quoted name, size and time. */
 function lookAtStranger(ctx: EngineContext, outbox: string, name: string): void {
-  let looked: fs.Stats
-  try {
-    looked = fs.lstatSync(path.join(outbox, name))
-  } catch {
-    return
-  }
+  const looked = attempt(() => fs.lstatSync(path.join(outbox, name)))
+  if (looked === undefined) return
   logOnce(ctx, `ai exchange: ignored outbox file ${JSON.stringify(name)}`, `${String(looked.size)}:${String(looked.mtimeMs)}`, 'outbox files')
 }
 
 /**
  * One poll's look at the other entries of the outbox, in a bounded batch (R104): at most strangerBatch are looked at, and
- * the next poll carries on after them (the cursor); the listing is read in buffers of the same size. False when it cannot be read.
+ * the next poll carries on after them (the cursor); the listing is read in buffers of the same size. 'unreadable' when it cannot be read.
  */
-function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: number }): boolean {
+function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: number }): 'listed' | 'unreadable' {
   const { strangerBatch } = EXCHANGE_LIMITS
-  let dir: fs.Dir
-  try {
-    dir = fs.opendirSync(outbox, { bufferSize: strangerBatch })
-  } catch {
-    return false
-  }
+  const dir = attempt(() => fs.opendirSync(outbox, { bufferSize: strangerBatch }))
+  if (dir === undefined) return 'unreadable'
   try {
     let met = 0
     let looked = 0
@@ -212,15 +213,15 @@ function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: numb
       if (met <= cursor.passed) continue
       if (looked === strangerBatch) {
         cursor.passed += looked
-        return true
+        return 'listed'
       }
       lookAtStranger(ctx, outbox, entry.name)
       looked++
     }
     cursor.passed = 0
-    return true
+    return 'listed'
   } catch {
-    return false
+    return 'unreadable'
   } finally {
     dir.closeSync()
   }
@@ -228,18 +229,18 @@ function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: numb
 
 /** The real path a folder has, or would have: the nearest folder that exists, resolved, with the missing names put back. */
 function realPathOrAncestor(folder: string): string {
-  try {
-    return fs.realpathSync(folder)
-  } catch {
-    const up = path.dirname(folder)
-    return up === folder ? folder : path.join(realPathOrAncestor(up), path.basename(folder))
-  }
+  const real = attempt(() => fs.realpathSync(folder))
+  if (real !== undefined) return real
+  const up = path.dirname(folder)
+  return up === folder ? folder : path.join(realPathOrAncestor(up), path.basename(folder))
 }
 
 /** N6: the exchange folder (by real path) lies inside the repository, where a commit could pick it up. */
-function insideRepo(exchangeDir: string): boolean {
-  const rel = path.relative(realPathOrAncestor(REPO_ROOT), realPathOrAncestor(path.resolve(exchangeDir)))
-  return !(rel === '..' || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel))
+export function insideRepo(exchangeDir: string, repoRoot: string = REPO_ROOT): boolean {
+  const rel = path.relative(realPathOrAncestor(repoRoot), realPathOrAncestor(path.resolve(exchangeDir)))
+  // Stryker disable next-line ConditionalExpression,BooleanLiteral: path.relative gives an absolute path only across Windows drives, which a posix run cannot reach
+  if (path.isAbsolute(rel)) return false
+  return !(rel === '..' || rel.startsWith(`..${path.sep}`))
 }
 
 /**
@@ -248,14 +249,11 @@ function insideRepo(exchangeDir: string): boolean {
  */
 function realFolder(root: string, name: 'inbox' | 'outbox', make: boolean): string | undefined {
   const dir = path.join(root, name)
-  try {
+  const real = attempt(() => {
     if (make) fs.mkdirSync(dir, { recursive: true, mode: 0o700 })
-    if (fs.realpathSync(dir) === path.join(fs.realpathSync(root), name)) return dir
-    // Stryker disable next-line BlockStatement: the catch block returns what an empty one would fall through to
-  } catch {
-    return undefined
-  }
-  return undefined
+    return fs.realpathSync(dir) === path.join(fs.realpathSync(root), name)
+  })
+  return real === true ? dir : undefined
 }
 
 async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult> {
@@ -323,7 +321,7 @@ async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult>
       if (realFolder(exchangeDir, 'outbox', false) === undefined) return refuse(OUTBOX_NOT_REAL)
       const own = readOwn(jobId, outbox)
       if (own !== undefined) return own.ok ? checkedOutput(job, own) : own
-      if (!logStrangers(ctx, outbox, cursor)) return refuse(OUTBOX_READ_FAILED)
+      if (logStrangers(ctx, outbox, cursor) === 'unreadable') return refuse(OUTBOX_READ_FAILED)
       await sleep(ctx.pollMs)
     }
   } finally {

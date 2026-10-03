@@ -31,6 +31,7 @@ export function inputHashOf(inputs: unknown): string {
 /** A file read as text (no encoding name to get wrong: a decoder reads UTF-8). */
 export const readUtf8 = (file: string): string => new TextDecoder().decode(fs.readFileSync(file))
 
+// Stryker disable StringLiteral,ObjectLiteral: module-load constants. A wrong value fails the import of every test file, which the runner scores as a survivor; exchange-limits.build.test.ts and the acceptance tests pin the values read.
 /** The repository's root folder: the exchange folder must lie outside it (ARC-22) and the data files sit inside it. */
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
 
@@ -48,7 +49,8 @@ export const ExchangeLimitsSchema = z.strictObject({
   lastErrorMaxChars: positiveInt,
 })
 
-export const EXCHANGE_LIMITS = ExchangeLimitsSchema.parse(JSON.parse(readUtf8(path.join(REPO_ROOT, 'data', 'ai', 'exchange-limits.json'))))
+export const EXCHANGE_LIMITS = ExchangeLimitsSchema.parse(JSON.parse(new TextDecoder().decode(fs.readFileSync(path.join(REPO_ROOT, 'data', 'ai', 'exchange-limits.json')))))
+// Stryker restore StringLiteral,ObjectLiteral
 
 /** One identifier grammar for the stamp fields that are not free text: 1 to 128 characters, a letter or digit first, then . _ - + : too. */
 export const IdentifierSchema = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._+:-]{0,127}$/)
