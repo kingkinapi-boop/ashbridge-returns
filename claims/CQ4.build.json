@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "ac01e80",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T07:50:35.356Z",
+ "state": "reported",
+ "at": "2026-10-03T08:02:15.425Z",
  "mode": "turbo",
- "beat": "2026-10-03T08:00:26.141Z"
+ "beat": "2026-10-03T08:00:26.141Z",
+ "note": "14 of 14 acceptance tests pass; tools 262 of 262; scope OK"
 }
