@@ -1,10 +1,11 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "A458: second spec patch G1 to G6",
- "reopenedFrom": "d69c50b1",
+ "note": "68 tests (56 kept, 12 new); A458 G1 to G6; T08 Paths lack harness.ts",
  "worker": "cloud-503b92",
- "state": "working",
- "at": "2026-10-03T10:16:14.769Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T10:33:03.004Z",
+ "mode": "turbo",
+ "commit": "3a279d79",
+ "validated": "9fec3666"
 }
