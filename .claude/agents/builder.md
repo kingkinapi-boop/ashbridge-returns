@@ -32,3 +32,5 @@ You build one card. You do not merge, deploy, change the blueprint, or grade you
 ## Report
 
 Write `reports/<card>-build.md`, at most 15 lines: branch and head commit; files changed; acceptance tests passing (count); your ambers; what you could not do and why. Commit and push it. Your final reply: the path and one line.
+
+A command in the card's Check section that is still red after your build means BLOCKED, not done (A417): report it as BLOCKED with the output, never as built.

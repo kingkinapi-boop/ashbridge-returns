@@ -1,0 +1,18 @@
+// Planted (SC4 R56 exemption): three absolute tolerances. Only the page one with its scale named may stay.
+
+/** Any snap within this of a cent counts as the cent. */
+const SNAP_EPSILON = 1e-9
+
+export const nearCent = (x: number, cents: number): boolean => x <= cents / 100 + SNAP_EPSILON && x >= cents / 100 - SNAP_EPSILON
+
+/** A rounding allowance. */
+const EDGE_EPS = 1e-9
+
+export const insideRight = (left: number, width: number): boolean => left + width <= 1 + EDGE_EPS
+
+/** Boxes are fractions of the page, scaled 0 to 1, so this allowance is on that scale. */
+const PAGE_EPS = 1e-9
+
+export const insideBottom = (top: number, height: number): boolean => top + height <= 1 + PAGE_EPS
+
+export const closeTotal = (a: number, b: number): boolean => a - b < 1e-7 && b - a < 1e-7

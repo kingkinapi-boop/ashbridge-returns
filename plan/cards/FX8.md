@@ -1,6 +1,8 @@
 # FX8 Sample clients: the four bare names in flag text
 
-Phase 0. Size S. Deps: none. Where: local or cloud (Node scripts, no packages).
+**Lead directive, 3 Oct (A417): round 2 from reports/FX8-findings.md, on a fresh branch claude/FX8-r2 from main after W16 lands.** The spec job owns the test, the SEC-11 verify line and the README count (main's count plus 15) and pastes the exact red set on its commit (the SEC-11 lines and the two R11 lines); the acceptance test also asserts no declared person is skipped by the 5-character name guard. The build changes only the three generator lines and regenerates 07, 09, 14 and 15. The check runs verify.mjs green on the branch and again after merging origin/main into a scratch copy. W16 replaces the two whole-folder lines; FX8 does not touch them.
+
+Phase 0. Size S. Deps: W16. Where: local or cloud (Node scripts, no packages).
 Tags: none (made-up names gain "(Test)"; no figure changes).
 Paths: reference/sample-clients/clients/c07_08.mjs, reference/sample-clients/clients/c09_10.mjs, reference/sample-clients/clients/c13_15.mjs, reference/sample-clients/07-*/**, reference/sample-clients/09-*/**, reference/sample-clients/14-*/**, reference/sample-clients/15-*/**, reference/sample-clients/verify.mjs, reference/sample-clients/README.md, tools/test/sample-names.test.mjs
 Clauses: SEC-11, ARC-8
