@@ -5,6 +5,7 @@
   },
   "db": { "include": ["src/**/*.db.test.ts", "testworld/**/*.db.test.ts"] },
   "evals": { "include": ["evals/**/*.test.ts", "src/**/*.eval.test.ts"] },
+  "dbCatchAllow": [],
   "tsconfig": {
     "include": [
       "next-env.d.ts",
