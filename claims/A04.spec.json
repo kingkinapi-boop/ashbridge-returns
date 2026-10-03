@@ -1,10 +1,11 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "A469: round 5c clock fix (card directive)",
- "reopenedFrom": "796cd7ab",
+ "note": "round 5c (A469): 18 new or restated tests fail first, 233 unit in the two files, none retired",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T12:50:30.712Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T13:08:12.637Z",
+ "mode": "turbo",
+ "commit": "71a8efe8",
+ "validated": "0eccaccd48c07696135250f496de99fc2d1e4003"
 }
