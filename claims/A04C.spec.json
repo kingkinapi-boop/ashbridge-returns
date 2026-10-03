@@ -2,7 +2,9 @@
  "card": "A04C",
  "role": "spec",
  "worker": "cloud-359204",
- "state": "working",
- "at": "2026-10-03T13:48:25.576Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T13:55:28.914Z",
+ "mode": "turbo",
+ "note": "wait: A04 lands first (its runner files are not on main; A04 is frozen and its last check is running); the Lead reopens it then",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"carded\"]}"
 }
