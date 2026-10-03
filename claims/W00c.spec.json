@@ -1,9 +1,8 @@
 {
  "card": "W00c",
  "role": "spec",
- "note": "A459 and A463: see card directives",
- "worker": "cloud-dfeb44",
- "state": "reopened",
- "at": "2026-10-03T11:43:46.721Z",
+ "worker": "cloud-a244c5",
+ "state": "working",
+ "at": "2026-10-03T11:48:09.182Z",
  "mode": "turbo"
 }
