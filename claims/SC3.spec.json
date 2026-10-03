@@ -1,10 +1,11 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "A452 patch (10 items from reports/SC3-findings.md), not A443",
- "reopenedFrom": "1f7ff0e05b3abfe9675c8d23f31ccb08cb308433",
+ "note": "56 tests (36 unit, 20 db); A452 patch; L00, B05, FX17 cards need harness.ts in Paths",
  "worker": "cloud-d01e1c",
- "state": "working",
- "at": "2026-10-03T09:42:25.069Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T10:06:32.556Z",
+ "mode": "turbo",
+ "commit": "d69c50b1",
+ "validated": "46ab96ea"
 }
