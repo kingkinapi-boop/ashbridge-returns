@@ -1,6 +1,7 @@
 // FX7 acceptance tests, the A508 section: textlayer's cleanup (`await task.destroy()` in a finally or a catch) must
 // never mask the error already in flight. The first error stays primary (SC11's settleAll pattern): the read rejects
 // with that error itself, or with an error whose `cause` is that error; the library task is still destroyed.
+// A520: a clean read whose destroy rejects rejects with that cleanup error (itself or as cause) and stores nothing.
 // The library (pdfjs-dist) is wrapped here, never our own modules: a flag makes a page read fail and destroy reject.
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
@@ -90,5 +91,28 @@ describe('FX7 textlayer cleanup keeps the first error primary (A508)', () => {
     expect(primary).toBeInstanceOf(Error)
     expect((primary as Error).message).toMatch(/^Reading refused: /)
     expect(plan.destroyed).toBe(1)
+  })
+  // A520 gap 6 (amber, SC11's settleAll: with no earlier error the cleanup error is primary). A build that swallows
+  // every destroy error (`await task.destroy().catch(() => undefined)`) returns and stores the result: caught here.
+  test('ARC-6 planted: a good read whose destroy rejects rejects with the destroy error, stores nothing, and the next read parses again', async () => {
+    plan.destroyFails = true
+    const engine = createTextLayerEngine()
+    const doc = fixtureDoc('one-page.pdf')
+    let caught: unknown
+    try {
+      await engine.read(doc)
+    } catch (e) {
+      caught = e
+    }
+    expect(caught, 'a clean read whose cleanup failed was returned as a success').toBeInstanceOf(Error)
+    const e = caught as Error
+    expect(e === DESTROY_ERROR || e.cause === DESTROY_ERROR).toBe(true)
+    expect(plan.destroyed).toBe(1)
+    expect(engine.parseCount()).toBe(1)
+    plan.destroyFails = false
+    const r = await engine.read(doc)
+    expect(r.pageCount).toBe(1)
+    expect(engine.parseCount()).toBe(2)
+    expect(plan.destroyed).toBe(2)
   })
 })

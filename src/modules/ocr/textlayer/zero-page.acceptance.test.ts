@@ -84,6 +84,22 @@ describe('FX7 A01 refuses a zero-size page (R54)', () => {
     expectRefused(await outcome(rawPdf([{ text: 'SALE (Test)', box: [0, 0, 0, 792] }])))
     expectRefused(await outcome(rawPdf([{ text: 'SALE (Test)', box: [0, 0, 612, 0] }])))
   })
+  // A520 gap 7: zero size away from the origin. A check on the raw MediaBox's third or fourth number alone
+  // (`box[2] === 0 || box[3] === 0`) misses these and refuses the inverted control below.
+  test('ARC-6 R54 planted: a zero-width box away from the origin [72 72 72 864] is refused', async () => {
+    expectRefused(await outcome(rawPdf([{ text: 'SALE (Test)', box: [72, 72, 72, 864] }])))
+  })
+  test('ARC-6 R54 planted: a zero-height box away from the origin [0 792 612 792] is refused', async () => {
+    expectRefused(await outcome(rawPdf([{ text: 'SALE (Test)', box: [0, 792, 612, 792] }])))
+  })
+  test('ARC-6 control: an inverted Letter box [612 792 0 0] still reads, as a Letter page with its word', async () => {
+    const o = await outcome(rawPdf([{ text: 'SALE (Test)', box: [612, 792, 0, 0] }]))
+    expect(o.threw).toBeUndefined()
+    const r = o.value as { pageCount: number; pages: { widthPt: number; heightPt: number }[]; words: { text: string }[] }
+    expect(r.pageCount).toBe(1)
+    expect(r.pages.map((p) => [p.widthPt, p.heightPt])).toEqual([[612, 792]])
+    expect(r.words.map((w) => w.text)).toEqual(['SALE', '(Test)'])
+  })
   test('ARC-6 R54 planted: a zero-size second page refuses the whole document', async () => {
     expectRefused(
       await outcome(

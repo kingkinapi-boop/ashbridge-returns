@@ -13,6 +13,9 @@
 //   the bytes come back exactly as on disk, never decoded. Synchronous. A reason is one of the three words.
 //   readRegularFile keeps its shape; for the same file and cap both forms give the same refusal, and the text form's
 //   text is the UTF-8 decoding of the bytes form's bytes.
+//   A520 patch: the buffer is sized from the file, never from the cap (a 10-byte file under a cap of 2 ** 40 reads);
+//   a cap that is negative, fractional or NaN is a caller's mistake and throws (spec choice, amber: any Error) in both
+//   forms; a dangling link, a link to a folder and a link to a FIFO are 'not-a-file' and never opened.
 // Every call goes through node:fs's default export, so the spies below see it. The module is loaded by name, so a
 // missing export fails each test with its reason while typecheck stays green before the build.
 import { execFileSync } from 'node:child_process'
@@ -176,6 +179,33 @@ describe('ARC-22 readRegularFileBytes returns a regular file\'s bytes exactly, u
     expect(whole).not.toHaveBeenCalled()
   })
 
+  // A520 gap 4: the buffer is sized from the file, never from the cap (STORAGE_MAX_BYTES would zero-fill 64 MiB per read).
+  test('ARC-22 planted: a 10-byte file read with a cap of 2 ** 40 gives its 10 bytes, in both forms (the buffer is never sized from the cap)', async () => {
+    const { readRegularFileBytes, readRegularFile } = await safeRead()
+    const ten = Uint8Array.from(Buffer.from('0123456789', 'latin1'))
+    fs.writeFileSync(at('ten (Test).bin'), ten)
+    expect(Array.from(okBytes(readRegularFileBytes(at('ten (Test).bin'), 2 ** 40)))).toEqual(Array.from(ten))
+    expect(readRegularFile(at('ten (Test).bin'), 2 ** 40)).toEqual({ ok: true, text: '0123456789' })
+    fs.writeFileSync(at('empty (Test).bin'), '')
+    expect(okBytes(readRegularFileBytes(at('empty (Test).bin'), 2 ** 40)).length).toBe(0)
+    expect(readRegularFile(at('empty (Test).bin'), 2 ** 40)).toEqual({ ok: true, text: '' })
+  })
+
+  test('ARC-22 planted: a cap that is negative, fractional or NaN throws in both forms, and leaves no descriptor open', async () => {
+    const { readRegularFileBytes, readRegularFile } = await safeRead()
+    fs.writeFileSync(at('a (Test).bin'), NOT_UTF8)
+    fs.writeFileSync(at('empty (Test).bin'), '')
+    for (const file of [at('a (Test).bin'), at('empty (Test).bin')]) {
+      for (const cap of [-1, -0.5, 1.5, 10.25, Number.NaN]) {
+        const fds = watchDescriptors()
+        expect(() => readRegularFileBytes(file, cap), `bytes ${String(cap)}`).toThrow()
+        expect(() => readRegularFile(file, cap), `text ${String(cap)}`).toThrow()
+        expect(fds.closed.sort()).toEqual(fds.opened.sort())
+        vi.restoreAllMocks()
+      }
+    }
+  })
+
   test('ARC-22 a file that grows past what fstat saw is still cut at maxBytes + 1', async () => {
     const { readRegularFileBytes } = await safeRead()
     fs.writeFileSync(at('grows.bin'), Buffer.alloc(5, 0xfe))
@@ -227,6 +257,42 @@ describe('ARC-22 readRegularFileBytes refuses what readRegularFile refuses, the 
       fs.rmSync(outside, { recursive: true, force: true })
     }
   })
+
+  // A520 gap 5: every kind of link, not one. An fs.existsSync guard first follows the link and answers gone for the
+  // dangling one; a stat that follows links answers a folder or a FIFO for the others.
+  test.skipIf(onWin32)('ARC-22 (Linux) planted: a dangling symlink is not-a-file, never gone, in both forms, and is never opened', async () => {
+    const { readRegularFileBytes, readRegularFile } = await safeRead()
+    fs.symlinkSync(at('nowhere (Test).pdf'), at('dangling.pdf'))
+    expect(fs.lstatSync(at('dangling.pdf')).isSymbolicLink()).toBe(true)
+    expect(fs.existsSync(at('dangling.pdf'))).toBe(false)
+    const opens = watchOpens()
+    expect(readRegularFileBytes(at('dangling.pdf'), 1024)).toEqual({ ok: false, reason: 'not-a-file' })
+    expect(readRegularFile(at('dangling.pdf'), 1024)).toEqual({ ok: false, reason: 'not-a-file' })
+    expect(opens.paths).not.toContain(path.resolve(at('dangling.pdf')))
+    expect(opens.paths).not.toContain(path.resolve(at('nowhere (Test).pdf')))
+  })
+
+  test.skipIf(onWin32)('ARC-22 (Linux) planted: a symlink to a directory is not-a-file in both forms; neither the link nor the directory is opened', async () => {
+    const { readRegularFileBytes, readRegularFile } = await safeRead()
+    fs.mkdirSync(at('real-dir'))
+    fs.symlinkSync(at('real-dir'), at('dir-link.pdf'))
+    const opens = watchOpens()
+    expect(readRegularFileBytes(at('dir-link.pdf'), 1024)).toEqual({ ok: false, reason: 'not-a-file' })
+    expect(readRegularFile(at('dir-link.pdf'), 1024)).toEqual({ ok: false, reason: 'not-a-file' })
+    expect(opens.paths).not.toContain(path.resolve(at('dir-link.pdf')))
+    expect(opens.paths).not.toContain(path.resolve(at('real-dir')))
+  })
+
+  test.skipIf(onWin32)('ARC-22 (Linux) planted: a symlink to a FIFO is not-a-file at once in both forms; neither the link nor the FIFO is opened', async () => {
+    const { readRegularFileBytes, readRegularFile } = await safeRead()
+    execFileSync('mkfifo', [at('real-pipe')], { timeout: 5000 })
+    fs.symlinkSync(at('real-pipe'), at('pipe-link.pdf'))
+    const opens = watchOpens()
+    expect(readRegularFileBytes(at('pipe-link.pdf'), 10)).toEqual({ ok: false, reason: 'not-a-file' })
+    expect(readRegularFile(at('pipe-link.pdf'), 10)).toEqual({ ok: false, reason: 'not-a-file' })
+    expect(opens.paths).not.toContain(path.resolve(at('pipe-link.pdf')))
+    expect(opens.paths).not.toContain(path.resolve(at('real-pipe')))
+  }, 30_000)
 
   test.skipIf(onWin32)('ARC-22 (Linux) planted: a FIFO is not-a-file at once and is never opened (an open would block)', async () => {
     const { readRegularFileBytes } = await safeRead()

@@ -1081,7 +1081,8 @@ function blankRuleProblems(files, readFile) {
   for (const f of files) {
     if (f.endsWith('src/contracts/text.ts')) continue
     const src = readFile(f)
-    if (/\.trim\(\)/.test(src)) problems.push(`${f}: a .trim() blank rule (non-blank goes through src/contracts/text.ts)`)
+    // A520: trimStart, trimEnd and their old names are trims too; the one accepted trim is text.ts's trimWhitespace
+    if (/\.trim(?:Start|End|Left|Right)?\(\)/.test(src)) problems.push(`${f}: a .trim() blank rule (non-blank goes through src/contracts/text.ts)`)
     if (/z\s*\.\s*string\(\)(?:\s*\.\s*\w+\([^)]*\))*?\s*\.\s*min\(\s*1\s*[,)]/.test(src)) problems.push(`${f}: a z.string().min(1) non-blank rule (use NonBlankSchema)`)
   }
   return problems
@@ -2123,6 +2124,29 @@ describe('SC R34 to R45: test data, money from text, line ends, blanks, pages an
 
   test('EV-1 R41 rule: a planted .trim() blank rule and z.string().trim().min(1) are caught', () => {
     expect(blankRuleProblems(['planted-r41-blank.ts.txt'], fix)).toHaveLength(2)
+  })
+  // A520 (FX7): a normaliser that is not a blank rule calls the one named helper exported from src/contracts/text.ts,
+  // trimWhitespace; R41 accepts a call to it and flags every other trim, including a local copy of the helper.
+  test('EV-1 R41 rule: a call to text.ts trimWhitespace passes; every other trim is caught, a local helper of the same name included (A520)', () => {
+    const one = (src) => blankRuleProblems(['planted-r41-helper.ts'], () => src)
+    expect(one("import { trimWhitespace } from './text'\nconst collapse = (s: string): string => trimWhitespace(s).replace(/\\s+/g, ' ')\n")).toEqual([])
+    expect(one("import { trimWhitespace } from '../contracts/text'\nexport const lex = (raw: string) => trimWhitespace(raw)\n")).toEqual([])
+    const planted = [
+      'const collapse = (s: string): string => s.trim().replace(/\\s+/g, \' \')',
+      'export const trimWhitespace = (s: string): string => s.trim()',
+      'const lex = (raw: string) => raw.trimStart().trimEnd()',
+      'const lex = (raw: string) => raw.trimEnd()',
+      'const lex = (raw: string) => raw.trimLeft().trimRight()',
+    ]
+    for (const src of planted) expect(one(src), src).toEqual(['planted-r41-helper.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)'])
+  })
+  test('EV-1 R41 lex in amount-grammar.ts and collapse in reading.ts call text.ts trimWhitespace (A520)', () => {
+    for (const f of ['src/contracts/amount-grammar.ts', 'src/contracts/reading.ts']) {
+      const src = read(f)
+      expect(src, f).toMatch(/import\s*\{[^}]*\btrimWhitespace\b[^}]*\}\s*from\s*'\.\/text'/)
+      expect(src, f).toMatch(/\btrimWhitespace\(/)
+      expect(blankRuleProblems([f], read), f).toEqual([])
+    }
   })
   test('EV-1 R41 one blank definition: no .trim() or z.string().min(1) non-blank rule in src/contracts or src/modules (text.ts is the one)', () => {
     const files = CONTRACT_AND_MODULE_FILES()
