@@ -2,10 +2,9 @@
  "card": "GL3",
  "role": "spec",
  "note": "A476: round 2 test (card directive)",
- "worker": "cloud-c6e634",
- "state": "reopened",
- "at": "2026-10-03T13:15:18.853Z",
- "mode": "turbo",
- "commit": "c6ed0a6",
- "validated": "66de2c9"
+ "reopenedFrom": "c6ed0a6",
+ "worker": "cloud-1ba1dc",
+ "state": "working",
+ "at": "2026-10-03T13:30:55.203Z",
+ "mode": "turbo"
 }
