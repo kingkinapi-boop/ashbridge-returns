@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-02T22:03:38.513Z",
  "worker": "cloud-abfeb2",
- "state": "working",
- "at": "2026-10-03T02:27:38.611Z",
+ "state": "reported",
+ "at": "2026-10-03T02:38:38.688Z",
  "mode": "turbo",
- "beat": "2026-10-03T02:27:55.956Z"
+ "beat": "2026-10-03T02:27:55.956Z",
+ "note": "PASS (Opus read refused: Agent tool disabled; run one before boarding)"
 }
