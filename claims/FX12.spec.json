@@ -1,9 +1,11 @@
 {
  "card": "FX12",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: 17 tests, 6 fail for the unbuilt setting; 2 pg16 multi-world tests added to KNOWN (amber, owner FX14)",
  "worker": "cloud-247bf5",
- "state": "working",
- "at": "2026-10-03T12:47:07.093Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T12:51:57.113Z",
+ "mode": "turbo",
+ "commit": "41237c2",
+ "validated": "5ba459ce97fcd7fb85d7ec11fe2bfdcbb5fedc75"
 }
