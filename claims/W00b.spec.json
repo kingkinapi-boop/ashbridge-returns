@@ -1,10 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-06931b",
- "state": "released",
- "at": "2026-10-03T09:04:56.391Z",
- "mode": "turbo",
- "note": "wait: spec round 4 merges W00c in and W00c has not landed (check failed, round 3 pending); no code base",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "worker": "cloud-51ac6d",
+ "state": "working",
+ "at": "2026-10-03T09:42:22.326Z",
+ "mode": "turbo"
 }
