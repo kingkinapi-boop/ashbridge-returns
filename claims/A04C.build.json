@@ -1,7 +1,10 @@
 {
  "card": "A04C",
  "role": "build",
- "state": "reopened",
- "worker": "lead",
- "at": "2026-10-03T17:35:43.910Z"
+ "round": 1,
+ "spec": "b18e932c",
+ "worker": "cloud-7d7878",
+ "state": "working",
+ "at": "2026-10-03T17:41:53.853Z",
+ "mode": "turbo"
 }
