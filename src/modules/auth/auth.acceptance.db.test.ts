@@ -22,11 +22,17 @@
 //   (expiresAt = the earlier of lastSeenAt + 30 min and signedInAt + 12 h). Five failed attempts (wrong password or
 //   wrong code) lock the user until 15 minutes after the fifth.
 // - A one-time code is valid for its own 30-second step and one step either side; each step's code is accepted once per user.
+//
+// FX10 (3 Oct): one database per test. A clone costs about 0.85 s on the laptop; tests that made two to four in one
+// body (several worlds, drifts or engine settings) ran 4 to 7 s under full-run load against the db project's 6 s
+// budget and timed out now and then. Each such test is now one test per world, each with its own setup and pinned
+// clock, and every assertion kept. Every database here comes from freshDb(), and afterEach refuses a test that made two.
 import crypto from 'node:crypto'
 import type { PGlite } from '@electric-sql/pglite'
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import type { Clock } from '../../core/clock'
 import { cloneTestDb } from '../../core/db'
+import { readOwnSource } from '../../core/testing/read-own-source'
 import { createAuth } from './index'
 import { listTestUsers, testCredentials } from './testing'
 import { totp } from './totp'
@@ -56,8 +62,21 @@ interface World {
   now: () => number
 }
 
+// FX10: the only place this file makes a database; counted per test.
+let dbsThisTest = 0
+async function freshDb(): Promise<PGlite> {
+  dbsThisTest += 1
+  return cloneTestDb()
+}
+beforeEach(() => {
+  dbsThisTest = 0
+})
+afterEach(() => {
+  expect(dbsThisTest, 'FX10 one database per test: split a test that needs more into one test per world').toBeLessThanOrEqual(1)
+})
+
 async function world(env: Env = {}): Promise<World> {
-  const db = await cloneTestDb()
+  const db = await freshDb()
   let t = START
   const clock: Clock = { now: () => new Date(t) }
   const lines: string[] = []
@@ -98,9 +117,14 @@ async function refusalOf(p: Promise<unknown>): Promise<{ code: string; message: 
 }
 
 describe('A06 sign-in with two factors (SEC-1)', () => {
-  test('SEC-1 the right password then the right code gives a session with exactly the user roles', async () => {
-    const w = await world()
-    for (const u of listTestUsers()) {
+  // FX10: one test per made-up user (was nine sign-ins in one body); the nine together still cover every user.
+  test('SEC-1 there are nine made-up users, so the tests below cover each one', () => {
+    expect(listTestUsers()).toHaveLength(9)
+  })
+
+  for (const u of listTestUsers()) {
+    test(`SEC-1 the right password then the right code gives a session with exactly the user roles: ${u.id}`, async () => {
+      const w = await world()
       const r = await signIn(w, u.id)
       expect(r.ok, u.id).toBe(true)
       if (r.ok) {
@@ -108,9 +132,8 @@ describe('A06 sign-in with two factors (SEC-1)', () => {
         expect(r.session.userId).toBe(u.id)
         expect(r.session.signedInAt.getTime()).toBe(w.now())
       }
-      w.at(w.now() + 5 * MIN)
-    }
-  })
+    })
+  }
 
   test('SEC-1 the dual-role user session lists cpa and owner', async () => {
     const w = await world()
@@ -139,13 +162,13 @@ describe('A06 sign-in with two factors (SEC-1)', () => {
     expect(a.session.sessionId).not.toBe(b.session.sessionId)
   })
 
-  test('SEC-1 a code one step either side is accepted (one step of drift)', async () => {
-    for (const drift of [-1, 1]) {
+  for (const drift of [-1, 1]) {
+    test(`SEC-1 a code one step either side is accepted (one step of drift): drift ${String(drift)}`, async () => {
       const w = await world()
       const r = await signIn(w, userWith('cpa'), { codeAt: w.now() + drift * STEP })
       expect(r.ok, `drift ${String(drift)}`).toBe(true)
-    }
-  })
+    })
+  }
 
   test('SEC-1 a wrong password is refused with "sign-in failed" and the true reason in the event', async () => {
     const w = await world()
@@ -175,12 +198,12 @@ describe('A06 sign-in with two factors (SEC-1)', () => {
     expect((await refusals(w.db))[0]?.['reason']).toBe('wrong code')
   })
 
-  test('SEC-1 a code two steps away, either way, is refused (drift is one step)', async () => {
-    for (const drift of [-2, 2]) {
+  for (const drift of [-2, 2]) {
+    test(`SEC-1 a code two steps away, either way, is refused (drift is one step): drift ${String(drift)}`, async () => {
       const w = await world()
       expect(await signIn(w, userWith('owner'), { codeAt: w.now() + drift * STEP }), `drift ${String(drift)}`).toEqual(FAILED)
-    }
-  })
+    })
+  }
 
   test('SEC-1 a code used twice is refused the second time, as a reused code', async () => {
     const w = await world()
@@ -453,22 +476,22 @@ describe('A06 no secret kept or logged (SEC-10)', () => {
 describe('A06 engine switch (ARC-6, ARC-20, END-8)', () => {
   const OFF = /live sign-in is off until go-live/
 
-  test('ARC-6 the engine is testusers by default and by name, and neither is live', async () => {
-    for (const env of [{}, { AUTH_ENGINE: 'testusers' }, { AUTH_ENGINE: '' }]) {
+  for (const env of [{}, { AUTH_ENGINE: 'testusers' }, { AUTH_ENGINE: '' }]) {
+    test(`ARC-6 the engine is testusers by default and by name, and neither is live: ${JSON.stringify(env)}`, async () => {
       const w = await world(env)
       expect(w.auth.isLive, JSON.stringify(env)).toBe(false)
       expect((await signIn(w, userWith('preparer'))).ok).toBe(true)
-    }
-  })
+    })
+  }
 
   test('ARC-20 AUTH_ENGINE=live is refused with "live sign-in is off until go-live"', async () => {
-    const db = await cloneTestDb()
+    const db = await freshDb()
     const r = await refusalOf(createAuth({ db, env: { AUTH_ENGINE: 'live' } }))
     expect(r?.message).toMatch(OFF)
   })
 
   test('END-8 live holds no key: a planted key in the settings is never printed, in the refusal or the log', async () => {
-    const db = await cloneTestDb()
+    const db = await freshDb()
     const lines: string[] = []
     const planted = 'PLANTED-live-key-4d2e'
     const r = await refusalOf(createAuth({ db, env: { AUTH_ENGINE: 'live', AUTH_LIVE_KEY: planted }, sink: (l) => lines.push(l) }))
@@ -477,7 +500,7 @@ describe('A06 engine switch (ARC-6, ARC-20, END-8)', () => {
   })
 
   test('ARC-6 an unknown engine is refused naming AUTH_ENGINE, never its value', async () => {
-    const db = await cloneTestDb()
+    const db = await freshDb()
     const r = await refusalOf(createAuth({ db, env: { AUTH_ENGINE: 'PLANTED-engine-77' } }))
     expect(r?.message).toMatch(/AUTH_ENGINE/)
     expect(r?.message).not.toContain('PLANTED-engine-77')
@@ -496,7 +519,7 @@ describe('A06 engine switch (ARC-6, ARC-20, END-8)', () => {
   })
 
   test('ARC-20 the live engine takes no sign-in even when the settings ask for it: nothing is written', async () => {
-    const db = await cloneTestDb()
+    const db = await freshDb()
     await refusalOf(createAuth({ db, env: { AUTH_ENGINE: 'live' } }))
     expect((await db.query('select count(*)::int as n from returns.sign_in_events')).rows).toEqual([{ n: 0 }])
   })
@@ -598,32 +621,36 @@ const countOf = async (db: PGlite, sql: string, args: unknown[] = []): Promise<n
 const wrongCodeFor = (id: string, at: number): string => (testCredentials(id).codeAt(new Date(at)) === '000000' ? '000001' : '000000')
 
 describe('A06 round 2: the stand-in is never chosen by silence in production (ARC-6, SEC-11, END-8)', () => {
-  test('ARC-6 in production an unset or blank AUTH_ENGINE is refused naming AUTH_ENGINE, and staff_users stays empty', async () => {
-    for (const env of [{ NODE_ENV: 'production' }, { NODE_ENV: 'production', AUTH_ENGINE: '' }]) {
-      const db = await cloneTestDb()
+  for (const env of [{ NODE_ENV: 'production' }, { NODE_ENV: 'production', AUTH_ENGINE: '' }]) {
+    test(`ARC-6 in production an unset or blank AUTH_ENGINE is refused naming AUTH_ENGINE, and staff_users stays empty: ${JSON.stringify(env)}`, async () => {
+      const db = await freshDb()
       const r = await refusalOf(createAuth({ db, env }))
       expect(r?.message, JSON.stringify(env)).toMatch(/AUTH_ENGINE/)
       expect(await countOf(db, 'returns.staff_users'), JSON.stringify(env)).toBe(0)
-    }
-  })
+    })
+  }
 
-  test('ARC-6 in production AUTH_ENGINE=testusers set by name works, and outside production unset still means testusers', async () => {
+  // FX10: this was one test making four worlds; it timed out under full-run load (DB16 spec run, 3 Oct). One per world.
+  test('ARC-6 in production AUTH_ENGINE=testusers set by name works', async () => {
     const w = await world({ NODE_ENV: 'production', AUTH_ENGINE: 'testusers' })
     expect(w.auth.isLive).toBe(false)
     expect((await signIn(w, userWith('preparer'))).ok).toBe(true)
-    for (const nodeEnv of ['development', 'test', undefined]) {
-      const x = await world({ NODE_ENV: nodeEnv })
-      expect((await signIn(x, userWith('ops'))).ok, String(nodeEnv)).toBe(true)
-    }
   })
 
+  for (const nodeEnv of ['development', 'test', undefined]) {
+    test(`ARC-6 outside production unset still means testusers: NODE_ENV ${String(nodeEnv)}`, async () => {
+      const x = await world({ NODE_ENV: nodeEnv })
+      expect((await signIn(x, userWith('ops'))).ok, String(nodeEnv)).toBe(true)
+    })
+  }
+
   test('SEC-11 production with AUTH_ENGINE=live is still refused with "live sign-in is off until go-live"', async () => {
-    const db = await cloneTestDb()
+    const db = await freshDb()
     expect((await refusalOf(createAuth({ db, env: { NODE_ENV: 'production', AUTH_ENGINE: 'live' } })))?.message).toMatch(/live sign-in is off until go-live/)
   })
 
   test('SEC-11 the testusers engine refuses to start, and inserts no row, on a database holding a real (is_test = false) staff user', async () => {
-    const db = await cloneTestDb()
+    const db = await freshDb()
     await db.query(`insert into returns.staff_users (id, display_name, roles, is_test) values ('real-person', 'Jordan Real', '{owner}', false)`)
     const r = await refusalOf(createAuth({ db, env: {} }))
     expect(r?.message).toBeDefined()
@@ -732,5 +759,26 @@ describe('A06 round 2: every refusal costs the same work, and typed text is neve
       w.db.query(`insert into returns.sign_in_events (id, user_id, outcome, reason) values ('ghost', 'PLANTED-not-a-user', 'refused', 'unknown user')`),
     )
     expect(r?.code).toBe('23503')
+  })
+})
+
+describe('FX10 one database per test (ARC-6, SEC-1)', () => {
+  // Counted from the text; the name is built from parts so this test's own words are not counted.
+  const NAME = ['clone', 'TestDb'].join('')
+  const CALL = new RegExp(`\\b${NAME}\\s*\\(`, 'g')
+  const directClones = (text: string): number => [...text.matchAll(CALL)].length
+
+  test('ARC-6 every database in this file comes from freshDb, the one counted place (a planted direct call is caught)', () => {
+    const own = readOwnSource('src/modules/auth/auth.acceptance.db.test.ts')
+    expect(own).toContain('async function freshDb(')
+    expect(directClones(own), 'a direct call outside freshDb escapes the one-database guard').toBe(1)
+    const planted = `${own}\ntest('x', async () => { const db = await ${NAME}() })\n`
+    expect(directClones(planted)).toBe(2)
+  })
+
+  test('SEC-1 the guard counts each database a test makes, starting from zero', async () => {
+    expect(dbsThisTest).toBe(0)
+    await freshDb()
+    expect(dbsThisTest).toBe(1)
   })
 })

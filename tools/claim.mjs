@@ -151,8 +151,8 @@ function buildPassed(b, ck) {
   if (b.state === 'reopened') return false
   return b.state !== 'reported' || ck.for === b.at
 }
-// CQ1 rule 2: a release with "wait:" is still held while the card's wait key is unchanged.
-const isHeld = (c, card, status) => Boolean(c && c.state === 'released' && WAIT_NOTE.test(c.note || '') && c.waitKey && card && c.waitKey === waitKey(card, status))
+// CQ3 rule 2: a release with "wait:" is held until the Lead reopens the job (which ends the released state).
+const isHeld = (c) => Boolean(c && c.state === 'released' && WAIT_NOTE.test(c.note || ''))
 // CQ2 rule 6: a release stores the card branch tip; a second release at the same tip is "needs Lead".
 const NEEDS_LEAD = (c) => Boolean(c && c.state === 'released' && c.needsLead)
 const REFIT_NOTE = /^refit/i
@@ -161,8 +161,15 @@ const isActive = (c) => (c.state === 'working' || c.state === 'reported') && !is
 // Write claims/<file> (one or several, in ONE commit) on top of the claims branch tip and push.
 // `files` is { name: object }. A refused push (someone else pushed first) waits a
 // jittered, growing time, re-fetches and returns 'retry'; after 6 tries it returns false.
-function writeClaims(files, attempt = 1) {
+// CQ5: `decidedTip` is the claims tip the caller decided on. If the tip moved since and any of the
+// files written changed in between, the decision is stale: nothing is written and 'retry' is returned.
+// A move that touched other jobs only is kept, and the new claim lands on top of it.
+function writeClaims(files, attempt = 1, decidedTip) {
   const tip = claimsTip()
+  if (decidedTip !== undefined && tip !== decidedTip) {
+    const blobAt = (t, f) => (t ? tryGit(['rev-parse', '--verify', '-q', `${t}:claims/${f}`]) : '') || ''
+    if (Object.keys(files).some((f) => blobAt(tip, f) !== blobAt(decidedTip, f))) return 'retry'
+  }
   const index = path.join(os.tmpdir(), `claims-index-${process.pid}-${attempt}`)
   const env = { ...process.env, ...ID, GIT_INDEX_FILE: index }
   const run = (a, input) => execFileSync('git', a, { cwd: ROOT, env, encoding: 'utf8', input, stdio: ['pipe', 'pipe', 'pipe'] }).trim()
@@ -192,7 +199,7 @@ function writeClaims(files, attempt = 1) {
     fs.rmSync(index, { force: true })
   }
 }
-const writeClaim = (file, obj, attempt) => writeClaims({ [file]: obj }, attempt)
+const writeClaim = (file, obj, attempt, decidedTip) => writeClaims({ [file]: obj }, attempt, decidedTip)
 
 // The protect-spec hook reads this to know whether we are building or checking.
 function setCurrentJob(job) {
@@ -222,7 +229,8 @@ function next() {
     const mode = modeNow()
     const cap = mode.mode === 'turbo' ? Number(mode.max_workers || 16) : CAPS[mode.mode] ?? 0
     const { cards } = JSON.parse(readMain('plan/slices.json'))
-    const claims = readClaims(claimsTip())
+    const decidedTip = claimsTip()
+    const claims = readClaims(decidedTip)
     const active = claims.filter(isActive)
     if (cap === 0) return out(`PAUSED ${mode.mode}`, 3)
     if (active.filter((c) => c.state === 'working').length >= cap) return out(`PAUSED ${mode.mode} (cap ${cap} reached)`, 3)
@@ -260,6 +268,8 @@ function next() {
         if (role === 'build') {
           const s = claimFor(c.id, 'spec')
           const reopened = s && s.state === 'reopened'
+          // CQ3 rule 1: no build while its spec is reopened or being written.
+          if (reopened || (s && s.state === 'working' && !isStale(s))) continue
           const specReady = (c.spec && !reopened) || (s && s.state === 'reported' && s.commit && !specNeedsRefit(s))
           if (!specReady || !depGate(c, 'build', status, reportedBuilds).ok) continue
           const b = claimFor(c.id, 'build')
@@ -299,7 +309,7 @@ function next() {
     const was = claimFor0(claims, pick.card, pick.role)
     if (was && was.state === 'released' && was.lastRelease) claim.lastRelease = was.lastRelease
     const file = `${pick.card}.${pick.role}.json`
-    const res = writeClaim(file, claim, attempt)
+    const res = writeClaim(file, claim, attempt, decidedTip)
     if (res === true) {
       setCurrentJob({ card: pick.card, role: pick.role, worker })
       return out(`CLAIMED ${pick.card} ${pick.role}${pick.reopenedFrom && pick.note ? `\n${pick.note}` : ''}`, 0)

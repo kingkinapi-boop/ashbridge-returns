@@ -22,7 +22,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 
-const ACCEPTANCE = /\.acceptance\.test\.[cm]?[jt]sx?$/
+// A451: also `.acceptance.db.test.ts` (and any one-word project infix)
+const ACCEPTANCE = /\.acceptance\.([a-z0-9]+\.)?test\.[cm]?[jt]sx?$/
 const GOLDEN = /(^|[\\/])__golden__[\\/]/
 
 let input = ''

@@ -1,13 +1,12 @@
 {
   "status": "checking",
   "branch": "claude/train",
-  "head": "5deca4a3",
+  "head": "26e84345",
   "cards": [
-    "CQ3",
-    "W16",
-    "FX2"
+    "DB16",
+    "FX15"
   ],
-  "requested_at": "2026-10-03T07:17:08Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). W16 touches reference/sample-clients: run node reference/sample-clients/verify.mjs on the train head (A417). CQ3 changes claim.mjs: run every tools test. FX2 is security: run mutate:changed for FX2 (cloud; Stryker cannot run on the laptop). scope.mjs on FX2 flags only the spec job's report commit 22e1212 (known tool gap, CQ4): not a failure.",
-  "by": "cloud-91039f"
+  "requested_at": "2026-10-03T10:56:00Z",
+  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). Both cards run on Postgres 16.5 or later: print select version() and run the db project on pg16 (TEST_DB=pg16) as well as PGlite. DB16 is core and security (CLEAN): mutate:changed for DB16. FX15 is core: mutate:changed for FX15. Run the db project 5 times on pg16 (DB16 changes pooled sessions).",
+  "by": "cloud-d9f338"
 }

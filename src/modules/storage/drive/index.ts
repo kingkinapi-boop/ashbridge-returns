@@ -26,7 +26,7 @@ const Index = z.object({
 const REFUSED_TEST = 'refused: the company folder name lacks "(Test)", so it is not made-up data'
 
 export function createDriveStandIn(options: DriveOptions): ClientDocuments {
-  readEngine(options.env ?? process.env, 'STORAGE_DRIVE_ENGINE', options.sink)
+  readEngine(options.env, 'STORAGE_DRIVE_ENGINE', options.sink)
   const root = path.resolve(options.root)
 
   function readIndex() {
