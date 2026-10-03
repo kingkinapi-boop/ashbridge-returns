@@ -5,8 +5,8 @@
  "spec": "78a9fba1",
  "worker": "cloud-4c2861",
  "state": "released",
- "at": "2026-10-03T04:17:18.436Z",
+ "at": "2026-10-03T04:49:10.705Z",
  "mode": "turbo",
- "note": "wait: core spec review of claude/W16-r2 (reports/W16-spec-review.md); build opens after GO",
+ "note": "wait: core spec review of the new spec (reports/W16-spec-review-3.md); build opens after GO",
  "waitKey": "{\"status\":\"carded\",\"deps\":[],\"depStatus\":[]}"
 }
