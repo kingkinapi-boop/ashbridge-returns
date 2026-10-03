@@ -1,11 +1,12 @@
 {
  "card": "CQ11",
  "role": "spec",
- "note": "A478: Review items a to c (card directive)",
- "reopenedFrom": "17b31e9af5ec9054fed65f877943070b2799fda4",
+ "note": "33 failing by design; rules 5 to 10 added, see report; R1 on main needs Lead's Where rewrites",
  "worker": "cloud-ddf73a",
- "state": "working",
- "at": "2026-10-03T14:07:25.708Z",
+ "state": "reported",
+ "at": "2026-10-03T14:15:25.059Z",
  "mode": "turbo",
- "beat": "2026-10-03T14:12:10.205Z"
+ "beat": "2026-10-03T14:12:10.205Z",
+ "commit": "dbd21a0a",
+ "validated": "fd9a875b912b9c40e086920098abf3efc94469c1"
 }
