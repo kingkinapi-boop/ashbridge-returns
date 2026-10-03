@@ -3,7 +3,8 @@
  "role": "spec",
  "worker": "cloud-06d0d7",
  "state": "released",
- "at": "2026-10-03T08:27:25.225Z",
+ "at": "2026-10-03T08:44:32.154Z",
  "mode": "turbo",
- "note": "needs Lead: queue re-offers W00b spec though deps W00c and FX8 are not on main; hold until both land"
+ "note": "wait: W00c and FX8 land (A423 directive)",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
 }
