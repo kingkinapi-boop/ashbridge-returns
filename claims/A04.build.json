@@ -4,7 +4,8 @@
  "round": 9,
  "spec": "fb82b8c",
  "worker": "cloud-42f06c",
- "state": "working",
- "at": "2026-10-03T07:57:52.849Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T08:01:40.085Z",
+ "mode": "turbo",
+ "note": "round 4: 126 of 126 unit, db 5, mutation 100, head 40355127"
 }
