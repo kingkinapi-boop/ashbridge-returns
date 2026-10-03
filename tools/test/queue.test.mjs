@@ -431,13 +431,15 @@ describe('scope allows listed test and golden paths', () => {
   const card = '# A\n\nPaths: src/a/**\n\n## Tests\n- `src/a/extra/` is not a file\n- `e2e/a/journey.spec.ts`\n\nGolden: fixtures/a/golden.json, fixtures/a/more.json\n'
   const scopeWorld = async (changed) => {
     const w = await world({ files: { 'plan/cards/A.md': card, 'src/a/seed.ts': 'x' } })
-    await git(w.work, 'checkout', '-q', '-b', 'work')
+    await git(w.work, 'checkout', '-q', '-b', 'claude/A')
     for (const f of changed) {
       fs.mkdirSync(path.dirname(path.join(w.work, f)), { recursive: true })
       fs.writeFileSync(path.join(w.work, f), 'x')
     }
     await git(w.work, 'add', ...changed)
     await git(w.work, 'commit', '-q', '-m', 'work')
+    // CQ2 rule 4 (ARC-15): scope.mjs reads origin/claude/<card>, so the branch is published
+    await git(w.work, 'push', '-q', 'origin', 'claude/A')
     return w
   }
 
