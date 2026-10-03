@@ -1,9 +1,11 @@
 {
  "card": "W00c",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: typecheck and lint clean; only W00c's own tests fail (unbuilt)",
  "worker": "cloud-03268d",
- "state": "working",
- "at": "2026-10-03T05:57:09.158Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T06:09:03.211Z",
+ "mode": "turbo",
+ "commit": "77bbbef0",
+ "validated": "0f7e1cc4"
 }
