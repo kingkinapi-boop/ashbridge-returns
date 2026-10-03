@@ -9480,7 +9480,9 @@
         "testworld/model/schema.test.ts",
         "testworld/model/guard.ts",
         "testworld/model/guard.test.ts",
-        "testworld/model/kinds.ts"
+        "testworld/model/kinds.ts",
+        "testworld/model/checks.test.ts",
+        "testworld/model/faults.test.ts"
       ],
       "clauses": [
         "ARC-8",
