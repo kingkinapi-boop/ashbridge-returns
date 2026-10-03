@@ -5,7 +5,7 @@
  "spec": "d69ac553",
  "worker": "cloud-120dac",
  "state": "reported",
- "at": "2026-10-03T05:50:14.591Z",
+ "at": "2026-10-03T05:52:39.871Z",
  "mode": "turbo",
- "note": "round 3: 565 pg16 db tests pass, 563+1xfail on PGlite; head 3bd6a33; scope flags spec-side commits only"
+ "note": "duplicate build: branch head 512d833 (another worker's round 3) verified instead: typecheck clean, TEST_DB=pg16 db project 565 pass 1 skip; my duplicate not pushed"
 }
