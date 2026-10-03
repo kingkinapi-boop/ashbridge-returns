@@ -1,12 +1,10 @@
 {
  "card": "GL3",
  "role": "build",
- "round": 1,
- "spec": "9da00fbd",
- "worker": "cloud-06931b",
- "state": "reopened",
- "at": "2026-10-03T11:57:22.931Z",
- "mode": "turbo",
- "beat": "2026-10-03T10:08:06.296Z",
- "note": "DB16 landed: pg16 run, R41 fix in manifest.ts (A462)"
+ "round": 2,
+ "spec": "c6ed0a6",
+ "worker": "cloud-0ac9e9",
+ "state": "working",
+ "at": "2026-10-03T12:20:58.958Z",
+ "mode": "turbo"
 }
