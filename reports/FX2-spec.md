@@ -1,6 +1,6 @@
-# FX2 spec (cloud-253f9f, 3 Oct 2026)
-- 23 tests in src/modules/ocr/engine-setting.test.ts (9) and src/modules/storage/engine-setting.test.ts (14); 14 fail for the right reason (OCR_ENGINE, STORAGE_FILES_ENGINE, STORAGE_DRIVE_ENGINE not in env.ts; no production refusal). Clauses: SEC-11, ARC-6, ARC-20, SEC-10.
-- validated on main 7eaf18c: typecheck and lint green; npm test green except the 14.
-- Step 6b retired tests: none (existing settings.acceptance and adapter.acceptance tests use no NODE_ENV, so they are unaffected).
-- Amber: A05's settings are STORAGE_FILES_ENGINE and STORAGE_DRIVE_ENGINE (the card did not name them); the refusal message names the setting; blank reads as unset; live still fails as "off" in production. Builder must also drop the `process.env` default in storage files/drive index (read via readSettings) and make readEngine take env.ts values.
-Model: Sonnet 5.5. Permission gaps: none.
+# FX2 spec (round 2, local-2, 3 Oct 2026; A414, reports/FX2-findings.md)
+- Spec commit 5ebca343 on claude/FX2 (round 1 6ac74579). 23 tests, unchanged in number: the two source scans (ocr/engine-setting.test.ts and storage/engine-setting.test.ts) now read through `readOwnSource` with the same files and regexes, each with a sentinel that it read the module itself; the storage scan adds src/modules/auth/index.ts and names each offending file. Clauses: ARC-20, SEC-11, ARC-6.
+- Fails first for the right reason: 1 of 23 (`expected [ 'src/modules/auth/index.ts' ] to deeply equal []`; auth reads `opts.env ?? process.env`). The other 22 pass on the round 1 build already on the branch.
+- Validated on main c545b8ed, then 77648178 merged (no toolchain file changed between them): tsc and eslint clean; whole unit project green except this card's 1 test and 3 laptop-only failures unrelated to FX2 (design/basis RV-52 build timing; storage/real-parent two symlink tests on Windows). 6b: the stub (`readSettings(opts.env)` in auth/index.ts, reverted) turns the scan green; whole unit project and the auth db file (57) green with it. Tests retired: none.
+- Amber: the auth file sits in the storage file's scan (the card's Paths name only the two engine-setting tests), and the test is renamed "no storage or auth module ...". Expectation files: none beyond these two tests.
+Model: Opus 5.5. Permission gaps: none.
