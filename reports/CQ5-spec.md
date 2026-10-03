@@ -1,0 +1,7 @@
+# CQ5 spec (local-2, 3 Oct)
+
+- Spec commit 756760ac, validated on main 50fcaf43. Tests: `tools/test/claim-race.test.mjs`, 3 ARC-15 tests.
+- The race is planted, not timed: worker A runs claim.mjs under a `node --import` preload (written to a temp dir by the test) that wraps `child_process.execFileSync`; after A's `next` runs its first `git ls-tree` (the claims tree it decides on), the preload runs rival B to completion from the same checkout, so B's claim moves the shared `refs/remotes/origin/claude/claims`. The test asserts B ran and the ref moved, so a missed plant fails loudly.
+- Fails first on main for the right reason: tests 1 and 2 get `CLAIMED X spec` for both workers (A428 reproduced). Test 3 (a claim on another job is kept, the new claim lands on top, no rewind) passes on main: it guards against an over-fix such as a forced push.
+- Step 6b: a stub (next passes the tip it read to writeClaims) passes all 3; `tools/test/` 251 of 251 green with it; no test retired. Typecheck clean; ESLint ignores tools tests. The full `npm test` (src) was not run on the laptop: the spec adds one tools test file only.
+- Amber: the preload hooks the first `git ls-tree` in `next`, so the build must keep `readClaims` reading through `execFileSync('git', ['ls-tree', ...])` (card: "nothing else"). `update` and `beat` have the same read-then-re-read pattern; the card covers `next` only, so no test pins them; the Lead may card it.

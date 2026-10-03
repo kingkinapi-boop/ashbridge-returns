@@ -9,7 +9,7 @@ Tags: core (permissions and citations: the rules keep every later table and box 
 Paths: tools/test/schema-contract-rules.test.mjs, src/contracts/schema-rules.db.test.ts, tools/test/__fixtures__/schema-contract/**
 Clauses: SEC-7, EV-1, ARC-10, EV-5, EV-8, EV-10, FLOW-1, ARC-15
 Read: `reports/findings-F01-F09.md` (rule tests R12 to R18, risks), `reports/findings-F09-r2.md` ("Rule tests": its R19 to R21, numbered R26 to R28 here), `reports/findings-wave2.md` (fix 8: R23 to R25; fix 1g: the renumbering), `plan/cards/F01.md`, `plan/cards/F09.md`, `plan/cards/F09A.md`, blueprint 03 (EV-1, EV-5, EV-8, EV-10), 02 (FLOW-1), 08 (SEC-7), 09 (ARC-10, ARC-15), `.claude/rules/testing.md`, `tools/test/db-rules.test.mjs` (the pattern).
-Spec commit: (spec-writer fills)
+Spec commit: 348528d6 (round 3, A415; validated on main 61cb3bc7 (full suite on 2288da55, code-identical); 110 rule tests (87 unit, 23 db), all green on main: defects on main sit in KNOWN with fix-card owners FX3 to FX9, unbuilt subjects in PENDING; earlier specs 1267a0fb on b277a240, 34e8ac0 on 6d8efd6)
 
 **SPEC JOB, 2 Oct 21:40Z (not a toolchain refit; supersedes the 20:45Z line below once done):** A03 landed `src/modules/ocr/recorded` after the last spec. In the SC test files add (1) reasoned BINARY_FIXTURES entries for `src/modules/ocr/recorded/__fixtures__/one-page.pdf` and `unrecorded.pdf` (R34) and (2) a READERS registry entry for `src/modules/ocr/recorded` (R47). Then merge main again and confirm no other rule fails on main; any further failure in landed code gets a KNOWN entry, owner FX3. Report with the test count.
 

@@ -59,10 +59,12 @@ export function createLifecycle(opts: LifecycleOptions) {
     }
   }
 
-  async function move(returnId: ReturnId, to: ReturnState, actor: string, why: string): Promise<Ok | Refused> {
+  // FX5: given the caller's transaction (tx), the move runs inside it: rule refusals return { ok: false },
+  // a database error throws so the caller's transaction rolls back. Without tx it opens its own, as before.
+  async function move(returnId: ReturnId, to: ReturnState, actor: string, why: string, tx?: Transaction): Promise<Ok | Refused> {
     const blank = blankWho(actor, why)
     if (blank) return refuse(blank)
-    const cur = await db.query<{ state: ReturnState }>('select state from returns.returns where id = $1', [returnId])
+    const cur = await (tx ?? db).query<{ state: ReturnState }>('select state from returns.returns where id = $1', [returnId])
     const from = cur.rows[0]?.state
     if (from === undefined) return refuse(`no return ${returnId}`)
     const m = findMove(from, to)
@@ -71,12 +73,18 @@ export function createLifecycle(opts: LifecycleOptions) {
     if (!guard) return refuse(`guard ${m.guard} is not built yet`)
     const verdict = await guard({ returnId, from, to, actor })
     if (!verdict.ok) return refuse(verdict.reason)
-    const done = await atomically<Ok | Refused>(async (tx) => {
-      if ((await lockedState(tx, returnId)) !== from) throw new Refusal(`return ${returnId} moved while the guard ran; try again`)
-      await stateEvent(tx, returnId, from, to, actor, why)
+    const apply = async (t: Transaction): Promise<Ok | Refused> => {
+      if ((await lockedState(t, returnId)) !== from) throw new Refusal(`return ${returnId} moved while the guard ran; try again`)
+      await stateEvent(t, returnId, from, to, actor, why)
       return { ok: true }
-    })
-    return done
+    }
+    if (!tx) return atomically<Ok | Refused>(apply)
+    try {
+      return await apply(tx)
+    } catch (e) {
+      if (e instanceof Refusal) return refuse(e.message)
+      throw e
+    }
   }
 
   async function voidApproval(returnId: ReturnId, changed: readonly ChangedItem[], actor: string, why: string): Promise<VoidResult> {
