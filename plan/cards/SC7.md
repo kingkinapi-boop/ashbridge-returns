@@ -1,5 +1,7 @@
 # SC7 One shared KNOWN helper for every rules file
 
+**Lead note, 3 Oct 20:19Z (A521):** W00d edits tools/mutate-changed.mjs first (zero-mutant guard, refused pass-through mutate, shards mode); SC7's spec and build start from main after W00d lands and keep those behaviours.
+
 Phase 0. Size S. Deps: SC, SC2, SC3, SC4, SC5, SC6, SC10. Where: cloud.
 Tags: core (the exemptions every rule test trusts).
 Paths: tools/test/lib/known.mjs, tools/test/lib/known.test.mjs, tools/test/lib/cards.mjs, tools/test/lib/cards.test.mjs, tools/test/schema-contract-rules.test.mjs, tools/test/reading-rules.test.mjs, tools/test/spec-rules.test.mjs, tools/test/card-rules.test.mjs, tools/mutate-changed.mjs, tools/test/mutate-harness.test.mjs (A493, A502)
@@ -41,3 +43,22 @@ From SC10's findings review 1 and SC6's spec review (3 Oct, Opus; both reports s
 - The shared scan fails a card with no file only when the card is open: 8 closed cards have none (P02, P03, P04, B00, B02, T03, V07, T06). This replaces "a card with no file fails by id" in A493.
 - On the one reader, R18 reads GL1 as core (its tags line has security first) with 6 auth files unmarked. The Lead names the card that marks them before this card's spec starts; known.json takes only FX3 to FX9 as owners.
 - Rule tests for everywhere: (A) one card reader for the four rule files and the gate, planted with Q10 (the gate stops today) and GL1 (security first); (B) every card's Paths line equals slices.json, planted with A08's line before A502; (C) every exemption list (in-test KNOWN arrays, known.json, R89's guard list) names open owners whose Paths hold it, planted with SC10 at 73fe6af4.
+
+## Also (A515, GL3 findings review 3, 3 Oct)
+- R-A: no test file casts to `typeof X & { y?: ... }` (an intersection that tracks the built type turns a needed fallback into a lint error once the build lands). Plant: GL3's round 4 cast.
+- R-B: every src or testworld file with `Stryker disable all` names in its reason a `.db.test.ts` that exists and imports it (directly or through its index), or a test that pins its input whole; mutate-changed.mjs's "core file without @mutate" message prints the accepted form. Plants: a pure file with disable all and no named test; a reason naming a missing test. Paths gain tools/mutate-changed.mjs (already listed).
+
+## Also (A518, SC6 findings review 2, 3 Oct)
+- R-C: every list of words two readers share comes from one export; a meta test fails when a copy drifts. Plant: SC6's tip NEG_VERBS against OWN_VERB.
+- R-D: every reader's drop or exemption path has a planted near-miss that must not be dropped. Plants: SC6's fixes 2 and 9.
+- R-E: a coverage rule never uses the regex it checks. Plant: SC6's tip coverage against a "Build note (Axxx):" label.
+- (A527) The card Tags reader accepts mixed-case card ids (W00c, W00d), not upper case only (card-rules.test.mjs:174 on SC10's landing form). Plant: a card tagged as W00c.
+
+## Also (A528, SC6 re-carded, 3 Oct)
+- R77 as data: every open card whose Spec names files carries one "Spec owns: <paths or globs>" line, read like SC10's Harness line; a card whose Build section or a round directive names a file matched by its own "Spec owns:" line fails. The prose reader SC6 tried (four rounds, reports/SC6-check.md on claude/SC6) is not rebuilt. The Lead adds the lines to open cards in one plan commit before this spec. Plants: W16.md as on main before A404, rewritten with the data line.
+
+## Also (A529, A08 findings review 1, 3 Oct)
+- R-inside: no containment check by `startsWith('..')` in src, tools or testworld; one shared isInsideFolder in src/core with rows `..x`, sibling prefix, same folder. Plant: A08's isInside at 9a152e7a.
+- R-luhn: R50 also flags a digit-sum table or `% 10 === 0` loop outside the one Luhn. Plant: A08's scan.ts at 9a152e7a.
+- R-forms: one table of sensitive forms in src/core/testing that every scanner runs (A08's scan, I00's redactText, W00b's guard, the logger's redaction). Plant: a scanner missing U+202F.
+- R-child-env: every child-env allowlist test imports one helper that adds libuv's Windows names on win32. Plant: a bare allowlist on win32.

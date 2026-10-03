@@ -1,36 +1,34 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 19:40Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 21:09Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, "turbo on" 13:26Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 78% of the week at 15:42Z, about 4% an hour: the limit comes about 21:00Z; then pause until Zo's saved reset and `go`.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims and `list_runs`). 4 queue runs fired 17:36Z. Laptop (decision 0026): designers 1 to 3. 
-- **Landed (63):** train 2b (A04, CQ8, CQ9, CQ12; checked 092598f3) on main ba6d7ee5 at 17:30Z. Auto mode refused the Lead's landing push at 17:25Z; Zo ran the fast-forward and push himself. Never route around that refusal: at each next landing, put the commands in TODO-ZO and wait for Zo (or a settings rule he adds).
+- **Landed (66):** train 3 (A04C, CQ11, FX14; checked f4e43c51) on main b151c592 at 20:45Z by the Lead; auto mode refused the bookkeeping until Zo's `go` at 21:06Z (A524).
 - **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
 
 ## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| Train 3 | A04C, CQ11 (3712d3d9) | request at 20:00Z with W00c if its check passes by then, else without it |
+| Train 4 | SC8, GL3, SC10 at 40e9173c, requested 23:06Z | land if green; next train: W00c on its mutation check, SC6, FX18 and SC11 on PASS |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
-| A08 | spec review GAPS 11 (A509): spec patch reopened | build after it; then Opus check and a security review |
-| W00c | round 3 check FAIL on items 1 to 5 only: split to W00d (A501) | fresh check working (cloud-f09ae7, from 17:36Z); board on PASS |
-| SC10 | findings review 1 done (A502): Lead plan commit on main; round 2 spec patch P1 to P8, no build | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check on the landing form |
-| SC6 | second spec patch reported (111 tests, A513); build marked reported 19:38Z | Opus check of the landing form; board |
-| SC3 | round 3 spec reported; S4 added (A511: module order under isolate false broke test:flake) and reopened | then mark the build reported; Opus read; security review |
+| W00c | mutation check 3 could not finish on one box (A530): file groups across check sessions, lean test set | next check session takes group 1; land on 100 on all 11 files |
+| SC10 | Opus read 2 PASS (A527) | boarded train 4 at 21:50Z; then the push guard for plan/cards and slices.json |
+| SC6 | round 3 check FAIL (6 fail-open forms): re-carded to R78 (A528); R77 moves to SC7 as a data rule | spec reopened (one patch, last round); then build marked reported; Opus read; board |
+| SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
-| FX14 | spec-only patch reported; build marked reported 19:10Z | check; board on PASS |
-| SC11 | findings review 2 done (A508): round 3, the last: spec S4 to S12 plus R118 reopened 18:30Z | then the Lead reopens the build (B3 to B14); Opus read; security review; board |
-| GL3 | round 4 check FAIL (lint in a spec file; mutate gate stops on db.ts, index.ts, manifest.ts) | findings review 3 (local Opus, from 19:40Z); then the smallest patch |
-| SC5 | check FAIL (KNOWN owner gaps for FX16 and FX11; R101, R84, R73 coverage holes) | findings review 1 (local Opus, from 19:40Z); FX11 waits for SC5 |
-| SC8, A08 | SC8 build reported (check opens); A08 spec patch reported (218 tests) | SC8 check; A08 build, then Opus check and security review |
-| FX7, W00d, FX16 | A511 rulings: FX7 and W00d specs reopened (FX7 then an Opus spec review) | builds after W00c lands |
+| SC11 | round 3 spec reported (21 tests); build reopened 21:07Z (B3 to B14) | Opus read; security review; board; then SC3 round 3 (A517) |
+| GL3 | Opus read and security review PASS (A525) | boarded train 4 at 21:15Z |
+| SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
+| A08 | findings review 1 done (A529): round 2 spec S0 to S5 (S0 a cloud survivor map), then build B1 to B6 | spec reopened; build after it; Opus check; fresh security review |
+| FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | W00b, FX6, FX18, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
-| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), panel running locally; designers 2 (D03 B+), 3 (D02) local; then a panel each; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
+| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), its panel done (A516); designer 2 done (D03 B+, claude/design-source-viewer-3, A519), its panel done (A522, local branch panel-source-viewer-3); designer 3 done (D02 v3, claude/design-cpa-review-3, A531), its panel local; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
 
 ## Next, in order
 
