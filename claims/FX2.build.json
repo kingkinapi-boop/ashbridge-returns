@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "6bb1d6fd",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T06:22:15.623Z",
+ "state": "reported",
+ "at": "2026-10-03T06:28:36.858Z",
  "mode": "turbo",
- "beat": "2026-10-03T06:27:57.971Z"
+ "beat": "2026-10-03T06:27:57.971Z",
+ "note": "23 of 23 acceptance tests pass; mutation cloud only (laptop symlink EPERM in dry run); scope flags spec job commit 22e1212 only, see reports/FX2-build.md"
 }
