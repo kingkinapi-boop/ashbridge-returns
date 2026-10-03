@@ -1,9 +1,10 @@
 {
  "card": "FX8",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "wait: refit not possible: merging main into claude/FX8 conflicts in reference/sample-clients/verify.mjs and clients/c09_10.mjs (main changed both); the build is failed-check and a patch is due after W00c (A493); Lead resolves, not a refit",
  "worker": "cloud-beb1e2",
- "state": "working",
- "at": "2026-10-03T15:28:54.051Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T15:29:10.583Z",
+ "mode": "turbo",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"W16\"],\"depStatus\":[\"done\"]}"
 }
