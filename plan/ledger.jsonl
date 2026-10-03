@@ -631,3 +631,6 @@
 {"ts":"2026-10-03T14:35:07.874Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":null,"where":"worktree","desc":"SC6 findings review","allowed":true}
 {"ts":"2026-10-03T14:35:16.078Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"A04 security review","allowed":true}
 {"ts":"2026-10-03T14:36:48.567Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:43:32.784Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"checker","model":"opus","where":"worktree","desc":"G18 Opus tax-content read","allowed":true}
+{"ts":"2026-10-03T14:43:58.569Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T14:43:58.883Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
