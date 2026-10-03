@@ -36,3 +36,6 @@ Applying the migration to any real database, choosing the host, or setting real 
 ## Also (A476, reports/GL3-findings-1.md on claude/GL3)
 - **G1** `returns_app` can still insert into every `returns` table after GL3's PUBLIC revoke, with only the function rights those writes need (check helpers such as `returns.is_blank`), each granted by name. Planted: an insert by a non-owner role is refused without the grant and accepted with it.
 - **G2** the default-privilege revoke is global for the owner role (`alter default privileges for role ... revoke execute on functions from public`), not "in schema": PGlite shows the schema form leaves later functions runnable by everyone.
+
+## Also (A498, GL3's findings review 2, 3 Oct)
+G2, the check on functions added to returns later, covers every role in roles.json (client_app_reader included) and role membership, not only the public-key roles. Its `for role` names a dedicated Returns owner role that owns nothing outside returns: naming the host's postgres would strip PUBLIC execute from the client app's later functions, which changes the live client app (red), so never that.
