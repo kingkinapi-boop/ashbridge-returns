@@ -1,11 +1,9 @@
 {
  "card": "CQ6",
  "role": "spec",
- "note": "14 tests, A464 patch",
- "worker": "cloud-a244c5",
- "state": "reported",
- "at": "2026-10-03T11:46:28.006Z",
- "mode": "turbo",
- "commit": "f134477",
- "validated": "3e9f1c8d38ba570eba4e3e6acb521200674e7fe6"
+ "note": "toolchain refit",
+ "worker": "cloud-0ac9e9",
+ "state": "working",
+ "at": "2026-10-03T12:12:39.446Z",
+ "mode": "turbo"
 }
