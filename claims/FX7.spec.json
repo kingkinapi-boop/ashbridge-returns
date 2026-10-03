@@ -2,11 +2,9 @@
  "card": "FX7",
  "role": "spec",
  "note": "A511 patch: business_number dropped from R45; readRegularFileBytes spec (18) + 4 storage tests; Opus spec review next",
- "worker": "cloud-fce4c0",
- "state": "reopened",
- "at": "2026-10-03T20:17:46.078Z",
- "mode": "turbo",
- "beat": "2026-10-03T19:30:39.958Z",
- "commit": "c12b1b12",
- "validated": "a677d7fe"
+ "reopenedFrom": "c12b1b12",
+ "worker": "cloud-aae833",
+ "state": "working",
+ "at": "2026-10-03T20:24:21.834Z",
+ "mode": "turbo"
 }
