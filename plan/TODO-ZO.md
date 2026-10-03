@@ -4,8 +4,8 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 ## 1. Needs you
 
-Nothing. Thank you: the Auto-fill notes are in the repo and the test return is gone.
+Nothing now.
 
-## 2. What the Lead is doing now (2 Oct, 18:45 UTC)
+## 2. What the Lead is doing now (2 Oct, 21:10 UTC)
 
-Turbo. A train with four checked cards (the scanner fix, the blank rule, the PDF reader, due dates and holds) is being tested in the cloud before it lands on main. Six other cloud workers are running: checks on the test world and the jobs table, two builds, a check and the next test-world spec. Next: the Auto-fill findings go into the Taxprep findings and the checks that use them. Plan use this week: 48%.
+Turbo. 42 cards are on main; this evening added the jobs table, the client-app bridge, five question-bank topics, the OCR reader and the bank-statement topic. Your three Critic fixes are in (decision 0024): long chats now shrink on their own and reload where they left off, the queue stops re-handing a stuck job, and real public document layouts get studied before made-up statements are drawn. Sign-in is in a second round after its security review; the test-world card that most of the build waits on is being specified again. Plan use this week: about 52%.

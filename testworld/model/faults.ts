@@ -18,8 +18,12 @@ export type FaultEntry = {
    * the export lacks, or 'duplicate' rows it holds twice. The cause must explain the gap exactly.
    */
   roll?: { account: string; month: string; cause?: 'missing' | 'duplicate' }
-  /** The fault marker this entry's flag plants: every transaction carrying it, in this account and month, is covered. */
-  marker?: { field: 'missingFromExport' | 'dupOf' | 'priorYear'; account: string; month: string }
+  /**
+   * The fault marker this entry's flag plants: every transaction carrying it, in this account and month, is covered.
+   * `rows` and `totalCents` are hand-written (W00c): how many rows carry it and their signed sum in cents, so a marked
+   * row cannot change by a cent, and no marked row can be added, without this entry changing with it.
+   */
+  marker?: { field: 'missingFromExport' | 'dupOf' | 'priorYear'; account: string; month: string; rows?: number; totalCents?: number }
 }
 
 const CATALOGUE: readonly FaultEntry[] = [
@@ -87,9 +91,9 @@ const CATALOGUE: readonly FaultEntry[] = [
   { id: '09-F05', client: 'C09', flagId: '09-F05', planted: 'HST registration part-way through the year', expected: 'flag 09-F05 (HST registration part-way through the year), must fire: flag for a person; do not decide alone' },
   { id: '09-F06', client: 'C09', flagId: '09-F06', planted: 'research costs: eligibility needs a person', expected: 'flag 09-F06 (research costs: eligibility needs a person), must fire: flag for a person; do not decide alone' },
   { id: '09-F07', client: 'C09', flagId: '09-F07', planted: 'incorporation legal fees: expense or class 14.1', expected: 'flag 09-F07 (incorporation legal fees: expense or class 14.1), info: flag for a person; do not decide alone' },
-  { id: '10-F01', client: 'C10', flagId: '10-F01', planted: 'missing month: the chequing export has no May rows', expected: 'flag 10-F01 (missing month: the chequing export has no May rows), must fire: flag for a person; do not decide alone', marker: { field: 'missingFromExport', account: 'CHQ', month: '2025-05' } },
-  { id: '10-F02', client: 'C10', flagId: '10-F02', planted: 'duplicate lines in March', expected: 'flag 10-F02 (duplicate lines in March), must fire: flag for a person; do not decide alone', marker: { field: 'dupOf', account: 'CHQ', month: '2025-03' } },
-  { id: '10-F03', client: 'C10', flagId: '10-F03', planted: 'last year\'s statement mixed in', expected: 'flag 10-F03 (last year\'s statement mixed in), must fire: flag for a person; do not decide alone', marker: { field: 'priorYear', account: 'CHQ', month: '2024-12' } },
+  { id: '10-F01', client: 'C10', flagId: '10-F01', planted: 'missing month: the chequing export has no May rows', expected: 'flag 10-F01 (missing month: the chequing export has no May rows), must fire: flag for a person; do not decide alone', marker: { field: 'missingFromExport', account: 'CHQ', month: '2025-05', rows: 56, totalCents: 1686665 } },
+  { id: '10-F02', client: 'C10', flagId: '10-F02', planted: 'duplicate lines in March', expected: 'flag 10-F02 (duplicate lines in March), must fire: flag for a person; do not decide alone', marker: { field: 'dupOf', account: 'CHQ', month: '2025-03', rows: 4, totalCents: 316494 } },
+  { id: '10-F03', client: 'C10', flagId: '10-F03', planted: 'last year\'s statement mixed in', expected: 'flag 10-F03 (last year\'s statement mixed in), must fire: flag for a person; do not decide alone', marker: { field: 'priorYear', account: 'CHQ', month: '2024-12', rows: 8, totalCents: 569501 } },
   { id: '10-F04', client: 'C10', flagId: '10-F04', planted: 'personal spending paid from the business account', expected: 'flag 10-F04 (personal spending paid from the business account), must fire: flag for a person; do not decide alone' },
   { id: '10-F05', client: 'C10', flagId: '10-F05', planted: 'spouse paid with no payroll', expected: 'flag 10-F05 (spouse paid with no payroll), must fire: flag for a person; do not decide alone' },
   { id: '10-F06', client: 'C10', flagId: '10-F06', planted: 'luxury vehicle: class 10.1 cost limit', expected: 'flag 10-F06 (luxury vehicle: class 10.1 cost limit), must fire: flag for a person; do not decide alone' },

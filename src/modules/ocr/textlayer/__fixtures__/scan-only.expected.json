@@ -1,0 +1,15 @@
+{
+  "file": "scan-only.pdf",
+  "note": "Made up (A01 spec). One page, an image and no text at all.",
+  "pageCount": 1,
+  "pages": [
+    {
+      "number": 1,
+      "widthPt": 612,
+      "heightPt": 792,
+      "hasTextLayer": false
+    }
+  ],
+  "words": [],
+  "boxes": {}
+}

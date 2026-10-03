@@ -5,8 +5,9 @@
 // A document citation reuses F09's box (AI-4). The model never sets its own routing flag.
 import { z } from 'zod'
 import { BoxSchema } from './reading'
+import { NonBlankSchema } from './text'
 
-const text = z.string().trim().min(1)
+const text = NonBlankSchema
 
 // Stryker disable next-line ObjectLiteral,StringLiteral: a mutant that breaks a schema at module load crashes the whole test file, which the runner counts as survived; tests kill every such mutation when run by hand
 const ledgerCitation = z.strictObject({ source: z.literal('ledger'), recordKind: text, recordId: text })

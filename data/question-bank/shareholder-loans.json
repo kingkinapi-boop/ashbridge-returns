@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "id": "Q-SHL-001",
+      "type": "ASK",
+      "resolves": "onboarding.shareholder_loan.balance",
+      "slots": [{ "name": "loan_balance", "type": "money_cents", "required": true }],
+      "answer": { "shape": "money" },
+      "label": "Shareholder loan balance at onboarding",
+      "topic": "shareholder-loans",
+      "retired": false
+    },
+    {
+      "id": "Q-SHL-002",
+      "type": "ASK",
+      "resolves": "qa.shareholder.loan_balance",
+      "slots": [{ "name": "loan_balance", "type": "money_cents", "required": true }],
+      "answer": { "shape": "money" },
+      "label": "Shareholder loan balance at year end",
+      "topic": "shareholder-loans",
+      "retired": false
+    }
+  ]
+}

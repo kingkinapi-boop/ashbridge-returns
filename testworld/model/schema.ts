@@ -4,6 +4,19 @@ import { z } from 'zod'
 
 export const CLIENT_ID = /^C\d{2}$/
 
+/** The roles an account can have; the role decides the sign of its roll, so it is never free text. */
+export const ACCOUNT_ROLES = ['bank', 'card', 'pcard', 'broker'] as const
+
+/** Is this a real calendar date written YYYY-MM-DD (it round-trips, so 2025-02-30 and 2025-03-99 are not)? */
+export function isCalendarDate(s: string): boolean {
+  // Stryker disable next-line Regex: the round trip below refuses any text around the date, so the two anchors cannot change the answer
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s)
+  if (m === null) return false
+  const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])))
+  return d.toISOString().slice(0, 10) === s
+}
+export const calendarDate = z.string().refine(isCalendarDate, { message: 'it is not a calendar date written YYYY-MM-DD' })
+
 const cents = z.number().int()
 const gifi = z.number().int().nullable()
 
@@ -20,8 +33,8 @@ export const ClientSchema = z.object({
   corporation: z.object({
     name: z.string().min(1),
     businessNumber: z.string(),
-    yearStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    yearEnd: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    yearStart: calendarDate,
+    yearEnd: calendarDate,
   }),
   owners: z.array(z.object({ name: z.string().min(1) })),
   accounts: z.array(
@@ -36,7 +49,7 @@ export const ClientSchema = z.object({
       qboRows: cents,
       months: z.array(
         z.object({
-          month: z.string().regex(/^\d{4}-\d{2}$/),
+          month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
           openingCents: cents,
           closingCents: cents,
           activityCents: cents,
@@ -49,7 +62,7 @@ export const ClientSchema = z.object({
     z.object({
       id: z.string().min(1),
       accountKey: z.string(),
-      date: z.string(),
+      date: calendarDate,
       amountCents: cents,
       account: z.string(),
       glAccount: z.string(),
@@ -63,7 +76,7 @@ export const ClientSchema = z.object({
   adjustingEntries: z.array(
     z.object({
       id: z.string().min(1),
-      date: z.string(),
+      date: calendarDate,
       type: z.string().min(1),
       reason: z.string(),
       sources: z.array(z.string()),

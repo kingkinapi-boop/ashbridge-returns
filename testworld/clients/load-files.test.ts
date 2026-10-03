@@ -44,6 +44,8 @@ const firstKey = (): string => {
   return k.accounts[0]?.key ?? ''
 }
 const issue = (check: LoadIssue['check'], record: string, reason: string): LoadIssue => ({ client: 'C01', check, record, reason })
+/** W00c fix 5: a path outside accounts/*.csv or qbo/*.csv is refused before the outside-the-folder check, so the reason is left to the build; it names the path. */
+const fileRefused = (record: string, value: string): LoadIssue[] => [{ client: 'C01', check: 'file', record, reason: expect.stringContaining(value) as string }]
 
 describe('ARC-8 W00a missing client files', () => {
   it('a client with both files loads', () => {
@@ -65,39 +67,39 @@ describe('ARC-8 W00a account files stay inside the client folder', () => {
   it.each(['file', 'qboFile'] as const)('%s leading out by "../" is refused with its record and reason', (field) => {
     writeFileSync(join(root, 'x.csv'), 'a\n')
     setFile(field, '../x.csv')
-    expect(issues()).toEqual([issue('file', `${firstKey()} ${field}`, '../x.csv is outside the client folder')])
+    expect(issues()).toEqual(fileRefused(`${firstKey()} ${field}`, '../x.csv'))
   })
   it('the parent folder itself ("..") is outside', () => {
     setFile('file', '..')
-    expect(issues()).toEqual([issue('file', `${firstKey()} file`, '.. is outside the client folder')])
+    expect(issues()).toEqual(fileRefused(`${firstKey()} file`, '..'))
   })
   it('an absolute path is outside', () => {
     setFile('qboFile', join(root, 'x.csv'))
-    expect(issues()).toEqual([issue('file', `${firstKey()} qboFile`, `${join(root, 'x.csv')} is outside the client folder`)])
+    expect(issues()).toEqual(fileRefused(`${firstKey()} qboFile`, join(root, 'x.csv')))
   })
   it('a file name that merely starts with two dots is inside', () => {
     const k = JSON.parse(readFileSync(join(folder, 'answer-key.json'), 'utf8')) as Key
-    copyFileSync(join(folder, k.accounts[0]?.file ?? ''), join(folder, '..data.csv'))
-    setFile('file', '..data.csv')
+    copyFileSync(join(folder, k.accounts[0]?.file ?? ''), join(folder, 'accounts/..data.csv'))
+    setFile('file', 'accounts/..data.csv')
     expect(issues()).toEqual([])
   })
   it('a file that is not there names the account, the field and the file', () => {
-    setFile('file', 'nope.csv')
-    expect(issues()).toEqual([issue('file', `${firstKey()} file`, 'nope.csv is not in the client folder')])
+    setFile('file', 'accounts/nope.csv')
+    expect(issues()).toEqual([issue('file', `${firstKey()} file`, 'accounts/nope.csv is not in the client folder')])
   })
   it('a link that leads out of the folder is refused, for a file and for the parent folder', () => {
     writeFileSync(join(root, 'outside.csv'), 'a\n')
-    symlinkSync(join(root, 'outside.csv'), join(folder, 'link.csv'))
-    setFile('file', 'link.csv')
-    expect(issues()).toEqual([issue('file', `${firstKey()} file`, 'link.csv leads out of the client folder')])
-    symlinkSync(root, join(folder, 'up.csv'))
-    setFile('file', 'up.csv')
-    expect(issues()).toEqual([issue('file', `${firstKey()} file`, 'up.csv leads out of the client folder')])
+    symlinkSync(join(root, 'outside.csv'), join(folder, 'accounts/link.csv'))
+    setFile('file', 'accounts/link.csv')
+    expect(issues()).toEqual([issue('file', `${firstKey()} file`, 'accounts/link.csv leads out of the client folder')])
+    symlinkSync(root, join(folder, 'accounts/up.csv'))
+    setFile('file', 'accounts/up.csv')
+    expect(issues()).toEqual(fileRefused(`${firstKey()} file`, 'accounts/up.csv'))
   })
   it('a link that stays inside the folder is fine', () => {
     const k = JSON.parse(readFileSync(join(folder, 'answer-key.json'), 'utf8')) as Key
-    symlinkSync(join(folder, k.accounts[0]?.file ?? ''), join(folder, 'inside.csv'))
-    setFile('file', 'inside.csv')
+    symlinkSync(join(folder, k.accounts[0]?.file ?? ''), join(folder, 'accounts/inside.csv'))
+    setFile('file', 'accounts/inside.csv')
     expect(issues()).toEqual([])
   })
 })
@@ -111,8 +113,9 @@ describe('ARC-8 W00a adjusting entry sources', () => {
     return issues().filter((i) => i.check === 'adjusting-entry')
   }
   const firstEntry = (): string => (JSON.parse(readFileSync(join(folder, 'answer-key.json'), 'utf8')) as Key).adjustingEntries[0]?.id ?? ''
-  it('a source naming a top-level key, with or without a note, resolves', () => {
-    for (const s of ['corporation', 'corporation (a note)', 'corporation(a note)', 'corporation (a note)  ']) expect(withSource(s), s).toEqual([])
+  it('a source naming a top-level key resolves', () => {
+    // W00c fix 3: a free note in brackets no longer resolves; a qualifier must name a record (acceptance RC2).
+    expect(withSource('corporation')).toEqual([])
   })
   it('a note not at the end does not resolve; the whole text is the key', () => {
     editJson('onboarding.json', (j) => {

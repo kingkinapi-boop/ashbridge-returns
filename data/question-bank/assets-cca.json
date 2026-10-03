@@ -1,0 +1,168 @@
+{
+  "items": [
+    {
+      "id": "Q-ASSETS-001",
+      "type": "ASK",
+      "resolves": "qa.assets.purchased_not_in_use",
+      "slots": [
+        {
+          "name": "not_in_use_cost",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Asset bought, not yet in use (cost)",
+      "topic": "assets-cca",
+      "retired": false
+    },
+    {
+      "id": "Q-ASSETS-002",
+      "type": "ASK",
+      "resolves": "qa.assets.purchased_not_in_use_cca_class",
+      "slots": [
+        {
+          "name": "cca_class",
+          "type": "choice",
+          "required": true,
+          "options": [
+            "class_1",
+            "class_8",
+            "class_10",
+            "class_12",
+            "class_14_1",
+            "class_29",
+            "class_43",
+            "class_50",
+            "class_53",
+            "other"
+          ]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": [
+          "class_1",
+          "class_8",
+          "class_10",
+          "class_12",
+          "class_14_1",
+          "class_29",
+          "class_43",
+          "class_50",
+          "class_53",
+          "other"
+        ]
+      },
+      "label": "CCA class of asset not yet in use",
+      "topic": "assets-cca",
+      "retired": false
+    },
+    {
+      "id": "Q-ASSETS-003",
+      "type": "ASK",
+      "resolves": "qa.assets.disposed",
+      "slots": [
+        {
+          "name": "disposal_proceeds",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Asset disposal proceeds",
+      "topic": "assets-cca",
+      "retired": false
+    },
+    {
+      "id": "Q-ASSETS-004",
+      "type": "ASK",
+      "resolves": "qa.assets.disposed_kind",
+      "slots": [
+        {
+          "name": "disposal_kind",
+          "type": "choice",
+          "required": true,
+          "options": [
+            "sold",
+            "written_off"
+          ]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": [
+          "sold",
+          "written_off"
+        ]
+      },
+      "label": "Asset disposal kind",
+      "topic": "assets-cca",
+      "retired": false
+    },
+    {
+      "id": "Q-ASSETS-005",
+      "type": "ASK",
+      "resolves": "qa.assets.disposed_original_cost",
+      "slots": [
+        {
+          "name": "original_cost",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Original cost of disposed asset",
+      "topic": "assets-cca",
+      "retired": false
+    },
+    {
+      "id": "Q-ASSETS-006",
+      "type": "ASK",
+      "resolves": "qa.assets.disposed_cca_class",
+      "slots": [
+        {
+          "name": "cca_class",
+          "type": "choice",
+          "required": true,
+          "options": [
+            "class_1",
+            "class_8",
+            "class_10",
+            "class_12",
+            "class_14_1",
+            "class_29",
+            "class_43",
+            "class_50",
+            "class_53",
+            "other"
+          ]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": [
+          "class_1",
+          "class_8",
+          "class_10",
+          "class_12",
+          "class_14_1",
+          "class_29",
+          "class_43",
+          "class_50",
+          "class_53",
+          "other"
+        ]
+      },
+      "label": "CCA class of disposed asset",
+      "topic": "assets-cca",
+      "retired": false
+    }
+  ]
+}

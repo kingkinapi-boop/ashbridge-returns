@@ -40,6 +40,12 @@ const clean = (): Client =>
 
 const issue = (check: LoadIssue['check'], record: string, reason: string): LoadIssue => ({ client: 'C01', check, record, reason })
 const entry = (over: Partial<FaultEntry>): FaultEntry => ({ id: 'E1', client: 'C01', planted: 'p', expected: 'e', ...over })
+type Marker = NonNullable<FaultEntry['marker']>
+/** W00c fix 2: a marker entry carries its hand-written row count and signed total (a variable, so the W00a type takes it too). */
+const pins = (m: Marker, rows: number, totalCents: number): Marker => {
+  const pinnedMarker = { ...m, rows, totalCents }
+  return pinnedMarker
+}
 const run = (c: Client, cat: FaultEntry[] = []): LoadIssue[] => {
   c.flags = cat.flatMap((f) => (f.flagId === undefined ? [] : [{ id: f.flagId, rule: 'r', detail: 'd', severity: null, action: null }]))
   return modelIssues(c, cat)
@@ -106,13 +112,13 @@ describe('ARC-8 W00a month sequences', () => {
   })
   it('an account with transactions and no months says there is nothing to roll', () => {
     const c = client([], [tx('T1', '2025-01-05', 100)])
-    expect(run(c)).toEqual([
-      issue('roll', 'CHQ', 'it has transactions but no statement balances, so there is nothing to roll'),
-      issue('roll', 'T1', 'it is dated 2025-01-05, in no month of CHQ'),
-    ])
-  })
-  it('an account with no months and no transactions is quiet', () => {
-    expect(run(client([], []))).toEqual([])
+    // W00c fix 4: the coverage check also names each month of the year, so these two are among the issues.
+    expect(run(c)).toEqual(
+      expect.arrayContaining([
+        issue('roll', 'CHQ', 'it has transactions but no statement balances, so there is nothing to roll'),
+        issue('roll', 'T1', 'it is dated 2025-01-05, in no month of CHQ'),
+      ]),
+    )
   })
 })
 
@@ -131,35 +137,36 @@ describe('ARC-8 W00a both rolls', () => {
     ])
   })
   it('a dupOf row is off the statement and a priorYear row is off the statement', () => {
+    // W00c fix 2: a dupOf row copies its original (same account, date and amount) and a priorYear row is dated before
+    // the fiscal year, so the prior-year row can no longer sit in the duplicate's month.
     const c = clean()
-    c.transactions.push(tx('D1', '2025-02-06', 50, { dupOf: 'T2' }), tx('P1', '2025-02-07', 70, { priorYear: true }))
+    c.transactions.push(tx('D1', '2025-02-05', 200, { dupOf: 'T2' }), tx('P1', '2024-12-20', 70, { priorYear: true }))
     const cat = [
-      entry({ id: 'F1', flagId: 'F1', marker: { field: 'dupOf', account: 'CHQ', month: '2025-02' } }),
-      entry({ id: 'F2', flagId: 'F2', marker: { field: 'priorYear', account: 'CHQ', month: '2025-02' } }),
+      entry({ id: 'F1', flagId: 'F1', marker: pins({ field: 'dupOf', account: 'CHQ', month: '2025-02' }, 1, 200) }),
+      entry({ id: 'F2', flagId: 'F2', marker: pins({ field: 'priorYear', account: 'CHQ', month: '2024-12' }, 1, 70) }),
       entry({ id: 'R1', roll: { account: 'CHQ', month: '2025-02', cause: 'duplicate' } }),
     ]
-    // The export holds the duplicate and the prior-year row; the gap is the duplicate and the prior-year row together, which no cause explains alone.
-    expect(run(c, cat)).toEqual([issue('roll', 'CHQ 2025-02', 'the export gap -1.20 is not explained exactly by the catalogue\'s cause duplicate')])
+    expect(run(c, cat)).toEqual([])
   })
   it('a waived duplicate month explains its gap exactly', () => {
     const c = clean()
-    c.transactions.push(tx('D1', '2025-02-06', 50, { dupOf: 'T2' }))
-    const marker = entry({ id: 'F1', flagId: 'F1', marker: { field: 'dupOf', account: 'CHQ', month: '2025-02' } })
+    c.transactions.push(tx('D1', '2025-02-05', 200, { dupOf: 'T2' }))
+    const marker = entry({ id: 'F1', flagId: 'F1', marker: pins({ field: 'dupOf', account: 'CHQ', month: '2025-02' }, 1, 200) })
     const waiver = entry({ id: 'R1', roll: { account: 'CHQ', month: '2025-02', cause: 'duplicate' } })
     expect(run(c, [marker, waiver])).toEqual([])
   })
   it('a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows', () => {
     const c = clean()
-    c.transactions.push(tx('D1', '2025-02-06', 50, { dupOf: 'T2' }))
-    const marker = entry({ id: 'F1', flagId: 'F1', marker: { field: 'dupOf', account: 'CHQ', month: '2025-02' } })
+    c.transactions.push(tx('D1', '2025-02-05', 200, { dupOf: 'T2' }))
+    const marker = entry({ id: 'F1', flagId: 'F1', marker: pins({ field: 'dupOf', account: 'CHQ', month: '2025-02' }, 1, 200) })
     const waiver = entry({ id: 'R1', roll: { account: 'CHQ', month: '2025-02' } })
-    expect(run(c, [marker, waiver])).toEqual([issue('roll', 'CHQ 2025-02', "the export gap -0.50 is not explained exactly by the catalogue's cause undefined")])
+    expect(run(c, [marker, waiver])).toEqual([issue('roll', 'CHQ 2025-02', "the export gap -2.00 is not explained exactly by the catalogue's cause undefined")])
   })
   it('a waived missing month explains its gap exactly, and only the missing rows count', () => {
     const c = clean()
     c.transactions.push(tx('M1', '2025-02-06', 0, { missingFromExport: true }))
     c.transactions = c.transactions.map((t) => (t.id === 'T2' ? { ...t, missingFromExport: true } : t))
-    const marker = entry({ id: 'F1', flagId: 'F1', marker: { field: 'missingFromExport', account: 'CHQ', month: '2025-02' } })
+    const marker = entry({ id: 'F1', flagId: 'F1', marker: pins({ field: 'missingFromExport', account: 'CHQ', month: '2025-02' }, 2, 200) })
     const waiver = entry({ id: 'R1', roll: { account: 'CHQ', month: '2025-02', cause: 'missing' } })
     expect(run(c, [marker, waiver])).toEqual([])
     // The same gap blamed on duplicates, or on nothing, is refused.
@@ -176,7 +183,7 @@ describe('ARC-8 W00a both rolls', () => {
     c.accounts[0]?.months.splice(1, 1, month('2025-02', 100, 305))
     c.accounts[0]?.months.splice(2, 1, month('2025-03', 305, 605))
     c.accounts[0] = { ...(c.accounts[0] as Client['accounts'][number]), closingCents: 605 }
-    const marker = entry({ id: 'F1', flagId: 'F1', marker: { field: 'missingFromExport', account: 'CHQ', month: '2025-02' } })
+    const marker = entry({ id: 'F1', flagId: 'F1', marker: pins({ field: 'missingFromExport', account: 'CHQ', month: '2025-02' }, 2, 200) })
     const waiver = entry({ id: 'R1', roll: { account: 'CHQ', month: '2025-02', cause: 'missing' } })
     expect(run(c, [marker, waiver])).toEqual([])
     c.accounts[0].months.splice(1, 1, month('2025-02', 100, 306))
@@ -185,7 +192,7 @@ describe('ARC-8 W00a both rolls', () => {
   it('an unlisted export gap says what the export gives', () => {
     const c = clean()
     c.transactions = c.transactions.map((t) => (t.id === 'T2' ? { ...t, missingFromExport: true } : t))
-    const out = run(c, [entry({ id: 'F1', flagId: 'F1', marker: { field: 'missingFromExport', account: 'CHQ', month: '2025-02' } })])
+    const out = run(c, [entry({ id: 'F1', flagId: 'F1', marker: pins({ field: 'missingFromExport', account: 'CHQ', month: '2025-02' }, 1, 200) })])
     expect(out).toEqual([issue('roll', 'CHQ 2025-02', 'the export gives 1.00, not the closing 3.00, and the fault catalogue lists no planted fault for it')])
   })
   it('a waiver on a month that rolls, or on a month the client lacks, is refused', () => {
@@ -208,12 +215,13 @@ describe('ARC-8 W00a both rolls', () => {
 })
 
 describe('ARC-8 W00a markers', () => {
+  // W00c fix 2: the duplicate copies its original (same account, date and amount), and the marker pins one row of 0.00.
   const dupClient = (): Client => {
     const c = clean()
-    c.transactions.push(tx('D1', '2025-02-06', 0, { dupOf: 'T2' }))
+    c.transactions.push(tx('O1', '2025-02-06', 0), tx('D1', '2025-02-06', 0, { dupOf: 'O1' }))
     return c
   }
-  const dupMarker = { field: 'dupOf', account: 'CHQ', month: '2025-02' } as const
+  const dupMarker = pins({ field: 'dupOf', account: 'CHQ', month: '2025-02' }, 1, 0)
   it('a marker with no entry is named with the row and the field', () => {
     expect(run(dupClient())).toEqual([issue('fault-catalogue', 'CHQ 2025-02', 'D1 carries dupOf and the fault catalogue has no flag entry with that marker for this account and month')])
   })
@@ -230,9 +238,10 @@ describe('ARC-8 W00a markers', () => {
     expect(run(dupClient(), [entry({ client: 'C02', flagId: 'M1', marker: dupMarker })]).map((i) => i.record)).toEqual(['CHQ 2025-02', 'M1'])
   })
   it('a marker entry that no row carries is named', () => {
-    expect(run(clean(), [entry({ id: 'M1', flagId: 'M1', marker: dupMarker })])).toEqual([
-      issue('fault-catalogue', 'M1', 'no transaction carries its marker dupOf CHQ 2025-02'),
-    ])
+    // W00c fix 2: its pins (one row) no longer match the rows either, so the entry may be named more than once.
+    const out = run(clean(), [entry({ id: 'M1', flagId: 'M1', marker: dupMarker })])
+    expect(out).toContainEqual(issue('fault-catalogue', 'M1', 'no transaction carries its marker dupOf CHQ 2025-02'))
+    expect([...new Set(out.map((i) => `${i.check} ${i.record}`))]).toEqual(['fault-catalogue M1'])
   })
   it('a roll entry that is also a marker entry is refused', () => {
     const c = dupClient()
@@ -242,15 +251,15 @@ describe('ARC-8 W00a markers', () => {
   it('a priorYear row outside every month passes only when its marker is listed for its own account and month', () => {
     const c = clean()
     c.transactions.push(tx('P1', '2024-12-20', 5, { priorYear: true }))
-    const listed = entry({ id: 'P', flagId: 'P', marker: { field: 'priorYear', account: 'CHQ', month: '2024-12' } })
+    const listed = entry({ id: 'P', flagId: 'P', marker: pins({ field: 'priorYear', account: 'CHQ', month: '2024-12' }, 1, 5) })
     expect(run(c, [listed])).toEqual([])
-    const elsewhere = entry({ id: 'P', flagId: 'P', marker: { field: 'priorYear', account: 'CHQ', month: '2024-11' } })
+    const elsewhere = entry({ id: 'P', flagId: 'P', marker: pins({ field: 'priorYear', account: 'CHQ', month: '2024-11' }, 0, 0) })
     expect(run(c, [elsewhere]).map((i) => `${i.check} ${i.record}`)).toEqual(['roll P1', 'fault-catalogue CHQ 2024-12', 'fault-catalogue P'])
   })
   it('a row outside every month that is not priorYear is refused even when a priorYear marker covers its month', () => {
     const c = clean()
     c.transactions.push(tx('P1', '2024-12-20', 0))
-    const listed = entry({ id: 'P', flagId: 'P', marker: { field: 'priorYear', account: 'CHQ', month: '2024-12' } })
+    const listed = entry({ id: 'P', flagId: 'P', marker: pins({ field: 'priorYear', account: 'CHQ', month: '2024-12' }, 0, 0) })
     expect(run(c, [listed]).map((i) => `${i.check} ${i.record}`)).toEqual(['roll P1', 'fault-catalogue P'])
   })
 })

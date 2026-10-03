@@ -16,8 +16,11 @@ The Lead still re-stamps builds by hand so their checks can be offered again, an
 3. `next.mjs` counts in flight from the claims (working jobs, any role) and never prints START for a card whose build is reported, checked or done; those show under "waiting on check" or "ready to board".
 4. `scope.mjs <card>` compares the card's branch (`origin/claude/<card>`) with the base whatever the current checkout, and fails loudly (exit 2) when that branch is missing, instead of reading HEAD.
 
+5. A spec the Lead reopens for a new round (note does not start with `refit`) is offered with the Lead's note as the job's first line, and a worker cannot report it as a refit with no test change (A06 round 2 was reported "refit: no test change" on 2 Oct).
+6. A job released twice with no new commit on the card's branch between the two releases is held as "needs Lead" (not offered) until the Lead reopens it; `claim.mjs list` shows it under that label (Critic 2 Oct evening, proposal 2, decision 0024: the SC build was taken 41 times in 22 runs).
+
 ## Build
-The four rules in claim.mjs, next.mjs and scope.mjs; the merge skill's board step names `node tools/scope.mjs <card>` from any checkout.
+The five rules in claim.mjs, next.mjs and scope.mjs; the merge skill's board step names `node tools/scope.mjs <card>` from any checkout.
 
 ## Check
 A checker who did neither: the claim and scope tests, `npm test`, a dry run of `node tools/next.mjs 12` and `node tools/scope.mjs F02` on main showing true counts and F02's real file count.
