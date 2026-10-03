@@ -10305,7 +10305,9 @@
         "testworld/clients/w00d-*.acceptance.test.ts",
         "testworld/model/__fixtures__/w00d-*.ts",
         "testworld/model/__fixtures__/w00c-r3-walk.ts",
-        "reference/sample-clients/*/answer-key.json"
+        "reference/sample-clients/*/answer-key.json",
+        "reference/sample-clients/lib/**",
+        "reference/sample-clients/clients/**"
       ],
       "clauses": [
         "ARC-8",
