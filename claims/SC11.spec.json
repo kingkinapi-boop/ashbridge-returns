@@ -1,10 +1,10 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "refit: 39 db tests (10 fail in npm test on missing build, 29 on pg16); typecheck, lint green",
+ "note": "A476: R107 R108 (card Also)",
  "worker": "cloud-f814e6",
- "state": "reported",
- "at": "2026-10-03T12:55:11.008Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:15:23.473Z",
  "mode": "turbo",
  "commit": "d1db68b",
  "validated": "5ba459ce97fcd7fb85d7ec11fe2bfdcbb5fedc75"
