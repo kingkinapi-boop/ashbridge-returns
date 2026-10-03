@@ -2,7 +2,10 @@
  "card": "CQ2",
  "role": "spec",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T03:35:13.422Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T03:43:02.581Z",
+ "mode": "turbo",
+ "note": "rule 6: 11 tests (9 fail on main, 11 pass on the CQ2 build); builder's file replaced; add claim-needs-lead.test.mjs and merge SKILL.md to Paths",
+ "commit": "934365e",
+ "validated": "e9dbfcc37d9d1c0e968060c39e4ded7aed544772"
 }
