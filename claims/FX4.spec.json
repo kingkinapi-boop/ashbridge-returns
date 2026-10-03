@@ -1,10 +1,11 @@
 {
  "card": "FX4",
  "role": "spec",
- "note": "A470: delete the 11 FX4 KNOWN rows (card directive)",
- "reopenedFrom": "e92df82b",
+ "note": "A470: 11 FX4 KNOWN rows deleted; R36 R41 R46 R54 R56 fail naming FX4 files; 43 fail, all FX4/SC rules",
  "worker": "cloud-247bf5",
- "state": "working",
- "at": "2026-10-03T12:52:01.934Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T12:58:11.240Z",
+ "mode": "turbo",
+ "commit": "ab6b660",
+ "validated": "01bad2ecb8116ee6e2404e9d01b446677fe65e29"
 }
