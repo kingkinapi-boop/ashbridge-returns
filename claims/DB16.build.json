@@ -4,7 +4,8 @@
  "round": 8,
  "spec": "d69ac553",
  "worker": "cloud-120dac",
- "state": "working",
- "at": "2026-10-03T05:32:36.952Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T05:50:14.591Z",
+ "mode": "turbo",
+ "note": "round 3: 565 pg16 db tests pass, 563+1xfail on PGlite; head 3bd6a33; scope flags spec-side commits only"
 }
