@@ -1,32 +1,42 @@
-# DB16 spec report
+# DB16 spec report (round 2, A411)
 
-Worker local-2 (laptop). Model: Opus 5.5 (local worker; the card is core and security). Branch claude/DB16 from origin/main 73751b0e.
+Worker local-2 (laptop). Model: Opus 5.5 (local worker; core and security card). Branch claude/DB16; round 1 was d6f3a1b1, round 2 adds the 9 gaps of reports/DB16-spec-review.md plus its optional lower-case refusal. Validated on main 2288da55.
 
 ## Files
-- `src/core/db/pg16.acceptance.test.ts` (unit, 29 tests): the switch `testDbTarget(env)` (off, on, url on 127.0.0.1, PGPORT, local and non-local PGHOST and PGHOSTADDR, values of TEST_DB that are not the switch, DATABASE_URL and SUPABASE refusals that name the variable and never print the value), the global setup refusing before it connects, and the two cloud docs carrying `TEST_DB=pg16`.
-- `src/core/db/pg16.acceptance.db.test.ts` (db, 5 tests; runs in both modes): switch off gives a PGlite clone; switch on gives Postgres 16 (server_version_num 160000 to 169999, not PGlite), on 127.0.0.1, in a non-default database; two test databases are isolated; SEC-7 (truncate of state events refused, the three state-event triggers loaded); the planted race.
+- `src/core/db/pg16.acceptance.test.ts` (unit, 47 tests, was 29).
+- `src/core/db/pg16.acceptance.db.test.ts` (db, 13 tests, was 5; runs in both modes: 10 plain, the race `test.fails` on PGlite, and 2 `runIf` per mode).
 
-## The planted race
-Two transactions on one test database each read a counter, wait at a barrier (at most 1 s), then write read+1, under READ COMMITTED. On Postgres 16 both read 0 on two backends (pg_backend_pid differs) and one increment is lost (final 1). PGlite's single connection cannot start the second transaction until the first commits (reads 0 then 1, final 2, one backend). The test is `test.fails` with the switch off and `test` with it on, so it passes on PGlite as an expected failure and must pass on Postgres 16. The backend check stops a single-client adapter (two "transactions" in one session) from passing falsely.
+## Round 2 tests, by review item
+1. Cluster down (unit): TEST_DB=pg16, PGPORT a loopback port opened then closed: the global setup rejects, and `createTemplate()` rejects (if it resolves, the test names the backend it resolved on).
+2. Every path (db, runIf ON): `createTemplate(DEFAULT_SCHEMA_DIR).clone()` is Postgres 16.x on 127.0.0.1, not PGlite.
+3. Rule scan (unit): no file in the db include of tools/test-homes.json and no non-test file under src/ outside src/core/db/ has `new PGlite(`, `PGlite.create(`, a value import of PGlite (named, aliased, default, namespace) or a dynamic import of the package; 7 planted texts flagged, 4 clean texts not; at least 9 db files, sentinels auth.acceptance.db.test.ts, pg16.acceptance.db.test.ts and src/modules/auth/index.ts; files read through `readOwnSource`.
+4. SEC-7 by class (db, both backends): the trigger names loaded equal the `create trigger` names parsed from db/schema/*.sql (at least 40); every returns table with a BEFORE TRUNCATE trigger (floor: the 15 guarded tables) refuses `truncate ... cascade` with its own guard's message, and has BEFORE row guards on UPDATE and DELETE (jobs: DELETE). Planted: a declared name missing is reported; `jobs_no_delete` dropped is reported; with `state_events_no_truncate` dropped, state_events is no longer refused by its own guard.
+5. Session pinned (db, both): TimeZone `Etc/GMT+5`, DateStyle `ISO, MDY`, IntervalStyle `postgres`, default isolation `read committed`, server and client encoding UTF8, standard_conforming_strings on, datcollate `C`, datctype `C.UTF-8` (read from PGlite 0.5.8 under TZ=America/Toronto).
+6. Types (db, both): int4, int8 cents (positive, negative) and count(*) are JS numbers, an int8 beyond 2^53 is a BigInt, numeric(12,2) a string, date a Date at UTC midnight, timestamptz a Date, jsonb an object, nulls null, int4[] an array, uuid a string; plus an int8 money parameter round trip.
+7. SEC-10 (unit): PGPASSWORD=PLANTED-db16-pass gives a url with no password; with the cluster down, the setup rejection (message, stack, cause) and everything sent to console hold no PLANTED value.
+8. Before any socket (unit): the three global-setup refusal cases now also assert zero `net.Socket.prototype.connect` calls; switch off with DATABASE_URL and SUPABASE_URL set: setup resolves on PGlite with zero connects and prints no planted value.
+9. Docs (unit): each of checker.md and cloud-worker-run.md has one line with `TEST_DB=pg16` and the db project command (`--project db` or `npm test`), a cluster start command (`pg_ctlcluster 16 <name> start`, `pg_ctl ... start`, `service postgresql start` or `systemctl start postgresql`), "every train", `db/` and `*.db.test.ts`, and one line naming the identity test ("a test database is Postgres 16") with "not skipped".
+Optional: `supabase_url` (lower case) with the switch on is refused.
 
-## Fail first (validated on main 73751b0e)
-- Unit: 29 of 29 tests that need the build fail: `DB16: src/core/db/index.ts exports no testDbTarget(env)`, the global setup resolving instead of refusing, and the docs lacking `TEST_DB=pg16`.
-- Db, switch off: 3 pass (isolation, SEC-7, PGlite clone), 1 expected fail (the race), 1 skipped (the Postgres 16 identity test). Nothing to build on this path; they guard it.
-- Db, `TEST_DB=pg16` on the laptop today (the switch is not built, so still PGlite): 2 fail for the right reason: `expected 'PostgreSQL 18.3 (PGlite 0.5.8) ...' not to match /PGlite/` and `the two transactions run on two connections, not one session: expected 1 to be 2`.
-- tsc and lint clean on these files; the only repo errors are the known laptop gap (exceljs and pdfjs-dist missing: src/modules/ocr, src/modules/sheets).
+## Fail first (laptop, PGlite)
+- Unit: 34 of 47 fail for the right reason: `exports no testDbTarget(env)`, the setup resolving instead of refusing, `createTemplate()` "resolved on PostgreSQL 18.3 (PGlite 0.5.8)", and the docs lacking the steps. 13 pass and guard: the 11 planted and clean scan texts, the repo scan (nothing builds a database outside src/core/db today), and the switch-off setup.
+- Db, switch off: 10 pass, 1 expected fail (race), 2 skipped (runIf ON). They guard the PGlite path; on Postgres 16 they are the checker's proof.
+- tsc clean (only the known laptop gap: exceljs, pdfjs-dist); eslint clean on both files.
 
 ## 6b sweep
-A throwaway stub (testDbTarget in index.ts, one call in global-setup.ts), never committed, reverted with `git checkout`: unit `src/core` plus `tools/test` 327 of 329 green (the 2 docs tests need the build's doc edits); db `src/core` green (5 passed, 1 expected fail, 1 skipped). Tests retired: none. Not proven here: the Postgres 16 path itself (no cluster on the laptop); the checker runs it on a cloud box.
+Throwaway stub in this worktree (testDbTarget, the switch in createTemplate failing closed on a socket error, one call in global-setup), never committed, reverted with `git checkout`. Whole unit project: only the 2 docs tests of this card fail, plus 3 laptop-only failures unrelated to db (design/basis RV-52 build timing; src/modules/storage/real-parent ARC-6 two symlink tests on Windows). Whole db project: 554 passed, 1 failed once (auth.acceptance.db.test.ts "ARC-6 in production AUTH_ENGINE=testusers set by name works", four worlds in one test under full-run load; its env is passed explicitly and never reads TEST_DB) and passed alone and in a full rerun (555 passed). Tests retired: none.
+
+## Changed in round 1 tests (this card's own)
+- The switch-off identity test drops `toBeInstanceOf(PGlite)` (a value import the new rule scan forbids in db test files) and keeps `version()` matching /PGlite/.
+- The setup refusal cases stub every switch variable first (TEST_DB, PGHOST, PGHOSTADDR, PGPORT, PGPASSWORD, DATABASE_URL, any SUPABASE name), so a box running the suite with the switch on sees the same thing.
 
 ## Amber
-- Surface: `testDbTarget(env)` exported from src/core/db/index.ts, pure, returning `{ kind: 'pglite' } | { kind: 'pg16'; url }`. Reverse: rename in the unit file's `target()` helper.
-- TEST_DB: only unset or '' is off and only exactly `pg16` is on; anything else (PG16, true, 1, a URL) is refused rather than read as off, a flag for a person rather than a silent pass.
-- The refusals (DATABASE_URL, any name containing SUPABASE, even when empty) apply only with the switch on; with it off PGlite connects nowhere, so the default run is never blocked by a stray variable.
-- Local hosts: PGHOST or PGHOSTADDR may be unset, 127.0.0.1 or localhost; other values (a name, a private address) are refused. ::1 and socket paths are left to the builder (no test either way).
-- Fresh database per run: tests pin a non-default database name and isolation between test databases; "dropped by the global setup" is not observable from inside a test, so the checker confirms no test database is left on the cluster after a run.
-- The race uses a 1 s barrier wait; on Postgres 16 both transactions arrive in milliseconds, so it is not a timing bet (ARC-16), but a box that needs over 1 s to open a second connection would fail it.
-- The planted values carry the gitleaks allowlisted `PLANTED-` prefix; gitleaks itself is not on the laptop, so GitHub checks confirm.
-- The docs test reads .claude/agents/checker.md and .claude/cloud-worker-run.md; it asks only for the text `TEST_DB=pg16`.
+- The pinned TimeZone is PGlite's `Etc/GMT+5` (a fixed UTC-5, no daylight time), not America/Toronto: parity with what every db test was written against. Reverse: change both backends together on a later card and edit the fixed value.
+- datctype `C.UTF-8`: the builder creates each test database with LC_COLLATE 'C', LC_CTYPE 'C.UTF-8' from template0 (glibc on the cloud box has C.UTF-8).
+- The truncate check uses `truncate ... cascade` so a foreign key cannot refuse in the guard's place (on PGlite, adjusting_entries, state_events and versions are refused by the foreign key first without cascade; the round 1 state_events test passed for that reason, now covered by class).
+- Docs: the cluster start accepts four command shapes; the identity test is named by the fragment "a test database is Postgres 16".
+- The switch-off socket test and the scan pass today: they guard the default path, as the review asked.
+- The Postgres 16 path is not proven here (no cluster on the laptop): the cloud checker runs the seven points in the review's last section.
 
 ## Permission gaps
-None.
+- `git reset --hard` and `git log` against origin refs were refused once each by the auto-mode classifier at the start; worked around by checking out the existing branch (no reset needed). Multi-command heredoc edits were refused as "too complex"; edits went through the Edit tool.
