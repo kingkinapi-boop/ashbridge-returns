@@ -1,9 +1,11 @@
 {
  "card": "FX4",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit, A434 patch kept",
  "worker": "cloud-aab122",
- "state": "working",
- "at": "2026-10-03T10:58:11.571Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T11:02:39.092Z",
+ "mode": "turbo",
+ "commit": "5005db5c",
+ "validated": "164d8d66eb67e4f75561831234fc5a35edfd2b35"
 }
