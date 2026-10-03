@@ -25,6 +25,7 @@ import {
   appendOnlyGuardProblems,
   appendOnlyTables,
   applyKnown,
+  checkVouches,
   formatFunctionProblems,
   freeText,
   landingProblems,
@@ -312,12 +313,30 @@ describe('R66 every text column of an append-only table has a key, a list or for
   test('R66 rule (item 2): a two-column CHECK, a !~ match, a negated match and a non-blank check do not vouch for a column; a format function does', async () => {
     const db = await withFixture('planted-r66-checks.sql')
     expect(planted(await freeTextColumns(db))).toEqual([
+      'planted_checks.anchored_any',
+      'planted_checks.any_char',
       'planted_checks.blank_only',
       'planted_checks.negated',
       'planted_checks.neighbour',
+      'planted_checks.nonblank_match',
       'planted_checks.not_format',
       'planted_checks.not_match',
     ])
+  })
+  test("R66 rule (A458 G1): a table refusing DELETE and TRUNCATE through one statement-level trigger, whose function never says append-only, is append-only, so its author text is caught", async () => {
+    const cat = await readCatalog(await withFixture('planted-r66-statement-guard.sql'))
+    expect(appendOnlyTables(cat)).toContain('planted_stmt')
+    expect(planted(freeText(cat))).toEqual(['planted_stmt.author'])
+  })
+  test('R66 rule (A458 G2): main\'s four inline matches (client_ref, token_hash, jobs.kind, the handoff id pattern) still vouch', async () => {
+    const cat = await readCatalog(await cloneTestDb())
+    const def = (name: string): string => cat.constraints.find((k) => k.def.includes(name))?.def ?? `no constraint on ${name}`
+    expect(checkVouches(def('client_ref ~'), 'client_ref')).toBe(true)
+    expect(checkVouches(def('token_hash ~'), 'token_hash')).toBe(true)
+    expect(checkVouches(def('kind ~'), 'kind')).toBe(true)
+    const handoff = cat.functions.find((f) => f.name === 'is_handoff_id')?.src ?? ''
+    expect(formatFunctionProblems({ ...cat, functions: cat.functions.filter((f) => f.name === 'is_handoff_id') }, ['is_handoff_id'])).toEqual([])
+    expect(handoff).toMatch(/~/)
   })
   test('R66 rule (item 3): a domain over text (and its array), varchar, varchar[] and char(n) are text', async () => {
     const db = await withFixture('planted-r66-types.sql')

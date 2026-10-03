@@ -1,0 +1,10 @@
+// Planted (A458 G4): a stand-in behind its factory, declared as an arrow function, that takes a database and carries
+// no stand-in tag.
+import type { PGlite } from '@electric-sql/pglite'
+
+export interface PlantedOptions {
+  db: PGlite
+  label?: string
+}
+
+export const createPlantedStandIn = (opts: PlantedOptions): { label: string } => ({ label: opts.label ?? 'planted (Test)' })

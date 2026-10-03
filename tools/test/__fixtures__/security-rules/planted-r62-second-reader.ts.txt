@@ -1,0 +1,5 @@
+// Planted (A458 G5): a second file reading a registered engine setting, outside its factory's file, with its own
+// stand-in default the factory test never sees.
+import { env } from '../core/env'
+
+export const readingEngine = (): string => env.OCR_ENGINE ?? 'recorded'

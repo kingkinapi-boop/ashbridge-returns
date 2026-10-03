@@ -147,6 +147,24 @@ export function undeclaredProblems(files: SourceFile[], envText: string, notSett
   return out
 }
 
+/**
+ * A registered setting (one with a factory) is read only in its factory's file: a second reader could choose a
+ * stand-in by silence the factory test never sees (A458 G5). `factoryFiles` maps each setting to its factory's file.
+ */
+export function secondReaderProblems(files: SourceFile[], factoryFiles: Record<string, string>, notSettings: Record<string, string> = {}): Problem[] {
+  const out: Problem[] = []
+  const seen = new Set<string>()
+  for (const r of engineSettings(files, '').read) {
+    const home = factoryFiles[r.setting]
+    if (home === undefined || r.file === home || `${r.file}#${r.setting}` in notSettings) continue
+    const text = `${r.setting} is read outside its factory's file (${home}): read it only through the factory`
+    if (seen.has(`${r.file}\n${text}`)) continue
+    seen.add(`${r.file}\n${text}`)
+    out.push({ file: r.file, text })
+  }
+  return out
+}
+
 type Factory = (env: Record<string, string | undefined>) => unknown
 /** With NODE_ENV=production and the setting unset, then blank, the factory must refuse naming the setting. */
 export async function productionProblems(setting: string, file: string, factory: Factory): Promise<Problem[]> {
@@ -299,6 +317,16 @@ export function landingProblems(landing: Landing[], registry: Tagged[], exists: 
     .filter((l) => exists(l.dir) && !registry.some((r) => r.key.startsWith(`${l.dir}/`)))
     .map((l) => `${l.card}: landed (${l.dir}, ${l.what}) with no ${l.rule} registry entry under it`)
 }
+/** Each LANDING folder sits inside its card's Paths, so a renamed folder cannot leave the entry silent (A458 G3). */
+export function landingPathProblems(landing: Landing[], cards: Map<string, CardInfo>): string[] {
+  const out: string[] = []
+  for (const l of landing) {
+    const card = cards.get(l.card)
+    if (!card) out.push(`${l.card}: not a card in plan/slices.json`)
+    else if (!card.paths.some((g) => pathMatches(g, `${l.dir}/x.ts`))) out.push(`${l.card}: ${l.dir} is outside the card's Paths, so its landing would never be seen`)
+  }
+  return out
+}
 
 // ---------- the create* inventory (item 8) ----------
 export interface Inventory {
@@ -349,7 +377,10 @@ export function createExports(files: SourceFile[]): { name: string; file: string
   return out
 }
 function takesDb(text: string, name: string): boolean {
-  const sig = new RegExp(`function\\s+${name}\\s*\\(([^)]*)\\)`).exec(text)
+  // a function declaration, or a const/let/var bound to an arrow or function expression (A458 G4)
+  const sig =
+    new RegExp(`function\\s*\\*?\\s*${name}\\s*(?:<[^>]*>)?\\s*\\(([^)]*)\\)`).exec(text) ??
+    new RegExp(`(?:const|let|var)\\s+${name}\\b[^=]*=\\s*(?:async\\s+)?(?:function\\b\\s*\\*?\\s*[\\w$]*\\s*)?(?:<[^>]*>)?\\s*\\(([^)]*)\\)`).exec(text)
   if (!sig) return false
   const params = sig[1] ?? ''
   if (/\bdb\s*\??\s*:/.test(params)) return true
@@ -398,17 +429,19 @@ export interface Catalog {
   columns: { table: string; col: string; attnum: number; text: boolean }[]
   constraints: { table: string; type: string; cols: number[]; def: string }[]
 }
-const ROW = 1
 const BEFORE = 2
 const DELETE = 8
 const TRUNCATE = 32
-/** Append-only by behaviour: a BEFORE ROW DELETE trigger and a BEFORE TRUNCATE trigger, whatever the function. */
+/**
+ * Append-only by behaviour: a BEFORE DELETE trigger (row or statement level, A458 G1) and a BEFORE TRUNCATE trigger,
+ * whatever the function.
+ */
 export function appendOnlyTables(cat: Catalog): string[] {
   const tables = [...new Set(cat.triggers.map((t) => t.table))]
   return tables
     .filter((t) => {
       const ts = cat.triggers.filter((g) => g.table === t)
-      return ts.some((g) => (g.tgtype & (ROW | BEFORE | DELETE)) === (ROW | BEFORE | DELETE)) && ts.some((g) => (g.tgtype & (BEFORE | TRUNCATE)) === (BEFORE | TRUNCATE))
+      return ts.some((g) => (g.tgtype & (BEFORE | DELETE)) === (BEFORE | DELETE)) && ts.some((g) => (g.tgtype & (BEFORE | TRUNCATE)) === (BEFORE | TRUNCATE))
     })
     .sort()
 }
@@ -430,13 +463,63 @@ export const FORMAT_FUNCTIONS: Record<string, string> = {
 export const NEVER_FORMAT = ['is_blank']
 
 const esc = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-/** True when the CHECK definition constrains `col` itself: its operand of `= ANY`, `~`, `~*` or `<@`, or the argument of a format function, never negated. */
+
+const WILD = '\u0000'
+/**
+ * A `~` literal is a format only when it is anchored `^...$`, has no top-level `|` (which would undo the anchors), and
+ * repeats no wildcard (`.`, `\S`, `\W`, `\D`) with `*`, `+` or `{`: so `\S`, `.` and `^.+$` (non-blank in other
+ * words) are not formats (A458 G2). Bracket expressions, negated ones included, are a fixed set and count as formats.
+ */
+export function formatPattern(literal: string): boolean {
+  const p = literal.replace(/''/g, "'")
+  if (!p.startsWith('^') || !p.endsWith('$') || p.endsWith('\\$')) return false
+  let out = ''
+  let depth = 0
+  for (let i = 0; i < p.length; ) {
+    const c = p[i] ?? ''
+    if (c === '\\') {
+      out += /[SWD]/.test(p[i + 1] ?? '') ? WILD : 'x'
+      i += 2
+    } else if (c === '[') {
+      let j = i + 1
+      if (p[j] === '^') j += 1
+      if (p[j] === ']') j += 1
+      while (j < p.length && p[j] !== ']') {
+        if (p[j] === '[' && p[j + 1] === ':') {
+          const e = p.indexOf(':]', j + 2)
+          j = e < 0 ? p.length : e + 2
+        } else j += p[j] === '\\' ? 2 : 1
+      }
+      out += 'x'
+      i = j + 1
+    } else {
+      if (c === '(') depth += 1
+      if (c === ')') depth -= 1
+      if (c === '|' && depth === 0) return false
+      out += c === '.' ? WILD : c
+      i += 1
+    }
+  }
+  return !new RegExp(`${WILD}\\)*[*+{]`).test(out)
+}
+/** The literals of every `~` or `~*` match in a text (not `!~`), as written between quotes. */
+function matchLiterals(text: string): string[] {
+  return [...text.matchAll(/(?<![!~])~\*?(?![~*])\s*'((?:[^']|'')*)'/g)].map((m) => m[1] ?? '')
+}
+/**
+ * True when the CHECK definition constrains `col` itself: its operand of `= ANY`, `<@` or a `~`/`~*` match whose literal
+ * is a format (formatPattern), or the argument of a format function, never negated.
+ */
 export function checkVouches(def: string, col: string, formatFns: string[] = Object.keys(FORMAT_FUNCTIONS)): boolean {
   const ref = `(?:"${esc(col)}"|\\b${esc(col)}\\b)`
   const cast = `(?:\\s*\\)|::[a-z ]+(?:\\[\\])?)*`
   const notNeg = `(?<!\\bNOT\\s*(?:\\(\\s*)*)`
-  const operand = new RegExp(`${notNeg}(?<![\\w."])${ref}${cast}\\s*(?:=\\s*ANY\\b|~\\*?(?![~*])|<@)`)
-  if (operand.test(def)) return true
+  const operand = new RegExp(`${notNeg}(?<![\\w."])${ref}${cast}\\s*(=\\s*ANY\\b|~\\*?(?![~*])|<@)`, 'g')
+  for (const m of def.matchAll(operand)) {
+    if (!(m[1] ?? '').startsWith('~')) return true
+    const lit = /^\s*'((?:[^']|'')*)'/.exec(def.slice((m.index ?? 0) + m[0].length))
+    if (lit && formatPattern(lit[1] ?? '')) return true
+  }
   const fns = formatFns.filter((f) => !NEVER_FORMAT.includes(f)).map(esc)
   if (fns.length === 0) return false
   const call = new RegExp(`${notNeg}(?<![\\w.])(?:returns\\.)?(?:${fns.join('|')})\\(\\s*(?:\\(\\s*)*${ref}${cast}\\s*\\)`)
@@ -450,7 +533,8 @@ export function formatFunctionProblems(cat: Catalog, formatFns: string[] = Objec
     if (NEVER_FORMAT.includes(f)) out.push(`${f}: never a format function`)
     const src = cat.functions.find((x) => x.name === f)?.src
     if (src === undefined) out.push(`${f}: no such function in the database`)
-    else if (/(?<![!~])~(?![~*])|~\*|=\s*any\b/i.test(src.replace(/!~\*?/g, ''))) ok.add(f)
+    // a match counts only when its literal is a format (A458 G2: `s ~ '\S'` is non-blank, not a format)
+    else if (matchLiterals(src).some(formatPattern) || /=\s*any\b/i.test(src)) ok.add(f)
   }
   for (const f of formatFns) {
     const src = cat.functions.find((x) => x.name === f)?.src
@@ -486,11 +570,9 @@ export const APPEND_ONLY_SENTINEL = [
 export const FREE_TEXT: Record<string, string> = {
   'adjusting_entries.qbo_txn_id': 'the id QuickBooks gave the transaction; opaque to us and not ours to constrain',
   'adjusting_entries.reason': 'the reason the preparer gave for the adjusting entry (TB-3); free by nature',
-  'approvals.fingerprint': 'a sha256 of the approved content, computed by code (FLOW-1); the value has no fixed list',
   'entry_lines.qbo_account_id': 'the id QuickBooks gave the account; opaque to us and not ours to constrain',
   'events.reason': 'the reason a person or the system gave for the change (FLOW-1); free by nature, non-blank is checked',
   'events.record_id': 'the id of the record the event is about, in the table named beside it; a pointer across tables cannot be one key',
-  'events.record_table': 'the name of the table the event is about, written by code beside record_id; the set of tables is not a fixed list',
   'facts.source_qbo_account_id': 'the id QuickBooks gave the account the figure came from; opaque to us and not ours to constrain',
   'facts.source_qbo_txn_id': 'the id QuickBooks gave the transaction the figure came from; opaque to us and not ours to constrain',
   'facts.source_reason': 'the reason given as the source of a judgment figure (EV-5); free by nature',
@@ -502,7 +584,6 @@ export const FREE_TEXT: Record<string, string> = {
   'judgment_inputs.cell_id': 'the Taxprep cell identifier, kept as the export spelled it (RT-13); the cell list lives in data, not in a check',
   'judgment_inputs.reason': 'the reason the preparer gave for the judgment (EV-10); free by nature',
   'judgment_inputs.value': 'the value the preparer entered, kept exactly as typed (RT-12); any text is valid',
-  'sign_in_events.reason': 'one of the fixed sentences the auth engine writes, never typed text (SEC-10); non-blank is checked',
   'state_events.reason': 'the reason a person or the system gave for the transition (FLOW-1); free by nature, non-blank is checked',
   'version_cells.cell_id': 'the Taxprep cell identifier, kept as the export spelled it (RT-13); the cell list lives in data, not in a check',
   'version_cells.value': 'the cell value as exported, kept exactly as read (RT-3); any text is valid',
@@ -513,14 +594,15 @@ export const r66Problem = (col: string): string => `${col} is text in an append-
 
 const ACTOR_FIX = 'db/schema/94_actor_keys.sql'
 // KNOWN for every rule here (A407, R80 form). R62 is empty since FX2 landed (A443). R66: the deferred columns, each
-// with the open card whose Paths hold its schema file (or, for FX17, its fix file).
+// with the open card whose Paths hold its schema file (or, for FX17, its fix file). An owner deletes its own entries
+// when it lands; tools/test/security-rules.test.mjs pins which columns each owner may hold (A458 G6).
 export const KNOWN: Known[] = [
   {
     rule: 'R66',
     file: 'db/schema/20_ledger.sql',
     owner: 'L00',
     problems: [
-      'facts.fact_key', 'facts.method', 'facts.source_client_answer_id', 'facts.source_column', 'facts.source_cra_capture_id', 'facts.source_prior_return_id', 'facts.source_qbo_snapshot_id',
+      'events.record_table', 'facts.fact_key', 'facts.method', 'facts.source_client_answer_id', 'facts.source_column', 'facts.source_cra_capture_id', 'facts.source_prior_return_id', 'facts.source_qbo_snapshot_id',
     ].map(r66Problem),
   },
   { rule: 'R66', file: 'db/schema/30_books.sql', owner: 'B05', problems: ['adjusting_entries.qbo_snapshot_id', 'gifi_mappings.gifi_code'].map(r66Problem) },
@@ -528,6 +610,9 @@ export const KNOWN: Known[] = [
   { rule: 'R66', file: 'db/schema/50_returns.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['state_events.actor'].map(r66Problem) },
   { rule: 'R66', file: 'db/schema/60_versions.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['approvals.approved_by'].map(r66Problem) },
   { rule: 'R66', file: 'db/schema/30_books.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['adjusting_entries.author', 'judgment_inputs.author'].map(r66Problem) },
+  // A458: the three former FREE_TEXT keeps, each a format or a fixed list its owner adds
+  { rule: 'R66', file: 'db/schema/15_auth.sql', owner: 'FX17', fix: ACTOR_FIX, problems: ['sign_in_events.reason'].map(r66Problem) },
+  { rule: 'R66', file: 'db/schema/60_versions.sql', owner: 'T08', problems: ['approvals.fingerprint'].map(r66Problem) },
 ]
 
 /** The schema files, named from the repo root (the rule files read them through here, as db-rules does, ARC-4 R4). */

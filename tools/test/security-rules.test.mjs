@@ -13,6 +13,7 @@ import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { describe, expect, test } from 'vitest'
 import {
+  APPEND_ONLY_SENTINEL,
   FORMAT_FUNCTIONS,
   FREE_TEXT,
   INVENTORY,
@@ -29,9 +30,11 @@ import {
   createExports,
   engineSettings,
   formatFunctionProblems,
+  formatPattern,
   freeText,
   inventoryProblems,
   knownShapeProblems,
+  landingPathProblems,
   landingProblems,
   limitProblems,
   onceProblems,
@@ -43,6 +46,7 @@ import {
   r66Problems,
   readSources,
   scanTags,
+  secondReaderProblems,
   standinProblems,
   tableFiles,
   tagProblems,
@@ -184,6 +188,25 @@ describe('R62 every *_ENGINE setting is declared and no stand-in is chosen by si
     for (const f of FACTORIES) expect(createExports(files).some((e) => e.name === f.name && e.file === f.file && e.declared), f.name).toBe(true)
   })
 
+  test('R62 rule (A458 G5): a second file reading a registered setting with its own default is caught; the factory file itself passes', () => {
+    const homes = Object.fromEntries(FACTORIES.map((f) => [f.setting, f.file]))
+    const planted = [
+      { name: 'src/app/reading.ts', text: fix('planted-r62-second-reader.ts.txt') },
+      { name: 'src/modules/ocr/index.ts', text: "const engine = settings.OCR_ENGINE ?? 'textlayer'\n" },
+    ]
+    expect(secondReaderProblems(planted, homes)).toEqual([
+      { file: 'src/app/reading.ts', text: "OCR_ENGINE is read outside its factory's file (src/modules/ocr/index.ts): read it only through the factory" },
+    ])
+    expect(secondReaderProblems(planted, homes, { 'src/app/reading.ts#OCR_ENGINE': 'planted exception' })).toEqual([])
+  })
+
+  test("R62 every registered *_ENGINE setting is read only in its factory's file (sentinel: AUTH_ENGINE in src/modules/auth/index.ts)", () => {
+    const files = SRC()
+    const homes = Object.fromEntries(FACTORIES.map((f) => [f.setting, f.file]))
+    expect(engineSettings(files, '').read).toContainEqual({ file: 'src/modules/auth/index.ts', setting: 'AUTH_ENGINE' })
+    expect(applyKnown('R62-reader', secondReaderProblems(files, homes, NOT_SETTINGS), KNOWN)).toEqual([])
+  })
+
   test("R62 with NODE_ENV=production and the setting unset or blank '' every adapter factory refuses naming it", async () => {
     const problems = []
     for (const f of FACTORIES) problems.push(...(await productionProblems(f.setting, f.file, f.make)))
@@ -256,6 +279,19 @@ describe('R63 R64 R65 tags parse strictly and equal the registries', () => {
     expect(LANDING.map((l) => `${l.rule} ${l.card} ${l.dir}`)).toEqual(['R64 T08 src/modules/approval', 'R64 E00 src/modules/documents/intake'])
     expect(landingProblems(LANDING, REGISTRY.once, (d) => fs.existsSync(path.join(ROOT, d)))).toEqual([])
   })
+
+  test("R64 rule (A458 G3): a LANDING folder outside its card's Paths is caught (T08 renamed to src/modules/approvals)", () => {
+    const cards = new Map([['T08', { status: 'carded', paths: ['src/modules/approval/**', 'sql/60_versions.sql'] }]])
+    expect(landingPathProblems([{ rule: 'R64', card: 'T08', dir: 'src/modules/approvals', what: 'approve, tagged @once' }], cards)).toEqual([
+      "T08: src/modules/approvals is outside the card's Paths, so its landing would never be seen",
+    ])
+    expect(landingPathProblems([{ rule: 'R64', card: 'T08', dir: 'src/modules/approval', what: 'approve, tagged @once' }], cards)).toEqual([])
+    expect(landingPathProblems([{ rule: 'R64', card: 'ZZ9', dir: 'src/x', what: 'x' }], cards)).toEqual(['ZZ9: not a card in plan/slices.json'])
+  })
+
+  test("R64 every LANDING folder sits inside its card's Paths (T08, E00)", () => {
+    expect(landingPathProblems(LANDING, cardsMap())).toEqual([])
+  })
 })
 
 // ---------- the create* inventory (A452 item 8) ----------
@@ -278,6 +314,21 @@ describe('R62 R63 every exported create* under src/modules is a factory, not an 
     ])
     const tagged = fix('planted-untagged-standin.ts.txt').replace('export function createPlantedStandIn', '/**\n * @standin createPlantedStandIn\n */\nexport function createPlantedStandIn')
     expect(inventoryProblems([files[0], { name: files[1].name, text: tagged }], { ...inv, notAdapter: { createStray: 'planted' } })).toEqual([])
+  })
+
+  test('R63 rule (A458 G4): an untagged stand-in declared as an arrow function that takes a database is caught; tagged, it passes', () => {
+    const inv = { factories: { createPlantedAdapter: 'PLANTED_ENGINE' }, notAdapter: {}, behindFactory: { createPlantedStandIn: { factory: 'createPlantedAdapter', module: 'src/modules/planted' } } }
+    const index = { name: 'src/modules/planted/index.ts', text: 'export function createPlantedAdapter(env: Env) { return createPlantedStandIn({ db }) }\n' }
+    const arrow = fix('planted-arrow-standin.ts.txt')
+    expect(inventoryProblems([index, { name: 'src/modules/planted/standin.ts', text: arrow }], inv)).toEqual([
+      { file: 'src/modules/planted/standin.ts', text: 'createPlantedStandIn takes a database but carries no @standin tag' },
+    ])
+    const tagged = arrow.replace('export const createPlantedStandIn', '/**\n * @standin createPlantedStandIn\n */\nexport const createPlantedStandIn')
+    expect(inventoryProblems([index, { name: 'src/modules/planted/standin.ts', text: tagged }], inv)).toEqual([])
+    const inline = 'export const createPlantedStandIn = async ({ db }: { db: PGlite }) => db\n'
+    expect(inventoryProblems([index, { name: 'src/modules/planted/standin.ts', text: inline }], inv)).toHaveLength(1)
+    const expr = 'export const createPlantedStandIn = function (opts: { db: PGlite }) { return opts }\n'
+    expect(inventoryProblems([index, { name: 'src/modules/planted/standin.ts', text: expr }], inv)).toHaveLength(1)
   })
 
   test('R62 R63 rule: a listed name nobody exports is stale, and a stand-in naming an unlisted factory is caught', () => {
@@ -373,6 +424,52 @@ describe('R63 R64 R65 unit twins of the race and stand-in harnesses (A391)', () 
   })
 })
 
+// ---------- pinned lists (A458 G6): here, outside the Paths of the cards that may edit harness.ts ----------
+// Each owner may hold at most these R66 KNOWN columns, and deletes them when it lands.
+const PINNED_R66_OWNERS = {
+  B05: ['adjusting_entries.qbo_snapshot_id', 'gifi_mappings.gifi_code'],
+  FX17: ['adjusting_entries.author', 'approvals.approved_by', 'events.actor', 'judgment_inputs.author', 'sign_in_events.reason', 'state_events.actor'],
+  L00: [
+    'events.record_table', 'facts.fact_key', 'facts.method', 'facts.source_client_answer_id', 'facts.source_column', 'facts.source_cra_capture_id', 'facts.source_prior_return_id', 'facts.source_qbo_snapshot_id',
+  ],
+  T08: ['approvals.fingerprint'],
+}
+const PINNED_FREE_TEXT = [
+  'adjusting_entries.qbo_txn_id', 'adjusting_entries.reason', 'entry_lines.qbo_account_id', 'events.reason', 'events.record_id', 'facts.source_qbo_account_id',
+  'facts.source_qbo_txn_id', 'facts.source_reason', 'facts.source_sheet', 'facts.value', 'jobs.idempotency_key', 'jobs.last_error', 'jobs.lease_holder',
+  'judgment_inputs.cell_id', 'judgment_inputs.reason', 'judgment_inputs.value', 'state_events.reason', 'version_cells.cell_id', 'version_cells.value',
+]
+const PINNED_NOT_ADAPTER = ['createJobQueue', 'createLifecycle', 'createLiveAuth', 'createRunner', 'createSheetsReader', 'createSyncRunner']
+const PINNED_SENTINEL = ['adjusting_entries', 'approvals', 'client_handoff', 'events', 'facts', 'gifi_mappings', 'judgment_inputs', 'sign_in_events', 'state_events', 'version_cells', 'versions']
+
+function knownPinProblems(known) {
+  const out = []
+  for (const k of known) {
+    const id = `${k.rule} ${k.file}`
+    if (k.rule !== 'R66') {
+      out.push(`${id}: only R66 KNOWN entries are pinned; another rule needs a spec patch`)
+      continue
+    }
+    const pinned = PINNED_R66_OWNERS[k.owner]
+    if (!pinned) {
+      out.push(`${id}: owner ${k.owner} holds no pinned R66 columns`)
+      continue
+    }
+    for (const p of k.problems) {
+      const col = p.split(' ')[0]
+      if (p !== r66Problem(col) || !pinned.includes(col)) out.push(`${id}: ${col} is not pinned to owner ${k.owner}`)
+    }
+  }
+  return out
+}
+function listPinProblems(freeTextList, notAdapter, sentinel) {
+  return [
+    ...Object.keys(freeTextList).filter((c) => !PINNED_FREE_TEXT.includes(c)).map((c) => `FREE_TEXT ${c} is not pinned: a new free-text column needs a spec patch`),
+    ...Object.keys(notAdapter).filter((n) => !PINNED_NOT_ADAPTER.includes(n)).map((n) => `INVENTORY.notAdapter ${n} is not pinned: a new not-an-adapter line needs a spec patch`),
+    ...PINNED_SENTINEL.filter((t) => !sentinel.includes(t)).map((t) => `APPEND_ONLY_SENTINEL lost ${t}: the sentinel only grows`),
+  ]
+}
+
 // ---------- R66 twins (A452 items 1 to 5) ----------
 const T = { ROW: 1, BEFORE: 2, DELETE: 8, UPDATE: 16, TRUNCATE: 32 }
 const rowGuard = (table, fn) => ({ table, fn, tgtype: T.ROW | T.BEFORE | T.UPDATE | T.DELETE })
@@ -397,6 +494,46 @@ describe('R66 unit twins: append-only by behaviour, per-column checks, string ty
     expect(freeText(cat)).toEqual(['planted_ledger.author'])
     expect(appendOnlyGuardProblems(cat)).toEqual(['planted_notes: guarded by refuse_change but not found append-only (no BEFORE ROW DELETE and BEFORE TRUNCATE pair)'])
     expect(appendOnlyGuardProblems({ ...cat, functions: [...cat.functions, { name: 'idle_guard', src: GUARD_SRC }] })).toContain('idle_guard: raises append-only but guards no table')
+  })
+
+  test('R66 rule twin (A458 G1): one statement-level BEFORE DELETE OR TRUNCATE trigger (no ROW bit) makes a table append-only, whatever its function says', () => {
+    const cat = {
+      triggers: [{ table: 'planted_stmt', fn: 'planted_forbid', tgtype: T.BEFORE | T.DELETE | T.TRUNCATE }],
+      functions: [{ name: 'planted_forbid', src: "begin raise exception 'records are permanent'; end" }],
+      columns: cols('planted_stmt', [['id', true], ['author', true]]),
+      constraints: [{ table: 'planted_stmt', type: 'p', cols: [1], def: 'PRIMARY KEY (id)' }],
+    }
+    expect(appendOnlyTables(cat)).toEqual(['planted_stmt'])
+    expect(freeText(cat)).toEqual(['planted_stmt.author'])
+    // an AFTER statement trigger still refuses nothing in time
+    expect(appendOnlyTables({ ...cat, triggers: [{ table: 'planted_stmt', fn: 'planted_forbid', tgtype: T.DELETE | T.TRUNCATE }] })).toEqual([])
+  })
+
+  test("R66 rule twin (A458 G2): a positive non-blank match (\\S, ., ^.+$ and kin) is not a format, while main's four inline matches still are", () => {
+    for (const lit of ['\\S', '.', '^.+$', '^.*$', '^\\S+$', '^(.)+$', '^.{1,500}$', 'abc', '^abc', 'abc$', '^a|b$', '^a$|.', '^x\\$']) expect(formatPattern(lit), lit).toBe(false)
+    const main = [
+      '^ASH-(000[1-9]|00[1-9][0-9]|0[1-9][0-9]{2}|[1-9][0-9]{3,})$',
+      '^[0-9a-f]{64}$',
+      '^[^:[:space:]]+:[^:[:space:]]+$',
+      '^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,79}$',
+    ]
+    for (const lit of main) expect(formatPattern(lit), lit).toBe(true)
+    expect(formatPattern('^a\\.b$')).toBe(true)
+    // as pg_get_constraintdef prints them
+    expect(checkVouches("CHECK ((nonblank_match ~ '\\S'::text))", 'nonblank_match')).toBe(false)
+    expect(checkVouches("CHECK ((any_char ~ '.'::text))", 'any_char')).toBe(false)
+    expect(checkVouches("CHECK ((anchored_any ~ '^.+$'::text))", 'anchored_any')).toBe(false)
+    expect(checkVouches("CHECK ((anchored_any ~* '^.+$'::text))", 'anchored_any')).toBe(false)
+    expect(checkVouches("CHECK ((client_ref ~ '^ASH-(000[1-9]|00[1-9][0-9]|0[1-9][0-9]{2}|[1-9][0-9]{3,})$'::text))", 'client_ref')).toBe(true)
+    expect(checkVouches("CHECK ((kind ~ '^[^:[:space:]]+:[^:[:space:]]+$'::text))", 'kind')).toBe(true)
+    // a column matched twice: one format match is enough
+    expect(checkVouches("CHECK (((x ~ '\\S'::text) AND (x ~ '^[a-z]+$'::text)))", 'x')).toBe(true)
+    // a format function whose source only checks non-blank is not one
+    const cat = { triggers: [], columns: [], constraints: [], functions: [{ name: 'nonblank', src: "select s ~ '\\S'" }, { name: 'anchored_any', src: "select s ~ '^.+$'" }] }
+    expect(formatFunctionProblems(cat, ['nonblank', 'anchored_any'])).toEqual([
+      'nonblank: its source holds no ~ match or = ANY list and calls no format function that does',
+      'anchored_any: its source holds no ~ match or = ANY list and calls no format function that does',
+    ])
   })
 
   test('R66 rule twin (item 2): only a list, a match or a format function on the column itself vouches for it', () => {
@@ -487,14 +624,40 @@ describe('R66 unit twins: append-only by behaviour, per-column checks, string ty
     expect(applyKnown('R66', problems, [{ rule: 'R66', file: 'sql/20_x.sql', owner: 'L00', problems: [r66Problem('facts.fact_key')] }])).toEqual([])
   })
 
-  test('R66 the R66 KNOWN entries are the deferred columns of A452 item 5, by owner (L00, B05, FX17)', () => {
-    const byOwner = {}
-    for (const k of KNOWN.filter((x) => x.rule === 'R66')) byOwner[k.owner] = [...(byOwner[k.owner] ?? []), ...k.problems.map((p) => p.split(' ')[0])].sort()
-    expect(byOwner).toEqual({
-      B05: ['adjusting_entries.qbo_snapshot_id', 'gifi_mappings.gifi_code'],
-      FX17: ['adjusting_entries.author', 'approvals.approved_by', 'events.actor', 'judgment_inputs.author', 'state_events.actor'],
-      L00: ['facts.fact_key', 'facts.method', 'facts.source_client_answer_id', 'facts.source_column', 'facts.source_cra_capture_id', 'facts.source_prior_return_id', 'facts.source_qbo_snapshot_id'],
-    })
+  test('R66 every KNOWN entry is an R66 column its owner may hold (pinned here, A452 item 5 and A458), so owners can delete entries but never add them', () => {
+    expect(knownPinProblems(KNOWN)).toEqual([])
+  })
+
+  test('R66 rule twin (A458 G6): an owner deleting its entries passes; a new owner, a column moved to another owner, or a KNOWN for another rule fails', () => {
+    expect(knownPinProblems(KNOWN.filter((k) => k.owner !== 'L00'))).toEqual([])
+    expect(knownPinProblems([])).toEqual([])
+    expect(knownPinProblems([{ rule: 'R66', file: 'sql/20_ledger.sql', owner: 'ZZ9', problems: [r66Problem('facts.fact_key')] }])).toEqual([
+      'R66 sql/20_ledger.sql: owner ZZ9 holds no pinned R66 columns',
+    ])
+    expect(knownPinProblems([{ rule: 'R66', file: 'sql/20_ledger.sql', owner: 'B05', problems: [r66Problem('facts.fact_key')] }])).toEqual([
+      'R66 sql/20_ledger.sql: facts.fact_key is not pinned to owner B05',
+    ])
+    expect(knownPinProblems([{ rule: 'R62-production', file: 'src/modules/auth/index.ts', owner: 'L00', problems: ['x'] }])).toEqual([
+      'R62-production src/modules/auth/index.ts: only R66 KNOWN entries are pinned; another rule needs a spec patch',
+    ])
+  })
+
+  test('R66 the reviewed lists in harness.ts (which owners may edit) only shrink: FREE_TEXT, INVENTORY.notAdapter and the append-only sentinel are pinned here', () => {
+    expect(listPinProblems(FREE_TEXT, INVENTORY.notAdapter, APPEND_ONLY_SENTINEL)).toEqual([])
+  })
+
+  test('R66 rule twin (A458 G6): moving facts.fact_key to FREE_TEXT, adding a not-an-adapter line or dropping a sentinel table fails; removing a line passes', () => {
+    expect(listPinProblems({ ...FREE_TEXT, 'facts.fact_key': 'the key of the fact; free by nature' }, INVENTORY.notAdapter, APPEND_ONLY_SENTINEL)).toEqual([
+      'FREE_TEXT facts.fact_key is not pinned: a new free-text column needs a spec patch',
+    ])
+    expect(listPinProblems(FREE_TEXT, { ...INVENTORY.notAdapter, createPlanted: 'planted' }, APPEND_ONLY_SENTINEL)).toEqual([
+      'INVENTORY.notAdapter createPlanted is not pinned: a new not-an-adapter line needs a spec patch',
+    ])
+    expect(listPinProblems(FREE_TEXT, INVENTORY.notAdapter, APPEND_ONLY_SENTINEL.filter((t) => t !== 'events'))).toEqual([
+      'APPEND_ONLY_SENTINEL lost events: the sentinel only grows',
+    ])
+    const { 'jobs.lease_holder': _gone, ...fewer } = FREE_TEXT
+    expect(listPinProblems(fewer, {}, [...APPEND_ONLY_SENTINEL, 'planted_more'])).toEqual([])
   })
 })
 
