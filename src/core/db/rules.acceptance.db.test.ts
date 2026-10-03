@@ -674,3 +674,146 @@ describe('SC11 R92 no swallowed database errors in src/core/db (ARC-15)', () => 
     expect(unallowed(found, [{ file: 'b.ts', text: '.catch(() => undefined)', reason: 'test' }])).toHaveLength(2)
   })
 })
+
+// SC11 round 2 (A500): R116 and R117 at run time, on Postgres 16 (PGlite has no pool). index.ts exports
+// `openPool(config)` (a pg.Pool whose clients are tracked from connect to end and whose pool and client errors are
+// recorded), `endPool(pool)` (pool.end(), then waits, 5 s at most, for every tracked client to end, including one
+// destroyed by release(true); a client that never ends is a failure naming it) and `takeLateErrors()` (the errors
+// recorded after their pool had ended, as strings with the code and message, cleared by the call; assertCleanClones
+// rejects naming them, so vitest-setup.ts reports them in afterEach).
+interface PoolApi {
+  openPool(config: Record<string, unknown>): PoolHandle
+  endPool(pool: PoolHandle): Promise<void>
+  takeLateErrors(): string[]
+}
+interface PoolHandle {
+  connect(): Promise<ClientHandle>
+}
+interface ClientHandle {
+  query(sql: string, params?: unknown[]): Promise<{ rows: Record<string, unknown>[] }>
+  release(destroy?: boolean): void
+  emit(event: string, ...args: unknown[]): boolean
+  connection?: { stream?: { destroyed?: boolean } }
+}
+function poolApi(): PoolApi {
+  const m = dbModule as unknown as Partial<PoolApi>
+  for (const k of ['openPool', 'endPool', 'takeLateErrors'] as const) {
+    if (typeof m[k] !== 'function') throw new Error(`src/core/db/index.ts does not export ${k} (SC11 round 2 build)`)
+  }
+  return m as PoolApi
+}
+function pgUrl(): string {
+  const t = dbModule.testDbTarget(process.env)
+  if (t.kind !== 'pg16') throw new Error('SC11: these tests need TEST_DB=pg16')
+  return t.url
+}
+const killed57P01 = (): Error =>
+  Object.assign(new Error('terminating connection due to administrator command'), { code: '57P01' })
+const dbNamed = (name: string): RegExp => new RegExp(`${name}[\\s\\S]*57P01|57P01[\\s\\S]*${name}`)
+
+describe('SC11 R117 endPool resolves only after every connection has ended (ARC-6)', () => {
+  test.runIf(ON)(
+    'ARC-6 after endPool every client socket the pool opened is closed, including one destroyed by release(true)',
+    async () => {
+      const pa = poolApi()
+      const pool = pa.openPool({ connectionString: pgUrl(), max: 3, application_name: `sc11_end_${PID}` })
+      const [a, b, c] = [await pool.connect(), await pool.connect(), await pool.connect()]
+      await Promise.all([a.query('select 1'), b.query('select 1'), c.query('select 1')])
+      a.release(true)
+      b.release()
+      c.release()
+      await pa.endPool(pool)
+      for (const [name, cl] of [
+        ['destroyed', a],
+        ['idle', b],
+        ['second idle', c],
+      ] as const) {
+        expect(cl.connection?.stream?.destroyed, `the ${name} client's socket is closed when endPool resolves`).toBe(true)
+      }
+    },
+    BOOT_MS,
+  )
+
+  test.runIf(ON)(
+    'ARC-6 endPool rejects, naming the pool, when a checked-out client is never released within the bound',
+    async () => {
+      const pa = poolApi()
+      const pool = pa.openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_bound_${PID}` })
+      const held = await pool.connect()
+      await held.query('select 1')
+      const t0 = Date.now()
+      await expect(pa.endPool(pool)).rejects.toThrow(/sc11_bound_|did not end|checked out/i)
+      expect(Date.now() - t0, 'the wait is bounded (5 s) and the 30 s hookTimeout does not fire').toBeLessThan(15_000)
+      held.release(true)
+    },
+    BOOT_MS,
+  )
+})
+
+describe('SC11 R116 a connection error is recorded, never thrown (ARC-6, ARC-15)', () => {
+  test.runIf(ON)(
+    'ARC-6 an error that arrives after endPool is recorded as a late error, not thrown out of the test, and is taken once',
+    async () => {
+      const pa = poolApi()
+      pa.takeLateErrors()
+      const pool = pa.openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_late_${PID}` })
+      const c = await pool.connect()
+      await c.query('select 1')
+      c.release()
+      await pa.endPool(pool)
+      expect(() => c.emit('error', killed57P01())).not.toThrow()
+      expect(pa.takeLateErrors().join('\n')).toMatch(/57P01/)
+      expect(pa.takeLateErrors(), 'taking clears them').toEqual([])
+    },
+    BOOT_MS,
+  )
+
+  type Pooled = Queryable & { pool: PoolLike }
+  const killIdle = async (db: Pooled): Promise<void> => {
+    const c = (await db.pool.connect()) as unknown as ClientHandle
+    const pid = (await c.query('select pg_backend_pid() as pid')).rows[0]?.['pid']
+    c.release()
+    await db.query('select pg_terminate_backend($1)', [pid])
+    await sleep(500)
+  }
+
+  test.runIf(ON)(
+    'ARC-6 a pooled backend killed while idle is recorded: assertCleanClones and close reject naming the database and 57P01',
+    async () => {
+      const db = (await cloneTestDb()) as unknown as Pooled
+      const name = (await db.query('select current_database() as n')).rows[0]?.['n'] as string
+      await killIdle(db)
+      await expect(api('assertCleanClones')()).rejects.toThrow(dbNamed(name))
+      await expect(db.close()).rejects.toThrow(/57P01/)
+    },
+    BOOT_MS,
+  )
+
+  test.runIf(ON)(
+    'ARC-6 a backend killed while checked out inside transaction() is recorded: the transaction rejects, then assertCleanClones and close reject naming 57P01',
+    async () => {
+      const db = (await cloneTestDb()) as unknown as Pooled
+      const name = (await db.query('select current_database() as n')).rows[0]?.['n'] as string
+      await expect(
+        db.transaction(async (tx) => {
+          const pid = (await tx.query('select pg_backend_pid() as pid')).rows[0]?.['pid']
+          const other = (await db.pool.connect()) as unknown as ClientHandle
+          await other.query('select pg_terminate_backend($1)', [pid])
+          other.release()
+          await sleep(500)
+          await tx.query('select 1')
+        }),
+      ).rejects.toThrow()
+      await expect(api('assertCleanClones')()).rejects.toThrow(dbNamed(name))
+      await expect(db.close()).rejects.toThrow(/57P01/)
+    },
+    BOOT_MS,
+  )
+
+  test('ARC-6 assertCleanClones reports takeLateErrors, so a late error is named by the next afterEach or afterAll', () => {
+    const src = readOwnSource(`${DB_DIR}/index.ts`)
+    const body = /export\s+async\s+function\s+assertCleanClones\b[\s\S]*?\n\}/.exec(src)?.[0] ?? ''
+    expect(body, 'sentinel: assertCleanClones is defined in index.ts').not.toBe('')
+    expect(body).toContain('takeLateErrors')
+  })
+})
