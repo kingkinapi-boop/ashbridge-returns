@@ -1,5 +1,5 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "25bde2a",
   "cards": [
@@ -7,5 +7,6 @@
     "A06"
   ],
   "requested_at": "2026-10-03T03:42:49Z",
-  "note": "A07D core (Opus read done, findings carded to FX4 and SC4, A393). A06 security: run the A06 db tests (src/modules/auth/*.db.test.ts) on the preinstalled PostgreSQL 16 as well as PGlite and report both (A396). Run gitleaks over HEAD if available."
+  "note": "A07D core (Opus read done, findings carded to FX4 and SC4, A393). A06 security: run the A06 db tests (src/modules/auth/*.db.test.ts) on the preinstalled PostgreSQL 16 as well as PGlite and report both (A396). Run gitleaks over HEAD if available.",
+  "by": "cloud-d8b04b"
 }
