@@ -4,7 +4,8 @@
  "round": 7,
  "spec": "d6f3a1b1",
  "worker": "cloud-555a8d",
- "state": "working",
- "at": "2026-10-03T05:10:01.926Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T05:25:59.747Z",
+ "mode": "turbo",
+ "note": "47 of 47 unit, 5 of 5 db on pg16; whole db project pg16 557 pass; npm test green"
 }
