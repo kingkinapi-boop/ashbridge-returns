@@ -475,3 +475,4 @@
 {"ts":"2026-10-03T07:00:49.863Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 1 (Opus)","allowed":true}
 {"ts":"2026-10-03T07:00:52.342Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 3 (Opus)","allowed":true}
 {"ts":"2026-10-03T07:01:55.963Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"Draft cards V15, B06, T09-T11","allowed":true}
+{"ts":"2026-10-03T07:12:35.317Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Phase 3 card review","allowed":true}
