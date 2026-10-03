@@ -2,11 +2,11 @@
  "card": "DB16",
  "role": "spec",
  "worker": "local-2",
- "state": "reported",
- "at": "2026-10-03T05:07:50.851Z",
+ "state": "reopened",
+ "at": "2026-10-03T05:14:54.791Z",
  "mode": "turbo",
  "beat": "2026-10-03T05:06:42.053Z",
- "note": "round 2: 60 tests (47 unit, 13 db), 9 review gaps added; round 1 build fails items 7 and 9 as expected",
+ "note": "A419: reports/DB16-spec-review-2.md; see bold directive",
  "commit": "e4eddf71",
  "validated": "2288da55"
 }
