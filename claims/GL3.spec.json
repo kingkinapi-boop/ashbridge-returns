@@ -1,9 +1,11 @@
 {
  "card": "GL3",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit, no spec change",
  "worker": "cloud-da95a7",
- "state": "working",
- "at": "2026-10-03T15:29:37.925Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T15:39:44.585Z",
+ "mode": "turbo",
+ "commit": "e93ad935",
+ "validated": "8e4698a47e6564c0af4e2b7290eb823870729d7d"
 }
