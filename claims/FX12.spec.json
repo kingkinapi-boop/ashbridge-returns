@@ -1,11 +1,9 @@
 {
  "card": "FX12",
  "role": "spec",
- "note": "toolchain refit: main merged, typecheck/lint green, only the 6 ARC-15 worker-setting tests fail; validated on main 2f472bdf",
- "worker": "cloud-64f020",
- "state": "reported",
- "at": "2026-10-03T11:26:58.766Z",
- "mode": "turbo",
- "commit": "e59c1544",
- "validated": "2f472bdf40d5d20c9d6311b6058d7a8f1cb04978"
+ "note": "toolchain refit",
+ "worker": "cloud-247bf5",
+ "state": "working",
+ "at": "2026-10-03T12:47:07.093Z",
+ "mode": "turbo"
 }
