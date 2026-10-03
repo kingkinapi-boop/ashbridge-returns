@@ -2,11 +2,11 @@
  "card": "SC",
  "role": "spec",
  "worker": "cloud-f25f3a",
- "state": "reported",
- "at": "2026-10-03T04:43:19.545Z",
+ "state": "reopened",
+ "at": "2026-10-03T05:01:34.953Z",
  "mode": "turbo",
  "beat": "2026-10-03T04:26:26.120Z",
- "note": "105 rule tests (83 unit, 22 db); KNOWN exact in known.json; Lead: add src/contracts/auth.ts and planted-interpolated-log.ts.txt to FX7 Paths; test:flake not run",
+ "note": "A415: reports/SC-spec-review-3.md; see bold directive",
  "commit": "1267a0fb",
  "validated": "b277a240"
 }
