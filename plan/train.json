@@ -1,13 +1,14 @@
 {
   "status": "checking",
   "branch": "claude/train",
-  "head": "df6f1249",
+  "head": "092598f3",
   "cards": [
-    "FX15",
-    "CQ7",
-    "CQ6"
+    "A04",
+    "CQ8",
+    "CQ9",
+    "CQ12"
   ],
-  "requested_at": "2026-10-03T12:35:00Z",
-  "note": "Train 25ea2736 red on A04 only (a clock mix; findings review running); A04 is off. Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462): npm test with TEST_DB=pg16 and on PGlite; print select version(). FX15 is not core (A465). CQ6 and CQ7 change tools/mutate-changed.mjs, test-homes.json and claim.mjs: every tools test, and mutate:changed for one landed core card (F00T) to show the gate still scores. A refused command makes the train blocked, not red.",
-  "by": "cloud-9e54a6"
+  "requested_at": "2026-10-03T16:23:00Z",
+  "note": "Train 2b on main ae38bd2e: train 2 was red on SC3's tests only (reports/train-20261003-1531.md), so SC3 is off and goes to a findings review; CQ12 boards. Run the full check (checker.md, check train full), npm run test:flake and npm run test:flake:shifted (A405, CQ10). Postgres 16 per .claude/cloud-worker-run.md (A462): print select version(); npm test with TEST_DB=pg16 and once on PGlite; A04's db tests run on both. CQ12 sets one sequence.groupOrder per project: also run one unit file and one db file in one vitest run and report that it passes. CQ9 changes stryker.config.mjs and tools/mutate-changed.mjs: run npm run mutate:canary first, then mutate:changed at 100 for every @mutate file the train changes (A04: env.ts, safe-read.ts, engines.ts, runner.ts, schemas.ts). A04's Linux-only cases (FIFO, symlink, file names with a newline) must run, not skip: name them in the report. Landing rehearsal (merge skill, A493): with A04, CQ8, CQ9 and CQ12 set done in plan/slices.json (not committed), run tools/test with --project unit and src/contracts/schema-rules.db.test.ts with --project db, and report any failure. Known main flake until SC11 lands (A500): a pg16 run that fails only on an unhandled 57P01 'terminating connection due to administrator command' from a pool is re-run once; report both runs; any other failure is red. A refused command makes the train blocked, not red.",
+  "by": "cloud-fcc3f4"
 }

@@ -1,5 +1,7 @@
 # Family: one check ({check})
 
+Phase (the card's own, in plan/slices.json). Where: local or cloud; check: cloud (the mutation run on the check's rule).
+
 Cards Q10 to Q47 (Q33 parked). Deps, paths and clauses: the card's entry in `plan/slices.json`. Read the clause {check} in blueprint 05, `src/contracts/checks.ts` (F05), `src/modules/checks/engine/` (Q00) and `reference/sources.md`.
 
 ## Goal
@@ -17,6 +19,7 @@ Cards Q10 to Q47 (Q33 parked). Deps, paths and clauses: the card's entry in `pla
 3. With the needed evidence missing, the result is "not checked: no evidence".
 4. The check record carries a working source link.
 5. A mutation test run on the check's rule leaves no surviving mutant (cloud).
+6. Each sample flag that `data/question-coverage.json` (G18) gives this card as owner is raised on its sample client, by flag id; before G18 is on main, take the rows from G18's directive (A499).
 
 ## Not in this card
 Screens. Other checks.

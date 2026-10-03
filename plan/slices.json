@@ -1176,7 +1176,8 @@
       "family": "kind",
       "params": {
         "kind": "K03"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -1273,7 +1274,8 @@
       "family": "kind",
       "params": {
         "kind": "K07"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -1325,7 +1327,7 @@
       "params": {
         "kind": "K09"
       },
-      "note": "Sample client 03's answer key says 'payment by day 179 (26 Dec 2025)'; under CK-47 (amber A71) payment on day 180 (27 Dec 2025) is in time and day 181 or later is late. Build K9's expected results on day 180; the 03 result (paid day 181, flagged) stands. Do not edit reference/sample-clients; the Lead fixes its wording."
+      "note": "Sample client 03's answer key says 'payment by day 179 (26 Dec 2025)'; under CK-47 (amber A71) payment on day 180 (27 Dec 2025) is in time and day 181 or later is late. Build K9's expected results on day 180; the 03 result (paid day 181, flagged) stands. Do not edit reference/sample-clients; the Lead fixes its wording. A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -1350,7 +1352,8 @@
       "family": "kind",
       "params": {
         "kind": "K10"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -2524,7 +2527,9 @@
         "src/modules/documents/index.ts",
         "src/contracts/documents.ts",
         "db/schema/10_documents.sql",
-        "src/pipeline/steps/intake.ts"
+        "src/pipeline/steps/intake.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts"
       ],
       "clauses": [
         "EV-2",
@@ -3269,7 +3274,8 @@
         "src/modules/gaps/core/**",
         "src/modules/gaps/index.ts",
         "data/gaps/required.json",
-        "src/pipeline/steps/gaps.ts"
+        "src/pipeline/steps/gaps.ts",
+        "db/schema/05_bridge.sql"
       ],
       "clauses": [
         "AI-12",
@@ -3589,6 +3595,36 @@
       },
       "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
       "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15",
+        "G16",
+        "G17"
+      ],
+      "paths": [
+        "data/question-coverage.json",
+        "data/question-bank/*.json",
+        "src/modules/gaps/bank/coverage.acceptance.test.ts"
+      ],
+      "clauses": [
+        "END-7",
+        "RULE-19",
+        "AI-12"
+      ],
+      "id": "G18",
+      "title": "Question banks: every sample flag mapped",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "Review 3 Oct finding 7 (A478)."
     },
     {
       "status": "carded",
@@ -6227,7 +6263,8 @@
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
         "src/pipeline/deps.ts",
-        "tools/test/__fixtures__/security-rules/harness.ts"
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -6516,7 +6553,8 @@
       "params": {
         "check": "CK-43",
         "kind": "ties"
-      }
+      },
+      "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
     },
     {
       "status": "carded",
@@ -6541,7 +6579,8 @@
       "params": {
         "check": "CK-20",
         "kind": "reconciliations"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -6767,7 +6806,8 @@
       "params": {
         "check": "CK-30",
         "kind": "flags"
-      }
+      },
+      "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
     },
     {
       "status": "carded",
@@ -6813,7 +6853,8 @@
       "params": {
         "check": "CK-32",
         "kind": "flags"
-      }
+      },
+      "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
     },
     {
       "status": "parked",
@@ -6906,7 +6947,8 @@
       "params": {
         "check": "CK-36",
         "kind": "flags"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -7050,7 +7092,8 @@
       "params": {
         "check": "CK-47",
         "kind": "flags"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -7364,7 +7407,8 @@
       "family": "aicheck",
       "params": {
         "topic": "shareholder-loan-signs"
-      }
+      },
+      "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
     },
     {
       "status": "carded",
@@ -9075,7 +9119,7 @@
       "params": {
         "screen": "ops"
       },
-      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A444: the brief gains bulk assign on New returns, Close follow-up and Start amended return on the notice page (CPA and owner), and the staff-recorded client dispute form (V10)."
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A444: the brief gains bulk assign on New returns, Close follow-up and Start amended return on the notice page (CPA and owner), and the staff-recorded client dispute form (V10). A499: the brief also gains F07's ops-confirms items (year end, which years to file, a year bought twice; END-1), each with a confirm action (V10)."
     },
     {
       "status": "parked",
@@ -9320,7 +9364,8 @@
         "FLOW-7",
         "SEC-2",
         "RV-50",
-        "LL-6"
+        "LL-6",
+        "END-1"
       ],
       "id": "V10",
       "title": "Ops screens",
@@ -9747,7 +9792,9 @@
         "src/modules/storage/**",
         "src/modules/qbo/**",
         "data/live/**",
-        "tools/golive-check.mjs"
+        "tools/golive-check.mjs",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-6",
@@ -10012,7 +10059,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ4"
@@ -10030,10 +10077,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/DB16-findings.md, 3 Oct (A430)."
+      "note": "From reports/DB16-findings.md, 3 Oct (A430).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ5"
@@ -10050,7 +10098,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/CQ5-spec.md, 3 Oct (A431)."
+      "note": "From reports/CQ5-spec.md, 3 Oct (A431).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10095,13 +10144,14 @@
       "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
         "package.json",
         "tools/flake-shifted.mjs",
-        "tools/test/flake-shifted.test.mjs"
+        "tools/test/flake-shifted.test.mjs",
+        "tools/test/__fixtures__/flake-shifted/**"
       ],
       "clauses": [
         "ARC-15"
@@ -10111,7 +10161,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/A04-findings-6.md, 3 Oct (A469)."
+      "note": "From reports/A04-findings-6.md, 3 Oct (A469).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10126,7 +10177,9 @@
         "tools/test/metrics-counts.test.mjs",
         "tools/next.mjs",
         "tools/lib.mjs",
-        "tools/test/next-paths.test.mjs"
+        "tools/test/next-paths.test.mjs",
+        "tools/scope.mjs",
+        "tools/test/scope-spec-files.test.mjs"
       ],
       "clauses": [
         "ARC-15"
@@ -10134,9 +10187,37 @@
       "id": "CQ11",
       "title": "Queue: no re-offered checks after a wait, honest card counts",
       "phase": 0,
-      "size": "S",
+      "size": "M",
       "core": false,
       "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "vitest.config.ts",
+        "src/core/test-assertions.ts",
+        "src/core/test-assertions.acceptance.test.ts",
+        "src/modules/gaps/bank/expenses.acceptance.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts",
+        "src/contracts/jobs.acceptance.test.ts",
+        "src/modules/bridge/**/*.test.ts",
+        "vitest.mutate.config.ts",
+        "src/contracts/facts.acceptance.test.ts",
+        "src/modules/gaps/bank/bank.acceptance.test.ts",
+        "src/modules/auth/rules.acceptance.test.ts",
+        "tools/test/vitest-projects.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ12",
+      "title": "Assertion floor: no test passes without asserting",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Review 3 Oct finding 7 (A478)."
     },
     {
       "status": "carded",
@@ -10499,7 +10580,7 @@
       "note": "From reports/A04-findings.md, 3 Oct (A426)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "FX10"
@@ -10516,7 +10597,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX10-spec.md, 3 Oct (A429)."
+      "note": "From reports/FX10-spec.md, 3 Oct (A429).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10567,7 +10649,7 @@
       "note": "From reports/FX12-spec.md, 3 Oct (A443)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10586,7 +10668,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
+      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10644,7 +10727,10 @@
         "src/modules/ai/runner/engines.ts",
         "src/modules/ai/runner/runner.ts",
         "src/core/safe-read.ts",
-        "src/modules/ai/runner/exchange-errors.acceptance.test.ts"
+        "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/index.ts",
+        "data/ai/exchange-limits.json"
       ],
       "clauses": [
         "ARC-22",
@@ -10714,11 +10800,11 @@
         "W16"
       ],
       "paths": [
-        "tools/test/card-rules.test.mjs",
-        "tools/test/__fixtures__/card-rules/**"
+        "tools/test/spec-rules.test.mjs",
+        "tools/test/__fixtures__/spec-rules/**"
       ],
       "clauses": [
-        "ARC-15",
+        "ARC-12",
         "ARC-16"
       ],
       "id": "SC6",
@@ -10741,7 +10827,9 @@
       ],
       "paths": [
         "tools/test/lib/known.mjs",
-        "tools/test/lib/known.test.mjs"
+        "tools/test/lib/known.test.mjs",
+        "tools/test/lib/cards.mjs",
+        "tools/test/lib/cards.test.mjs"
       ],
       "clauses": [
         "ARC-15",
@@ -10793,14 +10881,20 @@
       "spec": null,
       "deps": [
         "SC",
-        "SC7"
+        "SC7",
+        "SC3"
       ],
       "paths": [
         "tools/test/rule-walker.test.mjs",
         "tools/test/__fixtures__/rule-walker/**",
         "tools/test/lib/walk.mjs",
         "tools/test/rules.test.mjs",
-        "src/core/db/db.test.ts"
+        "src/core/db/db.test.ts",
+        "src/contracts/schema-rules.db.test.ts",
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "data/schema/contract-tables.json",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-15",
@@ -10874,7 +10968,10 @@
       ],
       "paths": [
         "tools/test/fs-rules.test.mjs",
-        "tools/test/__fixtures__/fs-rules/**"
+        "tools/test/__fixtures__/fs-rules/**",
+        "src/modules/auth/testusers/engine.ts",
+        "src/core/db/index.ts",
+        "src/modules/auth/auth.acceptance.db.test.ts"
       ],
       "clauses": [
         "SEC-10",

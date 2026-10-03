@@ -71,8 +71,8 @@ export interface ReturnJobStatus {
 export interface JobQueue {
   enqueue(kind: string, key: string, input: unknown, returnId?: string): Promise<Job>
   claim(workerId: string, kinds?: readonly string[], leaseMsFor?: (kind: string) => number | undefined): Promise<Job | null>
-  complete(id: string, result: unknown, versions: VersionStamp): Promise<Job>
-  fail(id: string, error: string, options?: { retry?: boolean }): Promise<Job>
+  complete(id: string, workerId: string, result: unknown, versions: VersionStamp): Promise<Job>
+  fail(id: string, workerId: string, error: string, options?: { retry?: boolean }): Promise<Job>
   statusForReturn(returnId: string): Promise<ReturnJobStatus>
 }
 
