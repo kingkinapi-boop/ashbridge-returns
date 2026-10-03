@@ -2,10 +2,10 @@
  "card": "SC11",
  "role": "spec",
  "worker": "cloud-b91986",
- "state": "working",
- "at": "2026-10-03T11:53:31.890Z",
+ "state": "reported",
+ "at": "2026-10-03T12:08:15.179Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "46975225bf2eb48c2b540b77f181fe9c76ead7c2"
- }
+ "note": "39 tests, refit on main 409d3309",
+ "commit": "428cc413",
+ "validated": "409d3309"
 }
