@@ -3101,7 +3101,8 @@
         "src/contracts/qbo.ts",
         "db/schema/56_qbo.sql",
         "testworld/qbo/export.ts",
-        "src/core/env.ts"
+        "src/core/env.ts",
+        "tools/test/schema-contract-rules.test.mjs"
       ],
       "clauses": [
         "TB-1",
