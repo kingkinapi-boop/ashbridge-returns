@@ -34,3 +34,7 @@ SC's KNOWN entries owned by FX4 (`tools/test/__fixtures__/schema-contract/known.
 
 ## Refit (cloud-aab122, 3 Oct)
 Validated on main 164d8d66 (merged, no conflicts). typecheck and lint clean. sheets unit: 34 of 438 fail, all FX4 tests failing for the right reason (READER_RULES, snapSums, centText missing); tools/test adds only the known R18 failure (other cards lack // @mutate). No assertion changed.
+
+## Refit 2 (cloud-6ca6b4, 3 Oct)
+Old sha 164d8d66, new: validated on main b0f6ddd9 (merged; toolchain change: pg and @types/pg in package.json, db fileParallelism in vitest.config.ts). typecheck and lint clean. unit: 38 of 2818 fail, all FX4's own: 34 in the four fx4 acceptance files and R67, R68, R70, R74 in tools/test/reading-rules.test.mjs (FX4 entries removed in round 1). db: 608 pass. No assertion changed.
+SC's 11 FX4 entries in tools/test/__fixtures__/schema-contract/known.json (R36, R41, R46 x2, R54 x5, R56 x2) are kept: none of those defects is caught by FX4's own tests, and deleting them would turn SC's rules red until the build. Left to the Lead (A434 second patch not applied).
