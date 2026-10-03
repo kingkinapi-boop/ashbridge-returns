@@ -17,38 +17,13 @@ const FIX = path.join(ROOT, 'tools', 'test', '__fixtures__', 'security-rules')
 const fix = (name) => fs.readFileSync(path.join(FIX, name), 'utf8')
 const load = (p) => import(pathToFileURL(p).href)
 
-const KNOWN = [
-  { rule: 'R62-declared', file: 'src/modules/ocr/index.ts', problems: ['OCR_ENGINE is read but not declared in src/core/env.ts'], owner: 'FX2' },
-  {
-    rule: 'R62-declared',
-    file: 'src/modules/storage/drive/index.ts',
-    problems: ['STORAGE_DRIVE_ENGINE is read but not declared in src/core/env.ts'],
-    owner: 'FX2',
-  },
-  {
-    rule: 'R62-declared',
-    file: 'src/modules/storage/files/index.ts',
-    problems: ['STORAGE_FILES_ENGINE is read but not declared in src/core/env.ts'],
-    owner: 'FX2',
-  },
-  { rule: 'R62-production', file: 'src/modules/ocr/index.ts', problems: ['OCR_ENGINE: with NODE_ENV=production and the setting unset the factory did not refuse'], owner: 'FX2' },
-  {
-    rule: 'R62-production',
-    file: 'src/modules/storage/drive/index.ts',
-    problems: ['STORAGE_DRIVE_ENGINE: with NODE_ENV=production and the setting unset the factory did not refuse'],
-    owner: 'FX2',
-  },
-  {
-    rule: 'R62-production',
-    file: 'src/modules/storage/files/index.ts',
-    problems: ['STORAGE_FILES_ENGINE: with NODE_ENV=production and the setting unset the factory did not refuse'],
-    owner: 'FX2',
-  },
-]
+// FX2 landed (A443): the OCR and storage settings are declared and refuse production silence, so the list is empty.
+// A new entry names one rule, one file, exact problem strings and an open owner card.
+const KNOWN = []
 
 /** problems: [{ file, text }]. Returns the problems no KNOWN entry covers, plus a line per stale listed string. */
-export function applyKnown(rule, problems) {
-  const entries = KNOWN.filter((k) => k.rule === rule)
+export function applyKnown(rule, problems, known = KNOWN) {
+  const entries = known.filter((k) => k.rule === rule)
   const listed = new Set(entries.flatMap((k) => k.problems.map((p) => `${k.file}\n${p}`)))
   const seen = new Set(problems.map((p) => `${p.file}\n${p.text}`))
   const unlisted = problems.filter((p) => !listed.has(`${p.file}\n${p.text}`)).map((p) => `${p.file}: ${p.text}`)
@@ -131,7 +106,7 @@ describe('R62 every *_ENGINE setting is declared and no stand-in is chosen by si
     ])
   })
 
-  test('R62 every *_ENGINE setting a product file reads is declared in src/core/env.ts (KNOWN: FX2 declares the OCR and storage settings)', () => {
+  test('R62 every *_ENGINE setting a product file reads is declared in src/core/env.ts ', () => {
     const files = productFiles(path.join(ROOT, 'src')).map((p) => ({ name: rel(p), text: fs.readFileSync(p, 'utf8') }))
     expect(files.length).toBeGreaterThan(0)
     expect(files.map((f) => f.name)).toContain('src/modules/auth/index.ts')
@@ -167,10 +142,10 @@ describe('R62 every *_ENGINE setting is declared and no stand-in is chosen by si
     const registered = new Set([...DB_FACTORIES, ...FACTORIES.map((f) => f.setting)])
     expect([...read].filter((s) => !registered.has(s)).sort()).toEqual([])
     expect([...registered].filter((s) => !read.has(s)).sort()).toEqual([])
-    for (const f of FACTORIES) expect(files.find((x) => x.name === f.file)?.text).toContain(`'${f.setting}'`)
+    for (const f of FACTORIES) expect(files.find((x) => x.name === f.file)?.text).toMatch(new RegExp(`[.'"]${f.setting}\\b`))
   })
 
-  test('R62 with NODE_ENV=production and the setting unset every adapter factory refuses naming it (KNOWN: FX2)', async () => {
+  test('R62 with NODE_ENV=production and the setting unset every adapter factory refuses naming it ', async () => {
     const problems = []
     for (const f of FACTORIES) problems.push(...(await productionProblems(f.setting, f.file, f.make)))
     expect(applyKnown('R62-production', problems)).toEqual([])
@@ -193,7 +168,6 @@ describe('R62 every *_ENGINE setting is declared and no stand-in is chosen by si
   test('R62 KNOWN entries are one rule, one file, exact strings and an owner card that is not done', () => {
     const slices = JSON.parse(fs.readFileSync(path.join(ROOT, 'plan', 'slices.json'), 'utf8'))
     const cards = new Map(slices.cards.map((c) => [c.id, c.status]))
-    expect(KNOWN.length).toBeGreaterThan(0)
     for (const k of KNOWN) {
       expect(k.rule, JSON.stringify(k)).toMatch(/^R6[2-6](-\w+)?$/)
       expect(fs.existsSync(path.join(ROOT, k.file)), k.file).toBe(true)
@@ -205,11 +179,16 @@ describe('R62 every *_ENGINE setting is declared and no stand-in is chosen by si
   })
 
   test('R62 KNOWN: an unlisted problem fails and a listed string no longer produced fails as stale', () => {
-    expect(applyKnown('R62-declared', [{ file: 'src/x.ts', text: 'FOO_ENGINE is read but not declared in src/core/env.ts' }])).toHaveLength(4)
-    const everything = KNOWN.filter((k) => k.rule === 'R62-declared').flatMap((k) => k.problems.map((text) => ({ file: k.file, text })))
-    expect(applyKnown('R62-declared', everything)).toEqual([])
-    expect(applyKnown('R62-declared', everything.slice(1))).toEqual([
-      'stale KNOWN entry R62-declared src/modules/ocr/index.ts: OCR_ENGINE is read but not declared in src/core/env.ts: it no longer fails, remove it',
+    const planted = [
+      { rule: 'R62-declared', file: 'src/a.ts', problems: ['A_ENGINE is read but not declared in src/core/env.ts'], owner: 'FX2' },
+      { rule: 'R62-declared', file: 'src/b.ts', problems: ['B_ENGINE is read but not declared in src/core/env.ts'], owner: 'FX2' },
+    ]
+    expect(applyKnown('R62-declared', [{ file: 'src/x.ts', text: 'FOO_ENGINE is read but not declared in src/core/env.ts' }], planted)).toHaveLength(3)
+    const everything = planted.flatMap((k) => k.problems.map((text) => ({ file: k.file, text })))
+    expect(applyKnown('R62-declared', everything, planted)).toEqual([])
+    expect(applyKnown('R62-declared', everything.slice(1), planted)).toEqual([
+      'stale KNOWN entry R62-declared src/a.ts: A_ENGINE is read but not declared in src/core/env.ts: it no longer fails, remove it',
     ])
+    expect(applyKnown('R62-declared', [])).toEqual([])
   })
 })

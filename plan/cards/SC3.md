@@ -1,5 +1,7 @@
 # SC3 Security rules R62 to R66
 
+**Lead directive, 3 Oct 08:30Z (A443): spec patch.** FX2 landed (758d0b06): drop the six FX2 KNOWN entries in tools/test/security-rules.test.mjs (OCR_ENGINE, STORAGE_DRIVE_ENGINE, STORAGE_FILES_ENGINE under declared and production) and fit the factory list to the landed ocr/index.ts shape. No rule weakened. Then build round 2 (the three JSDoc tags on engine.ts are already in).
+
 **BUILD DIRECTIVE (spec job, 3 Oct, cloud-0303ff):** the build adds three JSDoc tags to `src/modules/auth/testusers/engine.ts` (tag-only edit, no behaviour change; amber): `@standin createTestUsersAuth` on that factory, `@once finishSignIn` on `finishSignIn`, `@limit 5 startSignIn` on `startSignIn` (a name line each, as `src/contracts/security-rules.db.test.ts` documents). Later cards add their own tag and registry line. Three tests fail until then: the tag-equals-registry tests of R63, R64, R65. R66 treats a single-column primary key as keyed and lists 15 free-text columns with reasons in the test file (amber: `actor`, `approved_by`, `record_table` are candidates for a key or list in V00 and F-cards). R62 KNOWN entries (OCR, storage drive and files) owner FX2; remove them when FX2 lands.
 
 Phase 0. Size M. Deps: A06, FX2. Where: cloud.
