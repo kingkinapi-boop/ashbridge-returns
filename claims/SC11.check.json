@@ -1,11 +1,9 @@
 {
  "card": "SC11",
  "role": "check",
- "for": "2026-10-03T14:42:22.302Z",
- "worker": "cloud-b1e6bc",
- "state": "failed",
- "at": "2026-10-03T15:17:49.559Z",
- "mode": "turbo",
- "beat": "2026-10-03T15:09:47.440Z",
- "note": "FAIL: test:flake 4 of 5 (57P01 unhandled pool error in lease db test), see reports/SC11-check.md"
+ "for": "2026-10-03T17:40:52.430Z",
+ "worker": "cloud-6345e6",
+ "state": "working",
+ "at": "2026-10-03T17:41:41.721Z",
+ "mode": "turbo"
 }
