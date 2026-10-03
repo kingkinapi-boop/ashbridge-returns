@@ -5,6 +5,8 @@
 import type { ClientId } from './schema'
 import type { KindId } from './kinds'
 
+export type MarkedRow = { id: string; date: string; amountCents: number; dupOf?: string }
+
 export type FaultEntry = {
   id: string
   client?: ClientId
@@ -20,10 +22,12 @@ export type FaultEntry = {
   roll?: { account: string; month: string; cause?: 'missing' | 'duplicate' }
   /**
    * The fault marker this entry's flag plants: every transaction carrying it, in this account and month, is covered.
-   * `rows` and `totalCents` are hand-written (W00c): how many rows carry it and their signed sum in cents, so a marked
-   * row cannot change by a cent, and no marked row can be added, without this entry changing with it.
+   * `rows` is hand-written (W00c, A400): each marked row by id, date and amount (and its original, for a duplicate), so
+   * a marked row cannot change by a cent, move or swap, and no marked row can be added, without this entry changing with it.
    */
-  marker?: { field: 'missingFromExport' | 'dupOf' | 'priorYear'; account: string; month: string; rows?: number; totalCents?: number }
+  marker?: { field: 'missingFromExport' | 'dupOf' | 'priorYear'; account: string; month: string; rows?: readonly [MarkedRow, ...MarkedRow[]] }
+  /** This client has no accounts by design (12-F02): the only way an empty account list is accepted. */
+  empty?: 'accounts'
 }
 
 const CATALOGUE: readonly FaultEntry[] = [
@@ -91,9 +95,98 @@ const CATALOGUE: readonly FaultEntry[] = [
   { id: '09-F05', client: 'C09', flagId: '09-F05', planted: 'HST registration part-way through the year', expected: 'flag 09-F05 (HST registration part-way through the year), must fire: flag for a person; do not decide alone' },
   { id: '09-F06', client: 'C09', flagId: '09-F06', planted: 'research costs: eligibility needs a person', expected: 'flag 09-F06 (research costs: eligibility needs a person), must fire: flag for a person; do not decide alone' },
   { id: '09-F07', client: 'C09', flagId: '09-F07', planted: 'incorporation legal fees: expense or class 14.1', expected: 'flag 09-F07 (incorporation legal fees: expense or class 14.1), info: flag for a person; do not decide alone' },
-  { id: '10-F01', client: 'C10', flagId: '10-F01', planted: 'missing month: the chequing export has no May rows', expected: 'flag 10-F01 (missing month: the chequing export has no May rows), must fire: flag for a person; do not decide alone', marker: { field: 'missingFromExport', account: 'CHQ', month: '2025-05', rows: 56, totalCents: 1686665 } },
-  { id: '10-F02', client: 'C10', flagId: '10-F02', planted: 'duplicate lines in March', expected: 'flag 10-F02 (duplicate lines in March), must fire: flag for a person; do not decide alone', marker: { field: 'dupOf', account: 'CHQ', month: '2025-03', rows: 4, totalCents: 316494 } },
-  { id: '10-F03', client: 'C10', flagId: '10-F03', planted: 'last year\'s statement mixed in', expected: 'flag 10-F03 (last year\'s statement mixed in), must fire: flag for a person; do not decide alone', marker: { field: 'priorYear', account: 'CHQ', month: '2024-12', rows: 8, totalCents: 569501 } },
+  { id: '10-F01', client: 'C10', flagId: '10-F01', planted: 'missing month: the chequing export has no May rows', expected: 'flag 10-F01 (missing month: the chequing export has no May rows), must fire: flag for a person; do not decide alone',
+    marker: {
+      field: 'missingFromExport',
+      account: 'CHQ',
+      month: '2025-05',
+      rows: [
+        { id: '10-CHQ-2025-05-0001', date: '2025-05-02', amountCents: 49007 },
+        { id: '10-CHQ-2025-05-0002', date: '2025-05-02', amountCents: -58427 },
+        { id: '10-CHQ-2025-05-0003', date: '2025-05-02', amountCents: -43281 },
+        { id: '10-CHQ-2025-05-0004', date: '2025-05-02', amountCents: -38446 },
+        { id: '10-CHQ-2025-05-0005', date: '2025-05-05', amountCents: 440700 },
+        { id: '10-CHQ-2025-05-0006', date: '2025-05-05', amountCents: 310750 },
+        { id: '10-CHQ-2025-05-0007', date: '2025-05-05', amountCents: -11197 },
+        { id: '10-CHQ-2025-05-0008', date: '2025-05-05', amountCents: -12935 },
+        { id: '10-CHQ-2025-05-0009', date: '2025-05-05', amountCents: -26500 },
+        { id: '10-CHQ-2025-05-0010', date: '2025-05-06', amountCents: 237300 },
+        { id: '10-CHQ-2025-05-0011', date: '2025-05-06', amountCents: -56319 },
+        { id: '10-CHQ-2025-05-0012', date: '2025-05-06', amountCents: -10223 },
+        { id: '10-CHQ-2025-05-0013', date: '2025-05-06', amountCents: -41500 },
+        { id: '10-CHQ-2025-05-0014', date: '2025-05-07', amountCents: 209050 },
+        { id: '10-CHQ-2025-05-0015', date: '2025-05-07', amountCents: 333350 },
+        { id: '10-CHQ-2025-05-0016', date: '2025-05-08', amountCents: 384200 },
+        { id: '10-CHQ-2025-05-0017', date: '2025-05-08', amountCents: 299450 },
+        { id: '10-CHQ-2025-05-0018', date: '2025-05-08', amountCents: 158200 },
+        { id: '10-CHQ-2025-05-0019', date: '2025-05-08', amountCents: 259900 },
+        { id: '10-CHQ-2025-05-0020', date: '2025-05-09', amountCents: 175150 },
+        { id: '10-CHQ-2025-05-0021', date: '2025-05-09', amountCents: 77978 },
+        { id: '10-CHQ-2025-05-0022', date: '2025-05-09', amountCents: -33737 },
+        { id: '10-CHQ-2025-05-0023', date: '2025-05-09', amountCents: -32438 },
+        { id: '10-CHQ-2025-05-0024', date: '2025-05-09', amountCents: -38116 },
+        { id: '10-CHQ-2025-05-0025', date: '2025-05-09', amountCents: -200000 },
+        { id: '10-CHQ-2025-05-0026', date: '2025-05-09', amountCents: -18765 },
+        { id: '10-CHQ-2025-05-0027', date: '2025-05-12', amountCents: 197750 },
+        { id: '10-CHQ-2025-05-0028', date: '2025-05-12', amountCents: 163850 },
+        { id: '10-CHQ-2025-05-0029', date: '2025-05-12', amountCents: -76035 },
+        { id: '10-CHQ-2025-05-0030', date: '2025-05-12', amountCents: -9800 },
+        { id: '10-CHQ-2025-05-0031', date: '2025-05-16', amountCents: 51535 },
+        { id: '10-CHQ-2025-05-0032', date: '2025-05-16', amountCents: -41652 },
+        { id: '10-CHQ-2025-05-0033', date: '2025-05-16', amountCents: -63272 },
+        { id: '10-CHQ-2025-05-0034', date: '2025-05-16', amountCents: -40258 },
+        { id: '10-CHQ-2025-05-0035', date: '2025-05-16', amountCents: -25730 },
+        { id: '10-CHQ-2025-05-0036', date: '2025-05-19', amountCents: -9275 },
+        { id: '10-CHQ-2025-05-0037', date: '2025-05-19', amountCents: -39369 },
+        { id: '10-CHQ-2025-05-0038', date: '2025-05-19', amountCents: -34693 },
+        { id: '10-CHQ-2025-05-0039', date: '2025-05-20', amountCents: -3500 },
+        { id: '10-CHQ-2025-05-0040', date: '2025-05-20', amountCents: -174346 },
+        { id: '10-CHQ-2025-05-0041', date: '2025-05-23', amountCents: 55516 },
+        { id: '10-CHQ-2025-05-0042', date: '2025-05-23', amountCents: -31784 },
+        { id: '10-CHQ-2025-05-0043', date: '2025-05-23', amountCents: -65412 },
+        { id: '10-CHQ-2025-05-0044', date: '2025-05-23', amountCents: -42180 },
+        { id: '10-CHQ-2025-05-0045', date: '2025-05-23', amountCents: -200000 },
+        { id: '10-CHQ-2025-05-0046', date: '2025-05-26', amountCents: -13088 },
+        { id: '10-CHQ-2025-05-0047', date: '2025-05-26', amountCents: -3963 },
+        { id: '10-CHQ-2025-05-0048', date: '2025-05-28', amountCents: -18651 },
+        { id: '10-CHQ-2025-05-0049', date: '2025-05-28', amountCents: -2495 },
+        { id: '10-CHQ-2025-05-0050', date: '2025-05-30', amountCents: 40381 },
+        { id: '10-CHQ-2025-05-0051', date: '2025-05-30', amountCents: -34041 },
+        { id: '10-CHQ-2025-05-0052', date: '2025-05-30', amountCents: -48734 },
+        { id: '10-CHQ-2025-05-0053', date: '2025-05-30', amountCents: -28364 },
+        { id: '10-CHQ-2025-05-0054', date: '2025-05-30', amountCents: -17941 },
+        { id: '10-CHQ-2025-05-0055', date: '2025-05-30', amountCents: -5911 },
+        { id: '10-CHQ-2025-05-0056', date: '2025-05-30', amountCents: -105024 },
+      ],
+    } },
+  { id: '10-F02', client: 'C10', flagId: '10-F02', planted: 'duplicate lines in March', expected: 'flag 10-F02 (duplicate lines in March), must fire: flag for a person; do not decide alone',
+    marker: {
+      field: 'dupOf',
+      account: 'CHQ',
+      month: '2025-03',
+      rows: [
+        { id: '10-CHQ-2025-03-0009', date: '2025-03-06', amountCents: 209050, dupOf: '10-CHQ-2025-03-0008' },
+        { id: '10-CHQ-2025-03-0011', date: '2025-03-06', amountCents: 237300, dupOf: '10-CHQ-2025-03-0010' },
+        { id: '10-CHQ-2025-03-0049', date: '2025-03-28', amountCents: -83259, dupOf: '10-CHQ-2025-03-0048' },
+        { id: '10-CHQ-2025-03-0053', date: '2025-03-31', amountCents: -46597, dupOf: '10-CHQ-2025-03-0052' },
+      ],
+    } },
+  { id: '10-F03', client: 'C10', flagId: '10-F03', planted: 'last year\'s statement mixed in', expected: 'flag 10-F03 (last year\'s statement mixed in), must fire: flag for a person; do not decide alone',
+    marker: {
+      field: 'priorYear',
+      account: 'CHQ',
+      month: '2024-12',
+      rows: [
+        { id: '10-CHQ-2024-12-0001', date: '2024-12-06', amountCents: 440700 },
+        { id: '10-CHQ-2024-12-0002', date: '2024-12-09', amountCents: 61500 },
+        { id: '10-CHQ-2024-12-0003', date: '2024-12-13', amountCents: -21684 },
+        { id: '10-CHQ-2024-12-0004', date: '2024-12-16', amountCents: -9800 },
+        { id: '10-CHQ-2024-12-0005', date: '2024-12-18', amountCents: 384200 },
+        { id: '10-CHQ-2024-12-0006', date: '2024-12-20', amountCents: -200000 },
+        { id: '10-CHQ-2024-12-0007', date: '2024-12-23', amountCents: -58915 },
+        { id: '10-CHQ-2024-12-0008', date: '2024-12-27', amountCents: -26500 },
+      ],
+    } },
   { id: '10-F04', client: 'C10', flagId: '10-F04', planted: 'personal spending paid from the business account', expected: 'flag 10-F04 (personal spending paid from the business account), must fire: flag for a person; do not decide alone' },
   { id: '10-F05', client: 'C10', flagId: '10-F05', planted: 'spouse paid with no payroll', expected: 'flag 10-F05 (spouse paid with no payroll), must fire: flag for a person; do not decide alone' },
   { id: '10-F06', client: 'C10', flagId: '10-F06', planted: 'luxury vehicle: class 10.1 cost limit', expected: 'flag 10-F06 (luxury vehicle: class 10.1 cost limit), must fire: flag for a person; do not decide alone' },
@@ -105,7 +198,7 @@ const CATALOGUE: readonly FaultEntry[] = [
   { id: '11-F04', client: 'C11', flagId: '11-F04', planted: 'HST regular, quarterly', expected: 'flag 11-F04 (HST regular, quarterly), info: flag for a person; do not decide alone' },
   { id: '11-F05', client: 'C11', flagId: '11-F05', planted: 'corporate tax instalments follow last year (prior-year option)', expected: 'flag 11-F05 (corporate tax instalments follow last year (prior-year option)), info: flag for a person; do not decide alone' },
   { id: '12-F01', client: 'C12', flagId: '12-F01', planted: 'no third-party evidence for revenue', expected: 'flag 12-F01 (no third-party evidence for revenue), must fire: flag for a person; do not decide alone' },
-  { id: '12-F02', client: 'C12', flagId: '12-F02', planted: 'bank balance has no statement', expected: 'flag 12-F02 (bank balance has no statement), must fire: flag for a person; do not decide alone' },
+  { id: '12-F02', client: 'C12', flagId: '12-F02', planted: 'bank balance has no statement', expected: 'flag 12-F02 (bank balance has no statement), must fire: flag for a person; do not decide alone', empty: 'accounts' },
   { id: '12-F03', client: 'C12', flagId: '12-F03', planted: 'home office rests on the client\'s word', expected: 'flag 12-F03 (home office rests on the client\'s word), must fire: flag for a person; do not decide alone' },
   { id: '12-F04', client: 'C12', flagId: '12-F04', planted: 'vehicle use rests on the client\'s word', expected: 'flag 12-F04 (vehicle use rests on the client\'s word), must fire: flag for a person; do not decide alone' },
   { id: '12-F05', client: 'C12', flagId: '12-F05', planted: 'shareholder loan rests on the client\'s word', expected: 'flag 12-F05 (shareholder loan rests on the client\'s word), must fire: flag for a person; do not decide alone' },

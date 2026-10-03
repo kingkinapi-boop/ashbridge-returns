@@ -28,6 +28,19 @@ export function modelIssues(c: Client, catalogue: readonly FaultEntry[]): LoadIs
     issues.push({ client, check, record, reason })
   }
 
+  yearIssues(c, add)
+
+  // A list that drives a check is never empty by accident: no accounts only where the hand-written catalogue declares it (W00c RC2).
+  const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
+  if (c.accounts.length === 0) {
+    if (!noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
+    else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
+  }
+  if (c.owners.length === 0) add('schema', 'owners', 'the client has no owners')
+  for (const name of ['unadjusted', 'adjusted'] as const) {
+    if (c.trialBalance[name].rows.length === 0) add('trial-balance', name, 'the trial balance has no rows, so nothing is tied out')
+  }
+
   // Every id-keyed list refuses a repeat, and no account key may be the name of an Object.prototype member (W00c RC2).
   for (const k of repeated(c.accounts, (a) => a.key)) add('schema', k, 'two accounts have this key')
   for (const a of c.accounts) if (a.key in Object.prototype) add('schema', a.key, 'the account key is the name of an Object.prototype member, which a lookup would find without it being declared')
@@ -110,6 +123,33 @@ function tieOut(
 type Add = (check: LoadIssue['check'], record: string, reason: string) => void
 type Marker = NonNullable<FaultEntry['marker']>
 
+const MAX_YEAR_DAYS = 371
+const dayNumber = (d: string): number => Date.parse(`${d}T00:00:00Z`) / 86_400_000
+
+/** The first day of the month `back` months before the month of `date`, as YYYY-MM-DD. */
+function monthsBefore(date: string, back: number): string {
+  const i = Number(date.slice(0, 4)) * 12 + Number(date.slice(5, 7)) - 1 - back
+  return `${String(Math.floor(i / 12))}-${String((i % 12) + 1).padStart(2, '0')}-01`
+}
+
+/** The fiscal year is a range in order of at most 53 weeks; every row and adjusting entry is dated inside it (W00c RC3). */
+function yearIssues(c: Client, add: Add): void {
+  const { yearStart, yearEnd } = c.corporation
+  if (yearStart > yearEnd) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
+  else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
+  const earliest = monthsBefore(yearStart, 12)
+  for (const t of c.transactions) {
+    if (t.priorYear === true) {
+      if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+    } else if (t.date < yearStart) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
+    else if (t.date > yearEnd) add('schema', t.id, `it is dated ${t.date}, after the fiscal year ends on ${yearEnd}`)
+  }
+  for (const j of c.adjustingEntries) {
+    if (j.date < yearStart) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
+    else if (j.date > yearEnd) add('adjusting-entry', j.id, `it is dated ${j.date}, after the fiscal year ends on ${yearEnd}`)
+  }
+}
+
 /** The months of a fiscal year, YYYY-MM from the start's month to the end's, in order. */
 function yearMonths(start: string, end: string): string[] {
   const index = (d: string): number => Number(d.slice(0, 4)) * 12 + Number(d.slice(5, 7)) - 1
@@ -127,7 +167,9 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
   const waivers = mine.flatMap((f) => (f.roll === undefined ? [] : [{ id: f.id, ...f.roll }]))
   const markers = mine.flatMap((f) => (f.marker === undefined ? [] : [{ id: f.id, marker: f.marker, flagId: f.flagId, isRoll: f.roll !== undefined }]))
   const year = yearMonths(c.corporation.yearStart, c.corporation.yearEnd)
-  const covered = new Set(markers.filter((f) => f.flagId !== undefined).map((f) => markerKey(f.marker)))
+  const listedRows = new Map<string, number>()
+  for (const f of markers) for (const r of f.marker.rows ?? []) listedRows.set(r.id, (listedRows.get(r.id) ?? 0) + 1)
+  const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
 
   for (const a of c.accounts) {
     const months = a.months
@@ -173,7 +215,7 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
     for (const m of year) if (!listed.has(m)) add('roll', `${a.key} ${m}`, 'the month of the fiscal year has no statement balances')
     const names = new Set(months.map((m) => m.month))
     for (const t of own) {
-      const priorListed = t.priorYear === true && t.date < c.corporation.yearStart && covered.has(markerKey({ field: 'priorYear', account: a.key, month: t.date.slice(0, 7) }))
+      const priorListed = t.priorYear === true && t.date < c.corporation.yearStart && pinnedPrior.has(t.id)
       if (!names.has(t.date.slice(0, 7)) && !priorListed) add('roll', t.id, `it is dated ${t.date}, in no month of ${a.key}`)
     }
   }
@@ -183,13 +225,11 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
     if (month !== true) add('fault-catalogue', f.id, `the catalogue waives ${f.account} ${f.month}, which this client does not have`)
   }
 
-  const carried = new Set<string>()
+  // Every transaction carrying a marker field is listed by id under an entry of that field (W00c RC1).
   for (const t of c.transactions) {
     for (const field of fieldsOf(t)) {
-      const m = { field, account: t.accountKey, month: t.date.slice(0, 7) }
-      carried.add(markerKey(m))
-      if (!covered.has(markerKey(m))) {
-        add('fault-catalogue', `${m.account} ${m.month}`, `${t.id} carries ${field} and the fault catalogue has no flag entry with that marker for this account and month`)
+      if (!markers.some((f) => f.flagId !== undefined && f.marker.field === field && (f.marker.rows ?? []).some((r) => r.id === t.id))) {
+        add('fault-catalogue', t.id, `it carries ${field} and no fault catalogue entry lists it by id under that marker`)
       }
     }
   }
@@ -219,15 +259,34 @@ function rollIssues(c: Client, catalogue: readonly FaultEntry[], add: Add): void
     }
     if (t.priorYear === true && t.date >= c.corporation.yearStart) add('fault-catalogue', t.id, `it is marked priorYear but dated ${t.date}, not before the fiscal year starts on ${c.corporation.yearStart}`)
   }
+  const firstById = new Map<string, Client['transactions'][number]>()
+  for (const t of c.transactions) if (!firstById.has(t.id)) firstById.set(t.id, t)
   for (const f of markers) {
-    const rows = c.transactions.filter((t) => t.accountKey === f.marker.account && t.date.slice(0, 7) === f.marker.month && fieldsOf(t).includes(f.marker.field))
-    const total = sum(rows.map((t) => t.amountCents))
-    if (f.marker.rows !== rows.length || f.marker.totalCents !== total) {
-      add('fault-catalogue', f.id, `its pinned ${String(f.marker.rows)} row(s) totalling ${String(f.marker.totalCents)} cents do not match the answer key's ${String(rows.length)} row(s) totalling ${String(total)} cents`)
+    const { field, account, month } = f.marker
+    const rows = f.marker.rows ?? []
+    if (rows.length === 0) add('fault-catalogue', f.id, 'its marker lists no rows')
+    for (const r of rows) {
+      const t = firstById.get(r.id)
+      const why =
+        t === undefined
+          ? 'it is not a transaction of this client'
+          : listedRows.get(r.id) !== 1
+            ? 'the fault catalogue lists it more than once'
+            : t.accountKey !== account
+              ? `it is not in the account ${account}`
+              : t.date.slice(0, 7) !== month
+                ? `it is not dated in ${month}`
+                : t.date !== r.date || t.amountCents !== r.amountCents
+                  ? `the catalogue pins ${r.date} ${String(r.amountCents)} cents but the answer key has ${t.date} ${String(t.amountCents)} cents`
+                  : !fieldsOf(t).includes(field)
+                    ? `it does not carry ${field}`
+                    : t.dupOf !== r.dupOf
+                      ? `the catalogue pins its original as ${String(r.dupOf)} but the answer key has ${String(t.dupOf)}`
+                      : undefined
+      if (why !== undefined) add('fault-catalogue', f.id, `marker row ${r.id}: ${why}`)
     }
     if (f.isRoll) add('fault-catalogue', f.id, 'a roll entry is not a marker entry')
     if (f.flagId === undefined) add('fault-catalogue', f.id, 'a marker entry must be on the entry of the flag the planted fault raises')
-    if (!carried.has(markerKey(f.marker))) add('fault-catalogue', f.id, `no transaction carries its marker ${markerKey(f.marker)}`)
   }
 }
 /** The fault markers a transaction carries. */
@@ -236,4 +295,3 @@ const fieldsOf = (t: Client['transactions'][number]): Marker['field'][] => [
   ...(t.dupOf === undefined ? [] : (['dupOf'] as const)),
   ...(t.priorYear === true ? (['priorYear'] as const) : []),
 ]
-const markerKey = (m: Pick<Marker, 'field' | 'account' | 'month'>): string => `${m.field} ${m.account} ${m.month}`

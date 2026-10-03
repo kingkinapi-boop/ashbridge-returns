@@ -1,6 +1,6 @@
 // @mutate
 // Loads one sample client from reference/sample-clients/ in place (never copied or rewritten) into the model (ARC-8).
-import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs'
+import { existsSync, lstatSync, readdirSync, readFileSync, realpathSync } from 'node:fs'
 import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
@@ -8,7 +8,8 @@ import { decimalToCents } from '../../src/core/money'
 import { faults, type FaultEntry } from '../model/faults'
 import { guardIssues, type GuardFile } from '../model/guard'
 import { modelIssues } from '../model/checks'
-import { ACCOUNT_ROLES, CLIENT_ID, ClientSchema, TestWorldLoadError, calendarDate, type Client, type ClientId, type LoadIssue } from '../model/schema'
+import { repeatedKeys } from './json-keys'
+import { ACCOUNT_ROLES, CLIENT_ID, ClientSchema, TestWorldLoadError, calendarDate, isCalendarDate, type Client, type ClientId, type LoadIssue } from '../model/schema'
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 export const SAMPLE_ROOT = join(REPO_ROOT, 'reference', 'sample-clients')
@@ -82,7 +83,9 @@ const RawOnboarding = z.object({
     business_number: z.string(),
     financial_year_end: z.string().optional(),
     fiscal_year_start: z.string().optional(),
+    incorporation_date: z.string().optional(),
   }),
+  prior_year_closing_balances: z.object({ as_of: z.string().optional() }).optional(),
   cra_program_accounts: z.array(z.object({ account_number: z.string() })).optional(),
   owners: z.array(z.object({ name: z.string() })),
   related_entities: z.array(z.object({ entity_name: z.string() })).optional(),
@@ -94,12 +97,18 @@ const RawOnboarding = z.object({
 /** The numbered folders of a sample-clients root, as client ids (C01 upward), in order. */
 export function clientFolders(root: string = SAMPLE_ROOT): Map<ClientId, string> {
   const found = new Map<ClientId, string>()
-  for (const name of readdirSync(root).sort()) {
-    const m = /^(\d\d)-/.exec(name)
+  // A folder that is itself a link is not listed: loadClient refuses its id with a 'file' issue (W00c RC4).
+  for (const e of readdirSync(root, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+    const m = /^(\d\d)-/.exec(e.name)
     // Stryker disable next-line StringLiteral: m[1] always exists once the pattern has matched; the fallback only satisfies noUncheckedIndexedAccess
-    if (m !== null && existsSync(join(root, name, 'answer-key.json'))) found.set(`C${m[1] ?? ''}`, join(root, name))
+    if (m !== null && e.isDirectory() && existsSync(join(root, e.name, 'answer-key.json'))) found.set(`C${m[1] ?? ''}`, join(root, e.name))
   }
   return found
+}
+
+/** The name of a linked numbered folder of the root that would be the client `id`, if there is one. */
+function linkedFolder(root: string, id: string): string | undefined {
+  return readdirSync(root, { withFileTypes: true }).find((e) => e.isSymbolicLink() && new RegExp(`^${id.slice(1)}-`).test(e.name))?.name
 }
 
 const AMOUNT_KEYS = new Set(['amount', 'debit', 'credit', 'dr', 'cr', 'opening', 'closing', 'openingBalance', 'closingBalance'])
@@ -144,12 +153,19 @@ function readClientJson(
   fileIssue: (record: string, reason: string) => void,
 ): unknown {
   const path = join(folder, name)
-  if (!existsSync(path)) {
+  const kind = lstatSync(path, { throwIfNoEntry: false })
+  if (kind === undefined) {
     fileIssue(name, 'the file is not in the client folder')
     return undefined
   }
-  if (!statSync(path).isFile()) {
+  // lstat, not stat: a link to another file (another client's, say) is never read as this client's file.
+  if (!kind.isFile()) {
     fileIssue(name, 'it is not a regular file')
+    return undefined
+  }
+  const again = repeatedKeys(readFileSync(path, 'utf8'))
+  if (again.length > 0) {
+    for (const r of again) fileIssue(name, `the key "${r.key}" is written twice in one object`)
     return undefined
   }
   try {
@@ -171,10 +187,27 @@ function csvRows(path: string): number {
   )
 }
 
+/** The calendar day before a YYYY-MM-DD date. */
+function dayBefore(date: string): string {
+  const d = new Date(`${date}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() - 1)
+  return d.toISOString().slice(0, 10)
+}
+
+/** Is this a path of the form `<dir>/<name>.csv`, directly inside `dir`? */
+function isAccountFile(name: string, dir: string): boolean {
+  return name.startsWith(`${dir}/`) && name.endsWith('.csv') && name.length > dir.length + 5 && !name.includes('/', dir.length + 1)
+}
+
 /** Loads a client, or throws a TestWorldLoadError listing every check it fails. Deterministic: no clock, no randomness. */
 export function loadClient(id: ClientId, opts: { root?: string; faults?: readonly FaultEntry[] } = {}): Client {
-  const folder = CLIENT_ID.test(id) ? clientFolders(opts.root).get(id) : undefined
-  if (folder === undefined) throw new Error(`test-world client ${id} has no folder in ${opts.root ?? SAMPLE_ROOT}`)
+  const root = opts.root ?? SAMPLE_ROOT
+  const folder = CLIENT_ID.test(id) ? clientFolders(root).get(id) : undefined
+  if (folder === undefined) {
+    const linked = CLIENT_ID.test(id) ? linkedFolder(root, id) : undefined
+    if (linked !== undefined) throw new TestWorldLoadError(id, [{ client: id, check: 'file', record: linked, reason: 'the client folder is a link, not a folder' }])
+  }
+  if (folder === undefined) throw new Error(`test-world client ${id} has no folder in ${root}`)
   const issues: LoadIssue[] = []
   const schemaIssue = (record: string, reason: string): void => {
     issues.push({ client: id, check: 'schema', record, reason })
@@ -196,6 +229,23 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   if (!keyResult.success || !onbResult.success) throw new TestWorldLoadError(id, issues)
   const key = keyResult.data
   const onb = onbResult.data
+
+  // Each onboarding date is a calendar date and agrees with the fiscal year in the answer key (W00c RC3).
+  const { start, end } = key.fiscalYear
+  const twin = (field: string, value: string | undefined, agrees: (v: string) => string | undefined): void => {
+    if (value === undefined) return
+    if (!isCalendarDate(value)) schemaIssue(`onboarding.json ${field}`, 'it is not a calendar date written YYYY-MM-DD')
+    else {
+      const why = agrees(value)
+      if (why !== undefined) schemaIssue(`onboarding.json ${field}`, why)
+    }
+  }
+  twin('corporation.financial_year_end', onb.corporation.financial_year_end, (v) => (v === end ? undefined : `it is ${v} but the fiscal year ends ${end}`))
+  twin('corporation.fiscal_year_start', onb.corporation.fiscal_year_start, (v) => (v === start ? undefined : `it is ${v} but the fiscal year starts ${start}`))
+  twin('corporation.incorporation_date', onb.corporation.incorporation_date, (v) => (v <= start ? undefined : `it is ${v}, after the fiscal year starts on ${start}`))
+  twin('prior_year_closing_balances.as_of', onb.prior_year_closing_balances?.as_of, (v) =>
+    v === dayBefore(start) ? undefined : `it is ${v} but the prior year closes the day before the fiscal year starts on ${start}`,
+  )
 
   const toLine = (l: z.infer<typeof line>) => ({
     account: l.account,
@@ -230,7 +280,7 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   /** Rows of an account file, or 0 and a 'file' issue when it is not `<dir>/<name>.csv`, is not a regular file in the client folder, or is not there. */
   const accountFile = (account: string, field: string, name: string, dir: string): number => {
     const record = `${account} ${field}`
-    if (!name.startsWith(`${dir}/`) || !name.endsWith('.csv') || name.length <= dir.length + 5 || name.includes('/', dir.length + 1)) {
+    if (!isAccountFile(name, dir)) {
       fileIssue(record, `${name} is not a ${dir}/<name>.csv file of the client folder`)
       return 0
     }
@@ -239,12 +289,17 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
       fileIssue(record, `${name} is not in the client folder`)
       return 0
     }
-    const real = relative(home, realpathSync(path))
-    if (real === '..' || real.startsWith(`..${sep}`)) {
+    const real = relative(home, realpathSync(path)).split(sep).join('/')
+    if (real === '..' || real.startsWith('../')) {
       fileIssue(record, `${name} leads out of the client folder`)
       return 0
     }
-    if (!statSync(path).isFile()) {
+    // The file checks look at what the name resolves to, not at the name (W00c RC4).
+    if (!isAccountFile(real, dir)) {
+      fileIssue(record, `${name} resolves to ${real}, which is not a ${dir}/<name>.csv file of the client folder`)
+      return 0
+    }
+    if (!lstatSync(realpathSync(path)).isFile()) {
       fileIssue(record, `${name} is not a regular file`)
       return 0
     }
@@ -284,7 +339,12 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
     const holder = onbKeys[base]
     const list = (holder as { accounts?: unknown } | null)?.accounts
     // Stryker disable next-line ArrayDeclaration: a non-list gives no record either way (a stand-in item has no account, so it never matches a qualifier)
-    return Array.isArray(list) ? list.map((x) => ({ account: String((x as { account?: unknown }).account), name: String((x as { name?: unknown }).name) })) : []
+    if (!Array.isArray(list)) return []
+    // A record counts only when its account and name are both written as strings: a missing name is never the text "undefined".
+    return list.flatMap((x) => {
+      const r = x as { account?: unknown; name?: unknown }
+      return typeof r.account === 'string' && typeof r.name === 'string' ? [{ account: r.account, name: r.name }] : []
+    })
   }
   const resolves = (source: string): boolean => {
     if (Array.isArray(onbAnswers) && onbAnswers.some((x) => (x as { question_asked?: unknown }).question_asked === source)) return true
@@ -346,6 +406,11 @@ export function loadClient(id: ClientId, opts: { root?: string; faults?: readonl
   if (!parsed.success) {
     for (const i of parsed.error.issues) schemaIssue(i.path.join('.'), i.message)
     throw new TestWorldLoadError(id, issues)
+  }
+
+  // An opening trial balance is empty only in a first year: the corporation was incorporated on the fiscal year start.
+  if (parsed.data.trialBalance.opening.rows.length === 0 && onb.corporation.incorporation_date !== start) {
+    issues.push({ client: id, check: 'trial-balance', record: 'opening', reason: `the opening trial balance has no rows and the corporation was not incorporated on the fiscal year start ${start}` })
   }
 
   // The guard reads every file of the folder, not a field list (SEC-11).
