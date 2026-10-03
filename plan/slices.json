@@ -10431,7 +10431,9 @@
       "paths": [
         "tools/test/rule-walker.test.mjs",
         "tools/test/__fixtures__/rule-walker/**",
-        "tools/test/lib/walk.mjs"
+        "tools/test/lib/walk.mjs",
+        "tools/test/rules.test.mjs",
+        "src/core/db/db.test.ts"
       ],
       "clauses": [
         "ARC-15",
