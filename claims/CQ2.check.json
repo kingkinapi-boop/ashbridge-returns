@@ -1,10 +1,9 @@
 {
  "card": "CQ2",
  "role": "check",
- "for": "2026-10-02T21:30:48.090Z",
- "worker": "cloud-4b7764",
- "state": "failed",
- "at": "2026-10-02T21:38:12.780Z",
- "mode": "turbo",
- "note": "FAIL: scope (2 files outside Paths, one a builder-written rule 6 test file); no code defect, see reports/CQ2-check.md"
+ "for": "2026-10-03T03:52:10.549Z",
+ "worker": "cloud-e17d8e",
+ "state": "working",
+ "at": "2026-10-03T03:56:14.481Z",
+ "mode": "turbo"
 }
