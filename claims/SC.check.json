@@ -2,9 +2,8 @@
  "card": "SC",
  "role": "check",
  "for": "2026-10-03T03:29:58.274Z",
- "worker": "local-3",
- "state": "released",
- "at": "2026-10-03T03:43:40.164Z",
- "mode": "turbo",
- "note": "laptop node_modules lacks exceljs/pdfjs-dist (4 tests, typecheck, lint); no Opus read, db or mutation locally; needs cloud check, see reports/SC-check.md"
+ "worker": "cloud-e17d8e",
+ "state": "working",
+ "at": "2026-10-03T04:03:00.946Z",
+ "mode": "turbo"
 }
