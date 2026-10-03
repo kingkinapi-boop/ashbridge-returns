@@ -1,8 +1,10 @@
 {
  "card": "FX2",
  "role": "build",
- "state": "reopened",
- "worker": "lead",
- "at": "2026-10-03T04:17:57.527Z",
- "note": "not core: no spec review; build to the spec"
+ "round": 1,
+ "spec": "6ac7457",
+ "worker": "cloud-fd4d7f",
+ "state": "working",
+ "at": "2026-10-03T04:19:43.164Z",
+ "mode": "turbo"
 }
