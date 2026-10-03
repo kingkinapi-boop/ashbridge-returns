@@ -10307,7 +10307,12 @@
         "testworld/model/__fixtures__/w00c-r3-walk.ts",
         "reference/sample-clients/*/answer-key.json",
         "reference/sample-clients/lib/**",
-        "reference/sample-clients/clients/**"
+        "reference/sample-clients/clients/**",
+        "vitest.mutate.config.ts",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-args.test.mjs",
+        "tools/mutate-shards.json",
+        "testworld/**/*.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -10525,7 +10530,8 @@
         "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
         "tools/test/__fixtures__/schema-contract/known.json",
         "src/core/safe-read.ts",
-        "tools/test/schema-contract-rules.test.mjs"
+        "tools/test/schema-contract-rules.test.mjs",
+        "src/contracts/text.ts"
       ],
       "clauses": [
         "EV-1",

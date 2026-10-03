@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 20:02Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 20:22Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -16,20 +16,20 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 20:02Z by the Lea
 | Train 3 | A04C, CQ11, FX14 at f4e43c51, checking (cloud-b25ed0) | land if green (rehearsal: two vitest runs); then train 4 with SC8 and each new PASS |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
 | A08 | spec review GAPS 11 (A509): spec patch reopened | build after it; then Opus check and a security review |
-| W00c | check 2 FAIL (8ca30bc6): RC-B, RC-C split to W00d (A517); mutation 100 unverified (Stryker dry run over 45 min) | findings review 4 (local Opus, from 20:00Z; third failure: split or park); then its ruling |
-| SC10 | findings review 1 done (A502): Lead plan commit on main; round 2 spec patch P1 to P8, no build | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check on the landing form |
-| SC6 | check FAIL on the landing form (G2 verbs, G6 c chains, G6 a init reader; reports/SC6-check.md) | findings review 2 (local Opus, from 20:00Z); the next failure parks or splits |
+| W00c | findings review 4 done (A521): no build round; mutation-only check of 75556283 in shards, union of kills | check opened (cloud); land on 100 on all 11 files; W00d makes the method a tool |
+| SC10 | round 2 spec reported (78 tests); build marked reported 20:21Z | Opus check on the landing form; board |
+| SC6 | findings review 2 done (A518): round 3, the last: spec patch of 11 fixes, no build; Check grades against the stated grammar | spec reopened; then build marked reported; Opus check; on a fourth R77 failure split SC6a and SC6b |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | SC11 | findings review 2 done (A508): round 3, the last: spec S4 to S12 plus R118 reopened 18:30Z | then the Lead reopens the build (B3 to B14); Opus read; security review; board |
-| GL3 | A515 spec patch reported; build reopened 20:00Z (three header lines) | re-check, Opus read, fresh security review; board |
+| GL3 | build reported (98 of 98, mutate 100) | check working (cloud-3a2ec0); Opus read; fresh security review; board |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
 | SC8, A08 | SC8 check PASS (boards train 4); A08 spec patch reported (218 tests) | A08 build, then Opus check and security review |
-| FX7, W00d, FX16 | FX7 spec patch reported: Opus spec review (local, from 20:00Z), build held `wait:`; W00d spec reopened (A517: generator in Paths) | builds after W00c lands |
+| FX7, W00d, FX16 | FX7 spec review GAPS 7 (A520): spec reopened, second Opus review next; W00d spec reopened (A517, A521: generator, mutate tool and shards) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | W00b, FX6, FX18, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
-| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), its panel done (A516); designers 2 (D03 B+), 3 (D02) local; then a panel each; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
+| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), its panel done (A516); designer 2 done (D03 B+, claude/design-source-viewer-3, A519), its panel local; designer 3 (D02) local, then its panel; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
 
 ## Next, in order
 
