@@ -1,9 +1,9 @@
 {
-  "mode": "turbo",
-  "resume_to": null,
-  "set_by": "Zo, 3 Oct 2026 03:20Z: \"turbo on\" again (mode was already turbo since 2 Oct 15:30Z)",
+  "mode": "normal",
+  "resume_to": "turbo",
+  "set_by": "Reviewer, 3 Oct 2026 13:15Z: SLOW (reviews/REVIEW.md). Turbo returns only on Zo saying \"turbo on\".",
   "set_at": "2026-10-03",
-  "why": "Zo raised it. Order: FX1 and F01C land first, then the Reviewer's other fixes (CQ1, cards ahead, W kinds), then the rest. 3 Oct: local_workers 3 and heavy_slots 2 (decision 0026).",
+  "why": "Lowered one step from turbo: the queue is starving (next.mjs: 2 spec'd cards startable, 10 wanted; most cards wait on W00c) and a flaky test class (7 A04 tests passed on one date, failed on train 25ea2736 when the date rolled, A468). Lead fixes first: reopen met waits and board FX5, split A04, copy red train reports to main, NOW true (review findings 1, 2, 5, 8).",
   "wind_down_at": "2026-10-09T18:00:00-04:00",
   "heavy_slots": 2,
   "max_workers": 12,
