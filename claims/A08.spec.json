@@ -1,9 +1,11 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: main merged (plan files from main); 71 tests unchanged, fail at import of the missing project module, tsc errors only in the two spec files; A04 build now reported, A08 builds after A04 lands",
  "worker": "cloud-88d9d7",
- "state": "working",
- "at": "2026-10-03T05:42:36.813Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T05:43:25.812Z",
+ "mode": "turbo",
+ "commit": "220f240b648dca49293b365341c689bdf526e4b2",
+ "validated": "61cb3bc7437e99c6164beec6afdc8a7b2c8ec313"
 }
