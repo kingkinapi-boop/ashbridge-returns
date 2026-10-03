@@ -1992,7 +1992,7 @@
     },
     {
       "status": "carded",
-      "spec": "fb82b8c",
+      "spec": "be09e312",
       "deps": [
         "F04",
         "F06",
@@ -2025,6 +2025,28 @@
       "hard": true,
       "core": true,
       "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/runner.acceptance.test.ts",
+        "src/modules/ai/runner/exchange.acceptance.test.ts",
+        "src/modules/ai/runner/runner.ts"
+      ],
+      "clauses": [
+        "AI-9",
+        "ARC-15"
+      ],
+      "id": "A04C",
+      "title": "AI runner: one clock, pinned as a class",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Split from A04 (A477, Review 3 Oct finding 2)."
     },
     {
       "status": "done",
@@ -5450,7 +5472,6 @@
       "deps": [
         "V05",
         "B00",
-        "D06",
         "U02"
       ],
       "paths": [
@@ -10826,6 +10847,7 @@
       ],
       "paths": [
         "src/core/db/rules.acceptance.db.test.ts",
+        "src/core/db/__fixtures__/grants/**",
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",

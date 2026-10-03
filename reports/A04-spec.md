@@ -164,3 +164,7 @@ Step 6b: the stub was runner.ts:69 `options.now ?? now` (core/clock) plus runner
 
 ## For the build (round 5c)
 Change runner.ts:166 so the handler passes `{ jobId: ctx.jobId }` only. At runner.ts:69 the default `now` is `now` from src/core/clock.ts (read at each call), never `new Date()`. Nothing else changes. Re-run unit, db on PGlite and pg16 (cloud), mutation 100 on all five `@mutate` files, and test:flake 5 of 5.
+
+## Frozen (A477, 3 Oct 14:05Z)
+
+The Lead froze the spec at round 5c (71a8efe8): the build round 5c is the last for A04. Review gaps G1 to G4 moved to card A04C (draft 6f94e3ac on claude/A04C-draft). No test changed in this commit.
