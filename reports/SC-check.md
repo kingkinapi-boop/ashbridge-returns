@@ -1,16 +1,16 @@
-# SC check, local-3 (laptop), 3 Oct: RELEASED, not a verdict
+# SC check (cloud-e17d8e, 3 Oct 2026)
 
-Branch claude/SC at 29ad3663 (main 9e6513cf merged; no code on origin/main since).
+FAIL. Branch claude/SC at b68ef0d (main is 68 commits ahead, not merged in; merge before the next round).
 
-Done and clean:
-- Spec untouched: no change to src, tools, db, testworld or e2e since the last spec(SC) commit a069a196 (empty diff).
-- `node tools/scope.mjs SC`: SCOPE OK, 51 files, all inside Paths.
-- `npm run deps:check`: no violations.
-- Rule tests `tools/test/schema-contract-rules.test.mjs`: 71 of 75 pass locally.
+Passed: typecheck, lint, deps:check, `npm test` (unit 2509, db 507), scope OK (52 files), spec files unchanged since the spec commit a069a19, no product code changed. Not completed: `npm run test:flake` printed no result in this run (rerun next round).
 
-Why no PASS or FAIL:
-- The laptop's shared node_modules lacks `exceljs` and `pdfjs-dist` (both in package.json). Typecheck (9 errors in sheets/xlsx and ocr/textlayer, none in SC files), lint (304 errors, all unresolved-type fallout) and 4 SC tests (R31, R47, R48, R54, each "Cannot find package pdfjs-dist/legacy/build/pdf.mjs" from src/modules/ocr/textlayer) fail only on that. Installing packages locally was refused by the permission system and orders forbid `npm install`; not worked around.
-- The db project (Postgres), `npm run test:flake`, mutation canary and `mutate:changed`, and the Opus adversarial read for a `core` card are cloud jobs or need a subagent; none available to a local worker.
+Failures (Opus adversarial read of the diff, spot-checked 1 and 3):
+1. KNOWN entry R43 at `src/contracts/schema-rules.db.test.ts:53` matches `^returns\.[a-z_]+\.[a-z_]+_id: points at no built table...`, so any pointer column in any table, including future ones, passes without a FUTURE_POINTERS entry. Owner reads "F01 family", not FX3. List the covered columns by name.
+2. Other KNOWN entries exempt whole files or open sets, not named defects: `tools/test/schema-contract-rules.test.mjs:44` (R41 off for any message in reading, facts, checks, taxprep, amount-grammar), `:51` (R23 for every `\w+RecordSchema`), `:39-40` (R37 for any CSV under sample-clients taxprep and reference/taxprep). Owners F01, F02, G00/G02, G01, F09B, E03 at `:48-55` and db `:51-53`, `:61-62`, not FX3 as the card line says. Narrow each to the exact message and file.
+3. R34 scan drops the whole SC fixtures folder (`testDataFiles()`, `:897`), including goldens and clean files. Excuse only the planted-r34 files by name.
+4. Repo-wide rules can pass on an empty scan: R16 (`:1418-1422`), R17 (`:1434`), R41 (`:1758`), R49 (`:1973`), R56 (`:2004`) never assert a file was scanned; R18 (`:1454`) does not assert any core file matched. None is empty today (12 schema .sql, 29 core files).
+5. Note: planted fixtures use a Luhn-valid SIN 271000002, jordan.lee@realmail.ca, (416) 555-2368 (`planted-r34-pii.*`). Made up, but KNOWN `:38` says A05 was told to use a non-Luhn number for the same kind of plant; keep that consistent.
 
-Needed: a cloud check run (full), including the Opus read. The 4 local failures should be re-run there; the builder's cloud run (cloud-a93d05) reported 75 of 75 unit, 19 of 19 db, 507 green.
-Also for the Lead: the laptop's node_modules is stale against package-lock (exceljs, pdfjs-dist), so local checks of anything touching A03 or A07 readers fail the same way.
+Rule candidate: a KNOWN entry names one exact message (or a counted list) and one owner card; a rule that scans files asserts the scan is non-empty.
+
+Permission gaps: none. Model: Sonnet 5.5, adversarial read by an Opus subagent.
