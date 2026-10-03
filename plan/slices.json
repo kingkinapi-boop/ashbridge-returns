@@ -2002,12 +2002,8 @@
         "src/modules/ai/index.ts",
         "data/ai/approved.json",
         "src/core/env.ts",
-<<<<<<< HEAD
-        "src/core/safe-read.ts"
-=======
         "src/core/safe-read.ts",
         "src/core/safe-read.test.ts"
->>>>>>> origin/main
       ],
       "clauses": [
         "ARC-6",
@@ -6208,12 +6204,8 @@
         "db/schema/60_versions.sql",
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
-<<<<<<< HEAD
-        "src/pipeline/deps.ts"
-=======
         "src/pipeline/deps.ts",
         "tools/test/__fixtures__/security-rules/harness.ts"
->>>>>>> origin/main
       ],
       "clauses": [
         "FLOW-4",
@@ -10578,8 +10570,6 @@
     },
     {
       "status": "carded",
-<<<<<<< HEAD
-=======
       "spec": null,
       "deps": [
         "A04"
@@ -10603,7 +10593,6 @@
     },
     {
       "status": "carded",
->>>>>>> origin/main
       "spec": "bd0e2fe2",
       "deps": [
         "F02",
