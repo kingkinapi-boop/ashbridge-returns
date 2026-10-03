@@ -2203,7 +2203,8 @@
         "ai-project/**",
         "src/modules/ai/project/**",
         "package.json",
-        "src/core/env.ts"
+        "src/core/env.ts",
+        "tools/test/settings-rules.test.mjs"
       ],
       "clauses": [
         "ARC-6",
@@ -3102,7 +3103,8 @@
         "db/schema/56_qbo.sql",
         "testworld/qbo/export.ts",
         "src/core/env.ts",
-        "tools/test/schema-contract-rules.test.mjs"
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/settings-rules.test.mjs"
       ],
       "clauses": [
         "TB-1",
@@ -10303,7 +10305,14 @@
         "testworld/clients/w00d-*.acceptance.test.ts",
         "testworld/model/__fixtures__/w00d-*.ts",
         "testworld/model/__fixtures__/w00c-r3-walk.ts",
-        "reference/sample-clients/*/answer-key.json"
+        "reference/sample-clients/*/answer-key.json",
+        "reference/sample-clients/lib/**",
+        "reference/sample-clients/clients/**",
+        "vitest.mutate.config.ts",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-args.test.mjs",
+        "tools/mutate-shards.json",
+        "testworld/**/*.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -10521,7 +10530,8 @@
         "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
         "tools/test/__fixtures__/schema-contract/known.json",
         "src/core/safe-read.ts",
-        "tools/test/schema-contract-rules.test.mjs"
+        "tools/test/schema-contract-rules.test.mjs",
+        "src/contracts/text.ts"
       ],
       "clauses": [
         "EV-1",
@@ -10734,7 +10744,7 @@
       "paths": [
         "src/contracts/records.ts",
         "src/contracts/records.acceptance.test.ts",
-        "src/modules/bridge/bridge.ts",
+        "src/contracts/bridge.ts",
         "src/modules/ai/runner/schemas.ts",
         "src/modules/ai/runner/engines.ts",
         "src/modules/ai/runner/runner.ts",
