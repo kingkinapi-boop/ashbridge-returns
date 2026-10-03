@@ -1,0 +1,5 @@
+export function guardFiles(dir: string) {
+  return [dir].filter(() => false)
+}
+const luhn = (s: string) => s.length === 9
+export const guardValue = (s: string) => luhn(s)

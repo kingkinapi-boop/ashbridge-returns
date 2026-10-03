@@ -510,143 +510,6 @@
     },
     {
       "rule": "R37",
-      "file": "reference/sample-clients/01-maple-ridge/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/01-maple-ridge/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/02-halton-haulage/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/02-halton-haulage/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/03-bluewater-renovations/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/03-bluewater-renovations/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/04-lakeshore-eats/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/04-lakeshore-eats/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/05-eglinton-holdings/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/05-eglinton-holdings/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/06-eglinton-retail/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/06-eglinton-retail/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/07-riverdale-rentals/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/07-riverdale-rentals/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/08-queen-west-design/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/08-queen-west-design/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/09-scarborough-robotics/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/09-scarborough-robotics/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/10-danforth-cleaning/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/10-danforth-cleaning/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/11-humber-bay-software/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/11-humber-bay-software/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)",
-        "reference/sample-clients/11-humber-bay-software/taxprep/import.csv: CRLF in the index under text=auto eol=lf"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/12-kensington-market-crafts/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/12-kensington-market-crafts/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)",
-        "reference/sample-clients/12-kensington-market-crafts/taxprep/import.csv: CRLF in the index under text=auto eol=lf"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/13-sharma-medicine/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/13-sharma-medicine/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/14-rouge-valley-landscaping-2024/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/14-rouge-valley-landscaping-2024/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
-      "file": "reference/sample-clients/15-rouge-valley-landscaping-2025/taxprep/import.csv",
-      "problems": [
-        "reference/sample-clients/15-rouge-valley-landscaping-2025/taxprep/import.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
-      ],
-      "owner": "FX9",
-      "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R37",
       "file": "reference/taxprep/2026-10-01-day1/exports/all-input-cells-return1-structure.csv",
       "problems": [
         "reference/taxprep/2026-10-01-day1/exports/all-input-cells-return1-structure.csv: byte-compared but git may rewrite its line ends (attr text=auto eol=lf; make it -text or binary)"
@@ -842,15 +705,6 @@
       ],
       "owner": "FX9",
       "why": "byte-compared CSV not -text in .gitattributes (FX9: .gitattributes and the CSV line endings, A415)"
-    },
-    {
-      "rule": "R38",
-      "file": "src/contracts/taxprep.acceptance.test.ts",
-      "problems": [
-        "src/contracts/taxprep.acceptance.test.ts: a TextDecoder for windows-1252 (its table differs between Node versions)"
-      ],
-      "owner": "FX6",
-      "why": "windows-1252 TextDecoder or no Node 24 setup guard"
     },
     {
       "rule": "R38",
@@ -1112,6 +966,33 @@
       ],
       "owner": "FX4",
       "why": "a raw-XML regex that misses a self-closed element"
+    },
+    {
+      "rule": "R28",
+      "file": "testworld/model/guard.ts",
+      "problems": [
+        "testworld/model/guard.ts: defines its own amount pattern (/\\(\\\\{1,2}d\\{3\\}\\)/); import from src/contracts/amount-grammar.ts"
+      ],
+      "owner": "W00b",
+      "why": "PHONE10 and NINE_DIGITS capture groups (\\d{3}) are a phone or SIN shape, not an amount; W00b's guard rewrite settles it, never by dodging the scanner (A463 row 2, A467)"
+    },
+    {
+      "rule": "R51",
+      "file": "testworld/clients/load.ts",
+      "problems": [
+        "testworld/clients/load.ts: reads data files without guardFolder or guardValue (SEC-11)"
+      ],
+      "owner": "W00b",
+      "why": "guardFolder and guardValue do not exist until W00b, which wires the loader through them and deletes this row (A463 row 11, A467)"
+    },
+    {
+      "rule": "R51",
+      "file": "testworld/generate.ts",
+      "problems": [
+        "testworld/generate.ts: reads data files without guardFolder or guardValue (SEC-11)"
+      ],
+      "owner": "W00b",
+      "why": "guardFolder and guardValue do not exist until W00b, which wires the generator through them and deletes this row (A463 row 11, A467)"
     }
   ],
   "db": [
