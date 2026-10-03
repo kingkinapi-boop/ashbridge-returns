@@ -1,9 +1,11 @@
 {
  "card": "FX17",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "11 unit + 72 db tests; refit; db-budget ARC-15 flags SC3's security-rules.db.test.ts R62-R66 (SC3's, not FX17's)",
  "worker": "cloud-1fcc74",
- "state": "working",
- "at": "2026-10-03T15:30:57.322Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T15:39:52.072Z",
+ "mode": "turbo",
+ "commit": "5d41ddd2",
+ "validated": "6c6d989efcffd327989aedc460b44a64f9e3451c"
 }
