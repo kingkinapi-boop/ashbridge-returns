@@ -1,6 +1,7 @@
 # Family: test documents ({doc})
 
 Phase (the card's own, in plan/slices.json). Where: cloud (scan bytes are compared on the cloud Linux runner, as W20).
+Tags: none.
 
 Cards W21 to W38. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 03 (documents) and `testworld/render/_core/` (W20).
 
