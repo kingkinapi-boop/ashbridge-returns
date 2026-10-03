@@ -3,11 +3,11 @@
  "role": "spec",
  "worker": "cloud-a113b9",
  "state": "released",
- "at": "2026-10-03T06:23:13.804Z",
+ "at": "2026-10-03T06:34:34.453Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "560e3b2e0c61c29eaec768c645fe825f2b82a5f7"
  },
- "note": "waits for W16 to land (A417); queue re-offers it, Lead: hold FX8 until W16 is merged",
- "needsLead": true
+ "note": "wait: W16 lands, then round 2 on claude/FX8-r2 (A417)",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"W16\"],\"depStatus\":[\"carded\"]}"
 }
