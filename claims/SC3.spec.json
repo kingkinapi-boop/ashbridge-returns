@@ -1,10 +1,10 @@
 {
  "card": "SC3",
  "role": "spec",
- "note": "56 tests (36 unit, 20 db); A452 patch; L00, B05, FX17 cards need harness.ts in Paths",
+ "note": "A458: second spec patch G1 to G6",
  "worker": "cloud-d01e1c",
- "state": "reported",
- "at": "2026-10-03T10:06:32.556Z",
+ "state": "reopened",
+ "at": "2026-10-03T10:14:54.156Z",
  "mode": "turbo",
  "commit": "d69c50b1",
  "validated": "46ab96ea"
