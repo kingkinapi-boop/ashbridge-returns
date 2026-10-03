@@ -1,10 +1,10 @@
 {
  "card": "S00",
  "role": "spec",
- "note": "toolchain refit: spec tests only on new branch claude/S00-refit (old claude/S00 merge conflicts on unrelated files; its build files left out); typecheck/lint fail only on missing taxprep-sim/index; unit 2434 pass; 6b none",
+ "note": "A402: gaps in reports/S00-spec-review.md; see bold directive on the card",
  "worker": "cloud-c447a8",
- "state": "reported",
- "at": "2026-10-03T03:25:53.989Z",
+ "state": "reopened",
+ "at": "2026-10-03T03:47:54.362Z",
  "mode": "turbo",
  "commit": "39ac95b",
  "validated": "a5475d6"
