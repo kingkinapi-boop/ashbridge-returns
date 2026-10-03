@@ -4,8 +4,8 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 ## 1. Needs you
 
-Nothing now.
+Nothing now. (Critic proposals of 3 Oct: you said "critic ok"; the Lead applies them.)
 
-## 2. What the Lead is doing now (3 Oct, 03:25 UTC)
+## 2. What the Lead is doing now (3 Oct, 13:00 UTC)
 
-Turbo, between sessions (handover). 42 cards are on main. Your three Critic fixes are in (decision 0024). Waiting to board: the spreadsheet reader's last round, the test-world fix round that most of the build waits on (all 1,975 of its tests pass), and sign-in round 2 (passed its check; a fresh security review comes first). The AI runner failed its check on test strength and goes round 2 after sign-in lands. Six cards for phase 3 are written. Plan use this week: about 52%.
+Turbo. 54 cards are on main. A batch of three (job queue fix, test tooling) is being checked in the cloud now; four cloud workers and three on this laptop are building. The AI runner failed its last train on a clock mix-up (its deadline read one clock, its wait another); the fix is small and stays in this round, and a new check runs every test with the date moved forward so this kind of fault is caught everywhere. The test-world fixes most of the build waits on are in their last round. Nothing else needs you.
