@@ -24,7 +24,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | spec round 3 working (local-1, A410) | spec review, build, check, security review |
 | DB16 | spec round 2 working (local-2, A411); an early cloud build claim voided | spec review, build, check on Postgres 16 |
-| FX2 | check FAIL (scope, mutation dry run); Opus findings review running | fix round from reports/FX2-findings.md |
+| FX2 | round 2 spec reopened (A414: Paths fixed, readOwnSource, auth line); SC8 carded (R79) | spec, build, check, security review; lands before FX7 |
 | CQ2 | on the train (claude/train a5d6dba0), boarding | request the train at 6 cards or 05:30Z, with test:flake |
 | JH0 | spec reported | build after W00c lands |
 
