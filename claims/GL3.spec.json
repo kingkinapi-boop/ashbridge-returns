@@ -1,11 +1,12 @@
 {
  "card": "GL3",
  "role": "spec",
- "note": "A498 round 4 spec patch S1 to S6 per the Lead directive at the top of the card; then the Lead reopens the build",
- "reopenedFrom": "e93ad935",
+ "note": "round 4: 17 tests (6 unit, 11 db) red on 470bc705 by design; 73 total; builder note B2 union flatten, see reports/GL3-spec-4.md",
  "worker": "cloud-97b8bd",
- "state": "working",
- "at": "2026-10-03T15:55:25.902Z",
+ "state": "reported",
+ "at": "2026-10-03T16:32:55.605Z",
  "mode": "turbo",
- "beat": "2026-10-03T15:57:54.109Z"
+ "beat": "2026-10-03T15:57:54.109Z",
+ "commit": "c0528761",
+ "validated": "de30610b"
 }
