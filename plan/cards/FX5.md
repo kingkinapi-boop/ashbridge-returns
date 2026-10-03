@@ -1,5 +1,7 @@
 # FX5 F02 move inside a caller transaction (for T08)
 
+**Lead directive, 3 Oct 15:04Z (A494): round 3, a small one, after FX4 in the known.json order (A481); the Lead reopens the spec.** Round 2's code landed with train 725bc456. The card stays open because tools/test/__fixtures__/schema-contract/known.json still names it as owner of three entries its build did not fix (A407 below): R16, the order by occurred_at, id with no identity seq first in src/modules/lifecycle/index.ts; R18 and R23, plain z.object (a stray key passes) in src/contracts/lifecycle.ts for ApprovalFingerprintSchema and ChangedItemSchema. Spec: delete the three entries (the rule tests then fail on them). Build: identity seq first in the order; strict schemas. Nothing else.
+
 **Lead note, 3 Oct (A410): round 2 spec bd0e2fe2 reviewed GO (reports/FX5-spec-review-2.md). Build to it: rule refusals return `{ ok: false }`, database errors throw.**
 
 Phase 3. Size S. Deps: F02, SC. Where: cloud.

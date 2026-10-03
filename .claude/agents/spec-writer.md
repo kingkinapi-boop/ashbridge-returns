@@ -18,8 +18,10 @@ You write the tests that decide when a card is done. You never write product cod
 7. Commit as `spec(<card>): acceptance tests`, push, put the commit hash on the card's "Spec commit" line (family cards: in your report), and report the job with `--commit <hash>`.
 8. Report in at most 5 lines: tests written, clauses covered, "validated on main <sha>", the tests step 6b retired (or "none"), and anything the card left unclear with the choice you made (amber).
 
-A spec refit (the dep gate reopens a spec for a "toolchain refit" when `vitest.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `package.json` or `tools/test/*-rules.test.mjs` changed on main since the "validated on main" sha) repeats step 6 on the existing spec: fix only what the toolchain flags, keep every assertion, and report the old and new sha.
+A spec refit (the dep gate reopens a spec for a "toolchain refit" when `vitest.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `package.json` or `tools/test/*-rules.test.mjs` changed on main since the "validated on main" sha) repeats step 6 on the existing spec: fix only what the toolchain flags, keep every assertion, and report the old and new sha. First read the top of the card: a bold Lead directive dated after the spec's last commit is a spec patch, and the refit job does it too (the queue shows only "toolchain refit" when a reopen and a refit fall together; A497: FX8's reopen on 3 Oct).
 
 Expectation files (A417, lesson 35): a spec writes every expectation for the finished state, counts included (a README pass count, a verify line, a golden). A file the spec owns is never the build's; if the card does not say who owns one, it is yours, and you name it in your report.
 
 Contract tables (A426): a test table over a contract's fields (a stamp's parts, a schema's keys) is derived from the contract's shape (`Object.keys(schema.shape)`), never copied by hand from the code under test.
+
+Plant real forms first (A493): before inventing an example for a rule over cards or files, copy the phrasing that is really on main (for card rules, a real bold Lead directive, header and time included). SC6's round 1 planted a "**Build: ...**" form that no card uses and missed the real one.

@@ -535,7 +535,8 @@
       "phase": 0,
       "size": "S",
       "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it).",
-      "done": "2026-10-02"
+      "done": "2026-10-02",
+      "core": true
     },
     {
       "status": "done",
@@ -1991,7 +1992,7 @@
     },
     {
       "status": "carded",
-      "spec": "fb82b8c",
+      "spec": "be09e312",
       "deps": [
         "F04",
         "F06",
@@ -2024,6 +2025,28 @@
       "hard": true,
       "core": true,
       "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/runner.acceptance.test.ts",
+        "src/modules/ai/runner/exchange.acceptance.test.ts",
+        "src/modules/ai/runner/runner.ts"
+      ],
+      "clauses": [
+        "AI-9",
+        "ARC-15"
+      ],
+      "id": "A04C",
+      "title": "AI runner: one clock, pinned as a class",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Split from A04 (A477, Review 3 Oct finding 2)."
     },
     {
       "status": "done",
@@ -2501,7 +2524,9 @@
         "src/modules/documents/index.ts",
         "src/contracts/documents.ts",
         "db/schema/10_documents.sql",
-        "src/pipeline/steps/intake.ts"
+        "src/pipeline/steps/intake.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts"
       ],
       "clauses": [
         "EV-2",
@@ -3566,6 +3591,35 @@
       },
       "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
       "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15",
+        "G16",
+        "G17"
+      ],
+      "paths": [
+        "data/question-coverage.json",
+        "data/question-bank/*.json",
+        "src/modules/gaps/bank/coverage.acceptance.test.ts"
+      ],
+      "clauses": [
+        "END-7",
+        "RULE-19"
+      ],
+      "id": "G18",
+      "title": "Question banks: every sample flag mapped",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Review 3 Oct finding 7 (A478)."
     },
     {
       "status": "carded",
@@ -5449,7 +5503,6 @@
       "deps": [
         "V05",
         "B00",
-        "D06",
         "U02"
       ],
       "paths": [
@@ -6205,7 +6258,8 @@
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
         "src/pipeline/deps.ts",
-        "tools/test/__fixtures__/security-rules/harness.ts"
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -9307,7 +9361,7 @@
       "screens": true,
       "hard": false,
       "security": true,
-      "core": true
+      "core": false
     },
     {
       "status": "carded",
@@ -9725,7 +9779,9 @@
         "src/modules/storage/**",
         "src/modules/qbo/**",
         "data/live/**",
-        "tools/golive-check.mjs"
+        "tools/golive-check.mjs",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-6",
@@ -9990,7 +10046,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ4"
@@ -10008,10 +10064,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/DB16-findings.md, 3 Oct (A430)."
+      "note": "From reports/DB16-findings.md, 3 Oct (A430).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ5"
@@ -10028,7 +10085,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/CQ5-spec.md, 3 Oct (A431)."
+      "note": "From reports/CQ5-spec.md, 3 Oct (A431).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10071,6 +10129,82 @@
       "size": "S",
       "core": false,
       "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "package.json",
+        "tools/flake-shifted.mjs",
+        "tools/test/flake-shifted.test.mjs",
+        "tools/test/__fixtures__/flake-shifted/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ10",
+      "title": "Flake run with the date shifted",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/A04-findings-6.md, 3 Oct (A469).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ8"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/metrics.mjs",
+        "tools/test/claim-wait-check.test.mjs",
+        "tools/test/metrics-counts.test.mjs",
+        "tools/next.mjs",
+        "tools/lib.mjs",
+        "tools/test/next-paths.test.mjs",
+        "tools/scope.mjs",
+        "tools/test/scope-spec-files.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ11",
+      "title": "Queue: no re-offered checks after a wait, honest card counts",
+      "phase": 0,
+      "size": "M",
+      "core": false,
+      "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "vitest.config.ts",
+        "src/core/test-assertions.ts",
+        "src/core/test-assertions.acceptance.test.ts",
+        "src/modules/gaps/bank/expenses.acceptance.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts",
+        "src/contracts/jobs.acceptance.test.ts",
+        "src/modules/bridge/**/*.test.ts",
+        "vitest.mutate.config.ts",
+        "src/contracts/facts.acceptance.test.ts",
+        "src/modules/gaps/bank/bank.acceptance.test.ts",
+        "src/modules/auth/rules.acceptance.test.ts",
+        "tools/test/vitest-projects.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ12",
+      "title": "Assertion floor: no test passes without asserting",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Review 3 Oct finding 7 (A478)."
     },
     {
       "status": "carded",
@@ -10165,7 +10299,7 @@
       "title": "Security rules R62 to R66",
       "phase": 0,
       "size": "M",
-      "core": true,
+      "core": false,
       "security": true,
       "note": "From reports/A06-findings.md, 2 Oct."
     },
@@ -10433,7 +10567,7 @@
       "note": "From reports/A04-findings.md, 3 Oct (A426)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "FX10"
@@ -10450,7 +10584,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX10-spec.md, 3 Oct (A429)."
+      "note": "From reports/FX10-spec.md, 3 Oct (A429).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10501,7 +10636,7 @@
       "note": "From reports/FX12-spec.md, 3 Oct (A443)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10520,7 +10655,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
+      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10578,7 +10714,10 @@
         "src/modules/ai/runner/engines.ts",
         "src/modules/ai/runner/runner.ts",
         "src/core/safe-read.ts",
-        "src/modules/ai/runner/exchange-errors.acceptance.test.ts"
+        "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/index.ts",
+        "data/ai/exchange-limits.json"
       ],
       "clauses": [
         "ARC-22",
@@ -10648,11 +10787,11 @@
         "W16"
       ],
       "paths": [
-        "tools/test/card-rules.test.mjs",
-        "tools/test/__fixtures__/card-rules/**"
+        "tools/test/spec-rules.test.mjs",
+        "tools/test/__fixtures__/spec-rules/**"
       ],
       "clauses": [
-        "ARC-15",
+        "ARC-12",
         "ARC-16"
       ],
       "id": "SC6",
@@ -10675,7 +10814,9 @@
       ],
       "paths": [
         "tools/test/lib/known.mjs",
-        "tools/test/lib/known.test.mjs"
+        "tools/test/lib/known.test.mjs",
+        "tools/test/lib/cards.mjs",
+        "tools/test/lib/cards.test.mjs"
       ],
       "clauses": [
         "ARC-15",
@@ -10727,14 +10868,20 @@
       "spec": null,
       "deps": [
         "SC",
-        "SC7"
+        "SC7",
+        "SC3"
       ],
       "paths": [
         "tools/test/rule-walker.test.mjs",
         "tools/test/__fixtures__/rule-walker/**",
         "tools/test/lib/walk.mjs",
         "tools/test/rules.test.mjs",
-        "src/core/db/db.test.ts"
+        "src/core/db/db.test.ts",
+        "src/contracts/schema-rules.db.test.ts",
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "data/schema/contract-tables.json",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-15",
@@ -10781,6 +10928,7 @@
       ],
       "paths": [
         "src/core/db/rules.acceptance.db.test.ts",
+        "src/core/db/__fixtures__/grants/**",
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",
@@ -10807,7 +10955,10 @@
       ],
       "paths": [
         "tools/test/fs-rules.test.mjs",
-        "tools/test/__fixtures__/fs-rules/**"
+        "tools/test/__fixtures__/fs-rules/**",
+        "src/modules/auth/testusers/engine.ts",
+        "src/core/db/index.ts",
+        "src/modules/auth/auth.acceptance.db.test.ts"
       ],
       "clauses": [
         "SEC-10",
