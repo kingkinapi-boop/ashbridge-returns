@@ -1,34 +1,34 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 10:50Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:55Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (49):** through A07D, A06, CQ2, SC4, then CQ3, W16 and FX2 (train 5deca4a green, test:flake 5 of 5, verify 541; landed 07:57Z as 758d0b06). Train 12af2528 requested 08:50Z.
+- **Landed (53):** through FX2, then SC, CQ4, CQ5 and FX10 (train 12af2528 green: unit 2703, db 587, flake 5 of 5, FX10 db x20 20 of 20; landed 10:52Z as 6ca8b48f). Train (DB16) requested 11:25Z.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | round 3 spec review: 4 gaps (A459), spec patch reopened | spec, build round 3, mutation on cloud, check |
+| W00c | spec patch A459 in; main merge needs SC rule rows (A463: no Zo question) | spec merges main and fixes rows, build round 3, mutation on cloud, check |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| Train | SC, CQ4, CQ5, FX10 on 12af2528: flake 5 of 5 green, FX10 db x20 at 16 of 20 (10:20Z) | land if green; next train DB16, FX15 |
-| SC3 | spec review: 6 gaps, no build round (A458); second spec patch reopened | spec, Opus re-check, security review, board |
+| Train | 26e84345 red on R18 (fixed by A461) and blocked on pg16 and mutation (refused); rebuilt with DB16 alone, requested 11:25Z (A462) | check on pg16; land; SC11 and GL3 follow |
+| SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 5 spec + G1 to G5 patch reported (235 unit); build round 5 open (cloud) | build, check, security review; A08 spec after |
+| A04 | lint fix in; main merged: R41 flags .trim() in engines.ts and runner.ts (A461) | build round 5b (contracts/text.ts), check, security review |
 | DB16, SC11, GL3 | DB16 PASS, CLEAN; SC11 spec reported (39 tests, A453 in); GL3 build waits for DB16 on main (pg16) | board DB16 next train; SC11 build; GL3 pg16 re-run, check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
-| FX12, FX14, FX15 | FX12 build open; FX14 carded; FX15 spec Paths fixed (A449) | builds, checks |
-| CQ6 to CQ8, SC10, A08 | CQ6, CQ7, CQ8 specs reported; A08 spec reported, refusal-file gap to its spec (A443) | CQ builds after CQ4 and CQ5 land; A08 after A04 |
+| FX12, FX14, FX15, FX17 | FX15 build round 2 (@mutate on jobs/runner.ts, A461); FX12 build open; FX17 spec reported | builds, checks |
+| CQ6 to CQ8, SC10, A08 | CQ6 build in, spec patch for the real setup path (A464); CQ7 build reported; CQ8 spec reported; A08 waits for A04 | CQ6 spec, build; CQ7 check; CQ8 build |
 
-Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none (only cloud jobs open at 10:15Z). Cloud: 2 more at 10:15Z (SC11 spec, FX8 build).
+Cloud runs: about 6 since 10:58Z (train DB16, A04 and FX15 builds, specs). Local: none; local workers only for a named local job until CQ8 lands (claim.mjs offers Where: cloud jobs to them).
 
 ## Next, in order
 

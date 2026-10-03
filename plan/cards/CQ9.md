@@ -20,3 +20,9 @@ The config and the pass-through; nothing else.
 
 ## Check
 A checker who did neither: the new tests and every tools test pass; scope clean.
+
+## Also (A460, reports/train-20261003 for 12af2528)
+`mutate:changed <card>` for a core card whose Paths hold no product file under src/ (SC: tests, tools and fixtures only) prints "no product code to mutate" and exits 0, instead of exit 1. Planted: SC's Paths.
+
+## Also (A464)
+The mutation gate also covers family cards (A430): a card built from `plan/cards/families/<family>.md` is gated by its own Tags like any card. Planted: a family card tagged core with an unmarked src file.
