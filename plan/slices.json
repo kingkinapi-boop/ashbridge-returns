@@ -771,14 +771,16 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00c"
+        "W00c",
+        "FX8"
       ],
       "paths": [
         "testworld/model/guard.ts",
         "testworld/model/guard-fields.ts",
         "testworld/model/made-up-data.acceptance.test.ts",
         "testworld/model/kinds.ts",
-        "testworld/model/__fixtures__/guard/**"
+        "testworld/model/__fixtures__/guard/**",
+        "testworld/clients/load.ts"
       ],
       "clauses": [
         "SEC-11",
@@ -9738,6 +9740,33 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "reference/sample-clients/clients/c07_08.mjs",
+        "reference/sample-clients/clients/c09_10.mjs",
+        "reference/sample-clients/clients/c13_15.mjs",
+        "reference/sample-clients/07-*/**",
+        "reference/sample-clients/09-*/**",
+        "reference/sample-clients/14-*/**",
+        "reference/sample-clients/15-*/**",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md",
+        "tools/test/sample-names.test.mjs"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-8"
+      ],
+      "id": "FX8",
+      "title": "Sample clients: the four bare names in flag text",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/W00b-spec-review.md, 3 Oct (A409)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "F02",
         "SC"
@@ -9785,7 +9814,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "SC"
+        "SC",
+        "W16"
       ],
       "paths": [
         "tools/test/card-rules.test.mjs",
@@ -9864,7 +9894,7 @@
     },
     {
       "status": "carded",
-      "spec": null,
+      "spec": "d6f3a1b1",
       "deps": [
         "A06"
       ],

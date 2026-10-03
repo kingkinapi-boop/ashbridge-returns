@@ -1,6 +1,8 @@
 # SC6 Card and verify rules R77 and R78
 
-Phase 0. Size S. Deps: SC. Where: cloud.
+**Lead directive, 3 Oct (A408): spec fixup for the 6 gaps in reports/SC6-spec-review.md.** R77 reads bold directives and "Fix round" sections too, whole-sentence handling, any case and path spelling; R78 matches behaviour (git diff, git show, merge-base through a variable, pinned hashes) and covers test files; SC6 now depends on W16, so no KNOWN entry is needed for verify.mjs or W14 (R77 runs only on open cards): KNOWN ends empty.
+
+Phase 0. Size S. Deps: SC, W16. Where: cloud.
 Tags: core (who writes which file decides whether a spec can be graded fairly).
 Paths: tools/test/card-rules.test.mjs, tools/test/__fixtures__/card-rules/**
 Clauses: ARC-15, ARC-16
