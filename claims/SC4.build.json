@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "aa5b46ad",
  "worker": "cloud-fd4d7f",
- "state": "working",
- "at": "2026-10-03T04:27:17.444Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T04:29:27.213Z",
+ "mode": "turbo",
+ "note": "17 of 17 rule tests pass on merged main, tools 214 pass"
 }
