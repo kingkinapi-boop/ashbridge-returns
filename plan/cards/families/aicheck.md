@@ -18,6 +18,7 @@ The owner-manager issue "{topic}" is looked for on every return, and every findi
 3. On kinds without the issue, no flag.
 4. The prompt version and model are stamped on every output (AI-10).
 5. The evaluation harness (I40) shows this topic's score, and it is recorded in `reports/`.
+6. Each sample flag that `data/question-coverage.json` (G18) gives this card as owner is raised on its sample client, by flag id; before G18 is on main, take the rows from G18's directive (A499).
 
 ## Not in this card
 Other topics. Clearing anything: AI never clears (AI-7).

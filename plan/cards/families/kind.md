@@ -20,6 +20,7 @@ One made-up corporation, {kind}, with everything a real file would hold and the 
 2. The books balance and retained earnings roll (the model's own checks).
 3. Every clause on the card has at least one planted fault or expected result that names it.
 4. No real person, business or number (names end in "(Test)").
+5. Each planted fault drawn from a sample flag names the clause `data/question-coverage.json` (G18) gives that flag, and a test compares them; a flag the map marks cpa-judgment (owner X00) names no clause and is expected on the CPA's review, not from a check (A499).
 
 ## Not in this card
 Rendering documents (W21 to W38). Any product code.
