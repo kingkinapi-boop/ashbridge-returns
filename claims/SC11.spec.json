@@ -1,10 +1,11 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "A476: R107 R108 (card Also)",
- "reopenedFrom": "d1db68b",
+ "note": "R107 R108: 12 new unit tests in sql-rules.acceptance.test.ts (A476); round 1 spec kept; only SC11's own db tests fail",
  "worker": "cloud-11e3ce",
- "state": "working",
- "at": "2026-10-03T13:31:00.691Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T13:40:02.010Z",
+ "mode": "turbo",
+ "commit": "817cdde4",
+ "validated": "9ae027c4a5f2567479e2966ad2e6c04104e1e40c"
 }
