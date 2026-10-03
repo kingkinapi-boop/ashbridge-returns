@@ -2,9 +2,10 @@
  "card": "A04C",
  "role": "spec",
  "worker": "cloud-359204",
- "state": "released",
- "at": "2026-10-03T13:55:28.914Z",
+ "state": "reported",
+ "at": "2026-10-03T13:58:50.812Z",
  "mode": "turbo",
- "note": "wait: A04 lands first (its runner files are not on main; A04 is frozen and its last check is running); the Lead reopens it then",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"carded\"]}"
+ "note": "4 tests (G1 to G4); runner 141, exchange 95; reports/A04C-spec.md",
+ "commit": "bdf80180",
+ "validated": "a2ee55d388fe4b45920cc3d657388be37c2f0fcf"
 }
