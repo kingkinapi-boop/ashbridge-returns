@@ -1,10 +1,10 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "77 tests (exchange 61, safe-read 16; 8 Linux-only) + 1 db, 5 restated, 1 retired; see reports/A04-spec.md round 5",
+ "note": "A456: G1 to G5 spec patch",
  "worker": "local-1",
- "state": "reported",
- "at": "2026-10-03T09:49:09.230Z",
+ "state": "reopened",
+ "at": "2026-10-03T09:54:11.409Z",
  "mode": "turbo",
  "beat": "2026-10-03T09:48:08.624Z",
  "commit": "e255f795",
