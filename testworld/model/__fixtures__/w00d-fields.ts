@@ -83,11 +83,12 @@ const key = (gs: readonly string[]): string[] => gs.map((g) => `answer-key.json 
 const onb = (gs: readonly string[]): string[] => gs.map((g) => `onboarding.json ${g}`)
 
 /**
- * The four typed fields of reports/W00c-check.md items 2 and 3 that W00c neither held nor checked. W00d reads each:
- * a change refuses the load or changes the model (the plants in w00d-fields.acceptance.test.ts).
+ * The four typed fields of reports/W00c-check.md items 2 and 3 that W00c neither held nor checked, and the adjusting
+ * entry's TB-2 type (A511). W00d reads each: a change refuses the load or changes the model (the plants in
+ * w00d-fields.acceptance.test.ts and w00d-types.acceptance.test.ts).
  */
 export const W00D_READ: readonly string[] = [
-  ...key(['accounts[].tag', 'parties[].kind', 't2Inputs.schedule50[].businessNumber']),
+  ...key(['accounts[].tag', 'parties[].kind', 't2Inputs.schedule50[].businessNumber', 'adjustingEntries[].type']),
   ...onb(['cra_program_accounts[].account_number']),
 ]
 

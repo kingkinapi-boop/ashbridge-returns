@@ -256,22 +256,15 @@ describe('ARC-8 the loaded model, field by field', () => {
     expect(empty).toBeGreaterThan(0)
   })
 
-  it('ARC-8 an adjusting entry is typed by where its sources come from, and lists transactions then onboarding sources', () => {
-    const seen = new Set<string>()
+  it('ARC-8 an adjusting entry lists its transactions sources, then its onboarding sources', () => {
+    // Its type is the answer key's TB-2 type, no longer derived from its sources (W00d, A511): w00d-types.acceptance.test.ts.
     for (const id of CLIENT_IDS) {
       const raw = JSON.parse(readFileSync(join(clientDir(SAMPLE_ROOT, id), 'answer-key.json'), 'utf8')) as {
         adjustingEntries: { id: string; source: { transactions: string[]; onboarding: string[] } }[]
       }
-      const want = raw.adjustingEntries.map((j) => {
-        const t = j.source.transactions.length
-        const o = j.source.onboarding.length
-        const type = t > 0 && o > 0 ? 'from-transactions-and-onboarding' : o > 0 ? 'from-onboarding' : 'from-transactions'
-        seen.add(type)
-        return [j.id, type, [...j.source.transactions, ...j.source.onboarding]]
-      })
-      expect(loadClient(id).adjustingEntries.map((j) => [j.id, j.type, j.sources])).toEqual(want)
+      const want = raw.adjustingEntries.map((j) => [j.id, [...j.source.transactions, ...j.source.onboarding]])
+      expect(loadClient(id).adjustingEntries.map((j) => [j.id, j.sources])).toEqual(want)
     }
-    expect([...seen].sort()).toEqual(['from-onboarding', 'from-transactions', 'from-transactions-and-onboarding'])
   })
 })
 
