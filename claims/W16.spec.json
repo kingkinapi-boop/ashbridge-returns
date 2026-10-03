@@ -1,11 +1,8 @@
 {
  "card": "W16",
  "role": "spec",
- "worker": "local-3",
- "state": "reopened",
- "at": "2026-10-03T04:25:11.313Z",
- "mode": "turbo",
- "note": "A408: gaps in reports/W16-spec-review.md; see bold directive on the card",
- "commit": "704a9432",
- "validated": "7eaf18cfa0e8c49160d5e37d60f1df584204de88"
+ "worker": "cloud-5a0e82",
+ "state": "working",
+ "at": "2026-10-03T04:29:15.906Z",
+ "mode": "turbo"
 }
