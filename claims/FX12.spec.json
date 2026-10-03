@@ -1,11 +1,9 @@
 {
  "card": "FX12",
  "role": "spec",
- "note": "A443 patch: owner FX14; 6 setting tests fail (unbuilt), rest green; typecheck, lint clean",
- "worker": "cloud-117624",
- "state": "reported",
- "at": "2026-10-03T08:29:59.523Z",
- "mode": "turbo",
- "commit": "e5e326a2",
- "validated": "f7705608"
+ "note": "toolchain refit",
+ "worker": "cloud-64f020",
+ "state": "working",
+ "at": "2026-10-03T11:22:36.728Z",
+ "mode": "turbo"
 }
