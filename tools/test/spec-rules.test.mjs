@@ -1,7 +1,8 @@
 // SC6: spec-ownership and verify rules R77, R78 and R81 (unit project). Card plan/cards/SC6.md; clauses ARC-12 (R77,
 // R81: the builder never edits the spec job's files) and ARC-16 (R78). Sources: reports/W16-findings.md ("Rule tests to
 // add"), reports/SC6-spec-review.md (A408), reports/FX8-findings.md (R81, A417, A430), reports/SC6-check.md and the
-// Lead directives of 3 Oct 15:04Z (A493, eight fixes) and 17:07Z (A503, G1 to G8 and grammar coverage). Each rule is first shown failing on its planted examples under
+// Lead directives of 3 Oct 15:04Z (A493, eight fixes), 17:07Z (A503, G1 to G8 and grammar coverage) and 20:08Z (A518,
+// round 3, fixes 1 to 11). Each rule is first shown failing on its planted examples under
 // tools/test/__fixtures__/spec-rules/ (copies taken from git history) or on small typed cards, then applied to the repo.
 // This file was tools/test/card-rules.test.mjs (A493: SC10 owns that name).
 //
@@ -24,34 +25,47 @@
 //     the job word of its header (the bold part) owns its sentences: "spec patch", "spec round" or "spec fixup" is the
 //     spec job's, "build round" is the build's (the first of them wins), a header with only "round N" is a round
 //     directive, and any other header has no job.
-//   - Labels (G1). A label is a job word (spec, build or rebuild, builder, check or checker, acceptance, golden,
-//     fixtures), optionally followed by "files" or "job", optionally "round N" or "patch", optionally a bracket, then a
-//     colon. A label at the start of a line that is not a bullet (bold allowed) gives its job to the rest of its line and
+//   - Word lists (A518 fixes 1 and 6, RC-B). Each class of words is one list that every reader derives from: JOB_WORDS
+//     (spec: spec, specs, spec-writer, acceptance, golden, goldens, fixture, fixtures; build: (re)build(s),
+//     (re)builder(s); check: check, checker) gives the heading words, the label words and the coverage detector's words;
+//     VERB_STEMS with inflect (s, es, ies, ed, d, ied, ing with a final e dropped or a consonant doubled, and written,
+//     wrote, made, kept, held, brought, ran) gives the negation's verbs, a clause's own verb and the spec hand-over's.
+//   - Labels (G1, A518 fix 6). A label is an optional lead ("also for", "also", "new"), a job word (JOB_WORDS),
+//     optionally one of note, notes, risks, order, orders, files, job or items, optionally "round N" or "patch",
+//     optionally a bracket, then a colon. A label at the start of a line that is not a bullet (bold allowed) gives its job to the rest of its line and
 //     to the bullet lines under it, up to the first line that is not a bullet; then the section's or directive's job
 //     returns. A sentence ending in a colon that is a label (after "first", "then", "and", "so", "also", "next", and
-//     "a", "an" or "the") gives its job to the rest of its line. spec, acceptance, golden and fixtures labels are the
+//     "a", "an", "the" or "new") gives its job to the rest of its line. Spec-class labels are the
 //     spec job's, build and builder labels the build's, check labels the check's. Anything else before a colon ("Build
-//     rules added:", "Build risks:", "Spec commit:") is no label.
+//     rules added:", "Spec commit:", "Spec review:") is no label.
 //   - Sentences split after ".", "!", "?", ".**", "**" and ": " (a colon followed by a space); clauses split at commas,
-//     semicolons, brackets and "and".
+//     semicolons, brackets and the words and, but, that, which, while, whereas, though and although (A518 fix 3).
 //   - Job words (G3): a sentence or clause that starts with (re)build(s), builder(s) or "the build" (after "then",
 //     "and", "so", "also" or "next"), a sentence ending in "(build)", and a clause with "by the build" are the build's;
 //     a clause starting with "the check" or "the checker", or holding "by the check", is the check's. A clause that
-//     hands a file to the spec job ("the spec job writes ...") is the spec job's. A clause with a verb of its own starts
-//     fresh; one without inherits the clause before it.
-//   - Negation (G2), closed. With file names masked (so a negation's scope crosses their dots), a clause is negated when
-//     "never", "not", "n't", "without", "nor" or "no line of" comes before an editing verb (edit, change, touch, write,
-//     rewrite, update, modify, add, regenerate, create, delete, remove, in any form), or it says "no change(s) to",
-//     "no edit(s) to", "stays (remains) as it is" or "is (are) out of scope". So "no line of <file> changes", "do not add
-//     a <file> line", "no change to <file>", "<file> stays as it is", "<file> is out of scope (<card> owns it)" and
-//     "don't regenerate <file>" are negations. "forget to" and "fail to" are not: "never forget to update <file>" and
-//     "don't forget to rewrite <file>" are orders. A negated clause is dropped (never a build order, never ownership),
-//     and so is a following clause with no verb of its own.
-//   - Naming a job (G3). A sentence names its job only when one of its clauses starts with a job word (spec, the spec
-//     job, a spec patch, (re)build, the build, builder, the check, the checker), a label gives it, or a clause holds
-//     "by the <job>" or hands a file to the spec job. A job word anywhere else ("counts the spec job left stale", "after
-//     the checks pass") names nothing. In a round directive a sentence that names a spec-owned file and names no job
-//     fails as ambiguous.
+//     hands a file to the spec job ("the spec job writes ...") is the spec job's. "spec" followed by review, reviewer,
+//     commit, report, check, line, section or file (A518 fix 5) is a noun: it starts no spec clause and hands nothing
+//     over. A clause with a verb of its own (a VERB_FORMS word) starts fresh; one without inherits the clause before it,
+//     except after a negated clause (A518 fix 4): the drop carries only to a noun continuation (an optional nor or or,
+//     an optional determiner, then a file or folder name, and no verb); any other clause returns to the line's job.
+//   - Negation (G2, A518 fix 2), closed and adjacent. With file and folder names masked as FILE (so a negation's scope
+//     crosses their dots), a clause is negated when its first verb (the first VERB_FORMS word not right after a
+//     determiner: a, an, the, this, that, its, their, each, every, any, one) has a negation word (never, not, n't,
+//     cannot, without, nor, no) before it with only filler words between (do, does, did, be, is, are, to, ever,
+//     directly, by, hand, yet, again, also, any, the, a, an, FILE, line, lines, of, should, must, may, can, will, need,
+//     needs, have, has, it, them, its, their, this, that), or it says "no change(s) to", "no edit(s) to", "stays
+//     (remains) as it is" or "is (are) out of scope". So "no line of <file> changes", "do not add a <file> line", "no
+//     change to <file>", "<file> stays as it is", "<file> is out of scope (<card> owns it)" and "don't regenerate
+//     <file>" are negations. Any other word ends the negation: "never forget to update <file>", "do not ever forget to
+//     update <file>", "never failing to update <file>" and "without forgetting to update <file>" are orders, and a
+//     negation after the first verb ("Fix <file> counts the spec did not update") negates nothing. A negated clause is
+//     dropped (never a build order, never ownership), and so is a noun continuation after it (fix 4 above).
+//   - Naming a job (G3, per clause since A518 fix 5). A clause names its job only when it starts with a job word (spec,
+//     the spec job, a spec patch, (re)build, the build, builder, the check, the checker; never "the spec review" and the
+//     other spec nouns), holds "by the <job>", hands a file to the spec job, a label gives its line or bullet the job,
+//     or it has no verb and continues a named clause. A job word anywhere else ("counts the spec job left stale", "after
+//     the checks pass", a job word in another clause: "Rewrite <file> counts, then the checker reruns it") names
+//     nothing. In a round directive a clause that names a spec-owned file and names no job fails as ambiguous.
 //   - Spec-owned files, one reading for R77 and R81 (G5): the expectation files (tools/lib.mjs isExpectationFile, a
 //     README in any case, never a `*.build.test.*` file: that is the builder's own test, G7) a Spec section names (by
 //     this reader and by CQ4's sectionNames), every file a "Who does what" spec bullet names, the expectation files a
@@ -67,11 +81,17 @@
 //   Planted: plan/cards/W16.md as on main before A404 (b170854), the six forms of reports/SC6-check.md item 2, the real
 //   directive form, the passive clause of check item 3, the folder of item 4, the standing owners of item 9, and the
 //   A503 forms: the GL3, SC11 and G18 labels, S00's non-label line, the negation table, FX8's A417 check sentence,
-//   DB16's colon form, the heading spellings on main, CQ11's A490 sentence and the glob pairs.
-// Grammar coverage (A503, a rule for everywhere): every heading (the title aside) and every label line on an open card
-//   that holds a job word (spec, build, builder, acceptance, golden, fixtures; check for labels) reads as the job its
-//   first job word names, and a label gives that job to the bullets under it; anything else fails by name. Planted:
-//   round 1's reader (49e9d2e7) over the real forms, which it names.
+//   DB16's colon form, the heading spellings on main, CQ11's A490 sentence and the glob pairs; and the A518 forms: the
+//   modify, touch and refresh orders after a negation, the four near-miss negations, the "that" clause, the "zap"
+//   carry, the three per-clause round sentences, FX8's "**Build note (A442):**" label and the "Goldens:" and
+//   "Spec-writer:" labels.
+// Grammar coverage (A503, a rule for everywhere; A518 fix 7): every heading (the title aside) that holds a job word
+//   reads as the job its first job word names. Label lines are found by an independent detector that never uses the
+//   label regex it checks: a line that is not a bullet or a heading, with at most six words before its first colon
+//   (bold marks dropped, words in brackets and a bracket left open not counted), one of which is a JOB_WORDS word. Each
+//   line found reads as a label of its first job word's class, with that job given to the bullets under it, or is on
+//   the closed NON_LABELS list ("Spec commit", "A checker who did neither"); anything else fails by name. Planted:
+//   round 1's reader (49e9d2e7) and the tip's reader (77d11040, the "**Build note (A442):**" form) over real forms.
 // R81 (ARC-12, A417 lesson 35): each expectation file in an open card's Paths (a verify script, a README with counts, a
 //   test, a fixture folder) is owned by the Spec side (R77's spec-owned files above, G5, which use CQ4's sectionNames in
 //   tools/lib.mjs over the Spec sections less their negated clauses) or by the Build side (as R77 reads it); owned by
@@ -81,14 +101,20 @@
 // R78 (ARC-16: a check over sample data is deterministic and depends on the data, not on git history). Reach by class
 //   (fix 3): every test file the repository holds (`git ls-files --cached --others --exclude-standard`, never a disk
 //   walk) and every checker script over sample data (reference/sample-clients, testworld) is scanned, except a test
-//   that builds its own repository (G6 a: mkdtemp in its code and a git call whose subcommand is init) and this file
+//   that builds its own repository (G6 a, A518 fix 9: mkdtemp or mkdtempSync called in its code, never in a string or
+//   a comment, and a git init call it executes: git(<dir>, 'init', ...) or any git(...) helper call whose subcommand is
+//   init, spawn, spawnSync, execFile or execFileSync('git', [..., 'init']), or an exec or execSync string with a shell
+//   segment starting "git init"; a test title or any other string is no call; a plain oracle cross-checks it, fix 10)
+//   and this file
 //   (SELF, the one named entry: it quotes its plants). A file is over sample data when it lies in those folders or
 //   names them as a path or as path segments (G6 b: path.join(ROOT, 'reference', 'sample-clients')). A scanned file
 //   holds no git call that names a ref other than HEAD, and no frozen "unchanged" claim. Each call is read whole, across
-//   lines (fix 7): a git call is spawnSync/execFileSync('git', ...), git(...), or a string starting "git "; its
-//   subcommand is its first word that is not an option or an option's value. It fails when it names main or master
-//   with any subcommand but init (G6 c), shows "REF:file" for a REF other than HEAD, rev-parses a ref other than HEAD,
-//   or runs describe. Any code line fails on origin/..., refs/..., FETCH_HEAD, ORIG_HEAD, @{u}, @{N}, HEAD~N, HEAD^,
+//   lines (fix 7): a git call is spawnSync/execFileSync('git', ...), git(...), or a string starting "git "; its words
+//   split at &&, ||, ; and | into segments, and each segment that starts with git (a git(...) helper's words are one
+//   segment) is judged alone (A518 fix 8); a segment's subcommand is its first word that is not an option or an
+//   option's value. A segment fails when it names main or master as a ref (refs/, heads/ or remotes/<r>/ in front, ~N,
+//   ^N or @{..} after, a ":path" after that, or at either end of ".." or "...") with any subcommand but init (G6 c),
+//   shows "REF:file" for a REF other than HEAD, rev-parses a ref other than HEAD, or runs describe. Any code line fails on origin/..., refs/..., FETCH_HEAD, ORIG_HEAD, @{u}, @{N}, HEAD~N, HEAD^,
 //   merge-base, show-ref or for-each-ref. Any line, comments included, fails on "folders N to M identical/unchanged/the
 //   same", "unchanged since (or versus) main", "same as (on) main" or "versus main". In a file over sample data, a hex
 //   literal of 40 characters or more and a sha256- or sha512- base64 literal fail too. Comments are read as JavaScript
@@ -323,8 +349,12 @@ const ROUND = /\bround\b/i;
 // "a spec patch"; "the check", "the checker".
 const LEADS = "(?:(?:then|and|so|also|next)\\s+)?";
 const START_BUILD = new RegExp(`^${LEADS}(?:the\\s+)?(?:re)?build(?:s|ers?)?\\b`, "i");
+// A518 fix 5: "spec" followed by one of these nouns names a thing, not the spec job ("the spec review found ...", "the
+// spec commit rewrites ...").
+const SPEC_NOUNS = ["review", "reviewer", "commit", "report", "check", "line", "section", "file"];
+const NOT_SPEC_NOUN = `(?!\\s+(?:${SPEC_NOUNS.join("|")})s?\\b)`;
 const START_SPEC = new RegExp(
-  `^(?:(?:then|and|so|also|next|first)\\s+)?(?:(?:a|an|the)\\s+)?spec\\b`,
+  `^(?:(?:then|and|so|also|next|first)\\s+)?(?:(?:a|an|the)\\s+)?spec\\b${NOT_SPEC_NOUN}`,
   "i",
 );
 const START_CHECK = new RegExp(`^${LEADS}the\\s+check(?:er)?\\b`, "i");
@@ -337,18 +367,34 @@ const BY_CHECK = /\bby\s+the\s+check(?:er)?\b/i;
 // colon. At the start of a line that is not a bullet it gives its job to the rest of the line and to the bullet lines
 // under it; at the start of a sentence ending in a colon (after "first", "then" ... and "a", "the") it gives its job to
 // the rest of its line.
-const LABEL_WORDS = "spec|(?:re)?build(?:s|ers?)?|check(?:er)?|acceptance|golden|fixtures";
+// RC-B (A518 fix 6): one list of job words by class. JOB_WORD (headings), LABEL_WORDS (labels) and the coverage rule's
+// detector all derive from it; check words name a label's job but never a heading's.
+const JOB_WORDS = {
+  spec: ["spec", "specs", "spec-writer", "acceptance", "golden", "goldens", "fixture", "fixtures"],
+  build: ["build", "builds", "builder", "builders", "rebuild", "rebuilds", "rebuilder", "rebuilders"],
+  check: ["check", "checker"],
+};
+const wordAlt = (ws) => [...ws].sort((a, b) => b.length - a.length).join("|");
+const LABEL_WORDS = wordAlt(Object.values(JOB_WORDS).flat());
+// A label may carry one of these words after its job word ("Build note (A442):", "Build risks:", "Spec files:", S00's
+// "New spec items (...):"), and one of these leads before it (S00's "Also for spec round 2 (...):").
+const LABEL_TAILS = ["note", "notes", "risks", "order", "orders", "files", "job", "items"];
+const LABEL_TAIL = `(?:\\s+(?:${LABEL_TAILS.join("|")}))?`;
+const LABEL_LEADS = ["also for", "also", "new"];
+const LABEL_LEAD = `(?:(?:${LABEL_LEADS.join("|").replace(/ /g, "\\s+")})\\s+)?`;
 const LABEL = new RegExp(
-  `^\\s*(?:\\*\\*)?(?:the\\s+)?(${LABEL_WORDS})(?:\\s+(?:files?|job))?(?:\\s+round\\s+\\d+|\\s+patch)?(?:\\s*\\((?:[^()]|\\([^()]*\\))*\\))?\\s*:(?:\\*\\*)?(?=\\s|$)`,
+  `^\\s*(?:\\*\\*)?${LABEL_LEAD}(?:the\\s+)?(${LABEL_WORDS})(?![\\w-])${LABEL_TAIL}(?:\\s+round\\s+\\d+|\\s+patch)?(?:\\s*\\((?:[^()]|\\([^()]*\\))*\\))?\\s*:(?:\\*\\*)?(?=\\s|$)`,
   "i",
 );
 const INLINE_LABEL = new RegExp(
-  `^(?:(?:first|then|and|so|also|next)\\s+)*(?:(?:a|an|the)\\s+)?(${LABEL_WORDS})(?:\\s+(?:files?|job))?(?:\\s+round\\s+\\d+|\\s+patch)?(?:\\s*\\(.*\\))?\\s*:\\s*(?:\\*\\*)?\\s*$`,
+  `^(?:(?:first|then|and|so|also|next)\\s+)*(?:(?:a|an|the|new)\\s+)?(${LABEL_WORDS})(?![\\w-])${LABEL_TAIL}(?:\\s+round\\s+\\d+|\\s+patch)?(?:\\s*\\(.*\\))?\\s*:\\s*(?:\\*\\*)?\\s*$`,
   "i",
 );
+/** The class of a job word: spec, build or check (undefined for any other word). */
+const jobClassOf = (w) =>
+  Object.keys(JOB_WORDS).find((k) => JOB_WORDS[k].includes(w.toLowerCase()));
 /** The job a label word names: spec, build or check. */
-const labelClass = (w) =>
-  /^(?:re)?build/i.test(w) ? "build" : /^check/i.test(w) ? "check" : "spec";
+const labelClass = (w) => jobClassOf(w) ?? "spec";
 /** The state a label gives: the build's, the check's, or the spec job's (a spec section stays a spec section). */
 const labelState = (cls, base) =>
   cls === "build"
@@ -359,8 +405,10 @@ const labelState = (cls, base) =>
         ? base
         : "spec-directive";
 // G4: the job words of a heading (outside code spans and file names); the first one names its class.
-const JOB_WORD =
-  /\b(?:(spec(?:s|-writer)?|acceptance|golden|goldens|fixtures?)|((?:re)?build(?:s|ers?)?))\b/i;
+const JOB_WORD = new RegExp(
+  `\\b(?:(${wordAlt(JOB_WORDS.spec)})|(${wordAlt(JOB_WORDS.build)}))\\b`,
+  "i",
+);
 const outsideNames = (t) =>
   t.replace(/`[^`]*`/g, " ").replace(FILE_RE, " ");
 /** The job a heading's words name: "spec-section" or "build", or undefined when it holds no job word. */
@@ -381,30 +429,83 @@ const READER = {
 };
 // A quotation names a form, never gives an order: text in double quotes is blanked before a line is read.
 const maskQuotes = (line) => line.replace(/"[^"\n]*"|“[^”\n]*”/g, '""');
-// G2: a closed negation grammar. With file names masked (so the scope crosses their dots), a clause is negated when a
-// negation word (never, not, n't, without, nor, "no line of") comes before an editing verb, or it says "no change to",
-// "stays as it is" or "is out of scope". "forget to" and "fail to" are not negations: "never forget to update" orders.
-const NEG_VERBS =
-  "edit|edits|editing|edited|change|changes|changed|touch|touches|touched|write|writes|written|rewrite|rewrites|rewritten|update|updates|updated|modify|modifies|modified|add|adds|added|regenerate|regenerates|regenerated|create|creates|created|delete|deletes|deleted|remove|removes|removed";
-const NEG_PAIR = new RegExp(
-  `(?:\\b(?:never|not|without|nor|no\\s+line\\s+of)\\b|n't\\b)[^.;,]*\\b(?:${NEG_VERBS})\\b`,
-  "i",
-);
+// RC-B (A518 fix 1): one list of verb stems. Every reader's verbs (the negation's, a clause's own verb, a spec hand-over)
+// are VERB_FORMS, the stems with inflect's forms; no reader keeps a list of its own.
+const VERB_STEMS = [
+  "edit", "change", "touch", "write", "rewrite", "update", "modify", "add", "regenerate", "create", "delete", "remove",
+  "refresh", "fix", "commit", "bring", "run", "replace", "move", "copy", "set", "list", "put", "record", "patch",
+  "generate", "make", "own", "keep", "hold", "fill",
+];
+const IRREGULAR = {
+  write: ["wrote", "written"],
+  rewrite: ["rewrote", "rewritten"],
+  make: ["made"],
+  keep: ["kept"],
+  hold: ["held"],
+  bring: ["brought"],
+  run: ["ran"],
+};
+// The stems whose last consonant doubles: one syllable ending consonant, vowel, consonant (set, put, run), and commit.
+const doubles = (s) =>
+  (s.match(/[aeiou]+/g) ?? []).length === 1
+    ? /[^aeiou][aeiou][b-df-hj-np-tvz]$/.test(s)
+    : s === "commit";
+/** Every form of a stem: the stem, s or es or ies, ed or d or ied, ing (dropping a final e, doubling a consonant), and
+ * the irregular forms (written, wrote, made, kept, held, brought). */
+function inflect(stem) {
+  const cy = /[^aeiou]y$/.test(stem);
+  const third = cy ? `${stem.slice(0, -1)}ies` : /(?:s|x|z|ch|sh)$/.test(stem) ? `${stem}es` : `${stem}s`;
+  const dbl = doubles(stem) ? stem + stem.slice(-1) : stem;
+  const past = cy ? `${stem.slice(0, -1)}ied` : stem.endsWith("e") ? `${stem}d` : `${dbl}ed`;
+  const ing = /[^e]e$/.test(stem) ? `${stem.slice(0, -1)}ing` : `${dbl}ing`;
+  return uniq([stem, third, past, ing, ...(IRREGULAR[stem] ?? [])]);
+}
+const VERB_FORMS = new Set(VERB_STEMS.flatMap(inflect));
+const VERB_ALT = wordAlt(VERB_FORMS);
+// G2 and A518 fix 2: a closed negation grammar, adjacent. With file and folder names masked as FILE (so the scope
+// crosses their dots), a clause is negated when its first verb (a VERB_FORMS word that does not follow a determiner) has
+// a negation word (never, not, n't, cannot, without, nor, no) before it with only filler words between, or it says "no
+// change(s) to", "no edit(s) to", "stays (remains) as it is" or "is (are) out of scope". Any other word between them
+// ("forget to", "failing to", "forgetting to") ends the negation, and a negation after the first verb ("Fix <file>
+// counts the spec did not update") negates nothing.
+const NEG_WORDS = new Set(["never", "not", "n't", "cannot", "without", "nor", "no"]);
+const NEG_FILLERS = new Set([
+  "do", "does", "did", "be", "is", "are", "to", "ever", "directly", "by", "hand", "yet", "again", "also", "any", "the",
+  "a", "an", "file", "line", "lines", "of", "should", "must", "may", "can", "will", "need", "needs", "have", "has", "it",
+  "them", "its", "their", "this", "that",
+]);
+const DETERMINERS = new Set(["a", "an", "the", "this", "that", "its", "their", "each", "every", "any", "one"]);
 const NEG_STATE =
   /\bno\s+(?:changes?|edits?)\s+(?:to|in)\b|\b(?:stays?|remains?)\s+as\s+(?:it\s+is|they\s+are)\b|\b(?:is|are)\s+out\s+of\s+scope\b/i;
-const NOT_NEG = /(?:\b(?:never|not)\s+|n't\s+)(?:forget|fail)\s+to\b/gi;
+/** A clause with its file and folder names masked as FILE. */
+const maskNames = (clause) => clause.replace(FILE_RE, "FILE").replace(FOLDER_RE, "FILE");
+const words = (masked) =>
+  (masked.toLowerCase().replace(/n't\b/g, " n't").match(/n't|[a-z][a-z'-]*/g) ?? []);
 function negated(clause) {
-  const masked = clause.replace(FILE_RE, "FILE").replace(NOT_NEG, " ");
-  return NEG_PAIR.test(masked) || NEG_STATE.test(masked);
+  const masked = maskNames(clause);
+  if (NEG_STATE.test(masked)) return true;
+  const w = words(masked);
+  const first = w.findIndex((x, i) => VERB_FORMS.has(x) && !DETERMINERS.has(w[i - 1] ?? ""));
+  if (first < 0) return false;
+  let j = first - 1;
+  while (j >= 0 && NEG_FILLERS.has(w[j])) j--;
+  return j >= 0 && NEG_WORDS.has(w[j]);
 }
-// A clause that hands a file to the spec job (only the clause, never the whole sentence).
-const SPEC_OWNS =
-  /\bspec(\s+job|-writer|\s+writer)?('s)?\s+(job\s+)?(owns?|writes?|wrote|keeps?|holds?|updates?|rewrites?|adds?|sets?|edits?|fills?|puts?)\b|\bspec[- ]owned\b|\b(is|are|stays?|remains?)\s+(the\s+)?spec(\s+job|-writer)?'s\b|\bbelongs?\s+to\s+the\s+spec\b|\bby\s+the\s+spec(\s+job|-writer)?\b|\b(the\s+)?spec(\s+job|-writer)?'s\s+(files?|lines?|counts?|tables?|tests?)\b/i;
-// A clause with a verb of its own starts fresh; one without (", and README.md") inherits the clause before it.
-const OWN_VERB =
-  /\b(write|writes|rewrite|rewrites|update|updates|add|adds|edit|edits|change|changes|fix|fixes|commit|commits|bring|brings|regenerate|regenerates|run|runs|create|creates|remove|removes|delete|deletes|replace|replaces|move|moves|copy|copies|set|sets|list|lists|put|puts|record|records|patch|patches|generate|generates|make|makes|owns?|keeps?|holds?|fills?)\b/i;
+/** A clause with a verb of its own starts fresh (any VERB_FORMS word in it). */
+const hasOwnVerb = (clause) => words(maskNames(clause)).some((x) => VERB_FORMS.has(x));
+// A518 fix 4: a negated clause's drop carries only to a noun continuation: an optional nor or or, an optional
+// determiner, then a file or folder name, with no verb of its own. Any other clause returns to the line's job.
+const NOUN_CONT = /^(?:(?:nor|or)\s+)?(?:(?:the|a|an|its|their|this|that|any|every)\s+)?`?FILE\b/i;
+const nounContinuation = (clause) => NOUN_CONT.test(maskNames(clause).trim()) && !hasOwnVerb(clause);
+// A clause that hands a file to the spec job (only the clause, never the whole sentence); its verbs are VERB_FORMS.
+const SPEC_OWNS = new RegExp(
+  `\\bspec${NOT_SPEC_NOUN}(\\s+job|-writer|\\s+writer)?('s)?\\s+(job\\s+)?(?:${VERB_ALT})\\b|\\bspec[- ]owned\\b|\\b(is|are|stays?|remains?)\\s+(the\\s+)?spec(\\s+job|-writer)?'s\\b|\\bbelongs?\\s+to\\s+the\\s+spec\\b|\\bby\\s+the\\s+spec(\\s+job|-writer)?\\b|\\b(the\\s+)?spec(\\s+job|-writer)?'s\\s+(files?|lines?|counts?|tables?|tests?)\\b`,
+  "i",
+);
 const SENTENCE_SPLIT = /(?<=\*\*|[.!?:])\s+/;
-const CLAUSE_SPLIT = /\s*(?:[,;()]|\band\b)\s*/i;
+// A518 fix 3: clauses also split at but, that, which, while, whereas, though and although.
+const CLAUSE_WORDS = ["and", "but", "that", "which", "while", "whereas", "though", "although"];
+const CLAUSE_SPLIT = new RegExp(`\\s*(?:[,;()]|\\b(?:${CLAUSE_WORDS.join("|")})\\b)\\s*`, "i");
 const stripMarks = (s) => s.replace(/^[\s*_(`>]+/, "");
 // G5: a Spec line that is a file label ("`<file>`: what the spec job writes in it") hands that file to the spec job.
 const FILE_LABEL = /^`?([^\s`]+)`?\s*:\s*(?:\*\*)?\s*$/;
@@ -444,29 +545,27 @@ function lineClauses(line, base, given = false) {
       if (m) carry = labelState(labelClass(m[1]), base);
     }
     const clauses = s.split(CLAUSE_SPLIT).filter((c) => c.trim());
-    // G3: a sentence names its job only when a clause starts with a job word, a label gives it, or a clause holds
-    // "by the <job>" or hands a file to the spec job.
-    const named =
-      explicit ||
-      labelled ||
-      clauses.some((c) => {
-        const x = stripMarks(c);
-        return (
-          START_BUILD.test(x) ||
-          START_SPEC.test(x) ||
-          START_CHECK.test(x) ||
-          BY_JOB.test(x) ||
-          SPEC_OWNS.test(x)
-        );
-      });
+    // G3 per clause (A518 fix 5): a clause names its job only by its own job word at its start, "by the <job>", a spec
+    // hand-over, a label, or as a verbless continuation of a named clause.
     let state = job;
+    let prevNamed = false;
     for (const clause of clauses) {
       const c = stripMarks(clause);
+      const ownWord =
+        START_BUILD.test(c) ||
+        START_SPEC.test(c) ||
+        START_CHECK.test(c) ||
+        BY_JOB.test(c) ||
+        SPEC_OWNS.test(c);
+      const verb = hasOwnVerb(c);
+      const named = labelled || ownWord || (!verb && prevNamed);
+      prevNamed = named;
       if (negated(c)) state = "dropped";
       else if (SPEC_OWNS.test(c)) state = "spec-owns";
       else if (BY_BUILD.test(c) || START_BUILD.test(c)) state = "build";
       else if (BY_CHECK.test(c) || START_CHECK.test(c)) state = "check";
-      else if (OWN_VERB.test(c)) state = job;
+      else if (verb) state = job;
+      else if (state === "dropped" && !nounContinuation(c)) state = job;
       out.push({ state: state === "round" && named ? "none" : state, text: c });
     }
   }
@@ -588,6 +687,29 @@ function r77(rel, text) {
 
 // ---------- grammar coverage: every heading and label holding a job word maps to its job ----------
 const JOB_NAME = { "spec-section": "spec", build: "build", spec: "spec", check: "check", who: "who does what", none: "no" };
+// A518 fix 7: the closed list of label-like lines that are not labels (the words before the colon, brackets dropped).
+const NON_LABELS = ["Spec commit", "A checker who did neither"];
+/** The independent label detector (A518 fix 7): a line that is not a bullet or a heading, with at most six words before
+ * its first colon (words in brackets do not count; bold marks dropped), one of which is a job word (JOB_WORDS, compared
+ * word by word). Returns the text before the colon, its name (brackets dropped) and the class of its first job word. */
+function labelCandidate(line) {
+  if (BULLET.test(line) || HEADING.test(line)) return undefined;
+  const at = line.indexOf(":");
+  if (at < 0) return undefined;
+  const text = line.slice(0, at).replace(/\*\*/g, "").trim();
+  let name = text;
+  for (let prev; prev !== name; ) {
+    prev = name;
+    name = name.replace(/\([^()]*\)/g, " ");
+  }
+  // A bracket left open before the colon ("A checker who did neither (Opus: ...") does not count either.
+  name = name.replace(/\(.*$/, " ");
+  const ws = name.split(/\s+/).filter(Boolean);
+  if (ws.length === 0 || ws.length > 6) return undefined;
+  const job = ws.map((x) => jobClassOf(x.replace(/^[^\w]+|[^\w-]+$/g, ""))).find(Boolean);
+  if (!job) return undefined;
+  return { text, name: ws.join(" "), job };
+}
 /** Every heading (the title aside) and every label line of a card that holds a job word (spec, build, builder,
  * acceptance, golden, fixtures; check for labels) must read as the job its first job word names, and a label must give
  * that job to the bullets under it; anything else fails by name. */
@@ -613,10 +735,12 @@ function grammarCoverage(rel, text, reader = READER) {
         );
       return;
     }
-    const m = LABEL.exec(line);
-    if (!m || BULLET.test(line)) return;
-    const named = labelClass(m[1]);
-    const label = m[0].trim();
+    // A518 fix 7: label lines are found by an independent detector, never by the label regex under check.
+    const cand = labelCandidate(line);
+    if (!cand) return;
+    if (NON_LABELS.includes(cand.name)) return;
+    const named = cand.job;
+    const label = `${cand.text}:`;
     const got = reader.labelJob(line)?.job ?? "none";
     if (got !== named)
       out.push(
@@ -627,6 +751,19 @@ function grammarCoverage(rel, text, reader = READER) {
   });
   return out;
 }
+/** The tip's reader (77d11040, round 2: the plant for A518 fix 7): its label regex, frozen here, had no "note" or
+ * "risks" word, so "**Build note (A442):**" read as no label. */
+const TIP_LABEL =
+  /^\s*(?:\*\*)?(?:the\s+)?(spec|(?:re)?build(?:s|ers?)?|check(?:er)?|acceptance|golden|fixtures)(?:\s+(?:files?|job))?(?:\s+round\s+\d+|\s+patch)?(?:\s*\((?:[^()]|\([^()]*\))*\))?\s*:(?:\*\*)?(?=\s|$)/i;
+const TIP_READER = {
+  headingJob: READER.headingJob,
+  labelJob: (line) => {
+    if (BULLET.test(line)) return undefined;
+    const m = TIP_LABEL.exec(line);
+    return m ? { job: labelClass(m[1]), length: m[0].length } : undefined;
+  },
+  bullets: true,
+};
 /** Round 1's reader (49e9d2e7, the plant for the coverage rule): three heading names and no inheritance; a sentence
  * ending in a colon gave the build only when it was the bare word, the spec when it named the spec anywhere, and its job
  * reached no bullet. */
@@ -640,7 +777,7 @@ const ROUND1_READER = {
           ? "who"
           : "none",
   labelJob: (line) => {
-    const m = LABEL.exec(line);
+    const m = TIP_LABEL.exec(line);
     if (!m) return undefined;
     const head = stripMarks(m[0]);
     const job = /^(?:the\s+)?(?:re)?build(?:s|ers?)?(?:\s+job)?\s*:/i.test(head)
@@ -834,6 +971,30 @@ function gitSubcommand(words) {
   const w = words[0] === "git" ? words.slice(1) : words;
   return w.find((x) => !x.startsWith("-") && !/[=/\\]/.test(x) && x !== ".");
 }
+// A518 fix 8: main or master as a ref: refs/, heads/ or remotes/<r>/ in front, ~N, ^N or @{..} after, a ":path" after
+// that, and either end of ".." or "...".
+const MAIN_REF =
+  /^(?:refs\/)?(?:heads\/|remotes\/[^/\s]+\/)?(?:main|master)(?:~\d*|\^\d*|@\{[^}]*\})*(?::.*)?$/;
+const namesMainRef = (x) => x.split(/\.\.\.?/).some((p) => MAIN_REF.test(p));
+const SHELL_SEPARATORS = new Set(["&&", "||", ";", "|"]);
+/** A call's words split at &&, ||, ; and | (A518 fix 8). A call whose words start with "git" (a spawn of git, or a shell
+ * string) keeps only its segments that start with "git"; a git(...) helper's words are one git segment. */
+function gitSegments(words) {
+  if (words[0] !== "git") return [words.filter((x) => !SHELL_SEPARATORS.has(x))];
+  return shellSegments(words);
+}
+/** A shell string's words split at &&, ||, ; and |, keeping the segments that start with "git". */
+function shellSegments(words) {
+  const segs = [[]];
+  for (const x of words) {
+    if (SHELL_SEPARATORS.has(x)) segs.push([]);
+    else if (/;$/.test(x) && x.length > 1) {
+      segs[segs.length - 1].push(x.slice(0, -1));
+      segs.push([]);
+    } else segs[segs.length - 1].push(x);
+  }
+  return segs.filter((s) => s[0] === "git");
+}
 const CALL_CHECKS = {
   revParse: [
     (w) => {
@@ -852,13 +1013,10 @@ const CALL_CHECKS = {
       w.some((x) => /^(?!HEAD:)[^\s:-][^\s:]*:[^\s/]/.test(x)),
     "a git show of a ref other than HEAD",
   ],
-  // G6 (c): any git call naming main or master fails, whatever its subcommand, except init (it names a new branch).
+  // G6 (c), A518 fix 8: any git segment naming main or master as a ref fails, whatever its subcommand, except init (it
+  // names a new branch).
   main: [
-    (w) =>
-      gitSubcommand(w) !== "init" &&
-      w.some((x) =>
-        /^(?:main|master)(?:$|:|\.\.)|\.\.(?:main|master)$/.test(x),
-      ),
+    (w) => gitSubcommand(w) !== "init" && w.some(namesMainRef),
     "a git call naming main",
   ],
   describe: [(w) => w.includes("describe"), "a git describe (it reads tags)"],
@@ -915,7 +1073,7 @@ function r78(rel, text, { overSampleData = true } = {}) {
   const callsAt = new Map();
   for (const c of gitCalls(code, skel)) {
     const n = lineAt(code, c.start);
-    callsAt.set(n, [...(callsAt.get(n) ?? []), callWords(c.text)]);
+    callsAt.set(n, [...(callsAt.get(n) ?? []), ...gitSegments(callWords(c.text))]);
   }
   const checks = [...R78_CHECKS, ...(overSampleData ? SAMPLE_CHECKS : [])];
   const out = [];
@@ -945,14 +1103,33 @@ const mentionsSampleData = (text) =>
   /reference[/\\]sample-clients|\btestworld[/\\]/.test(text) ||
   /['"`]reference['"`]\s*,\s*['"`]sample-clients['"`]/.test(text) ||
   /['"`]testworld['"`]\s*[,)]/.test(text);
-/** A test that builds its own repository (mkdtemp, and init as a git call's subcommand, both in its code) reads its own
- * history, not the repo's (G6 (a)). */
+/** A518 fix 9: the git init calls a file executes: git(<dir>, 'init', ...) (a git helper whose subcommand is init),
+ * spawn, spawnSync, execFile or execFileSync('git', [..., 'init']) (a segment whose subcommand is init), or an exec or
+ * execSync string with a shell segment that starts "git init". A string elsewhere (a test title) is no call. */
+function initCalls(code, skel) {
+  const out = [];
+  for (const m of skel.matchAll(/(?<![\w$.])git\s*\(|(?<![\w$])(spawn|spawnSync|execFile|execFileSync|exec|execSync)\s*\(/g)) {
+    const p = m.index + m[0].length - 1;
+    const text = code.slice(p, matchEnd(skel, p) + 1);
+    const w = callWords(text);
+    const callee = m[1];
+    if (!callee) {
+      if (gitSubcommand(w) === "init") out.push(text);
+    } else if (/^exec(?:Sync)?$/.test(callee)) {
+      const first = /^\(\s*(['"`])((?:[^\\]|\\.)*?)\1/.exec(text)?.[2] ?? "";
+      const segs = shellSegments(first.split(/\s+/).filter(Boolean));
+      if (segs.some((s) => s[1] === "init")) out.push(text);
+    } else if (/^\(\s*(['"`])git\1\s*,/.test(text)) {
+      if (gitSegments(w).some((s) => gitSubcommand(s) === "init")) out.push(text);
+    }
+  }
+  return out;
+}
+/** A test that builds its own repository reads its own history, not the repo's (G6 (a), A518 fix 9): mkdtemp as a call
+ * in its skeleton (never in a string or a comment), and a git init call it executes. */
 const buildsOwnRepo = (text) => {
   const { code, skel } = scanSource(text);
-  return (
-    /\bmkdtemp(?:Sync)?\b/.test(code) &&
-    gitCalls(code, skel).some((c) => gitSubcommand(callWords(c.text)) === "init")
-  );
+  return /(?<![\w$])mkdtemp(?:Sync)?\s*\(/.test(skel) && initCalls(code, skel).length > 0;
 };
 /** The files git holds or would add (never a disk walk: that differs by machine and enters the excluded Assets/).
  * The tests that call it set a 30 s timeout (FX1: a test that spawns a process sets one). */
@@ -1018,6 +1195,19 @@ const README_FAIL =
 const withPreamble = (block) =>
   plantCard(CLEAN_SPEC).replace("Phase 0.", `${block}\n\nPhase 0.`);
 const withTail = (block) => `${plantCard(CLEAN_SPEC)}\n\n${block}\n`;
+// A518 fix 9 plants: a test title naming git init, and mkdtemp in a string beside a real init. Neither builds its own
+// repository, so each reads the repo's history on its line 3.
+const G6A_TITLE_PLANT = [
+  "describe('git init flow (Test)', () => {",
+  "  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'x-'))",
+  "  test('x', () => { spawnSync('git', ['diff', '--quiet', 'origin/main'], { cwd: dir }) })",
+  "})",
+].join("\n");
+const G6A_STRING_PLANT = [
+  "const step = 'mkdtemp'",
+  "execSync('git init -q', { cwd: dir })",
+  "spawnSync('git', ['diff', '--quiet', 'origin/main'], { cwd: dir })",
+].join("\n");
 
 describe("SC6 cards read by R77 and R81 (fix 2)", () => {
   test("ARC-12 cards rule: with every card pinned done, SC6 included, the sentinel and the floors still pass and no card is open", () => {
@@ -1829,18 +2019,23 @@ describe("SC6 grammar coverage: every heading and label holding a job word maps 
     expect(grammarCoverage("plan/cards/X1.md", PLANT)).toEqual([]);
   });
 
-  test("ARC-12 grammar coverage rule: a heading or label with no job word, a label-like line that is not a label, and the title are out of its reach", () => {
+  // Rewritten in round 3 (A518 fixes 6 and 7 supersede it): "Build risks:" is now a build label, and a label-like line
+  // that is no label ("Build rules added:") fails by name unless it is on the closed NON_LABELS list.
+  test("ARC-12 grammar coverage rule (A518 fix 7): a heading with no job word, a NON_LABELS line, a bullet label and the title are out of its reach; \"Build risks:\" reads as a build label", () => {
     const card = [
       "# X1 Build the spec fixtures (Test)",
       "## Fix round 1",
       "## Also (A459, reports/W00c-spec-review-4.md)",
       "Spec commit: f64dedb0",
+      "A checker who did neither: both rules fail on the planted examples.",
+      "A checker who did neither (Opus: a third worker): both rules fail.",
       "Build risks: keep the status literals.",
-      "Build rules added: a yes or no cell resets to N.",
       "- Build: a bullet label gives its job to its own line only.",
     ].join("\n");
-    expect(grammarCoverage("plan/cards/X1.md", card, ROUND1_READER)).toEqual([]);
     expect(grammarCoverage("plan/cards/X1.md", card)).toEqual([]);
+    expect(
+      grammarCoverage("plan/cards/X1.md", `${card}\nBuild rules added: a yes or no cell resets to N.`),
+    ).toEqual(['plan/cards/X1.md: the label "Build rules added:" names the build job but reads as no job']);
   });
 
   test("ARC-12 grammar coverage: every heading and label line on an open card maps to its job", () => {
@@ -2048,14 +2243,21 @@ describe("SC6 R78: no frozen history guard over sample data or in a test (ARC-16
     ).toEqual([]);
   });
 
-  test("ARC-16 R78 rule (G6 a): the temp-repo tests exempt on main are exactly those with mkdtemp and a git init call", () => {
-    const files = r78Files();
-    const exempt = files.filter((f) => buildsOwnRepo(read(f)));
-    expect(exempt.length, "no temp-repo test found").toBeGreaterThan(0);
-    for (const f of exempt) {
-      const { code, skel } = scanSource(read(f));
-      expect(gitCalls(code, skel).some((c) => gitSubcommand(callWords(c.text)) === "init"), f).toBe(true);
-    }
+  // Rewritten in round 3 (A518 fix 10 supersedes it): it checked buildsOwnRepo with the reader under test. Now a second
+  // plain oracle judges every scanned file and the two G6 a plants; any file the two disagree on fails by name. The count
+  // is never pinned (a landing trap).
+  test("ARC-16 R78 rule (G6 a, A518 fix 10): buildsOwnRepo agrees with a plain oracle (mkdtempSync( and git(<dir>, 'init') on every scanned file and on the G6 a plants", () => {
+    const oracle = (t) => t.includes("mkdtempSync(") && /git\(\w+, 'init'/.test(t);
+    const texts = [
+      ...r78Files().map((f) => [f, read(f)]),
+      ["plant: a test title naming git init", G6A_TITLE_PLANT],
+      ["plant: mkdtemp in a string", G6A_STRING_PLANT],
+    ];
+    expect(texts.filter(([, t]) => buildsOwnRepo(t)).length, "no temp-repo test found").toBeGreaterThan(0);
+    const disagree = texts
+      .filter(([, t]) => buildsOwnRepo(t) !== oracle(t))
+      .map(([f, t]) => `${f}: buildsOwnRepo ${String(buildsOwnRepo(t))}, oracle ${String(oracle(t))}`);
+    expect(disagree).toEqual([]);
   }, 30_000);
 
   test('ARC-16 R78 no checker over sample data and no test holds a git ref other than HEAD or a frozen "unchanged" guard (KNOWN entries aside)', () => {
@@ -2068,6 +2270,235 @@ describe("SC6 R78: no frozen history guard over sample data or in a test (ARC-16
     const problems = files.flatMap((f) => r78File(f, read(f)));
     expect(onlyKnown("R78", problems)).toEqual([]);
    }, 30_000);
+});
+
+// Round 3 (A518, SC6 findings review 2 of the check FAIL on 77d11040). Every plant below fails on 77d11040's readers
+// (reports/SC6-spec.md, "Round 3 (A518)", lists each by name from a scratch run).
+describe("SC6 round 3: closed, adjacent drops and one word list per class (ARC-12, ARC-16, A518)", () => {
+  const X1 = "plan/cards/X1.md";
+  const inBuild = (sentence) => plantCard([...CLEAN_SPEC, "## Build", `- ${sentence}`]);
+  const ROUND_HEAD = "**Lead directive, 3 Oct 20:08Z (A999): round 3, the last, from reports/X1-findings.md (on claude/X1).**";
+  const AMBIGUOUS =
+    "plan/cards/X1.md: a round directive sentence names README.md, which the spec job owns (reference/sample-clients/README.md), and names no job (spec or build)";
+
+  // fix 1 (RC-B): one VERB_STEMS list with an inflect function.
+  test("ARC-12 R77 rule (A518 fix 1): inflect gives each stem's forms, and every list of verbs derives from VERB_STEMS", () => {
+    for (const s of ["refresh", "modify", "touch", "edit", "write", "own", "keep", "hold", "fill", "put", "set"])
+      expect(VERB_STEMS, s).toContain(s);
+    expect(inflect("write")).toEqual(expect.arrayContaining(["write", "writes", "writing", "wrote", "written"]));
+    expect(inflect("copy")).toEqual(expect.arrayContaining(["copies", "copied", "copying"]));
+    expect(inflect("fix")).toEqual(expect.arrayContaining(["fixes", "fixed", "fixing"]));
+    expect(inflect("touch")).toEqual(expect.arrayContaining(["touches", "touched", "touching"]));
+    expect(inflect("set")).toContain("setting");
+    expect(inflect("run")).toEqual(expect.arrayContaining(["runs", "running", "ran"]));
+    expect(inflect("commit")).toEqual(expect.arrayContaining(["committed", "committing"]));
+    expect(inflect("edit")).toEqual(expect.arrayContaining(["edited", "editing"]));
+    expect(inflect("change")).toEqual(expect.arrayContaining(["changed", "changing"]));
+    for (const [s, f] of [["make", "made"], ["keep", "kept"], ["hold", "held"], ["bring", "brought"], ["rewrite", "rewritten"]])
+      expect(inflect(s)).toContain(f);
+    expect([...VERB_FORMS].sort()).toEqual(uniq(VERB_STEMS.flatMap(inflect)).sort());
+    // The spec hand-over reads every stem in its third-person form.
+    for (const s of VERB_STEMS)
+      expect(SPEC_OWNS.test(`the spec job ${inflect(s)[1]} README.md counts`), s).toBe(true);
+  });
+
+  test('ARC-12 R77 rule (A518 fix 1): each stem in every form is negated after "never" and starts a fresh clause after a negated one', () => {
+    const notNegated = [];
+    const notFresh = [];
+    for (const s of VERB_STEMS)
+      for (const f of inflect(s)) {
+        if (!negated(`never ${f} reference/sample-clients/README.md`)) notNegated.push(f);
+        const last = lineClauses(`Never edit verify.mjs, and ${f} README.md counts.`, "build").at(-1);
+        if (last?.state !== "build") notFresh.push(`${f} (${String(last?.state)})`);
+      }
+    expect(notNegated).toEqual([]);
+    expect(notFresh).toEqual([]);
+  });
+
+  test.each([
+    "Never edit verify.mjs, and modify README.md counts.",
+    "Never edit verify.mjs; touch README.md counts.",
+    "Never edit verify.mjs; refresh README.md counts.",
+  ])('ARC-12 R77 rule (A518 fix 1): "%s" in a build section fails on the README', (sentence) => {
+    expect(r77(X1, inBuild(sentence))).toEqual([README_FAIL]);
+  });
+
+  // fix 2 (RC-A): negation is closed and adjacent.
+  test.each([
+    "Bring the data over without forgetting to update README.md.",
+    "Never failing to update README.md, bring the data.",
+    "Do not ever forget to update README.md.",
+    "Fix README.md counts the spec did not update.",
+  ])('ARC-12 R77 rule (A518 fix 2): "%s" is no negation, so in a build section it fails', (sentence) => {
+    expect(r77(X1, inBuild(sentence))).toEqual([README_FAIL]);
+  });
+  test.each([
+    "Bring the data over but never edit README.md.",
+    "Never edit verify.mjs, nor README.md.",
+    "Never edit verify.mjs, README.md or the fixtures.",
+    ...[
+      "no line of README.md changes",
+      "do not add a README.md line",
+      "no change to README.md",
+      "README.md stays as it is",
+      "README.md is out of scope (FX8 owns it)",
+      "don't regenerate README.md",
+    ].map((n) => `Regenerate the folders; ${n}.`),
+  ])('ARC-12 R77 rule (A518 fix 2, control): "%s" is a negation, so in a build section it passes', (sentence) => {
+    expect(r77(X1, inBuild(sentence))).toEqual([]);
+  });
+
+  // fix 3: clauses split at but, that, which, while, whereas, though and although.
+  test("ARC-12 R77 rule (A518 fix 3): a negation after \"that\" stays in its own clause", () => {
+    expect(r77(X1, inBuild("Rewrite README.md counts that the spec did not update."))).toEqual([README_FAIL]);
+    for (const w of ["which", "while", "whereas", "though", "although", "but"])
+      expect(r77(X1, inBuild(`Rewrite README.md counts ${w} the spec did not update them.`)), w).toEqual([README_FAIL]);
+  });
+
+  // fix 4 (RC-A carry): a drop carries only to a noun continuation.
+  test("ARC-12 R77 rule (A518 fix 4): a negated clause's drop does not carry to a clause with a verb in no list", () => {
+    expect(r77(X1, inBuild("Never edit verify.mjs, and zap README.md counts."))).toEqual([README_FAIL]);
+    expect(r77(X1, inBuild("Never edit verify.mjs, and the README.md counts."))).toEqual([]);
+    expect(r77(X1, inBuild("Never edit verify.mjs, or the README.md counts."))).toEqual([]);
+  });
+
+  // fix 5: G3 per clause in a round directive; START_SPEC excludes the spec nouns.
+  test.each([
+    "Rewrite README.md counts, then the checker reruns it.",
+    "The spec review found README.md counts stale.",
+    "The spec commit rewrites README.md counts.",
+  ])('ARC-12 R77 rule (A518 fix 5): in a round directive "%s" names no job for the README clause and fails as ambiguous', (sentence) => {
+    expect(r77(X1, withPreamble(`${ROUND_HEAD} ${sentence}`))).toEqual([AMBIGUOUS]);
+  });
+  test.each([
+    "The spec job rewrites README.md counts.",
+    "The build writes src/x.ts, then the checker reruns README.md counts.",
+  ])('ARC-12 R77 rule (A518 fix 5, control): in a round directive "%s" names its job', (sentence) => {
+    expect(r77(X1, withPreamble(`${ROUND_HEAD} ${sentence}`))).toEqual([]);
+  });
+  test.each(["review", "reviewer", "commit", "report", "check", "line", "section", "file"])(
+    'ARC-12 R77 rule (A518 fix 5): "the spec %s" does not start the spec job',
+    (noun) => {
+      expect(START_SPEC.test(`the spec ${noun} rewrites README.md counts`)).toBe(false);
+      expect(SPEC_OWNS.test(`the spec ${noun} rewrites README.md counts`)).toBe(false);
+    },
+  );
+
+  // fix 6 (RC-B labels): LABEL_WORDS derives from the job words; a label may carry note, notes, risks, order, orders,
+  // files or job.
+  const FIXTURE_DIR = "tools/test/__fixtures__/x/";
+  // plan/cards/FX8.md:5 as on main, with the sample folders swapped for a spec-owned fixture folder.
+  const BUILD_NOTE = `**Build note (A442):** regenerate ${FIXTURE_DIR} on a cloud box (Linux): regenerating on Windows writes CRLF and breaks RT-3 (sample 01 import.csv). Spec commit a9dd4aa3 on claude/FX8-r2.`;
+  const noteCard = [
+    "# X1 A card (Test)",
+    "",
+    BUILD_NOTE,
+    "",
+    "## Spec",
+    `- Plants in \`${FIXTURE_DIR}\`, each shown failing.`,
+  ].join("\n");
+  test("ARC-12 R77 rule (A518 fix 6): FX8's \"**Build note (A442):**\" form is a build label, so it fails on a spec-owned fixture folder", () => {
+    expect(r77(X1, noteCard)).toEqual([
+      `plan/cards/X1.md: a build order names ${FIXTURE_DIR}, which the spec job owns (${FIXTURE_DIR})`,
+    ]);
+  });
+  test.each(["Goldens:", "Spec-writer:", "Fixture:", "Specs:", "Spec order:"])(
+    'ARC-12 R77 rule (A518 fix 6): "%s" is a spec label, so the bullet under it in a round directive is the spec job\'s',
+    (label) => {
+      expect(r77(X1, withPreamble(`${ROUND_HEAD}\n${label}\n- Rewrite README.md counts.`))).toEqual([]);
+      // The same bullet under no label is ambiguous.
+      expect(r77(X1, withPreamble(`${ROUND_HEAD}\n- Rewrite README.md counts.`))).toEqual([AMBIGUOUS]);
+    },
+  );
+  test("ARC-12 R77 rule (A518 fix 6): LABEL_WORDS and JOB_WORD derive from JOB_WORDS, so every job word labels and every spec or build word names a heading", () => {
+    for (const [cls, ws] of Object.entries(JOB_WORDS))
+      for (const w of ws) {
+        expect(READER.labelJob(`${w}:`)?.job, w).toBe(cls);
+        expect(READER.labelJob(`**${w} note (A1):** x`)?.job, w).toBe(cls);
+        if (cls !== "check") expect(wordJob(`${w} (Test)`), w).toBe(cls === "spec" ? "spec-section" : "build");
+      }
+    for (const t of LABEL_TAILS) expect(READER.labelJob(`Build ${t}:`)?.job, t).toBe("build");
+  });
+
+  // fix 7 (RC-C coverage): an independent detector finds label lines; the tip's reader fails on the "Build note" form.
+  const coverageCard = [
+    "# X1 A card (Test)",
+    BUILD_NOTE,
+    "Goldens:",
+    "- Regenerate `src/x/__golden__/t2.csv`.",
+    "Spec-writer:",
+    "- Rewrite README.md counts.",
+    "## Spec",
+    `- Plants in \`${FIXTURE_DIR}\`.`,
+  ].join("\n");
+  test("ARC-12 grammar coverage rule (A518 fix 7): the tip's reader (77d11040) fails each new label form by name; the reader R77 uses maps them", () => {
+    expect(grammarCoverage(X1, coverageCard, TIP_READER)).toEqual([
+      'plan/cards/X1.md: the label "Build note (A442):" names the build job but reads as no job',
+      'plan/cards/X1.md: the label "Goldens:" names the spec job but reads as no job',
+      'plan/cards/X1.md: the label "Spec-writer:" names the spec job but reads as no job',
+    ]);
+    expect(grammarCoverage(X1, coverageCard)).toEqual([]);
+  });
+  test("ARC-12 grammar coverage rule (A518 fix 7): the detector never uses the regex it checks, and NON_LABELS is closed", () => {
+    for (const f of [grammarCoverage, labelCandidate])
+      expect(f.toString(), f.name).not.toMatch(/\b(?:INLINE_)?LABEL\b|LABEL_WORDS/);
+    expect(NON_LABELS).toEqual(["Spec commit", "A checker who did neither"]);
+    // Any other label-like line that holds a job word and is no label fails by name.
+    expect(grammarCoverage(X1, "# X1 (Test)\nSpec review: GAPS 11.\nThe build plan: B1 to B6.")).toEqual([
+      'plan/cards/X1.md: the label "Spec review:" names the spec job but reads as no job',
+      'plan/cards/X1.md: the label "The build plan:" names the build job but reads as no job',
+    ]);
+  });
+
+  // fix 8 (G6 c): main or master as a ref in any spelling, each shell segment judged alone.
+  test.each([
+    ["git diff main~1", "execSync('git diff main~1 -- x')"],
+    ["git diff main^", "spawnSync('git', ['diff', 'main^', '--', dir])"],
+    ["git log master~2", "execSync('git log master~2 -- x')"],
+    ["git diff heads/main", "spawnSync('git', ['diff', 'heads/main'])"],
+    ["git diff remotes/upstream/main", "spawnSync('git', ['diff', 'remotes/upstream/main'])"],
+    ["git log main@{yesterday}", "git(['log', 'main@{yesterday}'])"],
+    ["git init then git diff main (&&)", "execSync('git init -q && git diff --quiet main -- x')"],
+    ["git init then git diff main (;)", "execSync('git init -q; git diff --quiet main -- x')"],
+    ["git init or git diff master (||)", "execSync('git init -q || git diff master -- x')"],
+  ])("ARC-16 R78 rule (A518 fix 8): %s fails as a git call naming main", (_name, line) => {
+    expect(r78("reference/sample-clients/check-x.mjs", `// a checker over sample data (Test)\n${line}\n`)).toEqual([
+      "reference/sample-clients/check-x.mjs:2: a git call naming main (scope.mjs checks unchanged files)",
+    ]);
+  });
+  test("ARC-16 R78 rule (A518 fix 8, control): git init -q -b main and git show HEAD:src/main.ts pass", () => {
+    expect(
+      r78(
+        "reference/sample-clients/check-x.mjs",
+        [
+          "execSync('git init -q -b main')",
+          "spawnSync('git', ['init', '-q', '-b', 'main'], { cwd: dir })",
+          "spawnSync('git', ['show', 'HEAD:src/main.ts'])",
+          "execSync('git init -q && git add -A && git commit -qm x')",
+        ].join("\n"),
+      ),
+    ).toEqual([]);
+  });
+
+  // fix 9 (G6 a): mkdtemp counts only as a call; init only in an executed call.
+  test.each([
+    ["a test title naming git init", () => G6A_TITLE_PLANT],
+    ["mkdtemp in a string beside a real init", () => G6A_STRING_PLANT],
+  ])("ARC-16 R78 rule (A518 fix 9): %s does not exempt the file", (_name, text) => {
+    expect(buildsOwnRepo(text())).toBe(false);
+    expect(r78File("tools/test/x.test.mjs", text())).toEqual([
+      "tools/test/x.test.mjs:3: a git ref on origin (scope.mjs checks unchanged files)",
+    ]);
+  });
+  test.each([
+    ["git(dir, 'init', ...)", "git(dir, 'init', '-q', '-b', 'main')"],
+    ["spawnSync('git', [..., 'init'])", "spawnSync('git', ['-c', 'init.defaultBranch=main', 'init'], { cwd: dir })"],
+    ["an execSync string with a git init segment", "execSync('cd x && git init -q', { cwd: dir })"],
+  ])("ARC-16 R78 rule (A518 fix 9, control): mkdtempSync( with %s builds its own repository", (_name, init) => {
+    const text = ["const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'x-'))", init, "spawnSync('git', ['diff', 'origin/main'], { cwd: dir })"].join("\n");
+    expect(buildsOwnRepo(text)).toBe(true);
+    expect(r78File("tools/test/x.test.mjs", text)).toEqual([]);
+  });
 });
 
 describe("SC6 KNOWN shape (A407)", () => {
