@@ -2,7 +2,11 @@
  "card": "SC11",
  "role": "spec",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T09:54:38.624Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T09:54:52.228Z",
+ "mode": "turbo",
+ "note": "Where: cloud (Postgres 16); local worker cannot run it. Released for a cloud worker.",
+ "lastRelease": {
+  "tip": "05be26079f331955df5eff833c7dce5fd0ab1c26"
+ }
 }
