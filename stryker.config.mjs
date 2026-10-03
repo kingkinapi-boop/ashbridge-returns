@@ -4,6 +4,7 @@ export default {
   plugins: ['@stryker-mutator/vitest-runner'],
   vitest: { configFile: 'vitest.mutate.config.ts', related: true },
   incremental: true,
+  dryRunTimeoutMinutes: 45, // W00c: 2845 mutants over 6858 tests need more than the 5 minute default (CQ9)
   incrementalFile: 'reports/mutation/stryker-incremental.json',
   thresholds: { high: 90, low: 80, break: 70 },
   reporters: ['clear-text', 'json'],

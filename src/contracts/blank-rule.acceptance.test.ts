@@ -410,6 +410,13 @@ describe('BL0 item 3: SC R41 scan finds no trim or min(1) non-blank string rule 
     expect(src).toMatch(/import\s*\{[^}]*\b(NonBlankSchema|isBlank)\b[^}]*\}\s*from\s*'\.\/text'/)
   })
 
+  test('AI-5 ARC-8 behaviour twin: ai.ts and checks.ts refuse a zero-width quote and source as blank and keep a visible one as given', () => {
+    expectBlankRefusal(validateAiOutput('finding', issueWithQuote('\u200B'), stamp), 'quote', 'ai.ts')
+    expect(validateAiOutput('finding', issueWithQuote(' a '), stamp).ok, 'a visible quote is kept as given').toBe(true)
+    expect(validateReconcilingItem({ ...goodItem, source: '\u2800' })).toEqual({ ok: false, reason: 'source: must not be blank' })
+    expect(validateReconcilingItem({ ...goodItem, source: ' a ' })).toEqual({ ok: true })
+  })
+
   test('ARC-8 checks.ts holds no trim or min(1) non-blank string rule and takes blank from text.ts', () => {
     const src = readOwnSource('src/contracts/checks.ts')
     expect(blankRuleViolations(src, 'checks.ts')).toEqual([])

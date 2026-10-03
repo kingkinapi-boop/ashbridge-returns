@@ -1,5 +1,7 @@
 # JH0 Journey harness: load a kind, run the pipeline
 
+**Lead directive, 3 Oct 17:17Z (A504): when the spec reopens after W00c lands, the refit also splits the five multi-world db tests over FX12's budget (journey.acceptance.db.test.ts: three at 2; load.acceptance.db.test.ts: one at 2 and one at 3), each keeping its plant and its catch, as SC3's refit f0dde579 did.**
+
 **Lead note, 3 Oct (A403): JH0's branch carries a copy of testworld checks-rolls.test.ts; at merge take W00c's version.**
 
 Phase 0. Size M. Deps: W00, F01. Where: cloud (journeys, the unit-level parts run anywhere).

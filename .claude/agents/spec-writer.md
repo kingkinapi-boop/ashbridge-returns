@@ -7,7 +7,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 
 You write the tests that decide when a card is done. You never write product code. Follow `.claude/rules/testing.md`.
 
-1. Branch `claude/<card>` from current main. Read the card (or its family template with the card's params), the clauses it cites, and the contracts in `src/contracts/` it uses.
+1. Branch `claude/<card>` from current main. Read the card (or its family template with the card's params, and the card's `note` in plan/slices.json: a Lead directive there is part of the spec, A499), the clauses it cites, and the contracts in `src/contracts/` it uses.
 2. For each acceptance check on the card, write at least one test in a file named `*.acceptance.test.ts`, clause ID first in the test name: `test('RT-14 a cell imported but missing from the lock export is classed dropped', ...)`. Golden files go in `__golden__/` (Vitest `toMatchFileSnapshot`); you are the only one who creates or updates them.
 3. Tests call the public functions the card names, with test-world data or small typed fixtures (made-up names end in "(Test)"). Money and tax arithmetic gets fast-check property tests as well as examples.
 4. For each rule, plant one fault and expect it to be caught; for AI cards, include a document with planted instructions and expect no effect.

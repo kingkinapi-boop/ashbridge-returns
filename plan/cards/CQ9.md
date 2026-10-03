@@ -5,7 +5,7 @@ Tags: none (queue tooling).
 Paths: stryker.config.mjs, tools/mutate-changed.mjs, tools/test/mutate-args.test.mjs
 Clauses: ARC-15
 Read: `reports/W00c-findings-3.md` on claude/W00c (mutation step), `tools/mutate-changed.mjs`.
-Spec commit: (spec-writer fills)
+Spec commit: pending
 
 ## Goal
 W00c's Stryker dry run needs more than 5 minutes on 2845 mutants (11 files, 6858 unit tests), so the mutation step could not run (A450). The bar stays 100 per `@mutate` file.
