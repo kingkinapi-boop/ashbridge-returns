@@ -1,11 +1,9 @@
 {
  "card": "JH0",
  "role": "spec",
- "worker": "cloud-7e015b",
- "state": "reported",
- "at": "2026-10-03T03:38:38.460Z",
- "mode": "turbo",
- "note": "20 unit + 18 db + smoke tests; tests in testworld/harness (add to Paths); 6b none",
- "commit": "e295acc",
- "validated": "aff351ac"
+ "note": "toolchain refit",
+ "worker": "cloud-a98eee",
+ "state": "working",
+ "at": "2026-10-03T08:25:46.023Z",
+ "mode": "turbo"
 }
