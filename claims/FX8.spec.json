@@ -1,9 +1,11 @@
 {
  "card": "FX8",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit on claude/FX8-r2: 12 red by design (3 sample-names, 9 sample-verify)",
  "worker": "cloud-657654",
- "state": "working",
- "at": "2026-10-03T18:23:19.801Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T18:31:26.738Z",
+ "mode": "turbo",
+ "commit": "92862da5",
+ "validated": "8d5e7d21"
 }
