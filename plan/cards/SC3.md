@@ -20,3 +20,6 @@ Each rule first shown failing on its planted fixture, then passing on main:
 
 ## Check
 A checker who did neither: the five rules fail on the planted fixtures and pass on main after A06 round 2 and FX2; a `/security-review` of the rule harness.
+
+## KNOWN shape (3 Oct, A407)
+Every KNOWN entry names one rule, one file, the exact problem strings (no regex) and an open owner card; any problem not listed fails, and a listed string not produced fails as stale. Every file scan asserts it read at least one file and a named sentinel.

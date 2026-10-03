@@ -2454,7 +2454,8 @@
         "src/modules/ledger/dots/**",
         "src/modules/ledger/index.ts",
         "data/ledger/origins.json",
-        "data/ledger/agree-rules.json"
+        "data/ledger/agree-rules.json",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-10",
@@ -2610,7 +2611,8 @@
         "src/pipeline/steps/facts.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-5",
@@ -3121,7 +3123,8 @@
         "src/modules/books/gifi/**",
         "src/modules/books/index.ts",
         "data/gifi/**",
-        "testworld/qbo/gfi.ts"
+        "testworld/qbo/gfi.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "TB-3",
@@ -5047,7 +5050,8 @@
         "src/pipeline/steps/import.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "RT-1",
@@ -9657,7 +9661,8 @@
       "spec": null,
       "deps": [
         "A07D",
-        "SC4"
+        "SC4",
+        "SC"
       ],
       "paths": [
         "src/modules/sheets/**",
@@ -9681,7 +9686,61 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F02"
+        "W00c",
+        "SC4",
+        "SC"
+      ],
+      "paths": [
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.acceptance.test.ts"
+      ],
+      "clauses": [
+        "EV-5",
+        "ARC-10"
+      ],
+      "id": "FX6",
+      "title": "Taxprep rate text invents digits at huge values (found by SC4)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC4-spec.md, 3 Oct (A406)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W00c"
+      ],
+      "paths": [
+        "src/contracts/facts.ts",
+        "src/contracts/reading.ts",
+        "src/contracts/amount-grammar.ts",
+        "src/modules/ocr/textlayer/**",
+        "src/modules/storage/**",
+        "src/core/test-no-network.ts",
+        ".gitattributes"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "ARC-10",
+        "ARC-15",
+        "SEC-11"
+      ],
+      "id": "FX7",
+      "title": "Rule defects in landed contracts and readers (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F02",
+        "SC"
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
@@ -9747,6 +9806,32 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "SC",
+        "SC2",
+        "SC3",
+        "SC4",
+        "SC5",
+        "SC6"
+      ],
+      "paths": [
+        "tools/test/lib/known.mjs",
+        "tools/test/lib/known.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC7",
+      "title": "One shared KNOWN helper for every rules file",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "SC"
       ],
       "paths": [
@@ -9758,7 +9843,9 @@
         "src/modules/gaps/bank/index.ts",
         "src/modules/jobs/queue.ts",
         "src/modules/bridge/run.ts",
-        "tools/test/__fixtures__/schema-contract/known.json"
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/contracts/ids.ts",
+        "src/contracts/checks.ts"
       ],
       "clauses": [
         "SEC-7",

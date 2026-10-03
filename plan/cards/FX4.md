@@ -1,6 +1,6 @@
 # FX4 Spreadsheet reader: the five A07D Opus findings
 
-Phase 1. Size M. Hard. Deps: A07D, SC4. Where: cloud.
+Phase 1. Size M. Hard. Deps: A07D, SC4, SC. Where: cloud.
 Tags: core (citations and amounts: every figure a spreadsheet gives is checked against this text).
 Paths: src/modules/sheets/**, src/contracts/sheets.ts
 Clauses: EV-14, EV-5, EV-6, ARC-10, END-8
@@ -22,3 +22,6 @@ One acceptance test per finding, each with the failing input from the report, pl
 
 ## Check
 A checker who did neither, plus an Opus adversarial read: every finding's input gives the right result, SC4's rules green with no FX4 entry left in KNOWN, mutation 100 per `@mutate` file.
+
+## SC KNOWN entries (3 Oct, A407)
+SC lands with exact KNOWN entries owned by this card (reports/SC-findings.md, fix list step 3). Each defect fixed here deletes its entry; never widen an entry or weaken a rule (A329).

@@ -13,17 +13,17 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| FX2, A04 | specs reopened 04:05Z (A06 landed) | spec, build, check |
-| DB16 | carded (A405): db tests on Postgres 16 | spec |
-| W00c | findings review done (reports/W00c-findings.md); spec reopened for round 2 (A403) | spec, build round 2, check; it unblocks W00b, JH0, B04, SC2 |
-| S00, FX5 | spec review GAPS (11, 7); specs reopened (A402) | spec, then build (the wait: build releases clear when the spec reports) |
-| JH0 | spec reported (Paths + testworld/harness, A401) | build |
-| SC | build reopened | cloud run |
-| W16 | findings: the spec was wrong; spec reopened for round 2 on claude/W16-r2 (A404); SC6 carded | spec, build (data only), check with security review |
-| CQ2 | rule 6 spec and build round 2 reported (no code change needed) | check (cloud), then board |
-| SC4 | startable (A07D built) | spec, then FX4 |
-| A04, A08 | held on A06, then A04 | as before |
-| Local workers 1 to 3 | started 03:38Z; worker 1 restarted on Opus 03:42Z (Sonnet released core specs) | re-fire on Opus while the queue has jobs; Lead removes junctions |
+| W00c | spec round 2 (cloud) per reports/W00c-findings.md (A403) | build round 2, check; unblocks W00b, JH0, B04, SC2 |
+| W00b | refit spec reported (278 tests); Opus spec review running, build held | GO: reopen build after W00c lands |
+| W16 | round 2 spec on claude/W16-r2 reported; Opus spec review (with SC6) running, build held | GO: reopen build |
+| SC6 | spec reported; review running, build held | GO: reopen build |
+| SC | findings done; spec reopened (A407: exact KNOWN, owners FX3 to FX7); FX7, SC7 carded | spec, build re-run, check with Opus read |
+| SC4 | spec refit on a cloud box (laptop lacks ExcelJS); KNOWN owners FX4, FX6 (A406) | build, check |
+| S00, FX5, A04 | round 2 specs reported; one Opus review of all three running, builds held | GO: reopen builds |
+| FX2 | spec reported (not core); build open | build, check |
+| CQ2 | check in the cloud | board |
+| JH0 | spec reported | build after W00c lands |
+| DB16 | carded (A405) | spec |
 
 Cloud runs fired 03:22Z: 6, plus 1 at 03:43Z for the train (now checking), 3 at 03:50Z for W00c spec, S00 spec, SC check (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
 

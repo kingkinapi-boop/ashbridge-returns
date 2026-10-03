@@ -20,3 +20,5 @@ Each rule first shown failing on its planted example, then passing on main:
 
 ## Check
 A checker who did neither: the four rules fail on the planted examples and pass on main; R56 passes on main with the exemption.
+
+R69's Taxprep rate text entry has owner FX6 (A406).
