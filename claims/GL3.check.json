@@ -3,8 +3,8 @@
  "role": "check",
  "for": "2026-10-03T14:04:15.285Z",
  "worker": "cloud-92d46e",
- "state": "reported",
- "at": "2026-10-03T14:29:35.382Z",
+ "state": "failed",
+ "at": "2026-10-03T15:29:24.377Z",
  "mode": "turbo",
- "note": "PASS"
+ "note": "security review FINDINGS (one medium, five lows; report local only, A496); findings review next, then round 4 (the last)"
 }
