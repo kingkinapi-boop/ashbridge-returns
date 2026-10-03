@@ -10273,6 +10273,32 @@
         "W00c"
       ],
       "paths": [
+        "testworld/clients/load.ts",
+        "testworld/clients/json-keys.ts",
+        "testworld/model/checks.ts",
+        "testworld/clients/w00d-*.acceptance.test.ts",
+        "testworld/model/__fixtures__/w00d-*.ts",
+        "testworld/model/__fixtures__/w00c-r3-walk.ts"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16"
+      ],
+      "id": "W00d",
+      "title": "Test world loader: ids by rule and every typed field read (W00c split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Split from W00c by its landing rule (A450, A501)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00c"
+      ],
+      "paths": [
         "tools/test/testworld-rules.test.mjs",
         "tools/test/__fixtures__/testworld-rules/**"
       ],
