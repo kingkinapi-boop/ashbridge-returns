@@ -1,12 +1,9 @@
 {
  "card": "W00c",
  "role": "spec",
- "worker": "cloud-8caa6e",
- "state": "reported",
- "at": "2026-10-03T05:49:10.366Z",
- "mode": "turbo",
- "beat": "2026-10-03T05:05:40.107Z",
- "note": "spec patch for review 3 gaps; see reports/W00c-spec.md",
- "commit": "d89d7e8b",
- "validated": "3e79eb12"
+ "note": "toolchain refit",
+ "worker": "cloud-03268d",
+ "state": "working",
+ "at": "2026-10-03T05:57:09.158Z",
+ "mode": "turbo"
 }
