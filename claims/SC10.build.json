@@ -4,8 +4,8 @@
  "round": 3,
  "spec": "e578b6e2858d07a116ea59ef2d0f275dc911b263",
  "worker": "cloud-e6a4bc",
- "state": "reported",
- "at": "2026-10-03T14:41:10.978Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T15:38:11.928Z",
  "mode": "turbo",
- "note": "27 of 27 acceptance tests pass; tools 426 pass"
+ "note": "Opus read FAIL, 7 items: KNOWN and R89 landing traps, R86 reach, core read three ways, R89 scan, done owners, overlap with SC6 and SC7; report local only (sc10-read e68b2986); findings review next"
 }

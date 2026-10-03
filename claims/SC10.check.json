@@ -3,8 +3,8 @@
  "role": "check",
  "for": "2026-10-03T14:41:10.978Z",
  "worker": "cloud-161fd8",
- "state": "reported",
- "at": "2026-10-03T14:48:38.625Z",
+ "state": "failed",
+ "at": "2026-10-03T15:38:11.928Z",
  "mode": "turbo",
- "note": "PASS"
+ "note": "Opus read FAIL, 7 items: KNOWN and R89 landing traps, R86 reach, core read three ways, R89 scan, done owners, overlap with SC6 and SC7; report local only (sc10-read e68b2986); findings review next"
 }
