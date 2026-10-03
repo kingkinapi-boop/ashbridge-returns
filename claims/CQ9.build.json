@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "a13b660",
  "worker": "cloud-84988c",
- "state": "reported",
- "at": "2026-10-03T14:07:30.025Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T14:20:21.977Z",
  "mode": "turbo",
- "note": "15 of 15 acceptance pass; A465 scope.mjs item not done (outside Paths), see reports/CQ9-build.md"
+ "note": "FAIL: card Also (A465) scope.mjs *.build.test.ts vs spec not built, scope.mjs outside Paths, see reports/CQ9-check.md"
 }
