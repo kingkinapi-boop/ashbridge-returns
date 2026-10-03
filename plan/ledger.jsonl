@@ -587,3 +587,4 @@
 {"ts":"2026-10-03T13:10:22.723Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T13:10:23.171Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T13:10:23.459Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T13:13:00.101Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker A04 spec patch","allowed":true}

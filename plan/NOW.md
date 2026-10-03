@@ -20,7 +20,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 13:20Z by the Lea
 | Train | 25ea2736 red on A04 (clock mix, A468); FX15, CQ7, CQ6 on df6f1249, requested 12:35Z | check; land |
 | SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 5c spec reported (71a8efe8, 18 new fails); Opus spec review running (A472: R106 marker) | build round 5c, check, security read, train |
+| A04 | round 5c spec 71a8efe8; Opus review GAPS 4 (A474), spec patch with local-5 | build round 5c, check, security read, train |
 | SC11, GL3 | DB16 landed: SC11 spec refit open (cloud); GL3 build reopened (pg16 run, R41 fix) | SC11 build; GL3 check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 13:20Z by the Lea
 | FX12, FX14, FX17, FX4, GL3 | FX12 build reported; FX14 spec working; FX17 spec refit reported; FX4 spec patch reported (A470); GL3 check FAIL (blanket grant execute) | FX12 check; FX17, FX4 builds; GL3 findings review |
 | CQ8, CQ9, CQ10, CQ11, SC10, A08 | CQ8 build reported (e09db959; its gaps to CQ11, A473); CQ9 spec reported; CQ10 spec local-2; CQ11 carded (0027); SC10 build after CQ6; A08 after A04 | CQ8 check; builds |
 
-Cloud runs: 4 fired 12:47Z (train df6f1249 checking, cloud-9e54a6). Local: local-2 CQ10 spec, local-4 next check. Helpers: A04 spec review, GL3 findings, design-lane scout. Main checkout needs `npm ci` (no `pg` since DB16) once local-2 ends.
+Cloud runs: 4 fired 12:47Z (train df6f1249 checking, cloud-9e54a6). Local: local-2 CQ10 spec, local-4 next check, local-5 next spec (A04). Helpers: GL3 findings, design-lane scout. Main checkout needs `npm ci` (no `pg` since DB16) once local-2 ends.
 
 ## Next, in order
 
