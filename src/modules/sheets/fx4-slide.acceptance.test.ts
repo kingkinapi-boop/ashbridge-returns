@@ -4,12 +4,15 @@
 // inputs on every registered rewriter; these pin them on the reader and by class.
 //
 // Spec choices (amber, see reports/FX4-spec.md):
-//   F5. A token that reads as a cell reference but lies off the grid as written (a column past XFD or a row past 1048576)
-//       is a name and never changes; A07D's S1 still holds for a reference on the grid that a slide moves off it (#REF!).
-//   F6. A name may hold any Unicode letter or digit after its first character, and start with any Unicode letter, "_" or "\".
+//   F5. A token that reads as a cell reference but lies off the grid as written (a column past XFD or a row past 1048576),
+//       or whose column runs past three letters (`ABCD1`, `TAXRATE1`), is a name and never changes; A07D's S1 still holds
+//       for a reference on the grid that a slide moves off it (#REF!).
+//   F6. A name may start with any Unicode letter, "_" or "\", and hold any Unicode letter, combining mark or number after
+//       it (astral code points included). A cell-shaped run followed by any of those, or by "_" or ".", is part of a name.
+//       Names that start with a combining mark or a digit are not drawn (Excel refuses them; their text is not settled).
 //   F7. Inside a structured reference "'" escapes the next character ("[", "]", "#", "'"), as Excel writes `Col'[1]`.
-//   F8. A cell-shaped token followed by ":" and then a sheet-qualified part (`Q1:Q4!B1`) is the first sheet of an unquoted
-//       3D range: the sheet names stay, the cell after "!" slides.
+//   F8. A token followed by ":" and then a sheet-qualified part (`Q1:Q4!B1`, `Q1:Dec!B1`) is the first sheet of an
+//       unquoted 3D range: the sheet names stay, the reference after "!" slides (a cell or an area, `$` parts kept).
 import fc from 'fast-check'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { fixedClock, getClock, setClock, type Clock } from '../../core/clock'
@@ -54,6 +57,13 @@ const OPUS: [string, string, string][] = [
   ['5a', 'A1048577+1', 'A1048577+1'],
   ['5b', 'ÜB1*2', 'ÜB1*2'],
   ['5c', 'SUM(Q1:Q4!B1)', 'SUM(Q1:Q4!B2)'],
+  // The spec review's forms (reports/FX4-spec-review.md gaps 1 and 2): a letter after the cell, a combining mark, CJK, astral.
+  ['5b', 'B1Ü*2', 'B1Ü*2'],
+  ['5b', 'ÉB1*2', 'ÉB1*2'],
+  ['5b', '税B1*2', '税B1*2'],
+  ['5b', '\u{1D400}B1*2', '\u{1D400}B1*2'],
+  ['5c', 'SUM(Q1:Dec!B1)', 'SUM(Q1:Dec!B2)'],
+  ['5c', 'Q1!B1+A1', 'Q1!B2+A2'],
 ]
 
 describe('FX4 items 4 and 5: the Opus read inputs slide right (EV-14, EV-5)', () => {
@@ -106,14 +116,19 @@ describe('FX4 items 4 and 5 by class: escapes, names and 3D ranges never slide (
     )
   })
 
-  test('EV-14 property (seed 20261035): a token shaped like a reference but off the grid as written (column past XFD or row past 1048576) is a name and never changes', () => {
+  test('EV-14 property (seed 20261035): a token shaped like a reference but off the grid as written (column past XFD, row past 1048576, a column of 4 to 7 letters) or running on into a name (TAX2026A, A1_B, A1.B2) is a name and never changes', () => {
     const pastColumn = fc.tuple(fc.integer({ min: 16_385, max: 18_278 }), fc.integer({ min: 1, max: 1_048_576 })).map(([c, r]) => `${letters(c)}${String(r)}`)
     const pastRow = fc.tuple(fc.integer({ min: 1, max: 16_384 }), fc.integer({ min: 1_048_577, max: 9_999_999 })).map(([c, r]) => `${letters(c)}${String(r)}`)
+    const upper = fc.constantFrom(...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''))
+    const longColumn = fc.tuple(fc.array(upper, { minLength: 4, maxLength: 7 }), fc.integer({ min: 1, max: 1_048_576 })).map(([l, r]) => `${l.join('')}${String(r)}`)
+    const onGrid = fc.tuple(fc.integer({ min: 1, max: 16_384 }), fc.integer({ min: 1, max: 1_048_576 })).map(([c, r]) => `${letters(c)}${String(r)}`)
+    const runOn = fc.tuple(onGrid, fc.constantFrom('A', '_B', '.B2', '_', '.x', 'Q1', '_2026')).map(([c, tail]) => `${c}${tail}`)
+    const named = fc.constantFrom('ABCD1', 'TAXRATE1', 'TAX2026A', 'A1_B', 'A1.B2')
     fc.assert(
-      fc.property(fc.oneof(pastColumn, pastRow), cell, move, (name, c, m) => {
+      fc.property(fc.oneof(pastColumn, pastRow, longColumn, runOn, named), cell, move, (name, c, m) => {
         slidesOnlyTheCell(`${name}*2`, c, m)
       }),
-      { seed: 20261035, numRuns: 300 },
+      { seed: 20261035, numRuns: 400 },
     )
   })
 
@@ -130,15 +145,44 @@ describe('FX4 items 4 and 5 by class: escapes, names and 3D ranges never slide (
     )
   })
 
-  test('EV-14 property (seed 20261037): an unquoted 3D range of sheets whose names look like cells keeps both names; only the cell after "!" slides', () => {
-    const sheetName = cell.map(at)
+  test('EV-14 property (seed 20261038): a name holding non-ASCII letters, combining marks or numbers (astral ones too) before, inside or after a cell-shaped run never changes', () => {
+    const letter = fc.constantFrom('Ü', 'É', 'ß', 'Ж', 'Ω', '税', 'Ｂ', '\u{1D400}', '\u{20000}', 'ñ')
+    const mark = fc.constantFrom('́', '̈')
+    const number = fc.constantFrom('٣', '²', 'Ⅻ', '３', '\u{1D7CE}')
+    const any = fc.oneof(letter, mark, number)
+    const column = fc.integer({ min: 1, max: 16_384 }).map(letters)
+    const row = fc.integer({ min: 1, max: 1_048_576 }).map(String)
+    const core = fc.tuple(column, row).map(([c, r]) => `${c}${r}`)
+    const name = fc.oneof(
+      fc.tuple(core, any).map(([c, u]) => `${c}${u}`),
+      fc.tuple(fc.constantFrom('A', 'E', 'B', 'TAX'), mark, core).map(([l, k, c]) => `${l}${k}${c}`),
+      fc.tuple(letter, core).map(([u, c]) => `${u}${c}`),
+      fc.tuple(letter, core, any).map(([u, c, v]) => `${u}${c}${v}`),
+      fc.tuple(column, any, row).map(([c, u, r]) => `${c}${u}${r}`),
+    )
     fc.assert(
-      fc.property(sheetName, sheetName, cell, move, (s1, s2, [c, r], [dc, dr]) => {
-        const formula = `SUM(${s1}:${s2}!${at([c, r])})`
-        const to = `${letters(3 + dc)}${String(3 + dr)}`
-        expect(slide(formula, 'C3', to), formula).toBe(`SUM(${s1}:${s2}!${at([c + dc, r + dr])})`)
+      fc.property(name, cell, move, (n, c, m) => {
+        slidesOnlyTheCell(`${n}*2`, c, m)
       }),
-      { seed: 20261037, numRuns: 300 },
+      { seed: 20261038, numRuns: 500 },
+    )
+  })
+
+  test('EV-14 property (seed 20261037): an unquoted sheet or 3D range of sheets (names shaped like cells, words, off-grid tokens, four-letter columns) keeps its names; only the reference after "!" slides, cell or area, $ parts kept', () => {
+    const sheetName = fc.oneof(cell.map(at), fc.constantFrom('Dec', 'Jan2', 'Sheet', 'Q4FY'), fc.constantFrom('XYZ100', 'XFE1', 'A1048577'), fc.constantFrom('ABCD1', 'TAXRATE1'))
+    const end = fc.tuple(cell, fc.boolean(), fc.boolean())
+    type End = [[number, number], boolean, boolean]
+    const render = ([[c, r], ca, ra]: End, [dc, dr]: [number, number]): string => `${ca ? '$' : ''}${letters(ca ? c : c + dc)}${ra ? '$' : ''}${String(ra ? r : r + dr)}`
+    fc.assert(
+      fc.property(sheetName, fc.option(sheetName, { nil: undefined }), end, fc.option(end, { nil: undefined }), move, (s1, s2, e1, e2, d) => {
+        const sheets = s2 === undefined ? s1 : `${s1}:${s2}`
+        const part = (by: [number, number]): string => (e2 === undefined ? render(e1, by) : `${render(e1, by)}:${render(e2, by)}`)
+        const formula = `SUM(${sheets}!${part([0, 0])})`
+        const to = `${letters(3 + d[0])}${String(3 + d[1])}`
+        expect(slide(formula, 'C3', to), formula).toBe(`SUM(${sheets}!${part(d)})`)
+        expect(slide(formula, 'C3', 'C3'), formula).toBe(formula)
+      }),
+      { seed: 20261037, numRuns: 400 },
     )
   })
 })

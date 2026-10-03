@@ -1,22 +1,26 @@
-// FX4 acceptance tests, A07D Opus read items 1 to 3 (reports/A07D-opus-read.md; card plan/cards/FX4.md): SUM totals at 16
-// or more significant digits, every member of a reference cycle, and range walks inside a time budget.
+// FX4 acceptance tests, A07D Opus read items 1 and 2 (reports/A07D-opus-read.md; card plan/cards/FX4.md; spec review
+// reports/FX4-spec-review.md): SUM totals at 16 or more significant digits, and every member of a reference cycle.
+//
+// Public API this file needs from src/modules/sheets/xlsx/index.ts (Lead directive A434):
+//   centText(cents: bigint): string | undefined
+//     The text a snapped total writes for an exact cent total: the shortest text of the total's double when it reads
+//     back as exactly those cents ("46897341536252.6"), else undefined (the total keeps its own text).
+//   snapSums(cells: Cell[], limit?: number): { visits: number; skipped: { row: number; column: number; reason: 'reference cycle' | 'over the work limit' }[] }
+//     Snaps one sheet's SUM cells in place (cells in sheet order, as the reader lists them) and says what it did:
+//     `visits` counts every cell a range walk reads (cycle search and totals alike); `skipped` lists each SUM cell left
+//     with its own text for a reason, and why. A cached total that disagrees with its terms is not "skipped".
 //
 // Spec choices (amber, see reports/FX4-spec.md):
 //   F1. "Unsnapped" means the cell keeps its own text: numberText of its cached double, as every non-SUM number reads.
-//       Item 1 is pinned as "exact cents of the terms as read, or the own text", over cent totals up to 1e15 dollars. On
-//       main no output breaks this (a 2,000,000-case search found none: from 2^46 dollars up, where the shortest text of a
-//       total can name another cent, the half-cent cap only lets a total snap when its cached double is the total's own
-//       double, so the snap prints the own text). The item 1 tests are therefore guards that pass before the build; the
-//       build still takes the finding's one-line fix (snap only when the total's text is the exact cent text).
+//       Through the reader item 1 cannot be seen (its two reader tests are guards that pass on main), so centText is
+//       pinned directly: 7053684657509001n has no text, and every cent total below 1e15 cents has one.
 //   F2. A cycle member is any formula cell in a strongly connected component of two or more cells, or one that refers to
-//       itself, counting the references of formulas that are not SUMs (A2 = A1*1). Every member keeps its own text.
-//   F3. Time budgets are wall time from the moment the reader's modules are loaded in a worker (the walk is synchronous,
-//       so only a worker can be stopped); a work counter would need a product hook the card does not ask for. The
-//       running balance has the S6 budget (30 s); the whole-sheet range 10 s, as SC4's R74 gives it.
-//   F4. A SUM over budget may stay unsnapped (the card's fallback), so each running-balance total reads its exact cents
-//       or its own text; the first 100 balances (5,050 term visits) are pinned as exact, so "never snap" does not pass.
+//       itself, counting every reference of every formula: ranges inside other functions, `$` parts, references through
+//       IF, ROUND and AVERAGE, and references qualified with a sheet name (to that sheet). Every member keeps its own text.
+//   F9. A SUM over cells that read as exact cents (numbers, formulas whose cached double prints as a cent amount, and SUMs
+//       that themselves must snap) snaps to the exact total, cycles or not elsewhere on the sheet; others read their exact
+//       total or their own text.
 import fc from 'fast-check'
-import { Worker } from 'node:worker_threads'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { fixedClock, getClock, setClock, type Clock } from '../../core/clock'
 import { cellValueMatches, type Cell, type SheetResult } from '../../contracts/sheets'
@@ -24,19 +28,42 @@ import { address } from './__fixtures__/a07d'
 import {
   CELLS_SHEET,
   PLANTED,
-  cellCents,
+  acyclicSheet,
   cycleMembers,
   exactText,
   floatSum,
   formulaBody,
   graphSheet,
+  inSheetOrder,
+  isCentText,
+  memAt,
+  memFormula,
+  memNumber,
   numberBody,
+  sheetsXlsx,
   sparseXlsx,
   textCents,
   type GraphNode,
+  type RangeShape,
+  type RefShape,
 } from './__fixtures__/fx4'
 import { createSheetsReader } from './index'
+import * as xlsx from './xlsx/index'
 import { numberText } from './xlsx/index'
+
+type Skipped = { row: number; column: number; reason: 'reference cycle' | 'over the work limit' }
+type SnapSums = (cells: Cell[], limit?: number) => { visits: number; skipped: Skipped[] }
+type CentText = (cents: bigint) => string | undefined
+const api = xlsx as unknown as { snapSums?: SnapSums; centText?: CentText }
+function snapSums(cells: Cell[], limit?: number): { visits: number; skipped: Skipped[] } {
+  if (typeof api.snapSums !== 'function') throw new Error('src/modules/sheets/xlsx/index.ts does not export snapSums')
+  return limit === undefined ? api.snapSums(cells) : api.snapSums(cells, limit)
+}
+function centText(cents: bigint): string | undefined {
+  if (typeof api.centText !== 'function') throw new Error('src/modules/sheets/xlsx/index.ts does not export centText')
+  return api.centText(cents)
+}
+const sortSkipped = (s: Skipped[]): Skipped[] => [...s].sort((a, b) => a.row - b.row || a.column - b.column)
 
 let saved: Clock
 beforeEach(() => {
@@ -52,10 +79,16 @@ async function readBytes(bytes: Uint8Array): Promise<SheetResult> {
   if (!out.ok) throw new Error(`refused: ${out.reason}`)
   return out.result
 }
-function textsOf(r: SheetResult): Map<string, string> {
-  const sheet = r.sheets.find((s) => s.name === CELLS_SHEET)
-  return new Map((sheet?.cells ?? []).map((c: Cell) => [address(c.column.number, c.row), c.text]))
+function textsOf(r: SheetResult, sheet = CELLS_SHEET): Map<string, string> {
+  const found = r.sheets.find((s) => s.name === sheet)
+  return new Map((found?.cells ?? []).map((c: Cell) => [address(c.column.number, c.row), c.text]))
 }
+
+/** Whole cents drawn log-uniformly: a decade from `lo` to `hi` (10^lo up to 10^(hi+1)), then a value inside it, either sign. */
+const decadeCents = (lo: number, hi: number): fc.Arbitrary<bigint> =>
+  fc
+    .tuple(fc.integer({ min: lo, max: hi }), fc.boolean())
+    .chain(([k, negative]) => fc.bigInt({ min: k === 0 ? 0n : 10n ** BigInt(k), max: 10n ** BigInt(k + 1) - 1n }).map((c) => (negative ? -c : c)))
 
 // ------------------------------------------------------------------------------------------------ item 1: 16+ digits
 
@@ -88,9 +121,7 @@ async function readPair(big: bigint, small: bigint): Promise<{ texts: Map<string
 /** What A3 may read: the exact cent total of the terms as read, or its own text (unsnapped). */
 function allowed(texts: Map<string, string>, cached: number): { exact: string | undefined; own: string } {
   const terms = [texts.get('A1'), texts.get('A2')]
-  const exact = terms.every((t) => t !== undefined && /^-?\d+(?:\.\d{1,2})?$/.test(t))
-    ? exactText(terms.reduce((s, t) => s + textCents(t as string), 0n))
-    : undefined
+  const exact = terms.every(isCentText) ? exactText(terms.reduce((s, t) => s + textCents(t as string), 0n)) : undefined
   return { exact, own: numberText(cached) }
 }
 
@@ -107,17 +138,43 @@ describe('FX4 item 1: a SUM total at 16 or more significant digits reads its exa
     }
   })
 
-  test('EV-14 EV-6 property (seed 20261031): over cent totals up to 1e15 dollars, a snapped SUM maps back to the exact cents of its terms, else it keeps its own text', { timeout: 120_000 }, async () => {
-    const big = fc.bigInt({ min: 10n ** 12n, max: 10n ** 17n })
+  test('EV-14 EV-6 property (seed 20261031): over cent totals from 1e12 to 1e17 cents (log-uniform), a snapped SUM maps back to the exact cents of its terms, else it keeps its own text', { timeout: 120_000 }, async () => {
     const small = fc.bigInt({ min: -(10n ** 7n), max: 10n ** 7n })
     await fc.assert(
-      fc.asyncProperty(big, small, async (b, s) => {
+      fc.asyncProperty(decadeCents(12, 16), small, async (b, s) => {
         const { texts, cached } = await readPair(b, s)
         const { exact, own } = allowed(texts, cached)
         const total = texts.get('A3')
         if (total !== own) expect(total, `${centsTextOf(b)} + ${centsTextOf(s)}: snapped, so it must be the exact cents`).toBe(exact)
       }),
       { seed: 20261031, numRuns: 150 },
+    )
+  })
+
+  test('EV-14 EV-6 centText: 7053684657509001 cents (the Opus read total 70536846575090.01) has no text; String(Number(c)/100) would print .02', () => {
+    expect(String(Number(7053684657509001n) / 100)).toBe('70536846575090.02')
+    expect(centText(7053684657509001n)).toBeUndefined()
+    expect(centText(-7053684657509001n)).toBeUndefined()
+  })
+
+  test('EV-14 EV-6 centText: a total whose shortest text is its exact cents gets that text, trailing zeros dropped', () => {
+    expect(centText(4689734153625260n)).toBe('46897341536252.6')
+    expect(centText(25391488n)).toBe('253914.88')
+    expect(centText(-1250n)).toBe('-12.5')
+    expect(centText(100n)).toBe('1')
+    expect(centText(7n)).toBe('0.07')
+    expect(centText(0n)).toBe('0')
+  })
+
+  test('EV-14 EV-6 property (seed 20261040): centText gives the exact cent text or nothing, from 0 to 1e17 cents (log-uniform), and always a text below 1e15 cents', () => {
+    fc.assert(
+      fc.property(decadeCents(0, 16), (c) => {
+        const text = centText(c)
+        if (text !== undefined) expect(text, String(c)).toBe(exactText(c))
+        const magnitude = c < 0n ? -c : c
+        if (magnitude < 10n ** 15n) expect(text, `${String(c)} is below 1e15 cents, so it has a text`).toBe(exactText(c))
+      }),
+      { seed: 20261040, numRuns: 2_000 },
     )
   })
 })
@@ -130,9 +187,12 @@ async function readGraph(nodes: GraphNode[]): Promise<{ texts: Map<string, strin
   const r = await readBytes(sparseXlsx(cells))
   return { texts: textsOf(r), cached }
 }
-const sum = (lo: number, hi: number, withTerms = false): GraphNode => ({ kind: 'sum', lo, hi, withTerms })
-const ref = (target: number): GraphNode => ({ kind: 'ref', target })
+const sum = (lo: number, hi: number, withTerms = false, abs = false): GraphNode => ({ kind: 'sum', lo, hi, withTerms, abs })
+const ref = (target: number, shape: RefShape = 'mul'): GraphNode => ({ kind: 'ref', target, shape })
+const range = (lo: number, hi: number, shape: RangeShape): GraphNode => ({ kind: 'range', lo, hi, shape })
 const NOISY = String(floatSum(PLANTED))
+const REF_SHAPES: RefShape[] = ['mul', 'abs', 'if', 'round', 'sheet']
+const RANGE_SHAPES: RangeShape[] = ['average', 'sum-and-zero']
 
 describe('FX4 item 2: every member of a reference cycle keeps its own text (EV-14, EV-5)', () => {
   test('EV-14 the Opus read cycle joined through a finished node: A1 SUM(A2:A3), A2 SUM(A1:A1), A3 SUM over A2 and the planted terms keeps its own text', async () => {
@@ -173,15 +233,49 @@ describe('FX4 item 2: every member of a reference cycle keeps its own text (EV-1
     expect({ A1: texts.get('A1'), A4: texts.get('A4') }).toEqual({ A1: NOISY, A4: '253914.88' })
   })
 
+  /** A1 = SUM(A2:G2) over the planted terms in B2:G2 and A2 = Other!A1*1; the second sheet "Other" holds `other` at A1. */
+  async function readCrossSheet(other: string): Promise<{ cells: Map<string, string>; others: Map<string, string> }> {
+    const a2 = other.startsWith('><f>') ? 0 : 5
+    const main = new Map<string, string>([
+      ['A1', formulaBody('SUM(A2:G2)', floatSum([a2, ...PLANTED]))],
+      ['A2', formulaBody('Other!A1*1', a2)],
+    ])
+    PLANTED.forEach((x, i) => main.set(address(2 + i, 2), numberBody(x)))
+    const r = await readBytes(
+      sheetsXlsx([
+        { name: CELLS_SHEET, cells: main },
+        { name: 'Other', cells: new Map([['A1', other]]) },
+      ]),
+    )
+    return { cells: textsOf(r), others: textsOf(r, 'Other') }
+  }
+
+  test("EV-14 EV-5 a cycle across two sheets (A1 SUM(A2:G2), A2 = Other!A1*1, Other!A1 = 'Cells (Test)'!A1*1) leaves A1 with its own text", async () => {
+    const { cells, others } = await readCrossSheet(formulaBody(`'${CELLS_SHEET}'!A1*1`, 0))
+    expect({ A1: cells.get('A1'), A2: cells.get('A2'), 'Other!A1': others.get('A1') }).toEqual({ A1: NOISY, A2: '0', 'Other!A1': '0' })
+  })
+
+  test('EV-14 EV-5 the same two sheets with no cycle (Other!A1 holds 5) snap A1 to 253919.88: Other!A1 is not this sheet\'s A1', async () => {
+    const { cells, others } = await readCrossSheet(numberBody(5))
+    expect({ A1: cells.get('A1'), A2: cells.get('A2'), 'Other!A1': others.get('A1') }).toEqual({ A1: '253919.88', A2: '5', 'Other!A1': '5' })
+  })
+
   const node: fc.Arbitrary<(n: number) => GraphNode> = fc.oneof(
-    { weight: 4, arbitrary: fc.tuple(fc.nat(), fc.nat(), fc.boolean()).map(([a, b, t]) => (n: number) => sum(Math.min(a % n, b % n) + 1, Math.max(a % n, b % n) + 1, t)) },
-    { weight: 1, arbitrary: fc.nat().map((a) => (n: number) => ref((a % n) + 1)) },
+    {
+      weight: 4,
+      arbitrary: fc.tuple(fc.nat(), fc.nat(), fc.boolean(), fc.boolean()).map(([a, b, t, abs]) => (n: number) => sum(Math.min(a % n, b % n) + 1, Math.max(a % n, b % n) + 1, t, abs)),
+    },
+    { weight: 3, arbitrary: fc.tuple(fc.nat(), fc.constantFrom(...REF_SHAPES)).map(([a, shape]) => (n: number) => ref((a % n) + 1, shape)) },
+    {
+      weight: 1,
+      arbitrary: fc.tuple(fc.nat(), fc.nat(), fc.constantFrom(...RANGE_SHAPES)).map(([a, b, shape]) => (n: number) => range(Math.min(a % n, b % n) + 1, Math.max(a % n, b % n) + 1, shape)),
+    },
   )
   const graph: fc.Arbitrary<GraphNode[]> = fc
     .tuple(fc.integer({ min: 2, max: 6 }), fc.array(node, { minLength: 6, maxLength: 6 }))
     .map(([n, makers]) => makers.slice(0, n).map((make) => make(n)))
 
-  test('EV-14 EV-5 property (seed 20261032): in random SUM graphs with cycles (through SUMs and through A<n>*1 formulas), every member of every strongly connected component keeps its own text', { timeout: 120_000 }, async () => {
+  test("EV-14 EV-5 property (seed 20261032): in random formula graphs with cycles (through SUMs, $ parts, IF, ROUND, AVERAGE, SUM(range,0) and 'Cells (Test)'! references), every member of every strongly connected component keeps its own text", { timeout: 120_000 }, async () => {
     await fc.assert(
       fc.asyncProperty(graph, async (nodes) => {
         const members = cycleMembers(nodes)
@@ -194,112 +288,124 @@ describe('FX4 item 2: every member of a reference cycle keeps its own text (EV-1
       { seed: 20261032, numRuns: 300 },
     )
   })
+
+  /** Node i (1-based) of an acyclic graph of n nodes refers only to rows i+1 to n+2 (rows n+1 and n+2 hold numbers). */
+  const acyclicNode: fc.Arbitrary<(i: number, n: number) => GraphNode> = fc.oneof(
+    {
+      weight: 4,
+      arbitrary: fc.tuple(fc.nat(), fc.nat(), fc.boolean(), fc.boolean()).map(([a, b, t, abs]) => (i: number, n: number) => {
+        const span = n + 2 - i
+        return sum(i + 1 + Math.min(a % span, b % span), i + 1 + Math.max(a % span, b % span), t, abs)
+      }),
+    },
+    { weight: 2, arbitrary: fc.tuple(fc.nat(), fc.constantFrom(...REF_SHAPES)).map(([a, shape]) => (i: number, n: number) => ref(i + 1 + (a % (n + 2 - i)), shape)) },
+    {
+      weight: 1,
+      arbitrary: fc.tuple(fc.nat(), fc.nat(), fc.constantFrom(...RANGE_SHAPES)).map(([a, b, shape]) => (i: number, n: number) => {
+        const span = n + 2 - i
+        return range(i + 1 + Math.min(a % span, b % span), i + 1 + Math.max(a % span, b % span), shape)
+      }),
+    },
+  )
+  const acyclic: fc.Arbitrary<GraphNode[]> = fc
+    .tuple(fc.integer({ min: 2, max: 6 }), fc.array(acyclicNode, { minLength: 6, maxLength: 6 }))
+    .map(([n, makers]) => makers.slice(0, n).map((make, k) => make(k + 1, n)))
+
+  test('EV-14 EV-5 property (seed 20261039): in random formula graphs with no cycle and Excel-true cached values, a SUM over cells that read as exact cents snaps to their exact total, any other SUM reads its exact total or its own text, and no other formula changes', { timeout: 120_000 }, async () => {
+    await fc.assert(
+      fc.asyncProperty(acyclic, async (nodes) => {
+        const n = nodes.length
+        const { cells, cached } = acyclicSheet(nodes)
+        const texts = textsOf(await readBytes(sparseXlsx(cells)))
+        const must = new Map<number, boolean>()
+        // Bottom-up: a SUM must snap when every cell in its range reads as exact cents of its own double, or is a SUM that must snap.
+        for (let row = n; row >= 1; row--) {
+          const node = nodes[row - 1] as GraphNode
+          if (node.kind !== 'sum') continue
+          let ok = true
+          for (let r = node.lo; r <= node.hi; r++) {
+            if (r > n) continue
+            const inner = nodes[r - 1] as GraphNode
+            if (inner.kind === 'sum') ok &&= must.get(r) === true
+            else ok &&= isCentText(String(cached[r - 1]))
+          }
+          must.set(row, ok)
+        }
+        const wrong: string[] = []
+        nodes.forEach((node, k) => {
+          const row = k + 1
+          const text = texts.get(`A${String(row)}`)
+          const own = numberText(cached[k] as number)
+          if (node.kind !== 'sum') {
+            if (text !== own) wrong.push(`A${String(row)} (${node.kind}) read ${String(text)}, own ${own}`)
+            return
+          }
+          const terms: (string | undefined)[] = []
+          for (let r = node.lo; r <= node.hi; r++) for (let c = 1; c <= (node.withTerms ? 7 : 1); c++) terms.push(texts.get(address(c, r)))
+          const exact = terms.every(isCentText) ? exactText(terms.reduce((s, t) => s + textCents(t as string), 0n)) : undefined
+          if (must.get(row) === true) {
+            if (text !== exact) wrong.push(`A${String(row)} must snap: read ${String(text)}, exact ${String(exact)}`)
+          } else if (text !== own && text !== exact) wrong.push(`A${String(row)} read ${String(text)}, own ${own}, exact ${String(exact)}`)
+        })
+        expect(wrong, JSON.stringify(nodes)).toEqual([])
+      }),
+      { seed: 20261039, numRuns: 200 },
+    )
+  })
+
+  test('EV-14 a 50,000-cell ring through formulas that are not SUMs (A1 SUM(A2:G2), A<r> = A<r+1>*1, A50000 = A1*1) reads without a stack overflow, and A1 keeps its own text', { timeout: 120_000 }, async () => {
+    const RING = 50_000
+    const cells = new Map<string, string>([['A1', formulaBody('SUM(A2:G2)', floatSum([0, ...PLANTED]))]])
+    PLANTED.forEach((x, i) => cells.set(address(2 + i, 2), numberBody(x)))
+    for (let r = 2; r < RING; r++) cells.set(`A${String(r)}`, formulaBody(`A${String(r + 1)}*1`, 0))
+    cells.set(`A${String(RING)}`, formulaBody('A1*1', 0))
+    const texts = textsOf(await readBytes(sparseXlsx(cells)))
+    expect({ A1: texts.get('A1'), A2: texts.get('A2'), A50000: texts.get('A50000') }).toEqual({ A1: NOISY, A2: '0', A50000: '0' })
+  })
 })
 
-// ------------------------------------------------------------------------------------------- item 3: bounded range walks
+describe('FX4 item 2 through snapSums: cycle members are skipped with the reason "reference cycle" (EV-14, EV-5)', () => {
+  const own = numberText(floatSum([0, ...PLANTED]))
+  const planted = (row: number): Cell[] => PLANTED.map((x, i) => memNumber(address(2 + i, row), String(x)))
 
-type WorkerRead = { status: 'over' } | { status: 'error'; error: string } | { status: 'done'; ok: false; reason: string } | { status: 'done'; ok: true; cells: Record<string, { text: string; merged: string | null }> }
-
-/** Module loading in the worker has its own limit; the budget counts from when the modules are loaded. */
-const LOAD_LIMIT_MS = 30_000
-
-/** Reads the bytes through createSheetsReader in a worker; a read still running at the budget is stopped. */
-function readInWorker(bytes: Uint8Array, budgetMs: number): Promise<WorkerRead> {
-  return new Promise((resolve) => {
-    const worker = new Worker(new URL('./__fixtures__/fx4-worker.mjs', import.meta.url), {
-      workerData: { bytes, fileName: 'budget (Test).xlsx' },
-      resourceLimits: { maxOldGenerationSizeMb: 2048 },
-      stdout: true,
-      stderr: true,
-    })
-    let settled = false
-    const finish = (r: WorkerRead): void => {
-      if (settled) return
-      settled = true
-      clearTimeout(timer)
-      void worker.terminate()
-      resolve(r)
-    }
-    let timer = setTimeout(() => {
-      finish({ status: 'error', error: 'modules did not load' })
-    }, LOAD_LIMIT_MS)
-    worker.on('message', (m: { ready?: boolean; done?: boolean; ok?: boolean; reason?: string; error?: string; cells?: Record<string, { text: string; merged: string | null }> }) => {
-      if (m.ready === true) {
-        clearTimeout(timer)
-        timer = setTimeout(() => {
-          finish({ status: 'over' })
-        }, budgetMs)
-        return
-      }
-      if (m.done !== true) finish({ status: 'error', error: m.error ?? 'unknown' })
-      else if (m.ok === true) finish({ status: 'done', ok: true, cells: m.cells ?? {} })
-      else finish({ status: 'done', ok: false, reason: m.reason ?? '' })
-    })
-    worker.on('error', (e: Error) => {
-      finish({ status: 'error', error: `${e.name}: ${e.message}` })
-    })
-    worker.on('exit', (code) => {
-      finish({ status: 'error', error: `worker exited with code ${String(code)}` })
-    })
-  })
-}
-
-/** A fixed stream of whole cents up to 1e6 (10,000 dollars), mixed sign. */
-function centStream(seed: number, count: number): number[] {
-  let state = seed
-  const out: number[] = []
-  for (let i = 0; i < count; i++) {
-    state = (Math.imul(state, 1_103_515_245) + 12_345) >>> 0
-    out.push((state % 2_000_001) - 1_000_000)
-  }
-  return out
-}
-
-describe('FX4 item 3: range walks are bounded by the cells that exist, inside the budget (EV-14, ARC-10)', () => {
-  test('EV-14 ARC-10 a 20,000-row ledger running balance B<r> = SUM($A$1:A<r>) reads inside the 30 s budget; each balance reads its exact cents or its own text, the first 100 exactly', { timeout: 90_000 }, async () => {
-    const ROWS = 20_000
-    const amounts = centStream(20261033, ROWS)
-    const cells = new Map<string, string>()
-    const exact: bigint[] = []
-    const cached: number[] = []
-    let running = 0
-    let runningExact = 0n
-    amounts.forEach((c, i) => {
-      const row = i + 1
-      // Excel sums A1..A<r> in range order, which is the running float sum.
-      running += c / 100
-      runningExact += BigInt(c)
-      cached.push(running)
-      exact.push(runningExact)
-      cells.set(`A${String(row)}`, numberBody(c / 100))
-      cells.set(`B${String(row)}`, formulaBody(`SUM($A$1:A${String(row)})`, running))
-    })
-    const out = await readInWorker(sparseXlsx(cells), 30_000)
-    expect(out.status === 'done' && out.ok, `the read ${out.status === 'over' ? 'did not finish inside 30 s' : JSON.stringify(out).slice(0, 200)}`).toBe(true)
-    if (out.status !== 'done' || !out.ok) return
-    const wrong: string[] = []
-    for (let row = 1; row <= ROWS; row++) {
-      const text = out.cells[`B${String(row)}`]?.text
-      const want = cellCents(exact[row - 1] as bigint)
-      const own = numberText(cached[row - 1] as number)
-      const ok = row <= 100 ? text === want : text === want || text === own
-      if (!ok) wrong.push(`B${String(row)} read ${String(text)}, exact ${want}, own ${own}`)
-    }
-    expect({ wrongCount: wrong.length, first: wrong.slice(0, 3) }).toEqual({ wrongCount: 0, first: [] })
-    expect(out.cells.A20000?.text).toBe(String((amounts[ROWS - 1] as number) / 100))
+  test('EV-14 the cycle joined through a finished node: all three SUMs are skipped as a reference cycle, and none changes', () => {
+    const cells = inSheetOrder([memFormula('A1', 'SUM(A2:A3)', '0'), memFormula('A2', 'SUM(A1:A1)', '0'), memFormula('A3', 'SUM(A2:G2)', own), ...planted(2)])
+    const out = snapSums(cells)
+    expect(sortSkipped(out.skipped)).toEqual([
+      { row: 1, column: 1, reason: 'reference cycle' },
+      { row: 2, column: 1, reason: 'reference cycle' },
+      { row: 3, column: 1, reason: 'reference cycle' },
+    ])
+    expect(['A1', 'A2', 'A3'].map((a) => memAt(cells, a)?.text)).toEqual(['0', '0', own])
   })
 
-  test('EV-14 ARC-10 A1 = SUM(A2:XFD1048576) over the planted terms spread to the far corner reads inside 10 s, as their exact cents or its own text', { timeout: 60_000 }, async () => {
-    const at = ['A2', 'B3', 'Z10', 'AA100', 'XFC1048576', 'XFD1048576']
-    const cells = new Map<string, string>()
-    PLANTED.forEach((x, i) => cells.set(at[i] as string, numberBody(x)))
-    // Range order is row by row, so the cached sum adds the terms in the order listed.
-    const cachedTotal = floatSum(PLANTED)
-    cells.set('A1', formulaBody('SUM(A2:XFD1048576)', cachedTotal))
-    const out = await readInWorker(sparseXlsx(cells), 10_000)
-    expect(out.status === 'done' && out.ok, `the read ${out.status === 'over' ? 'did not finish inside 10 s' : JSON.stringify(out).slice(0, 200)}`).toBe(true)
-    if (out.status !== 'done' || !out.ok) return
-    expect(['253914.88', numberText(cachedTotal)]).toContain(out.cells.A1?.text)
-    expect(at.map((a) => out.cells[a]?.text)).toEqual(PLANTED.map((x) => String(x)))
+  test('EV-14 the cycle through A2 = A1*1 skips the SUM A1 only; A4 = SUM(B4:G4) beside it snaps and is not skipped', () => {
+    const cells = inSheetOrder([memFormula('A1', 'SUM(A2:G2)', own), memFormula('A2', 'A1*1', '0'), ...planted(2), memFormula('A4', 'SUM(B4:G4)', numberText(floatSum(PLANTED))), ...planted(4)])
+    const out = snapSums(cells)
+    expect(sortSkipped(out.skipped)).toEqual([{ row: 1, column: 1, reason: 'reference cycle' }])
+    expect({ A1: memAt(cells, 'A1')?.text, A4: memAt(cells, 'A4')?.text, A4cached: memAt(cells, 'A4')?.cached }).toEqual({
+      A1: own,
+      A4: '253914.88',
+      A4cached: { type: 'number', text: '253914.88' },
+    })
+  })
+
+  test('EV-14 a self-reference (A1 = SUM(A1:G1)) is a cycle of one: skipped, own text kept', () => {
+    const cells = inSheetOrder([memFormula('A1', 'SUM(A1:G1)', own), ...planted(1)])
+    const out = snapSums(cells)
+    expect(out.skipped).toEqual([{ row: 1, column: 1, reason: 'reference cycle' }])
+    expect(memAt(cells, 'A1')?.text).toBe(own)
+  })
+
+  test('EV-14 a chain of 50,000 SUMs closed into a ring (A<r> = SUM(A<r+1>:A<r+1>), A50000 = SUM(A1:G1)) is walked without recursion: every one is skipped as a reference cycle', { timeout: 60_000 }, () => {
+    const RING = 50_000
+    const cells: Cell[] = []
+    for (let r = 1; r < RING; r++) cells.push(memFormula(`A${String(r)}`, `SUM(A${String(r + 1)}:A${String(r + 1)})`, '0'))
+    cells.push(memFormula(`A${String(RING)}`, 'SUM(A1:G1)', own), ...planted(1))
+    const out = snapSums(inSheetOrder(cells))
+    expect(out.skipped.length).toBe(RING)
+    expect(out.skipped.every((s) => s.reason === 'reference cycle' && s.column === 1)).toBe(true)
+    expect(new Set(out.skipped.map((s) => s.row)).size).toBe(RING)
+    expect(memAt(cells, `A${String(RING)}`)?.text).toBe(own)
   })
 })
