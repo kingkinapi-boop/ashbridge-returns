@@ -31,3 +31,6 @@ A throwaway stub (Unicode name classes and a 3D sheet prefix in raw.ts, `'` esca
 
 ## Still to do (Lead directive A434)
 SC's KNOWN entries owned by FX4 (`tools/test/__fixtures__/schema-contract/known.json`, 11 entries) wait for SC to land; a second spec patch deletes them before the build.
+
+## Refit (cloud-aab122, 3 Oct)
+Validated on main 164d8d66 (merged, no conflicts). typecheck and lint clean. sheets unit: 34 of 438 fail, all FX4 tests failing for the right reason (READER_RULES, snapSums, centText missing); tools/test adds only the known R18 failure (other cards lack // @mutate). No assertion changed.
