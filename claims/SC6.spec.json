@@ -2,10 +2,10 @@
  "card": "SC6",
  "role": "spec",
  "worker": "cloud-e8594a",
- "state": "reported",
- "at": "2026-10-03T04:16:07.106Z",
+ "state": "reopened",
+ "at": "2026-10-03T04:25:15.758Z",
  "mode": "turbo",
- "note": "7 rule tests R77 R78 (ARC-15, ARC-16); KNOWN: R77 W14, R78 verify.mjs (owner W16-r2, remove on landing); amber: R77 exception wording",
+ "note": "A408: gaps in reports/SC6-spec-review.md; see bold directive on the card",
  "commit": "839819f",
  "validated": "7eaf18c"
 }
