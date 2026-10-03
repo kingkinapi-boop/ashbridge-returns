@@ -31,7 +31,7 @@ Tags: core (who writes which file decides whether a spec can be graded fairly).
 Paths: tools/test/spec-rules.test.mjs, tools/test/__fixtures__/spec-rules/** (A493: renamed from card-rules, which SC10 owns)
 Clauses: ARC-12, ARC-16 (A493: R77 and R81 re-cited from ARC-15)
 Read: `reports/W16-findings.md` (rule tests), `plan/cards/SC.md` (rule style, KNOWN table), `.claude/rules/testing.md`.
-Spec commit: f64dedb0 (round 2, A493; validated on main de30610b; 71 tests in tools/test/spec-rules.test.mjs, KNOWN empty; one repo-scan failure on main, R77 on N01.md (its Build section writes the fixture folder its Spec section names), for the Lead to reword (reports/SC6-spec.md item 8); earlier specs c526b32d on 931d08fa, 839819ff on 7eaf18cf)
+Spec commit: d208b8ee (round 2 second patch G1 to G8, A503; validated on main a677d7fe; 111 tests, KNOWN empty; landing note in reports/SC6-spec.md item 3: with CQ11, JH0.md fails R77), earlier f64dedb0 (round 2, A493; validated on main de30610b; 71 tests in tools/test/spec-rules.test.mjs, KNOWN empty; one repo-scan failure on main, R77 on N01.md (its Build section writes the fixture folder its Spec section names), for the Lead to reword (reports/SC6-spec.md item 8); earlier specs c526b32d on 931d08fa, 839819ff on 7eaf18cf)
 
 ## Spec
 Each rule first shown failing on its planted example, then passing on main:
