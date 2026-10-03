@@ -1,12 +1,8 @@
 {
  "card": "W16",
  "role": "spec",
- "worker": "cloud-abfeb2",
- "state": "reopened",
- "at": "2026-10-03T03:55:31.192Z",
- "mode": "turbo",
- "beat": "2026-10-02T21:37:48.726Z",
- "note": "A404: round 2 on claude/W16-r2 from main; see bold directive on the card",
- "commit": "78a9fba1",
- "validated": "b9d2f580"
+ "worker": "local-3",
+ "state": "working",
+ "at": "2026-10-03T03:56:08.723Z",
+ "mode": "turbo"
 }
