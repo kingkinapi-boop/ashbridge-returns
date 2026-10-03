@@ -4,8 +4,8 @@
  "round": 2,
  "spec": "c6ed0a6",
  "worker": "cloud-0ac9e9",
- "state": "reported",
- "at": "2026-10-03T12:30:43.535Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T12:52:19.896Z",
  "mode": "turbo",
- "note": "pg16 db 638 pass, unit 2820, R41 fixed"
+ "note": "FAIL: unasked blanket grant execute to returns_app (0002_grants.sql:20), see reports/GL3-check.md"
 }
