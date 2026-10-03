@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 10:15Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 10:35Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -18,7 +18,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 10:15Z by the Lea
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
 | Train | SC, CQ4, CQ5, FX10 boarded; head 12af2528; requested 08:50Z | cloud check full, test:flake, FX10 db x20; land if green |
-| SC3 | A452 spec patch reported (56 tests); Opus spec review running; harness.ts added to L00, B05, FX17 (A457) | build if new tests fail, re-check, security review, board |
+| SC3 | spec review: 6 gaps, no build round (A458); second spec patch reopened | spec, Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | round 5 spec review: 5 gaps (A456), spec patch working (cloud) | build round 5 on cloud, check, security review; A08 spec after |
 | DB16, SC11, GL3 | DB16 PASS, CLEAN; SC11 spec reported (39 tests, A453 in); GL3 build waits for DB16 on main (pg16) | board DB16 next train; SC11 build; GL3 pg16 re-run, check |
