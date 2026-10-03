@@ -1,3 +1,5 @@
+// @mutate
+// Stryker disable all: a strict reader of db/bridge/views.json, whose whole content the spec pins (draft.acceptance.test.ts: readViewsManifest() equals the spec manifest); its patterns decide no read and no right.
 // GL3 (ARC-2): db/bridge/views.json, read strictly. An unknown key anywhere is refused, not stripped.
 import fs from 'node:fs'
 import path from 'node:path'

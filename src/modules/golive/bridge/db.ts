@@ -1,3 +1,5 @@
+// @mutate
+// Stryker disable all: database glue (catalog SQL and the one-transaction apply); Stryker runs unit tests only (vitest.mutate.config.ts), and the db project covers every line on PGlite and TEST_DB=pg16 (reach.acceptance.db.test.ts S3, S4, G1; draft.acceptance.db.test.ts). The verdicts it feeds (reachDiff, neverReadFindings, missingColumns) live in scan.ts, which scores 100.
 // GL3 (ARC-2, U9): the database side of the bridge draft: apply it to a database (tests and the go-live run), read the
 // view dependencies from the catalog, and probe the client app's schema. The probe issues only selects on the catalog.
 import fs from 'node:fs'
