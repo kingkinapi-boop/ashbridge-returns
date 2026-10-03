@@ -2,11 +2,11 @@
  "card": "DB16",
  "role": "spec",
  "worker": "local-1",
- "state": "reported",
- "at": "2026-10-03T05:26:31.703Z",
+ "state": "reopened",
+ "at": "2026-10-03T08:10:26.670Z",
  "mode": "turbo",
  "beat": "2026-10-03T05:26:18.247Z",
- "note": "round 3: 89 tests (68 unit, 21 db), the 7 of review 2; reports/DB16-spec.md; a cloud DB16 build was already working, it must take d69ac553",
+ "note": "A441: final round, T1 to T5 (see card directive)",
  "commit": "d69ac553",
  "validated": "49c44fd5"
 }
