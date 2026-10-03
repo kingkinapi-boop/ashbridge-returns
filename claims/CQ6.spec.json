@@ -1,10 +1,10 @@
 {
  "card": "CQ6",
  "role": "spec",
- "note": "13 tests, 8 fail (toolchain refit, 555a07bf)",
+ "note": "A464: real setup path",
  "worker": "local-1",
- "state": "reported",
- "at": "2026-10-03T11:10:41.000Z",
+ "state": "reopened",
+ "at": "2026-10-03T11:43:42.501Z",
  "mode": "turbo",
  "commit": "f5a17f0",
  "validated": "35483b5005dfeffed89e680a521abeb9fa2f2fd8"
