@@ -1,0 +1,20 @@
+// SC10 R89 plant (Test): a deps.ts that registers three guards with F02's lifecycle, one of them through a spread
+// variable. A guard named only in a comment (build_to_prepare here) or in a plain string is not registered.
+import { createLifecycle } from '../modules/lifecycle'
+import { approveGuard } from '../modules/approval (Test)'
+
+const reviewToRework = async () => ({ ok: true as const })
+const lateGuards = { rework_to_review: reviewToRework }
+
+export const lifecycle = createLifecycle({
+  db,
+  clock,
+  guards: {
+    review_to_approved: approveGuard,
+    'review_to_rework': reviewToRework,
+    ...lateGuards,
+  },
+})
+
+/* respond_to_review is registered by V09 when it lands */
+const message = 'trace_to_respond is a string, not a registration // nor a comment'
