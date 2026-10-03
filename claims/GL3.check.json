@@ -1,10 +1,9 @@
 {
  "card": "GL3",
  "role": "check",
- "for": "2026-10-03T14:04:15.285Z",
- "worker": "cloud-92d46e",
- "state": "failed",
- "at": "2026-10-03T15:29:24.377Z",
- "mode": "turbo",
- "note": "security review FINDINGS (one medium, five lows; report local only, A496); findings review next, then round 4 (the last)"
+ "for": "2026-10-03T19:09:37.280Z",
+ "worker": "cloud-fce4c0",
+ "state": "working",
+ "at": "2026-10-03T19:14:13.997Z",
+ "mode": "turbo"
 }
