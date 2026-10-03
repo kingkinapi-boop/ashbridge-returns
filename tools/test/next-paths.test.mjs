@@ -182,3 +182,97 @@ describe('ARC-15 CQ8 rule 2: the Lead can reopen a check', () => {
     expect(r.code).toBe(6)
   })
 })
+
+// Rule 3 (A440, check finding 1 of CQ8): a worker named local-* is never offered any job of a card whose Where line says
+// only "cloud"; next.mjs tags such a card "cloud only". The Where line is read from plan/cards/<id>.md on main.
+describe('ARC-15 CQ8 rule 3: local workers skip cards that run in the cloud only', () => {
+  const where = (text) => `# t\n\nPhase 0. Size S. Deps: none. Where: ${text}\nTags: none.\n`
+  const CARDS = {
+    CLOUDP: 'cloud (a long run on a big box).',
+    CLOUDD: 'cloud.',
+    CLOUDLAPTOP: 'cloud, then one laptop run',
+    EITHER: 'local or cloud',
+  }
+  async function whereWorld(withSpec) {
+    const w = await world(Object.keys(CARDS).map((id) => card(id, 'carded', withSpec ? { spec: 'abc' } : {})))
+    fs.mkdirSync(path.join(w.work, 'plan', 'cards'), { recursive: true })
+    for (const [id, text] of Object.entries(CARDS)) fs.writeFileSync(path.join(w.work, 'plan', 'cards', `${id}.md`), where(text))
+    await git(w.work, 'add', 'plan/cards')
+    await git(w.work, 'commit', '-q', '-m', 'cards')
+    await git(w.work, 'push', '-q', 'origin', 'main')
+    return w
+  }
+
+  test('ARC-15 a local-* worker is refused a spec of a "Where: cloud (...)" card and a "Where: cloud." card, and offered the other two', async () => {
+    const w = await whereWorld(false)
+    const offered = []
+    for (let i = 0; i < 6; i++) {
+      const out = await nextFor(w, 'local-1', 'spec')
+      if (out === 'NOTHING') break
+      offered.push(out)
+    }
+    expect(offered.sort()).toEqual(['CLAIMED CLOUDLAPTOP spec', 'CLAIMED EITHER spec'])
+    const list1 = await list(w)
+    expect(list1).not.toMatch(/^CLOUDP /m)
+    expect(list1).not.toMatch(/^CLOUDD /m)
+  })
+
+  test('ARC-15 a cloud worker is still offered the cloud-only cards (spec)', async () => {
+    const w = await whereWorld(false)
+    const offered = new Set()
+    for (let i = 0; i < 6; i++) {
+      const out = await nextFor(w, 'cloud-a1', 'spec')
+      if (out === 'NOTHING') break
+      offered.add(out)
+    }
+    expect(offered.has('CLAIMED CLOUDP spec')).toBe(true)
+    expect(offered.has('CLAIMED CLOUDD spec')).toBe(true)
+    expect(offered.size).toBe(4)
+  })
+
+  test('ARC-15 a local-* worker is refused a build of a cloud-only card and offered the others', async () => {
+    const w = await whereWorld(true)
+    const offered = []
+    for (let i = 0; i < 6; i++) {
+      const out = await nextFor(w, 'local-1', 'build')
+      if (out === 'NOTHING') break
+      offered.push(out)
+    }
+    expect(offered.sort()).toEqual(['CLAIMED CLOUDLAPTOP build', 'CLAIMED EITHER build'])
+    expect(await nextFor(w, 'cloud-a1', 'build')).toMatch(/^CLAIMED CLOUD[PD] build$/)
+  })
+
+  test('ARC-15 a local-* worker is refused a check of a cloud-only card with a reported build, and offered the others', async () => {
+    const w = await whereWorld(true)
+    const sha = await git(w.work, 'rev-parse', 'origin/main')
+    const ids = Object.keys(CARDS)
+    for (const id of ids) {
+      await claim(w, ['update', id, 'spec', 'reported', '--worker', 'cloud-s1', '--commit', 'abc123', '--validated', sha])
+    }
+    for (let i = 0; i < ids.length; i++) {
+      const out = await nextFor(w, 'cloud-b1', 'build')
+      expect(out).toMatch(/^CLAIMED \w+ build$/)
+      expect((await claim(w, ['update', out.split(' ')[1], 'build', 'reported', '--worker', 'cloud-b1'])).code, out).toBe(0)
+    }
+    const localChecks = []
+    for (let i = 0; i < ids.length; i++) {
+      const out = await nextFor(w, 'local-1', 'check')
+      if (out === 'NOTHING') break
+      localChecks.push(out)
+    }
+    expect(localChecks.sort()).toEqual(['CLAIMED CLOUDLAPTOP check', 'CLAIMED EITHER check'])
+    const cloudChecks = []
+    for (let i = 0; i < 2; i++) cloudChecks.push(await nextFor(w, 'cloud-c1', 'check'))
+    expect(cloudChecks.sort()).toEqual(['CLAIMED CLOUDD check', 'CLAIMED CLOUDP check'])
+  })
+
+  test('ARC-15 next.mjs tags only the cloud-only cards "cloud only"', async () => {
+    const w = await whereWorld(true)
+    const out = await nextOut(w)
+    const tag = (id) => out.split('\n').find((l) => l.startsWith(`START ${id} `)) ?? ''
+    expect(tag('CLOUDP')).toMatch(/cloud only/)
+    expect(tag('CLOUDD')).toMatch(/cloud only/)
+    expect(tag('CLOUDLAPTOP')).not.toMatch(/cloud only/)
+    expect(tag('EITHER')).not.toMatch(/cloud only/)
+  })
+})
