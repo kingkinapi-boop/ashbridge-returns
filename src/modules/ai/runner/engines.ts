@@ -200,7 +200,7 @@ function lookAtStranger(ctx: EngineContext, outbox: string, name: string): void 
  * One poll's look at the other entries of the outbox, in a bounded batch (R104): at most strangerBatch are looked at, and
  * the next poll carries on after them (the cursor); the listing is read in buffers of the same size. 'unreadable' when it cannot be read.
  */
-function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: number }): 'listed' | 'unreadable' {
+function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: number }): 'unreadable' | undefined {
   const { strangerBatch } = EXCHANGE_LIMITS
   const dir = attempt(() => fs.opendirSync(outbox, { bufferSize: strangerBatch }))
   if (dir === undefined) return 'unreadable'
@@ -213,13 +213,13 @@ function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: numb
       if (met <= cursor.passed) continue
       if (looked === strangerBatch) {
         cursor.passed += looked
-        return 'listed'
+        return undefined
       }
       lookAtStranger(ctx, outbox, entry.name)
       looked++
     }
     cursor.passed = 0
-    return 'listed'
+    return undefined
   } catch {
     return 'unreadable'
   } finally {
