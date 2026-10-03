@@ -2,10 +2,11 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-f0768b",
- "state": "reported",
- "at": "2026-10-03T05:12:53.014Z",
+ "state": "released",
+ "at": "2026-10-03T05:38:07.595Z",
  "mode": "turbo",
- "note": "504 tests (494 fail by name, 9 controls pass, 1 skip); see reports/W00b-spec.md",
+ "note": "wait: W00c lands, then spec round 4 (A423)",
  "commit": "b3e31300",
- "validated": "2288da55"
+ "validated": "2288da55",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
 }
