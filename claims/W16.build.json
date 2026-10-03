@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "78a9fba1",
  "worker": "cloud-4c2861",
- "state": "reported",
- "at": "2026-10-03T03:43:20.536Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T03:45:18.366Z",
  "mode": "turbo",
- "note": "539 of 539 verify checks pass"
+ "note": "FAIL: build edited spec verify.mjs and README (scope); root cause: spec ARC-16 and R11 checks contradict the card, see reports/W16-check.md"
 }

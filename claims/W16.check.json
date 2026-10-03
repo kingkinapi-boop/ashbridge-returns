@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-03T03:43:20.536Z",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T03:43:50.273Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-03T03:45:18.366Z",
+ "mode": "turbo",
+ "note": "FAIL: build edited spec verify.mjs and README (scope); root cause: spec ARC-16 and R11 checks contradict the card, see reports/W16-check.md"
 }
