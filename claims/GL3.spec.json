@@ -1,11 +1,12 @@
 {
  "card": "GL3",
  "role": "spec",
- "note": "A476: round 2 test (card directive)",
- "reopenedFrom": "c6ed0a6",
+ "note": "2 tests (card total 56), fails on line 20 only; validated on main 9ae027c4",
  "worker": "cloud-1ba1dc",
- "state": "working",
- "at": "2026-10-03T13:30:55.203Z",
+ "state": "reported",
+ "at": "2026-10-03T13:52:49.889Z",
  "mode": "turbo",
- "beat": "2026-10-03T13:33:26.783Z"
+ "beat": "2026-10-03T13:33:26.783Z",
+ "commit": "cd78aaf5",
+ "validated": "9ae027c4a5f2567479e2966ad2e6c04104e1e40c"
 }
