@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:15Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:46Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,29 +13,29 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 08:15Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | spec patch reported (A413); build open (A424) | build round 2, check; unblocks W00b round 4, JH0, B04, SC2 |
+| W00c | build round 2 reported (mutation and flake not run: Stryker dry run over 5 min); check working | board or findings |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
-| FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
+| FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| SC | check PASS; boarded (train eb2ee8f) | next train |
-| SC3 | spec reported (security) | build, check, security review |
+| SC, CQ4, CQ5 | checks PASS; boarded (train f164b1b) | train with A04 if it passes, about 09:00Z |
+| SC3 | spec patch reported (22 of 22 with tags in); build round 2 open | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 4 build reported (126 unit, mutation 100); check working | security review, board |
-| DB16 | findings 4 (A441): one final round; SC11 carded (R90 to R92, new parity cases) | spec patch T1 to T5 (Opus), build round 5, check, security review |
-| JH0 | spec reported | build after W00c lands |
+| A04 | round 4 check FAIL (4 security: path traversal, outbox reads, endless poll, isTest trust); findings review 5 running | verdict; A08 spec held for it |
+| DB16 | final round: spec T1 to T5 reported; build round 5 open (A441) | build, check, security review |
+| JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
-| SC6, FX8 | W16 landed: their wait lifts | spec (FX8 on claude/FX8-r2) |
-| FX10, FX12 | FX10 build reported (no product change); check for a cloud box; FX12 carded | FX10 check, security review; FX12 after |
-| CQ4 to CQ8, SC10 | CQ4 and CQ5 builds reported, checks working; CQ8 gains the cloud-only rule (A440) | board; CQ4 lands before the S00 and DB16 checks |
+| SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
+| FX10, FX12, FX14 | FX10 check PASS, security review running; FX12 spec patch reported, build open; FX14 carded | board FX10; FX12 build |
+| CQ6 to CQ8, SC10, A08 | CQ6, CQ7, CQ8 specs reported; A08 spec reported, refusal-file gap to its spec (A443) | CQ builds after CQ4 and CQ5 land; A08 after A04 |
 
-Cloud runs: 6 fired 07:42Z to 08:08Z (W00c build; A04, CQ4, CQ5 checks; SC3 build reopened for cloud). Local: local-2 (FX8 spec); local-1 and local-3 done.
+Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none. Helpers: A04 findings review 5, FX10 security review.
 
 ## Next, in order
 
 1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
 2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
 3. FX2 and A04 round 2 specs, then SC3, SC5 (R71 to R73); DB16.
-4. Phase 3 cards reviewed (reports/phase3-card-review-2026-10-03b.md) and fixed (A437, A438); T13 (notice of assessment, phase 4) and T14 (amended return) carded. Specs follow as deps land. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
+4. Phase 3 cards reviewed and fixed (A437, A438); T13, T14 carded. Phase 4: D11 (parked), V10, V11, N01, N20, GL1 carded (A444); N19 to write; independent card review of phase 4 before its first spec. Specs follow as deps land.
 5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
 6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
