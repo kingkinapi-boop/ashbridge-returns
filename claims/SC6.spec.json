@@ -1,11 +1,12 @@
 {
  "card": "SC6",
  "role": "spec",
- "note": "33 tests; paths gap: verify.mjs items (R11 missing N known, * bullets) need a card with verify.mjs in Paths",
- "reopenedFrom": "c526b32d",
+ "note": "71 tests; only N01.md trips R77 (needs rewording on main, Lead); amber in reports/SC6-spec.md",
  "worker": "cloud-4863d0",
- "state": "working",
- "at": "2026-10-03T15:31:57.182Z",
+ "state": "reported",
+ "at": "2026-10-03T16:12:15.195Z",
  "mode": "turbo",
- "beat": "2026-10-03T15:35:16.544Z"
+ "beat": "2026-10-03T15:35:16.544Z",
+ "commit": "f64dedb0",
+ "validated": "de30610b"
 }
