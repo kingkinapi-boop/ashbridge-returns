@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title>Source viewer prototype, version B+ (D03) - Ashbridge Tax</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="static/govuk-moj.css">
+  <link rel="stylesheet" href="static/app.css">
+</head>
+<body class="govuk-template__body" data-signed-out="signed-out.html">
+  <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+  <a href="#main" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+  <div id="sv-live" class="govuk-visually-hidden" role="status" aria-live="polite"></div>
+  <header><div class="govuk-generic-header"><div class="govuk-generic-header__container app-wide"><div class="govuk-generic-header__logo"><span class="govuk-generic-header__homepage-link app-brand"><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="6" fill="#ffffff"/><path d="M6 25 L16 6 L26 25 M10.5 19 H21.5" fill="none" stroke="#355b7d" stroke-width="3" stroke-linejoin="round"/></svg><span>Ashbridge Tax</span></span></div></div></div></header>
+  <div class="govuk-width-container"><main id="main" class="govuk-main-wrapper" tabindex="-1">
+    <h1 class="govuk-heading-l">Source viewer prototype, version B+ (D03)</h1>
+    <p class="govuk-body">One viewer for every family, as chosen at design sitting 1: version B (sources as tabs, the decision beside the evidence) with A (keys, the "Supports" tick) and C (Complete with Undo, window first) folded in. It sits as a pane inside the return record, beside five record tabs, each a client route. Made-up data: Maple Ridge Consulting Inc. (Test).</p>
+    <h2 class="govuk-heading-m">Pages</h2>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link" href="workbench.html">Workbench</a>: cite a source or write a reason (preparer).</li>
+      <li><a class="govuk-link" href="review.html?as=dev">Review</a>: check each figure against its sources and tick your place (CPA reviewer).</li>
+      <li><a class="govuk-link" href="documents.html">Documents</a>: verify extracted values (preparer).</li>
+      <li><a class="govuk-link" href="exceptions.html?as=dev">Exceptions</a>: judge accepted risks (CPA reviewer).</li>
+      <li><a class="govuk-link" href="ops.html?as=sam">Ops</a>: complete or chase an item (Operations).</li>
+      <li><a class="govuk-link" href="window.html">The second window on its own</a>, a full page. From any record tab, "Open in a second window" opens it and it follows every click.</li>
+      <li><a class="govuk-link" href="search.html?q=meals">Search results</a>, from the search box at the top of every page.</li>
+      <li><a class="govuk-link" href="signed-out.html">Signed out</a>, where every window goes on sign-out.</li>
+    </ul>
+    <h2 class="govuk-heading-m">States to try</h2>
+    <table class="govuk-table app-table-dense">
+      <caption class="govuk-table__caption govuk-visually-hidden">States of the viewer, each opened on the figure that shows it</caption>
+      <thead class="govuk-table__head"><tr class="govuk-table__row"><th scope="col" class="govuk-table__header">State</th><th scope="col" class="govuk-table__header">What to look for</th></tr></thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f1&amp;src=1">Normal: a figure with six sources of six kinds</a></th><td class="govuk-table__cell">Due from shareholder: a QBO trial balance line, an adjusting entry, a QBO transaction, a bank page, a client answer and a written reason. Each header names the origin and the dot in words.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f1&amp;src=2.1">An adjusting entry and its own sources as steps</a></th><td class="govuk-table__cell">Source 2 is entry 01-AJE-01 with its type, reason and memo. Press ] to step through its seven sources: six card rows and the client's list.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f1&amp;src=3">QBO line with its id</a></th><td class="govuk-table__cell">A deposit with its QBO Transaction ID, date, type, number and memo, from the dated snapshot.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f1&amp;src=1">QBO trial balance line (no id)</a></th><td class="govuk-table__cell">A trial balance line names the snapshot and the account and says it carries no id.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f3&amp;src=1">QBO line without an id (composite key)</a></th><td class="govuk-table__cell">A General Ledger line with no id: the composite key and the flag for a person show at once, and the line comes first (TB-13).</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f4&amp;src=1">Flagged: the flag's own evidence first</a></th><td class="govuk-table__cell">The client answer that raised the flag comes first, then the figure's own source.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f7">Empty: not checked, no evidence</a></th><td class="govuk-table__cell">Capital dividend account: never blank, and the reason there is no source.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f8&amp;src=1">Error: the page image fails, then loads</a></th><td class="govuk-table__cell">Try again loads the image. The error summary names what happened.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f5&amp;src=1">Masked: the T5 slip with SIN and date of birth blacked out</a></th><td class="govuk-table__cell">The masking is in the image itself; the words say &quot;SIN on file&quot;.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f9&amp;src=1">CRA capture with its pull date</a></th><td class="govuk-table__cell">An Auto-fill value shows when it was pulled (CK-12).</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="review.html?item=f2&amp;src=3">Last year's return and assessment</a></th><td class="govuk-table__cell">A cell of the filed return, grey: one third-party source.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="workbench.html?item=c2">Candidates: exact value first, rounds apart, none chosen</a></th><td class="govuk-table__cell">Taxes payable: the client's answer matches exactly; two captures round to the value. Nothing is preselected.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="workbench.html?item=c5">Overridden cell: a reason only</a></th><td class="govuk-table__cell">No candidate: the cell facts and one box for the reason.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="documents.html?item=v1">Verify an extracted value</a></th><td class="govuk-table__cell">The words inside the box beside Accept and Reject.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="exceptions.html?item=x2">Judge an accepted risk with its source open</a></th><td class="govuk-table__cell">One reason box, Accept the risk or Comment. Sign in as Dev Malhotra (Test) for the buttons.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="ops.html?item=o1">Check an item: Complete or Chase</a></th><td class="govuk-table__cell">Chase writes a dated staff note and sends nothing.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="ops.html?state=done&amp;item=o2">Done rows with Undo that asks for a reason</a></th><td class="govuk-table__cell">Also on Documents, Exceptions, Workbench and Review with state=done.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="workbench.html?state=void&amp;item=g1">Approval void: the books changed after approval</a></th><td class="govuk-table__cell">Snapshot value and re-read value with both dates, and nothing to decide.</td></tr>
+        <tr class="govuk-table__row"><th scope="row" class="govuk-table__header"><a class="govuk-link" href="workbench.html?as=dev&amp;item=c2">The same Workbench as another person</a></th><td class="govuk-table__cell">The remembered second-window choice and the actions follow the person.</td></tr>
+      </tbody>
+    </table>
+    <h2 class="govuk-heading-m">The second window</h2>
+    <p class="govuk-body">It opens only when you ask: the button "Open in a second window", the tick box beside it, or the key o. The tick box is remembered for each signed-in person (default off) and its state is written next to it. While the window is open and following, the list takes the full width and the decision sits above the list.</p>
+  </main></div>
+  <script src="static/signout.js"></script>
+
+</body>
+</html>

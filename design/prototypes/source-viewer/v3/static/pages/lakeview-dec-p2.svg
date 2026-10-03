@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 792" width="612" height="792" role="img" aria-label="Lakeview Bank (Test) chequing statement, December 2025, page 2 of 3. Account number blacked out." font-family="Roboto, Arial, sans-serif">
+<title>Lakeview Bank (Test) chequing statement, December 2025, page 2 of 3. Account number blacked out.</title>
+<rect width="612" height="792" fill="#ffffff"/>
+<rect x="0" y="0" width="612" height="6" fill="#355b7d"/>
+<text x="36" y="48" font-size="20" font-weight="700" fill="#355b7d">Lakeview Bank (Test)</text>
+<text x="36" y="70" font-size="12" fill="#444">Business chequing statement</text>
+<text x="576" y="48" font-size="11" fill="#444" text-anchor="end">Page 2 of 3</text>
+<text x="36" y="120" font-size="11" fill="#444">Account holder</text>
+<text x="150" y="120" font-size="11" fill="#222">Maple Ridge Consulting Inc. (Test)</text>
+<text x="36" y="142" font-size="11" fill="#444">Account number</text>
+<rect x="150" y="131" width="120" height="15" fill="#000000"/>
+<text x="36" y="164" font-size="11" fill="#444">Statement period</text>
+<text x="150" y="164" font-size="11" fill="#222">1 Dec 2025 to 31 Dec 2025</text>
+<text x="36" y="236" font-size="11" font-weight="700" fill="#222">Date</text>
+<text x="96" y="236" font-size="11" font-weight="700" fill="#222">Description</text>
+<text x="420" y="236" font-size="11" font-weight="700" fill="#222" text-anchor="end">Withdrawals</text>
+<text x="490" y="236" font-size="11" font-weight="700" fill="#222" text-anchor="end">Deposits</text>
+<text x="576" y="236" font-size="11" font-weight="700" fill="#222" text-anchor="end">Balance</text>
+<line x1="36" y1="244" x2="576" y2="244" stroke="#222" stroke-width="1"/>
+<text x="40" y="262" font-size="11" fill="#222">2025-12-15</text>
+<text x="96" y="262" font-size="11" fill="#222">POS PURCHASE DOLLARAMA #1055 PICKERING ON</text>
+<text x="420" y="262" font-size="11" fill="#222" text-anchor="end">58.85</text>
+<text x="490" y="262" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="262" font-size="11" fill="#222" text-anchor="end">124,694.18</text>
+<line x1="36" y1="268" x2="576" y2="268" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="284" font-size="11" fill="#222">2025-12-15</text>
+<text x="96" y="284" font-size="11" fill="#222">POS PURCHASE UPS STORE #4297 OAKVILLE ON</text>
+<text x="420" y="284" font-size="11" fill="#222" text-anchor="end">30.11</text>
+<text x="490" y="284" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="284" font-size="11" fill="#222" text-anchor="end">124,664.07</text>
+<line x1="36" y1="290" x2="576" y2="290" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="306" font-size="11" fill="#222">2025-12-16</text>
+<text x="96" y="306" font-size="11" fill="#222">POS PURCHASE PRESTO</text>
+<text x="420" y="306" font-size="11" fill="#222" text-anchor="end">30.33</text>
+<text x="490" y="306" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="306" font-size="11" fill="#222" text-anchor="end">124,633.74</text>
+<line x1="36" y1="312" x2="576" y2="312" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="328" font-size="11" fill="#222">2025-12-16</text>
+<text x="96" y="328" font-size="11" fill="#222">POS PURCHASE PRESTO</text>
+<text x="420" y="328" font-size="11" fill="#222" text-anchor="end">35.26</text>
+<text x="490" y="328" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="328" font-size="11" fill="#222" text-anchor="end">124,598.48</text>
+<line x1="36" y1="334" x2="576" y2="334" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="350" font-size="11" fill="#222">2025-12-17</text>
+<text x="96" y="350" font-size="11" fill="#222">PRE-AUTH DEBIT GOOGLE *WORKSPACE</text>
+<text x="420" y="350" font-size="11" fill="#222" text-anchor="end">9.36</text>
+<text x="490" y="350" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="350" font-size="11" fill="#222" text-anchor="end">124,589.12</text>
+<line x1="36" y1="356" x2="576" y2="356" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="372" font-size="11" fill="#222">2025-12-17</text>
+<text x="96" y="372" font-size="11" fill="#222">POS PURCHASE PRESTO</text>
+<text x="420" y="372" font-size="11" fill="#222" text-anchor="end">39.40</text>
+<text x="490" y="372" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="372" font-size="11" fill="#222" text-anchor="end">124,549.72</text>
+<line x1="36" y1="378" x2="576" y2="378" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="394" font-size="11" fill="#222">2025-12-18</text>
+<text x="96" y="394" font-size="11" fill="#222">E-TRANSFER RECEIVED PRIYA NAIR TEST</text>
+<text x="420" y="394" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="490" y="394" font-size="11" fill="#222" text-anchor="end">12,000.00</text>
+<text x="576" y="394" font-size="11" fill="#222" text-anchor="end">136,549.72</text>
+<line x1="36" y1="400" x2="576" y2="400" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="416" font-size="11" fill="#222">2025-12-19</text>
+<text x="96" y="416" font-size="11" fill="#222">POS PURCHASE PRESTO</text>
+<text x="420" y="416" font-size="11" fill="#222" text-anchor="end">29.00</text>
+<text x="490" y="416" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="416" font-size="11" fill="#222" text-anchor="end">136,520.72</text>
+<line x1="36" y1="422" x2="576" y2="422" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="438" font-size="11" fill="#222">2025-12-20</text>
+<text x="96" y="438" font-size="11" fill="#222">E-TRANSFER SENT PRIYA NAIR TEST</text>
+<text x="420" y="438" font-size="11" fill="#222" text-anchor="end">20,000.00</text>
+<text x="490" y="438" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="438" font-size="11" fill="#222" text-anchor="end">116,520.72</text>
+<line x1="36" y1="444" x2="576" y2="444" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="460" font-size="11" fill="#222">2025-12-22</text>
+<text x="96" y="460" font-size="11" fill="#222">PRE-AUTH DEBIT INTUIT *QUICKBOOKS</text>
+<text x="420" y="460" font-size="11" fill="#222" text-anchor="end">35.00</text>
+<text x="490" y="460" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="460" font-size="11" fill="#222" text-anchor="end">116,485.72</text>
+<line x1="36" y1="466" x2="576" y2="466" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="482" font-size="11" fill="#222">2025-12-22</text>
+<text x="96" y="482" font-size="11" fill="#222">POS PURCHASE PRESTO</text>
+<text x="420" y="482" font-size="11" fill="#222" text-anchor="end">31.20</text>
+<text x="490" y="482" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="482" font-size="11" fill="#222" text-anchor="end">116,454.52</text>
+<line x1="36" y1="488" x2="576" y2="488" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="504" font-size="11" fill="#222">2025-12-22</text>
+<text x="96" y="504" font-size="11" fill="#222">POS PURCHASE UBER *TRIP</text>
+<text x="420" y="504" font-size="11" fill="#222" text-anchor="end">39.41</text>
+<text x="490" y="504" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="504" font-size="11" fill="#222" text-anchor="end">116,415.11</text>
+<line x1="36" y1="510" x2="576" y2="510" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="526" font-size="11" fill="#222">2025-12-22</text>
+<text x="96" y="526" font-size="11" fill="#222">POS PURCHASE CANADA POST</text>
+<text x="420" y="526" font-size="11" fill="#222" text-anchor="end">58.71</text>
+<text x="490" y="526" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="526" font-size="11" fill="#222" text-anchor="end">116,356.40</text>
+<line x1="36" y1="532" x2="576" y2="532" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="40" y="548" font-size="11" fill="#222">2025-12-22</text>
+<text x="96" y="548" font-size="11" fill="#222">PAYMENT TO CARD AURORA CARD TEST 7712</text>
+<text x="420" y="548" font-size="11" fill="#222" text-anchor="end">815.85</text>
+<text x="490" y="548" font-size="11" fill="#222" text-anchor="end"></text>
+<text x="576" y="548" font-size="11" fill="#222" text-anchor="end">115,540.55</text>
+<line x1="36" y1="554" x2="576" y2="554" stroke="#d8dde3" stroke-width="0.6"/>
+<text x="36" y="770" font-size="9" fill="#666">Made-up document for the test world. Not a real statement.</text>
+</svg>

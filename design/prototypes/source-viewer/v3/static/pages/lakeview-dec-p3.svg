@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 792" width="612" height="792" role="img" aria-label="Lakeview Bank (Test) chequing statement, December 2025, page 3 of 3, closing balance. Account number blacked out." font-family="Roboto, Arial, sans-serif">
+<title>Lakeview Bank (Test) chequing statement, December 2025, page 3 of 3, closing balance. Account number blacked out.</title>
+<rect width="612" height="792" fill="#ffffff"/>
+<rect x="0" y="0" width="612" height="6" fill="#355b7d"/>
+<text x="36" y="48" font-size="20" font-weight="700" fill="#355b7d">Lakeview Bank (Test)</text>
+<text x="36" y="70" font-size="12" fill="#444">Business chequing statement</text>
+<text x="576" y="48" font-size="11" fill="#444" text-anchor="end">Page 3 of 3</text>
+<text x="36" y="120" font-size="11" fill="#444">Account holder</text>
+<text x="150" y="120" font-size="11" fill="#222">Maple Ridge Consulting Inc. (Test)</text>
+<text x="36" y="142" font-size="11" fill="#444">Account number</text>
+<rect x="150" y="131" width="120" height="15" fill="#000000"/>
+<text x="36" y="200" font-size="13" font-weight="700" fill="#222">Account summary</text>
+<text x="36" y="246" font-size="12" fill="#222">Closing balance, 31 Dec 2025</text>
+<text x="560" y="250" font-size="16" font-weight="700" fill="#222" text-anchor="end">131,184.97</text>
+<line x1="36" y1="270" x2="576" y2="270" stroke="#d8dde3"/>
+<text x="36" y="300" font-size="12" fill="#222">Interest rate on this account</text>
+<text x="576" y="300" font-size="12" fill="#222" text-anchor="end">0.00%</text>
+<text x="36" y="324" font-size="12" fill="#222">Service charges, December</text>
+<text x="576" y="324" font-size="12" fill="#222" text-anchor="end">0.00</text>
+<text x="36" y="770" font-size="9" fill="#666">Made-up document for the test world. Not a real statement.</text>
+</svg>

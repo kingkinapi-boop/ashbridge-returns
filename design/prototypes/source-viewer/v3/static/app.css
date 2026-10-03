@@ -1,0 +1,275 @@
+/* app- parts for the source viewer, version B+ (D03). Every class here is listed with its reason in notes.md.
+   No CSS zoom, no third-party fonts, no inline style in the pages (script sets only the box position and the page width).
+   Sizes in rem or px; colours from the Ashbridge palette (design/basis/settings.scss). */
+
+:root { --app-pane-w: 480px; --app-ink: #15283b; --app-brand: #355b7d; --app-focus: #f5c94c; --app-line: #c5ced8; --app-soft: #f3f5f8; --app-muted: #4f5f70; --app-error: #b3413a; --app-ok: #1f6e50; }
+[hidden] { display: none !important; }
+
+/* ---------------------------------------------------------------- shell: a fixed viewport app so the pane is full height beside the work (rule 20) */
+html.govuk-template { height: 100%; background: #fff; }
+.govuk-template__body { margin: 0; font-family: Roboto, arial, sans-serif; color: var(--app-ink); }
+.app-shell { margin: 0; min-height: 100%; background: #fff; position: relative; }
+.app-shell button, .app-shell input, .app-shell textarea { font-family: inherit; }
+.app-shell--stack { display: flex; flex-direction: column; }
+.app-wide { width: 100%; max-width: none; padding-left: 16px; padding-right: 16px; box-sizing: border-box; }
+.app-wide .moj-identity-bar__container, .app-wide .moj-sub-navigation__list { max-width: none; margin-left: 0; margin-right: 0; }
+.app-return { flex: none; }
+.app-shell .moj-identity-bar { margin-bottom: 0; padding-top: 0; padding-bottom: 0; }
+.app-shell .moj-sub-navigation { margin-bottom: 0; }
+.app-shell .moj-sub-navigation__list { padding-top: 0; }
+.app-shell .moj-sub-navigation__link { padding-top: 4px; padding-bottom: 4px; font-size: 1rem; }
+
+@media (min-width: 601px) {
+  html.govuk-template { overflow: hidden; }
+  .app-shell { height: 100%; overflow: hidden; }
+  .app-shell--stack > main, .app-shell--stack > .app-window-main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .app-split { height: 100%; }
+  .app-split__left { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+  .app-split__left > main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .app-shell--page { overflow: auto; height: auto; }
+  html.govuk-template:has(.app-shell--page) { overflow: auto; }
+}
+
+/* ---------------------------------------------------------------- header: the Generic header, the logo and the one search box */
+.govuk-generic-header { background: var(--app-brand); padding: 0; border-bottom: 0; }
+.govuk-generic-header__container { display: block; }
+.govuk-generic-header__logo { margin: 0; padding: 0; }
+.app-header-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; padding-top: 4px; padding-bottom: 4px; }
+.app-brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 700; font-size: 18px; line-height: 1; padding: 3px 0; margin: 0; }
+.govuk-generic-header__homepage-link.app-brand:link, .govuk-generic-header__homepage-link.app-brand:visited { color: #fff; }
+.app-brand:focus { outline: 3px solid var(--app-focus); background: var(--app-focus); color: var(--app-ink); box-shadow: none; }
+.app-brand svg { display: block; width: 22px; height: 22px; }
+.app-header-search { margin: 0; }
+.app-header-search .govuk-form-group { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; }
+.app-header-search .moj-search__label { margin: 0; color: #fff; font-size: 1rem; font-weight: 400; line-height: 1.25; }
+.app-header-search .moj-search__input-wrapper { display: flex; align-items: center; }
+.app-header-search .govuk-input { width: 14rem; max-width: 100%; height: 32px; padding: 2px 8px; border-width: 2px; }
+.app-header-search .moj-search__button { margin: 0 0 0 6px; min-height: 0; height: 32px; padding: 0 12px; font-size: 1rem; background: #fff; color: var(--app-ink); box-shadow: 0 2px 0 #c5ced8; }
+.app-header-search .moj-search__button:hover { background: #e6edf4; }
+.app-header-search .moj-search__button:focus { background: var(--app-focus); box-shadow: 0 2px 0 var(--app-ink); }
+
+/* ---------------------------------------------------------------- the return: identity bar and record tabs */
+.app-shell .moj-identity-bar__container { display: flex !important; flex-wrap: wrap !important; align-items: center; min-height: 32px; width: 100%; float: none; max-width: none; text-align: left; }
+.app-shell .moj-identity-bar__container::before, .app-shell .moj-identity-bar__container::after { content: none; display: none; }
+.app-shell .moj-identity-bar__details { flex: 1 1 auto !important; width: auto !important; max-width: none !important; float: none !important; margin: 0; min-width: 0; font-size: 1rem; padding: 4px 0; }
+.app-shell .moj-identity-bar__title { display: block; font-size: 1rem; }
+.app-shell .moj-identity-bar__actions { flex: none; white-space: nowrap; width: auto; margin-left: auto; float: none; display: block; font-size: 1rem; }
+.app-bar-who { margin-right: 6px; }
+.app-shell .app-bar-link { display: inline-block; padding: 5px 4px; min-height: 24px; }
+
+/* ---------------------------------------------------------------- split: work at the left, the source pane (splitter then viewer) at the right, never stacked above 600 px */
+.app-split { display: grid; grid-template-columns: minmax(240px, 1fr) calc(var(--app-pane-w) + 24px); grid-template-rows: minmax(0, 1fr); min-height: 0; }
+.app-split--no-pane { grid-template-columns: 1fr; }
+.app-split--no-pane .app-split__pane { display: none; }
+.app-split__work { flex: 1; position: relative; overflow: auto; padding: 6px 16px 12px; min-width: 0; min-height: 0; scroll-padding: 80px 0; }
+.app-split__pane { min-width: 0; min-height: 0; height: 100%; display: grid; grid-template-columns: 24px minmax(0, 1fr); background: var(--app-soft); }
+.app-split__pane > .app-viewer-root { border-left: 1px solid var(--app-line); position: relative; min-width: 0; min-height: 0; height: 100%; overflow: hidden; }
+.app-splitter { width: 24px; cursor: col-resize; background: #fff; position: relative; box-sizing: border-box; border: 0; padding: 0; }
+.app-splitter::after { content: ""; position: absolute; left: 10px; top: 50%; height: 48px; margin-top: -24px; width: 4px; background: #627283; border-radius: 2px; }
+.app-splitter:hover::after { background: var(--app-ink); }
+.app-splitter:focus { outline: 3px solid var(--app-focus); outline-offset: -3px; background: var(--app-focus); }
+.app-splitter:focus::after { background: var(--app-ink); }
+.app-split__work:focus, .app-scroll:focus, .app-sheet-wrap:focus, .app-viewer__stage:focus { outline: 3px solid var(--app-focus); outline-offset: -3px; box-shadow: inset 0 0 0 6px var(--app-ink); }
+
+/* ---------------------------------------------------------------- the work column: heading and filter, move buttons, the second window controls */
+.app-headline { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 12px; margin: 0 0 4px; }
+.app-h1 { margin: 0; font-size: 1.375rem; line-height: 1.2; font-weight: 700; padding: 2px 0; }
+.app-h1:focus { outline: 3px solid var(--app-focus); outline-offset: 2px; }
+.app-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 0; }
+.app-filter .govuk-label { margin: 0; font-size: 1rem; }
+.app-filter .govuk-input { width: 8rem; max-width: 100%; height: 32px; padding: 2px 8px; }
+.app-filter .govuk-hint { margin: 0; font-size: 1rem; color: var(--app-muted); }
+.app-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 0 0 4px; }
+.app-navbar { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.app-winctl { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; flex: 1 1 auto; }
+.app-winctl .govuk-checkboxes__item { margin: 0; float: none; }
+.app-winctl .govuk-checkboxes--small .govuk-checkboxes__label { padding-top: 2px; padding-bottom: 2px; font-size: 1rem; }
+.app-win-status { margin: 0; flex: 1 1 8em; font-size: 1rem; line-height: 1.25; color: var(--app-muted); }
+.app-counts, .app-done, .app-recorded { margin: 0 0 6px; font-size: 1rem; line-height: 1.3; }
+.app-done:focus, .app-recorded:focus { outline: 3px solid var(--app-focus); outline-offset: 2px; }
+.app-done, .app-recorded { padding: 4px 8px; border-left: 4px solid var(--app-ok); background: #eef6f1; }
+.app-section-h { margin: 0 0 4px; font-size: 1.0625rem; }
+.app-winslot { margin: 0 0 8px; border: 1px solid var(--app-line); background: var(--app-soft); }
+.app-void { margin: 6px 16px 0; padding: 6px 10px; }
+.app-void .moj-alert__content { font-size: 1rem; line-height: 1.3; padding-top: 2px; }
+
+/* ---------------------------------------------------------------- tables: compact rows so at least three show beside the pane */
+.app-scroll { overflow-x: auto; position: relative; }
+.app-table-dense { margin-bottom: 8px; }
+.app-table-dense th, .app-table-dense td { padding: 4px 8px 4px 0; font-size: 1rem; line-height: 1.25; }
+.app-table-dense thead th { white-space: nowrap; }
+.app-table-dense .govuk-tag, .app-table-dense .app-button-compact { white-space: nowrap; }
+.app-row--selected th, .app-row--selected td { background: #e6edf4; }
+.app-row--selected th:first-child, .app-row--selected td:first-child { box-shadow: inset 4px 0 0 var(--app-brand); padding-left: 8px; }
+.app-what { display: block; font-size: 1rem; font-weight: 400; line-height: 1.2; color: var(--app-muted); }
+.app-table-dense .govuk-hint { color: var(--app-muted); }
+.app-button-compact { margin: 0; padding: 3px 10px; min-height: 0; font-size: 1rem; line-height: 1.25; box-shadow: 0 2px 0 #1f3a52; width: auto; white-space: normal; }
+.app-actions .app-button-compact, .app-navbar .app-button-compact, .app-winctl .app-button-compact { white-space: nowrap; }
+.app-button-compact.govuk-button--secondary { box-shadow: 0 2px 0 #8aa0b4; }
+.app-button-compact.govuk-button--warning { box-shadow: 0 2px 0 #651b1b; }
+.app-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.app-button-glyph { min-width: 28px; padding: 2px 6px; font-size: 1.125rem; font-weight: 700; line-height: 1.2; text-align: center; }
+.app-key { display: inline-block; min-width: 1.4em; padding: 0 6px; border: 1px solid #627283; border-bottom-width: 2px; border-radius: 3px; background: #fff; color: var(--app-ink); font-family: inherit; font-size: 1em; text-align: center; font-weight: 400; }
+.app-table-dense .govuk-tag, .app-viewer .govuk-tag, .app-summary-strip .govuk-tag { font-size: 1rem; line-height: 1.2; padding: 1px 6px; max-width: none; }
+.app-req { color: var(--app-error); font-weight: 700; }
+
+/* ---------------------------------------------------------------- the viewer: the figure and zoom, the steps, the source line, origin and dot, the evidence, then the decision */
+.app-viewer-root { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.app-viewer { display: flex; flex-direction: column; min-height: 0; flex: 1; height: 100%; background: var(--app-soft); }
+.app-viewer--window { background: var(--app-soft); }
+.app-viewer__head { display: flex; align-items: center; gap: 0 8px; padding: 2px 8px; min-height: 36px; box-sizing: border-box; background: #fff; border-bottom: 1px solid var(--app-line); flex: none; }
+.app-viewer__title { flex: 1 1 0; min-width: 0; margin: 0; font-size: 1.0625rem; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
+.app-viewer__zoom { display: flex; gap: 4px; align-items: center; flex: none; }
+.app-zoom-level { font-size: 1rem; min-width: 2.8em; text-align: right; white-space: nowrap; }
+.app-viewer__note { margin: 0; padding: 2px 8px; background: #fff; border-bottom: 1px solid var(--app-line); font-size: 1rem; line-height: 1.25; flex: none; }
+.app-viewer__steps { margin: 0; padding: 0 6px; background: #fff; border-bottom: 1px solid var(--app-line); flex: none; }
+.app-viewer__steps--sub { background: var(--app-soft); padding-left: 24px; }
+.app-viewer--window .app-viewer__head .app-viewer__steps { flex: none; padding: 0; border: 0; background: transparent; }
+.app-viewer__meta { margin: 0; padding: 2px 8px 0; background: #fff; font-size: 1rem; line-height: 1.3; flex: none; }
+.app-viewer__prov { margin: 0; padding: 0 8px 3px; background: #fff; border-bottom: 1px solid var(--app-line); font-size: 1rem; line-height: 1.3; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; color: var(--app-ink); flex: none; }
+.app-meta-group { font-weight: 700; }
+.app-tag-origin { vertical-align: baseline; }
+.app-viewer__body { flex: 1; min-height: 0; display: flex; }
+.app-viewer__stage { flex: 1; min-width: 0; position: relative; overflow: auto; padding: 6px; scroll-padding: 40px; background: var(--app-soft); }
+.app-viewer__empty { padding: 12px; background: #fff; flex: 1; }
+.app-viewer__card { background: #fff; border: 1px solid var(--app-line); padding: 8px; }
+.app-viewer__card:focus { outline: 3px solid var(--app-focus); }
+.app-viewer__card .govuk-summary-list { margin-bottom: 0; }
+.app-viewer__card .govuk-summary-list__row { display: table-row; }
+.app-viewer__card .govuk-summary-list__key { width: 34%; font-size: 1rem; padding: 3px 8px 3px 0; }
+.app-viewer__card .govuk-summary-list__value { font-size: 1rem; padding: 3px 0; }
+.app-viewer__card .govuk-body-s, .app-viewer__card .govuk-hint { font-size: 1rem; }
+.app-ocr { font-weight: 700; word-break: break-word; }
+.app-only-narrow { display: none; }
+.app-warning { margin: 0 0 8px; padding: 0 0 0 40px; }
+.app-warning .govuk-warning-text__text { font-size: 1.125rem; }
+
+/* origin and dot, in words, with a shape as well as a colour (EV-10, EV-11, rule 7) */
+.app-dot { display: inline-flex; align-items: center; gap: 6px; }
+.app-dot__mark { display: inline-block; flex: none; width: 14px; height: 14px; box-sizing: border-box; background: currentColor; }
+.app-dot--green { color: var(--app-ok); }
+.app-dot--green .app-dot__mark { border-radius: 50%; }
+.app-dot--grey { color: #627283; }
+.app-dot--grey .app-dot__mark { border-radius: 50%; background: transparent; border: 3px solid currentColor; }
+.app-dot--amber { color: #b8650a; }
+.app-dot--amber .app-dot__mark { transform: rotate(45deg) scale(0.8); }
+.app-dot--purple { color: #6f3e8a; }
+.app-dot--purple .app-dot__mark { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.app-dot > span:last-child { color: var(--app-ink); }
+
+/* numbered steps (TB-9): MOJ sub navigation links; the current step is not a link */
+.app-reset-button { font-family: inherit; background: none; border: 0; cursor: pointer; margin: 0; text-align: left; text-decoration: underline; }
+.moj-sub-navigation__link.app-reset-button { padding: 4px 4px; min-width: 24px; box-sizing: border-box; text-align: center; color: var(--govuk-link-colour, #355b7d); font-size: 1rem; }
+.moj-sub-navigation__link.app-reset-button:hover { color: var(--govuk-link-hover-colour, #1f3a52); text-decoration: none; }
+.moj-sub-navigation__link.app-reset-button:focus { outline: 3px solid rgba(0, 0, 0, 0); background: var(--app-focus); color: var(--app-ink); text-decoration: none; }
+.app-steps__current { font-weight: 700; padding: 4px 4px; min-width: 24px; box-sizing: border-box; text-align: center; font-size: 1rem; }
+.app-steps__sep { width: 0; height: 22px; border-left: 2px solid #8b9dae; margin: 0 -2px; }
+.app-viewer .moj-sub-navigation__item.app-steps__go { margin-left: auto; }
+.app-viewer .moj-sub-navigation__item.app-steps__go ~ .app-steps__go { margin-left: 0; }
+.app-card__added { margin: 6px 0 0; color: var(--app-muted); font-size: 1rem; }
+.app-viewer .moj-sub-navigation { margin-top: 0; margin-bottom: 0; }
+.app-viewer .moj-sub-navigation__list { padding-top: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; box-shadow: none; width: auto; }
+.app-viewer .moj-sub-navigation__item { margin-right: 0; font-size: 1rem; }
+
+/* the status cell of the Exceptions list holds two tags, one above the other */
+.app-table-dense td[data-status] .govuk-tag + .govuk-visually-hidden + .govuk-tag { margin-top: 2px; }
+
+/* page image and the box (rule 1 allows an inline style for the box position, set by script) */
+.app-page { position: relative; background: #fff; border: 1px solid #8b9dae; margin: 0; }
+.app-page img { display: block; width: 100%; height: auto; }
+.app-page--loading { min-height: 240px; }
+.app-box { position: absolute; box-sizing: border-box; border: 4px solid var(--app-ink); outline: 2px solid #fff; background: rgba(245, 201, 76, 0.18); }
+.app-box:focus { outline: 4px solid var(--app-focus); }
+.app-box__label { position: absolute; left: -4px; bottom: 100%; margin-bottom: 2px; padding: 1px 6px; background: var(--app-ink); color: #fff; font-size: 0.8125rem; font-weight: 700; white-space: nowrap; line-height: 1.3; }
+.app-box--below .app-box__label { bottom: auto; top: 100%; margin: 2px 0 0; }
+.app-skeleton { position: absolute; inset: 0; background: linear-gradient(90deg, #e6edf4 25%, #f3f5f8 50%, #e6edf4 75%); opacity: 0; animation: app-appear 0s linear 300ms forwards; }
+@keyframes app-appear { to { opacity: 1; } }
+.app-page--loaded .app-skeleton { display: none; }
+
+/* sheet grid (EV-14): a header and the rows near the boxed one, the cell outlined */
+.app-sheet-wrap { overflow-x: auto; position: relative; }
+.app-sheet { border-collapse: collapse; font-size: 0.8125rem; line-height: 1.25; width: 100%; }
+.app-sheet th, .app-sheet td { border: 1px solid #8b9dae; padding: 2px 4px; text-align: left; white-space: normal; overflow-wrap: anywhere; vertical-align: top; }
+.app-sheet thead th { background: var(--app-soft); }
+.app-sheet th[scope="row"] { background: var(--app-soft); text-align: right; font-weight: 400; }
+.app-sheet td.app-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.app-sheet td.app-cell-boxed { outline: 4px solid var(--app-ink); outline-offset: -3px; background: #fbf0c8; font-weight: 700; }
+.app-sheet td.app-cell-boxed:focus { outline-color: var(--app-focus); box-shadow: inset 0 0 0 5px var(--app-ink); }
+
+/* QBO, adjusting entry, no-id line */
+.app-noid { margin: 0 0 8px; padding: 6px 8px; border-left: 4px solid var(--app-error); background: #fbeceb; }
+.app-memo { font-size: 1rem; overflow-wrap: anywhere; }
+.app-lines { margin-bottom: 6px; }
+.app-lines th, .app-lines td { padding: 2px 8px 2px 0; }
+
+/* ---------------------------------------------------------------- the decision slot, below the evidence: one job per tab */
+.app-viewer__foot { flex: none; padding: 4px 8px; background: #fff; border-top: 1px solid var(--app-line); display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; margin: 0; }
+.app-viewer__foot .govuk-body-s, .app-foot-line { margin: 0; font-size: 1rem; }
+.app-winslot .app-viewer__foot { border-top: 0; background: transparent; }
+.app-foot-note { font-size: 1rem; color: var(--app-muted); }
+.app-viewer__foot--cite { align-items: flex-end; }
+.app-viewer__foot--cite .app-cor { flex: 1 1 16em; min-width: 0; margin: 0; }
+.app-viewer__foot--cite .govuk-radios__item { margin-bottom: 0; min-height: 34px; }
+.app-viewer__foot--cite .govuk-radios__input { height: 34px; }
+.app-viewer__foot--cite .govuk-radios--small .govuk-radios__label { padding-top: 3px; padding-bottom: 3px; }
+.app-viewer__foot--cite .govuk-radios--small .govuk-radios__label::before { top: 5px; }
+.app-viewer__foot--cite .govuk-radios--small .govuk-radios__label::after { top: 12px; }
+.app-viewer__foot--cite .govuk-fieldset { margin: 0; }
+.app-cite__sum { flex: 1 1 100%; }
+.app-cite__sum:empty { display: none; }
+.app-cite__sum .govuk-error-summary, .app-undo-sum { padding: 8px; margin-bottom: 4px; border-width: 4px; }
+.app-cite__sum .govuk-error-summary__title, .app-undo-sum .govuk-error-summary__title { font-size: 1.0625rem; margin-bottom: 4px; }
+.app-cite__sum .govuk-list, .app-undo-sum .govuk-list { margin-bottom: 0; }
+.app-cite__go { margin: 0; }
+.app-viewer__foot--judge { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 4px 10px; }
+.app-judge__field { min-width: 0; margin: 0; }
+.app-judge__field .govuk-label { margin-bottom: 1px; font-size: 1rem; line-height: 1.25; }
+.app-judge__field .govuk-textarea { min-height: 0; padding: 3px 8px; margin-bottom: 0; resize: vertical; }
+.app-judge__buttons { display: flex; flex-direction: column; gap: 4px; align-items: stretch; }
+.app-viewer__foot--judge .app-cite__sum { grid-column: 1 / -1; }
+.app-viewer__foot--tick, .app-viewer__foot--done { align-items: center; }
+.app-undo { flex: 1 1 100%; width: 100%; margin: 4px 0 0; }
+.app-undo .govuk-form-group { margin-bottom: 6px; }
+.app-undo .govuk-label { font-size: 1rem; margin-bottom: 2px; }
+.app-undo .govuk-textarea { min-height: 0; padding: 3px 8px; }
+
+/* ---------------------------------------------------------------- the second window page, search results, signed out */
+.app-window-main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.app-summary-strip { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; background: var(--app-soft); border: 1px solid var(--app-line); padding: 4px 8px; margin-bottom: 6px; }
+.app-summary-strip p { margin: 0; font-size: 1rem; line-height: 1.3; }
+.app-summary-strip--window-top { margin: 0; border-width: 0 0 1px; flex: none; padding: 2px 10px; }
+.app-summary-strip--window-top .govuk-heading-s { margin: 0; font-size: 1.0625rem; }
+.app-summary-strip--window-top .govuk-checkboxes__item { margin: 0; }
+.app-summary-strip--window-top .govuk-checkboxes--small .govuk-checkboxes__label { padding-top: 2px; padding-bottom: 2px; font-size: 1rem; }
+.app-keys-inline { margin: 0 0 0 auto; }
+.app-keys-inline .govuk-details__summary { padding-top: 0; }
+.app-keys-inline .govuk-details__text { position: absolute; right: 16px; z-index: 5; background: #fff; border: 1px solid var(--app-line); max-width: 30rem; margin-top: 0; }
+.app-results-wrap { padding-left: 16px; padding-right: 16px; max-width: none; }
+.app-results { padding-top: 12px; }
+
+/* ---------------------------------------------------------------- narrow screens: one view at a time, with a Back control (brief, under 600 px) */
+@media (max-width: 600px) {
+  .app-only-narrow { display: inline-block; }
+  .app-shell { height: auto; }
+  .app-split { display: block; }
+  .app-splitter { display: none; }
+  .app-split[data-view="list"] .app-split__pane { display: none; }
+  .app-split[data-view="viewer"] .app-split__left > main { display: none; }
+  .app-split[data-view="viewer"] .app-split__pane { display: block; }
+  .app-split__work { overflow: visible; padding-left: 10px; padding-right: 10px; }
+  .app-split__pane > .app-viewer-root { border-left: 0; height: auto; overflow: visible; }
+  .app-viewer { height: auto; }
+  .app-viewer__stage { overflow-x: auto; overflow-y: visible; min-height: 50vh; }
+  .app-viewer__body { display: block; }
+  .app-viewer__title { flex-basis: 100%; }
+  .app-wide { padding-left: 10px; padding-right: 10px; }
+  .app-header-search .govuk-input { width: 100%; }
+  .app-header-search .moj-search__input-wrapper { width: 100%; }
+  .app-header-search .moj-search__input-wrapper > *:first-child { flex: 1 1 auto; }
+  .app-header-search, .app-header-search .govuk-form-group { width: 100%; }
+  .app-shell .moj-sub-navigation__item { margin-right: 12px; }
+  .app-shell .moj-identity-bar__actions { flex: 1 1 100%; min-width: 0; margin-left: 0; white-space: normal; }
+  .app-keys-inline { margin-left: 0; }
+  .app-keys-inline .govuk-details__text { position: static; }
+  .app-viewer__foot { position: static; }
+}
