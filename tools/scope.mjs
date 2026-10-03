@@ -4,6 +4,8 @@
 // Also allowed without counting as outside: every file a `spec(<card>):` commit touched (spec-writer step 7),
 // the name patterns (*.acceptance.test.ts, __golden__/) and any test or golden paths the card file lists.
 // A spec file that a later build commit changes fails as "spec file edited by the build".
+// CQ4 (R82): a changed file the card's Spec section names is the spec job's from the start, and a merge commit
+// that holds content from neither parent (a hand edit or a hand-resolved conflict) in one fails by name.
 // plan/ledger.jsonl (the budget hook's rows) is never outside; it is listed, and fails with --board.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -82,6 +84,24 @@ function listedTestPaths() {
   return found
 }
 
+// Files the card's Spec section names (backticked, or a bare token with an extension), matched to changed files by
+// full path or by trailing path.
+function specNamed() {
+  let text = ''
+  try {
+    text = fs.readFileSync(path.join(ROOT, 'plan', 'cards', `${id}.md`), 'utf8')
+  } catch {
+    return new Set()
+  }
+  const section = text.match(/^##\s+Spec\b[^\n]*\n([\s\S]*?)(?=^##\s|(?![\s\S]))/m)
+  if (!section) return new Set()
+  const names = new Set()
+  for (const m of section[1].matchAll(/`([^`\s]+)`/g)) names.add(m[1])
+  for (const m of section[1].replace(/`[^`]*`/g, ' ').matchAll(/[\w./-]+\.\w{1,5}(?![\w/])/g)) names.add(m[0])
+  return new Set(files.filter((f) => [...names].some((n) => f === n || f.endsWith(`/${n}`))))
+}
+const specNamedFiles = specNamed()
+
 const testGlobs = ['**/*.acceptance.test.ts', '**/__golden__/**', ...listedTestPaths()]
 // Spec files by commit: walk the branch's own commits oldest first.
 const specFiles = new Set()
@@ -98,7 +118,14 @@ for (const { sha, subject } of commits) {
   if (subject.startsWith(`spec(${id}):`)) {
     for (const f of touched) specFiles.add(f)
   } else {
-    for (const f of touched) if (specFiles.has(f)) edited.push(`${f} in ${sha.slice(0, 7)}`)
+    for (const f of touched) if (specFiles.has(f) || specNamedFiles.has(f)) edited.push(`${f} in ${sha.slice(0, 7)}`)
+  }
+}
+// R82: --cc lists only files whose merged content differs from every parent.
+const handMerged = []
+for (const sha of git('log', '--merges', '--format=%H', `${base}..${ref}`).split('\n').filter(Boolean)) {
+  for (const f of git('diff-tree', '--cc', '--no-commit-id', '--name-only', '-r', sha).split('\n').filter(Boolean)) {
+    if (specNamedFiles.has(f)) handMerged.push(`${f} in merge ${sha.slice(0, 7)}`)
   }
 }
 
@@ -115,6 +142,11 @@ if (outside.length) {
 if (edited.length) {
   console.log(`SCOPE FAIL ${id}: spec file edited by the build:`)
   for (const e of edited) console.log(`  spec file edited by the build: ${e}`)
+  failed = true
+}
+if (handMerged.length) {
+  console.log(`SCOPE FAIL ${id}: spec file edited by hand in a merge commit:`)
+  for (const e of handMerged) console.log(`  spec file edited by hand in a merge: ${e}`)
   failed = true
 }
 if (hasLedger) {
