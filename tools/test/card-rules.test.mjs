@@ -351,12 +351,6 @@ function r89(world) {
 
 const KNOWN_KEYS = ['owner', 'problems', 'rule', 'subject']
 const KNOWN = [
-  // R85: F00T's Tags say core (money: cents and rounding) but slices.json has no core flag.
-  { rule: 'R85', subject: 'F00T', owner: 'F00T', problems: ['R85 F00T: slices.json core is false but the Tags line says core'] },
-  // R85: V10's Tags say security and screens; slices.json marks it core.
-  { rule: 'R85', subject: 'V10', owner: 'V10', problems: ['R85 V10: slices.json core is true but the Tags line does not say core'] },
-  // R85: SC3 is "security; reviewed as core by directive (A461)"; slices.json marks it core.
-  { rule: 'R85', subject: 'SC3', owner: 'SC3', problems: ['R85 SC3: slices.json core is true but the Tags line does not say core'] },
   // R86: FX7 (core) lists the unit setup file it edits; the card never names it as harness (DB16 findings RC1).
   {
     rule: 'R86',
@@ -735,9 +729,6 @@ describe('SC10 KNOWN is exact, owned and alive', () => {
   test('ARC-16 KNOWN on main has the right shape and the exact entries the card expects on landing', () => {
     expect(knownShape(KNOWN, JSON.parse(read('plan/slices.json')).cards)).toEqual([])
     expect(KNOWN.map((k) => `${k.rule} ${k.subject} ${k.owner}`)).toEqual([
-      'R85 F00T F00T',
-      'R85 V10 V10',
-      'R85 SC3 SC3',
       'R86 FX7 FX7',
       'R89 intake_to_evidence E00',
       'R89 evidence_to_gaps E01',
