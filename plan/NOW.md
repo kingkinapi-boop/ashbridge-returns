@@ -1,12 +1,12 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 05:56Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 07:58Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (46):** through A07C, A03, G17, A07D, A06, then CQ2 and SC4 (train 677e92f green with test:flake 5 of 5, landed 05:52Z as edd3af05). No train in flight.
+- **Landed (49):** through A07D, A06, CQ2, SC4, then CQ3, W16 and FX2 (train 5deca4a green, test:flake 5 of 5, verify 541; landed 07:57Z as 758d0b06). No train in flight.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
@@ -16,25 +16,26 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 05:56Z by the Lea
 | W00c | spec patch reported (A413); build open (A424) | build round 2, check; unblocks W00b round 4, JH0, B04, SC2 |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
-| W16 | fixup spec GO (A415); build open | build, check; then SC6, FX9 |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| SC | spec patch reported (110 tests); build open (A424) | build, check with Opus read and test:flake |
+| SC | build reported (110 of 110) | check on a cloud box (npm test, db, test:flake) with Opus read |
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | findings done (A426): round 4 narrow patch, spec reopened | spec patch (21 stamp cases), build runner.ts, check, security review |
-| DB16 | round 3 build reported (565 db tests on Postgres 16) | check (cloud), security review, board |
-| FX2 | round 2 spec reported; build open | build (one auth line), check, security review; lands before FX7 |
+| A04 | round 4 spec reported (26 tests, 11 fail); build open (A427) | build runner.ts, check, security review |
+| DB16 | round 4 build reported (target.ts 100, pg16 565, flake 5 of 5) | check (Opus read), security review, board |
 | JH0 | spec reported | build after W00c lands |
-| CQ3, CQ4 | specs reported (CQ3 Paths gain claim.test.mjs) | build, check |
+| FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
+| SC6, FX8 | W16 landed: their wait lifts | spec (FX8 on claude/FX8-r2) |
+| FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
+| CQ4 to CQ8, SC10 | CQ3 landed; CQ4 build round 2 working (local-1); CQ5 build open; CQ6, CQ7, CQ8, SC10 carded | CQ4 lands before the S00 and DB16 checks |
 
-Cloud runs: 3 at 05:56Z (W16, SC, W00c, FX2, CQ3, CQ4 builds; DB16 check needs one). Local (Opus): local-1, local-3 workers; local-2 (FX10 spec). Helper: A04 findings review.
+Cloud runs: 2 at 07:42Z (SC check, DB16 check); 4 at 08:02Z (A04, FX10, W00c, CQ5 builds; FX8, SC6 specs reopened). 2 more at 08:08Z (FX10 build reopened, SC6 spec). Local: local-1 (CQ4 build), local-2 (FX8 spec); local-3 done (nothing local to take).
 
 ## Next, in order
 
 1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
 2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
 3. FX2 and A04 round 2 specs, then SC3, SC5 (R71 to R73); DB16.
-4. V02, V03, V04, V09, V13 drafted (A421): independent card review with the other phase 3 cards before their first spec; V15 to write. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
+4. Phase 3 cards reviewed (reports/phase3-card-review-2026-10-03b.md) and fixed (A437, A438); T13 (notice of assessment, phase 4) and T14 (amended return) carded. Specs follow as deps land. Phase 3 cards reviewed and fixed (A397); FX5 new. Still to write: the 22 `todo` cards `node tools/next.mjs` lists (X00, X01 carded 3 Oct, A395; V02 V03 V04 V09 next).
 5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
 6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
 7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
@@ -55,4 +56,5 @@ Cloud runs: 3 at 05:56Z (W16, SC, W00c, FX2, CQ3, CQ4 builds; DB16 check needs o
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`.
 - Commit no new Taxprep CSV to main before FX9 lands (SC's R37, A415).
+- A job released twice at one tip is held "needs Lead": re-release a check with a note starting "wait:", reopen a spec or build (07:40Z). Local workers skip Where: cloud cards (FX10, SC6): tell them to leave those untouched.
 - Never kill processes by name. Another Lead works in ashbridge-app: read-only there.
