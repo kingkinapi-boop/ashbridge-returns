@@ -1,10 +1,11 @@
 {
  "card": "SC8",
  "role": "spec",
- "note": "toolchain refit: main merged, typecheck/lint green, only 10 R79 tests fail (wrong build, reads not switched); validated on main 2f472bdf",
- "reopenedFrom": "6dccc118",
+ "note": "A479 patch: shell regex fixed, 1 planted test added (5 cases); 25 egress tests pass; validated on main 2f472bdf; merge of newer main skipped (plan file conflicts, Lead-owned)",
  "worker": "cloud-c7f307",
- "state": "working",
- "at": "2026-10-03T13:49:30.480Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T13:51:32.753Z",
+ "mode": "turbo",
+ "commit": "f788ca60",
+ "validated": "2f472bdf"
 }
