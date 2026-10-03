@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 10:56Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:15Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -17,15 +17,15 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 10:56Z by the Lea
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| Train | DB16, FX15 on 26e84345, requested 10:56Z | cloud check full on pg16, flake, mutation; land; then SC11 and GL3 (need DB16) |
+| Train | DB16, FX15 on 26e84345 (checking): R18 will be red (A461); FX15 comes off | rebuild with DB16 after the check; land; SC11 and GL3 follow |
 | SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | round 5 build reported (mutation 100); lint fails on a spec cast: spec lint fix (A460) | spec fix, build re-report, check, security review; A08 after |
+| A04 | lint fix in; main merged: R41 flags .trim() in engines.ts and runner.ts (A461) | build round 5b (contracts/text.ts), check, security review |
 | DB16, SC11, GL3 | DB16 PASS, CLEAN; SC11 spec reported (39 tests, A453 in); GL3 build waits for DB16 on main (pg16) | board DB16 next train; SC11 build; GL3 pg16 re-run, check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
-| FX12, FX14, FX17 | FX12 build open; FX14 carded; FX17 spec reported | builds, checks |
+| FX12, FX14, FX15, FX17 | FX15 build round 2 (@mutate on jobs/runner.ts, A461); FX12 build open; FX17 spec reported | builds, checks |
 | CQ6 to CQ8, SC10, A08 | CQ4 and CQ5 landed: CQ6, CQ7, CQ8 builds open; A08 waits for A04 | builds, checks |
 
 Cloud runs: 3 at 10:58Z (train 26e84345, A04 spec fix, CQ builds). Local: local-1, local-2 (any local job, 10:58Z).
