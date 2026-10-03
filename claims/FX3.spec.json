@@ -1,9 +1,8 @@
 {
  "card": "FX3",
  "role": "spec",
- "worker": "cloud-7e015b",
- "state": "reopened",
- "at": "2026-10-03T13:21:55.939Z",
- "mode": "turbo",
- "note": "A477: wait met (SC landed 10:49Z)"
+ "worker": "cloud-22d057",
+ "state": "working",
+ "at": "2026-10-03T13:31:04.237Z",
+ "mode": "turbo"
 }
