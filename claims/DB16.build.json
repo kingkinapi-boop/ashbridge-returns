@@ -4,9 +4,9 @@
  "round": 9,
  "spec": "d69ac553",
  "worker": "cloud-d137a3",
- "state": "reported",
- "at": "2026-10-03T07:20:25.050Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T08:01:20.075Z",
  "mode": "turbo",
  "beat": "2026-10-03T06:52:18.492Z",
- "note": "round 4: target.ts mutate 100, 89 spec tests unchanged, pg16 565, flake 5 of 5"
+ "note": "FAIL: 4 medium findings (pooled role/settings leaks, index.ts), see reports/DB16-check.md"
 }

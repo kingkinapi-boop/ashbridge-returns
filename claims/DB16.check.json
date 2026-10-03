@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-03T07:20:25.050Z",
  "worker": "cloud-54d8a4",
- "state": "working",
- "at": "2026-10-03T07:37:26.974Z",
+ "state": "failed",
+ "at": "2026-10-03T08:01:20.075Z",
  "mode": "turbo",
- "beat": "2026-10-03T08:00:30.564Z"
+ "beat": "2026-10-03T08:00:30.564Z",
+ "note": "FAIL: 4 medium findings (pooled role/settings leaks, index.ts), see reports/DB16-check.md"
 }
