@@ -27,7 +27,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | CQ2, SC4 | on the train (claude/train 677e92f1); CQ3 carded (A416) | request the train at 6 cards or 05:30Z, with test:flake |
 | JH0 | spec reported | build after W00c lands |
 
-Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local (Opus): local-1 (A04 spec), local-2 (DB16 spec), local-3 restarted 05:10Z. npm ci done 04:45Z.
+Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local (Opus): local-2 (FX2 spec), local-3 (CQ3 spec); local-1 idle (queue empty 05:20Z). npm ci done 04:45Z.
 
 ## Next, in order
 
