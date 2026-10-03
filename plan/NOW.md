@@ -18,17 +18,17 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 13:20Z by the Lea
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
 | Train | 25ea2736 red on A04 (clock mix, A468); FX15, CQ7, CQ6 on df6f1249, requested 12:35Z | check; land |
-| SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
+| SC3 | spec patch (68 tests) in; build reopened to run them (no change expected) | build, check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | round 5c spec 71a8efe8; Opus review GAPS 4 (A474), spec patch with local-5 | build round 5c, check, security read, train |
-| SC11, GL3 | DB16 landed: SC11 spec refit open (cloud); GL3 build reopened (pg16 run, R41 fix) | SC11 build; GL3 check |
+| SC11 | spec reopened for R107 R108 (A476) | spec, build on pg16, check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
-| FX12, FX14, FX17, FX4, GL3 | FX12 build reported; FX14 spec working; FX17 spec refit reported; FX4 spec patch reported (A470); GL3 check FAIL (blanket grant execute) | FX12 check; FX17, FX4 builds; GL3 findings review |
+| FX12, FX14, FX17, FX4, GL3 | FX12 check working; FX14 spec; FX17 build; FX4 build reopened (A470); GL3 findings 1: round 2, spec test first (A476), GL2 G1 G2, SC11 R107 R108 | checks, builds |
 | CQ8, CQ9, CQ10, CQ11, SC10, A08 | CQ8 build reported (e09db959; its gaps to CQ11, A473); CQ9 spec reported; CQ10 spec local-2; CQ11 carded (0027); SC10 build after CQ6; A08 after A04 | CQ8 check; builds |
 
-Cloud runs: 4 fired 12:47Z (train df6f1249 checking, cloud-9e54a6). Local: local-2 CQ10 spec, local-4 next check, local-5 next spec (A04). Helpers: GL3 findings, design-lane scout. Main checkout needs `npm ci` (no `pg` since DB16) once local-2 ends.
+Cloud runs: 4 fired 12:47Z (train df6f1249 checking, cloud-9e54a6). Local: local-2 CQ10 spec, local-4 next check, local-5 next spec (A04). Design lane (A475, reports/design-lane-2026-10-03.md): base branch and brief re-check first. Main checkout needs `npm ci` (no `pg` since DB16) once local-2 ends.
 
 ## Next, in order
 

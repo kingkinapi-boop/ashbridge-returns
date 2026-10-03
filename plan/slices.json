@@ -10825,6 +10825,7 @@
       ],
       "paths": [
         "src/core/db/rules.acceptance.db.test.ts",
+        "src/core/db/__fixtures__/grants/**",
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",
