@@ -4,9 +4,9 @@
  "round": 1,
  "spec": "817cdde4",
  "worker": "cloud-4507da",
- "state": "hold-findings",
- "at": "2026-10-03T15:17:49.559Z",
+ "state": "reopened",
+ "at": "2026-10-03T16:54:28.201Z",
  "mode": "turbo",
  "beat": "2026-10-03T14:11:12.615Z",
- "note": "FAIL: test:flake 4 of 5 (57P01 unhandled pool error in lease db test), see reports/SC11-check.md"
+ "note": "A500 round 2 build: B1 (track every client, await each end, bounded 5 s) and B2 (recording listeners, one admin-client helper) per the Lead directive at the top of plan/cards/SC11.md; spec ffa2f8f3 (12 tests, 8 red by design); DB16.md already matches main"
 }
