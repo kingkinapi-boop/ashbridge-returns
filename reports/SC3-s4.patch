@@ -1,0 +1,144 @@
+diff --git a/src/contracts/security-rules.db.test.ts b/src/contracts/security-rules.db.test.ts
+index ec0d27c..17050d9 100644
+--- a/src/contracts/security-rules.db.test.ts
++++ b/src/contracts/security-rules.db.test.ts
+@@ -19,7 +19,7 @@
+ import fs from 'node:fs'
+ import path from 'node:path'
+ import type { PGlite } from '@electric-sql/pglite'
+-import { describe, expect, test } from 'vitest'
++import { afterAll, describe, expect, test, vi } from 'vitest'
+ import {
+   APPEND_ONLY_SENTINEL,
+   FORMAT_FUNCTIONS,
+@@ -47,16 +47,28 @@ import {
+   type Catalog,
+   type Entry as HarnessEntry,
+ } from '../../tools/test/__fixtures__/security-rules/harness'
+-import { listTestUsers, testCredentials } from '../modules/auth/testing'
+ import type { Clock } from '../core/clock'
+ import { cloneTestDb } from '../core/db'
+-import { createAuth } from '../modules/auth'
++import type * as AuthModule from '../modules/auth'
++import type * as AuthTesting from '../modules/auth/testing'
+ 
+ const ROOT = path.resolve(__dirname, '..', '..')
+ const FIX = path.join(ROOT, 'tools', 'test', '__fixtures__', 'security-rules')
+ const fix = (name: string): string => fs.readFileSync(path.join(FIX, name), 'utf8')
+ const START = new Date('2026-10-02T10:00:05-04:00').getTime()
+-const USER = listTestUsers().find((u) => u.displayName.includes('(Test)'))?.id ?? ''
++
++// A511 S4: the db project runs files in one worker with isolate false, so a product module this file loaded at the top
++// level would stay cached for the next file, and that file's vi.mock (auth.acceptance.db's node:crypto counter) would
++// never apply. So the auth module loads only inside a test, and afterAll drops every cached module.
++const loadAuth = (): Promise<typeof AuthModule> => import('../modules/auth')
++const loadTesting = (): Promise<typeof AuthTesting> => import('../modules/auth/testing')
++type Auth = Awaited<ReturnType<typeof AuthModule.createAuth>>
++const createAuth = async (opts: Parameters<typeof AuthModule.createAuth>[0]): Promise<Auth> => (await loadAuth()).createAuth(opts)
++const testUser = async (): Promise<string> =>
++  (await loadTesting()).listTestUsers().find((u) => u.displayName.includes('(Test)'))?.id ?? ''
++afterAll(() => {
++  vi.resetModules()
++})
+ const clockAt = (ms: number): Clock => ({ now: () => new Date(ms) })
+ const SOURCES = (): { name: string; text: string }[] => readSources(ROOT, path.join(ROOT, 'src'))
+ const ON = process.env['TEST_DB'] === 'pg16'
+@@ -157,7 +169,8 @@ const finishSignIn: Entry<Ctx & { challenges: string[]; code: string }> = {
+   key: `${AUTH_FILE}#finishSignIn`,
+   setup: async (db) => {
+     const auth = await createAuth({ db, env: {}, clock: clockAt(START) })
+-    const c = testCredentials(USER)
++    const USER = await testUser()
++    const c = (await loadTesting()).testCredentials(USER)
+     const challenges: string[] = []
+     for (let i = 0; i < PARALLEL; i += 1) {
+       const s = await auth.startSignIn(USER, c.password)
+@@ -167,7 +180,7 @@ const finishSignIn: Entry<Ctx & { challenges: string[]; code: string }> = {
+     return { db, auth, challenges, code: c.codeAt(new Date(START)) }
+   },
+   call: async (ctx, i) => {
+-    const auth = ctx['auth'] as Awaited<ReturnType<typeof createAuth>>
++    const auth = ctx['auth'] as Auth
+     return (await auth.finishSignIn(ctx.challenges[i] ?? '', ctx.code)).ok
+   },
+ }
+@@ -175,11 +188,11 @@ const ONCE: Entry<never>[] = [finishSignIn as unknown as Entry<never>]
+ 
+ const lockOut: Entry = {
+   key: `${AUTH_FILE}#startSignIn`,
+-  setup: async (db) => ({ db, auth: await createAuth({ db, env: {}, clock: clockAt(START) }) }),
++  setup: async (db) => ({ db, auth: await createAuth({ db, env: {}, clock: clockAt(START) }), user: await testUser() }),
+   // Attempts let through are counted by `evaluated` below, from the database: a password that reached the comparison is recorded as `wrong password`.
+   call: async (ctx, i) => {
+-    const auth = ctx['auth'] as Awaited<ReturnType<typeof createAuth>>
+-    await auth.startSignIn(USER, `PLANTED-wrong-${String(i)}`)
++    const auth = ctx['auth'] as Auth
++    await auth.startSignIn(String(ctx['user']), `PLANTED-wrong-${String(i)}`)
+     return true
+   },
+ }
+diff --git a/tools/test/security-rules.test.mjs b/tools/test/security-rules.test.mjs
+index 236c6cb..6d19ee4 100644
+--- a/tools/test/security-rules.test.mjs
++++ b/tools/test/security-rules.test.mjs
+@@ -777,3 +777,60 @@ describe('KNOWN entries (A407, R80 form)', () => {
+     expect(applyKnown('R62-declared', [], KNOWN)).toEqual([])
+   })
+ })
++
++// ---------- A511 S4: SC3's db files cannot change another db file's mock by load order ----------
++// The db project runs every file in one worker with isolate false. A product module SC3's db file loads at the top
++// level stays cached for the next file, so that file's vi.mock never applies (auth.acceptance.db's node:crypto counter
++// read 0 scrypt calls on pg16, 4 of 5 test:flake runs). So SC3's db files load at the top level only libraries, the
++// rule harness and src/core/db (which src/core/db/vitest-setup.ts loads before every db file anyway), load product
++// modules inside tests, and drop every cached module in afterAll.
++const SC3_DB_FILES = ['src/contracts/security-rules.db.test.ts']
++const TOP_LEVEL_OK = (spec) =>
++  !spec.startsWith('.') || spec === '../core/db' || spec.endsWith('/__fixtures__/security-rules/harness')
++function topLevelLoadProblems(text) {
++  const out = []
++  for (const m of text.matchAll(/^import\s+(?!type\s)[^;]*?\bfrom\s+'([^']+)'/gms)) {
++    if (!TOP_LEVEL_OK(m[1])) out.push(`top-level import of product module ${m[1]}`)
++  }
++  for (const m of text.matchAll(/^import\s+'([^']+)'/gm)) {
++    if (!TOP_LEVEL_OK(m[1])) out.push(`top-level import of product module ${m[1]}`)
++  }
++  if (!/afterAll\(\(\) => \{\s*vi\.resetModules\(\)\s*\}\)/.test(text)) out.push('no afterAll(() => { vi.resetModules() })')
++  return out
++}
++
++describe('A511 S4 SC3 db files load no product module at the top level (ARC-15)', () => {
++  test('A511 S4 rule: the round 3 form (createAuth and the test users imported at the top level, no reset) is caught', () => {
++    const planted = [
++      "import { describe, expect, test } from 'vitest'",
++      "import { listTestUsers, testCredentials } from '../modules/auth/testing'",
++      "import type { Clock } from '../core/clock'",
++      "import { cloneTestDb } from '../core/db'",
++      "import { createAuth } from '../modules/auth'",
++      '',
++    ].join('\n')
++    expect(topLevelLoadProblems(planted)).toEqual([
++      'top-level import of product module ../modules/auth/testing',
++      'top-level import of product module ../modules/auth',
++      'no afterAll(() => { vi.resetModules() })',
++    ])
++  })
++  test('A511 S4 rule: type-only imports, a dynamic import inside a test and the reset pass', () => {
++    const clean = [
++      "import { afterAll, test, vi } from 'vitest'",
++      "import type * as AuthModule from '../modules/auth'",
++      "import { cloneTestDb } from '../core/db'",
++      "const loadAuth = (): Promise<typeof AuthModule> => import('../modules/auth')",
++      'afterAll(() => {',
++      '  vi.resetModules()',
++      '})',
++      '',
++    ].join('\n')
++    expect(topLevelLoadProblems(clean)).toEqual([])
++  })
++  test.each(SC3_DB_FILES)('A511 S4 %s loads no product module at the top level and resets modules after its tests', (file) => {
++    const text = fs.readFileSync(path.join(ROOT, file), 'utf8')
++    expect(text, `${file} imports the rule harness (the scan read the file)`).toContain('/__fixtures__/security-rules/harness')
++    expect(topLevelLoadProblems(text)).toEqual([])
++  })
++})
