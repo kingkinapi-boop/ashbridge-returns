@@ -1,10 +1,12 @@
 {
  "card": "CQ5",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "5 tests",
  "worker": "cloud-f95290",
- "state": "working",
- "at": "2026-10-03T06:55:11.682Z",
+ "state": "reported",
+ "at": "2026-10-03T07:00:12.404Z",
  "mode": "turbo",
- "beat": "2026-10-03T06:56:13.542Z"
+ "beat": "2026-10-03T06:56:13.542Z",
+ "commit": "9e4bf120",
+ "validated": "26ed9de4ab5d55cb11535b97caeb09bf63721e71"
 }
