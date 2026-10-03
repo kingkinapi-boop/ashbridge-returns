@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "4ce0202",
  "worker": "cloud-84988c",
- "state": "working",
- "at": "2026-10-03T14:15:19.364Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T14:17:03.229Z",
+ "mode": "turbo",
+ "note": "15 of 15 acceptance pass; 105 flags mapped (41 to questions)"
 }
