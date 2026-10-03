@@ -4,8 +4,8 @@
  "round": 11,
  "spec": "fb82b8c",
  "worker": "cloud-91d3cf",
- "state": "hold-findings",
- "at": "2026-10-03T11:45:40.556Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:28:27.255Z",
  "mode": "turbo",
- "note": "FAIL: scope only, same two items as reports/A04-check.md at e4d9714f (re-ran scope.mjs, identical); code checks passed in that report; needs Lead ruling or Paths edit (add src/core/safe-read.test.ts, treat engines.build.test.ts as build-test)"
+ "note": "A477: round 5c, the last: runner.ts:166 passes only the job id; default now from core/clock; spec be09e312 (tests 71a8efe8)"
 }
