@@ -1,9 +1,11 @@
 {
  "card": "CQ9",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: merged main, typecheck+lint green; 8 CQ9 tests fail by name; 3 mutate-harness fails are CQ6 build-owned (round 2 reported)",
  "worker": "cloud-c6e634",
- "state": "working",
- "at": "2026-10-03T12:22:06.393Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T12:24:15.095Z",
+ "mode": "turbo",
+ "commit": "a13b660",
+ "validated": "b0f6ddd"
 }
