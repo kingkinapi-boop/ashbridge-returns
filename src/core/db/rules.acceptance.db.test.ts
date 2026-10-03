@@ -27,8 +27,12 @@
 //   (it mints a fresh one and puts it in DB16_RUN_ID); R92 also scans the empty `catch {}` block, and the one in
 //   index.ts (the first rollback of `transaction`) is the allow list's only entry.
 // - The plant for R90 and R92 is __fixtures__/index-36672c88.ts, index.ts as the DB16 round 4 check found it.
+// - Round 3 (A508), at the end of this file: S6 to S9 and the S12 guard, on Postgres 16; S4, S5, S10, S11 and R118
+//   are unit tests in pool-rules.acceptance.test.ts. index.ts exports `withAdmin(url, run)` (S9, amber).
 // This file imports no PGlite value: only src/core/db builds a database (the rule scan in pg16.acceptance.test.ts).
 import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import { readOwnSource } from '../testing/read-own-source'
@@ -816,4 +820,176 @@ describe('SC11 R116 a connection error is recorded, never thrown (ARC-6, ARC-15)
     expect(body, 'sentinel: assertCleanClones is defined in index.ts').not.toBe('')
     expect(body).toContain('takeLateErrors')
   })
+})
+
+// SC11 round 3 (A508): close, closeClones, the template's failure path and withAdmin collect every failure (RC1),
+// and closing 25 clones at once stays well inside max_connections (S12, a guard). Postgres 16 only.
+interface AdminPool {
+  query(sql: string, params?: unknown[]): Promise<{ rows: Record<string, unknown>[] }>
+}
+interface Round3DbApi {
+  openPool(config: Record<string, unknown>): AdminPool
+  endPool(pool: AdminPool): Promise<void>
+  takeLateErrors(): string[]
+  withAdmin<T>(url: string, run: (admin: AdminPool) => Promise<T>): Promise<T>
+}
+function round3<K extends keyof Round3DbApi>(k: K): Round3DbApi[K] {
+  const f = (dbModule as unknown as Partial<Round3DbApi>)[k]
+  if (typeof f !== 'function') throw new Error(`src/core/db/index.ts does not export ${k} (SC11 round 3 build)`)
+  return f as Round3DbApi[K]
+}
+type Clone = Queryable & { pool: PoolLike }
+const failureOf = async (p: Promise<unknown>): Promise<string> =>
+  p.then(
+    () => 'resolved',
+    (e: unknown) => (e instanceof Error ? e.message : String(e)),
+  )
+const nameOf = async (db: Clone): Promise<string> => (await db.query('select current_database() as n')).rows[0]?.['n'] as string
+async function killOneIdle(db: Clone): Promise<void> {
+  const c = (await db.pool.connect()) as unknown as ClientHandle
+  const pid = (await c.query('select pg_backend_pid() as pid')).rows[0]?.['pid']
+  c.release()
+  await db.query('select pg_terminate_backend($1)', [pid])
+  await sleep(500)
+}
+/** A clone made undroppable: `drop database ... with (force)` fails on a template database. */
+async function undroppable(admin: AdminPool, name: string): Promise<void> {
+  await admin.query(`alter database "${name}" is_template true`)
+}
+async function unblockAndDrop(admin: AdminPool, name: string): Promise<void> {
+  await admin.query(`alter database "${name}" is_template false`)
+  await admin.query(`drop database if exists "${name}" with (force)`)
+}
+
+describe('SC11 round 3 cleanup collects every failure on Postgres 16 (RC1, ARC-6)', () => {
+  test.runIf(ON)(
+    'ARC-6 S6 close names both a killed idle backend (57P01) and a failed drop, and leaves nothing late',
+    async () => {
+      const admin = poolApi().openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_s6_${PID}` }) as unknown as AdminPool
+      const db = (await cloneTestDb()) as unknown as Clone
+      const name = await nameOf(db)
+      try {
+        poolApi().takeLateErrors()
+        await killOneIdle(db)
+        await undroppable(admin, name)
+        const msg = await failureOf(db.close())
+        expect(msg).toMatch(/57P01/)
+        expect(msg).toMatch(/template database/i)
+        expect(poolApi().takeLateErrors(), 'nothing from this close reaches the next test').toEqual([])
+      } finally {
+        await unblockAndDrop(admin, name)
+        await poolApi().endPool(admin as never)
+      }
+    },
+    BOOT_MS,
+  )
+
+  test.runIf(ON)(
+    'ARC-6 S7 closeClones with two undroppable clones rejects naming both databases',
+    async () => {
+      const admin = poolApi().openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_s7_${PID}` }) as unknown as AdminPool
+      const a = (await cloneTestDb()) as unknown as Clone
+      const b = (await cloneTestDb()) as unknown as Clone
+      const names = [await nameOf(a), await nameOf(b)]
+      try {
+        for (const n of names) await undroppable(admin, n)
+        const msg = await failureOf(dbModule.closeClones())
+        for (const n of names) expect(msg).toContain(n)
+      } finally {
+        for (const n of names) await unblockAndDrop(admin, n)
+        await poolApi().endPool(admin as never)
+      }
+    },
+    BOOT_MS,
+  )
+
+  test.runIf(ON)(
+    'ARC-6 S8 a schema file that kills its own backend fails createTemplate naming the file and 57P01, and leaves no template database',
+    async () => {
+      const admin = poolApi().openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_s8_${PID}` }) as unknown as AdminPool
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sc11-s8-'))
+      fs.writeFileSync(path.join(dir, '001_sc11_kill_test.sql'), 'select pg_terminate_backend(pg_backend_pid());\n')
+      const templates = async (): Promise<string[]> =>
+        (
+          await admin.query('select datname from pg_database where datname like $1 order by datname', [
+            `ashbridge\\_t\\_%\\_tpl%\\_${PID}`,
+          ])
+        ).rows.map((r) => String(r['datname']))
+      try {
+        const before = await templates()
+        const msg = await failureOf(
+          dbModule.createTemplate(dir).then(async (t) => {
+            await t.close()
+          }),
+        )
+        expect(msg).toContain('001_sc11_kill_test.sql')
+        expect(msg).toMatch(/57P01/)
+        expect(await templates(), 'the failed template database is dropped').toEqual(before)
+      } finally {
+        fs.rmSync(dir, { recursive: true, force: true })
+        await poolApi().endPool(admin as never)
+      }
+    },
+    BOOT_MS,
+  )
+
+  test.runIf(ON)(
+    'ARC-6 S9 withAdmin is exported, and a run that kills its own backend rejects naming 57P01',
+    async () => {
+      const withAdmin = round3('withAdmin')
+      const msg = await failureOf(
+        withAdmin(pgUrl(), async (admin) => {
+          await admin.query('select pg_terminate_backend(pg_backend_pid())')
+        }),
+      )
+      expect(msg).toMatch(/57P01/)
+    },
+    BOOT_MS,
+  )
+
+  /** Throws when the peak passes the limit (S12's check; proved below by a limit one under the peak). */
+  const assertPeak = (peak: number, limit: number): void => {
+    if (peak > limit) throw new Error(`connection peak ${String(peak)} is over the limit ${String(limit)}`)
+  }
+
+  test.runIf(ON)(
+    'ARC-6 S12 GUARD closing 25 clones, each after a transaction, peaks at most 0.8 of max_connections (the peak is printed)',
+    async () => {
+      const sampler = poolApi().openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_s12_${PID}` }) as unknown as AdminPool
+      try {
+        const max = Number((await sampler.query('show max_connections')).rows[0]?.['max_connections'])
+        expect(max).toBeGreaterThan(0)
+        const dbs: Queryable[] = []
+        for (let i = 0; i < 25; i += 1) dbs.push((await cloneTestDb()) as unknown as Queryable)
+        await Promise.all(dbs.map((d) => d.transaction((tx) => tx.query('select 1'))))
+        const count = async (): Promise<number> =>
+          Number(
+            (await sampler.query(`select count(*)::int as n from pg_stat_activity where backend_type = 'client backend'`)).rows[0]?.['n'],
+          )
+        let peak = await count()
+        const sampling = { on: true }
+        const loop = (async (): Promise<void> => {
+          while (sampling.on) {
+            peak = Math.max(peak, await count())
+            await sleep(10)
+          }
+        })()
+        try {
+          await dbModule.closeClones()
+        } finally {
+          sampling.on = false
+          await loop
+        }
+        process.stdout.write(`SC11 S12: connection peak ${String(peak)} of max_connections ${String(max)} (0.6 is ${String(0.6 * max)})\n`)
+        expect(peak, 'sentinel: the sampler saw every clone').toBeGreaterThanOrEqual(25)
+        expect(() => {
+          assertPeak(peak, peak - 1)
+        }, 'PLANT: a limit one under the peak fails').toThrow(/over the limit/)
+        assertPeak(peak, Math.floor(0.8 * max))
+      } finally {
+        await poolApi().endPool(sampler as never)
+      }
+    },
+    120_000,
+  )
 })
