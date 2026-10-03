@@ -146,7 +146,7 @@
         "letter": "B",
         "number": 2
       },
-      "text": "1000000000000000000000",
+      "text": "1e+21",
       "type": "number",
       "hiddenRow": false,
       "hiddenColumn": false,

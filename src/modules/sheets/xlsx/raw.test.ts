@@ -21,8 +21,9 @@ describe('EV-14 slide: a shared formula moved from its master to a child', () =>
     ['a three-letter column slides', 'AAA10', 'A1', 'B2', 'AAB11'],
     ['the first row is reachable', 'A2', 'B3', 'B2', 'A1'],
     ['the first column is reachable', 'B1', 'C1', 'B1', 'A1'],
-    ['a reference sliding above row 1 stays as written', 'A1+B5', 'B5', 'B1', 'A1+B1'],
-    ['a reference sliding left of column A stays as written', 'B1+D1', 'C1', 'A1', 'B1+B1'],
+    // A07D D1 (findings fix 1) supersedes "stays as written": a reference that falls off the grid reads #REF! in its place.
+    ['a reference sliding above row 1 reads #REF!', 'A1+B5', 'B5', 'B1', '#REF!+B1'],
+    ['a reference sliding left of column A reads #REF!', 'B1+D1', 'C1', 'A1', '#REF!+B1'],
     ['a master and a child with two-letter columns and two-digit rows', 'C1', 'AA10', 'AB12', 'D3'],
     ['a master with a one-letter column and a child with two letters', 'A1', 'A1', 'AB12', 'AB12'],
     ['no change when the child is at the master', 'C1*2', 'B1', 'B1', 'C1*2'],

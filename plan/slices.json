@@ -942,7 +942,8 @@
         "e2e/_harness/**",
         "package.json",
         "e2e/steps/README.md",
-        "package-lock.json"
+        "package-lock.json",
+        "testworld/harness/**"
       ],
       "clauses": [
         "END-9",
@@ -2036,7 +2037,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2065,7 +2066,8 @@
       "title": "Staff sign-in stand-in and roles",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "parked",
@@ -9601,7 +9603,7 @@
       "note": "From reports/A06-findings.md, 2 Oct."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -9625,7 +9627,8 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals."
+      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals.",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9685,9 +9688,8 @@
         "src/modules/lifecycle/**"
       ],
       "clauses": [
-        "FLOW-4",
-        "EV-1",
-        "LL-1"
+        "FLOW-1",
+        "FLOW-4"
       ],
       "id": "FX5",
       "title": "F02 move inside a caller transaction (for T08)",
@@ -9727,6 +9729,27 @@
         "SC"
       ],
       "paths": [
+        "tools/test/card-rules.test.mjs",
+        "tools/test/__fixtures__/card-rules/**"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC6",
+      "title": "Card and verify rules R77 and R78",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/W16-findings.md, 3 Oct (A404)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC"
+      ],
+      "paths": [
         "db/schema/**",
         "src/contracts/records.ts",
         "src/contracts/jobs.ts",
@@ -9751,6 +9774,35 @@
       "size": "M",
       "core": true,
       "note": "From reports/SC-build.md, 2 Oct."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06"
+      ],
+      "paths": [
+        "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/pg16.test.ts",
+        "vitest.config.ts",
+        "package.json",
+        "package-lock.json",
+        ".claude/agents/checker.md",
+        ".claude/cloud-worker-run.md"
+      ],
+      "clauses": [
+        "ARC-4",
+        "ARC-16",
+        "SEC-7"
+      ],
+      "id": "DB16",
+      "title": "The db test project runs on Postgres 16 in cloud checks",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From the train report of 3 Oct (A405)."
     }
   ]
 }
