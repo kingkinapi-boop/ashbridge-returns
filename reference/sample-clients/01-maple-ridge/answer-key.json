@@ -1614,6 +1614,7 @@
       "id": "01-AJE-01",
       "date": "2025-12-31",
       "amount": 1788.42,
+      "type": "reclass",
       "reason": "Six business items the owner paid on her personal card (listed by her in onboarding): expense them and reduce the amount she owes the company",
       "lines": [
         {"account":"6155","name":"Software and computer expenses","gifi":9150,"debit":583.96,"credit":0},

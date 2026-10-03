@@ -203,6 +203,7 @@
       "id": "07-AJE-01",
       "date": "2025-12-31",
       "amount": 1620,
+      "type": "allocation",
       "reason": "Release the prepaid insurance brought forward from last year: the old policy has expired",
       "note": "the policy of 1 Oct 2024 to 30 Sep 2025 cost $2,160.00; nine months were left at 1 Jan 2025",
       "lines": [
@@ -218,6 +219,7 @@
       "id": "07-AJE-02",
       "date": "2025-12-31",
       "amount": 1620,
+      "type": "allocation",
       "reason": "Prepaid insurance: the policy of 1 Oct 2025 covers 12 months, 9 of them fall after year end",
       "note": "2160.00 x 9/12 = 1620.00",
       "lines": [
@@ -233,6 +235,7 @@
       "id": "07-AJE-03",
       "date": "2025-12-31",
       "amount": 975,
+      "type": "accrual",
       "reason": "Unit 2 rent: October ($1,950.00) was half paid in November and $975.00 is still owed at year end (the tenant left): rent earned but not received",
       "lines": [
         {"account":"1110","name":"Rent receivable (tenant arrears)","gifi":1062,"debit":975,"credit":0},
@@ -247,6 +250,7 @@
       "id": "07-AJE-04",
       "date": "2025-12-31",
       "amount": 22670.2,
+      "type": "estimate",
       "reason": "Book amortization on the building (straight-line, 25 years)",
       "note": "straight-line book amortization: building brought forward 22400.00 (25 years); new roof 270.20 (25 years)",
       "lines": [

@@ -38,7 +38,7 @@ export function build07() {
 
   c.opening['1500'] = 31000000; c.opening['1510'] = 56000000; c.opening['1511'] = -11200000; c.opening['2095'] = -41800000; c.opening['1200'] = 162000; c.opening['3010'] = -20000000;
   const pre = prepaidInsurance(c, { paidTx: ins, premium: 216000, start: '2025-10-01', months: 12, openingPrepaid: 162000, openingNote: 'the policy of 1 Oct 2024 to 30 Sep 2025 cost $2,160.00; nine months were left at 1 Jan 2025' });
-  const ajeRent = c.aje({ date: c.fyEnd, lines: [{ gl: '1110', dr: 97500 }, { gl: '4100', cr: 97500 }], tx: [halfOct], onb: ['tenants'],
+  const ajeRent = c.aje({ type: 'accrual', date: c.fyEnd, lines: [{ gl: '1110', dr: 97500 }, { gl: '4100', cr: 97500 }], tx: [halfOct], onb: ['tenants'],
     reason: 'Unit 2 rent: October ($1,950.00) was half paid in November and $975.00 is still owed at year end (the tenant left): rent earned but not received' });
   const am = amortAje(c, { date: c.fyEnd, tx: [roof], reason: 'Book amortization on the building (straight-line, 25 years)', items: [
     { label: 'building brought forward', cost: 56000000, acc: '1511', life: 25, inService: '2020-01-01', prior: 11200000 },
@@ -165,21 +165,21 @@ export function build08() {
   c.externalCardPayments('PCD', 18);
 
   // adjusting entries
-  const ajeInv = c.aje({ date: '2025-02-14', lines: [{ gl: '1100', dr: 452000 }, { gl: '4010', cr: 400000 }, { gl: '2050', cr: 52000 }], onb: ['client_notes'],
+  const ajeInv = c.aje({ type: 'accrual', date: '2025-02-14', lines: [{ gl: '1100', dr: 452000 }, { gl: '4010', cr: 400000 }, { gl: '2050', cr: 52000 }], onb: ['client_notes'],
     reason: 'Invoice dated 14 Feb 2025 to Bayview Print and Pack Ltd. (Test): $4,000.00 plus $520.00 HST = $4,520.00. Never paid, so it is not in the bank data' });
-  const ajeBad = c.aje({ date: '2025-09-22', lines: [{ gl: '6030', dr: 400000 }, { gl: '2050', dr: 52000 }, { gl: '1100', cr: 452000 }], confirm: true, onb: ['client_notes'],
+  const ajeBad = c.aje({ type: 'estimate', date: '2025-09-22', lines: [{ gl: '6030', dr: 400000 }, { gl: '2050', dr: 52000 }, { gl: '1100', cr: 452000 }], confirm: true, onb: ['client_notes'],
     reason: 'Write off the $4,520.00 invoice from Feb 2025 (the client went bankrupt, written off 22 Sep 2025); the HST bad-debt adjustment is for a person to confirm' });
   const pre = prepaidInsurance(c, { paidTx: ins, premium: 180000, start: '2025-07-01', months: 12, openingPrepaid: 132000, openingNote: 'the policy of 1 Jul 2024 to 30 Jun 2025 cost $1,760.00; nine months were left at 1 Oct 2024' });
-  const ajeFee = c.aje({ date: c.fyEnd, lines: [{ gl: '6100', dr: 350000 }, { gl: '2030', cr: 350000 }], onb: ['client_notes'],
+  const ajeFee = c.aje({ type: 'accrual', date: c.fyEnd, lines: [{ gl: '6100', dr: 350000 }, { gl: '2030', cr: 350000 }], onb: ['client_notes'],
     reason: 'Year-end accounting fee of $3,500.00 for this year, billed after year end: accrue it (HST is claimed when it is invoiced, next year)' });
-  const ajeSw = c.aje({ date: c.fyEnd, lines: mergeLines(c.reimburseLines(sw, c.fyEnd, '2080')), tx: sw, onb: ['personal_card_business_items'],
+  const ajeSw = c.aje({ type: 'accrual', date: c.fyEnd, lines: mergeLines(c.reimburseLines(sw, c.fyEnd, '2080')), tx: sw, onb: ['personal_card_business_items'],
     reason: 'Software the owner paid on his personal card (listed in onboarding): expense it and record what the company owes him' });
   const am = amortAje(c, { date: c.fyEnd, tx: [laptop, camera], reason: 'Book amortization for the year (straight-line: laptop 3 years, camera and older equipment 5 years)', items: [
     { label: 'equipment brought forward', cost: 860000, acc: '1531', life: 5, inService: '2021-10-01', prior: 516000 },
     { label: 'laptop', cost: 329900, acc: '1541', life: 3, inService: '2024-11-19' },
     { label: 'camera', cost: 215000, acc: '1531', life: 5, inService: '2025-03-11' }] });
   const usdClose = c.nativeBalance('USD'), carrying = c.glNet('1015'), diff = Math.round(usdClose * YE) - carrying;
-  const ajeFx = c.aje({ date: c.fyEnd, confirm: true, onb: ['fx'], lines: diff >= 0 ? [{ gl: '1015', dr: diff }, { gl: '4310', cr: diff }] : [{ gl: '1015', cr: -diff }, { gl: '4310', dr: -diff }],
+  const ajeFx = c.aje({ type: 'estimate', date: c.fyEnd, confirm: true, onb: ['fx'], lines: diff >= 0 ? [{ gl: '1015', dr: diff }, { gl: '4310', cr: diff }] : [{ gl: '1015', cr: -diff }, { gl: '4310', dr: -diff }],
     reason: `Revalue the US-dollar account at the year-end rate 1.3900 (a test rate): balance USD ${(usdClose / 100).toFixed(2)}` });
 
   c.flag({ rule: 'bad debt: invoice of $4,520.00 written off in September', aje: [ajeInv, ajeBad], onb: ['client_notes'], judgement: true,

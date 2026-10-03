@@ -154,11 +154,11 @@ export function build06() {
   c.opening['1150'] = 4200000; c.opening['2050'] = -623410; c.opening['3010'] = -100000;
   hstQuarterly(c, 'CHQ', 623410);
   c.cardPayments('BCD', 'CHQ', 20);
-  const ajeInv = c.aje({ date: c.fyEnd, onb: ['inventory'],
+  const ajeInv = c.aje({ type: 'reclass', date: c.fyEnd, onb: ['inventory'],
     lines: [{ gl: '5010', dr: 4200000 }, { gl: '1150', cr: 4200000 }, { gl: '1150', dr: 5150000 }, { gl: '5050', cr: 5150000 }],
     reason: 'Inventory: move the opening inventory ($42,000.00) into cost of sales and record the year-end count ($51,500.00, onboarding); net effect is a $9,500.00 increase in inventory and a lower cost of sales' });
   const usdClose = c.nativeBalance('USD'), carrying = c.glNet('1015'), diff = Math.round(usdClose * YE) - carrying;
-  const ajeFx = c.aje({ date: c.fyEnd, onb: ['fx'], confirm: true,
+  const ajeFx = c.aje({ type: 'estimate', date: c.fyEnd, onb: ['fx'], confirm: true,
     lines: diff >= 0 ? [{ gl: '1015', dr: diff }, { gl: '4310', cr: diff }] : [{ gl: '1015', cr: -diff }, { gl: '4310', dr: -diff }],
     reason: `Revalue the US-dollar account at the year-end rate 1.3900 (a test rate, onboarding): balance USD ${(usdClose / 100).toFixed(2)}; unrealized exchange ${diff >= 0 ? 'gain' : 'loss'}` });
 

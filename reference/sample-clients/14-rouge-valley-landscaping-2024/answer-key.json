@@ -285,6 +285,7 @@
       "id": "14-AJE-01",
       "date": "2024-12-31",
       "amount": 3150,
+      "type": "estimate",
       "reason": "Book amortization for 2024 (straight-line, 5 years, nine months in service): mower and trailer",
       "note": "mower 2130, trailer 1020",
       "lines": [

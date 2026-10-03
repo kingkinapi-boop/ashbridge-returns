@@ -175,7 +175,7 @@ export function build12() {
   c.opening['1010'] = cents('FL:97'); c.opening['2080'] = -cents('FL:104'); c.opening['3010'] = -cents('FL:98');
   c.openSource = { 1010: src('FL:97'), 2080: src('FL:104'), 3010: src('FL:98'), 3600: { kind: 'client answer', balancing: true, answers: ['FL:97', 'FL:104', 'FL:98'] } };
   // the year moves the bank by the year's profit; the loan and the shares do not move, so they are not in the entry
-  const aje = c.aje({ date: c.fyEnd, onb: rows.map((r) => r[1]), reason: 'Books built from the client\'s onboarding answers only: no account files, no QuickBooks, no documents. Every line is one answer.',
+  const aje = c.aje({ type: 'correction', date: c.fyEnd, onb: rows.map((r) => r[1]), reason: 'Books built from the client\'s onboarding answers only: no account files, no QuickBooks, no documents. Every line is one answer.',
     note: 'summarized entry; each line names the answer it comes from in the trial balance',
     lines: rows.filter(([gl]) => !['2080', '3010'].includes(gl)).map(([gl, id, side]) => ({ gl, [side]: gl === '1010' ? cents(id) - cents('FL:97') : cents(id) })) });
 

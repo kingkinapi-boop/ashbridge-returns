@@ -972,6 +972,7 @@
       "id": "02-AJE-01",
       "date": "2026-03-31",
       "amount": 12244.52,
+      "type": "estimate",
       "reason": "Book amortization for the year on the tractor (straight-line over 8 years from 2 Jun 2025)",
       "note": "straight-line book amortization: used tractor 12244.52 (8 years)",
       "lines": [

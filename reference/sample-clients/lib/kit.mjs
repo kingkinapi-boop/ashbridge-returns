@@ -50,7 +50,7 @@ export function amortAje(c, { date, items, reason, tx = [], onb = [], confirm = 
   const cr = {};
   for (const p of parts) cr[p.acc] = (cr[p.acc] ?? 0) + p.amount;
   const id = c.aje({
-    date, reason, tx, onb, confirm,
+    type: 'estimate', date, reason, tx, onb, confirm,
     note: 'straight-line book amortization: ' + parts.map((p) => `${p.label} ${fmt(p.amount)} (${p.life} years)`).join('; '),
     lines: [{ gl: '6050', dr: total }, ...Object.entries(cr).map(([gl, v]) => ({ gl, cr: v }))],
   });
@@ -61,13 +61,13 @@ export function amortAje(c, { date, items, reason, tx = [], onb = [], confirm = 
 export function prepaidInsurance(c, { paidTx, premium, start, months, openingPrepaid = 0, openingNote = '' }) {
   const ids = [];
   if (openingPrepaid > 0) {
-    ids.push(c.aje({ date: c.fyEnd, reason: 'Release the prepaid insurance brought forward from last year: the old policy has expired', onb: ['prior_year_closing_balances (1200 Prepaid expenses)'], note: openingNote,
+    ids.push(c.aje({ type: 'allocation', date: c.fyEnd, reason: 'Release the prepaid insurance brought forward from last year: the old policy has expired', onb: ['prior_year_closing_balances (1200 Prepaid expenses)'], note: openingNote,
       lines: [{ gl: '6060', dr: openingPrepaid }, { gl: '1200', cr: openingPrepaid }] }));
   }
   const used = Math.min(months, Math.max(0, Math.round(diffDays(start, c.fyEnd) / 30.4375)));
   const days = diffDays(start, c.fyEnd) + 1, total = diffDays(start, addDays(start, Math.round(months * 30.4375)));
   const unexpired = Math.round((premium * Math.max(0, months - used)) / months);
-  ids.push(c.aje({ date: c.fyEnd, reason: `Prepaid insurance: the policy of ${longDate(start)} covers ${months} months, ${months - used} of them fall after year end`, tx: paidTx, note: `${fmt(premium)} x ${months - used}/${months} = ${fmt(unexpired)}`,
+  ids.push(c.aje({ type: 'allocation', date: c.fyEnd, reason: `Prepaid insurance: the policy of ${longDate(start)} covers ${months} months, ${months - used} of them fall after year end`, tx: paidTx, note: `${fmt(premium)} x ${months - used}/${months} = ${fmt(unexpired)}`,
     lines: [{ gl: '1200', dr: unexpired }, { gl: '6060', cr: unexpired }] }));
   return { ids, unexpired };
 }

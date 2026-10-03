@@ -63,7 +63,7 @@ export function build01() {
     c.pcardBusiness('PCD', '2025-09-10', 'MOXIES #0412 TORONTO ON', 12415, '6020', { tax: 'meal', notes: 'client lunch' }),
     c.pcardBusiness('PCD', '2025-10-21', 'TECHFORWARD CONFERENCE TEST', 45000, '6175'),
   ];
-  const ajeBiz = c.aje({ date: '2025-12-31', lines: c.reimburseLines(biz, '2025-12-31'), tx: biz, onb: ['personal_card_business_items'],
+  const ajeBiz = c.aje({ type: 'reclass', date: '2025-12-31', lines: c.reimburseLines(biz, '2025-12-31'), tx: biz, onb: ['personal_card_business_items'],
     reason: 'Six business items the owner paid on her personal card (listed by her in onboarding): expense them and reduce the amount she owes the company' });
 
   c.opening['2050'] = -511328;

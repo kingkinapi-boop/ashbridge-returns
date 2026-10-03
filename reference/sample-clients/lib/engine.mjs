@@ -5,6 +5,7 @@ import { Rng, addDays, ymd, daysIn, monthList, bizInMonth, isWeekend, hstOf, hst
 import { GL } from './chart.mjs';
 import { locate, PERSONAL, CH } from './names.mjs';
 
+export const AJE_TYPES = ['reclass', 'accrual', 'allocation', 'estimate', 'correction'];
 export const HSTGL = '2050';
 export const bnFromSeed = (seed) => badNine(new Rng(seed ^ 0x5bd1e995));
 const NL = (n) => [n].flat(3).filter((x) => x !== undefined && x !== null && x !== false && x !== '');
@@ -235,13 +236,14 @@ export class Client {
 
   // ---------- entries, flags, tax inputs ----------
   aje(o) {
+    if (!AJE_TYPES.includes(o.type)) throw new Error(`${this.num}: adjusting entry needs one of ${AJE_TYPES.join(', ')}: ${o.reason}`);
     const id = `${this.num}-AJE-${String(this.ajes.length + 1).padStart(2, '0')}`;
     const lines = o.lines.filter((l) => (l.dr ?? 0) !== 0 || (l.cr ?? 0) !== 0);
     const dr = sum(lines, (l) => l.dr ?? 0), cr = sum(lines, (l) => l.cr ?? 0);
     if (dr !== cr) throw new Error(`${this.num}: unbalanced adjusting entry ${o.reason}: dr ${dr} cr ${cr}`);
     for (const l of lines) if (!GL[l.gl]) throw new Error('unknown GL ' + l.gl);
     if (o.date < this.fyStart || o.date > this.fyEnd) throw new Error('adjusting entry date outside year ' + o.date);
-    this.ajes.push({ id, date: o.date, lines, reason: o.reason, tx: NL(o.tx), onb: NL(o.onb), confirm: !!o.confirm, note: o.note ?? null, amount: dr });
+    this.ajes.push({ id, type: o.type, date: o.date, lines, reason: o.reason, tx: NL(o.tx), onb: NL(o.onb), confirm: !!o.confirm, note: o.note ?? null, amount: dr });
     return id;
   }
   flag(o) {

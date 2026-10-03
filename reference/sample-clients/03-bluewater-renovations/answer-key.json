@@ -1025,6 +1025,7 @@
       "id": "03-AJE-01",
       "date": "2025-06-30",
       "amount": 25000,
+      "type": "accrual",
       "reason": "Owner bonus of $25,000.00 declared by resolution on 30 Jun 2025: accrued at year end; paid 28 Dec 2025",
       "lines": [
         {"account":"6132","name":"Bonuses","gifi":9063,"debit":25000,"credit":0},
@@ -1039,6 +1040,7 @@
       "id": "03-AJE-02",
       "date": "2025-06-30",
       "amount": 14277.32,
+      "type": "estimate",
       "reason": "Book amortization for the year (straight-line, 5 years)",
       "note": "straight-line book amortization: shop equipment brought forward 4920.00 (5 years); pickup truck 9184.66 (5 years); table saw 172.66 (5 years)",
       "lines": [

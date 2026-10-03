@@ -1066,6 +1066,7 @@
       "id": "10-AJE-01",
       "date": "2025-12-31",
       "amount": 13598.36,
+      "type": "estimate",
       "reason": "Book amortization for the year (straight-line, 5 years)",
       "note": "straight-line book amortization: floor machines and vacuums brought forward 1960.00 (5 years); SUV 11638.36 (5 years)",
       "lines": [

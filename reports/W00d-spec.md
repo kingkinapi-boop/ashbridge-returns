@@ -29,3 +29,7 @@ Types chosen from each reason (amber, made-up data), for the data job:
 | correction | 12-AJE-01 (books built from onboarding answers) |
 
 Not required, outside Paths: testworld/model/schema.ts keeps `type: z.string().min(1)`; tightening it to the five is a later card's choice.
+
+## A517 data job: type in the generator (worker cloud-7bd520)
+
+lib/engine.mjs (AJE_TYPES, aje() requires one of the five), lib/emit.mjs (type after amount), lib/kit.mjs (amortAje estimate, prepaidInsurance allocation), c.aje calls in clients/*.mjs; generate.mjs and make-csv.mjs rerun: only the 14 answer-key.json files change (28 entries: 3 reclass, 6 accrual, 4 allocation, 14 estimate, 1 correction, matching the table above). No CSV changed. "TB-2 every adjusting entry ... has a type" and the ARC-16 regenerate tests pass; the loader tests stay red until the build reads `type`. Node 24.21; no pg16 run (data only). Permission gaps: none. Model: Sonnet 5.5 (no Opus subagent: no test written, data only).

@@ -493,6 +493,7 @@
       "id": "09-AJE-01",
       "date": "2025-12-31",
       "amount": 1361.38,
+      "type": "estimate",
       "reason": "Book amortization from the day each asset was ready (straight-line: printer 5 years, laptops 3 years)",
       "note": "straight-line book amortization: 3D printer 585.49 (5 years); two laptops 775.89 (3 years)",
       "lines": [

@@ -1369,6 +1369,7 @@
       "id": "04-AJE-01",
       "date": "2025-12-31",
       "amount": 11231.72,
+      "type": "reclass",
       "reason": "Quick method: HST collected (13/113 of sales) is more than the remittance due (rate x tax-included sales). The difference is the business's own income; leave only the fourth-quarter remittance due in HST payable",
       "confirm": true,
       "lines": [
@@ -1384,6 +1385,7 @@
       "id": "04-AJE-02",
       "date": "2025-12-31",
       "amount": 14290.96,
+      "type": "estimate",
       "reason": "Book amortization for the year (straight-line, 5 years)",
       "note": "straight-line book amortization: kitchen equipment brought forward 12400.00 (5 years); kitchen equipment bought in May 1890.96 (5 years)",
       "lines": [

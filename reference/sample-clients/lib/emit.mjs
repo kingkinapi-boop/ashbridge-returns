@@ -173,7 +173,7 @@ export function buildKey(c, fin) {
   }
   const idOf = (x) => (typeof x === 'object' ? x.id : x);
   const ajes = c.ajes.map((j) => ({
-    id: j.id, date: j.date, amount: D(j.amount), reason: j.reason, confirm: j.confirm || undefined, note: j.note ?? undefined,
+    id: j.id, date: j.date, amount: D(j.amount), type: j.type, reason: j.reason, confirm: j.confirm || undefined, note: j.note ?? undefined,
     lines: j.lines.map((l) => ({ account: l.gl, name: GL[l.gl].name, gifi: GL[l.gl].gifi, debit: D(l.dr ?? 0), credit: D(l.cr ?? 0) })),
     source: { transactions: j.tx.map(idOf), onboarding: j.onb },
   }));

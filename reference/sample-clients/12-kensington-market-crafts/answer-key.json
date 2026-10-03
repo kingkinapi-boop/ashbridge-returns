@@ -21,6 +21,7 @@
       "id": "12-AJE-01",
       "date": "2025-12-31",
       "amount": 28640,
+      "type": "correction",
       "reason": "Books built from the client's onboarding answers only: no account files, no QuickBooks, no documents. Every line is one answer.",
       "note": "summarized entry; each line names the answer it comes from in the trial balance",
       "lines": [

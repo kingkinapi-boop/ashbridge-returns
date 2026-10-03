@@ -64,7 +64,7 @@ export function build03() {
   c.opening['1530'] = 2460000; c.opening['1531'] = -1230000; c.opening['2050'] = -941255; c.opening['3010'] = -10000;
   hstQuarterly(c, 'CHQ', 941255);
   c.cardPayments('BCD', 'CHQ', 20);
-  const ajeBonus = c.aje({ date: '2025-06-30', lines: [{ gl: '6132', dr: 2500000 }, { gl: '2035', cr: 2500000 }], reason: 'Owner bonus of $25,000.00 declared by resolution on 30 Jun 2025: accrued at year end; paid 28 Dec 2025', onb: ['owner_bonus'] });
+  const ajeBonus = c.aje({ type: 'accrual', date: '2025-06-30', lines: [{ gl: '6132', dr: 2500000 }, { gl: '2035', cr: 2500000 }], reason: 'Owner bonus of $25,000.00 declared by resolution on 30 Jun 2025: accrued at year end; paid 28 Dec 2025', onb: ['owner_bonus'] });
   const am = amortAje(c, { date: c.fyEnd, tx: [truck, saw], reason: 'Book amortization for the year (straight-line, 5 years)', items: [
     { label: 'shop equipment brought forward', cost: 2460000, acc: '1531', life: 5, inService: '2022-01-01', prior: 1230000 },
     { label: 'pickup truck', cost: 5800000, acc: '1521', life: 5, inService: '2024-09-15' },
@@ -160,7 +160,7 @@ export function build04() {
     c.bs('CHQ', '2025-10-31', 'CRA', 'GST/HST QUICK METHOD PAYMENT', -due[2], '2050', { kind: 'hst-remit' }),
   ];
   const excess = coll - due.reduce((a, b) => a + b, 0);
-  const ajeQm = c.aje({ date: c.fyEnd, lines: [{ gl: '2050', dr: excess }, { gl: '4300', cr: excess }], confirm: true, tx: rem,
+  const ajeQm = c.aje({ type: 'reclass', date: c.fyEnd, lines: [{ gl: '2050', dr: excess }, { gl: '4300', cr: excess }], confirm: true, tx: rem,
     reason: 'Quick method: HST collected (13/113 of sales) is more than the remittance due (rate x tax-included sales). The difference is the business\'s own income; leave only the fourth-quarter remittance due in HST payable', onb: ['hst'] });
 
   // payroll: six part-time staff every two weeks, card tips paid out through payroll

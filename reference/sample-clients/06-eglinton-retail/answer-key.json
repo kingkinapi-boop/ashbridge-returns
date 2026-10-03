@@ -1273,6 +1273,7 @@
       "id": "06-AJE-01",
       "date": "2025-12-31",
       "amount": 93500,
+      "type": "reclass",
       "reason": "Inventory: move the opening inventory ($42,000.00) into cost of sales and record the year-end count ($51,500.00, onboarding); net effect is a $9,500.00 increase in inventory and a lower cost of sales",
       "lines": [
         {"account":"5010","name":"Opening inventory","gifi":8300,"debit":42000,"credit":0},
@@ -1289,6 +1290,7 @@
       "id": "06-AJE-02",
       "date": "2025-12-31",
       "amount": 757.76,
+      "type": "estimate",
       "reason": "Revalue the US-dollar account at the year-end rate 1.3900 (a test rate, onboarding): balance USD 43502.36; unrealized exchange loss",
       "confirm": true,
       "lines": [

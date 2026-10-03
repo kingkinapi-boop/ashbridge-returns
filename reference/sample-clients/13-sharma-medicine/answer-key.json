@@ -248,6 +248,7 @@
       "id": "13-AJE-01",
       "date": "2025-12-31",
       "amount": 58645.95,
+      "type": "accrual",
       "reason": "OHIP accrual: services for November and December 2025 are paid by the January and February 2026 remittance advice, inside the window (three months of claim submission plus one monthly payment cycle after year end)",
       "lines": [
         {"account":"1100","name":"Accounts receivable","gifi":1062,"debit":58645.95,"credit":0},
@@ -262,6 +263,7 @@
       "id": "13-AJE-02",
       "date": "2025-12-31",
       "amount": 848.27,
+      "type": "estimate",
       "reason": "Book amortization on the exam-room equipment (straight-line, 5 years)",
       "note": "straight-line book amortization: exam-room equipment 848.27 (5 years)",
       "lines": [

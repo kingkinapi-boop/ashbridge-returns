@@ -76,7 +76,7 @@ export function build13() {
 
   // opening: the receivable for Nov and Dec 2024 services, the share capital; the payroll liabilities come from the December 2024 runs
   c.opening['1100'] = 5915630; c.opening['3010'] = -10000;
-  const accrual = c.aje({ date: c.fyEnd, onb: ['ohip_remittance_advice'], tx: [deposit.get('2025-12')], reason: 'OHIP accrual: services for November and December 2025 are paid by the January and February 2026 remittance advice, inside the window (three months of claim submission plus one monthly payment cycle after year end)',
+  const accrual = c.aje({ type: 'accrual', date: c.fyEnd, onb: ['ohip_remittance_advice'], tx: [deposit.get('2025-12')], reason: 'OHIP accrual: services for November and December 2025 are paid by the January and February 2026 remittance advice, inside the window (three months of claim submission plus one monthly payment cycle after year end)',
     lines: [{ gl: '1100', dr: 5864595 }, { gl: '4010', cr: 5864595 }] });
   const am = amortAje(c, { date: c.fyEnd, tx: [equip], reason: 'Book amortization on the exam-room equipment (straight-line, 5 years)', items: [{ label: 'exam-room equipment', cost: 685000, acc: '1531', life: 5, inService: '2025-05-20' }] });
 
@@ -214,7 +214,7 @@ export function build14() {
   c.opening['3010'] = -10000;
   // book amortization: straight-line over 5 years, whole months in service (nine months in 2024)
   const a8 = Math.round((1420000 * 9) / 60), a10 = Math.round((680000 * 9) / 60);
-  const am = c.aje({ date: c.fyEnd, tx: [mower, trailer], reason: 'Book amortization for 2024 (straight-line, 5 years, nine months in service): mower and trailer',
+  const am = c.aje({ type: 'estimate', date: c.fyEnd, tx: [mower, trailer], reason: 'Book amortization for 2024 (straight-line, 5 years, nine months in service): mower and trailer',
     note: `mower ${a8 / 100}, trailer ${a10 / 100}`, lines: [{ gl: '6050', dr: a8 + a10 }, { gl: '1531', cr: a8 }, { gl: '1521', cr: a10 }] });
   const cca = sumCca(CCA14);
 
@@ -258,7 +258,7 @@ export function build15() {
   const cca = sumCca(CCA15);
   // book amortization: a full year, straight-line over 5 years
   const a8 = Math.round(1420000 / 5), a10 = Math.round(680000 / 5);
-  c.aje({ date: c.fyEnd, onb: ['prior_year_closing_balances'], reason: 'Book amortization for 2025 (straight-line, 5 years): mower and trailer brought forward from 2024',
+  c.aje({ type: 'estimate', date: c.fyEnd, onb: ['prior_year_closing_balances'], reason: 'Book amortization for 2025 (straight-line, 5 years): mower and trailer brought forward from 2024',
     note: `mower ${a8 / 100}, trailer ${a10 / 100}`, lines: [{ gl: '6050', dr: a8 + a10 }, { gl: '1531', cr: a8 }, { gl: '1521', cr: a10 }] });
 
   corporationFlags(c, { onbYear: 2025 });
