@@ -1,11 +1,12 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "121 tests (118 unit, 3 db); see reports/A08-spec.md",
- "reopenedFrom": "543e7360",
+ "note": "218 tests (215 unit, 3 db); see reports/A08-spec.md",
  "worker": "cloud-8c7eee",
- "state": "working",
- "at": "2026-10-03T18:40:15.986Z",
+ "state": "reported",
+ "at": "2026-10-03T19:14:39.037Z",
  "mode": "turbo",
- "beat": "2026-10-03T18:43:25.136Z"
+ "beat": "2026-10-03T18:43:25.136Z",
+ "commit": "05edddb6",
+ "validated": "702b5892"
 }
