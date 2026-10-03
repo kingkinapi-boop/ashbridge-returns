@@ -10718,8 +10718,10 @@
         "DB16"
       ],
       "paths": [
-        "src/core/db/rules.db.test.ts",
+        "src/core/db/rules.acceptance.db.test.ts",
         "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/vitest-setup.ts",
         "tools/test-homes.json"
       ],
       "clauses": [
