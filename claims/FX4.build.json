@@ -1,8 +1,9 @@
 {
  "card": "FX4",
  "role": "build",
- "state": "reopened",
+ "state": "released",
  "worker": "lead",
- "at": "2026-10-03T13:15:28.192Z",
- "note": "A470 spec patch in (FX4 spec reported); build"
+ "at": "2026-10-03T13:47:08.349Z",
+ "note": "wait: W00c's build takes known.json first (A481); reopen once W00c's build is taken",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A07D\",\"SC\",\"SC4\"],\"depStatus\":[\"done\",\"done\",\"done\"]}"
 }
