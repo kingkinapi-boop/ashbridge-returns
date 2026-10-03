@@ -1,6 +1,7 @@
 # Family: reading a document type ({doc})
 
 Phase (the card's own, in plan/slices.json). Where: local or cloud; check: cloud (the Tesseract path on the cloud Linux runner).
+Tags: none.
 
 Cards E10 to E25. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 03 (EV-5 to EV-7), `src/modules/extraction/_core/` (E01) and the answer files from the matching render card.
 
