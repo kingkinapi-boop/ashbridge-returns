@@ -9726,7 +9726,6 @@
         "src/modules/ocr/textlayer/**",
         "src/modules/storage/**",
         "src/core/test-no-network.ts",
-        ".gitattributes",
         "src/contracts/auth.ts",
         "tools/test/__fixtures__/planted-interpolated-log.ts.txt"
       ],
@@ -9770,6 +9769,29 @@
       "size": "S",
       "core": false,
       "note": "From reports/W00b-spec-review.md, 3 Oct (A409)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W16",
+        "FX8"
+      ],
+      "paths": [
+        ".gitattributes",
+        "reference/**/*.csv"
+      ],
+      "clauses": [
+        "ARC-10",
+        "RT-14"
+      ],
+      "id": "FX9",
+      "title": "CSV line endings: .gitattributes and the committed CSVs (R37)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Split from FX7, 3 Oct (A415)."
     },
     {
       "status": "carded",
@@ -9895,6 +9917,29 @@
       "size": "S",
       "core": true,
       "note": "From reports/FX2-findings.md, 3 Oct (A414)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "SC7"
+      ],
+      "paths": [
+        "tools/test/rule-walker.test.mjs",
+        "tools/test/__fixtures__/rule-walker/**",
+        "tools/test/lib/walk.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC9",
+      "title": "Rule walkers: no escape by name, kind or path",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-spec-review-3.md, 3 Oct (A415)."
     },
     {
       "status": "carded",

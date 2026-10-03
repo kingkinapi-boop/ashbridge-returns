@@ -16,9 +16,9 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | W00c | round 2 spec patch reopened (A413: 4 gaps); build held | spec, build, check; unblocks W00b, JH0, B04, SC2 |
 | W00b | spec round 3 working (cloud, A409); build waits on W00c and FX8 | spec review, then build after both land |
 | FX8 | spec reported (non-core); build working (cloud) | check, board |
-| W16 | fixup spec reported; Opus re-review (with SC) running, build held | GO: reopen build |
+| W16 | fixup spec GO (A415); build open | build, check; then SC6, FX9 |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| SC | spec reported (105 rule tests, exact KNOWN); Opus review running, build held; FX7 Paths widened (A412) | GO: reopen build; check with Opus read and test:flake |
+| SC | spec patch reopened (A415: 5 gaps; R37 to FX9; SC9 carded for walker escapes) | spec, build, check with Opus read and test:flake |
 | SC3 | spec reported (security) | build, check, security review |
 | SC4 | build reported; check working (local-3) | board |
 | S00, FX5 | builds open (A410) | build, check |
@@ -55,4 +55,5 @@ Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local: local-1 (A04 spec), lo
 - Never weaken redaction, permissions or security checks to pass a test (A329); never route a refused edit through another worker.
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`.
+- Commit no new Taxprep CSV to main before FX9 lands (SC's R37, A415).
 - Never kill processes by name. Another Lead works in ashbridge-app: read-only there.
