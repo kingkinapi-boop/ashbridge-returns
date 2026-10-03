@@ -45,8 +45,8 @@ function tryRead(file: string): Read {
 }
 
 /** Logs a flagged file once per name and content (an unreadable entry: per name and error code). Names only, never content. */
-function logOnce(ctx: EngineContext, line: string, signature: unknown[]): void {
-  const key = JSON.stringify(signature)
+function logOnce(ctx: EngineContext, line: string, detail: string | undefined): void {
+  const key = JSON.stringify([line, detail])
   if (ctx.seen.has(key)) return
   ctx.seen.add(key)
   ctx.sink(line)
@@ -58,7 +58,7 @@ type Recording = z.infer<typeof RecordingSchema>
 function readRecording(ctx: EngineContext, name: string): Recording | undefined {
   const read = tryRead(path.join(ctx.recordingsDir, name))
   const flag = (reason: string, detail: string | undefined): void => {
-    logOnce(ctx, `ai exchange: ignored recording ${name}: ${reason}`, ['recording', name, detail])
+    logOnce(ctx, `ai exchange: ignored recording ${name}: ${reason}`, detail)
   }
   if (!read.ok) {
     flag(String(read.code), read.code)
@@ -104,7 +104,7 @@ function readOutbox(jobId: string, ctx: EngineContext, outbox: string): { output
   let found: { output: unknown; stamp: unknown } | undefined
   for (const name of fs.readdirSync(outbox)) {
     const ignore = (detail: string | undefined): void => {
-      logOnce(ctx, `ai exchange: ignored outbox file ${name}`, ['outbox', name, detail])
+      logOnce(ctx, `ai exchange: ignored outbox file ${name}`, detail)
     }
     const read = tryRead(path.join(outbox, name))
     const detail = read.ok ? read.text : read.code
@@ -119,6 +119,7 @@ function readOutbox(jobId: string, ctx: EngineContext, outbox: string): { output
     let value: unknown
     try {
       value = JSON.parse(read.text)
+      // Stryker disable next-line BlockStatement: a file that is not JSON and one that fails the result schema are both ignored and logged the same way
     } catch {
       ignore(detail)
       continue
