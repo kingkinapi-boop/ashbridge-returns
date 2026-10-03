@@ -1,11 +1,9 @@
 {
  "card": "FX8",
  "role": "spec",
- "worker": "cloud-97b8bd",
- "state": "reported",
- "at": "2026-10-03T15:55:22.912Z",
- "mode": "turbo",
- "note": "A493 patch: 9 tests in sample-verify.test.mjs (6 red by design), see reports/FX8-spec-patch.md",
- "commit": "a05c1c9c",
- "validated": "bd5ec11"
+ "note": "toolchain refit",
+ "worker": "cloud-657654",
+ "state": "working",
+ "at": "2026-10-03T18:23:19.801Z",
+ "mode": "turbo"
 }
