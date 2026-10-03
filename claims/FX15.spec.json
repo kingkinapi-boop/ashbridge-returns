@@ -2,7 +2,11 @@
  "card": "FX15",
  "role": "spec",
  "worker": "cloud-feb1e6",
- "state": "working",
- "at": "2026-10-03T08:59:27.544Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T09:01:11.892Z",
+ "mode": "turbo",
+ "note": "Paths gap: contracts/jobs.ts and runner.ts needed, see reports/FX15-spec.md on claude/FX15",
+ "lastRelease": {
+  "tip": "f4286ddb971e6c115864ce24bd40073b6d40cba2"
+ }
 }
