@@ -1,11 +1,10 @@
 {
  "card": "A04",
  "role": "build",
- "round": 7,
+ "round": 8,
  "spec": "fb82b8c",
  "worker": "cloud-88d9d7",
- "state": "released",
- "at": "2026-10-03T05:25:55.517Z",
- "mode": "turbo",
- "note": "claimed by mistake before train check; re-offer"
+ "state": "working",
+ "at": "2026-10-03T05:26:29.161Z",
+ "mode": "turbo"
 }
