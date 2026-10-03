@@ -16,3 +16,8 @@ Validated on main 310ffa6 (typecheck and lint clean; the card's own acceptance t
 
 Model: Sonnet 5.5 (card not core).
 Permission gaps: none (one `git stash` I issued by mistake was refused; nothing ran).
+
+## Refit and A495 patch (cloud-da95a7, 3 Oct)
+- Validated on main 8e4698a (old: 310ffa6). Typecheck and lint clean; tools/test: 432 pass, 1 fails by name (the real-config groupOrder rule, until the build).
+- New: `tools/test/vitest-projects.test.mjs` (5 tests, ARC-15, A495) with plant `tools/test/__fixtures__/planted-vitest-config.ts.txt` (vitest.config.ts as FX12 left it). Build: give db its own `sequence.groupOrder` (after unit) in vitest.config.ts, and vitest.mutate.config.ts if it gains projects.
+- Model: Sonnet 5.5 (card not core). Permission gaps: none.
