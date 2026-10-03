@@ -6,7 +6,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lea
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (46):** through A07C, A03, G17, A07D, A06, then CQ2 and SC4 (train 677e92f green with test:flake 5 of 5, landed 05:52Z as edd3af05). Train: CQ3 boarded 06:45Z.
+- **Landed (46):** through A07C, A03, G17, A07D, A06, then CQ2 and SC4 (train 677e92f green with test:flake 5 of 5, landed 05:52Z as edd3af05). Train: CQ3, W16 boarded (06:45Z, 06:58Z); request by 07:45Z or at 6 cards.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
@@ -16,7 +16,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lea
 | W00c | spec patch reported (A413); build open (A424) | build round 2, check; unblocks W00b round 4, JH0, B04, SC2 |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
-| W16 | check PASS (Opus read, 541 verify); security review running | board; then SC6, FX8, FX9 |
+| W16 | check PASS, security CLEAN; on the train (runs verify.mjs, A417) | land; then SC6, FX8, FX9 |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
 | SC | build reported (110 of 110) | check on a cloud box (npm test, db, test:flake) with Opus read |
 | SC3 | spec reported (security) | build, check, security review |
@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lea
 | FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
 | CQ3, CQ4, CQ5 | CQ3 PASS, on the train; CQ4 check FAIL, findings review running; CQ5 carded (claims race, A428) | train; CQ4 fix round; CQ5 spec |
 
-Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-2 and local-3 done. Helpers: DB16 and CQ4 findings review; W16 security review. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
+Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-2 and local-3 done. Helper: DB16 and CQ4 findings review. Local-2 restarted 06:55Z. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
 
 ## Next, in order
 
