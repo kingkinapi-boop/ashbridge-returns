@@ -2,7 +2,8 @@
  "card": "B04",
  "role": "spec",
  "worker": "cloud-77637e",
- "state": "working",
- "at": "2026-10-03T03:23:22.621Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T03:23:30.884Z",
+ "mode": "turbo",
+ "note": "no code base: dep W00 not merged (W00c check in progress), testworld/ missing on main; re-offer after W00 lands. Queue keeps re-offering B04 spec; Lead: gate it on W00 landing"
 }
