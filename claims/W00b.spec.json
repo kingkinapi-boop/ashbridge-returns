@@ -1,9 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-aae833",
- "state": "released",
- "at": "2026-10-03T20:57:03.593Z",
- "mode": "turbo",
- "note": "wait: needs Lead; queue re-offers this spec at once, it waits on W00c and FX8 landing, no card file W00b on main"
+ "worker": "cloud-a61550",
+ "state": "working",
+ "at": "2026-10-03T23:04:53.146Z",
+ "mode": "turbo"
 }
