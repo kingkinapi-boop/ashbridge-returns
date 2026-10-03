@@ -1,12 +1,9 @@
 {
  "card": "CQ8",
  "role": "check",
- "for": "2026-10-03T13:08:33.198Z",
- "worker": "local-4",
- "state": "failed",
- "at": "2026-10-03T13:31:59.272Z",
- "mode": "turbo",
- "beat": "2026-10-03T13:30:49.795Z",
- "note": "FAIL: rule 3 (local workers skip cloud-only cards) has no acceptance test; build code reads correct, 388 of 388 tools tests pass, see reports/CQ8-check.md",
- "commit": "e43d5b71"
+ "for": "2026-10-03T14:07:19.828Z",
+ "worker": "cloud-84988c",
+ "state": "working",
+ "at": "2026-10-03T14:07:32.645Z",
+ "mode": "turbo"
 }
