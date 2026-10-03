@@ -1,0 +1,4 @@
+import fs from 'node:fs'
+import base from './vitest.mutate.config.ts'
+const inc = fs.readFileSync('/tmp/lean.txt','utf8').split('\n').filter(Boolean)
+export default { ...base, test: { ...base.test, testTimeout: 120000, hookTimeout: 120000, include: inc } }
