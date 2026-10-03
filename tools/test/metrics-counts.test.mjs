@@ -176,3 +176,85 @@ describe('CQ11 rule 3: metrics.mjs counts failed checks and claims, not beats', 
     expect(b.jobs).toBe(0)
   })
 })
+
+// ---- A478 (b): minutes, tokens and train_fails come from the claims ---------------------------------------
+
+// Runs a tool with an explicit pinned clock (the landing time for metrics).
+async function runAt(w, tool, args, iso) {
+  const r = await exec('node', [path.join(w.work, 'tools', tool), ...args], {
+    cwd: w.work,
+    env: { ...process.env, CLAIMS_NOW: iso, CLAIMS_BACKOFF_MS: '1' },
+  })
+  return { code: r.status, out: r.out.trim(), err: r.err.trim() }
+}
+
+describe('CQ11 rule 10 (A478 b): metrics.mjs fills minutes, tokens and train_fails from the claims', () => {
+  async function landed() {
+    const w = await world([card('A', 'carded')])
+    // The first claim is the spec at T0+1s (the world's pinned clock); two more jobs follow.
+    expect(await nextFor(w, 'w1', 'spec')).toBe('CLAIMED A spec')
+    await ok(w, ['update', 'A', 'spec', 'reported', '--worker', 'w1', '--commit', 'abc123', '--validated', w.sha, '--tokens', '40000'])
+    expect(await nextFor(w, 'w2', 'build')).toBe('CLAIMED A build')
+    await ok(w, ['update', 'A', 'build', 'reported', '--worker', 'w2', '--tokens', '90000'])
+    return w
+  }
+  const T_FIRST = Date.parse(T0) + 1000
+
+  test('ARC-15 minutes is the time from the first claim to the landing (the clock the tool runs at)', async () => {
+    const w = await landed()
+    const m = JSON.parse((await runAt(w, 'metrics.mjs', ['A', '--dry'], new Date(T_FIRST + 135 * 60000).toISOString())).out)
+    expect(m.minutes).toBe(135)
+  })
+
+  test('ARC-15 minutes is 0 for a card with no claims, never missing', async () => {
+    const w = await world([card('Z', 'carded')])
+    const m = JSON.parse((await runAt(w, 'metrics.mjs', ['Z', '--dry'], new Date(T_FIRST + 60000).toISOString())).out)
+    expect(m.minutes).toBe(0)
+    expect(m.tokens).toBe(0)
+    expect(m.train_fails).toBe(0)
+  })
+
+  test('ARC-15 tokens adds the --tokens values workers passed on update, and is 0 when none was passed', async () => {
+    const w = await landed()
+    expect((await metrics(w)).tokens).toBe(130000)
+    const w2 = await world([card('A', 'carded')])
+    expect(await nextFor(w2, 'w1', 'spec')).toBe('CLAIMED A spec')
+    await ok(w2, ['update', 'A', 'spec', 'reported', '--worker', 'w1', '--commit', 'abc123', '--validated', w2.sha])
+    expect((await metrics(w2)).tokens).toBe(0)
+  })
+
+  test('ARC-15 a --tokens value that is not a number is refused (exit 2) and records nothing', async () => {
+    const w = await world([card('A', 'carded')])
+    expect(await nextFor(w, 'w1', 'spec')).toBe('CLAIMED A spec')
+    const r = await claim(w, ['update', 'A', 'spec', 'reported', '--worker', 'w1', '--commit', 'abc123', '--validated', w.sha, '--tokens', 'lots'])
+    expect(r.code).toBe(2)
+    expect((await metrics(w)).tokens).toBe(0)
+  })
+
+  test('ARC-15 train_fails counts the Lead\'s reopens whose note starts "train red:", and those are not build rounds or jobs', async () => {
+    const w = await landed()
+    const before = await metrics(w)
+    await ok(w, ['update', 'A', 'build', 'reopened', '--worker', 'lead', '--note', 'train red: R18 on main'])
+    await ok(w, ['update', 'A', 'build', 'reopened', '--worker', 'lead', '--note', 'train red: pg16 timeout'])
+    await ok(w, ['update', 'A', 'build', 'reopened', '--worker', 'lead', '--note', 'findings round 2'])
+    const after = await metrics(w)
+    expect(after.train_fails).toBe(2)
+    expect(after.rounds).toBe(before.rounds)
+    expect(after.jobs).toBe(before.jobs)
+    expect(after.check_fails).toBe(before.check_fails)
+  })
+
+  test('ARC-15 an explicit --train-fails N still wins when given, and a card with no red train reports 0', async () => {
+    const w = await landed()
+    expect((await metrics(w)).train_fails).toBe(0)
+    const r = await run(w, 'metrics.mjs', ['A', '--dry', '--train-fails', '3'])
+    expect(JSON.parse(r.out).train_fails).toBe(3)
+  })
+
+  test('ARC-15 a worker cannot record a red train: "train red:" from anyone but the Lead is refused (exit 6)', async () => {
+    const w = await landed()
+    const r = await claim(w, ['update', 'A', 'build', 'reopened', '--worker', 'w2', '--note', 'train red: nope'])
+    expect(r.code).toBe(6)
+    expect((await metrics(w)).train_fails).toBe(0)
+  })
+})
