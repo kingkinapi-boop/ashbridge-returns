@@ -3,8 +3,8 @@
  "role": "spec",
  "note": "A454: 56_qbo.sql rename in tests; card Paths text still 35_qbo.sql (Lead); Opus review owed",
  "worker": "cloud-7c6fec",
- "state": "reported",
- "at": "2026-10-03T17:43:47.892Z",
+ "state": "reopened",
+ "at": "2026-10-03T18:05:38.559Z",
  "mode": "turbo",
  "commit": "a34f8ce7",
  "validated": "f73707b82c4b871f3ca94d47e2d15e91f04b6d74"
