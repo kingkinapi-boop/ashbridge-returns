@@ -4,8 +4,8 @@
  "round": 9,
  "spec": "fb82b8c",
  "worker": "cloud-42f06c",
- "state": "reported",
- "at": "2026-10-03T08:01:48.296Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T08:25:39.461Z",
  "mode": "turbo",
- "note": "round 4: 126 of 126 unit, db 5, mutation 100, head b1bd533d"
+ "note": "FAIL: 4 security findings (path traversal job id, unsafe outbox reads, unbounded poll, isTest trust), see reports/A04-check.md"
 }

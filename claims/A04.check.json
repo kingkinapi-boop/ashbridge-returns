@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-03T08:01:48.296Z",
  "worker": "cloud-a98eee",
- "state": "working",
- "at": "2026-10-03T08:02:27.230Z",
+ "state": "failed",
+ "at": "2026-10-03T08:25:39.461Z",
  "mode": "turbo",
- "beat": "2026-10-03T08:24:33.505Z"
+ "beat": "2026-10-03T08:24:33.505Z",
+ "note": "FAIL: 4 security findings (path traversal job id, unsafe outbox reads, unbounded poll, isTest trust), see reports/A04-check.md"
 }
