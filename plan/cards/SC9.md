@@ -35,3 +35,6 @@ From reports/SC3-security-2.md (on claude/SC3, on main once SC3 lands); each fix
 - N4: the tag MENTION match ignores case, so STRICT reports `@Once` and `@ONCE`. Plant both.
 - N3: tools/test/security-rules.test.mjs pins a sha256 of harness.ts with the KNOWN block blanked, so an owner (L00, B05, T08, FX17) can delete its own KNOWN lines but cannot change a rule function.
 Paths gain tools/test/__fixtures__/security-rules/harness.ts and tools/test/security-rules.test.mjs; SC9 starts after SC3 lands (Deps).
+
+## Also (A504, SC3's findings review 1, 3 Oct)
+Classification beside the member: each exported create* under src/modules carries a strict tag (adapter, factory, or not-an-adapter with its reason), and each free-text column a column comment, so a member card classifies inside its own Paths instead of editing SC3's closed inventory. Plant: an untagged create*.

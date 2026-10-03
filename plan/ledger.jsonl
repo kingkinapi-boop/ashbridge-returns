@@ -656,3 +656,13 @@
 {"ts":"2026-10-03T16:29:58.639Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC3 findings review (Opus)","allowed":true}
 {"ts":"2026-10-03T16:30:04.113Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC6 spec review (Opus)","allowed":true}
 {"ts":"2026-10-03T16:32:35.738Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T16:54:58.320Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"G18 spec review (Opus)","allowed":true}
+{"ts":"2026-10-03T16:55:05.961Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"GL3 spec review (Opus)","allowed":true}
+{"ts":"2026-10-03T16:55:59.112Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T16:56:12.171Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}
+{"ts":"2026-10-03T16:57:55.854Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T16:58:20.983Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}
+{"ts":"2026-10-03T16:58:50.238Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}
+{"ts":"2026-10-03T16:59:08.943Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T17:13:22.211Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}
+{"ts":"2026-10-03T17:14:10.203Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"get_run_log","allowed":true}

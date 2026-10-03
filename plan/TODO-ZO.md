@@ -4,16 +4,14 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 ## 1. Needs you
 
-Nothing now.
+Nothing now. Thank you for landing the batch. Claude Code's auto mode may refuse the Lead's push to main again at the next landing; if it does, the exact two commands will be here for you to paste.
 
-## 2. What the Lead is doing now (3 Oct, 16:35 UTC)
+## 2. What the Lead is doing now (3 Oct, 17:35 UTC)
 
-Turbo continues; 59 cards are on main. The batch of four failed its cloud check, and all three failures were in one card's tests (the security rules), so that card is off the batch and gets a findings review. The other three, plus one more that passed, are being checked again now.
+Turbo continues; 63 cards are on main. The batch of four (the AI runner, two queue tools and the test assertion floor) passed its full cloud check and is on main.
 
-The test-world fix most of the build waits on finished its last round. Its check found five gaps in how strictly the loader reads the sample files. The plan made this morning moves them to a new small card, so the fix itself gets one more check after this batch lands and should then reach main. About ten cards start building once it does.
+The card whose security tests failed the first batch has its fix plan: one more round of test changes, then a security review. Four other cards (two rule checkers, the question-bank mapping and a database test helper) have their fixes written into their cards and are back with the spec writers. The test-world fix most of the build waits on gets its final check now; about ten cards start building once it lands.
 
-Three other cards (the question-bank mapping, a database test helper behind a rare false failure, and a queue tool) have their fixes written into their cards and are back with the spec writers. Two more reviews run on this laptop.
-
-Seven tax questions joined the CPA check list: `reference/cpa-check.md`, items 37 to 43, from the question-bank review. Nothing waits on them today; item 43 (eight sample flags no rule raises) is needed before the test-world kinds are built.
+Seven tax questions sit on the CPA check list: `reference/cpa-check.md`, items 37 to 43. Nothing waits on them today; item 43 is needed before the test-world kinds are built.
 
 The week's allowance was 78% used at 15:42 UTC; at this pace it runs out about 21:00 UTC. Then work pauses until you use your saved reset (Settings, Usage) and type `go`. Screen designs are being drawn for the design sitting about Tue 6 Oct.
