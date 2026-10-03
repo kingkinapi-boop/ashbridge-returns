@@ -14,6 +14,9 @@ commit and migration, so the LIVE-6 re-check knows what the draft was written ag
 3. `0002_grants.sql`: `returns_app` selects the bridge views and nothing else; the public-key roles see nothing in
    `bridge`; `client_app_reader` selects the hand-off columns of `returns.client_handoff` and only its `sent`,
    `withdrawn` and `closed` rows (a row-level security policy; a draft never leaves this system).
+   `0002` revokes PUBLIC execute on every function in `returns` and grants `returns_app` nothing there, so GL2's
+   migration must already grant `returns_app` execute on every function its writes call (check helpers, functions
+   called in trigger bodies), or its inserts fail.
 
 ## Before and after applying
 
@@ -36,3 +39,6 @@ commit and migration, so the LIVE-6 re-check knows what the draft was written ag
   `program_account`).
 - `bridge.document` reads one upload pointer per answer.
 - Revoking execute on the functions of `returns` from PUBLIC is in `0002_grants.sql`: Postgres grants it by default.
+- `bridge.t2_return` reads `flow_progress`; the contract (line 22) gives a fallback if that table is missing. The probe
+  names the missing table at LIVE-6 so it is flagged, never a silent pass.
+- The views run with their owner's rights (Postgres default), so `returns_app` needs no right on the base tables.

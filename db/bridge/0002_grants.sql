@@ -15,9 +15,9 @@ revoke all on all sequences in schema bridge from anon, authenticated;
 grant usage on schema bridge to returns_app;
 grant select on all tables in schema bridge to returns_app;
 
--- Postgres lets PUBLIC execute every function it creates; in schema returns only this system's role may.
+-- Postgres lets PUBLIC execute every function it creates; take that back so client_app_reader (and every role) executes none in
+-- schema returns. This draft grants returns_app nothing in returns: its rights there come only from GL2's migration.
 revoke execute on all functions in schema returns from public;
-grant execute on all functions in schema returns to returns_app;
 
 -- END-7: the client app reads returns.client_handoff and nothing else in returns: the columns of the hand-off row
 -- (ids, slot values and numbers, never a sentence), and only rows a person signed. A draft never leaves this system.

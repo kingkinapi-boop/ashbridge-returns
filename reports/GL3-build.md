@@ -14,3 +14,6 @@ Ambers (all reversible, edit the file named):
 
 ## Round 2 (cloud-0ac9e9, 3 Oct)
 Merged origin/main 66de2c9 (DB16 in). R41 fix: manifest.ts uses NonBlankSchema from src/contracts/text.ts for clientAppCommit and rule. Run on Node 24.21, Postgres 16.14: `TEST_DB=pg16` db project 638 passed, 1 skipped (the PGlite-only DB16 test; the pg16 identity test passes); unit project 2820 passed; typecheck, lint, deps:check (214 modules) clean; scope OK (17 files). No @mutate file changed. BLOCKED: none. /security-review still the Lead's to board. Permission gaps: none. Model: Sonnet 5.5.
+
+## Round 3 (cloud-84988c, 3 Oct, findings 1 fix list items 2 and 3)
+Merged origin/main f16096e. Deleted the blanket `grant execute` from 0002_grants.sql, kept the PUBLIC revoke, rewrote the comment. README: apply-order note (GL2's migration must grant returns_app execute on what its writes call), flow_progress fallback (A1), views run with owner rights (A4). Acceptance db 27 of 27 incl. the round 2 spec test, PGlite and TEST_DB=pg16 (Postgres 16.14, identity test passes); unit 2820 passed; db project pg16 640 passed, 1 skipped (PGlite-only). typecheck, lint, deps:check, scope OK (19 files). No @mutate file changed. BLOCKED: none. /security-review still the Lead's to board. Permission gaps: none. Model: Sonnet 5.5.
