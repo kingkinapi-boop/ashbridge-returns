@@ -5,7 +5,7 @@ Tags: none (queue tooling).
 Paths: tools/claim.mjs, tools/test/claim-race-update.test.mjs
 Clauses: ARC-15
 Read: `reports/CQ5-spec.md` on claude/CQ5 (amber 2), `plan/cards/CQ5.md`, `tools/claim.mjs`.
-Spec commit: (spec-writer fills)
+Spec commit: f62e90f
 
 ## Goal
 CQ5 fixes the claims race for `next` only. `update` and `beat` also read the claims and re-read them before writing, so a report or heartbeat can overwrite another worker's change made in between (A431).

@@ -1,0 +1,6 @@
+# FX15 build, round 2: BLOCKED (cloud-64f020, 3 Oct)
+Branch claude/FX15 (main merged in, no code change this round). Round 1 report: 49 of 49 jobs tests pass on PGlite, 39 of 39 on pg16.
+Asked (A461): `// @mutate` on runner.ts, mutation 100 on runner.ts and queue.ts. Tried it: `npm run mutate:changed -- FX15` first fails "core file without @mutate: src/contracts/jobs.ts" (also in Paths and changed), so three files need the marker, not two.
+With all three marked (not committed): jobs.ts 70 (3 survivors, line 13 regex and its message), queue.ts 14.05 (96 NoCoverage, 8 survived: lines 11 to 20), runner.ts 0 (49 NoCoverage). Cause: mutation runs the unit project only; every test of queue.ts and runner.ts is a `*.db.test.ts` (db project). Only the pure `holdsLease` has a unit twin (lease.acceptance.test.ts).
+Needed (spec job, not build; tests are spec-owned): unit-project twins of the db behaviour (claim, complete, fail, backoff, runner paths: no handler, bad input, bad result, throw) on PGlite in a unit-included `*.acceptance.test.ts`, plus a test killing the jobs.ts kind-regex mutants. Per spec-writer 4b. Without that, a core card cannot mark these files. Alternative (Lead, amber): leave queue.ts, runner.ts and jobs.ts unmarked and drop the R18 line for FX15's files.
+Permission gaps: none. Model: Sonnet 5.5.
