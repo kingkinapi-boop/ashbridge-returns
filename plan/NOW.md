@@ -18,13 +18,13 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 | S00, FX5 | spec review GAPS (11, 7); specs reopened (A402) | spec, then build (the wait: build releases clear when the spec reports) |
 | JH0 | spec reported (Paths + testworld/harness, A401) | build |
 | SC | build reopened | cloud run |
-| W16 | spec reported | build, cloud run |
+| W16 | check FAIL (spec contradicts card on ARC-16, R11); Opus findings review running | card or spec fix, then build round 2 |
 | CQ2 | spec reopened for rule 6 (A394) | spec, build, check |
 | SC4 | startable (A07D built) | spec, then FX4 |
 | A04, A08 | held on A06, then A04 | as before |
 | Local workers 1 to 3 | started 03:38Z; worker 1 restarted on Opus 03:42Z (Sonnet released core specs) | re-fire on Opus while the queue has jobs; Lead removes junctions |
 
-Cloud runs fired 03:22Z: 6, plus 1 at 03:43Z for the train (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
+Cloud runs fired 03:22Z: 6, plus 1 at 03:43Z for the train (now checking), 3 at 03:50Z for W00c spec, S00 spec, SC check (RemoteTrigger trig_01MWQ7hW5yecn8VaiMTq1xbp). Poll claims at the wake-up.
 
 ## Next, in order
 
