@@ -4,9 +4,8 @@
  "round": 1,
  "spec": "6ac7457",
  "worker": "cloud-fd4d7f",
- "state": "released",
- "at": "2026-10-03T04:56:44.272Z",
+ "state": "reopened",
+ "at": "2026-10-03T05:32:05.366Z",
  "mode": "turbo",
- "note": "wait: round 2 spec (A414)",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
+ "note": "A414: round 2 spec 5ebca343 reported; build the one auth line"
 }
