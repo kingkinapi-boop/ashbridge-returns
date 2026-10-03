@@ -31,30 +31,8 @@ const loadFix = (name) => import(pathToFileURL(path.join(FIX, name)).href)
 const sample = (arb, numRuns) => fc.sample(arb, { seed: SEED, numRuns })
 
 // ---------- known defects on main, each owned by another card ----------
-const FX4 = 'FX4 (A07D Opus read)'
 const KNOWN = [
-  // A07D Opus read item 4: closeBracket ignores the ' escape inside a structured reference.
-  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("Table1\[Col'\[1\]\+A1"/ },
-  // Item 5a: a name past XFD or row 1048576 becomes #REF! (even by (0, 0)).
-  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("XYZ100\*2"/ },
-  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("A1048577\+1"/ },
-  // Item 5b: WORD is ASCII-only, so a non-ASCII name slides.
-  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("ÜB1\*2"/ },
-  // Item 5c: an unquoted 3D sheet range slides as an area.
-  { rule: 'R67', owner: FX4, match: /^sheets slide \(A07\): slide\("SUM\(Q1:Q4!B1\)"/ },
-  // Item 2: a cycle member joined through a finished node, or through a non-SUM formula, is snapped.
-  { rule: 'R68', owner: FX4, match: /^sheets SUM snap \(A07\): cycle "joined": member Z was snapped/ },
-  { rule: 'R68', owner: FX4, match: /^sheets SUM snap \(A07\): cycle "non-sum": member X was snapped/ },
-  // Not in the five findings, found by this rule: the raw-XML reader matches double-quoted, unprefixed attributes only.
-  { rule: 'R70', owner: FX4, match: /^sheets raw XML \(A07\): the single-quoted attributes variant does not read/ },
-  { rule: 'R70', owner: FX4, match: /^sheets raw XML \(A07\): the namespace prefixes variant does not read/ },
-  { rule: 'R70', owner: FX4, match: /^sheets raw XML \(A07\): the attributes on value elements variant does not read/ },
-  { rule: 'R70', owner: FX4, match: /^sheets raw XML \(A07\): the all three variant does not read/ },
-  // Item 3: termCells walks every range in full (quadratic running balance; SUM(A2:XFD1048576) effectively hangs).
-  { rule: 'R74', owner: FX4, match: /^sheets reader \(A07\): running-balance-20k (did not finish|failed)/ },
-  { rule: 'R74', owner: FX4, match: /^sheets reader \(A07\): whole-sheet-range (did not finish|failed)/ },
-  // Same cause, not in the five findings: mergedRanges (index.ts) sets a map entry for every address a merge names.
-  { rule: 'R74', owner: FX4, match: /^sheets reader \(A07\): whole-sheet-merge (did not finish|failed)/ },
+  // FX4 fixed the A07D Opus read items 2 to 5 and the raw-XML variants, and removed its entries (R67, R68, R70, R74).
   // From 1e17 up toFixed(4) prints the double's exact digits (1.00000000001e20 reads 21 digits). Owner FX6 (A406), which
   // fixes the rate text in src/contracts/taxprep.ts and removes this entry.
   { rule: 'R69', owner: 'FX6 (Taxprep rate text, A406)', match: /^Taxprep rate text \(F03\): invents digits/ },
