@@ -111,11 +111,15 @@ export const EIGHT = [
   'IFirm.ContactID',
 ] as const
 
+export const GIFI_CASH = 'GFGBA.Ttwgba64'
+
 /** GIFI input cells (300, amount cells), then the eight creation cells, then the S8 copy cells (repeating). */
 export function fixtureList(): ReleaseCell[] {
   const list: Omit<ReleaseCell, 'order'>[] = []
   for (const [code, identifier] of Object.entries(cells.gifi.byCode)) {
-    list.push({ identifier, description: `GIFI code ${code} - Test description`, kind: 'amount' })
+    // spec round 4 (review gap 2): GIFI_CASH carries the form and box Taxprep shows for it (day 2 notes: S1599, box 1002)
+    const where = identifier === GIFI_CASH ? { form: 'S1599', box: '1002' } : {}
+    list.push({ identifier, description: `GIFI code ${code} - Test description`, kind: 'amount', ...where })
   }
   list.push(
     { identifier: 'IDENT.Ident120', description: 'Line 060 - Tax year start date', kind: 'date' },
@@ -124,7 +128,7 @@ export function fixtureList(): ReleaseCell[] {
     { identifier: 'IDENT.Ident230', description: 'Line 990 - Language of correspondence', kind: 'text' },
     { identifier: 'IDENT.Ident451', description: 'CCH iFirm - Client code', kind: 'text' },
     { identifier: 'IDENT.Ident492', description: '', kind: 'yesNo' },
-    { identifier: 'IFirm.ContactPartner', description: 'Partner', kind: 'text' },
+    { identifier: 'IFirm.ContactPartner', description: 'Partner', kind: 'text', form: 'IW', box: '' },
     { identifier: 'IFirm.ContactID', description: 'Contact ID', kind: 'text' },
     { identifier: CLASS_CELL(1), description: 'CCA class number', kind: 'text', repeating: true },
     { identifier: UCC_CELL(1), description: 'UCC at start of year', kind: 'amount', repeating: true },
@@ -151,9 +155,29 @@ export function extendedList(): ReleaseCell[] {
 }
 
 export const GIFI_IDS: string[] = Object.values(cells.gifi.byCode)
-export const GIFI_CASH = 'GFGBA.Ttwgba64'
 export const GIFI_RECEIVABLE = 'GFGBA.Ttwgba72'
 export const GIFI_PREPAID = 'GFGBA.Ttwgba127'
+
+/**
+ * Spec round 4 (review gap 2): the form and box a report line names for a known cell, from the release list
+ * (amber: `""` when the list gives none).
+ */
+export function whereOf(list: readonly ReleaseCell[], identifier: string): { form: string; description: string; box: string } {
+  const cell = list.find((c) => c.identifier === identifier)
+  if (cell === undefined) throw new Error(`test fixture: ${identifier} is not in the list`)
+  return { form: cell.form ?? '', description: cell.description, box: cell.box ?? '' }
+}
+
+/**
+ * Spec round 4 (review gap 7): true when F03's reader takes `text` in a cell as that very text, with no apostrophe and
+ * no fault, so a generated text value is one Taxprep's own format can carry (a test-data filter, not a rule).
+ */
+export function readsBackAs(text: string): boolean {
+  const r = parseTaxprepCsv(fromText(`[T (Test)|0|0|${'0'.repeat(8)}-0000-0000-0000-${'0'.repeat(12)}],"Current Year","Last Year",""\r\nAB.Cd,"${text}","",""\r\n`))
+  if (!r.ok) return false
+  const row = r.file.rows[0]
+  return row !== undefined && !row.apostrophe && row.current.kind === 'value' && row.current.text === text
+}
 
 // ---------- building a simulator and a return ----------
 
