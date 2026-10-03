@@ -1,10 +1,11 @@
 {
  "card": "SC6",
  "role": "spec",
- "note": "168 tests (57 new); 45 plants fail on 77d11040 readers; ambers in reports/SC6-spec.md Round 3",
- "reopenedFrom": "affda694",
+ "note": "R78 only (A528): R77, R81, prose reader moved to SC7; 84 tests, 10 new R78 plants failed before the patch; amber in reports/SC6-spec.md",
  "worker": "cloud-a61550",
- "state": "working",
- "at": "2026-10-03T23:05:30.626Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T23:11:03.326Z",
+ "mode": "turbo",
+ "commit": "7355b030",
+ "validated": "65dcba6fe68bac14e5316730493d42b15ea995ec"
 }
