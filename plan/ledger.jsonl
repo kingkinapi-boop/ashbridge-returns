@@ -676,3 +676,29 @@
 {"ts":"2026-10-03T17:58:33.011Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T18:19:46.972Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC11 findings review 2 (Opus)","allowed":true}
 {"ts":"2026-10-03T18:19:46.993Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"A08 spec review (Opus)","allowed":true}
+{"ts":"2026-10-03T18:29:39.329Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T18:39:55.689Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T18:42:09.841Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T18:42:10.361Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T19:13:50.197Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T19:13:50.852Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T19:14:24.503Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"tester","model":"sonnet","where":"worktree","desc":"Panel: queues and record v3","allowed":true}
+{"ts":"2026-10-03T19:35:19.680Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"GL3 findings review 3 (Opus)","allowed":true}
+{"ts":"2026-10-03T19:35:24.296Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC5 findings review 1 (Opus)","allowed":true}
+{"ts":"2026-10-03T19:35:59.120Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T19:35:59.775Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T19:47:23.658Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T19:58:36.805Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"W00c findings review 4 (Opus)","allowed":true}
+{"ts":"2026-10-03T19:58:41.825Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC6 findings review 2 (Opus)","allowed":true}
+{"ts":"2026-10-03T19:58:46.687Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"FX7 spec review (Opus)","allowed":true}
+{"ts":"2026-10-03T20:01:46.025Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T20:01:46.444Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T20:10:47.147Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"tester","model":"sonnet","where":"worktree","desc":"Panel: D03 source viewer v3","allowed":true}
+{"ts":"2026-10-03T20:23:51.795Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T20:23:52.437Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T20:23:53.078Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T20:23:53.572Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T21:08:46.783Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"FX7 spec review 2 (Opus)","allowed":true}
+{"ts":"2026-10-03T21:08:52.924Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"checker","model":"opus","where":"worktree","desc":"GL3 Opus read and security review","allowed":true}
+{"ts":"2026-10-03T21:08:57.809Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"checker","model":"opus","where":"worktree","desc":"SC10 Opus read of landing form","allowed":true}
+{"ts":"2026-10-03T21:30:51.714Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"A08 mutation findings review (Opus)","allowed":true}
