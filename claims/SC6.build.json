@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "c526b32d",
  "worker": "cloud-1ba1dc",
- "state": "reported",
- "at": "2026-10-03T23:33:26.564Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T23:53:27.861Z",
  "mode": "turbo",
- "note": "A528: spec-only last round (R78 only); check with an Opus read"
+ "note": "FAIL: SEC-10 exec import plus 4 R78 forms, see reports/SC6-check.md"
 }

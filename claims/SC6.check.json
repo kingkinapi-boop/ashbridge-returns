@@ -3,8 +3,9 @@
  "role": "check",
  "for": "2026-10-03T23:33:26.564Z",
  "worker": "cloud-b04976",
- "state": "working",
- "at": "2026-10-03T23:43:13.600Z",
+ "state": "failed",
+ "at": "2026-10-03T23:53:27.861Z",
  "mode": "turbo",
- "beat": "2026-10-03T23:47:14.592Z"
+ "beat": "2026-10-03T23:47:14.592Z",
+ "note": "FAIL: SEC-10 exec import plus 4 R78 forms, see reports/SC6-check.md"
 }
