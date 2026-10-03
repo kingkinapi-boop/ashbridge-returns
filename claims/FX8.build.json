@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "84810b04",
  "worker": "cloud-5a0e82",
- "state": "working",
- "at": "2026-10-03T04:46:08.580Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T04:49:01.478Z",
+ "mode": "turbo",
+ "note": "17 of 17 pass; verify SEC-11 line added; ARC-16 old guards and R11 count settle at landing after W16"
 }
