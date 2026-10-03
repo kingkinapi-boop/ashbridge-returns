@@ -628,3 +628,6 @@
 {"ts":"2026-10-03T14:13:00.071Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Designer 2: D03 source viewer B+","allowed":true}
 {"ts":"2026-10-03T14:13:12.726Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Designer 3: D02 CPA review","allowed":true}
 {"ts":"2026-10-03T14:30:36.903Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-03T14:35:07.874Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":null,"where":"worktree","desc":"SC6 findings review","allowed":true}
+{"ts":"2026-10-03T14:35:16.078Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"worktree","desc":"A04 security review","allowed":true}
+{"ts":"2026-10-03T14:36:48.567Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}

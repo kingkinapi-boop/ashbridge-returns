@@ -2524,7 +2524,9 @@
         "src/modules/documents/index.ts",
         "src/contracts/documents.ts",
         "db/schema/10_documents.sql",
-        "src/pipeline/steps/intake.ts"
+        "src/pipeline/steps/intake.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts"
       ],
       "clauses": [
         "EV-2",
@@ -6256,7 +6258,8 @@
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
         "src/pipeline/deps.ts",
-        "tools/test/__fixtures__/security-rules/harness.ts"
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -9776,7 +9779,9 @@
         "src/modules/storage/**",
         "src/modules/qbo/**",
         "data/live/**",
-        "tools/golive-check.mjs"
+        "tools/golive-check.mjs",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-6",
@@ -10855,7 +10860,8 @@
       "spec": null,
       "deps": [
         "SC",
-        "SC7"
+        "SC7",
+        "SC3"
       ],
       "paths": [
         "tools/test/rule-walker.test.mjs",
@@ -10865,7 +10871,9 @@
         "src/core/db/db.test.ts",
         "src/contracts/schema-rules.db.test.ts",
         "tools/test/__fixtures__/schema-contract/known.json",
-        "data/schema/contract-tables.json"
+        "data/schema/contract-tables.json",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-15",
