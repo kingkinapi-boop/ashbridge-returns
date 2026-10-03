@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-03T19:04:47.280Z",
  "worker": "cloud-8c7eee",
- "state": "working",
- "at": "2026-10-03T19:14:45.545Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-03T19:24:12.056Z",
+ "mode": "turbo",
+ "note": "FAIL: KNOWN owner gaps (FX16 path, FX11) and R101/R84/R73 coverage holes, see reports/SC5-check.md"
 }

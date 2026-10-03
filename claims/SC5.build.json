@@ -4,8 +4,8 @@
  "round": 1,
  "spec": "7f49fdb0",
  "worker": "cloud-8dacd4",
- "state": "reported",
- "at": "2026-10-03T19:04:47.280Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T19:24:12.056Z",
  "mode": "turbo",
- "note": "42 of 42 acceptance tests pass; rules only, no product code added; see reports/SC5-build.md"
+ "note": "FAIL: KNOWN owner gaps (FX16 path, FX11) and R101/R84/R73 coverage holes, see reports/SC5-check.md"
 }
