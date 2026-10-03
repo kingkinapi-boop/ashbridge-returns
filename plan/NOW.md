@@ -1,13 +1,13 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:45Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 13:20Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
 - **Landed (54):** through FX10 (train 12af2528), then DB16 (train 65f59a22 green on pg16 16.14, landed 12:15Z as dc36b33d). Train df6f1249 (FX15, CQ7, CQ6) requested 12:35Z.
-- **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
+- **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027, applied 13:15Z): design lane restarts (scout running, sitting about Tue 6 Oct); CQ11; no new repair card before W00c lands without a red or a measured waste.
 
 ## In flight
 
@@ -20,15 +20,15 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:45Z by the Lea
 | Train | 25ea2736 red on A04 (clock mix, A468); FX15, CQ7, CQ6 on df6f1249, requested 12:35Z | check; land |
 | SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | findings 6: one clock (A469), round 5c in-round; CQ10 carded, R105 R106 to SC12 | spec (Opus), build, check, security read, train |
+| A04 | round 5c spec reported (71a8efe8, 18 new fails); Opus spec review running (A472: R106 marker) | build round 5c, check, security read, train |
 | SC11, GL3 | DB16 landed: SC11 spec refit open (cloud); GL3 build reopened (pg16 run, R41 fix) | SC11 build; GL3 check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
-| FX12, FX14, FX15, FX17 | FX15 off core, round 1 PASS stands, boards (A465); FX12, FX17 specs refit | FX12 build; FX17 build |
-| CQ6, CQ8, CQ9, SC10, A08 | CQ6 spec patch in, build round 2 open; CQ9 spec reported; CQ8 build; SC10 spec working; A08 after A04 lands | builds, checks |
+| FX12, FX14, FX17, FX4, GL3 | FX12 build reported; FX14 spec working; FX17 spec refit reported; FX4 spec patch reported (A470); GL3 check FAIL (blanket grant execute) | FX12 check; FX17, FX4 builds; GL3 findings review |
+| CQ8, CQ9, CQ10, CQ11, SC10, A08 | CQ8 build reported (e09db959; its gaps to CQ11, A473); CQ9 spec reported; CQ10 spec local-2; CQ11 carded (0027); SC10 build after CQ6; A08 after A04 | CQ8 check; builds |
 
-Cloud runs: 4 fired 12:47Z (train df6f1249 first, then W00c build, SC11, FX17, FX12 builds). Local: local-1 CQ8 build, local-2 CQ10 spec, local-3 next spec (`next --roles spec`; A04, SC12 open; update cannot pass a reopened job to a new worker).
+Cloud runs: 4 fired 12:47Z (train df6f1249 checking, cloud-9e54a6). Local: local-2 CQ10 spec; local-1 and local-3 done. Main checkout needs `npm ci` (no `pg` since DB16) once local-2 ends.
 
 ## Next, in order
 
