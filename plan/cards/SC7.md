@@ -2,7 +2,7 @@
 
 Phase 0. Size S. Deps: SC, SC2, SC3, SC4, SC5, SC6. Where: cloud.
 Tags: core (the exemptions every rule test trusts).
-Paths: tools/test/lib/known.mjs, tools/test/lib/known.test.mjs
+Paths: tools/test/lib/known.mjs, tools/test/lib/known.test.mjs, tools/test/lib/cards.mjs, tools/test/lib/cards.test.mjs (A493)
 Clauses: ARC-15, ARC-16
 Read: `reports/SC-findings.md` (KNOWN shape), `plan/cards/SC.md`, `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
@@ -31,3 +31,6 @@ List the modules whose every test is a db test (jobs/queue.ts, jobs/runner.ts fi
 
 ## Also (A467)
 The KNOWN owner rule (an open card in plan/slices.json with a card file) is shared: SC7 makes every rules file use the one helper, so security-rules, fs-rules and db rules read owners the same way.
+
+## Also (A493): one card scan for the card rules
+One card scan shared by SC, SC4, SC6 and SC10 (tools/test/lib/cards.mjs): it reads every card and family template with its params, takes sentinels and floors from the unfiltered list, filters to open cards only after that, and drops nothing silently (a card with no file fails by id). The four rule files use it. Planted: SC6's rules as at 7f6d200a with SC6 marked done (the landing trap of 3 Oct). Paths gain tools/test/lib/cards.mjs and tools/test/lib/cards.test.mjs.
