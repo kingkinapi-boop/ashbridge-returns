@@ -2,8 +2,11 @@
  "card": "FX10",
  "role": "spec",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T05:26:11.124Z",
+ "state": "reported",
+ "at": "2026-10-03T06:22:06.029Z",
  "mode": "turbo",
- "beat": "2026-10-03T06:07:15.874Z"
+ "beat": "2026-10-03T06:07:15.874Z",
+ "note": "76 tests (split 6 multi-world tests into 22; cause: timeout, see reports/FX10-spec.md)",
+ "commit": "0f8e76f6",
+ "validated": "1f88585c"
 }
