@@ -1,12 +1,9 @@
 {
  "card": "GL3",
  "role": "spec",
- "worker": "cloud-c154d9",
- "state": "reported",
- "at": "2026-10-03T09:43:30.069Z",
- "mode": "turbo",
- "beat": "2026-10-03T09:43:27.717Z",
- "note": "54 tests (29 unit, 25 db); 6b stub sweep green, none retired",
- "commit": "9da00fbd",
- "validated": "f9da8e52"
+ "note": "toolchain refit",
+ "worker": "cloud-cb16ff",
+ "state": "working",
+ "at": "2026-10-03T10:50:27.679Z",
+ "mode": "turbo"
 }
