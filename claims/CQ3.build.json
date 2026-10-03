@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "8e11109b",
  "worker": "cloud-adefa2",
- "state": "working",
- "at": "2026-10-03T06:15:35.339Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T06:23:11.172Z",
+ "mode": "turbo",
+ "note": "59 of 59 claim tests, full suite green"
 }
