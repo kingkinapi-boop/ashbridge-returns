@@ -1,10 +1,11 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "A500 round 2: restore DB16.md from main, then spec patch S1 to S3 (R116, R117) per the Lead directive at the top of plan/cards/SC11.md; then the build reopens",
- "reopenedFrom": "b8b82f7",
+ "note": "A500 round 2: 12 tests (6 unit, 6 pg16 db), 8 fail on the real index.ts as expected",
  "worker": "cloud-019852",
- "state": "working",
- "at": "2026-10-03T16:27:36.750Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T16:32:03.893Z",
+ "mode": "turbo",
+ "commit": "ffa2f8f",
+ "validated": "11468064aabd17a62929d3072ab0a3ad990e5829"
 }
