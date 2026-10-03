@@ -1,0 +1,10 @@
+{
+ "card": "GL3",
+ "role": "build",
+ "round": 1,
+ "spec": "9da00fbd",
+ "worker": "cloud-06931b",
+ "state": "working",
+ "at": "2026-10-03T09:48:49.106Z",
+ "mode": "turbo"
+}
