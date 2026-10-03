@@ -4,9 +4,12 @@
  "round": 2,
  "spec": "ac01e80",
  "worker": "local-1",
- "state": "reported",
- "at": "2026-10-03T08:02:15.425Z",
+ "state": "released",
+ "at": "2026-10-03T10:48:09.760Z",
  "mode": "turbo",
  "beat": "2026-10-03T08:00:26.141Z",
- "note": "14 of 14 acceptance tests pass; tools 262 of 262; scope OK"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "b139268a19c33730badb08e9a03b51d28127be95"
+ }
 }
