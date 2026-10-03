@@ -3101,7 +3101,8 @@
         "src/contracts/qbo.ts",
         "db/schema/56_qbo.sql",
         "testworld/qbo/export.ts",
-        "src/core/env.ts"
+        "src/core/env.ts",
+        "tools/test/schema-contract-rules.test.mjs"
       ],
       "clauses": [
         "TB-1",
@@ -10301,7 +10302,8 @@
         "testworld/model/checks.ts",
         "testworld/clients/w00d-*.acceptance.test.ts",
         "testworld/model/__fixtures__/w00d-*.ts",
-        "testworld/model/__fixtures__/w00c-r3-walk.ts"
+        "testworld/model/__fixtures__/w00c-r3-walk.ts",
+        "reference/sample-clients/*/answer-key.json"
       ],
       "clauses": [
         "ARC-8",
@@ -10517,7 +10519,9 @@
         "src/core/test-no-network.ts",
         "src/contracts/auth.ts",
         "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
-        "tools/test/__fixtures__/schema-contract/known.json"
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/core/safe-read.ts",
+        "tools/test/schema-contract-rules.test.mjs"
       ],
       "clauses": [
         "EV-1",
@@ -10729,7 +10733,12 @@
       ],
       "paths": [
         "src/contracts/records.ts",
-        "src/contracts/records.acceptance.test.ts"
+        "src/contracts/records.acceptance.test.ts",
+        "src/modules/bridge/bridge.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/runner/engines.ts",
+        "src/modules/ai/runner/runner.ts",
+        "src/modules/gaps/bank/index.ts"
       ],
       "clauses": [
         "SEC-10",
@@ -11003,7 +11012,9 @@
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",
-        "tools/test-homes.json"
+        "tools/test-homes.json",
+        "src/core/db/pool-rules.acceptance.test.ts",
+        "src/core/db/__fixtures__/**"
       ],
       "clauses": [
         "ARC-6",
