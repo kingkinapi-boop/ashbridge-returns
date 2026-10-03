@@ -1,11 +1,12 @@
 {
  "card": "G18",
  "role": "spec",
- "note": "A499 round 2: spec patch (Opus) per the Lead directive at the top of plan/cards/G18.md: R1, R2, R3, R6 with plants and 39 pins; then the build reopens",
- "reopenedFrom": "4ce0202",
+ "note": "75 tests (31 pass as planted, 44 fail by name on today's data)",
  "worker": "cloud-850779",
- "state": "working",
- "at": "2026-10-03T16:25:07.381Z",
+ "state": "reported",
+ "at": "2026-10-03T16:52:08.121Z",
  "mode": "turbo",
- "beat": "2026-10-03T16:25:28.470Z"
+ "beat": "2026-10-03T16:25:28.470Z",
+ "commit": "df75d400e85e2c5a915bd9be4f416f7eeec87142",
+ "validated": "11468064aabd17a62929d3072ab0a3ad990e5829"
 }
