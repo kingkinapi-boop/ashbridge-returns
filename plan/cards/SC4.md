@@ -5,7 +5,7 @@ Tags: core (citations and amounts).
 Paths: tools/test/reading-rules.test.mjs, tools/test/__fixtures__/reading-rules/**
 Clauses: EV-14, EV-5, ARC-10
 Read: `reports/A07C-findings.md` ("Rule tests for SC"), `reports/A07D-opus-read.md` (on claude/A07D until it lands; amber A393), `plan/cards/SC.md` (rule style, R56), `.claude/rules/testing.md`.
-Spec commit: (spec-writer fills)
+Spec commit: 8ca5fb7a (validated on main 7eaf18cf except the 3 ExcelJS tests: cloud refit)
 
 ## Spec
 Each rule first shown failing on its planted example, then passing on main:
