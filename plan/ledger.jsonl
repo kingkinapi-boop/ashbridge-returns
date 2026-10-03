@@ -445,3 +445,6 @@
 {"ts":"2026-10-03T05:13:07.011Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 1 (Opus) again","allowed":true}
 {"ts":"2026-10-03T05:13:58.827Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"general-purpose","model":"opus","where":"local","desc":"Draft cards V02 V03 V04 V09 V13","allowed":true}
 {"ts":"2026-10-03T05:15:05.724Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 1 (Opus) for DB16 spec","allowed":true}
+{"ts":"2026-10-03T05:25:31.651Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T05:25:31.668Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T05:25:37.725Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 2 (Opus) again","allowed":true}

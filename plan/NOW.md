@@ -22,7 +22,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | spec patch reported (6fa39bb1, 106 tests); build open (A421) | build (mutation 100 on four files), check, security review |
-| DB16 | spec round 3 reopened (A419: 7 tests, roles and settings in transactions); build held | spec, review, build in the cloud on Postgres 16 |
+| DB16 | spec round 3 d69ac553 (89 tests); build working in the cloud (must contain d69ac553, A422) | check on Postgres 16, security review |
 | FX2 | round 2 spec reported (5ebca343); build open | build (one auth line), check, security review; lands before FX7 |
 | CQ2, SC4 | train requested 05:25Z (head 677e92f, test:flake) | land when green |
 | JH0 | spec reported | build after W00c lands |
