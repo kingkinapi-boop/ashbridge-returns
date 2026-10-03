@@ -1,12 +1,10 @@
 {
  "card": "W00c",
  "role": "build",
- "round": 2,
- "spec": "77bbbef0",
- "worker": "cloud-f27e32",
- "state": "reopened",
- "at": "2026-10-03T13:28:22.936Z",
- "mode": "turbo",
- "beat": "2026-10-03T08:16:28.938Z",
- "note": "Round 3, the last: spec at the A467 commit (W00c spec claim); RC-A to RC-C per card; mutation on cloud (CQ9 not landed: run Stryker with a long dry-run timeout as the card says)"
+ "round": 3,
+ "spec": "9ae225c64fa9c94d8a66e3c72c8125a93f3db223",
+ "worker": "cloud-1fcc74",
+ "state": "working",
+ "at": "2026-10-03T15:43:58.373Z",
+ "mode": "turbo"
 }
