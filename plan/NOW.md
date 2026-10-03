@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 09:55Z by the Lea
 | FX12, FX14, FX15 | FX12 build open; FX14 carded; FX15 spec Paths fixed (A449) | builds, checks |
 | CQ6 to CQ8, SC10, A08 | CQ6, CQ7, CQ8 specs reported; A08 spec reported, refusal-file gap to its spec (A443) | CQ builds after CQ4 and CQ5 land; A08 after A04 |
 
-Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: 2 workers at 09:55Z.
+Cloud runs: 3 more at 08:46Z (SC3, DB16, FX8, FX12 builds). Local: none (no local jobs at 10:00Z); SC11 spec on cloud at 10:00Z.
 
 ## Next, in order
 
