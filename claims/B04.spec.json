@@ -1,11 +1,12 @@
 {
  "card": "B04",
  "role": "spec",
- "note": "A454: 56_qbo.sql rename in tests; card Paths text still 35_qbo.sql (Lead); Opus review owed",
- "reopenedFrom": "a34f8ce7",
+ "note": "A507: items 1 to 9 added; failing by design on missing modules; READERS entry for QBO is amber, see reports/B04-spec-2.md",
  "worker": "cloud-07698b",
- "state": "working",
- "at": "2026-10-03T18:07:00.704Z",
+ "state": "reported",
+ "at": "2026-10-03T18:35:49.853Z",
  "mode": "turbo",
- "beat": "2026-10-03T18:14:11.306Z"
+ "beat": "2026-10-03T18:14:11.306Z",
+ "commit": "c17bd825",
+ "validated": "6e6f6348"
 }
