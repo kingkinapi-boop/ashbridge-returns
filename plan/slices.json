@@ -9500,7 +9500,7 @@
       "phase": 4,
       "size": "M",
       "security": true,
-      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED."
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED. From the FX2 security review (3 Oct, A435): a production host with NODE_ENV unset defaults to development and starts every stand-in; the go-live check refuses to start unless NODE_ENV is set explicitly."
     },
     {
       "status": "todo",
@@ -10133,6 +10133,29 @@
       "size": "S",
       "core": false,
       "note": "From reports/FX10-spec.md, 3 Oct (A429)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "FX2",
+        "SC5"
+      ],
+      "paths": [
+        "src/modules/ocr/index.ts",
+        "src/modules/ocr/ocr-guard.acceptance.test.ts"
+      ],
+      "clauses": [
+        "SEC-10",
+        "SEC-11"
+      ],
+      "id": "FX13",
+      "title": "Setting errors name the setting, never its value (R88)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/FX2-security.md, 3 Oct (A435)."
     },
     {
       "status": "carded",
