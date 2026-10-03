@@ -2,7 +2,10 @@
  "card": "SC6",
  "role": "spec",
  "worker": "cloud-e8594a",
- "state": "working",
- "at": "2026-10-03T04:04:55.588Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T04:16:07.106Z",
+ "mode": "turbo",
+ "note": "7 rule tests R77 R78 (ARC-15, ARC-16); KNOWN: R77 W14, R78 verify.mjs (owner W16-r2, remove on landing); amber: R77 exception wording",
+ "commit": "839819f",
+ "validated": "7eaf18c"
 }
