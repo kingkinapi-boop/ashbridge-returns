@@ -2,11 +2,11 @@
  "card": "W16",
  "role": "spec",
  "worker": "cloud-abfeb2",
- "state": "reported",
- "at": "2026-10-02T21:45:18.203Z",
+ "state": "reopened",
+ "at": "2026-10-03T03:55:31.192Z",
  "mode": "turbo",
  "beat": "2026-10-02T21:37:48.726Z",
- "note": "0 new tests; 5 R8 checks fail by name (verify.mjs KNOWN emptied)",
+ "note": "A404: round 2 on claude/W16-r2 from main; see bold directive on the card",
  "commit": "78a9fba1",
  "validated": "b9d2f580"
 }
