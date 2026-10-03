@@ -5,7 +5,8 @@
 -- restricted_data table with one row per kind, every never-read (table, column) pair as a column holding a
 -- canary (a value containing CANARY, which no bridge view may ever show), and the marker answers (PY3.sin,
 -- PY3.dob, PY3.bank, BQ7.sin, BQ1.bn) as rows in answers.answer_verbatim: question_asked bare and
--- "<id>: <label token>", values restricted-provided, that plus 4 digits, and null, current and superseded.
+-- "<id>: <label token>", values restricted-provided, that plus 4 digits, null, and a plain canary with no digits
+-- (A506 G3), current and superseded.
 -- Digit runs stay at 4 or fewer in answers, file names and transcripts (contract line 73). Every name ends in
 -- "(Test)"; every is_test is true. Applied on top of the build's returns schema, as the database superuser.
 
@@ -361,6 +362,8 @@ insert into public.client_requests (id, corporation_id, message) values
 -- RULE-19), values restricted-provided, that plus 4 digits, and null, each current and superseded. A superseded
 -- row points at its current twin. BQ1.bn's fixed sentence is a canary (row 0401 above and the grid here); the
 -- grid's BQ1.bn rows also carry an upload-pointer shape, so bridge.document must skip marker rows by question id.
+-- G3 (A506): per marker id one more value kind, "plain": a canary that does not start restricted-provided and has
+-- no digits, with an upload-pointer shape, so the mask must go by question id, never by the value's form.
 -- One more row: a value starting restricted-provided under an id the contract does not list (BQ7.name).
 insert into public.answers (
   id, entity_id, corporation_id, person_id, engagement_id, tax_year, what_it_resolves, question_asked,
@@ -371,17 +374,18 @@ select
   '00000000-0000-4000-8000-000000000201', '00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000000011',
   '00000000-0000-4000-8000-000000009001', 2025, 'FL:104', q.asked,
   case when v.kind = 'null' then null
+       when v.kind = 'plain' then 'CANARY-marker-plain|drive:CANARY-marker-pointer'
        when m.id = 'BQ1.bn' then 'CANARY-answers-BQ1.bn-' || v.kind || '|drive:CANARY-answers-BQ1.bn-pointer'
        when v.kind = 'bare' then 'restricted-provided'
        else 'restricted-provided:4821' end,
   case when s.n = 0 then 'current' else 'superseded' end,
   case when s.n = 0 then null
        else ('00000000-0000-4000-8000-0000000' || lpad((8000 + m.n * 100 + q.n * 10 + v.n * 2)::text, 5, '0'))::uuid end,
-  'screen', 'v2', null, timestamptz '2026-01-18T13:00:00-05:00' + make_interval(mins => m.n * 10 + q.n * 3 + v.n) - make_interval(secs => s.n),
+  'screen', 'v2', null, timestamptz '2026-01-18T13:00:00-05:00' + make_interval(mins => m.n * 10 + q.n * 4 + v.n) - make_interval(secs => s.n),
   true
 from (values (1, 'PY3.sin'), (2, 'PY3.dob'), (3, 'PY3.bank'), (4, 'BQ7.sin'), (5, 'BQ1.bn')) as m (n, id)
 cross join lateral (values (0, m.id), (1, m.id || ': label-' || replace(m.id, '.', '-'))) as q (n, asked)
-cross join (values (0, 'bare'), (1, 'digits'), (2, 'null')) as v (n, kind)
+cross join (values (0, 'bare'), (1, 'digits'), (2, 'null'), (3, 'plain')) as v (n, kind)
 cross join (values (0), (1)) as s (n);
 
 insert into public.answers (

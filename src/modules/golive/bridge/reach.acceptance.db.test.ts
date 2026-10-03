@@ -1,5 +1,6 @@
 // GL3 round 4 acceptance tests, the database side (spec-writer; builders never edit this file). Card
-// plan/cards/GL3.md, Lead directive A498 (S2 to S5). Each test clones the build's returns schema and applies the
+// plan/cards/GL3.md, Lead directive A498 (S2 to S5) and its second patch A506 (G1 every privilege form,
+// G2 the plan shape of every bridge view, G3 any answer to a marker id). Each test clones the build's returns schema and applies the
 // made-up client-app stand-in (db/bridge/__fixtures__/client-app-standin.sql, which since S1 holds a canary in
 // every never-read column, one restricted_data row per kind and the marker answers), then the draft.
 // The shapes these tests fix are listed at the top of reach.acceptance.test.ts (the unit side, which holds the
@@ -440,6 +441,173 @@ describe('GL3 round 4: the shared table policy walk (A498 S5; ARC-2, END-7)', ()
       }
     }
     expect(moves).toBe(56)
+    expect(problems).toEqual([])
+  })
+})
+
+describe('GL3 round 4 patch: every privilege form, probeReach against the spec read (A506 G1; ARC-2)', () => {
+  /** A role planted only for the membership form; roles are cluster-wide on Postgres 16, so creation is idempotent. */
+  const GROUP = 'gl3_planted_group'
+
+  test('ARC-2 rule: every privilege form planted on gl3_nobody (schema usage and create, the 7 table rights, column select, insert, update and references, sequence usage, select and update, a plain function with arguments, a role membership) is found key by key, by the spec read and by probeReach alike', async () => {
+    const db = await drafted()
+    await db.exec(`create schema gl3_planted;
+      grant usage, create on schema gl3_planted to ${NOBODY};
+      grant select, insert, update, delete, truncate, references, trigger on public.people to ${NOBODY};
+      grant select (filename), insert (filename), update (filename), references (filename) on public.documents to ${NOBODY};
+      create sequence public.gl3_planted_seq;
+      grant usage, select, update on sequence public.gl3_planted_seq to ${NOBODY};
+      create function public.gl3_planted_fn(a integer, b text) returns integer language sql as $f$ select a $f$;
+      grant execute on function public.gl3_planted_fn(integer, text) to ${NOBODY};
+      do $$ begin create role ${GROUP} nologin; exception when duplicate_object or unique_violation then null; end $$;`)
+    const planted = [
+      'usage on schema gl3_planted',
+      'create on schema gl3_planted',
+      ...['select', 'insert', 'update', 'delete', 'truncate', 'references', 'trigger'].map((p) => `${p} on public.people`),
+      ...['select', 'insert', 'update', 'references'].map((p) => `${p} (filename) on public.documents`),
+      ...['usage', 'select', 'update'].map((p) => `${p} on public.gl3_planted_seq`),
+      'execute on public.gl3_planted_fn(a integer, b text)',
+      `member of ${GROUP}`,
+    ]
+    // roles are cluster-wide on Postgres 16: the planted membership is always taken back
+    await db.exec(`grant ${GROUP} to ${NOBODY}`)
+    try {
+      const spec = await specReach(db, NOBODY)
+      for (const k of planted) expect(spec, `the spec read finds ${k}`).toContain(k)
+      const probe = await probeReach(db, NOBODY)
+      expect(planted.filter((k) => !probe.includes(k)), 'planted keys probeReach misses').toEqual([])
+      expect(probe).toEqual(spec)
+    } finally {
+      await db.exec(`revoke ${GROUP} from ${NOBODY}`)
+    }
+  })
+})
+
+describe('GL3 round 4 patch: the plan shape of every bridge view (A506 G2; ARC-2)', () => {
+  interface PlanNode {
+    'Node Type': string
+    Alias?: string
+    Filter?: string
+    Plans?: PlanNode[]
+    [key: string]: unknown
+  }
+
+  async function viewsIn(db: PGlite): Promise<string[]> {
+    return (await rows<{ name: string }>(db, `select c.relname as name from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'bridge' and c.relkind = 'v' order by 1`)).map((r) => r.name)
+  }
+
+  async function colsOf(db: PGlite, view: string): Promise<string[]> {
+    return (await rows<{ name: string }>(db, `select attname as name from pg_attribute where attrelid = ($1::text)::regclass and attnum > 0 and not attisdropped order by attnum`, [`bridge.${view}`])).map((r) => r.name)
+  }
+
+  /** Every node below the top one, each with the text of all its fields but its children. */
+  function below(node: PlanNode): PlanNode[] {
+    return (node.Plans ?? []).flatMap((p) => [p, ...below(p)])
+  }
+
+  function ownText(node: PlanNode): string {
+    return JSON.stringify(Object.fromEntries(Object.entries(node).filter(([k]) => k !== 'Plans')))
+  }
+
+  /**
+   * As returns_app, EXPLAIN (no ANALYZE) a select from each bridge view filtered by a near-zero-cost pg_temp
+   * function over every column. A view that holds its own filters first plans as "Subquery Scan on <view>" with
+   * the call in that node's Filter and nowhere below it. Each problem names the view.
+   */
+  async function planShapeProblems(db: PGlite): Promise<string[]> {
+    const views = await viewsIn(db)
+    const out: string[] = []
+    await asRole(db, 'returns_app', async () => {
+      await db.exec(`create or replace function pg_temp.gl3_peek(v anyelement) returns boolean language plpgsql cost 0.0000001 as $f$
+        begin return true; end $f$;`)
+      for (const view of views) {
+        const qual = (await colsOf(db, view)).map((c) => `pg_temp.gl3_peek("${c}")`).join(' and ')
+        const r = await rows(db, `explain (format json, costs off) select * from bridge.${view} where ${qual}`)
+        const raw = Object.values(r[0] ?? {})[0]
+        const parsed = (typeof raw === 'string' ? JSON.parse(raw) : raw) as { Plan: PlanNode }[]
+        const top = parsed[0]?.Plan
+        if (top === undefined) {
+          out.push(`bridge.${view}: no plan`)
+          continue
+        }
+        if (top['Node Type'] !== 'Subquery Scan' || top.Alias !== view) {
+          out.push(`bridge.${view}: top plan node is ${top['Node Type']}${top.Alias === undefined ? '' : ` on ${top.Alias}`}, not Subquery Scan on ${view}`)
+        } else if (!(top.Filter ?? '').includes('gl3_peek')) {
+          out.push(`bridge.${view}: the probe call is not in the top node's Filter`)
+        }
+        for (const n of below(top)) {
+          if (ownText(n).includes('gl3_peek')) out.push(`bridge.${view}: the probe call reaches ${n['Node Type']}${n.Alias === undefined ? '' : ` on ${n.Alias}`} below the view`)
+        }
+      }
+    })
+    return [...new Set(out)].sort()
+  }
+
+  test('ARC-2 EXPLAIN over every bridge view (client and cra_access, the UNION ALL views, included): the top node is "Subquery Scan on <view>" and a leaking call sits only in its Filter', async () => {
+    const db = await drafted()
+    const views = await viewsIn(db)
+    expect(views).toEqual(manifest().views.map((v) => v.name).sort())
+    for (const v of ['client', 'document', 'cra_access']) expect(views).toContain(v)
+    expect(await planShapeProblems(db)).toEqual([])
+  })
+
+  test('ARC-2 rule: a planted UNION ALL view with only security_barrier fails the plan shape by name; the same union wrapped in a subquery passes', async () => {
+    const db = await drafted()
+    await db.exec(`create view bridge.planted_union with (security_barrier) as
+        select a.id, a.answer_verbatim as v, a.is_test from public.answers a where a.channel = 'internal'
+        union all
+        select d.id, d.filename, d.is_test from public.documents d where d.mime_type = 'application/pdf';
+      create view bridge.planted_wrapped with (security_barrier) as
+        select * from (
+          select a.id, a.answer_verbatim as v, a.is_test from public.answers a where a.channel = 'internal'
+          union all
+          select d.id, d.filename, d.is_test from public.documents d where d.mime_type = 'application/pdf'
+        ) u;
+      grant select on bridge.planted_union, bridge.planted_wrapped to returns_app;`)
+    const barrier = await rows<{ name: string; opts: string[] | null }>(
+      db,
+      `select c.relname as name, c.reloptions as opts from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'bridge' and c.relname like 'planted\\_%' order by 1`,
+    )
+    for (const b of barrier) expect(b.opts ?? [], `bridge.${b.name} reloptions`).toContainEqual(expect.stringMatching(/^security_barrier=(true|on)$/i))
+    const problems = await planShapeProblems(db)
+    expect(problems.filter((p) => p.startsWith('bridge.planted_union:')).length, 'the barrier-only union is caught').toBeGreaterThan(0)
+    expect(problems.filter((p) => !p.startsWith('bridge.planted_union:'))).toEqual([])
+  })
+})
+
+describe('GL3 round 4 patch: any answer to a marker id reads given (A506 G3; ARC-2, contract line 70)', () => {
+  test('ARC-2 for each marker id, a value that does not start with restricted-provided and has no digits, bare and labelled, current and superseded, reads exactly "given" in bridge.answer and never shows in bridge.document', async () => {
+    const db = await drafted()
+    const markers = neverReadItems().markerIds
+    const plain = await rows<{ id: string; asked: string; v: string; status: string }>(
+      db,
+      `select id::text as id, question_asked as asked, answer_verbatim as v, status from public.answers
+       where answer_verbatim is not null and answer_verbatim not like 'restricted-provided%' and answer_verbatim !~ '[0-9]'
+       order by id`,
+    )
+    const problems: string[] = []
+    const marked: typeof plain = []
+    for (const id of markers) {
+      const mine = plain.filter((x) => x.asked.split(':')[0] === id)
+      for (const form of ['bare', 'labelled'] as const) {
+        for (const status of ['current', 'superseded']) {
+          const hit = mine.filter((x) => x.status === status && (form === 'bare' ? x.asked === id : x.asked.startsWith(`${id}: `)))
+          if (hit.length === 0) problems.push(`stand-in lacks a plain ${status} ${form} answer to ${id}`)
+        }
+      }
+      marked.push(...mine)
+    }
+    expect(problems).toEqual([])
+    const answer = new Map(
+      (await asRole(db, 'returns_app', () => rows<{ id: string; v: string | null }>(db, 'select id::text as id, answer_verbatim as v from bridge.answer'))).map((r) => [r.id, r.v]),
+    )
+    const documents = new Set(
+      (await asRole(db, 'returns_app', () => rows<{ id: string }>(db, 'select id::text as id from bridge.document'))).map((r) => r.id),
+    )
+    for (const x of marked) {
+      if (answer.get(x.id) !== 'given') problems.push(`bridge.answer ${x.id} (${x.asked}, ${x.status}) reads ${String(answer.get(x.id))}, not given`)
+      if (documents.has(x.id)) problems.push(`bridge.document shows marker answer ${x.id} (${x.asked}, ${x.status})`)
+    }
     expect(problems).toEqual([])
   })
 })
