@@ -113,6 +113,123 @@ function quoteIdent(name: string): string {
   return `"${name.replaceAll('"', '""')}"`
 }
 
+// SC11 (R116, R117): every connection this file opens has an error listener that records, and a pool is ended only
+// by endPool, which waits for every connection the pool ever opened to close.
+const POOL_END_BOUND_MS = 5000
+// Errors that arrive when no live handle can take them (after their pool ended): named by the next assertCleanClones.
+const lateErrors: string[] = []
+
+/** R116: the errors recorded after their pool or handle had ended, as strings with the code and message; cleared by the call. */
+export function takeLateErrors(): string[] {
+  return lateErrors.splice(0)
+}
+
+function errorLine(label: string, e: unknown): string {
+  const code = (e as { code?: unknown } | null)?.code
+  const codeText = typeof code === 'string' ? ` ${code}` : ''
+  return `${label}: connection error${codeText}: ${e instanceof Error ? e.message : String(e)}`
+}
+
+/** One recorder per connection owner: a live owner keeps the problem, a finished one reports it late; one entry per error object. */
+function recorderFor(label: string, problems: string[] | undefined, isEnded: () => boolean): (e: unknown) => void {
+  const seen = new WeakSet<object>()
+  return (e) => {
+    if (typeof e === 'object' && e !== null) {
+      if (seen.has(e)) return
+      seen.add(e)
+    }
+    const line = errorLine(label, e)
+    if (problems === undefined || isEnded()) lateErrors.push(line)
+    else problems.push(line)
+  }
+}
+
+interface PoolTracker {
+  label: string
+  ended: boolean
+  // Every client the pool opened and has not yet seen end, each with the promise of its end.
+  open: Map<pg.PoolClient, Promise<void>>
+}
+const trackers = new WeakMap<pg.Pool, PoolTracker>()
+
+/** R116, R117: a pool whose clients are tracked from connect to end and whose pool and client errors are recorded. */
+export function openPool(config: pg.PoolConfig, sink?: { label: string; problems: string[] }): pg.Pool {
+  const label = sink?.label ?? config.application_name ?? config.database ?? 'pool'
+  const tracker: PoolTracker = { label, ended: false, open: new Map() }
+  const record = recorderFor(label, sink?.problems, () => tracker.ended)
+  // A bare connection string gets the same fields (and the local test password) as every other connection here.
+  const { connectionString, ...rest } = config
+  const pool = new pg.Pool(connectionString === undefined ? rest : { ...connOpts(connectionString), ...rest })
+  trackers.set(pool, tracker)
+  pool.on('error', (e: Error) => {
+    record(e)
+  })
+  pool.on('connect', (client: pg.PoolClient) => {
+    tracker.open.set(
+      client,
+      new Promise<void>((resolve) => {
+        client.once('end', () => {
+          tracker.open.delete(client)
+          resolve()
+        })
+      }),
+    )
+    client.on('error', (e: Error) => {
+      record(e)
+    })
+  })
+  return pool
+}
+
+/** R117: ends a pool and resolves only when every connection it ever opened has ended; fails, naming the pool, after 5 s. */
+export async function endPool(pool: pg.Pool): Promise<void> {
+  const tracker = trackers.get(pool)
+  if (tracker !== undefined) tracker.ended = true
+  const label = tracker?.label ?? 'pool'
+  let timer: NodeJS.Timeout | undefined
+  const bound = new Promise<'late'>((resolve) => {
+    timer = setTimeout(() => {
+      resolve('late')
+    }, POOL_END_BOUND_MS)
+  })
+  const finished = (async (): Promise<'done'> => {
+    await pool.end()
+    const ending: Promise<void>[] = tracker === undefined ? [] : [...tracker.open.values()]
+    await Promise.all(ending)
+    return 'done'
+  })()
+  try {
+    if ((await Promise.race([finished, bound])) === 'late') {
+      const n = tracker?.open.size ?? 0
+      throw new Error(
+        `pool ${label} did not end within ${String(POOL_END_BOUND_MS)} ms: ${String(n)} connection(s) still open (a client checked out and never released?)`,
+      )
+    }
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/** One admin connection: connect, run, end, with its errors recorded and rethrown. */
+async function withAdmin<T>(url: string, run: (admin: pg.Client) => Promise<T>): Promise<T> {
+  const admin = new pg.Client(connOpts(url))
+  const errors: unknown[] = []
+  admin.on('error', (e: Error) => {
+    errors.push(e)
+  })
+  await admin.connect()
+  let out: T
+  try {
+    out = await run(admin)
+  } finally {
+    await admin.end()
+  }
+  if (errors.length > 0) {
+    throw new Error(`admin connection error: ${errors.map((e) => errorLine('admin', e)).join('; ')}`, { cause: errors[0] })
+  }
+  return out
+}
+
 interface QueryResult<T> {
   rows: T[]
   affectedRows: number
@@ -132,8 +249,14 @@ class PgDb {
     private readonly adminUrl: string,
     private readonly name: string,
     dbUrl: string,
+    /** Connection errors recorded for this handle (pool and session), reported by close and assertCleanClones. */
+    readonly problems: string[] = [],
   ) {
     this.main = new pg.Client(connOpts(dbUrl))
+    const record = recorderFor(name, problems, () => this.closed_)
+    this.main.on('error', (e: Error) => {
+      record(e)
+    })
   }
 
   private session(): Promise<pg.Client> {
@@ -330,7 +453,12 @@ class PgDb {
       }
       await this.main.end()
     }
-    await this.pool.end()
+    try {
+      await endPool(this.pool)
+    } catch (e) {
+      note(e)
+    }
+    failures.push(...this.problems)
     await dropDatabase(this.adminUrl, this.name)
     if (failures.length > 0) throw new Error(`database handle closed with problems:\n${failures.join('\n')}`)
   }
@@ -343,39 +471,28 @@ interface PgTx {
 }
 
 async function dropDatabase(adminUrl: string, name: string): Promise<void> {
-  const admin = new pg.Client(connOpts(adminUrl))
-  await admin.connect()
-  try {
+  await withAdmin(adminUrl, async (admin) => {
     await admin.query(`drop database if exists "${name}" with (force)`)
-  } finally {
-    await admin.end()
-  }
+  })
 }
 
 /** Drops every database this run made (the global setup's teardown). */
 export async function dropRunDatabases(url: string): Promise<void> {
-  const admin = new pg.Client(connOpts(url))
-  await admin.connect()
-  try {
+  await withAdmin(url, async (admin) => {
     const r = await admin.query<{ datname: string }>('select datname from pg_database where datname like $1', [
       `${DB_PREFIX}${pg16RunId().replaceAll('_', '\\_')}\\_%`,
     ])
     for (const { datname } of r.rows) await admin.query(`drop database if exists "${datname}" with (force)`)
-  } finally {
-    await admin.end()
-  }
+  })
 }
 
 async function createPg16Template(url: string, schemaDir: string): Promise<DbTemplate> {
   const tplName = freshDbName('tpl')
-  const admin = new pg.Client(connOpts(url))
-  await admin.connect()
-  try {
+  await withAdmin(url, async (admin) => {
     await admin.query(`create database "${tplName}" template template0 encoding 'UTF8' lc_collate 'C' lc_ctype 'C.UTF-8'`)
-  } finally {
-    await admin.end()
-  }
-  const schemaPool = new pg.Pool({ ...connOpts(withDatabase(url, tplName)), max: 1 })
+  })
+  const schemaProblems: string[] = []
+  const schemaPool = openPool({ ...connOpts(withDatabase(url, tplName)), max: 1 }, { label: tplName, problems: schemaProblems })
   try {
     for (const f of schemaFiles(schemaDir)) {
       try {
@@ -385,23 +502,24 @@ async function createPg16Template(url: string, schemaDir: string): Promise<DbTem
       }
     }
   } catch (e) {
-    await schemaPool.end()
+    await endPool(schemaPool)
     await dropDatabase(url, tplName)
     throw e
   }
-  await schemaPool.end()
+  await endPool(schemaPool)
+  if (schemaProblems.length > 0) {
+    await dropDatabase(url, tplName)
+    throw new Error(`template database had connection problems:\n${schemaProblems.join('\n')}`)
+  }
   return {
     clone: async () => {
       const name = freshDbName('db')
-      const c = new pg.Client(connOpts(url))
-      await c.connect()
-      try {
+      await withAdmin(url, async (c) => {
         await c.query(`create database "${name}" template "${tplName}"`)
-      } finally {
-        await c.end()
-      }
-      const pool = new pg.Pool({ ...connOpts(withDatabase(url, name)), max: 4 })
-      return new PgDb(pool, url, name, withDatabase(url, name)) as unknown as PGlite
+      })
+      const problems: string[] = []
+      const pool = openPool({ ...connOpts(withDatabase(url, name)), max: 4 }, { label: name, problems })
+      return new PgDb(pool, url, name, withDatabase(url, name), problems) as unknown as PGlite
     },
     close: () => dropDatabase(url, tplName),
   }
@@ -518,9 +636,9 @@ async function inspectIdle(pool: pg.Pool, customNames: Iterable<string>): Promis
  * and on a closed handle.
  */
 export async function idleConnectionProblems(db: unknown): Promise<string[]> {
-  const h = db as { pool?: pg.Pool; customSettings?: Set<string>; closed?: boolean }
+  const h = db as { pool?: pg.Pool; customSettings?: Set<string>; closed?: boolean; problems?: string[] }
   if (h.pool === undefined || h.closed === true) return []
-  return inspectIdle(h.pool, h.customSettings ?? [])
+  return [...(h.problems ?? []), ...(await inspectIdle(h.pool, h.customSettings ?? []))]
 }
 
 /** R90: rejects naming every problem of every open clone made by cloneTestDb (the db project's afterEach, before the clones close). */
@@ -529,6 +647,8 @@ export async function assertCleanClones(): Promise<void> {
   for (const [n, c] of clones.entries()) {
     for (const p of await idleConnectionProblems(c)) lines.push(`clone ${String(n + 1)}: ${p}`)
   }
+  // R116: an error that arrived after its pool had ended is named here, by the next afterEach or afterAll.
+  for (const late of takeLateErrors()) lines.push(`late: ${late}`)
   if (lines.length > 0) throw new Error(`a test left pooled connections dirty:\n${lines.join('\n')}`)
 }
 
@@ -540,12 +660,8 @@ export function leftoverRoles(before: Iterable<string>, after: Iterable<string>)
 
 /** R91: every role of the cluster (the global setup and its teardown compare two lists). */
 export async function listRoles(url: string): Promise<string[]> {
-  const admin = new pg.Client(connOpts(url))
-  await admin.connect()
-  try {
+  return withAdmin(url, async (admin) => {
     const r = await admin.query<{ rolname: string }>('select rolname from pg_roles')
     return r.rows.map((x) => x.rolname)
-  } finally {
-    await admin.end()
-  }
+  })
 }
