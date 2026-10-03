@@ -4,7 +4,8 @@
  "round": 1,
  "spec": "6ac7457",
  "worker": "cloud-fd4d7f",
- "state": "working",
- "at": "2026-10-03T04:19:43.164Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T04:27:11.806Z",
+ "mode": "turbo",
+ "note": "tests pass (both files, suite 3065); mutation dry run blocked by spec text test seeing Stryker instrumentation, see report"
 }
