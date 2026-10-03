@@ -1,9 +1,8 @@
 {
  "card": "FX2",
  "role": "build",
- "state": "released",
+ "state": "reopened",
  "worker": "lead",
- "at": "2026-10-03T04:17:40.185Z",
- "note": "wait: core spec review (reports/FX2-spec-review.md); build opens after GO",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
+ "at": "2026-10-03T04:17:57.527Z",
+ "note": "not core: no spec review; build to the spec"
 }
