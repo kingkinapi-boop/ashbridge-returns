@@ -1,8 +1,10 @@
-# DB16 build, rounds 2 and 3 (cloud-555a8d)
+# DB16 build round 4 (cloud-d137a3)
 
-Branch claude/DB16, main merged. Files: src/core/db/index.ts (url has no password, the driver gets fields and PGPASSWORD else the default; session settings pinned by connection options; date parser gives UTC midnight; template made from template0 with LC_COLLATE C, LC_CTYPE C.UTF-8; SUPABASE check ignores case), .claude/agents/checker.md and .claude/cloud-worker-run.md (identity-test line, "not skipped").
-Acceptance: pg16.acceptance unit 47 of 47. Whole db project on Postgres 16: 557 pass, 1 skipped. PGlite `npm test`: unit 2544 pass, db 555 pass with the expected race fail and 2 skipped. typecheck, lint, deps:check clean. No @mutate file in Paths.
-Scope: tools/scope.mjs flags the spec files as edited in b14182c (a spec-round commit on this branch, before the spec commit line); the build did not edit them.
-Ambers: (1) Pinned TimeZone is Etc/GMT+5 (PGlite's fixed UTC-5), reverse by editing the options string. (2) Earlier round: shared session for query/exec, own connection per transaction, roles dropped on close, db files serial on pg16, default throwaway password `postgres` (PGPASSWORD overrides).
-Permission gaps: none. Model: Sonnet 5.5.
-Round 3 (A419 spec d69ac553, merged): a transaction connection takes the handle's role and custom settings (names remembered from set_config / set statements, as pg_settings does not list them) and is reset on return; Dates go by their UTC clock (pg.defaults.parseInputDatesAsUTC); roles are dropped per handle, only the ones it created (found by diffing pg_roles around a create role statement). Result: unit 68 of 68; whole db project on Postgres 16: 565 pass, 1 skipped; PGlite npm test: unit 2565 pass, db 563 pass + expected race fail + 2 skipped; typecheck, lint, deps:check clean.
+Branch claude/DB16, merged origin/main (checker.md conflict: kept both sides). Round 4 per reports/DB16-findings.md.
+Files: src/core/db/target.ts (new, `// @mutate`, no driver import), src/core/db/index.ts (re-exports), src/core/db/pg16.test.ts (7 unit tests).
+Acceptance: `git diff d69ac553 HEAD` over the acceptance files is empty. npm test 563 passed (1 expected fail, 2 skipped); TEST_DB=pg16 db project 565 passed; test:flake 5 of 5 ok.
+typecheck, lint, deps:check clean. mutate:changed DB16: target.ts 100 (78 killed, 0 survived); mutate:canary 100.
+Scope: FAIL only on the known false positives (b14182c wip, reports/DB16-spec.md in 49cd785 and 8924d4e); read by hand, CQ4 not landed.
+Amber: none.
+Gap: the cloud cluster needs `alter user postgres password 'postgres'` (via `su postgres -c psql`) before TEST_DB=pg16 connects (28P01 otherwise); checker.md and cloud-worker-run.md do not say so.
+Permission gaps: none. Model: Sonnet 5.5 (no subagent used; card is security, Opus read of target.ts is the checker's job).
