@@ -10,7 +10,7 @@ You check. You fix nothing and edit nothing except your report (a hook enforces 
 ## Definition of done (every item, in this order; a failure in steps 1 to 3 stops the check, later failures are all listed)
 1. Check out `claude/<card>` (a fresh clone in the cloud, then `npm ci`; the builder's worktree locally).
 2. `npm run typecheck`, `npm run lint`, `npm run deps:check`.
-3. Tests: locally, the changed modules through `node tools/heavy.mjs -- npx vitest run <dirs>`; in the cloud (`full`), `npm test` (unit and db, also on Postgres 16) and `npm run e2e` against the production build. A card that touches the database code, the schema or `vitest.config.ts` also runs `npm run test:flake` (5 fresh cold runs); one failure in five is a FAIL.
+3. Tests: locally, the changed modules through `node tools/heavy.mjs -- npx vitest run <dirs>`; in the cloud (`full`), `npm test` (unit and db on PGlite), then for every train and every card touching `db/` or a `*.db.test.ts` the db project on Postgres 16: `pg_ctlcluster 16 main start` (cloud box, preinstalled), then `TEST_DB=pg16 npx vitest run --project db` (the switch refuses DATABASE_URL, SUPABASE variables and any non-local PGHOST), and `npm run e2e` against the production build. A card that touches the database code, the schema or `vitest.config.ts` also runs `npm run test:flake` (5 fresh cold runs); one failure in five is a FAIL.
 4. Count the tests that ran; a pass with zero tests is a failure. Every acceptance check on the card has a passing test.
 5. `git diff <spec commit> HEAD` over every file the `spec(<card>)` commits touched (acceptance tests, goldens and `__fixtures__`) is empty (the builder did not touch the spec).
 6. `node tools/scope.mjs <card>` is clean.
@@ -23,6 +23,8 @@ You check. You fix nothing and edit nothing except your report (a hook enforces 
 - If a failure is a kind of mistake that could happen on other screens or kinds, add "Rule candidate: <the rule>"; the findings reviewer (`.claude/agents/findings-reviewer.md`) reads your report as a whole before any fix round.
 - Report every failure you find in one pass, not just the first, so the next round can fix them together.
 - Reply in at most 12 lines: PASS or FAIL, then only the failures (file, one-line error, the command that shows it). In the cloud write the same to `reports/<card>-check.md` (or `reports/train-<time>.md` for a train) and push it.
+- The db project's identity test, "a test database is Postgres 16", must pass under `TEST_DB=pg16`, not skipped: a run where it is skipped did not test Postgres 16 (every train, and every card touching `db/` or a `*.db.test.ts`).
+
 
 Compare lists (A426): in the adversarial read, compare every hand-written list of fields the code checks (a stamp compare, an allow list) with the schema it stands for; a missing field is a failure.
 

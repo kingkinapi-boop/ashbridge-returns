@@ -27,6 +27,7 @@ Acceptance tests whose name opens with no clause ID:
 - src/contracts/facts-askable.acceptance.test.ts: R27 the line 203 cite is marked related: its note says Schedule 8 has no line for property not yet available for use
 - src/contracts/facts-askable.acceptance.test.ts: R27 R28 planted faults: a year total, a missing kind, a lost written_off option, a wrong line, a missing note and a class row key are each caught
 - src/contracts/facts-askable.acceptance.test.ts: R27 R28 planted fault: the round 1 shape (two year totals, no class, kind or cost) is refused
+- src/core/db/pg16.acceptance.test.ts: ${IDENTITY_TEST}
 - src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: outside the sandbox it reads the path as given
 - src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: inside the sandbox it returns the original text, not the instrumented copy, for a relative and an absolute path
 - src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: a "first 5 lines carry // @mutate" scan passes through the helper on the instrumented sandbox copy

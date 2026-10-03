@@ -21,3 +21,6 @@ A checker who did neither: R69 green with no FX6 entry in KNOWN, F03's and F03R'
 
 ## SC KNOWN entries (3 Oct, A407)
 SC lands with exact KNOWN entries owned by this card (reports/SC-findings.md, fix list step 3). Each defect fixed here deletes its entry; never widen an entry or weaken a rule (A329).
+
+## Also (A463)
+W00c deletes the R38 entry for taxprep.acceptance.test.ts.
