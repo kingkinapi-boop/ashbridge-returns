@@ -4,7 +4,11 @@
  "round": 1,
  "spec": "eb8d158c",
  "worker": "cloud-7bd520",
- "state": "working",
- "at": "2026-10-03T21:09:30.453Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T21:09:42.991Z",
+ "mode": "turbo",
+ "note": "released unstarted: session long (2 jobs, 40+ min); a fresh worker takes it",
+ "lastRelease": {
+  "tip": "4595abb976c1a7c356be73607296295c5a11f0f7"
+ }
 }
