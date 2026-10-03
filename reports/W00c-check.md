@@ -1,26 +1,28 @@
-# W00c check (round 3 build 75556283, branch claude/W00c) - FAIL
+# W00c check (fresh, build 75556283 + main merged, branch claude/W00c) - FAIL (mutation could not run)
 
-Checker: cloud-4863d0. Date: 3 Oct 2026.
+Checker: cloud-f09ae7 (Sonnet 5.5). Date: 3 Oct 2026. Node 24.21.0. Postgres 16.14 (select version()).
 
-Steps 1 to 3 (partial): typecheck, lint, deps:check clean. `npm test` was still running when this report was written (not read: not counted). Mutation (canary and mutate:changed) and test:flake were NOT run: the Opus read already fails the card. scope.mjs: SCOPE OK (85 files, all inside Paths); it flags one note on faults-catalogue.json (12c42b0 superseded by 1b555ab), read by hand: fine.
-Opus adversarial read (A496, not on the landing form; findings below do not depend on it). Held: guard.ts, guard.test.ts, kinds.ts no diff from 3fe3b47; build commit touched only load.ts, json-keys.ts, checks.ts, money.ts; no spec file edited or test weakened; testworld unit project 4777 pass; reserved and repeated keys at any depth, bad dates, one-unit twin moves, dotted paths and foreign ids refused; RC1 to RC5 hold.
+## Passed
+- typecheck, lint, deps:check clean. Main (train 2b) merged into the branch cleanly, no conflict.
+- `npm test`: unit 171 files, 7958 tests pass; db (PGlite) 14 files, 662 pass, 1 expected fail, 5 skipped.
+- `TEST_DB=pg16 npx vitest run --project db`: 14 files, 667 pass, 1 skipped (the PGlite-only case); "a test database is Postgres 16" passes, not skipped.
+- `TEST_DB=pg16 npm run test:flake`: 5 of 5 ok.
+- Spec files of the spec(W00c) commits: `git diff e1215472 HEAD` over them is empty.
+- scope.mjs: SCOPE OK (85 files, all inside Paths; one note on faults-catalogue.json, superseded by 1b555ab, read by hand: fine).
+- `npm run mutate:canary`: 100, tool works.
+- Opus adversarial read (A496, on HEAD, not on the landing form: the Opus reader's copy with W00c done was refused by auto mode and not retried; no KNOWN or PENDING row names W00c as owner so done status changes no owner check): PASS outside items 1 to 5. RC1 to RC5 hold; guard.ts, guard.test.ts, kinds.ts no diff from 3fe3b47; money.ts row 2, checks.ts row 8, owner rule A467, KNOWN changes A491 all as directed. The R34_PLANTED per-file filter (schema-contract-rules.test.mjs ~2160, 2175) is not worded in a directive; accepted as following from row 4.
 
-## Confirmed failures
-1. RC-C: the loader never checks transaction ids or references against the idRule (folder number, account tag, month). load.ts:391 tests shape only; the walk at load.ts:589-597 tests only that the id exists. C01's 01-CHQ-2025-01-0027 (with its references) renamed to 05-CHQ-..., 01-ZZZ-... and 01-CHQ-2031-07-0099 all load. The spec only asserts today's data agrees (id-walk.acceptance.test.ts:90).
-2. RC-A / A426: accounts[].tag (load.ts:43) is typed, outside any carried block, used nowhere; "ZZ" loads with the same model. The spec's READ list (w00c-r3-walk.ts:151-159) omits it, so the property test never changes it.
-3. RC-A / A426: cra_program_accounts[].account_number, t2Inputs.schedule50[].businessNumber and parties[].kind (company to person) can change and load with the same model.
-4. RC-A: prior_year is declared carried (load.ts:167) but the model holds it raw (load.ts:648). Renaming a key or adding fiscalYer under C11's prior_year loads and the model changes.
-5. Fix 2: about 15 objects at load.ts:96-253 declare carried keys with no comment naming the owning card (trialBalance, schedule50, addBacks, owners, shares, spouse).
+## Failure
+1. Step 7, mutation: `npm run mutate:changed -- W00c -- --incremental --dryRunTimeoutMinutes 45 --concurrency 4` (and again with `--concurrency 1`) stops in Stryker's initial dry run, before any mutant: `W00 determinism (card check 8, first half) ARC-16 the loader reads the sample files in place and leaves them byte-identical: Test timed out in 5000ms` (11 files, 3170 mutants; no mutation.json written). `dryRunTimeoutMinutes` does not help: 5000 ms is the per-test timeout in vitest.mutate.config.ts (default), and the instrumented loader walking 15 folders exceeds it. So the 100 bar on the 11 @mutate files is UNVERIFIED. Same failure the build report saw; CQ9 landing did not fix it.
+   Fix is outside the builder's reach (the test is a spec file, config is not on W00c's Paths): a spec job gives that test (and any like it) an explicit longer timeout, or the Lead sets testTimeout in vitest.mutate.config.ts (CQ9 follow-up). Then re-run mutation.
 
-## Suspicions (unproven)
-Date walk skips object keys (fx.monthly "2025-13", "2025-02-30" load); "2025-2-30T00:00Z" and "2025-02-30 10:00" load; "2025.13" let through as a decimal on purpose.
+## For W00d (A501, RC-C), found by the Opus read
+- testworld/clients/load.ts:395-402 `hasOwnPath` accepts `<array>.length` (e.g. "owners.length") as resolving onboarding evidence, since `Object.hasOwn([], 'length')` is true; a flag or add-back citing a non-existent field loads. Fix: refuse non-index own keys of arrays.
+Rule Candidate: an own-key path walk refuses non-index own keys of arrays, tested with a planted `<array>.length` path. Rule candidate: any test that walks all 15 sample folders sets its own timeout (Stryker's instrumented run is slower than the 5 s default).
 
-## Landing rule
-Failures 1 to 4 fall inside RC-A and RC-C: those classes split to W00d (card A450); the Lead decides. Items 2, 3 need spec READ list additions (spec job), 1 needs an idRule test over the walk.
-
-Rule candidate: a hand-written READ/carried list is compared with the schema's field list in a test (A426), for every typed field.
+Items 1 to 5 of the previous check (reports/W00c-check.md, commit 2302357c) are split to W00d (A501) and were not re-judged.
 
 ## Permission gaps
-None. (The Opus reader's write to /tmp was refused by the protect-spec hook; it reported inline.)
+The Opus reader's landing-form copy (W00c set to done in slices.json) was refused; read on HEAD instead.
 ## Model
 Checker Sonnet 5.5; adversarial read Opus 5.5.
