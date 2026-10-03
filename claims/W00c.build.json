@@ -4,9 +4,9 @@
  "round": 2,
  "spec": "77bbbef0",
  "worker": "cloud-f27e32",
- "state": "hold-findings",
- "at": "2026-10-03T08:59:18.585Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:28:22.936Z",
  "mode": "turbo",
  "beat": "2026-10-03T08:16:28.938Z",
- "note": "FAIL: adversarial read, 6 RC2/RC4 gaps in load.ts (proto key, totals, strictness, dates, id refs), see reports/W00c-check.md"
+ "note": "Round 3, the last: spec at the A467 commit (W00c spec claim); RC-A to RC-C per card; mutation on cloud (CQ9 not landed: run Stryker with a long dry-run timeout as the card says)"
 }
