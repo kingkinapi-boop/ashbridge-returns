@@ -1,8 +1,10 @@
 # CQ2 Queue: released checks re-offered, honest counts
 
+**Lead directive, 3 Oct (A394): spec round for rule 6 only.** The check (reports/CQ2-check.md on claude/CQ2) found rule 6 has no independent tests: the builder wrote `tools/test/claim-needs-lead.test.mjs`. The spec writer owns that file now: read it, rewrite or replace it so rule 6 is tested by its own author (released twice with no new commit, held as needs Lead, shown in `list`, reopened by the Lead), validate it fails on main, report. Then the build reopens to make them pass, then a fresh check. Other rules' tests are unchanged.
+
 Phase 0. Size S. Deps: CQ1. Where: cloud.
 Tags: none (build tooling).
-Paths: tools/claim.mjs, tools/next.mjs, tools/status.mjs, tools/scope.mjs, tools/test/claim.test.mjs, tools/test/scope.test.mjs, tools/test/__fixtures__/claims/**
+Paths: tools/claim.mjs, tools/next.mjs, tools/status.mjs, tools/scope.mjs, tools/test/claim.test.mjs, tools/test/scope.test.mjs, tools/test/claim-needs-lead.test.mjs, tools/test/__fixtures__/claims/**, .claude/skills/merge/SKILL.md
 Clauses: ARC-15
 Read: `plan/cards/CQ1.md` (Follow-up), `.claude/skills/dispatch/SKILL.md`, `.claude/skills/merge/SKILL.md` (Board the train), `plan/NOW.md` (Next, step 2).
 Spec commit: (spec-writer fills)
