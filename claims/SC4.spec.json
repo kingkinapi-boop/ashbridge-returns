@@ -2,8 +2,7 @@
  "card": "SC4",
  "role": "spec",
  "worker": "local-1",
- "state": "released",
- "at": "2026-10-03T03:36:18.212Z",
- "mode": "turbo",
- "note": "core card: needs Opus spec-writer subagent; local worker has no subagent tool (same as B04). Queue re-offers it to local workers at once; do not fire local workers on core specs"
+ "state": "working",
+ "at": "2026-10-03T03:37:19.846Z",
+ "mode": "turbo"
 }
