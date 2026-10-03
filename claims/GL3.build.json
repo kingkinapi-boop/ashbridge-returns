@@ -4,9 +4,9 @@
  "round": 4,
  "spec": "c4a5a4bd",
  "worker": "cloud-dfe211",
- "state": "hold-findings",
- "at": "2026-10-03T19:16:49.087Z",
+ "state": "reopened",
+ "at": "2026-10-03T20:01:15.004Z",
  "mode": "turbo",
  "beat": "2026-10-03T19:08:52.658Z",
- "note": "FAIL: lint error in spec file reach.acceptance.test.ts:56 and mutate gate unmarked db.ts/index.ts/manifest.ts, see reports/GL3-check.md"
+ "note": "A515: add @mutate to index.ts; @mutate plus Stryker disable all with reason to db.ts and manifest.ts; nothing else"
 }
