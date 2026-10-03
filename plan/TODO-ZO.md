@@ -4,10 +4,8 @@ Two parts only (decision 0022): what needs you, and what the Lead is doing. Answ
 
 ## 1. Needs you
 
-Nothing now. (Critic proposals of 3 Oct: you said "critic ok"; the Lead applies them.)
+1. **Turbo, if you want it back today (your choice).** The Reviewer slowed the build to normal at 13:15 UTC: work was outrunning ready cards, and one card kept failing. The four fixes it asked of the Lead are done (14:10 UTC). In normal, nothing new starts before 8 pm Toronto today; work already running finishes. Type `turbo on` to resume now, or do nothing and it restarts at normal pace tonight. The week's allowance is about 69% used and runs out about Sunday morning either way.
 
-## 2. What the Lead is doing now (3 Oct, 13:00 UTC)
+## 2. What the Lead is doing now (3 Oct, 14:10 UTC)
 
-Turbo. 54 cards are on main. A batch of three (job queue fix, test tooling) is being checked in the cloud now; four cloud workers and three on this laptop are building. The AI runner failed its last train on a clock mix-up (its deadline read one clock, its wait another); the fix is small and stays in this round, and a new check runs every test with the date moved forward so this kind of fault is caught everywhere. The test-world fixes most of the build waits on are in their last round. Nothing else needs you.
-
-**Reviewer, 3 Oct 13:15 UTC:** mode lowered from turbo to normal (too few cards ready to build; one test class passed only on one date). Today is past normal's cap, so no new worker starts before 8 pm Toronto. Details in `reviews\REVIEW.md`. Type `turbo on` in the Lead chat once the Lead says its four quick fixes are done; nothing is lost by waiting.
+Normal (Reviewer). 54 cards are on main; a batch of three is being checked in the cloud. The AI runner card is now split: its small clock fix is its last round, and the extra tests go to a new card, so it cannot loop again. Your Critic answer is applied: the screen designs restart with a plan for one design sitting about Tue 6 Oct (the first steps start tonight or when you type `turbo on`). The test-world fixes most of the build waits on are in their last round.
