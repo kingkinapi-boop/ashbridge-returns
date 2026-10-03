@@ -1,12 +1,10 @@
 {
  "card": "DB16",
  "role": "build",
- "round": 6,
+ "round": 7,
  "spec": "d6f3a1b1",
- "worker": "local-3",
- "state": "released",
- "at": "2026-10-03T05:09:28.186Z",
- "mode": "turbo",
- "note": "wait: Opus re-review of spec round 2 (reports/DB16-spec-review-2.md); build opens after GO",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
+ "worker": "cloud-555a8d",
+ "state": "working",
+ "at": "2026-10-03T05:10:01.926Z",
+ "mode": "turbo"
 }
