@@ -1,0 +1,2 @@
+// A core file without the mutation marker in its first five lines (planted, SC R18).
+export const plantedValue = 1

@@ -639,7 +639,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F01D",
@@ -666,7 +666,8 @@
       "title": "Schema and contract rules",
       "phase": 0,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -780,7 +781,12 @@
         "testworld/model/made-up-data.acceptance.test.ts",
         "testworld/model/kinds.ts",
         "testworld/model/__fixtures__/guard/**",
-        "testworld/clients/load.ts"
+        "testworld/clients/load.ts",
+        "testworld/generate.ts",
+        "testworld/model/guard.test.ts",
+        "testworld/clients/made-up-data.acceptance.test.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "SEC-11",
@@ -1996,7 +2002,12 @@
         "src/modules/ai/index.ts",
         "data/ai/approved.json",
         "src/core/env.ts",
+<<<<<<< HEAD
         "src/core/safe-read.ts"
+=======
+        "src/core/safe-read.ts",
+        "src/core/safe-read.test.ts"
+>>>>>>> origin/main
       ],
       "clauses": [
         "ARC-6",
@@ -2428,7 +2439,8 @@
         "src/modules/ledger/core/**",
         "src/modules/ledger/index.ts",
         "src/contracts/ledger.ts",
-        "db/schema/20_ledger.sql"
+        "db/schema/20_ledger.sql",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "EV-1",
@@ -3097,7 +3109,8 @@
         "src/modules/books/index.ts",
         "src/contracts/books.ts",
         "db/schema/30_books.sql",
-        "src/pipeline/steps/books.ts"
+        "src/pipeline/steps/books.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "TB-1",
@@ -6195,7 +6208,12 @@
         "db/schema/60_versions.sql",
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
+<<<<<<< HEAD
         "src/pipeline/deps.ts"
+=======
+        "src/pipeline/deps.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
+>>>>>>> origin/main
       ],
       "clauses": [
         "FLOW-4",
@@ -9937,7 +9955,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ2"
@@ -9955,10 +9973,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX8-findings.md, 3 Oct (A417)."
+      "note": "From reports/FX8-findings.md, 3 Oct (A417).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ3"
@@ -9975,7 +9994,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/CQ3-check.md, 3 Oct (A428)."
+      "note": "From reports/CQ3-check.md, 3 Oct (A428).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10068,9 +10088,7 @@
       ],
       "paths": [
         "testworld/model/checks.ts",
-        "testworld/model/load.ts",
         "testworld/model/faults.ts",
-        "testworld/model/money.ts",
         "testworld/model/schema.ts",
         "testworld/model/__fixtures__/**",
         "testworld/index.ts",
@@ -10091,7 +10109,9 @@
         "testworld/model/guard.test.ts",
         "testworld/model/kinds.ts",
         "testworld/model/checks.test.ts",
-        "testworld/model/faults.test.ts"
+        "testworld/model/faults.test.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "ARC-8",
@@ -10380,7 +10400,7 @@
       "note": "Split from FX7, 3 Oct (A415)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10397,7 +10417,8 @@
       "size": "S",
       "core": false,
       "security": true,
-      "note": "Seen in DB16's spec run, 3 Oct (A421)."
+      "note": "Seen in DB16's spec run, 3 Oct (A421).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10506,7 +10527,7 @@
       "title": "Job queue: complete and fail check the lease holder",
       "phase": 0,
       "size": "S",
-      "core": true,
+      "core": false,
       "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
     },
     {
@@ -10539,7 +10560,8 @@
       ],
       "paths": [
         "db/schema/94_actor_keys.sql",
-        "src/contracts/actors.acceptance.db.test.ts"
+        "src/contracts/actors.acceptance.db.test.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "SEC-1",
@@ -10556,6 +10578,32 @@
     },
     {
       "status": "carded",
+<<<<<<< HEAD
+=======
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/engines.ts",
+        "src/modules/ai/runner/exchange-errors.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-22",
+        "SEC-11",
+        "AI-9"
+      ],
+      "id": "FX18",
+      "title": "AI exchange: errors and waiting files told plainly",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/A04-check.md round 5b lows, 3 Oct (A465)."
+    },
+    {
+      "status": "carded",
+>>>>>>> origin/main
       "spec": "bd0e2fe2",
       "deps": [
         "F02",

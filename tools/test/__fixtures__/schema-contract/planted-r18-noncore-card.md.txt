@@ -1,0 +1,5 @@
+# PLN Planted card that is not core (Test)
+
+Phase 0. Size S.
+Tags: none (layout only).
+Paths: src/contracts/planted-unmarked.ts, src/modules/planted/**

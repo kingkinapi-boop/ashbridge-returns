@@ -1,14 +1,12 @@
 {
-  "status": "checking",
+  "status": "green",
   "branch": "claude/train",
-  "head": "12af2528",
+  "head": "65f59a22",
   "cards": [
-    "SC",
-    "CQ4",
-    "CQ5",
-    "FX10"
+    "DB16"
   ],
-  "requested_at": "2026-10-03T08:46:31Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). CQ4 and CQ5 change scope.mjs, lib.mjs and claim.mjs: run every tools test. SC adds the card rules: run them all; SC's known.json owners must all be open cards. FX10 card check: run the db project 20 times under load (its check ran test:flake 5 times only, A445). SC is core: mutate:changed for SC (cloud).",
-  "by": "cloud-915252"
+  "requested_at": "2026-10-03T11:25:00Z",
+  "note": "Train 26e84345 was red on SC R18 (FX15's runner.ts, SC3's engine.ts: fixed on main by A461; FX15 is off this train for its round 2) and blocked on pg16 and mutation by refused commands. This train is DB16 alone. Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462: start the cluster, set the local password, no pg_hba edit); print select version(); the db project on pg16 5 times. DB16 is core: mutate:changed for DB16. A refused command makes the train blocked, not red.",
+  "by": "cloud-a244c5",
+  "report": "reports/train-20261003-1145.md"
 }
