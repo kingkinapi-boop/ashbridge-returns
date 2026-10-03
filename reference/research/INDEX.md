@@ -4,6 +4,9 @@ Dated research, newest first. Each file marks claims as fact (with a source), in
 
 | Date | File | Question it answers |
 |---|---|---|
+| 3 Oct 2026 | 2026-10-03-critic-progress.md | How complete the build is (cards, clauses, end-state items), plan-use burn and when the week runs out, critical path, projection to the 9 Oct wind-down |
+| 3 Oct 2026 | 2026-10-03-critic-system-since-2050.md | System numbers 2 Oct 20:50Z to 3 Oct 12:40Z: landings, repair versus product, trains, dispatches, W00c, the biggest waste, metrics gaps |
+| 3 Oct 2026 | 2026-10-03-outside-world.md | Claude Code and model news since 2 Oct: nothing that changes the build |
 | 2 Oct 2026 | 2026-10-02c-outside-world.md | Claude Code 2.1.287 and 2.1.288, compaction settings in cloud (only the window variable), no callback from routine runs, model lifecycles; nothing replaces the queue or train |
 | 2 Oct 2026 | 2026-10-02b-token-use-since-0250.md | Token use 2 Oct 02:50Z to 20:32Z (local logs): the Lead is 79% of reads, mostly above 200k; no compaction switched on; helper re-writes small |
 | 2 Oct 2026 | 2026-10-02-token-use.md | Where the tokens went 29 Sep to 2 Oct (local logs), what leaks (big contexts, cache re-writes after long waits, revived helpers), how to repeat the count; no secret leaked |

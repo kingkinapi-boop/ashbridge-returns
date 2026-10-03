@@ -1,0 +1,8 @@
+// Planted (SC R46): a reader that copies the library's display text instead of building it from the typed value.
+import ExcelJS from 'exceljs'
+export function cellText(cell: ExcelJS.Cell): string {
+  return cell.text
+}
+export function cachedText(cell: ExcelJS.Cell): string {
+  return String(cell.value)
+}

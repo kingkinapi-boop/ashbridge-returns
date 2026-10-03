@@ -1,0 +1,4 @@
+// Planted (SC R38): the old ALPHABET loop builds expected bytes through a non-UTF-8 decoder.
+const decoder = new TextDecoder('windows-1252')
+const ALPHABET: string[] = []
+for (let b = 0x20; b <= 0xff; b++) ALPHABET.push(decoder.decode(Uint8Array.of(b)))

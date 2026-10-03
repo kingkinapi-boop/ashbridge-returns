@@ -535,7 +535,8 @@
       "phase": 0,
       "size": "S",
       "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it).",
-      "done": "2026-10-02"
+      "done": "2026-10-02",
+      "core": true
     },
     {
       "status": "done",
@@ -639,7 +640,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F01D",
@@ -666,7 +667,8 @@
       "title": "Schema and contract rules",
       "phase": 0,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -780,7 +782,12 @@
         "testworld/model/made-up-data.acceptance.test.ts",
         "testworld/model/kinds.ts",
         "testworld/model/__fixtures__/guard/**",
-        "testworld/clients/load.ts"
+        "testworld/clients/load.ts",
+        "testworld/generate.ts",
+        "testworld/model/guard.test.ts",
+        "testworld/clients/made-up-data.acceptance.test.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "SEC-11",
@@ -1985,7 +1992,7 @@
     },
     {
       "status": "carded",
-      "spec": "fb82b8c",
+      "spec": "be09e312",
       "deps": [
         "F04",
         "F06",
@@ -1996,7 +2003,8 @@
         "src/modules/ai/index.ts",
         "data/ai/approved.json",
         "src/core/env.ts",
-        "src/core/safe-read.ts"
+        "src/core/safe-read.ts",
+        "src/core/safe-read.test.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -2017,6 +2025,28 @@
       "hard": true,
       "core": true,
       "security": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/runner.acceptance.test.ts",
+        "src/modules/ai/runner/exchange.acceptance.test.ts",
+        "src/modules/ai/runner/runner.ts"
+      ],
+      "clauses": [
+        "AI-9",
+        "ARC-15"
+      ],
+      "id": "A04C",
+      "title": "AI runner: one clock, pinned as a class",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Split from A04 (A477, Review 3 Oct finding 2)."
     },
     {
       "status": "done",
@@ -3559,6 +3589,35 @@
       },
       "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
       "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15",
+        "G16",
+        "G17"
+      ],
+      "paths": [
+        "data/question-bank/coverage.json",
+        "data/question-bank/*.json",
+        "src/modules/gaps/bank/coverage.acceptance.test.ts"
+      ],
+      "clauses": [
+        "END-7",
+        "RULE-19"
+      ],
+      "id": "G18",
+      "title": "Question banks: every sample flag mapped",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Review 3 Oct finding 7 (A478)."
     },
     {
       "status": "carded",
@@ -5442,7 +5501,6 @@
       "deps": [
         "V05",
         "B00",
-        "D06",
         "U02"
       ],
       "paths": [
@@ -6197,7 +6255,8 @@
         "db/schema/60_versions.sql",
         "src/pipeline/steps/approval-watch.ts",
         "src/pipeline/handlers.ts",
-        "src/pipeline/deps.ts"
+        "src/pipeline/deps.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "FLOW-4",
@@ -9299,7 +9358,7 @@
       "screens": true,
       "hard": false,
       "security": true,
-      "core": true
+      "core": false
     },
     {
       "status": "carded",
@@ -9939,7 +9998,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ2"
@@ -9957,10 +10016,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX8-findings.md, 3 Oct (A417)."
+      "note": "From reports/FX8-findings.md, 3 Oct (A417).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ3"
@@ -9977,7 +10037,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/CQ3-check.md, 3 Oct (A428)."
+      "note": "From reports/CQ3-check.md, 3 Oct (A428).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10065,14 +10126,80 @@
     {
       "status": "carded",
       "spec": null,
+      "deps": [],
+      "paths": [
+        "package.json",
+        "tools/flake-shifted.mjs",
+        "tools/test/flake-shifted.test.mjs",
+        "tools/test/__fixtures__/flake-shifted/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ10",
+      "title": "Flake run with the date shifted",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/A04-findings-6.md, 3 Oct (A469)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "CQ8"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/metrics.mjs",
+        "tools/test/claim-wait-check.test.mjs",
+        "tools/test/metrics-counts.test.mjs",
+        "tools/next.mjs",
+        "tools/lib.mjs",
+        "tools/test/next-paths.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ11",
+      "title": "Queue: no re-offered checks after a wait, honest card counts",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "vitest.config.ts",
+        "src/core/test-assertions.ts",
+        "src/core/test-assertions.acceptance.test.ts",
+        "src/modules/gaps/bank/expenses.acceptance.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts",
+        "src/contracts/jobs.acceptance.test.ts",
+        "src/modules/bridge/**/*.test.ts"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ12",
+      "title": "Assertion floor: no test passes without asserting",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Review 3 Oct finding 7 (A478)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
       "deps": [
         "DG2"
       ],
       "paths": [
         "testworld/model/checks.ts",
-        "testworld/model/load.ts",
         "testworld/model/faults.ts",
-        "testworld/model/money.ts",
         "testworld/model/schema.ts",
         "testworld/model/__fixtures__/**",
         "testworld/index.ts",
@@ -10093,7 +10220,9 @@
         "testworld/model/guard.test.ts",
         "testworld/model/kinds.ts",
         "testworld/model/checks.test.ts",
-        "testworld/model/faults.test.ts"
+        "testworld/model/faults.test.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
       ],
       "clauses": [
         "ARC-8",
@@ -10155,7 +10284,7 @@
       "title": "Security rules R62 to R66",
       "phase": 0,
       "size": "M",
-      "core": true,
+      "core": false,
       "security": true,
       "note": "From reports/A06-findings.md, 2 Oct."
     },
@@ -10382,7 +10511,7 @@
       "note": "Split from FX7, 3 Oct (A415)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10399,7 +10528,8 @@
       "size": "S",
       "core": false,
       "security": true,
-      "note": "Seen in DB16's spec run, 3 Oct (A421)."
+      "note": "Seen in DB16's spec run, 3 Oct (A421).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10508,7 +10638,7 @@
       "title": "Job queue: complete and fail check the lease holder",
       "phase": 0,
       "size": "S",
-      "core": true,
+      "core": false,
       "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
     },
     {
@@ -10556,6 +10686,31 @@
       "core": true,
       "security": true,
       "note": "From reports/SC3-findings.md, 3 Oct (A452). Schema file number 94: N19 holds 93."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/engines.ts",
+        "src/modules/ai/runner/runner.ts",
+        "src/core/safe-read.ts",
+        "src/modules/ai/runner/exchange-errors.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-22",
+        "SEC-11",
+        "AI-9"
+      ],
+      "id": "FX18",
+      "title": "AI exchange: errors and waiting files told plainly",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/A04-check.md round 5b lows, 3 Oct (A465)."
     },
     {
       "status": "carded",
@@ -10745,6 +10900,7 @@
       ],
       "paths": [
         "src/core/db/rules.acceptance.db.test.ts",
+        "src/core/db/__fixtures__/grants/**",
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",
@@ -10822,7 +10978,7 @@
       "note": "From reports/SC-build.md, 2 Oct. Lands before the first phase 4 build: its db/schema/** hold overlaps every phase 4 schema file (77, 78, 79, 81, 82, 83, 91, 92, 99) (phase 4 card review C4, A447)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": "d69ac553",
       "deps": [
         "A06"
@@ -10849,7 +11005,8 @@
       "size": "S",
       "core": false,
       "security": true,
-      "note": "From the train report of 3 Oct (A405)."
+      "note": "From the train report of 3 Oct (A405).",
+      "done": "2026-10-03"
     }
   ]
 }
