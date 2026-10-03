@@ -4,8 +4,11 @@
  "round": 2,
  "spec": "6c428ac4",
  "worker": "cloud-a113b9",
- "state": "reported",
- "at": "2026-10-03T06:22:44.412Z",
+ "state": "released",
+ "at": "2026-10-03T07:54:51.317Z",
  "mode": "turbo",
- "note": "541 verify passes on claude/W16-r2; scope.mjs reads retired claude/W16, see reports/W16-build.md"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "e4ba504d3e0d666389dc4bb728cdeee90b5a5c66"
+ }
 }
