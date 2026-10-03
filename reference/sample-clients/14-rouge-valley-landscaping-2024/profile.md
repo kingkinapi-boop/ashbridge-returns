@@ -33,7 +33,7 @@ Opening and closing are what the statements show (for a card, the amount owing).
 - **late-filing exposure** (14-F05, a person decides): Neither the T2 nor the annual HST return is filed for 2024 or 2025: CRA late-filing penalty and interest may apply. No penalty is in the books (no row says CRA or penalty); a person estimates the exposure and tells the client.
 - **non-capital loss for 2024** (14-F06, a person decides): The 2024 year ends in a loss: $6,108.05 per books, a non-capital loss of $7,838.05 for tax after the book amortization add-back and the CCA claimed. It is carried to 2025 (folder 15), which applies it against that year's income.
 - **CCA additions: mower in class 8 and trailer in class 10** (14-F07): A zero-turn mower of $14,200.00 plus HST ($16,046.00) on 12 Apr 2024 (class 8) and a trailer of $6,800.00 plus HST ($7,684.00) on 26 Apr 2024 (class 10), both from chequing. HST is claimed, so capital cost is before HST. CCA is claimed in full (class 8 at 20%, class 10 at 30%, the accelerated investment incentive factor 1.0 for 2024).
-- **shareholder loan from the owner** (14-F08, a person decides): Declan Murphy lent the company $25,000.00 on 10 Apr 2024 (account 2080). No interest, no written terms. A person confirms the terms and whether the loan is current or long term. It is still owed at year end and carries into 2025.
+- **shareholder loan from the owner** (14-F08, a person decides): Declan Murphy (Test) lent the company $25,000.00 on 10 Apr 2024 (account 2080). No interest, no written terms. A person confirms the terms and whether the loan is current or long term. It is still owed at year end and carries into 2025.
 
 ## Statement balances by month (from the statements, not from the export)
 

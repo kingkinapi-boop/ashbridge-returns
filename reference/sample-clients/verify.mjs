@@ -623,6 +623,12 @@ for (const num of specNums) {
   const t2 = key.t2Inputs;
   K(num, 'T2 inputs present: Schedule 1, 8, 50, 3, 4, slips', t2.schedule1 && t2.schedule8 && t2.schedule50?.length >= 1 && t2.schedule3 && t2.schedule4 && t2.slips && t2.schedule50.every((h) => h.sin || h.businessNumber));
   K(num, 'profile.md and onboarding.json carry the planted issues, services, owners and prior-year balances', profile.includes('## Planted issues') && profile.includes(spec.name) && onb.services?.length && onb.owners?.length && (answersOnly ? onb.answers?.length : onb.prior_year_closing_balances) && onb.client_notes?.length);
+  // SEC-11: a person the folder declares is never named in any text of the folder without "(Test)" or "TEST" right after the name (FX8)
+  const declared = new Set(); const addP = (n) => { const m = typeof n === 'string' ? /^(.+?) \(Test\)$/.exec(n.trim()) : null; if (m && m[1].length >= 5) declared.add(m[1]); };
+  for (const p of key.parties ?? []) if (p?.kind === 'person') addP(p.name);
+  for (const o of onb.owners ?? []) if (o?.holder_kind === 'person' || o?.holder_kind === undefined) addP(o?.name);
+  const bareHits = []; for (const f of files.filter((x) => /\.(json|md|csv|txt|ofx|qbo|iif|tsv)$/i.test(x))) read(f).split(/\r?\n/).forEach((ln, i) => { for (const n of declared) if (new RegExp(n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?! \\(Test\\)| TEST\\b)', 'i').test(ln)) bareHits.push(`${path.relative(dir, f)}:${i + 1} ${n}`); });
+  K(num, 'SEC-11 every declared person is named with (Test) or TEST in every text of the folder', bareHits.length === 0, first(bareHits));
   CLIENT_CHECKS[num]?.({ num, spec, dir, files, key, onb, profile, accts, keys, rollBad, planted, nameBad, proseBad, rawBad, descBad, jsonText, nines });
   } catch (e) { K(num, 'checks ran to the end without an error', false, e.message.split('\n')[0]); }
 }

@@ -224,7 +224,7 @@ export function build14() {
   c.flag({ rule: 'CCA additions: mower in class 8 and trailer in class 10', severity: 'info', tx: [mower, trailer], aje: [am],
     detail: 'A zero-turn mower of $14,200.00 plus HST ($16,046.00) on 12 Apr 2024 (class 8) and a trailer of $6,800.00 plus HST ($7,684.00) on 26 Apr 2024 (class 10), both from chequing. HST is claimed, so capital cost is before HST. CCA is claimed in full (class 8 at 20%, class 10 at 30%, the accelerated investment incentive factor 1.0 for 2024).' });
   c.flag({ rule: 'shareholder loan from the owner', severity: 'must fire', judgement: true, tx: [loan], onb: ['owners'],
-    detail: 'Declan Murphy lent the company $25,000.00 on 10 Apr 2024 (account 2080). No interest, no written terms. A person confirms the terms and whether the loan is current or long term. It is still owed at year end and carries into 2025.' });
+    detail: 'Declan Murphy (Test) lent the company $25,000.00 on 10 Apr 2024 (account 2080). No interest, no written terms. A person confirms the terms and whether the loan is current or long term. It is still owed at year end and carries into 2025.' });
 
   c.who = 'Declan Murphy (Test) owns Rouge Valley Landscaping Inc. (Test), a seasonal residential and commercial landscaping business (April to November). The firm was asked to prepare two years at once: this is the first, 2024. Nothing has been filed for 2024 or 2025. In April he lent the company money and bought a mower and a trailer; the year ends in a loss.';
   c.planted = [

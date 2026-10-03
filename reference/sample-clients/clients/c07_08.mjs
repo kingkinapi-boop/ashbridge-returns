@@ -51,7 +51,7 @@ export function build07() {
   c.flag({ rule: 'prepaid insurance', tx: [ins], aje: pre.ids, onb: ['prior_year_closing_balances'],
     detail: 'The $2,160.00 premium paid 1 Oct 2025 covers twelve months; nine are after year end, so $1,620.00 is a prepaid asset. The $1,620.00 prepaid brought forward is released to expense.' });
   c.flag({ rule: 'owner lent the company money', tx: [loanIn, roof], onb: ['client_notes'],
-    detail: 'Grace Liu lent $15,000.00 on 18 Aug 2025, two days before the roof was paid. Due to shareholder (2080), no interest, no written terms. A person confirms terms and whether the loan is current or long term.' });
+    detail: 'Grace Liu (Test) lent $15,000.00 on 18 Aug 2025, two days before the roof was paid. Due to shareholder (2080), no interest, no written terms. A person confirms terms and whether the loan is current or long term.' });
   c.flag({ rule: 'rent arrears at year end', judgement: true, tx: [halfOct], aje: [ajeRent], onb: ['tenants'],
     detail: 'Unit 2 missed October, paid half in November and left at year end owing $975.00. Booked as rent receivable; whether it can be collected, reserved or written off is a person\'s decision.' });
   c.flag({ rule: 'mortgage payments: interest and principal', tx: mortTx.slice(0, 3), onb: ['mortgage'],

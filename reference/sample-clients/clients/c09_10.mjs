@@ -55,7 +55,7 @@ export function build09() {
     detail: 'Incorporated 15 Apr 2025; the first year runs 15 Apr to 31 Dec 2025, 261 days. The business limit is prorated by days over 365: $500,000.00 x 261/365 = $357,534.25 (Taxprep computes). Amortization, CCA and the small business limit use the short year.' });
   c.flag({ rule: 'loss year: non-capital loss', detail: (fin) => `Net loss per books before tax ${money(fin.netIncome)}. Schedule 4 carries the taxable loss (after Schedule 1 add-backs and CCA, computed by Taxprep) forward; the grant and research costs below can change it.` });
   c.flag({ rule: 'two shareholders lending money', tx: [loanW, loanO], onb: ['shareholder_loans'],
-    detail: 'Wei Zhang lent $40,000.00 on 22 Apr and Olu Adeyemi $15,000.00 on 5 May 2025. Due to shareholders (2080); no interest, no written terms in the file. A person confirms terms and whether the loans are current or long term.' });
+    detail: 'Wei Zhang (Test) lent $40,000.00 on 22 Apr and Olu Adeyemi (Test) $15,000.00 on 5 May 2025. Due to shareholders (2080); no interest, no written terms in the file. A person confirms terms and whether the loans are current or long term.' });
   c.flag({ rule: 'grant: treatment needs a person', judgement: true, tx: [grant], onb: ['grant'],
     detail: 'Ontario Innovation Voucher (Test) paid $25,000.00 on 10 Sep 2025. It may be income, a reduction of the costs it funded or a reduction of the research expenditure pool. Held in suspense (1390); a person decides. Nothing is decided here.' });
   c.flag({ rule: 'HST registration part-way through the year', judgement: true, tx: [printer], onb: ['corporation'],
