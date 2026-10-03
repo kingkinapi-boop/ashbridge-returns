@@ -4,8 +4,11 @@
  "round": 1,
  "spec": "8e11109b",
  "worker": "cloud-adefa2",
- "state": "reported",
- "at": "2026-10-03T06:23:11.172Z",
+ "state": "released",
+ "at": "2026-10-03T07:54:44.726Z",
  "mode": "turbo",
- "note": "59 of 59 claim tests, full suite green"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "2f20c9fe48d1651c7cb6c60606c2212f7157fcfc"
+ }
 }
