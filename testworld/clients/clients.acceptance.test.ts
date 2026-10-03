@@ -302,8 +302,13 @@ describe('W00 the roll check (card check 4)', () => {
     // The same row leaves the bank export, the QBO export and the answer key.
     editText(root, 'C04', must(chq.file, 'C04 chequing file'), dropLine(must(v.line, 'victim line')));
     editText(root, 'C04', must(chq.qboFile, 'C04 chequing QBO file'), dropLine(must(v.qboLine, 'victim QBO line')));
+    // W00c round 3 (reports/W00c-findings-3.md fix 3, A450): rowsInExport is a twin of the account's rows, so it
+    // drops with the row and only the roll can speak.
     editKey(root, 'C04', (j) => {
       j.transactions = j.transactions.filter((t) => t.id !== v.id);
+      const a = j.accounts.find((x) => x.key === 'CHQ') as { rowsInExport?: number } | undefined;
+      if (a?.rowsInExport === undefined) throw new Error('fixture: C04 CHQ has no rowsInExport');
+      a.rowsInExport -= 1;
     });
     const issues = await refusal('C04', root);
     expect(issues).toEqual(expect.arrayContaining([issue('roll', 'C04', 'CHQ', '2025-03')]));
@@ -520,16 +525,20 @@ describe('W00 round 2: money is read from the text, never through a float (findi
       const model = must(j.adjustingEntries[0], 'C01 first adjusting entry');
       for (const id of Object.keys(big)) {
         const marker = `__${id}__` as unknown as number;
-        // A copy of the first entry (its date, amount and sources) with two lines on the chequing account.
-        j.adjustingEntries.push({
-          ...model,
-          id,
-          reason: 'planted (Test): a large entry that nets to zero on one account',
-          lines: [
-            { account: '1010', gifi: 1002, debit: marker, credit: 0 },
-            { account: '1010', gifi: 1002, debit: 0, credit: marker },
-          ],
-        });
+        // A copy of the first entry (its date and sources) with two lines on the chequing account. W00c round 3
+        // (reports/W00c-findings-3.md fix 3, A450): an entry's amount is a twin of its debits, so it carries the same
+        // 16-digit value.
+        j.adjustingEntries.push(
+          Object.assign(structuredClone(model), {
+            id,
+            amount: marker,
+            reason: 'planted (Test): a large entry that nets to zero on one account',
+            lines: [
+              { account: '1010', gifi: 1002, debit: marker, credit: 0 },
+              { account: '1010', gifi: 1002, debit: 0, credit: marker },
+            ],
+          }),
+        );
       }
     });
     editText(root, 'C01', 'answer-key.json', (t) =>

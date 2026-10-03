@@ -38,10 +38,37 @@ const firstYear = (c: WalkClient): boolean => corporation(c)['incorporation_date
 /** The unadjusted rows with every amount set to zero: a trial balance that ties to empty books. */
 const zeroRows = (k: RawKey): TbRow[] => full(k).trialBalance.unadjusted.rows.map((r) => ({ ...structuredClone(r), debit: 0, credit: 0 }))
 
-/** No postings and no adjusting entries, so every trial balance ties to its opening alone. */
+/**
+ * A trial balance of these rows with every written key kept: rows whose amounts are all zero (or no rows) total zero.
+ * W00c round 3 (reports/W00c-findings-3.md fixes 2 and 3, A450): the trial balances are read strictly and their totals
+ * are twins of their rows, so a plant keeps basis, netIncomeLossBeforeTax and the totals instead of dropping them.
+ */
+const tbOf = (rows: TbRow[]): { rows: TbRow[]; totalDebit: number; totalCredit: number } => ({ rows, totalDebit: 0, totalCredit: 0 })
+function setTrialBalances(k: RawKey, opening: TbRow[], unadjusted: TbRow[], adjusted: TbRow[]): void {
+  const tb = full(k).trialBalance
+  tb.opening = tbOf(opening)
+  tb.unadjusted = tbOf(unadjusted)
+  tb.adjusted = tbOf(adjusted)
+}
+
+/**
+ * No postings and no adjusting entries, so every trial balance ties to its opening alone. W00c round 3
+ * (reports/W00c-findings-3.md fix 5, A450): every adjusting-entry id must resolve, so each list that names one of the
+ * removed entries (flags evidence, Schedule 1 add-back sources) loses that id too.
+ */
 function noPostings(k: RawKey): void {
   for (const t of k.transactions) Reflect.deleteProperty(t, 'post')
+  const gone = new Set(k.adjustingEntries.map((j) => j.id))
   k.adjustingEntries = []
+  const drop = (v: unknown): void => {
+    if (Array.isArray(v)) {
+      for (let i = v.length - 1; i >= 0; i--) {
+        if (typeof v[i] === 'string' && gone.has(v[i] as string)) v.splice(i, 1)
+        else drop(v[i])
+      }
+    } else if (v !== null && typeof v === 'object') for (const x of Object.values(v)) drop(x)
+  }
+  drop(k)
 }
 
 /** The catalogue with this client's roll waivers and marker entries taken off (they would name rows that are gone). */
@@ -80,7 +107,7 @@ describe("W00c RC2 no accounts only where the catalogue declares it ('empty: acc
         k.transactions = []
         k.statementBalances = {}
         k.adjustingEntries = []
-        full(k).trialBalance = { opening: { rows: zero }, unadjusted: { rows: structuredClone(zero) }, adjusted: { rows: structuredClone(zero) } }
+        setTrialBalances(k, zero, structuredClone(zero), structuredClone(zero))
       })
       expectNamed(await refusal(sb, c.id, catalogueWithoutRowFaults(c.id)), undefined, ['accounts'])
     },
@@ -108,9 +135,7 @@ describe('W00c RC2 the unadjusted and adjusted trial balances need a row (every 
       noPostings(k)
       const tb = full(k).trialBalance
       const zero = zeroRows(k)
-      tb.opening = { rows: tb.opening.rows.length === 0 ? [] : tb.opening.rows.map((r) => ({ ...r, debit: 0, credit: 0 })) }
-      tb.unadjusted = { rows: name === 'unadjusted' ? [] : zero }
-      tb.adjusted = { rows: name === 'adjusted' ? [] : structuredClone(zero) }
+      setTrialBalances(k, tb.opening.rows.map((r) => ({ ...r, debit: 0, credit: 0 })), name === 'unadjusted' ? [] : zero, name === 'adjusted' ? [] : structuredClone(zero))
     })
     // "adjusted" must be named as itself, not only inside "unadjusted".
     const issues = await refusal(sb, c.id)
@@ -124,7 +149,7 @@ describe('W00c RC2 the opening trial balance is empty only in a first year (inco
   const emptyOpening = (k: RawKey): void => {
     noPostings(k)
     const zero = zeroRows(k)
-    full(k).trialBalance = { opening: { rows: [] }, unadjusted: { rows: zero }, adjusted: { rows: structuredClone(zero) } }
+    setTrialBalances(k, [], zero, structuredClone(zero))
   }
 
   test.each(byId(clients.filter((c) => !firstYear(c))))('TB-3 %s (incorporated before its fiscal year) with its opening trial balance emptied is refused, naming opening', async (_l, c) => {

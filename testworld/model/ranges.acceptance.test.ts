@@ -65,6 +65,24 @@ function issuesOf(c: WalkClient, cat?: CatalogueEntry[]): Issue[] {
     throw e
   }
 }
+// W00c round 3 (reports/W00c-findings-3.md fix 3, A450): fiscalYear.days is a twin of start and end, and each
+// account's rowsInExport is a twin of its rows. A plant that moves the year end keeps days in step, and a plant that
+// adds rows to an account raises its rowsInExport, so each test still fails or passes for its own rule.
+const yearDays = (start: string, end: string): number => Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000) + 1
+type DaysYear = { start: string; end: string; days?: number }
+function moveEnd(k: { fiscalYear: DaysYear }, end: string): void {
+  k.fiscalYear.end = end
+  k.fiscalYear.days = yearDays(k.fiscalYear.start, end)
+}
+function moveStart(k: { fiscalYear: DaysYear }, start: string): void {
+  k.fiscalYear.start = start
+  k.fiscalYear.days = yearDays(start, k.fiscalYear.end)
+}
+function addRowsIn(k: { accounts: { key: string }[] }, acct: string, n: number): void {
+  const a = k.accounts.find((x) => x.key === acct) as { key: string; rowsInExport?: number } | undefined
+  if (a?.rowsInExport === undefined) throw new Error(`fixture: no rowsInExport on account ${acct}`)
+  a.rowsInExport += n
+}
 const fiscalYearIssue = (i: Issue): boolean => i.check === 'schema' && /fiscalYear|yearStart|yearEnd/.test(i.record)
 
 /** The onboarding twin fields, as [label, path] with the last key the field's own name. */
@@ -116,7 +134,8 @@ describe('W00c RC3 the fiscal year is ordered and at most 53 weeks (every folder
   test.each(byId(clients))("ARC-8 %s with fiscal year start and end swapped (onboarding twins swapped to match) is refused with a 'schema' issue naming the fiscal year", (_l, c) => {
     const { start, end } = c.key.fiscalYear
     sb.editKey(c, (k) => {
-      k.fiscalYear = { start: end, end: start }
+      // days kept as written (a swapped year has no day count of its own); W00c round 3 reads fiscalYear strictly.
+      k.fiscalYear = { ...k.fiscalYear, start: end, end: start }
     })
     sb.editOnboarding(c, (o) => {
       setTwin(o, 'fiscal_year_start', end)
@@ -130,7 +149,7 @@ describe('W00c RC3 the fiscal year is ordered and at most 53 weeks (every folder
   test.each(byId(clients))("ARC-8 %s with a 372-day fiscal year (end moved, financial_year_end to match) is refused with a 'schema' issue naming the fiscal year", (_l, c) => {
     const end = addDays(c.key.fiscalYear.start, 371)
     sb.editKey(c, (k) => {
-      k.fiscalYear.end = end
+      moveEnd(k, end)
     })
     sb.editOnboarding(c, (o) => {
       setTwin(o, 'financial_year_end', end)
@@ -142,7 +161,7 @@ describe('W00c RC3 the fiscal year is ordered and at most 53 weeks (every folder
   test.each(byId(clients))('ARC-8 %s with a 371-day fiscal year (53 weeks, end moved, financial_year_end to match) raises no fiscal-year issue (other checks may still speak)', (_l, c) => {
     const end = addDays(c.key.fiscalYear.start, 370)
     sb.editKey(c, (k) => {
-      k.fiscalYear.end = end
+      moveEnd(k, end)
     })
     sb.editOnboarding(c, (o) => {
       setTwin(o, 'financial_year_end', end)
@@ -207,6 +226,7 @@ describe('W00c RC3 unmarked rows and adjusting entries are dated inside the fisc
       plant: (date) => {
         sb.editKey(c, (k) => {
           k.transactions.push(plantRow(src, id, { date, amount: 0 }))
+          addRowsIn(k, src.acct, 1)
         })
       },
     }
@@ -231,7 +251,7 @@ describe('W00c RC3 unmarked rows and adjusting entries are dated inside the fisc
     const start = c.key.fiscalYear.start
     const newStart = addDays(start, 1)
     sb.editKey(c, (k) => {
-      k.fiscalYear.start = newStart
+      moveStart(k, newStart)
     })
     sb.editOnboarding(c, (o) => {
       setTwin(o, 'fiscal_year_start', newStart)
@@ -246,7 +266,7 @@ describe('W00c RC3 unmarked rows and adjusting entries are dated inside the fisc
     const end = c.key.fiscalYear.end
     const newEnd = addDays(end, -1)
     sb.editKey(c, (k) => {
-      k.fiscalYear.end = newEnd
+      moveEnd(k, newEnd)
     })
     sb.editOnboarding(c, (o) => {
       setTwin(o, 'financial_year_end', newEnd)
@@ -262,6 +282,7 @@ describe('W00c RC3 unmarked rows and adjusting entries are dated inside the fisc
     sb.editKey(c, (k) => {
       k.transactions.push(plantRow(src, `${src.id}-START-(Test)`, { date: c.key.fiscalYear.start, amount: 0 }))
       k.transactions.push(plantRow(src, `${src.id}-END-(Test)`, { date: c.key.fiscalYear.end, amount: 0 }))
+      addRowsIn(k, src.acct, 2)
     })
     await expectLoads(sb, c.id)
   })
@@ -337,7 +358,10 @@ describe('W00c RC3 February 29 is a date only in a leap year (spec review 3, gap
     const entry = full(c.key).adjustingEntries.length > 0
     if (src === undefined && !entry) throw new Error(`fixture: ${c.id} has neither an unmarked row nor an adjusting entry`)
     sb.editKey(c, (k) => {
-      if (src !== undefined) k.transactions.push(plantRow(src, `${src.id}-FEB29-(Test)`, { date, amount: 0 }))
+      if (src !== undefined) {
+        k.transactions.push(plantRow(src, `${src.id}-FEB29-(Test)`, { date, amount: 0 }))
+        addRowsIn(k, src.acct, 1)
+      }
       const j = full(k).adjustingEntries[0]
       if (j !== undefined) j.date = date
     })

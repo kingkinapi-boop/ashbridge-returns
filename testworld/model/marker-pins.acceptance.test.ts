@@ -247,14 +247,20 @@ describe('W00c RC1 a marked row is pinned row by row in the answer key (every li
     expectNamed(await refusal(sb, r.c.id), 'fault-catalogue', [r.t.id])
   })
 
+  // W00c round 3 (reports/W00c-findings-3.md fix 2, A450): every described object is read strictly, so the misspelled
+  // field is refused first as a 'schema' issue naming the row's path and the unknown key (it was a 'fault-catalogue'
+  // issue naming the row id while unknown keys were dropped).
   test.each(rowCases)('ARC-8 %s: the marker field misspelled in lower case on the listed row is refused, naming the row', async (_l, r) => {
+    const typo = FIELD_TYPO[r.field] ?? 'x'
+    const index = r.c.key.transactions.findIndex((t) => t.id === r.t.id)
+    expect(index).toBeGreaterThanOrEqual(0)
     sb.editKey(r.c, (k) => {
       const t = txIn(k, r.t.id)
       const value = t[r.field]
       Reflect.deleteProperty(t, r.field)
-      t[FIELD_TYPO[r.field] ?? 'x'] = value
+      t[typo] = value
     })
-    expectNamed(await refusal(sb, r.c.id), 'fault-catalogue', [r.t.id])
+    expectNamed(await refusal(sb, r.c.id), 'schema', [`answer-key.json transactions.${String(index)}`, typo])
   })
 
   test('ARC-13 property (fast-check, seed 20261003): any listed row of any client moved by any non-zero number of cents is refused, naming the row', async () => {

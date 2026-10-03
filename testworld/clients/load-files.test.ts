@@ -118,10 +118,9 @@ describe('ARC-8 W00a adjusting entry sources', () => {
     expect(withSource('corporation')).toEqual([])
   })
   it('a note not at the end does not resolve; the whole text is the key', () => {
-    editJson('onboarding.json', (j) => {
-      j['corporationy'] = 1
-    })
-    for (const s of ['corporation (x) (y)', 'corporation(x)y']) {
+    // W00c round 3 (reports/W00c-findings-3.md fix 2, A450): onboarding.json is read strictly, so no key is added;
+    // "serv(x)ices" would be the existing key "services" if the note were cut out of the middle.
+    for (const s of ['corporation (x) (y)', 'serv(x)ices']) {
       expect(withSource(s), s).toEqual([issue('adjusting-entry', firstEntry(), `its source "${s}" is not in onboarding.json`)])
     }
   })

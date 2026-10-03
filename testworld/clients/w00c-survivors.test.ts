@@ -78,13 +78,16 @@ describe('ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding sou
   ])('%j is refused', (source) => {
     expect(use(source).map((i) => i.reason)).toEqual([`its source "${source}" is not in onboarding.json`])
   })
+  // W00c round 3 (reports/W00c-findings-3.md fix 2, A450): onboarding.json is read strictly, so these use keys every
+  // folder already writes at the top level (note, is_test) instead of adding new ones.
   it('a qualifier on a key whose value is null is refused, not a crash', () => {
-    const source = 'nothing_here (1200 Prepaid expenses)'
-    expect(use(source, (j) => (j['nothing_here'] = null)).map((i) => i.reason)).toEqual([`its source "${source}" is not in onboarding.json`])
+    const source = 'note (1200 Prepaid expenses)'
+    expect(use(source, (j) => (j['note'] = null)).map((i) => i.reason)).toEqual([`its source "${source}" is not in onboarding.json`])
   })
-  it('a qualifier on a key whose value is plain text or a number is refused', () => {
-    expect(use('t (1200 Prepaid expenses)', (j) => (j['t'] = 'text')).map((i) => i.reason)).toHaveLength(1)
-    expect(use('n (1200 Prepaid expenses)', (j) => (j['n'] = 7)).map((i) => i.reason)).toHaveLength(1)
+  it('a qualifier on a key whose value is plain text, a number or a boolean is refused', () => {
+    expect(use('note (1200 Prepaid expenses)').map((i) => i.reason)).toHaveLength(1)
+    expect(use('note (1200 Prepaid expenses)', (j) => (j['note'] = 7)).map((i) => i.reason)).toHaveLength(1)
+    expect(use('is_test (1200 Prepaid expenses)').map((i) => i.reason)).toHaveLength(1)
   })
 })
 

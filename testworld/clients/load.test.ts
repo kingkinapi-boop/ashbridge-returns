@@ -113,9 +113,11 @@ describe('ARC-13 money fields read as cents from their text', () => {
       { month: '2025-01', ratio: 1e3 },
       { acct: 'x', date: 'y', ratio: 1e3 },
     ]
-    // The text is written by hand so the numbers keep their written form (1e3 stays 1e3 in the file).
-    const text = `  "decoys": [${decoys.map((d) => JSON.stringify(d).replace(/1000/g, '1e3')).join(', ')}],\n`
-    editText(root, 'C10', 'answer-key.json', (t) => t.replace('{\n', `{\n${text}`))
+    // The text is written by hand so the numbers keep their written form (1e3 stays 1e3 in the file). W00c round 3
+    // (fix 2, A450): the decoys sit inside "hst", a block the loader carries unread, since an undeclared top-level key
+    // is now refused.
+    const text = `    "decoys": [${decoys.map((d) => JSON.stringify(d).replace(/1000/g, '1e3')).join(', ')}],\n`
+    editText(root, 'C10', 'answer-key.json', (t) => t.replace('  "hst": {\n', `  "hst": {\n${text}`))
     expect(readFileSync(join(clientDir(root, 'C10'), 'answer-key.json'), 'utf8')).toContain('"amount":1e3')
     expect(loadClient('C10', { root }).id).toBe('C10')
   })
@@ -219,14 +221,16 @@ describe('ARC-8 schema refusals', () => {
 })
 
 describe('ARC-8 the loaded model, field by field', () => {
-  it('ARC-8 each account row count is its CSV lines without the header and blank lines', () => {
+  // W00c round 3 (reports/W00c-findings-3.md fix 3, A450): exportRows is the written rowsInExport (a layout B or C
+  // export has more or fewer CSV lines than transactions); qboRows stays the QBO CSV's lines.
+  it('ARC-8 each account exportRows is its written rowsInExport, and qboRows is its QBO CSV lines without the header and blank lines', () => {
     for (const id of CLIENT_IDS) {
       const raw = JSON.parse(readFileSync(join(clientDir(SAMPLE_ROOT, id), 'answer-key.json'), 'utf8')) as {
-        accounts: { key: string; file: string; qboFile: string }[]
+        accounts: { key: string; qboFile: string; rowsInExport: number }[]
       }
       const count = (f: string): number => readFileSync(join(clientDir(SAMPLE_ROOT, id), f), 'utf8').split('\n').filter((l) => l.trim() !== '').length - 1
       const client = loadClient(id)
-      expect(client.accounts.map((a) => [a.key, a.exportRows, a.qboRows])).toEqual(raw.accounts.map((a) => [a.key, count(a.file), count(a.qboFile)]))
+      expect(client.accounts.map((a) => [a.key, a.exportRows, a.qboRows])).toEqual(raw.accounts.map((a) => [a.key, a.rowsInExport, count(a.qboFile)]))
     }
   })
 
