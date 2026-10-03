@@ -1,11 +1,10 @@
 {
  "card": "A04",
  "role": "build",
- "round": 11,
- "spec": "fb82b8c",
- "worker": "cloud-91d3cf",
- "state": "reopened",
- "at": "2026-10-03T13:28:27.255Z",
- "mode": "turbo",
- "note": "A477: round 5c, the last: runner.ts:166 passes only the job id; default now from core/clock; spec be09e312 (tests 71a8efe8)"
+ "round": 12,
+ "spec": "be09e312",
+ "worker": "cloud-a33f4c",
+ "state": "working",
+ "at": "2026-10-03T13:30:44.592Z",
+ "mode": "turbo"
 }
