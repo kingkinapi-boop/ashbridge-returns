@@ -1,10 +1,10 @@
 {
  "card": "FX4",
  "role": "spec",
- "note": "refit 2, 40 tests unchanged; 11 SC known.json FX4 entries (R36,R41,R46,R54,R56) kept: not the 5 findings, Lead to decide; card Spec commit line stale",
+ "note": "A470: delete the 11 FX4 KNOWN rows (card directive)",
  "worker": "cloud-6ca6b4",
- "state": "reported",
- "at": "2026-10-03T12:38:31.112Z",
+ "state": "reopened",
+ "at": "2026-10-03T12:48:02.213Z",
  "mode": "turbo",
  "commit": "e92df82b",
  "validated": "b0f6ddd9"
