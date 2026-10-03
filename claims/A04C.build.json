@@ -4,8 +4,11 @@
  "round": 1,
  "spec": "b18e932c",
  "worker": "cloud-7d7878",
- "state": "reported",
- "at": "2026-10-03T17:43:35.811Z",
+ "state": "released",
+ "at": "2026-10-03T21:06:19.785Z",
  "mode": "turbo",
- "note": "236 of 236 acceptance tests pass on landed A04; no runner.ts change; shifted run clean"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "7e8e5e0165dbdcd4b3ca77231d98e280e5b614db"
+ }
 }
