@@ -4,9 +4,8 @@
  "round": 51,
  "spec": "ee0255d",
  "worker": "cloud-c29b25",
- "state": "released",
- "at": "2026-10-02T21:36:17.919Z",
+ "state": "reopened",
+ "at": "2026-10-03T03:16:43.903Z",
  "mode": "turbo",
- "note": "wait: spec round for A03's ocr/recorded (R34, R47); Lead reopens after the spec reports",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"F01D\",\"F05M\",\"F09\",\"F09B\"],\"depStatus\":[\"done\",\"done\",\"done\",\"done\"]}"
+ "note": "spec reported with R34 and R47 for A03 recorded; build to the spec"
 }
