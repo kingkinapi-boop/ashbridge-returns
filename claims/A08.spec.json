@@ -1,11 +1,12 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "wait: A04 round 5 lands (A446 directive)",
- "reopenedFrom": "87231747",
+ "note": "121 tests (118 unit, 3 db); see reports/A08-spec.md",
  "worker": "cloud-657654",
- "state": "working",
- "at": "2026-10-03T17:36:52.214Z",
+ "state": "reported",
+ "at": "2026-10-03T18:13:16.521Z",
  "mode": "turbo",
- "beat": "2026-10-03T17:37:57.812Z"
+ "beat": "2026-10-03T17:37:57.812Z",
+ "commit": "543e7360",
+ "validated": "f73707b8"
 }
