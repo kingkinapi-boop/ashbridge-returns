@@ -11,7 +11,7 @@ Tags: none (made-up names gain "(Test)"; no figure changes).
 Paths: reference/sample-clients/clients/c07_08.mjs, reference/sample-clients/clients/c09_10.mjs, reference/sample-clients/clients/c13_15.mjs, reference/sample-clients/07-*/**, reference/sample-clients/09-*/**, reference/sample-clients/14-*/**, reference/sample-clients/15-*/**, reference/sample-clients/verify.mjs, reference/sample-clients/README.md, tools/test/sample-names.test.mjs, tools/test/__fixtures__/schema-contract/known.json, tools/test/sample-verify.test.mjs, tools/test/__fixtures__/sample-verify/** (A493 patch)
 Clauses: SEC-11, ARC-8
 Read: `reports/W00b-spec-review.md` ("Who owns the C07, C09, C14 bare-name fix"), `reference/sample-clients/README.md`.
-Spec commit: a9dd4aa3; patch (A493) see claude/FX8 head; validated on main bd5ec11
+Spec commit: a9dd4aa3; A493 patch a05c1c9c; toolchain refit cea06abd on claude/FX8-r2, validated on main 8d5e7d21
 
 ## Goal
 Three flag details name a shareholder without "(Test)": Grace Liu (c07_08.mjs:54), Wei Zhang and Olu Adeyemi (c09_10.mjs:58), Declan Murphy (c13_15.mjs:227); the same text reaches answer-key.json, onboarding.json and profile.md of 07, 09, 14 and 15. W00b's guard refuses bare names in text, so W00b's build waits on this card (A409).
