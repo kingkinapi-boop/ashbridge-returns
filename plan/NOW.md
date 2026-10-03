@@ -16,19 +16,19 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:40Z by the Lea
 | W00c | spec patch reported (A413); build open (A424) | build round 2, check; unblocks W00b round 4, JH0, B04, SC2 |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
-| W16 | build reported on claude/W16-r2 | check (scope by hand, A427); then SC6, FX8, FX9 |
+| W16 | check PASS (Opus read, 541 verify); security review running | board; then SC6, FX8, FX9 |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
 | SC | build reported (110 of 110) | check on a cloud box (npm test, db, test:flake) with Opus read |
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | round 4 spec reported (26 tests, 11 fail); build open (A427) | build runner.ts, check, security review |
 | DB16 | check FAIL (two core db files lack @mutate; scope note); Opus findings review running with CQ4 | fix list, round, check, board |
-| FX2 | spec refit reported; build open | build (one auth line), check, security review; lands before FX7 |
+| FX2 | build reported (one auth line; mutation cloud only) | check in the cloud, security review; lands before FX7 |
 | JH0 | spec reported | build after W00c lands |
-| FX10 | spec reported (cause: timeouts; 6 tests split into 22) | build, check, security review |
+| FX10, FX12 | FX10 spec reported (timeouts; 6 tests split into 22); FX12 carded (db budget by machine, A429) | FX10 build, check, security review; FX12 after |
 | CQ3, CQ4, CQ5 | CQ3 PASS, on the train; CQ4 check FAIL, findings review running; CQ5 carded (claims race, A428) | train; CQ4 fix round; CQ5 spec |
 
-Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-2 (FX10 spec); local-3 done (queue empty for it). Helper: DB16 and CQ4 findings review. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
+Cloud runs: 3 at 05:56Z, 2 at 06:16Z, 3 at 06:38Z. Local (Opus): local-1 (FX4 spec), local-2 and local-3 done. Helpers: DB16 and CQ4 findings review; W16 security review. The CQ2 landing set off toolchain refits on every reported spec: for the Critic, refit only when a spec's own commands changed.
 
 ## Next, in order
 

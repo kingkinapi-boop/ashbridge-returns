@@ -9993,6 +9993,26 @@
     },
     {
       "status": "carded",
+      "spec": null,
+      "deps": [
+        "FX10"
+      ],
+      "paths": [
+        "vitest.config.ts",
+        "tools/test/db-budget.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "FX12",
+      "title": "Db test time budget: workers by machine, tests near the budget",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/FX10-spec.md, 3 Oct (A429)."
+    },
+    {
+      "status": "carded",
       "spec": "bd0e2fe2",
       "deps": [
         "F02",
