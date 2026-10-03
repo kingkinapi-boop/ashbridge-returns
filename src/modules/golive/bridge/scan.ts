@@ -45,28 +45,20 @@ export const NEVER_READ: { tables: readonly string[]; columns: readonly ColumnRe
 
 /** The dependencies on a never-read table (any column, or the whole table) or a never-read column, in input order. */
 export function neverReadFindings(deps: readonly ViewDependency[]): ViewDependency[] {
-  return deps.filter(
-    (d) =>
-      NEVER_READ.tables.includes(d.table) ||
-      (d.column !== null && NEVER_READ.columns.some((c) => c.table === d.table && c.column === d.column)),
-  )
+  // a whole-table dependency has column null, which equals no listed column
+  return deps.filter((d) => NEVER_READ.tables.includes(d.table) || NEVER_READ.columns.some((c) => c.table === d.table && c.column === d.column))
 }
 
-function byTableThenColumn(a: ColumnRef, b: ColumnRef): number {
-  if (a.table !== b.table) return a.table < b.table ? -1 : 1
-  if (a.column !== b.column) return a.column < b.column ? -1 : 1
-  return 0
-}
-
-/** Every client-app column the drafts read (sources and alsoReads of every view), once, by table then column. */
+/**
+ * Every client-app column the drafts read (sources and alsoReads of every view), once, by table then column in plain
+ * string order: "table.column" keys sort the same way, because "." sorts before every character of a name.
+ */
 export function draftReads(m: ViewsManifest): ColumnRef[] {
-  const found = new Map<string, ColumnRef>()
-  for (const view of m.views) {
-    for (const s of [...view.columns.flatMap((c) => c.sources), ...view.alsoReads]) {
-      found.set(s.source, { table: s.source.split('.')[0] ?? '', column: s.source.split('.')[1] ?? '' })
-    }
-  }
-  return [...found.values()].sort(byTableThenColumn)
+  const keys = m.views.flatMap((v) => [...v.columns.flatMap((c) => c.sources), ...v.alsoReads]).map((s) => s.source)
+  return [...new Set(keys)].sort().map((k) => {
+    const [table, column] = k.split('.') as [string, string] // every source is "table.column" (the manifest schema)
+    return { table, column }
+  })
 }
 
 /** The reads a database does not have, in the order of reads. */
@@ -74,50 +66,18 @@ export function missingColumns(reads: readonly ColumnRef[], present: readonly Co
   return reads.filter((r) => !present.some((p) => p.table === r.table && p.column === r.column))
 }
 
-// A comment to its line end, the start of a block comment, a quoted literal, a quoted identifier, or the opening of a
-// dollar quote. The leftmost match wins, so an apostrophe inside a comment is never a quote.
-const TOKEN = /--[^\n]*|\/\*|'(?:[^']|'')*'|"(?:[^"]|"")*"|\$(?:[A-Za-z_][A-Za-z0-9_]*)?\$/g
-
-function blockCommentEnd(sql: string, from: number): number {
-  let depth = 1
-  let i = from
-  while (i < sql.length && depth > 0) {
-    if (sql.startsWith('/*', i)) {
-      depth += 1
-      i += 2
-    } else if (sql.startsWith('*/', i)) {
-      depth -= 1
-      i += 2
-    } else {
-      i += 1
-    }
-  }
-  return i
-}
+// What the scan skips or reads, leftmost first: a line comment, a block comment, a single-quoted literal (group 1), a
+// quoted identifier, or a dollar-quoted literal with its optional tag (group 2) and body (group 3). The leftmost match
+// wins, so an apostrophe inside a comment is never a quote. Block comments do not nest, and E'..' strings are not
+// special: the draft files use neither.
+const TOKEN = /--[^\n]*|\/\*[\s\S]*?\*\/|'((?:[^']|'')*)'|"(?:[^"]|"")*"|(?<![A-Za-z0-9_$])\$([A-Za-z_][A-Za-z0-9_]*)?\$([\s\S]*?)\$\2\$/g
 
 /** Every string literal of the SQL that holds a space, tab or line break (a sentence), by file and opening line. */
 export function findSentenceLiterals(sql: string, file: string): SentenceLiteral[] {
   const out: SentenceLiteral[] = []
-  const add = (index: number, literal: string): void => {
-    if (/\s/.test(literal)) out.push({ file, line: sql.slice(0, index).split('\n').length, literal })
-  }
-  const re = new RegExp(TOKEN.source, 'g')
-  for (let m = re.exec(sql); m !== null; m = re.exec(sql)) {
-    const token = m[0]
-    if (token === '/*') {
-      re.lastIndex = blockCommentEnd(sql, m.index + 2)
-    } else if (token.startsWith("'")) {
-      add(m.index, token.slice(1, -1).replaceAll("''", "'"))
-    } else if (token.startsWith('$')) {
-      if (/[A-Za-z0-9_$]/.test(sql[m.index - 1] ?? '')) {
-        re.lastIndex = m.index + 1 // part of an identifier, not a quote
-        continue
-      }
-      const close = sql.indexOf(token, m.index + token.length)
-      const end = close === -1 ? sql.length : close
-      add(m.index, sql.slice(m.index + token.length, end))
-      re.lastIndex = close === -1 ? sql.length : close + token.length
-    }
+  for (const m of sql.matchAll(TOKEN)) {
+    const literal = m[1]?.replaceAll("''", "'") ?? m[3]
+    if (literal !== undefined && literal.search(/\s/) >= 0) out.push({ file, line: sql.slice(0, m.index).split('\n').length, literal })
   }
   return out
 }
