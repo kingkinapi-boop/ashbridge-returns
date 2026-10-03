@@ -81,6 +81,47 @@ export function neverReadTables(): string[] {
   return tables
 }
 
+/** The "Marker answers" bullet of section 3: the question ids whose answers are read as "given", never as a value. */
+export function markerIds(): string[] {
+  const bullet = SECTION_3.split('\n').filter((l) => l.startsWith('- Marker answers:'))
+  expect(bullet).toHaveLength(1)
+  const ids = [...new Set([...(bullet[0] ?? '').matchAll(/\b([A-Z]+\d+\.[a-z]+)\b/g)].map((m) => m[1] ?? ''))]
+  for (const id of ['PY3.sin', 'PY3.dob', 'PY3.bank', 'BQ7.sin', 'BQ1.bn']) expect(ids).toContain(id)
+  expect(ids).toHaveLength(5)
+  return ids
+}
+
+/** The restricted_data kinds section 3 lists ("Kinds: sin, date_of_birth, ... (M0001:171-178)"). */
+export function restrictedKinds(): string[] {
+  const m = /Kinds: ([a-z_, ]+) \(M\d{4}:/.exec(SECTION_3)
+  const kinds = (m?.[1] ?? '').split(',').map((k) => k.trim()).filter((k) => k !== '')
+  expect(kinds).toContain('sin')
+  expect(kinds).toContain('ontario_company_key')
+  expect(kinds).toHaveLength(6)
+  return kinds
+}
+
+export interface NeverReadItems {
+  /** tables no view may join or select (restricted_data) */
+  tables: string[]
+  /** the (table, column) pairs of the "Credentials and tokens" and "Contact details" bullets */
+  pairs: ClientColumn[]
+  /** the marker answer question ids (read as "given", never as a value) */
+  markerIds: string[]
+  /** the kinds of restricted_data row */
+  restrictedKinds: string[]
+}
+
+/**
+ * GL3 round 4 (A498, S1): every item of section 3, by kind, each kind asserted by its own sentinels: the
+ * never-read table, the 15 never-read pairs, the five marker ids and the six restricted kinds.
+ */
+export function neverReadItems(): NeverReadItems {
+  const pairs = neverReadPairs()
+  expect(pairs).toHaveLength(15)
+  return { tables: neverReadTables(), pairs, markerIds: markerIds(), restrictedKinds: restrictedKinds() }
+}
+
 /** True when the contract names this column with this cite ("legal_name M0002:50"). */
 export function contractCites(column: string, cite: string): boolean {
   return new RegExp(`(^|[^a-z0-9_])${column} ${cite.replace(/[.:]/g, (c) => `\\${c}`)}(?![0-9])`).test(CONTRACT_MD)
