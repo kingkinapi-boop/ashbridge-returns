@@ -4,7 +4,7 @@
 // typed list: a folder or a kind a later card adds is walked with no change here. The walk and the Luhn check are
 // written here on purpose (no product module), so the expected answers never come from the code under test.
 // No real-looking number is written in this file: every number that passes its check digit is computed at run time.
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -274,8 +274,9 @@ export interface Finding {
   reason: string
 }
 
-export type FieldClass = 'name' | 'id-number' | 'free-text' | 'code' | 'other'
-export const FIELD_CLASSES: readonly FieldClass[] = ['name', 'id-number', 'free-text', 'code', 'other']
+export type FieldClass = 'name' | 'id-number' | 'free-text' | 'code' | 'money' | 'other'
+/** 'money' (round 3, card decision): a JSON number at a money path is not a nine-digit candidate; a string there is. */
+export const FIELD_CLASSES: readonly FieldClass[] = ['name', 'id-number', 'free-text', 'code', 'money', 'other']
 
 interface GuardApi {
   guardFolder: (folder: string) => unknown
@@ -357,3 +358,117 @@ export const PERSON_IN_TEXT = /\(Test\)|TEST/
 export const UNCLASSIFIED = /unclassified/i
 export const CANNOT_CHECK = /cannot be checked/i
 export const NOT_UTF8 = /UTF-8|cannot be checked/i
+
+// ---- round 3 (reports/W00b-spec-review.md gaps 1 to 10) ----
+
+export const REPEATED = /repeat|duplicate|twice|more than once/i
+export const LINK = /link|outside/i
+export const EMAIL = /e-?mail/i
+export const CARD = /check digit|card/i
+
+/** Every JSON node the samples hold, by pattern: object nodes with the keys seen, and lists that hold a scalar. */
+export interface SampleNodes {
+  objects: Map<string, Set<string>>
+  scalarLists: Set<string>
+}
+
+export function sampleNodes(): SampleNodes {
+  const objects = new Map<string, Set<string>>()
+  const scalarLists = new Set<string>()
+  const walk = (v: Json, steps: Step[]): void => {
+    if (Array.isArray(v)) {
+      if (v.some((x) => x === null || typeof x !== 'object')) scalarLists.add(patternOf(steps))
+      v.forEach((x, i) => {
+        walk(x, [...steps, i])
+      })
+    } else if (v !== null && typeof v === 'object') {
+      const p = patternOf(steps)
+      const keys = objects.get(p) ?? new Set<string>()
+      objects.set(p, keys)
+      for (const [k, x] of Object.entries(v)) {
+        keys.add(k)
+        walk(x, [...steps, k])
+      }
+    }
+  }
+  for (const folder of sampleFolders()) {
+    for (const file of filesIn(folder.dir).filter((f) => f.endsWith('.json'))) walk(readJson(join(folder.dir, file)), [])
+  }
+  return { objects, scalarLists }
+}
+
+/** A key that is data, not a field name: it holds a digit or is all capitals (months, account keys such as CHQ). */
+export const isDataKey = (k: string): boolean => /\d/.test(k) || /^[A-Z][A-Z0-9_-]*$/.test(k)
+
+/** A pattern one key deeper. */
+export const under = (pattern: string, key: string): string => (pattern === '' ? key : `${pattern}.${key}`)
+
+/** Every code point that is a space separator (Zs) or a dash (Pd), computed by the engine, never typed. */
+export function spaceAndDashCodePoints(): string[] {
+  const out: string[] = []
+  const re = /^[\p{Zs}\p{Pd}]$/u
+  for (let cp = 0; cp <= 0x10ffff; cp++) {
+    if (cp >= 0xd800 && cp <= 0xdfff) continue
+    const ch = String.fromCodePoint(cp)
+    if (re.test(ch)) out.push(ch)
+  }
+  return out
+}
+
+/** Nine digits with a separator (or none) in each of the 8 gaps. */
+export function joinNine(digits: string, gaps: readonly string[]): string {
+  let out = ''
+  for (let i = 0; i < 9; i++) out += `${digits[i] ?? ''}${i < 8 ? (gaps[i] ?? '') : ''}`
+  return out
+}
+
+/** An ISO date or month written with ASCII hyphens (after NFKC): a shape the guard reads as a date, not a number. */
+export const ISO_DATE_SHAPE = /(?:19|20)\d\d-(?:0[1-9]|1[0-2])/
+
+/** Any ASCII from "!" to "~" written full width (U+FF01 to U+FF5E); NFKC turns it back. */
+export const fullWidthAscii = (s: string): string => s.replace(/[!-~]/g, (c) => String.fromCodePoint((c.codePointAt(0) ?? 0) + 0xfee0))
+
+/** A number of any length plus the Luhn digit that makes it pass, or one that makes it fail. */
+export function luhnComplete(body: string): string {
+  for (let k = 0; k < 10; k++) if (luhnValid(body + String(k))) return body + String(k)
+  throw new Error('fixture: no check digit')
+}
+export function luhnBroken(body: string): string {
+  const good = luhnComplete(body)
+  return body + String((Number(good.slice(-1)) + 1) % 10)
+}
+
+/** A symbolic link (file or folder); `target` is absolute or relative to the link's folder. */
+export function link(target: string, at: string, kind: 'file' | 'dir' = 'file'): void {
+  mkdirSync(dirname(at), { recursive: true })
+  symlinkSync(target, at, kind)
+}
+
+/** The outcome of asking for something that must be refused: the error it threw, or the findings it gave. */
+export type Refusal = { threw: unknown; findings: Finding[] | undefined }
+
+/** Calls the guard and keeps a throw as a refusal (fail closed); a returned result must be a list of findings. */
+export async function attempt(call: () => unknown): Promise<Refusal> {
+  let result: unknown
+  try {
+    result = await Promise.resolve().then(call)
+  } catch (e) {
+    return { threw: e, findings: undefined }
+  }
+  return { threw: undefined, findings: await asFindings(result) }
+}
+
+/** Refused: it threw (not a stack overflow), or it gave at least one finding, naming each hint when hints are given. */
+export function expectRefused(r: Refusal, ...hints: string[]): void {
+  if (r.findings === undefined) {
+    expect(r.threw instanceof RangeError, `a refusal, not a stack overflow: ${String(r.threw)}`).toBe(false)
+    return
+  }
+  expect(r.findings.length, 'a refusal gives at least one finding (never [])').toBeGreaterThan(0)
+  for (const h of hints) {
+    expect(
+      r.findings.some((f) => label(f).includes(h)),
+      `a finding names ${h}: ${JSON.stringify(r.findings)}`,
+    ).toBe(true)
+  }
+}

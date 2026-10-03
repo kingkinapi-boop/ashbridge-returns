@@ -125,7 +125,9 @@ describe('ARC-8 W00c account files are regular CSV files of their own subfolder'
     writeFileSync(join(root, 'elsewhere', 'y.csv'), 'a\n')
     symlinkSync(join(root, 'elsewhere', 'y.csv'), join(folder, 'accounts/out.csv'))
     set('file', 'accounts/out.csv')
-    expect(issues()).toEqual([issue('file', `${first()} file`, 'accounts/out.csv leads out of the client folder')])
+    // W00b spec round 3 (gaps 3 and 4): loadClient now also refuses the link through the guard (check 'made-up-data');
+    // this test pins the file check, so it reads the other issues. The guard's own refusal is pinned in W00b's acceptance file.
+    expect(issues().filter((i) => i.check !== 'made-up-data')).toEqual([issue('file', `${first()} file`, 'accounts/out.csv leads out of the client folder')])
   })
 })
 

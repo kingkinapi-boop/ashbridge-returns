@@ -91,10 +91,13 @@ describe('ARC-8 W00a account files stay inside the client folder', () => {
     writeFileSync(join(root, 'outside.csv'), 'a\n')
     symlinkSync(join(root, 'outside.csv'), join(folder, 'accounts/link.csv'))
     setFile('file', 'accounts/link.csv')
-    expect(issues()).toEqual([issue('file', `${firstKey()} file`, 'accounts/link.csv leads out of the client folder')])
+    // W00b spec round 3 (gaps 3 and 4): loadClient now also refuses the link through the guard (check 'made-up-data');
+    // this test pins the file check, so it reads the other issues. The guard's own refusal is pinned in W00b's acceptance file.
+    const notGuard = (): LoadIssue[] => issues().filter((i) => i.check !== 'made-up-data')
+    expect(notGuard()).toEqual([issue('file', `${firstKey()} file`, 'accounts/link.csv leads out of the client folder')])
     symlinkSync(root, join(folder, 'accounts/up.csv'))
     setFile('file', 'accounts/up.csv')
-    expect(issues()).toEqual(fileRefused(`${firstKey()} file`, 'accounts/up.csv'))
+    expect(notGuard()).toEqual(fileRefused(`${firstKey()} file`, 'accounts/up.csv'))
   })
   it('a link that stays inside the folder is fine', () => {
     const k = JSON.parse(readFileSync(join(folder, 'answer-key.json'), 'utf8')) as Key

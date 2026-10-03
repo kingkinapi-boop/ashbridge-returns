@@ -52,7 +52,9 @@ describe('ARC-8 W00c an account file that is the folder above is refused as lead
       ;((j['accounts'] as Obj[])[0] as Obj)['file'] = 'accounts/up.csv'
     })
     const key = JSON.parse(readFileSync(join(w.folder, 'answer-key.json'), 'utf8')) as { accounts: { key: string }[] }
-    expect(w.issues()).toEqual([{ client: 'C01', check: 'file', record: `${String(key.accounts[0]?.key)} file`, reason: 'accounts/up.csv leads out of the client folder' }])
+    // W00b spec round 3 (gaps 3 and 4): loadClient now also refuses the link through the guard (check 'made-up-data');
+    // this test pins the file check, so it reads the other issues. The guard's own refusal is pinned in W00b's acceptance file.
+    expect(w.issues().filter((i) => i.check !== 'made-up-data')).toEqual([{ client: 'C01', check: 'file', record: `${String(key.accounts[0]?.key)} file`, reason: 'accounts/up.csv leads out of the client folder' }])
   })
 })
 

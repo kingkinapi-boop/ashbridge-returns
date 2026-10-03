@@ -1,6 +1,6 @@
 // Builder unit tests for the sample-client loader: every refusal with its exact record and reason, built in
 // temp copies of one sample client (ARC-8, ARC-13, SEC-11).
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
@@ -332,23 +332,9 @@ describe('SEC-11 the guard sees every person and every file of the folder', () =
     expect(loadClient('C10', { root }).id).toBe('C10')
   })
 
-  it('SEC-11 files by kind: json, csv and md are scanned; other files are not; nested paths use slashes', () => {
-    const root = rootWith('C10')
-    const dir = clientDir(root, 'C10')
-    mkdirSync(join(dir, 'sub'))
-    writeFileSync(join(dir, 'sub', 'notes.md'), 'Write to bob@real-firm.com today\n')
-    writeFileSync(join(dir, 'ignored.txt'), 'Write to eve@real-firm.com or call 416-867-5309; BN 123456782\n')
-    writeFileSync(join(dir, 'ignored.pdf'), 'Write to eve@real-firm.com\n')
-    writeFileSync(join(dir, 'broken.json'), '{ not json')
-    writeFileSync(join(dir, 'sub', 'data.csv'), 'a,b\nCall 416-867-5309,1\n')
-    const issues = issuesOf(root, 'C10')
-    expect(issues.map((i) => [i.check, i.record, i.reason])).toEqual([
-      ['made-up-data', 'broken.json', 'the file is not valid JSON, so it cannot be checked'],
-      ['made-up-data', 'sub/data.csv', 'the phone number 416-867-5309 is outside 555-0100 to 555-0199'],
-      ['made-up-data', 'sub/notes.md', 'the e-mail address bob@real-firm.com is outside a reserved test domain'],
-    ])
-    expect(existsSync(join(dir, 'ignored.txt'))).toBe(true)
-  })
+  // Retired by the W00b spec round 3 (gap 4, S4): "SEC-11 files by kind: json, csv and md are scanned; other files are
+  // not; nested paths use slashes". loadClient now refuses whatever guardFolder refuses, so a .txt is scanned and a .pdf
+  // is refused; the replacement lives in testworld/model/made-up-data.acceptance.test.ts ("R3 gap 4", nested paths too).
 
   it('SEC-11 a client folder that loads clean has every file of its folder read (no refusal, sorted walk)', () => {
     expect(readdirSync(clientDir(SAMPLE_ROOT, 'C10')).length).toBeGreaterThan(0)
