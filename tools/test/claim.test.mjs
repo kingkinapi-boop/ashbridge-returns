@@ -215,3 +215,184 @@ describe('ARC-15 CQ1 rule 4: status.mjs prints the blueprint version from bluepr
     expect(r.out).not.toMatch(/blueprint v1\.1\b/)
   })
 })
+
+// ---- CQ2 (ARC-15): released checks re-offered, honest counts, a reopened spec carries the Lead's note ----
+const T_OLD = '2026-10-02T09:00:00Z'
+const SHA_BAD = 'deadbeefdeadbeef'
+// A card with a spec writer w0 and a builder w1, build reported. Returns the world.
+async function reportedBuild(cards = [card('B', 'carded')]) {
+  const w = await world({ cards })
+  const sha = await git(w.work, 'rev-parse', 'origin/main')
+  expect(await nextFor(w, 'w0', 'spec')).toBe('CLAIMED B spec')
+  await claim(w, ['update', 'B', 'spec', 'reported', '--worker', 'w0', '--commit', 'abc123', '--validated', sha])
+  expect(await nextFor(w, 'w1', 'build')).toBe('CLAIMED B build')
+  await claim(w, ['update', 'B', 'build', 'reported', '--worker', 'w1'])
+  return { ...w, sha }
+}
+
+describe('ARC-15 CQ2 rule 1: a released check is offered again, with no re-stamp of the build', () => {
+  test('ARC-15 a check released for the build is offered to a third worker, never to the spec writer or the builder', async () => {
+    const w = await reportedBuild()
+    expect(await nextFor(w, 'w2', 'check')).toBe('CLAIMED B check')
+    expect((await claim(w, ['update', 'B', 'check', 'released', '--worker', 'w2', '--note', 'ran out of time'])).code).toBe(0)
+    expect(await nextFor(w, 'w0', 'check')).toBe('NOTHING')
+    expect(await nextFor(w, 'w1', 'check')).toBe('NOTHING')
+    expect(await nextFor(w, 'w3', 'check')).toBe('CLAIMED B check')
+    // taken again: no one else gets it while it is working
+    expect(await nextFor(w, 'w4', 'check')).toBe('NOTHING')
+  })
+
+  test('ARC-15 a check that reported (any verdict) for this build is not offered again', async () => {
+    const w = await reportedBuild()
+    expect(await nextFor(w, 'w2', 'check')).toBe('CLAIMED B check')
+    await claim(w, ['update', 'B', 'check', 'reported', '--worker', 'w2', '--note', 'PASS'])
+    expect(await nextFor(w, 'w3', 'check')).toBe('NOTHING')
+  })
+
+  test('ARC-15 a check that is still working (not stale) is not offered to anyone else', async () => {
+    const w = await reportedBuild()
+    expect(await nextFor(w, 'w2', 'check')).toBe('CLAIMED B check')
+    for (const who of ['w3', 'w4']) expect(await nextFor(w, who, 'check')).toBe('NOTHING')
+  })
+
+  test('ARC-15 a released check does not make a released build checkable: no reported build, no check offer', async () => {
+    const w = await world({ cards: [card('B', 'carded', { spec: 'abc123' })] })
+    expect(await nextFor(w, 'w1')).toBe('CLAIMED B build')
+    await claim(w, ['update', 'B', 'build', 'released', '--worker', 'w1', '--note', 'could not finish'])
+    expect(await nextFor(w, 'w2', 'check')).toBe('NOTHING')
+  })
+})
+
+describe('ARC-15 CQ2 rule 2: no spec job while the card build is reported and not merged', () => {
+  test('ARC-15 a spec refit is not offered while the build is reported and unchecked; it is offered once the Lead reopens the build', async () => {
+    const w = await reportedBuild()
+    await pushCards(w, [card('B', 'carded')], { toolchain: true })
+    expect((await claim(w, ['list'])).out).toMatch(/B spec reported \(toolchain refit\)/)
+    for (const who of ['w5', 'w6']) expect(await nextFor(w, who, 'spec')).toBe('NOTHING')
+    await claim(w, ['update', 'B', 'build', 'reopened', '--worker', 'lead'])
+    expect(await nextFor(w, 'w7', 'spec')).toBe('CLAIMED B spec')
+  })
+
+  test('ARC-15 a spec refit is not offered while the build is under check either', async () => {
+    const w = await reportedBuild()
+    expect(await nextFor(w, 'w2', 'check')).toBe('CLAIMED B check')
+    await pushCards(w, [card('B', 'carded')], { toolchain: true })
+    expect(await nextFor(w, 'w5', 'spec')).toBe('NOTHING')
+  })
+
+  test('ARC-15 a spec with no sha (a refit by definition) is held back the same way while the build is reported', async () => {
+    const w = await reportedBuild()
+    await claim(w, ['update', 'B', 'spec', 'reported', '--worker', 'w0', '--commit', 'abc123', '--validated', SHA_BAD])
+    expect(await nextFor(w, 'w5', 'spec')).toBe('NOTHING')
+  })
+
+  test('ARC-15 with no reported build the refit is still offered (the rule is only for a reported, unmerged build)', async () => {
+    const w = await world({ cards: [card('B', 'carded')] })
+    await claim(w, ['update', 'B', 'spec', 'reported', '--worker', 'w0', '--commit', 'abc123', '--validated', SHA_BAD])
+    expect(await nextFor(w, 'w5', 'spec')).toBe('CLAIMED B spec')
+  })
+})
+
+describe('ARC-15 CQ2 rule 3: next.mjs counts in flight from the claims and never starts a reported build', () => {
+  // A: build working. C: build reported, check PASS. B: build reported, check working. D: nothing yet.
+  async function busyWorld() {
+    const w = await world({ cards: ['A', 'C', 'B', 'D'].map((id) => card(id, 'carded', { spec: 'abc123' })) })
+    expect(await nextBS(w, 'w1')).toBe('CLAIMED A build')
+    expect(await nextBS(w, 'w2')).toBe('CLAIMED C build')
+    await claim(w, ['update', 'C', 'build', 'reported', '--worker', 'w2'])
+    expect(await nextFor(w, 'w3', 'check')).toBe('CLAIMED C check')
+    await claim(w, ['update', 'C', 'check', 'reported', '--worker', 'w3', '--note', 'PASS'])
+    expect(await nextFor(w, 'w4', 'build')).toBe('CLAIMED B build')
+    await claim(w, ['update', 'B', 'build', 'reported', '--worker', 'w4'])
+    expect(await nextFor(w, 'w5', 'check')).toBe('CLAIMED B check')
+    return w
+  }
+
+  test('ARC-15 in flight counts the working jobs of any role from the claims, not the card statuses', async () => {
+    const w = await busyWorld()
+    const r = await run(w, 'next.mjs', ['10'])
+    expect(r.code).toBe(0)
+    expect(r.out).toMatch(/^in flight 2 \|/m)
+  })
+
+  test('ARC-15 next.mjs starts only the card with no build; reported builds show as waiting on check or ready to board', async () => {
+    const w = await busyWorld()
+    const r = await run(w, 'next.mjs', ['10'])
+    expect([...r.out.matchAll(/^START (\S+)/gm)].map((m) => m[1])).toEqual(['D'])
+    expect(r.out).toMatch(/^waiting on check: .*\bB\b/m)
+    expect(r.out).not.toMatch(/^waiting on check: .*\b[AC]\b/m)
+    expect(r.out).toMatch(/^ready to board: .*\bC\b/m)
+    expect(r.out).not.toMatch(/^ready to board: .*\b[ABD]\b/m)
+  })
+
+  test('ARC-15 a stale working claim is not counted as in flight', async () => {
+    const w = await world({ cards: [card('A', 'carded', { spec: 'abc123' })] })
+    expect((await run(w, 'claim.mjs', ['next', '--worker', 'w1', '--roles', 'build'], { CLAIMS_NOW: T_OLD })).out).toBe('CLAIMED A build')
+    const r = await run(w, 'next.mjs', ['10'])
+    expect(r.out).toMatch(/^in flight 0 \|/m)
+  })
+
+  test('ARC-15 a card whose spec is reported and whose build is reported is not started', async () => {
+    const w = await reportedBuild([card('B', 'carded')])
+    const r = await run(w, 'next.mjs', ['10'])
+    expect(r.out).not.toMatch(/^START B\b/m)
+    expect(r.out).toMatch(/^waiting on check: .*\bB\b/m)
+  })
+
+  test('ARC-15 with no claims in flight it prints in flight 0 and starts a fresh card', async () => {
+    const w = await world({ cards: [card('A', 'carded', { spec: 'abc123' })] })
+    const r = await run(w, 'next.mjs', ['10'])
+    expect(r.out).toMatch(/^in flight 0 \|/m)
+    expect(r.out).toMatch(/^START A\b/m)
+  })
+})
+
+describe('ARC-15 CQ2 rule 5: a spec the Lead reopens for a new round carries the Lead note and is no refit', () => {
+  async function reopened(note = 'round 2: add the six tests from reports/A-findings.md') {
+    const w = await world({ cards: [card('A', 'carded')] })
+    const sha = await git(w.work, 'rev-parse', 'origin/main')
+    expect(await nextFor(w, 'w0', 'spec')).toBe('CLAIMED A spec')
+    await claim(w, ['update', 'A', 'spec', 'reported', '--worker', 'w0', '--commit', 'c1c1c1', '--validated', sha])
+    expect((await claim(w, ['update', 'A', 'spec', 'reopened', '--worker', 'lead', '--note', note])).code).toBe(0)
+    return { ...w, sha, note }
+  }
+
+  test('ARC-15 the reopened spec is offered with the Lead note on the line after CLAIMED, and the claim keeps the note', async () => {
+    const w = await reopened()
+    const r = await claim(w, ['next', '--worker', 'w1', '--roles', 'spec'])
+    expect(r.code).toBe(0)
+    const lines = r.out.split('\n')
+    expect(lines[0]).toBe('CLAIMED A spec')
+    expect(lines[1]).toContain(w.note)
+    expect((await claim(w, ['list'])).out).toContain(`A spec working | w1 |`)
+    expect((await claim(w, ['list'])).out).toContain(w.note)
+  })
+
+  test('ARC-15 a worker cannot report the new round with no commit or with the old spec commit', async () => {
+    const w = await reopened()
+    await claim(w, ['next', '--worker', 'w1', '--roles', 'spec'])
+    for (const extra of [[], ['--commit', 'c1c1c1'], ['--commit', 'c1c1c1', '--note', 'refit: no test change']]) {
+      const r = await claim(w, ['update', 'A', 'spec', 'reported', '--worker', 'w1', '--validated', w.sha, ...extra])
+      expect(r.code, extra.join(' ')).toBe(6)
+      expect(r.out).toMatch(/^REFUSED/)
+    }
+    expect((await claim(w, ['list'])).out).toMatch(/^A spec working /m)
+  })
+
+  test('ARC-15 a worker who reports a new spec commit for the new round is accepted', async () => {
+    const w = await reopened()
+    await claim(w, ['next', '--worker', 'w1', '--roles', 'spec'])
+    const r = await claim(w, ['update', 'A', 'spec', 'reported', '--worker', 'w1', '--commit', 'c2c2c2', '--validated', w.sha, '--note', '6 tests added'])
+    expect(r.code).toBe(0)
+    expect((await claim(w, ['list'])).out).toMatch(/^A spec reported /m)
+  })
+
+  test('ARC-15 a toolchain refit may still be reported with the same spec commit and a new validated sha', async () => {
+    const w = await world({ cards: [card('A', 'carded')] })
+    const sha = await git(w.work, 'rev-parse', 'origin/main')
+    await claim(w, ['update', 'A', 'spec', 'reported', '--worker', 'w0', '--commit', 'c1c1c1', '--validated', SHA_BAD])
+    expect(await nextFor(w, 'w1', 'spec')).toBe('CLAIMED A spec')
+    const r = await claim(w, ['update', 'A', 'spec', 'reported', '--worker', 'w1', '--commit', 'c1c1c1', '--validated', sha])
+    expect(r.code).toBe(0)
+  })
+})

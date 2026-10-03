@@ -9552,7 +9552,7 @@
       "size": "M"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ1"
@@ -9576,7 +9576,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "CQ1 follow-up plus what the Lead saw on 2 Oct evening."
+      "note": "CQ1 follow-up plus what the Lead saw on 2 Oct evening.",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9586,7 +9587,8 @@
       ],
       "paths": [
         "tools/claim.mjs",
-        "tools/test/claim-wait.test.mjs"
+        "tools/test/claim-wait.test.mjs",
+        "tools/test/claim.test.mjs"
       ],
       "clauses": [
         "ARC-15"
@@ -9772,7 +9774,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A07D"
@@ -9791,7 +9793,8 @@
       "phase": 1,
       "size": "S",
       "core": true,
-      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393)."
+      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -9947,6 +9950,26 @@
       "core": false,
       "security": true,
       "note": "Seen in DB16's spec run, 3 Oct (A421)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC5"
+      ],
+      "paths": [
+        "src/modules/ocr/**"
+      ],
+      "clauses": [
+        "AI-10",
+        "EV-5"
+      ],
+      "id": "FX11",
+      "title": "Recorded OCR: the engine named by the result matches the source (R84)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/A04-findings.md, 3 Oct (A426)."
     },
     {
       "status": "carded",
