@@ -2,8 +2,11 @@
  "card": "DB16",
  "role": "spec",
  "worker": "local-2",
- "state": "working",
- "at": "2026-10-03T04:06:20.326Z",
+ "state": "reported",
+ "at": "2026-10-03T04:24:27.647Z",
  "mode": "turbo",
- "beat": "2026-10-03T04:09:55.807Z"
+ "beat": "2026-10-03T04:09:55.807Z",
+ "note": "34 tests (29 unit, 5 db); PG16 path not run on laptop; reports/DB16-spec.md",
+ "commit": "d6f3a1b1",
+ "validated": "73751b0e"
 }
