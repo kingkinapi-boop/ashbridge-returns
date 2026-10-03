@@ -3,10 +3,12 @@
  "role": "check",
  "for": "2026-10-03T06:23:57.040Z",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T06:27:10.994Z",
+ "state": "released",
+ "at": "2026-10-03T06:27:25.459Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "e19dcdbd14cb089bfc88339fb4e38abeaf8a9f57"
- }
+ },
+ "note": "needs a cloud box (A415 directive: npm test, db, test:flake); local-1 skips",
+ "needsLead": true
 }
