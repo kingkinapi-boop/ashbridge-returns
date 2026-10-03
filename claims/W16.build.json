@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "78a9fba1",
  "worker": "cloud-4c2861",
- "state": "hold-findings",
- "at": "2026-10-03T03:45:18.366Z",
+ "state": "released",
+ "at": "2026-10-03T04:17:18.436Z",
  "mode": "turbo",
- "note": "FAIL: build edited spec verify.mjs and README (scope); root cause: spec ARC-16 and R11 checks contradict the card, see reports/W16-check.md"
+ "note": "wait: core spec review of claude/W16-r2 (reports/W16-spec-review.md); build opens after GO",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[],\"depStatus\":[]}"
 }
