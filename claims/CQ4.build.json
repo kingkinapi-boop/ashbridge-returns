@@ -1,11 +1,10 @@
 {
  "card": "CQ4",
  "role": "build",
- "round": 1,
- "spec": "78fbaf82",
- "worker": "cloud-03268d",
- "state": "reopened",
- "at": "2026-10-03T07:36:56.450Z",
- "mode": "turbo",
- "note": "A430: build round 2 after the spec patch (reports/CQ4-findings.md)"
+ "round": 2,
+ "spec": "ac01e80",
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T07:50:35.356Z",
+ "mode": "turbo"
 }
