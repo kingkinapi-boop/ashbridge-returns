@@ -1,10 +1,9 @@
 {
  "card": "SC4",
  "role": "spec",
+ "note": "toolchain refit",
  "worker": "local-1",
- "state": "reported",
- "at": "2026-10-03T04:14:37.188Z",
- "mode": "turbo",
- "note": "17 rule tests; KNOWN owner FX4; 3 ExcelJS tests unvalidated on the laptop (no ExcelJS): cloud refit; see reports/SC4-spec.md",
- "commit": "8ca5fb7a07a785ac41e94dbc3d3a341955eac21c"
+ "state": "working",
+ "at": "2026-10-03T04:14:47.439Z",
+ "mode": "turbo"
 }
