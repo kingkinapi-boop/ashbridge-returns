@@ -7,7 +7,7 @@ Tags: core (who writes which file decides whether a spec can be graded fairly).
 Paths: tools/test/card-rules.test.mjs, tools/test/__fixtures__/card-rules/**
 Clauses: ARC-15, ARC-16
 Read: `reports/W16-findings.md` (rule tests), `plan/cards/SC.md` (rule style, KNOWN table), `.claude/rules/testing.md`.
-Spec commit: (spec-writer fills)
+Spec commit: c526b32d (fixup A408, A417, A430; validated on main 931d08fa; 33 rule tests (7 kept unchanged, 26 added), all green on main, KNOWN empty; earlier spec 839819ff on 7eaf18cf. Paths gap: the three W16 review-3 verify.mjs items need reference/sample-clients/verify.mjs, outside Paths)
 
 ## Spec
 Each rule first shown failing on its planted example, then passing on main:

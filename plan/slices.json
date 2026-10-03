@@ -3594,6 +3594,35 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15",
+        "G16",
+        "G17"
+      ],
+      "paths": [
+        "data/question-coverage.json",
+        "data/question-bank/*.json",
+        "src/modules/gaps/bank/coverage.acceptance.test.ts"
+      ],
+      "clauses": [
+        "END-7",
+        "RULE-19"
+      ],
+      "id": "G18",
+      "title": "Question banks: every sample flag mapped",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Review 3 Oct finding 7 (A478)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "A04",
         "A08",
         "E01",
@@ -10012,7 +10041,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ4"
@@ -10030,10 +10059,11 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/DB16-findings.md, 3 Oct (A430)."
+      "note": "From reports/DB16-findings.md, 3 Oct (A430).",
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ5"
@@ -10050,7 +10080,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/CQ5-spec.md, 3 Oct (A431)."
+      "note": "From reports/CQ5-spec.md, 3 Oct (A431).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
@@ -10101,7 +10132,8 @@
       "paths": [
         "package.json",
         "tools/flake-shifted.mjs",
-        "tools/test/flake-shifted.test.mjs"
+        "tools/test/flake-shifted.test.mjs",
+        "tools/test/__fixtures__/flake-shifted/**"
       ],
       "clauses": [
         "ARC-15"
@@ -10134,9 +10166,36 @@
       "id": "CQ11",
       "title": "Queue: no re-offered checks after a wait, honest card counts",
       "phase": 0,
-      "size": "S",
+      "size": "M",
       "core": false,
       "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "vitest.config.ts",
+        "src/core/test-assertions.ts",
+        "src/core/test-assertions.acceptance.test.ts",
+        "src/modules/gaps/bank/expenses.acceptance.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts",
+        "src/contracts/jobs.acceptance.test.ts",
+        "src/modules/bridge/**/*.test.ts",
+        "vitest.mutate.config.ts",
+        "src/contracts/facts.acceptance.test.ts",
+        "src/modules/gaps/bank/bank.acceptance.test.ts",
+        "src/modules/auth/rules.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ12",
+      "title": "Assertion floor: no test passes without asserting",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Review 3 Oct finding 7 (A478)."
     },
     {
       "status": "carded",
@@ -10567,7 +10626,7 @@
       "note": "From reports/FX12-spec.md, 3 Oct (A443)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [],
       "paths": [
@@ -10586,7 +10645,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446)."
+      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446).",
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
