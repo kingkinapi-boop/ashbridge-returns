@@ -1,12 +1,8 @@
 {
  "card": "A04",
  "role": "spec",
- "worker": "cloud-fd4d7f",
- "state": "reopened",
- "at": "2026-10-03T04:30:35.238Z",
- "mode": "turbo",
- "beat": "2026-10-03T04:07:28.734Z",
- "note": "A410: reports/A04-spec-review-2.md",
- "commit": "439aa70",
- "validated": "7eaf18c"
+ "worker": "local-1",
+ "state": "working",
+ "at": "2026-10-03T04:33:20.063Z",
+ "mode": "turbo"
 }
