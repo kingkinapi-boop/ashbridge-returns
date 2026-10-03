@@ -2,12 +2,8 @@
  "card": "SC11",
  "role": "spec",
  "worker": "local-3",
- "state": "released",
- "at": "2026-10-03T11:32:47.098Z",
+ "state": "reopened",
+ "at": "2026-10-03T11:33:28.038Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "46975225bf2eb48c2b540b77f181fe9c76ead7c2"
- },
- "note": "Card says Where: cloud (Postgres 16); queue re-offered it to a local worker. Lead: reopen for a cloud worker.",
- "needsLead": true
+ "note": "cloud box (pg16): toolchain refit after SC landed; DB16 on the train"
 }
