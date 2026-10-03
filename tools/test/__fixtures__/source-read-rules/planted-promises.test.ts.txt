@@ -1,0 +1,10 @@
+// Planted for R79: two reads of a @mutate file through the promise API.
+import fs from 'node:fs'
+import { readFile } from 'node:fs/promises'
+import { expect, test } from 'vitest'
+
+test('ARC-15 ids.ts and log.ts carry no process.env', async () => {
+  const ids = await fs.promises.readFile(new URL('./ids.ts', import.meta.url), 'utf8')
+  const log = await readFile(new URL('../core/log.ts', import.meta.url), { encoding: 'utf8' })
+  expect(ids + log).not.toMatch(/process\.env/)
+})

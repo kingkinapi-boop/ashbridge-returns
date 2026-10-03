@@ -4,6 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { fixedClock, getClock, now, setClock, systemClock } from './clock'
+import { readOwnSource } from './testing/read-own-source'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const CORE = path.join(ROOT, 'src', 'core')
@@ -117,7 +118,7 @@ describe('F00T clock.ts (ARC-16)', () => {
     let calls = 0
     const offenders: string[] = []
     for (const file of files) {
-      const source = fs.readFileSync(file, 'utf8')
+      const source = readOwnSource(file)
       calls += assertCalls(source).length
       for (const line of unseeded(source)) offenders.push(`${path.relative(ROOT, file)}:${String(line)}`)
     }
@@ -130,7 +131,7 @@ describe('F00T clock.ts (ARC-16)', () => {
   })
 
   test('ARC-15 clock.ts is a mutation target (// @mutate in its first 5 lines)', () => {
-    const head = fs.readFileSync(path.join(CORE, 'clock.ts'), 'utf8').split('\n').slice(0, 5).join('\n')
+    const head = readOwnSource(path.join(CORE, 'clock.ts')).split('\n').slice(0, 5).join('\n')
     expect(head).toMatch(/\/\/ @mutate/)
   })
 })

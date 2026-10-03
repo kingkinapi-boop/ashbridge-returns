@@ -1,0 +1,28 @@
+// Clean for R79: @mutate files read through readOwnSource; raw reads only of data files and unmarked sources.
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { expect, test } from 'vitest'
+import { readOwnSource } from '../core/testing/read-own-source'
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
+
+test('ARC-15 sources through the helper, data through fs', async () => {
+  expect(readOwnSource('src/core/money.ts')).toContain('// @mutate')
+  expect(readOwnSource(path.join(ROOT, 'src', 'core', 'ids.ts'))).toContain('// @mutate')
+  const catalogue = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'facts', 'catalogue.json'), 'utf8')) as unknown
+  const helper = await fs.promises.readFile(path.join(ROOT, 'src', 'core', 'testing', 'read-own-source.ts'), 'utf8')
+  const somewhere = (f: string): string => fs.readFileSync(f, 'utf8')
+  expect([catalogue, helper, somewhere]).toHaveLength(3)
+})
+
+test('ARC-15 two loops that both call their item f do not share it', () => {
+  for (const f of ['data/facts/catalogue.json']) expect(fs.readFileSync(path.join(ROOT, f), 'utf8')).not.toBe('')
+  for (const f of ['src/core/money.ts']) expect(readOwnSource(f)).toContain('// @mutate')
+})
+
+test('ARC-15 a wrapper called only with a data file, and a ?url import of a source, are no finding', async () => {
+  const data = (f: string): string => fs.readFileSync(path.join(ROOT, f), 'utf8')
+  const moneyUrl = ((await import('../core/money.ts?url')) as { default: string }).default
+  expect([data('data/facts/catalogue.json'), moneyUrl]).toHaveLength(2)
+})
