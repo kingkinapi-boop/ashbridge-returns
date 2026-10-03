@@ -1,0 +1,28 @@
+{
+  "note": "Clean (SC R52, R53): the planted key put right (Test). A duplicate of T-2, a December row, and one row missing from the export, each proved.",
+  "fiscalYear": { "start": "2025-01-01", "end": "2025-03-31" },
+  "accounts": [
+    { "key": "CHQ", "balanceMeaning": "cash balance", "openingBalance": 100.00, "closingBalance": 135.00, "rowsInExport": 4, "rowsMissingFromExport": 1 },
+    { "key": "BCD", "balanceMeaning": "amount owing on the card", "openingBalance": 50.00, "closingBalance": 40.00, "rowsInExport": 1, "rowsMissingFromExport": 0 }
+  ],
+  "statementBalances": {
+    "CHQ": [
+      { "month": "2025-01", "opening": 100.00, "closing": 110.00 },
+      { "month": "2025-02", "opening": 110.00, "closing": 120.00 },
+      { "month": "2025-03", "opening": 120.00, "closing": 135.00 }
+    ],
+    "BCD": [
+      { "month": "2025-01", "opening": 50.00, "closing": 40.00 },
+      { "month": "2025-02", "opening": 40.00, "closing": 40.00 },
+      { "month": "2025-03", "opening": 40.00, "closing": 40.00 }
+    ]
+  },
+  "transactions": [
+    { "id": "T-0", "acct": "CHQ", "date": "2024-12-30", "description": "OLD SALE (Test)", "amount": 7.00, "priorYear": true },
+    { "id": "T-1", "acct": "CHQ", "date": "2025-01-10", "description": "SALE (Test)", "amount": 10.00 },
+    { "id": "T-2", "acct": "CHQ", "date": "2025-02-10", "description": "SALE (Test)", "amount": 10.00 },
+    { "id": "T-3", "acct": "CHQ", "date": "2025-02-10", "description": "SALE (Test)", "amount": 10.00, "dupOf": "T-2" },
+    { "id": "T-4", "acct": "CHQ", "date": "2025-03-03", "description": "SALE (Test)", "amount": 15.00, "missingFromExport": true },
+    { "id": "T-5", "acct": "BCD", "date": "2025-01-12", "description": "CARD PAYMENT (Test)", "amount": 10.00 }
+  ]
+}

@@ -1,0 +1,4 @@
+// Planted (SC R36): money from a JSON number, not from text.
+export function dollarsToCents(dollars: number): number {
+  return Math.round(dollars * 100)
+}
