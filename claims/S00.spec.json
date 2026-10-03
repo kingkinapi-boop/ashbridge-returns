@@ -1,9 +1,11 @@
 {
  "card": "S00",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: no spec change, only the missing module fails",
  "worker": "cloud-117624",
- "state": "working",
- "at": "2026-10-03T08:24:59.888Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T08:28:46.669Z",
+ "mode": "turbo",
+ "commit": "e2dca05",
+ "validated": "6f3ce66"
 }
