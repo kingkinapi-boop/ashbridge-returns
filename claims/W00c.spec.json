@@ -1,12 +1,9 @@
 {
  "card": "W00c",
  "role": "spec",
- "worker": "cloud-c6e634",
- "state": "reported",
- "at": "2026-10-03T12:41:55.165Z",
- "mode": "turbo",
- "beat": "2026-10-03T12:26:38.641Z",
- "note": "A467 owner rule + rows 2, 11; tools 379/381 (2 build-owned rows 2 and 8); 563 unit fails are card's own",
- "commit": "e1215472",
- "validated": "b0f6ddd9"
+ "note": "toolchain refit",
+ "worker": "cloud-c5d3df",
+ "state": "working",
+ "at": "2026-10-03T15:24:00.368Z",
+ "mode": "turbo"
 }
