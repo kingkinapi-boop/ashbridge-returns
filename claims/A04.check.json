@@ -3,10 +3,8 @@
  "role": "check",
  "for": "2026-10-03T11:24:04.999Z",
  "worker": "cloud-3c9204",
- "state": "working",
- "at": "2026-10-03T11:44:49.990Z",
+ "state": "failed",
+ "at": "2026-10-03T11:45:40.556Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "c93ed92557552635dd702c26b88f01c3242c53ec"
- }
+ "note": "FAIL: scope only, same two items as reports/A04-check.md at e4d9714f (re-ran scope.mjs, identical); code checks passed in that report; needs Lead ruling or Paths edit (add src/core/safe-read.test.ts, treat engines.build.test.ts as build-test)"
 }
