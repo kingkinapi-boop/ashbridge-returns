@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
  "worker": "cloud-76ab27",
- "state": "working",
- "at": "2026-10-03T11:59:07.155Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T12:00:12.359Z",
+ "mode": "turbo",
+ "note": "wait: build is round 1 only; spec patch A464 (14 tests) is unbuilt, 3 of 14 fail on tip f134477c (harness list lacks src/core/db/vitest-setup.ts). Reopen build round 2 first.",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
 }
