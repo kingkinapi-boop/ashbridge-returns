@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-03T05:50:14.591Z",
  "worker": "local-3",
- "state": "working",
- "at": "2026-10-03T05:51:56.018Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T05:52:57.774Z",
+ "mode": "turbo",
+ "note": "needs a cloud box: no Postgres 16 on the laptop (card Where: cloud), see reports/DB16-check.md"
 }
