@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:35Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:45Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -20,7 +20,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:35Z by the Lea
 | Train | 25ea2736 red on A04 (clock mix, A468); FX15, CQ7, CQ6 on df6f1249, requested 12:35Z | check; land |
 | SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | train red: handler deadline from ctx.now, engine on the real clock (A468); findings review 6 running | in-round fix or split per the review |
+| A04 | findings 6: one clock (A469), round 5c in-round; CQ10 carded, R105 R106 to SC12 | spec (Opus), build, check, security read, train |
 | SC11, GL3 | DB16 landed: SC11 spec refit open (cloud); GL3 build reopened (pg16 run, R41 fix) | SC11 build; GL3 check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:35Z by the Lea
 | FX12, FX14, FX15, FX17 | FX15 off core, round 1 PASS stands, boards (A465); FX12, FX17 specs refit | FX12 build; FX17 build |
 | CQ6, CQ8, CQ9, SC10, A08 | CQ6 spec patch in, build round 2 open; CQ9 spec reported; CQ8 build; SC10 spec working; A08 after A04 lands | builds, checks |
 
-Cloud runs: about 6 since 10:58Z (train DB16, A04 and FX15 builds, specs). Local: none; local workers only for a named local job until CQ8 lands (claim.mjs offers Where: cloud jobs to them).
+Cloud runs: 4 fired 12:47Z (train df6f1249 first, then W00c build, SC11, FX17, FX12 builds). Local: local-1 CQ8 build, local-2 FX8 build, local-3 CQ10 spec (each claims its named job with `update`, never `next`).
 
 ## Next, in order
 
