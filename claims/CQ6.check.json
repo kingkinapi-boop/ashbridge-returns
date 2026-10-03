@@ -2,10 +2,8 @@
  "card": "CQ6",
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
- "worker": "cloud-1f7dcd",
- "state": "released",
- "at": "2026-10-03T11:45:25.311Z",
- "mode": "turbo",
- "note": "wait: needs Lead, queue re-offers this check although A464 reopened spec and build round 2; hold it until the round 2 build reports",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
+ "worker": "cloud-3c9204",
+ "state": "working",
+ "at": "2026-10-03T11:45:43.034Z",
+ "mode": "turbo"
 }
