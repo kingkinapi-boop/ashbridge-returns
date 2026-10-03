@@ -4,12 +4,8 @@
  "round": 2,
  "spec": "0f8e76f6",
  "worker": "local-3",
- "state": "released",
- "at": "2026-10-03T07:59:05.185Z",
+ "state": "reopened",
+ "at": "2026-10-03T08:00:37.157Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "8c21d0bc4f7fca0399f5781d06f4f8924c337ad4"
- },
- "note": "local worker skip: Where: cloud (db project 20 runs, test:flake); offered twice to local-3, Lead please re-offer to cloud",
- "needsLead": true
+ "note": "cloud only (Where: cloud); local workers skip it"
 }
