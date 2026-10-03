@@ -2,10 +2,8 @@
  "card": "CQ6",
  "role": "check",
  "for": "2026-10-03T11:42:00.036Z",
- "worker": "cloud-3c9204",
- "state": "released",
- "at": "2026-10-03T11:44:47.745Z",
- "mode": "turbo",
- "note": "wait: spec reopened by A464 and build round 2 ordered; do not check round 1",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"CQ4\"],\"depStatus\":[\"done\"]}"
+ "worker": "cloud-1f7dcd",
+ "state": "working",
+ "at": "2026-10-03T11:44:53.869Z",
+ "mode": "turbo"
 }
