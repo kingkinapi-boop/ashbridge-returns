@@ -12,6 +12,10 @@ export const DEFAULT_LEASE_MS = 10 * MINUTE
 const BACKOFF_MS = [1 * MINUTE, 4 * MINUTE, 16 * MINUTE]
 export const backoffMs = (attempts: number): number => BACKOFF_MS[Math.min(Math.max(attempts, 1), BACKOFF_MS.length) - 1] ?? 16 * MINUTE
 
+/** True while workerId holds the job's lease: running, its lease, not yet expired at `now` (ARC-5). */
+export const holdsLease = (job: Job, workerId: string, now: Date): boolean =>
+  job.status === 'running' && job.lease_holder === workerId && job.lease_until !== null && job.lease_until.getTime() > now.getTime()
+
 const parseJob = (row: unknown): Job => JobSchema.parse(row)
 
 export function createJobQueue(db: PGlite, clock: Clock): JobQueue {
@@ -23,9 +27,10 @@ export function createJobQueue(db: PGlite, clock: Clock): JobQueue {
     return parseJob(r.rows[0])
   }
 
-  async function running(id: string): Promise<Job> {
+  async function leased(id: string, workerId: string): Promise<Job> {
     const job = await get(id)
     if (job.status !== 'running') throw new Error(`job ${id} is ${job.status}, not running`)
+    if (!holdsLease(job, workerId, clock.now())) throw new Error(`job ${id}: ${workerId} does not hold the lease`)
     return job
   }
 
@@ -79,10 +84,10 @@ export function createJobQueue(db: PGlite, clock: Clock): JobQueue {
       })
     },
 
-    async complete(id, result, versions: VersionStamp) {
+    async complete(id, workerId, result, versions: VersionStamp) {
       const stamp = VersionStampSchema.safeParse(versions)
       if (!stamp.success) throw new Error('ARC-10: a done job needs a version stamp of non-blank values')
-      await running(id)
+      await leased(id, workerId)
       const done = await db.query(
         `update returns.jobs set status = 'done', result = $2::jsonb, version_stamp = $3::jsonb,
            finished_at = $4::timestamptz, lease_holder = null, lease_until = null where id = $1 returning *`,
@@ -91,8 +96,8 @@ export function createJobQueue(db: PGlite, clock: Clock): JobQueue {
       return parseJob(done.rows[0])
     },
 
-    async fail(id, error, options) {
-      const job = await running(id)
+    async fail(id, workerId, error, options) {
+      const job = await leased(id, workerId)
       const now = iso()
       if (options?.retry === false) {
         const r = await db.query(
