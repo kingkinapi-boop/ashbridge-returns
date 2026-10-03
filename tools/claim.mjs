@@ -161,8 +161,15 @@ const isActive = (c) => (c.state === 'working' || c.state === 'reported') && !is
 // Write claims/<file> (one or several, in ONE commit) on top of the claims branch tip and push.
 // `files` is { name: object }. A refused push (someone else pushed first) waits a
 // jittered, growing time, re-fetches and returns 'retry'; after 6 tries it returns false.
-function writeClaims(files, attempt = 1) {
+// CQ5: `decidedTip` is the claims tip the caller decided on. If the tip moved since and any of the
+// files written changed in between, the decision is stale: nothing is written and 'retry' is returned.
+// A move that touched other jobs only is kept, and the new claim lands on top of it.
+function writeClaims(files, attempt = 1, decidedTip) {
   const tip = claimsTip()
+  if (decidedTip !== undefined && tip !== decidedTip) {
+    const blobAt = (t, f) => (t ? tryGit(['rev-parse', '--verify', '-q', `${t}:claims/${f}`]) : '') || ''
+    if (Object.keys(files).some((f) => blobAt(tip, f) !== blobAt(decidedTip, f))) return 'retry'
+  }
   const index = path.join(os.tmpdir(), `claims-index-${process.pid}-${attempt}`)
   const env = { ...process.env, ...ID, GIT_INDEX_FILE: index }
   const run = (a, input) => execFileSync('git', a, { cwd: ROOT, env, encoding: 'utf8', input, stdio: ['pipe', 'pipe', 'pipe'] }).trim()
@@ -192,7 +199,7 @@ function writeClaims(files, attempt = 1) {
     fs.rmSync(index, { force: true })
   }
 }
-const writeClaim = (file, obj, attempt) => writeClaims({ [file]: obj }, attempt)
+const writeClaim = (file, obj, attempt, decidedTip) => writeClaims({ [file]: obj }, attempt, decidedTip)
 
 // The protect-spec hook reads this to know whether we are building or checking.
 function setCurrentJob(job) {
@@ -222,7 +229,8 @@ function next() {
     const mode = modeNow()
     const cap = mode.mode === 'turbo' ? Number(mode.max_workers || 16) : CAPS[mode.mode] ?? 0
     const { cards } = JSON.parse(readMain('plan/slices.json'))
-    const claims = readClaims(claimsTip())
+    const decidedTip = claimsTip()
+    const claims = readClaims(decidedTip)
     const active = claims.filter(isActive)
     if (cap === 0) return out(`PAUSED ${mode.mode}`, 3)
     if (active.filter((c) => c.state === 'working').length >= cap) return out(`PAUSED ${mode.mode} (cap ${cap} reached)`, 3)
@@ -301,7 +309,7 @@ function next() {
     const was = claimFor0(claims, pick.card, pick.role)
     if (was && was.state === 'released' && was.lastRelease) claim.lastRelease = was.lastRelease
     const file = `${pick.card}.${pick.role}.json`
-    const res = writeClaim(file, claim, attempt)
+    const res = writeClaim(file, claim, attempt, decidedTip)
     if (res === true) {
       setCurrentJob({ card: pick.card, role: pick.role, worker })
       return out(`CLAIMED ${pick.card} ${pick.role}${pick.reopenedFrom && pick.note ? `\n${pick.note}` : ''}`, 0)
@@ -320,7 +328,9 @@ function update() {
   if (state === 'reopened' && (worker !== 'lead' || !['build', 'spec'].includes(role))) return out('REFUSED: only --worker lead may reopen a build or a spec', 6)
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     fetchAll()
-    const claims = readClaims(claimsTip())
+    // CQ7: the write goes on the tip this decision read (as CQ5 does for next).
+    const decidedTip = claimsTip()
+    const claims = readClaims(decidedTip)
     const find = (r) => claims.find((c) => c.card === card && c.role === r)
     const prev = find(role) || {}
     if (prev.worker && prev.worker !== worker && worker !== 'lead') return out(`REFUSED: ${card} ${role} is held by ${prev.worker}, not ${worker}`, 6)
@@ -357,7 +367,7 @@ function update() {
     // A check FAIL: one push writes the failed check and holds the build for the findings review.
     const held = role === 'check' && state === 'failed' ? find('build') : null
     if (held) files[`${card}.build.json`] = { ...held, state: 'hold-findings', at, note: opt('note', held.note) }
-    const res = writeClaims(files, attempt)
+    const res = writeClaims(files, attempt, decidedTip)
     if (res === true) {
       if (state !== 'working') setCurrentJob(null)
       return out(`UPDATED ${card} ${role} ${state}${held ? ' (build on hold-findings)' : ''}`, 0)
@@ -373,10 +383,11 @@ function beat() {
   if (!card || !role) return out('usage: beat <card> <role> --worker <name>', 2)
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     fetchAll()
-    const prev = readClaims(claimsTip()).find((c) => c.card === card && c.role === role)
+    const decidedTip = claimsTip()
+    const prev = readClaims(decidedTip).find((c) => c.card === card && c.role === role)
     if (!prev) return out(`REFUSED: no claim for ${card} ${role}`, 6)
     if (prev.worker !== worker && worker !== 'lead') return out(`REFUSED: ${card} ${role} is held by ${prev.worker}, not ${worker}`, 6)
-    const res = writeClaims({ [`${card}.${role}.json`]: { ...prev, beat: new Date(nowMs()).toISOString() } }, attempt)
+    const res = writeClaims({ [`${card}.${role}.json`]: { ...prev, beat: new Date(nowMs()).toISOString() } }, attempt, decidedTip)
     if (res === true) return out(`BEAT ${card} ${role}`, 0)
     if (res === false) break
   }

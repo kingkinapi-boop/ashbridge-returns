@@ -18,3 +18,9 @@ Fix each defect at its source; never weaken a rule or widen KNOWN (A329). A defe
 
 ## Check
 A checker who did neither: SC's rules green with no FX7 entry in KNOWN, `npm test`, an Opus read of the contract changes.
+
+## Also (A446, reports/A04-findings-5.md RC1)
+The drive stand-in (storage/drive) reads through `readRegularFile` with a size cap and a regular-file check; the files store gains the size cap. R94's KNOWN entries for storage/drive and storage/files are owned by FX7.
+
+## SC12 KNOWN entries (A488, 3 Oct)
+SC12 (when it lands) lists R93, R94 or R104 KNOWN entries this card owns in tools/test/fs-rules.test.mjs (R93 and R94: src/modules/storage/files/index.ts and src/modules/storage/drive/index.ts; R104: the `store` Map in src/modules/ocr/textlayer/index.ts). The build fixes them (a guarded read or write; a cap from data or a reasoned `// R104 bounded: <reason>` marker); the spec of that round deletes the entries, with that file added to Paths then. If this card lands first, SC12 re-homes them (A488).

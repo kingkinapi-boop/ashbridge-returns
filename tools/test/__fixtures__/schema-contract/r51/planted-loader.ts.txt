@@ -1,0 +1,5 @@
+// Planted (SC R51): a test-world loader that reads data files without the SEC-11 guard.
+import fs from 'node:fs'
+export function loadClient(dir: string): unknown {
+  return JSON.parse(fs.readFileSync(`${dir}/answer-key.json`, 'utf8'))
+}

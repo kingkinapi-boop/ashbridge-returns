@@ -1,5 +1,7 @@
 # Family: test world kind ({kind})
 
+Phase (the card's own, in plan/slices.json). Where: local or cloud.
+
 Cards W01 to W13. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 00 (the kinds table), the clauses on the card, and `testworld/model/` (W00).
 
 ## Goal
