@@ -1,13 +1,19 @@
 // @mutate
 // The two engines (ARC-6): `recorded` replays stored answers and is the default; `project` hands the job
 // to the Claude project through the exchange folder (ARC-22). There is no API engine (decision 0008).
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
 import { aiStepSchemas } from '../../../contracts/ai'
+import { readRegularFile } from '../../../core/safe-read'
+import { isBlank } from '../../../contracts/text'
 import {
+  AiJobIdSchema,
   InboxFileSchema,
+  OUTBOX_MAX_BYTES,
   OutboxFileSchema,
+  OutboxRefusalSchema,
   RecordingSchema,
   inputHashOf,
   readUtf8,
@@ -17,7 +23,7 @@ import {
 
 export type EngineResult =
   | { ok: true; output: unknown; stamp: unknown }
-  | { ok: false; reason: string; problems: string[] }
+  | { ok: false; reason: string; problems: string[]; /** a refusal at the output stage counts against the step (AI-1) */ counted?: boolean }
 
 export interface EngineContext {
   jobId?: string | undefined
@@ -25,8 +31,12 @@ export interface EngineContext {
   exchangeDir?: string | undefined
   pollMs: number
   sink: (line: string) => void
-  /** Job ids this runner is waiting on, so a file for another waiting job is not logged as a stranger. */
-  waiting: Set<string>
+  /** Pollers per job id this runner is waiting on, so a file for another waiting job is not logged as a stranger. */
+  waiting: Map<string, number>
+  /** The runner's clock (pinned in tests). */
+  now: () => Date
+  /** The wait ends here: the lease minus a margin (ARC-22). */
+  deadline: Date
   /** Outbox files already seen, by name and content, so each is logged once. */
   seen: Set<string>
 }
@@ -108,39 +118,67 @@ function recordedRun(job: AiJob, ctx: EngineContext): EngineResult {
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
 
-/** Reads the outbox for this job's file; returns its result once there is one valid JSON object for it. */
-function readOutbox(jobId: string, ctx: EngineContext, outbox: string): { output: unknown; stamp: unknown } | undefined {
-  let found: { output: unknown; stamp: unknown } | undefined
-  for (const name of fs.readdirSync(outbox)) {
-    const ignore = (detail: string | undefined): void => {
-      logOnce(ctx, `ai exchange: ignored outbox file ${name}`, detail)
-    }
-    const read = tryRead(path.join(outbox, name))
-    const detail = read.ok ? read.text : read.code
-    if (name !== `${jobId}.json`) {
-      if (!ctx.waiting.has(path.parse(name).name)) ignore(detail)
-      continue
-    }
-    // Stryker disable next-line ConditionalExpression,BlockStatement: an unreadable file and one that is not JSON are ignored and logged the same way (the folder case is pinned by engines.build.test.ts)
-    if (!read.ok) {
-      ignore(detail)
-      continue
-    }
-    const json = tryParse(read.text)
-    const result = json.ok ? OutboxFileSchema.safeParse(json.value) : undefined
-    if (result?.success !== true || result.data.jobId !== jobId) {
-      ignore(detail)
-      continue
-    }
-    found = { output: result.data.output, stamp: result.data.stamp }
+export const DEADLINE_REASON = 'no result from the Claude project before the lease ends (ARC-22)'
+const REFUSED_BY_PROJECT = 'the Claude project refused the job: '
+
+/** The own file is not what a result looks like: the job fails at once, naming the file and the cause (never content). */
+const ownFails = (jobId: string, cause: string): EngineResult => refuse(`the outbox file ${jobId}.json is ${cause} (ARC-22)`)
+
+/** This job's own outbox file: a result or a refusal ends the wait; anything else at that name fails the job; none yet is undefined. */
+function readOwn(jobId: string, outbox: string): EngineResult | undefined {
+  const read = readRegularFile(path.join(outbox, `${jobId}.json`), OUTBOX_MAX_BYTES)
+  if (!read.ok) {
+    if (read.reason === 'gone') return undefined
+    return ownFails(jobId, read.reason === 'too-big' ? `too big (more than ${String(OUTBOX_MAX_BYTES)} bytes)` : 'not a file')
   }
-  return found
+  const json = tryParse(read.text)
+  if (!json.ok) return ownFails(jobId, 'not JSON')
+  const result = OutboxFileSchema.safeParse(json.value)
+  if (result.success) {
+    if (result.data.jobId !== jobId) return ownFails(jobId, 'for another job')
+    return { ok: true, output: result.data.output, stamp: result.data.stamp }
+  }
+  const refusal = OutboxRefusalSchema.safeParse(json.value)
+  if (!refusal.success) return ownFails(jobId, 'not one result or refusal')
+  if (refusal.data.jobId !== jobId) return ownFails(jobId, 'for another job')
+  const { reason, problems, stage } = refusal.data.refusal
+  return { ok: false, reason: `${REFUSED_BY_PROJECT}${reason}`, problems, counted: stage === 'output' }
 }
+
+/** Every other entry in the outbox is looked at, never opened, and logged once by quoted name, size and time. */
+function logStrangers(ctx: EngineContext, outbox: string): void {
+  for (const name of fs.readdirSync(outbox)) {
+    if (ctx.waiting.has(path.parse(name).name)) continue
+    let looked: fs.Stats
+    try {
+      looked = fs.lstatSync(path.join(outbox, name))
+    } catch {
+      continue
+    }
+    logOnce(ctx, `ai exchange: ignored outbox file ${JSON.stringify(name)}`, `${String(looked.size)}:${String(looked.mtimeMs)}`)
+  }
+}
+
+/** A folder of the exchange that must be a real folder inside the exchange folder's real path (made when missing). */
+// Stryker disable BlockStatement: the catch block returns what an empty one would fall through to
+function realFolder(root: string, name: 'inbox' | 'outbox'): string | undefined {
+  const dir = path.join(root, name)
+  try {
+    fs.mkdirSync(dir, { recursive: true })
+    if (fs.realpathSync(dir) === path.join(fs.realpathSync(root), name)) return dir
+  } catch {
+    return undefined
+  }
+  return undefined
+}
+// Stryker restore BlockStatement
 
 async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult> {
   const { jobId, exchangeDir } = ctx
-  if (jobId === undefined || jobId.trim() === '') return refuse('the project engine needs a job id (the inbox file is named by it)')
-  if (exchangeDir === undefined || exchangeDir.trim() === '') return refuse('the project engine is off: AI_EXCHANGE_DIR is not set')
+  if (jobId === undefined || isBlank(jobId)) return refuse('the project engine needs a job id (the inbox file is named by it)')
+  if (exchangeDir === undefined || isBlank(exchangeDir)) return refuse('the project engine is off: AI_EXCHANGE_DIR is not set')
+  // SEC-10: the id becomes a file name in a folder another process writes; it is never printed.
+  if (!AiJobIdSchema.safeParse(jobId).success) return refuse('the job id is not a safe file name (SEC-10)')
   const inboxFile: InboxFile = InboxFileSchema.parse({
     jobId,
     stepType: job.stepType,
@@ -156,23 +194,31 @@ async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult>
     mappingRelease: job.mappingRelease,
     inputs: job.inputs,
   })
-  const inbox = path.join(exchangeDir, 'inbox')
-  const outbox = path.join(exchangeDir, 'outbox')
-  fs.mkdirSync(inbox, { recursive: true })
-  fs.mkdirSync(outbox, { recursive: true })
-  // written beside the inbox, then renamed in, so the project never reads half a file
-  const staging = path.join(exchangeDir, `.staging-${jobId}.json`)
-  fs.writeFileSync(staging, JSON.stringify(inboxFile, null, 2))
+  fs.mkdirSync(exchangeDir, { recursive: true })
+  const inbox = realFolder(exchangeDir, 'inbox')
+  if (inbox === undefined) return refuse('the exchange inbox folder is not a real folder (ARC-22)')
+  const outbox = realFolder(exchangeDir, 'outbox')
+  if (outbox === undefined) return refuse('the exchange outbox folder is not a real folder (ARC-22)')
+  // written beside the inbox under a name nobody can predict (flag wx: never into an existing file or link), then renamed in
+  const staging = path.join(exchangeDir, `.staging-${jobId}-${crypto.randomBytes(8).toString('hex')}.json`)
+  fs.writeFileSync(staging, JSON.stringify(inboxFile, null, 2), { flag: 'wx' })
   fs.renameSync(staging, path.join(inbox, `${jobId}.json`))
-  ctx.waiting.add(jobId)
+  const pollers = (by: 1 | -1): void => {
+    const n = (ctx.waiting.get(jobId) ?? 0) + by
+    if (n > 0) ctx.waiting.set(jobId, n)
+    else ctx.waiting.delete(jobId)
+  }
+  pollers(1)
   try {
     for (;;) {
-      const got = readOutbox(jobId, ctx, outbox)
-      if (got) return { ok: true, ...got }
+      if (ctx.now().getTime() >= ctx.deadline.getTime()) return refuse(DEADLINE_REASON)
+      const own = readOwn(jobId, outbox)
+      if (own !== undefined) return own
+      logStrangers(ctx, outbox)
       await sleep(ctx.pollMs)
     }
   } finally {
-    ctx.waiting.delete(jobId)
+    pollers(-1)
   }
 }
 

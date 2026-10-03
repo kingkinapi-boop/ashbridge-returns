@@ -17,24 +17,24 @@ async function runJob({ queue, handlers, clock, workerId = 'worker' }: RunnerOpt
   if (!job) return false
   const handler = handlers[job.kind]
   if (!handler) {
-    await queue.fail(job.id, `no handler for ${job.kind}`, { retry: false })
+    await queue.fail(job.id, workerId, `no handler for ${job.kind}`, { retry: false })
     return true
   }
   try {
     const input = handler.input.safeParse(job.input)
     if (!input.success) {
-      await queue.fail(job.id, `input: ${input.error.message}`)
+      await queue.fail(job.id, workerId, `input: ${input.error.message}`)
       return true
     }
     const out = await handler.run(input.data, { jobId: job.id, attempt: job.attempts, now: clock.now(), returnId: job.return_id })
     const result = handler.result.safeParse(out)
     if (!result.success) {
-      await queue.fail(job.id, `result: ${result.error.message}`)
+      await queue.fail(job.id, workerId, `result: ${result.error.message}`)
       return true
     }
-    await queue.complete(job.id, result.data, handler.versions)
+    await queue.complete(job.id, workerId, result.data, handler.versions)
   } catch (e) {
-    await queue.fail(job.id, text(e))
+    await queue.fail(job.id, workerId, text(e))
   }
   return true
 }

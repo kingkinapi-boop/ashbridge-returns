@@ -131,7 +131,10 @@ async function world(sink?: (line: string) => void) {
   const db = await cloneTestDb()
   const clock = mutableClock(T0)
   const queue = createJobQueue(db, clock)
-  const ai = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5, ...(sink ? { sink } : {}) })
+  // Round 5c (A469): the runner reads the same pinned clock as the queue (F10 wires one Clock). The wait's deadline is the
+  // runner's: its now() at the call + lease - 10 min; ctx.now does not set it.
+  const options = { recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5, now: () => clock.now(), ...(sink ? { sink } : {}) }
+  const ai = createAiRunner(options)
   expect(ai.useEngine('project')).toEqual({ ok: true })
   const handler = createAiStepHandler('finding', ai)
   const runner = createRunner({ queue, handlers: { [handler.kind]: handler }, clock, workerId: 'worker (Test)' })
@@ -235,6 +238,36 @@ describe('ARC-22 ARC-5 a result that arrives after the 24-hour lease ran out', (
     expect(r.status).toBe('done')
     expect(r.attempts).toBe(2)
     expect(r.result?.output).toEqual(GOOD.output)
+  })
+
+  // Round 5 (reports/A04-findings-5.md fix 7): the wait ends at the lease minus 10 minutes, so a re-claim never starts a
+  // second poller beside one still running; the result that comes later is taken at once by the retry.
+  test('ARC-22 ARC-5 no result by lease minus 10 minutes: the attempt fails with the deadline reason, the inbox file stays, and the retry takes the result at once', async () => {
+    const { db, clock, queue, runner } = await world()
+    const queued = await queue.enqueue('ai:finding', 'ai-finding-c01-deadline', job('good'))
+    const state = { ended: false }
+    const running = runner.runOnce()
+    running.then(
+      () => { state.ended = true },
+      () => { state.ended = true },
+    )
+    await waitFor(() => filesIn(path.join(exchange, 'inbox')).length > 0, 'the inbox file')
+    expect((await row(db, queued.id)).status).toBe('running')
+    clock.advance(24 * HOUR - 10 * MIN)
+    await waitFor(() => state.ended, 'the attempt to end at the deadline', 2000)
+    expect(await running).toBe(true)
+    const failed = await row(db, queued.id)
+    expect(failed.status).toBe('queued')
+    expect(failed.result).toBeNull()
+    expect(failed.last_error).toContain('no result from the Claude project before the lease ends (ARC-22)')
+    expect(filesIn(path.join(exchange, 'inbox'))).toEqual([`${queued.id}.json`])
+    writeOutbox(`${queued.id}.json`, result(queued.id, GOOD.output, GOOD.stamp))
+    clock.advance(HOUR)
+    expect(await runner.runOnce()).toBe(true)
+    const done = await row(db, queued.id)
+    expect(done.status).toBe('done')
+    expect(done.attempts).toBe(2)
+    expect(done.result?.output).toEqual(GOOD.output)
   })
 
   test('ARC-22 a late result whose input hash does not match the job is refused with the reason and not stored', async () => {

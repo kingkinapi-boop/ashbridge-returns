@@ -1,0 +1,4 @@
+// Planted (SC R41): two private definitions of blank.
+import { z } from 'zod'
+export const NameSchema = z.string().trim().min(1)
+export const isEmpty = (s: string): boolean => s.trim() === ''

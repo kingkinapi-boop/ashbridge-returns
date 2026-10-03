@@ -21,7 +21,10 @@
 //   aiEngines: { recorded: { run(...) }, project: { run(...) } }   the runner calls aiEngines[name].run at call time
 //   createAiStepHandler(stepType, runner): Handler (src/contracts/jobs.ts), kind `ai:<stepType>`, leaseMs 24 hours,
 //     run(input, ctx) = runAiStep(input, { jobId: ctx.jobId }); a result is { output, stamp }; a refusal throws an
-//     Error whose message holds the reason and the problems.
+//     Error whose message holds the reason and the problems. ctx.now never sets the wait's deadline (round 5c, A469):
+//     the runner's own clock does (its `now` option, default src/core/clock.ts).
+// Clocks (round 5c): the runner() helper pins `now` at RUNNER_NOW, the instant every ctx.now in this file holds, so
+//   every test here runs on one pinned clock; only the date-roll twin leaves it to the default clock on purpose.
 //   AI_JOB_LEASE_MS (24 hours), AI_SETTING_NAMES (every setting name the runner reads),
 //   inputHashOf(inputs): sha256 hex of the canonical JSON (keys sorted at every depth, no whitespace),
 //   InboxFileSchema and ApprovedListSchema (zod, strict at every depth).
@@ -31,14 +34,16 @@
 // Exchange (ARC-22), under AI_EXCHANGE_DIR: the runner writes inbox/<jobId>.json = { jobId, stepType, promptVersion,
 //   promptHash, modelId, inputHash, schema (z.toJSONSchema(aiStepSchemas[stepType]), default options), redaction,
 //   isTest, ocrEngine, ocrEngineVersion, mappingRelease, inputs }, then waits for outbox/<jobId>.json =
-//   { jobId, output, stamp }. A file that is not one JSON object, or names no job it is waiting on, is ignored and
-//   logged by file name only.
+//   { jobId, output, stamp }. A file named for no job it is waiting on is ignored and logged by file name only.
+//   Round 5 (exchange.acceptance.test.ts header): the job id grammar, the deadline, the refusal file, and an own file
+//   that is neither a result nor a refusal failing the step at once.
 // Amber choices are listed in reports/A04-spec.md.
 import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { z } from 'zod'
 import { aiStepSchemas, validateAiOutput, versionStampSchema, type VersionStamp } from '../../../contracts/ai'
+import { setClock, systemClock } from '../../../core/clock'
 import { readSettings } from '../../../core/env'
 import { readOwnSource } from '../../../core/testing/read-own-source'
 import {
@@ -93,14 +98,30 @@ beforeEach(() => {
 
 afterEach(() => {
   for (const stop of stops) stop()
+  vi.useRealTimers() // a failed fake-timer test never leaves its timers to the next test
   vi.restoreAllMocks()
   tmp.cleanup()
 })
 
+/** Under fake timers: the step's result once it settles within one poll; a step still waiting fails here by name. */
+async function withinOnePoll<T>(step: Promise<T>): Promise<T> {
+  const state = { done: false }
+  step.then(
+    () => { state.done = true },
+    () => { state.done = true },
+  )
+  await vi.advanceTimersByTimeAsync(5)
+  if (!state.done) throw new Error('the step is still waiting after one poll')
+  return step
+}
+
 type RunnerOptions = Parameters<typeof createAiRunner>[0]
 
+/** The one instant this file's clocks hold: the runner's pinned `now` and every handler ctx.now (round 5c, A469). */
+const RUNNER_NOW = '2026-10-02T12:00:00Z'
+
 function runner(extra: Partial<RunnerOptions> = {}) {
-  return createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: {}, pollMs: 5, ...extra })
+  return createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: {}, pollMs: 5, now: () => new Date(RUNNER_NOW), ...extra })
 }
 
 /** A runner switched to the project engine against the temp exchange folder. */
@@ -355,22 +376,50 @@ describe('ARC-22 the project engine writes one inbox file in the fixed format an
     expect(InboxFileSchema.safeParse({ ...seen, redaction: { ...redaction, extra: 'x' } }).success).toBe(false)
   })
 
-  test('ARC-22 an outbox file that is not one JSON result is ignored and logged by name only; the job waits for a real one', async () => {
-    const { lines, sink } = collectLines()
-    const canary = 'PLANTED-CANARY-CONTENT (Test)'
-    fakeProject(async ({ json }) => {
-      const id = String(json['jobId'])
-      writeOutbox(exchange, `${id}.json`, `not json ${canary}`)
-      await waitFor(() => lines.some((l) => l.includes(`${id}.json`)), 'the bad outbox file to be logged')
-      writeOutbox(exchange, `${id}.json`, JSON.stringify([canary, canary]))
-      await waitFor(() => lines.filter((l) => l.includes(`${id}.json`)).length >= 2, 'the two-result file to be logged')
-      writeOutbox(exchange, `${id}.json`, outboxResult(id, recording('finding-c01-good').output, recording('finding-c01-good').stamp))
-    })
-    const r = projectRunner({ sink })
-    const res = await r.runAiStep(job('good'), { jobId: JOB_ID })
-    expect(res).toMatchObject({ ok: true, output: recording('finding-c01-good').output })
-    expect(lines.join('\n')).not.toContain(canary)
-    expect(lines.join('\n')).not.toContain(exchange)
+  // Round 5 (reports/A04-findings-5.md, RC2): restated. The own file that is not one JSON result no longer leaves the
+  // job waiting until the lease ends: it fails the step at once, naming the file and the cause, never the content.
+  test('ARC-22 an own outbox file that is not JSON fails the step at once, naming the file, never its content', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const { lines, sink } = collectLines()
+      const canary = 'PLANTED-CANARY-CONTENT (Test)'
+      writeOutbox(exchange, `${JOB_ID}.json`, `not json ${canary}`)
+      const r = projectRunner({ sink })
+      const res = await withinOnePoll(r.runAiStep(job('good'), { jobId: JOB_ID }))
+      expect(res.ok).toBe(false)
+      if (res.ok) return
+      expect(res.reason).toContain(`${JOB_ID}.json`)
+      expect(res.reason).toContain('not JSON')
+      expect(res.reason).toMatch(/\bARC-22\b/)
+      expect(res.problems).toEqual([])
+      expect(r.refusals('finding')).toBe(0)
+      expect(allText(res) + lines.join('\n')).not.toContain(canary)
+      expect(allText(res) + lines.join('\n')).not.toContain(exchange)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  test('ARC-22 an own outbox file holding JSON that is not one result (an array) fails the step at once, naming the file, never its content', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const { lines, sink } = collectLines()
+      const canary = 'PLANTED-CANARY-ARRAY (Test)'
+      writeOutbox(exchange, `${JOB_ID}.json`, JSON.stringify([canary, canary]))
+      const r = projectRunner({ sink })
+      const res = await withinOnePoll(r.runAiStep(job('good'), { jobId: JOB_ID }))
+      expect(res.ok).toBe(false)
+      if (res.ok) return
+      expect(res.reason).toContain(`${JOB_ID}.json`)
+      expect(res.reason).toContain('not one result or refusal')
+      expect(res.reason).toMatch(/\bARC-22\b/)
+      expect(res.problems).toEqual([])
+      expect(r.refusals('finding')).toBe(0)
+      expect(allText(res) + lines.join('\n')).not.toContain(canary)
+      expect(allText(res) + lines.join('\n')).not.toContain(exchange)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   test('ARC-22 an outbox file for an unknown job id is ignored and logged by file name only, never its content', async () => {
@@ -609,7 +658,7 @@ describe('ARC-22 the ai:<step> handler', () => {
 
   test('ARC-22 the handler returns { output, stamp } for a good job and throws the reason for a refusal', async () => {
     const h = createAiStepHandler('finding', runner())
-    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
     const out = (await h.run(job('good'), ctx)) as { output: unknown; stamp: unknown }
     expect(out).toMatchObject({ output: recording('finding-c01-good').output, stamp: recording('finding-c01-good').stamp })
     expect(h.result.safeParse(out).success).toBe(true)
@@ -672,7 +721,6 @@ describe('AI-1 AI-9 a document with planted instructions has no effect', () => {
 // default log sink is the core logger (fix 4). Every behaviour the db test proves also has a unit twin here (RC2).
 
 const LISTED_NOT_APPROVED = 'not approved: run the evaluation set first (AI-11)'
-const pause = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
 const GOOD_REC = (): ReturnType<typeof recording> => recording('finding-c01-good')
 
 /** A recordings folder in the temp dir holding exactly the given recordings (one file each). */
@@ -785,7 +833,7 @@ function projectAnswering(stamp: VersionStamp): void {
 
 async function handlerMessage(r: ReturnType<typeof runner>): Promise<{ threw: boolean; message: string }> {
   const h = createAiStepHandler('finding', r)
-  const ctx = { jobId: 'job-c01-handler-stamp-test', attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+  const ctx = { jobId: 'job-c01-handler-stamp-test', attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
   try {
     await h.run(job('good'), ctx)
     return { threw: false, message: '' }
@@ -871,6 +919,44 @@ describe('AI-10 round 4: the runner compares every stamp part the contract has',
     expect(namedParts(allText(res))).toEqual(['ocrEngine', 'ocrEngineVersion'])
   })
 })
+
+// ---------- AI-10 ARC-22 round 5c (A469): the handler stamp tests again after the date rolls ----------
+// Train 25ea2736 went red when the real date passed ctx.now + 23 h 50 min: the deadline came from ctx.now while the
+// wait ran on the runner's clock. Here the runner keeps its default clock (src/core/clock.ts's system clock) and Date
+// is faked forward from the queue's ctx.now; each case must still reach the stamp check and name exactly its part.
+
+/** A project runner on the default clock (no `now` option; R106 exception: the default clock is what is tested). */
+function defaultClockProjectRunner() {
+  const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5 })
+  expect(r.useEngine('project')).toEqual({ ok: true })
+  return r
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000
+for (const [label, shiftMs] of [['2 days', 2 * DAY_MS], ['1 year', 365 * DAY_MS]] as const) {
+  describe(`AI-10 ARC-22 round 5c: the date is ctx.now + ${label}`, () => {
+    beforeEach(() => {
+      setClock(systemClock)
+      vi.useFakeTimers({ toFake: ['Date'] })
+      vi.setSystemTime(Date.parse(RUNNER_NOW) + shiftMs)
+    })
+
+    test(`ARC-22 the faked date holds: the default clock reads ctx.now + ${label}`, () => {
+      expect(Date.now()).toBe(Date.parse(RUNNER_NOW) + shiftMs)
+    })
+
+    for (const part of STAMP_PARTS) {
+      test(`AI-10 ARC-22 handler, date ctx.now + ${label}: a project result differing only at ${part} still throws naming exactly {${part}}`, async () => {
+        projectAnswering(stampWith(part))
+        const got = await handlerMessage(defaultClockProjectRunner())
+        expect(got.threw).toBe(true)
+        expect(got.message).not.toContain('before the lease ends')
+        expect(namedParts(got.message)).toEqual([part])
+        expect(got.message).not.toContain(OTHER[part])
+      })
+    }
+  })
+}
 
 describe('SEC-11 round 2: the is_test gate is for the project engine only', () => {
   test('SEC-11 a recorded-engine job for a return with is_test = false runs on its recorded answer', async () => {
@@ -958,15 +1044,18 @@ describe('ARC-20 round 2: the exchange folder is read once, through env.ts, when
       const mkdir = vi.spyOn(fs, 'mkdirSync').mockImplementation(planted)
       const rename = vi.spyOn(fs, 'renameSync').mockImplementation(planted)
       const { lines, sink } = collectLines()
-      const ctx: Parameters<typeof aiEngines.project.run>[1] = {
+      // Round 5 engine context (exchange.acceptance.test.ts header): waiting counts pollers, now and deadline pin the wait.
+      const ctx = {
         jobId: JOB_ID,
         recordingsDir: RECORDINGS_DIR,
         pollMs: 5,
         sink,
-        waiting: new Set<string>(),
+        waiting: new Map<string, number>(),
         seen: new Set<string>(),
+        now: () => new Date('2026-10-03T09:00:00.000Z'),
+        deadline: new Date('2026-10-04T08:50:00.000Z'),
         ...(folder === undefined ? {} : { exchangeDir: folder }),
-      }
+      } as unknown as Parameters<typeof aiEngines.project.run>[1]
       // G2 (reports/A04-spec-review-3.md): the refusal comes back as a result; a thrown error fails here.
       const pending = Promise.resolve().then(() => aiEngines.project.run(job('good'), ctx))
       await expect(pending).resolves.toMatchObject({ ok: false, reason: expect.stringMatching(/AI_EXCHANGE_DIR/) as unknown })
@@ -988,22 +1077,28 @@ describe('ARC-20 round 2: the exchange folder is read once, through env.ts, when
 })
 
 describe('ARC-22 round 2: outbox files the job is not waiting for', () => {
-  test('ARC-22 an outbox file named for this job but holding another job id is ignored and logged once, by name only', async () => {
-    const { lines, sink } = collectLines()
-    const canary = 'PLANTED-CANARY-OTHER-ID (Test)'
-    fakeProject(async ({ json }) => {
-      const id = String(json['jobId'])
-      writeOutbox(exchange, `${id}.json`, outboxResult('job-someone-else-test', { ...GOOD_REC().output, summary: canary }, GOOD_REC().stamp))
-      await waitFor(() => lines.some((l) => l.includes(`${id}.json`)), 'the mislabelled file to be logged', 1000).catch(() => undefined)
-      await pause(40) // several more polls see the same file
-      writeOutbox(exchange, `${id}.json`, outboxResult(id, GOOD_REC().output, GOOD_REC().stamp))
-    })
-    const res = await projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
-    expect(res).toMatchObject({ ok: true, output: GOOD_REC().output })
-    expect(lines.filter((l) => l.includes(`${JOB_ID}.json`))).toHaveLength(1)
-    expect(lines.join('\n')).not.toContain(canary)
-    expect(lines.join('\n')).not.toContain('job-someone-else-test')
-    expect(lines.join('\n')).not.toContain(exchange)
+  // Round 5 (RC2): restated. The own file holding another job's result fails the step at once instead of waiting.
+  test('ARC-22 an outbox file named for this job but holding another job id fails the step at once, naming the file, never the other id', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const { lines, sink } = collectLines()
+      const canary = 'PLANTED-CANARY-OTHER-ID (Test)'
+      writeOutbox(exchange, `${JOB_ID}.json`, outboxResult('job-someone-else-test', { ...GOOD_REC().output, summary: canary }, GOOD_REC().stamp))
+      const r = projectRunner({ sink })
+      const res = await withinOnePoll(r.runAiStep(job('good'), { jobId: JOB_ID }))
+      expect(res.ok).toBe(false)
+      if (res.ok) return
+      expect(res.reason).toContain(`${JOB_ID}.json`)
+      expect(res.reason).toContain('another job')
+      expect(res.problems).toEqual([])
+      expect(r.refusals('finding')).toBe(0)
+      const all = allText(res) + lines.join('\n')
+      expect(all).not.toContain(canary)
+      expect(all).not.toContain('job-someone-else-test')
+      expect(all).not.toContain(exchange)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   test('ARC-22 two jobs waiting at once: neither logs the other job\'s outbox file while both wait', async () => {
@@ -1031,20 +1126,65 @@ describe('ARC-22 round 2: outbox files the job is not waiting for', () => {
     }
   })
 
-  test('ARC-22 a folder named like a result file in the outbox is logged once by name and the job waits for its real file', async () => {
-    const { lines, sink } = collectLines()
-    const folder = 'folder-not-a-result-test.json'
-    fs.mkdirSync(path.join(exchange, 'outbox', folder), { recursive: true })
-    fakeProject(async ({ json }) => {
-      const id = String(json['jobId'])
-      await waitFor(() => lines.some((l) => l.includes(folder)), 'the folder to be logged', 1000).catch(() => undefined)
-      await pause(40)
-      writeOutbox(exchange, `${id}.json`, outboxResult(id, GOOD_REC().output, GOOD_REC().stamp))
-    })
-    const res = await projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
-    expect(res).toMatchObject({ ok: true, output: GOOD_REC().output })
-    expect(lines.filter((l) => l.includes(folder))).toHaveLength(1)
-    expect(lines.join('\n')).not.toContain(exchange)
+  // Round 5 (fix 5): restated. A stranger is lstat'd only, never opened, and its name is logged quoted.
+  test('ARC-22 a folder named like a result file in the outbox is logged once, quoted, never opened, and the job waits for its real file', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const { lines, sink } = collectLines()
+      const folder = 'folder-not-a-result-test.json'
+      const folderPath = path.resolve(exchange, 'outbox', folder)
+      fs.mkdirSync(folderPath, { recursive: true })
+      const touched: string[] = []
+      const readFileSync = fs.readFileSync.bind(fs)
+      vi.spyOn(fs, 'readFileSync').mockImplementation(((p: unknown, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        return (readFileSync as (...a: unknown[]) => unknown)(p, ...rest)
+      }) as typeof fs.readFileSync)
+      const openSync = fs.openSync.bind(fs)
+      vi.spyOn(fs, 'openSync').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        return (openSync as (...a: unknown[]) => number)(p, ...rest)
+      }))
+      // A04 spec review 5, G2: the callback, stream and promise forms too (pass-through), so no read is invisible.
+      const open = fs.open.bind(fs)
+      vi.spyOn(fs, 'open').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        ;(open as (...a: unknown[]) => void)(p, ...rest)
+      }))
+      const readFile = fs.readFile.bind(fs)
+      vi.spyOn(fs, 'readFile').mockImplementation(((p: unknown, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        ;(readFile as (...a: unknown[]) => void)(p, ...rest)
+      }))
+      const createReadStream = fs.createReadStream.bind(fs)
+      vi.spyOn(fs, 'createReadStream').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        return (createReadStream as (...a: unknown[]) => fs.ReadStream)(p, ...rest)
+      }))
+      const promisesOpen = fs.promises.open.bind(fs.promises)
+      vi.spyOn(fs.promises, 'open').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        return (promisesOpen as (...a: unknown[]) => unknown)(p, ...rest)
+      }) as typeof fs.promises.open)
+      const promisesReadFile = fs.promises.readFile.bind(fs.promises)
+      vi.spyOn(fs.promises, 'readFile').mockImplementation(((p: unknown, ...rest: unknown[]) => {
+        if (typeof p === 'string') touched.push(path.resolve(p))
+        return (promisesReadFile as (...a: unknown[]) => unknown)(p, ...rest)
+      }) as typeof fs.promises.readFile)
+      const p = projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
+      await vi.advanceTimersByTimeAsync(0)
+      for (let i = 0; i < 6; i++) await vi.advanceTimersByTimeAsync(5)
+      writeOutbox(exchange, `${JOB_ID}.json`, outboxResult(JOB_ID, GOOD_REC().output, GOOD_REC().stamp))
+      await vi.advanceTimersByTimeAsync(5)
+      expect(await p).toMatchObject({ ok: true, output: GOOD_REC().output })
+      expect(lines.filter((l) => l.includes(folder))).toEqual([`ai exchange: ignored outbox file ${JSON.stringify(folder)}`])
+      expect(touched).not.toContain(folderPath)
+      // liveness (G2): the own file is seen opening, so the spies are not blind
+      expect(touched).toContain(path.resolve(exchange, 'outbox', `${JOB_ID}.json`))
+      expect(lines.join('\n')).not.toContain(exchange)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   test('ARC-22 a second outbox file for a job already done is ignored and logged by name only (unit twin of the db test)', async () => {
@@ -1141,7 +1281,7 @@ describe('ARC-22 round 2: the log line and the handler, exactly', () => {
     if (expected.ok) throw new Error('fixture must be refused')
     expect(expected.problems.length).toBeGreaterThan(0)
     const h = createAiStepHandler('finding', runner())
-    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
     let message = ''
     try {
       await h.run(job('broken'), ctx)
@@ -1213,7 +1353,7 @@ describe('ARC-16 round 3: a malformed recording fails closed, never a crash', ()
   test('ARC-16 the handler turns a malformed-only folder into a thrown refusal with the reason, not a crash of another kind', async () => {
     const dir = rawRecordings('handler-bad', { 'a-bad.json': '{' })
     const h = createAiStepHandler('finding', runner({ recordingsDir: dir }))
-    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
     await expect(Promise.resolve().then(() => h.run(job('good'), ctx))).rejects.toThrow(/re-record/)
   })
 
@@ -1373,40 +1513,54 @@ describe('ARC-16 round 3: two recordings for one key are refused, naming both fi
 })
 
 describe('ARC-22 round 3: an ignored outbox file is logged once per content', () => {
-  test('ARC-22 a stranger file is logged once over many polls, again only when rewritten with new content, by name only', async () => {
+  // Round 5 (fix 5): restated. A stranger is never opened, so "logged once" is keyed by its name, size and mtime
+  // (lstat), not its content. The mtimes are set with utimes, so a same-size rewrite in the same millisecond is no part
+  // of this test (reports/A04-findings-5.md, risks).
+  test('ARC-22 a stranger file is logged once over many polls, again only when its size or mtime changes, by name only', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
     try {
       const { lines, sink } = collectLines()
       const strangerId = 'job-stranger-rewritten-test'
       const stranger = `${strangerId}.json`
+      const strangerPath = path.join(exchange, 'outbox', stranger)
       const first = 'PLANTED-CANARY-FIRST-CONTENT (Test)'
       const second = 'PLANTED-CANARY-SECOND-CONTENT (Test)'
       const content = (summary: string): string => outboxResult(strangerId, { ...GOOD_REC().output, summary }, GOOD_REC().stamp)
+      const at = (sec: number): Date => new Date(Date.UTC(2026, 9, 3, 9, 0, sec))
+      const plant = (text: string, mtime: Date): void => {
+        writeOutbox(exchange, stranger, text)
+        fs.utimesSync(strangerPath, mtime, mtime)
+      }
       const polls = async (n: number): Promise<void> => {
         for (let i = 0; i < n; i++) await vi.advanceTimersByTimeAsync(5)
       }
       const strangerLines = (): string[] => lines.filter((l) => l.includes(stranger))
 
-      writeOutbox(exchange, stranger, content(first))
+      plant(content(first), at(1))
       const p = projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
       await vi.advanceTimersByTimeAsync(0)
       await polls(6)
       expect(strangerLines()).toHaveLength(1)
 
-      writeOutbox(exchange, stranger, content(first)) // the same bytes again: nothing new to flag
+      plant(content(first), at(1)) // the same bytes and the same mtime again: nothing new to flag
       await polls(6)
       expect(strangerLines()).toHaveLength(1)
 
-      writeOutbox(exchange, stranger, content(second))
+      plant(content(first), at(2)) // the same size, a new mtime: flagged again
       await polls(6)
       expect(strangerLines()).toHaveLength(2)
+
+      expect(Buffer.byteLength(content(second))).not.toBe(Buffer.byteLength(content(first)))
+      plant(content(second), at(2)) // a new size (SECOND is one letter longer than FIRST), the same mtime: flagged again
+      await polls(6)
+      expect(strangerLines()).toHaveLength(3)
 
       writeOutbox(exchange, `${JOB_ID}.json`, outboxResult(JOB_ID, GOOD_REC().output, GOOD_REC().stamp))
       await polls(1)
       expect(await p).toMatchObject({ ok: true, output: GOOD_REC().output })
       const logged = strangerLines()
-      expect(logged).toHaveLength(2)
-      expect(logged[0]).toBe(logged[1])
+      expect(logged).toHaveLength(3)
+      expect(new Set(logged)).toEqual(new Set([`ai exchange: ignored outbox file ${JSON.stringify(stranger)}`]))
       const all = lines.join('\n')
       expect(all).not.toContain(first)
       expect(all).not.toContain(second)
@@ -1458,7 +1612,7 @@ describe('AI-1 AI-10 round 3: every refusal names its clause and every part it l
     const [firstProblem] = expected.problems
     if (firstProblem === undefined) throw new Error('fixture must list a problem')
     const h = createAiStepHandler('finding', runner())
-    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date(RUNNER_NOW), returnId: null }
     let message = ''
     try {
       await h.run(job('broken'), ctx)
