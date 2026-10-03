@@ -3,9 +3,8 @@
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
  "worker": "cloud-6593f9",
- "state": "released",
- "at": "2026-10-03T21:39:22.377Z",
+ "state": "reopened",
+ "at": "2026-10-03T23:03:59.819Z",
  "mode": "turbo",
- "note": "wait: mutation pass 1 (3170 mutants, 1183 static) cannot finish in one 4-core box in a session; shard by file, see reports/W00c-check-3.md",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
+ "note": "A530: continue: group 1 next (load.ts, json-keys.ts, ids.ts); lean test set; commit tables under reports/W00c-mutation/"
 }
