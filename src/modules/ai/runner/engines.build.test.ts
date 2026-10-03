@@ -5,7 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { aiEngines } from './engines'
-import { RECORDINGS_DIR, collectLines, job, outboxResult, recording, startFakeProject, tempDir, writeOutbox } from './__fixtures__/harness'
+import { collectLines, job, recording, tempDir } from './__fixtures__/harness'
 
 let tmp: { dir: string; cleanup: () => void }
 beforeEach(() => {
@@ -46,26 +46,6 @@ describe('ARC-16 recordings are read in name order, so the duplicate message lis
   })
 })
 
-describe('ARC-22 an outbox entry named for this job that is a folder is ignored, logged once, and the job keeps waiting', () => {
-  test('ARC-22 outbox/<job id>.json as a folder', async () => {
-    const exchange = path.join(tmp.dir, 'exchange')
-    const id = 'job-folder-entry-test'
-    const { lines, sink } = collectLines()
-    const good = recording('finding-c01-good')
-    const fake = startFakeProject(exchange, () => {
-      fs.mkdirSync(path.join(exchange, 'outbox', `${id}.json`), { recursive: true })
-      setTimeout(() => {
-        fs.rmSync(path.join(exchange, 'outbox', `${id}.json`), { recursive: true })
-        writeOutbox(exchange, `${id}.json`, outboxResult(id, good.output, good.stamp))
-      }, 60)
-    })
-    try {
-      const ctx = { jobId: id, recordingsDir: RECORDINGS_DIR, exchangeDir: exchange, pollMs: 5, sink, waiting: new Set<string>(), seen: new Set<string>() }
-      const res = await aiEngines.project.run(job('good'), ctx)
-      expect(res.ok).toBe(true)
-      expect(lines).toEqual([`ai exchange: ignored outbox file ${id}.json`])
-    } finally {
-      fake.stop()
-    }
-  })
-})
+// Round 5 spec patch (reports/A04-findings-5.md, RC2): the test that pinned "an outbox entry named for this job that
+// is a folder is ignored and the job keeps waiting" is retired here; exchange.acceptance.test.ts restates it as
+// "a folder at the own name fails within one poll as not a file".
