@@ -1,9 +1,8 @@
 {
  "card": "W00c",
  "role": "spec",
- "worker": "cloud-a244c5",
- "state": "reopened",
- "at": "2026-10-03T12:12:02.668Z",
- "mode": "turbo",
- "note": "A467: owner rule ruling, then rows 2 and 11"
+ "worker": "cloud-c6e634",
+ "state": "working",
+ "at": "2026-10-03T12:24:17.578Z",
+ "mode": "turbo"
 }
