@@ -20,7 +20,6 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
 | SC | spec patch reopened (A415: 5 gaps; R37 to FX9; SC9 carded for walker escapes) | spec, build, check with Opus read and test:flake |
 | SC3 | spec reported (security) | build, check, security review |
-| SC4 | check PASS (Opus read by local-3); on the train | land with the train |
 | S00, FX5 | builds open (A410) | build, check |
 | A04 | spec round 3 working (local-1, A410) | spec review, build, check, security review |
 | DB16 | spec round 2 working (local-2, A411); an early cloud build claim voided | spec review, build, check on Postgres 16 |
@@ -28,7 +27,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | CQ2, SC4 | on the train (claude/train 677e92f1); CQ3 carded (A416) | request the train at 6 cards or 05:30Z, with test:flake |
 | JH0 | spec reported | build after W00c lands |
 
-Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local: local-1 (A04 spec), local-2 (DB16 spec), local-3 (SC4 check), Opus. npm ci done 04:45Z.
+Cloud runs: 4 at 04:28Z, 2 at 04:46Z, 3 at 04:55Z. Local (Opus): local-1 (A04 spec), local-2 (DB16 spec), local-3 restarted 05:10Z. npm ci done 04:45Z.
 
 ## Next, in order
 
