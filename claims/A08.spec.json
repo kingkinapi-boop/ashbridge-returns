@@ -1,10 +1,12 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "84 tests (82 unit, 2 db), all fail before build; finding: A04 OutboxFileSchema ignores launcher refusal file so job hangs to lease expiry (needs A04 edit, see reports/A08-spec.md)",
  "worker": "cloud-42f06c",
- "state": "working",
- "at": "2026-10-03T08:01:54.600Z",
+ "state": "reported",
+ "at": "2026-10-03T08:21:21.922Z",
  "mode": "turbo",
- "beat": "2026-10-03T08:02:10.659Z"
+ "beat": "2026-10-03T08:02:10.659Z",
+ "commit": "87231747",
+ "validated": "6f3ce664"
 }
