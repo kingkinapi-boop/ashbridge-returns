@@ -3,8 +3,8 @@
  "role": "check",
  "for": "2026-10-03T13:33:28.634Z",
  "worker": "cloud-a33f4c",
- "state": "reported",
- "at": "2026-10-03T14:01:03.832Z",
+ "state": "failed",
+ "at": "2026-10-03T16:23:59.030Z",
  "mode": "turbo",
- "note": "PASS"
+ "note": "train 2 red on SC3's tests (reports/train-20261003-1531.md on main): R62/R63 inventory lacks A04's create* exports; 6 db tests over FX12's one-database budget; pg16 R65 serialised twin 4 of 6; findings review next (A500)"
 }
