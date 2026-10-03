@@ -4,7 +4,8 @@
  "round": 3,
  "spec": "d6f3a1b1",
  "worker": "cloud-f78eac",
- "state": "working",
- "at": "2026-10-03T05:02:15.503Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T05:02:30.165Z",
+ "mode": "turbo",
+ "note": "spec not reported (local-2 still working); cloud checkout is on unrelated stale history, no code base"
 }
