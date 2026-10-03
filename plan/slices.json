@@ -3822,6 +3822,23 @@
       "hard": true
     },
     {
+      "status": "todo",
+      "spec": null,
+      "deps": [
+        "V00",
+        "D02",
+        "U02"
+      ],
+      "paths": [],
+      "clauses": [],
+      "id": "V15",
+      "title": "CPA review queue (/review): returns waiting for review, oldest first",
+      "phase": 3,
+      "size": "M",
+      "core": false,
+      "note": "No card owned the queue screen (reports/cards-V02-V13-draft.md, A421)."
+    },
+    {
       "status": "carded",
       "spec": null,
       "deps": [
@@ -4555,7 +4572,7 @@
       "params": {
         "screen": "exceptions"
       },
-      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A421: add RV-12 to the clauses; D08 also designs the CPA comments page V04 builds (RV-25 moved from V09 to V04)."
     },
     {
       "status": "parked",
@@ -9910,6 +9927,26 @@
       "size": "S",
       "core": true,
       "note": "Split from FX7, 3 Oct (A415)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "src/modules/auth/auth.acceptance.db.test.ts",
+        "src/modules/auth/**"
+      ],
+      "clauses": [
+        "ARC-6",
+        "SEC-1"
+      ],
+      "id": "FX10",
+      "title": "Auth db test flaky under full-run load",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "Seen in DB16's spec run, 3 Oct (A421)."
     },
     {
       "status": "carded",
