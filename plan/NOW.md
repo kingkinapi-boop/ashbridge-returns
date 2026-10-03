@@ -18,7 +18,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 03:22Z by the Lea
 | S00, FX5 | spec review GAPS (11, 7); specs reopened (A402) | spec, then build (the wait: build releases clear when the spec reports) |
 | JH0 | spec reported (Paths + testworld/harness, A401) | build |
 | SC | build reopened | cloud run |
-| W16 | check FAIL (spec contradicts card on ARC-16, R11); Opus findings review running | card or spec fix, then build round 2 |
+| W16 | findings: the spec was wrong; spec reopened for round 2 on claude/W16-r2 (A404); SC6 carded | spec, build (data only), check with security review |
 | CQ2 | rule 6 spec and build round 2 reported (no code change needed) | check (cloud), then board |
 | SC4 | startable (A07D built) | spec, then FX4 |
 | A04, A08 | held on A06, then A04 | as before |

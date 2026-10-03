@@ -9727,6 +9727,27 @@
         "SC"
       ],
       "paths": [
+        "tools/test/card-rules.test.mjs",
+        "tools/test/__fixtures__/card-rules/**"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC6",
+      "title": "Card and verify rules R77 and R78",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/W16-findings.md, 3 Oct (A404)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC"
+      ],
+      "paths": [
         "db/schema/**",
         "src/contracts/records.ts",
         "src/contracts/jobs.ts",
