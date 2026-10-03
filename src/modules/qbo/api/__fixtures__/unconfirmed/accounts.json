@@ -1,0 +1,65 @@
+{
+  "confirmed": false,
+  "note": "Made up for the B04 spec. The shape is what Intuit report and entity JSON is believed to look like; it is NOT confirmed (reference/research/2026-10-01-qbo-reconciled.md, reference/qbo/2026-10-01-sandbox-checks.md: the API was not reached). Amounts in report cells are debit-positive decimal strings for the account of the row or section (unconfirmed). Query response for Account entities.",
+  "QueryResponse": {
+    "Account": [
+      {
+        "Id": "35",
+        "Name": "Chequing",
+        "AcctNum": "1010",
+        "AccountType": "Bank",
+        "AccountSubType": "Checking",
+        "Active": true,
+        "CurrencyRef": {
+          "value": "CAD"
+        }
+      },
+      {
+        "Id": "33",
+        "Name": "Accounts Payable (A/P)",
+        "AcctNum": "2000",
+        "AccountType": "Accounts Payable",
+        "AccountSubType": "AccountsPayable",
+        "Active": true,
+        "CurrencyRef": {
+          "value": "CAD"
+        }
+      },
+      {
+        "Id": "80",
+        "Name": "Common shares",
+        "AcctNum": "3010",
+        "AccountType": "Equity",
+        "AccountSubType": "CommonStock",
+        "Active": true,
+        "CurrencyRef": {
+          "value": "CAD"
+        }
+      },
+      {
+        "Id": "79",
+        "Name": "Sales",
+        "AcctNum": "4010",
+        "AccountType": "Income",
+        "AccountSubType": "SalesOfProductIncome",
+        "Active": true,
+        "CurrencyRef": {
+          "value": "CAD"
+        }
+      },
+      {
+        "Id": "55",
+        "Name": "Utilities",
+        "AcctNum": "6200",
+        "AccountType": "Expense",
+        "AccountSubType": "Utilities",
+        "Active": true,
+        "CurrencyRef": {
+          "value": "CAD"
+        }
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 5
+  }
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "txnId": "182",
+    "idKind": "qbo",
+    "entityType": "Journal Entry",
+    "date": "2025-12-31",
+    "number": "15",
+    "memo": "AJE accrual: hydro owed at year end (Test) | source: hydro bill (Test)",
+    "accountId": "33",
+    "amountCents": -4500,
+    "otherAccountIds": [
+      "55"
+    ],
+    "attachmentIds": [
+      "902"
+    ]
+  }
+]

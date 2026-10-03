@@ -1,0 +1,102 @@
+{
+  "confirmed": false,
+  "note": "Made up for the B04 spec. The shape is what Intuit report and entity JSON is believed to look like; it is NOT confirmed (reference/research/2026-10-01-qbo-reconciled.md, reference/qbo/2026-10-01-sandbox-checks.md: the API was not reached). Amounts in report cells are debit-positive decimal strings for the account of the row or section (unconfirmed).",
+  "Header": {
+    "ReportName": "TrialBalance",
+    "ReportBasis": "Accrual",
+    "StartPeriod": "2024-01-01",
+    "EndPeriod": "2024-12-31",
+    "Currency": "CAD",
+    "Option": [
+      {
+        "Name": "NoReportData",
+        "Value": "false"
+      }
+    ]
+  },
+  "Columns": {
+    "Column": [
+      {
+        "ColTitle": "",
+        "ColType": "Account",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "account_name"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Debit",
+        "ColType": "Money",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "debt_amt"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Credit",
+        "ColType": "Money",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "credit_amt"
+          }
+        ]
+      }
+    ]
+  },
+  "Rows": {
+    "Row": [
+      {
+        "type": "Data",
+        "ColData": [
+          {
+            "value": "Chequing",
+            "id": "35"
+          },
+          {
+            "value": "1000.00"
+          },
+          {
+            "value": ""
+          }
+        ]
+      },
+      {
+        "type": "Data",
+        "ColData": [
+          {
+            "value": "Common shares",
+            "id": "80"
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": "1000.00"
+          }
+        ]
+      },
+      {
+        "type": "Section",
+        "group": "GrandTotal",
+        "Summary": {
+          "ColData": [
+            {
+              "value": "TOTAL"
+            },
+            {
+              "value": "1000.00"
+            },
+            {
+              "value": "1000.00"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

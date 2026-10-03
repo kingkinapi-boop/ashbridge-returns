@@ -1,0 +1,99 @@
+[
+  {
+    "txnId": "01-AJE-01",
+    "date": "2025-12-31",
+    "memo": "AJE from-transactions-and-onboarding: Six business items the owner paid on her personal card (listed by her in onboarding): expense them and reduce the amount she owes the company | source: 01-PCD-2025-02-0006; 01-PCD-2025-04-0023; 01-PCD-2025-05-0032; 01-PCD-2025-06-0017; 01-PCD-2025-09-0012; 01-PCD-2025-10-0028; personal_card_business_items",
+    "lines": [
+      {
+        "accountId": "6155",
+        "debitCents": 58396,
+        "creditCents": 0
+      },
+      {
+        "accountId": "2050",
+        "debitCents": 7592,
+        "creditCents": 0
+      },
+      {
+        "accountId": "1300",
+        "debitCents": 0,
+        "creditCents": 65988
+      },
+      {
+        "accountId": "6020",
+        "debitCents": 8143,
+        "creditCents": 0
+      },
+      {
+        "accountId": "2050",
+        "debitCents": 497,
+        "creditCents": 0
+      },
+      {
+        "accountId": "1300",
+        "debitCents": 0,
+        "creditCents": 8640
+      },
+      {
+        "accountId": "6170",
+        "debitCents": 7788,
+        "creditCents": 0
+      },
+      {
+        "accountId": "2050",
+        "debitCents": 1012,
+        "creditCents": 0
+      },
+      {
+        "accountId": "1300",
+        "debitCents": 0,
+        "creditCents": 8800
+      },
+      {
+        "accountId": "6095",
+        "debitCents": 33627,
+        "creditCents": 0
+      },
+      {
+        "accountId": "2050",
+        "debitCents": 4372,
+        "creditCents": 0
+      },
+      {
+        "accountId": "1300",
+        "debitCents": 0,
+        "creditCents": 37999
+      },
+      {
+        "accountId": "6020",
+        "debitCents": 11701,
+        "creditCents": 0
+      },
+      {
+        "accountId": "2050",
+        "debitCents": 714,
+        "creditCents": 0
+      },
+      {
+        "accountId": "1300",
+        "debitCents": 0,
+        "creditCents": 12415
+      },
+      {
+        "accountId": "6175",
+        "debitCents": 39823,
+        "creditCents": 0
+      },
+      {
+        "accountId": "2050",
+        "debitCents": 5177,
+        "creditCents": 0
+      },
+      {
+        "accountId": "1300",
+        "debitCents": 0,
+        "creditCents": 45000
+      }
+    ]
+  }
+]

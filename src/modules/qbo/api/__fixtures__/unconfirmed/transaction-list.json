@@ -1,0 +1,259 @@
+{
+  "confirmed": false,
+  "note": "Made up for the B04 spec. The shape is what Intuit report and entity JSON is believed to look like; it is NOT confirmed (reference/research/2026-10-01-qbo-reconciled.md, reference/qbo/2026-10-01-sandbox-checks.md: the API was not reached). Amounts in report cells are debit-positive decimal strings for the account of the row or section (unconfirmed). Transaction List by Date with the Transaction ID (txn_id) and Memo (memo) columns added: one row per transaction; a journal entry row has its memo and id but no account or amount (as on the sandbox screens, 1 Oct 2026).",
+  "Header": {
+    "ReportName": "TransactionList",
+    "ReportBasis": "Accrual",
+    "StartPeriod": "2024-01-01",
+    "EndPeriod": "2025-12-31",
+    "Currency": "CAD"
+  },
+  "Columns": {
+    "Column": [
+      {
+        "ColTitle": "Date",
+        "ColType": "Date",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "tx_date"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Transaction Type",
+        "ColType": "String",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "txn_type"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Num",
+        "ColType": "String",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "doc_num"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Posting",
+        "ColType": "String",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "is_no_post"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Name",
+        "ColType": "String",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "name"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Memo/Description",
+        "ColType": "String",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "memo"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Account",
+        "ColType": "String",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "account_name"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Split",
+        "ColType": "String",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "other_account"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Amount",
+        "ColType": "Money",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "subt_nat_amount"
+          }
+        ]
+      },
+      {
+        "ColTitle": "Transaction ID",
+        "ColType": "String",
+        "MetaData": [
+          {
+            "Name": "ColKey",
+            "Value": "txn_id"
+          }
+        ]
+      }
+    ]
+  },
+  "Rows": {
+    "Row": [
+      {
+        "type": "Data",
+        "ColData": [
+          {
+            "value": "2024-12-20"
+          },
+          {
+            "value": "Deposit"
+          },
+          {
+            "value": "D-0"
+          },
+          {
+            "value": "Yes"
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": "Opening capital (Test)"
+          },
+          {
+            "value": "Chequing"
+          },
+          {
+            "value": "Common shares"
+          },
+          {
+            "value": "1000.00"
+          },
+          {
+            "value": "120"
+          }
+        ]
+      },
+      {
+        "type": "Data",
+        "ColData": [
+          {
+            "value": "2025-03-14"
+          },
+          {
+            "value": "Deposit"
+          },
+          {
+            "value": "D-1"
+          },
+          {
+            "value": "Yes"
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": "March sales (Test)"
+          },
+          {
+            "value": "Chequing"
+          },
+          {
+            "value": "Sales"
+          },
+          {
+            "value": "500.00"
+          },
+          {
+            "value": "130"
+          }
+        ]
+      },
+      {
+        "type": "Data",
+        "ColData": [
+          {
+            "value": "2025-04-10"
+          },
+          {
+            "value": "Cheque"
+          },
+          {
+            "value": "2020"
+          },
+          {
+            "value": "Yes"
+          },
+          {
+            "value": "Hydro One (Test)"
+          },
+          {
+            "value": "Hydro bill (Test)"
+          },
+          {
+            "value": "Chequing"
+          },
+          {
+            "value": "Utilities"
+          },
+          {
+            "value": "-120.00"
+          },
+          {
+            "value": "131"
+          }
+        ]
+      },
+      {
+        "type": "Data",
+        "ColData": [
+          {
+            "value": "2025-12-31"
+          },
+          {
+            "value": "Journal Entry"
+          },
+          {
+            "value": "15"
+          },
+          {
+            "value": "Yes"
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": "AJE accrual: hydro owed at year end (Test) | source: hydro bill (Test)"
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": "182"
+          }
+        ]
+      }
+    ]
+  }
+}

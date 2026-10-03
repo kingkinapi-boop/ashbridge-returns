@@ -1,0 +1,48 @@
+{
+  "confirmed": false,
+  "note": "Made up for the B04 spec. The shape is what Intuit report and entity JSON is believed to look like; it is NOT confirmed (reference/research/2026-10-01-qbo-reconciled.md, reference/qbo/2026-10-01-sandbox-checks.md: the API was not reached). Amounts in report cells are debit-positive decimal strings for the account of the row or section (unconfirmed). Query response for JournalEntry entities. Line Amount is a JSON number in dollars; PostingType says debit or credit. No Adjustment field: the normalised flag is \"not given\".",
+  "QueryResponse": {
+    "JournalEntry": [
+      {
+        "Id": "182",
+        "SyncToken": "0",
+        "TxnDate": "2025-12-31",
+        "DocNumber": "15",
+        "PrivateNote": "AJE accrual: hydro owed at year end (Test) | source: hydro bill (Test)",
+        "CurrencyRef": {
+          "value": "CAD"
+        },
+        "Line": [
+          {
+            "Id": "0",
+            "Description": "line one (Test)",
+            "Amount": 45,
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+              "PostingType": "Debit",
+              "AccountRef": {
+                "value": "55",
+                "name": "Utilities"
+              }
+            }
+          },
+          {
+            "Id": "1",
+            "Description": "line two (Test)",
+            "Amount": 45,
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+              "PostingType": "Credit",
+              "AccountRef": {
+                "value": "33",
+                "name": "Accounts Payable (A/P)"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 1
+  }
+}

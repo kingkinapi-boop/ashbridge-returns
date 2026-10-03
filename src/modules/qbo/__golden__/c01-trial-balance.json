@@ -1,0 +1,142 @@
+[
+  {
+    "accountId": "1010",
+    "accountNumber": "1010",
+    "accountName": "Chequing (CAD)",
+    "debitCents": 13118497,
+    "creditCents": 0
+  },
+  {
+    "accountId": "1300",
+    "accountNumber": "1300",
+    "accountName": "Due from shareholder",
+    "debitCents": 1321158,
+    "creditCents": 0
+  },
+  {
+    "accountId": "2010",
+    "accountNumber": "2010",
+    "accountName": "Credit card payable",
+    "debitCents": 0,
+    "creditCents": 85613
+  },
+  {
+    "accountId": "2050",
+    "accountNumber": "2050",
+    "accountName": "HST payable (receivable)",
+    "debitCents": 0,
+    "creditCents": 548694
+  },
+  {
+    "accountId": "3010",
+    "accountNumber": "3010",
+    "accountName": "Common shares",
+    "debitCents": 0,
+    "creditCents": 10000
+  },
+  {
+    "accountId": "3600",
+    "accountNumber": "3600",
+    "accountName": "Retained earnings, opening",
+    "debitCents": 0,
+    "creditCents": 96298
+  },
+  {
+    "accountId": "3700",
+    "accountNumber": "3700",
+    "accountName": "Dividends declared",
+    "debitCents": 2000000,
+    "creditCents": 0
+  },
+  {
+    "accountId": "4010",
+    "accountNumber": "4010",
+    "accountName": "Sales",
+    "debitCents": 0,
+    "creditCents": 18670000
+  },
+  {
+    "accountId": "6020",
+    "accountNumber": "6020",
+    "accountName": "Meals and entertainment",
+    "debitCents": 194165,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6060",
+    "accountNumber": "6060",
+    "accountName": "Insurance",
+    "debitCents": 141600,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6075",
+    "accountNumber": "6075",
+    "accountName": "Bank charges",
+    "debitCents": 20340,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6090",
+    "accountNumber": "6090",
+    "accountName": "Office supplies",
+    "debitCents": 612416,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6095",
+    "accountNumber": "6095",
+    "accountName": "Office expenses",
+    "debitCents": 33627,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6100",
+    "accountNumber": "6100",
+    "accountName": "Accounting fees",
+    "debitCents": 300000,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6155",
+    "accountNumber": "6155",
+    "accountName": "Software and computer expenses",
+    "debitCents": 197884,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6156",
+    "accountNumber": "6156",
+    "accountName": "Internet",
+    "debitCents": 84948,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6170",
+    "accountNumber": "6170",
+    "accountName": "Travel",
+    "debitCents": 1088360,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6175",
+    "accountNumber": "6175",
+    "accountName": "Conferences and meetings",
+    "debitCents": 39823,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6185",
+    "accountNumber": "6185",
+    "accountName": "Telephone and telecommunications",
+    "debitCents": 94083,
+    "creditCents": 0
+  },
+  {
+    "accountId": "6195",
+    "accountNumber": "6195",
+    "accountName": "Delivery, freight and express",
+    "debitCents": 163704,
+    "creditCents": 0
+  }
+]

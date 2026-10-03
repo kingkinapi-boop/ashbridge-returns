@@ -1,0 +1,47 @@
+[
+  {
+    "accountId": "35",
+    "accountNumber": "1010",
+    "accountName": "Chequing",
+    "accountType": "Bank",
+    "accountSubType": "Checking",
+    "debitCents": 138000,
+    "creditCents": 0
+  },
+  {
+    "accountId": "33",
+    "accountNumber": "2000",
+    "accountName": "Accounts Payable (A/P)",
+    "accountType": "Accounts Payable",
+    "accountSubType": "AccountsPayable",
+    "debitCents": 0,
+    "creditCents": 4500
+  },
+  {
+    "accountId": "80",
+    "accountNumber": "3010",
+    "accountName": "Common shares",
+    "accountType": "Equity",
+    "accountSubType": "CommonStock",
+    "debitCents": 0,
+    "creditCents": 100000
+  },
+  {
+    "accountId": "79",
+    "accountNumber": "4010",
+    "accountName": "Sales",
+    "accountType": "Income",
+    "accountSubType": "SalesOfProductIncome",
+    "debitCents": 0,
+    "creditCents": 50000
+  },
+  {
+    "accountId": "55",
+    "accountNumber": "6200",
+    "accountName": "Utilities",
+    "accountType": "Expense",
+    "accountSubType": "Utilities",
+    "debitCents": 16500,
+    "creditCents": 0
+  }
+]

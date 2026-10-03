@@ -1,0 +1,12 @@
+{
+  "confirmed": false,
+  "note": "Made up for the B04 spec. The shape is what Intuit report and entity JSON is believed to look like; it is NOT confirmed (reference/research/2026-10-01-qbo-reconciled.md, reference/qbo/2026-10-01-sandbox-checks.md: the API was not reached). Amounts in report cells are debit-positive decimal strings for the account of the row or section (unconfirmed). CompanyInfo entity.",
+  "CompanyInfo": {
+    "Id": "1",
+    "CompanyName": "Birchwood Fixture Ltd. (Test)",
+    "LegalName": "Birchwood Fixture Ltd. (Test)",
+    "Country": "CA",
+    "FiscalYearStartMonth": "January",
+    "SyncToken": "0"
+  }
+}

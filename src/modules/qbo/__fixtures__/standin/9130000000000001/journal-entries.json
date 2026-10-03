@@ -1,0 +1,28 @@
+[
+  {
+    "txnId": "182",
+    "date": "2025-12-31",
+    "number": "15",
+    "memo": "AJE accrual: hydro owed at year end (Test) | source: hydro bill (Test)",
+    "adjustment": "not given",
+    "lines": [
+      {
+        "lineNo": 1,
+        "accountId": "55",
+        "debitCents": 4500,
+        "creditCents": 0,
+        "description": "line one (Test)"
+      },
+      {
+        "lineNo": 2,
+        "accountId": "33",
+        "debitCents": 0,
+        "creditCents": 4500,
+        "description": "line two (Test)"
+      }
+    ],
+    "attachmentIds": [
+      "902"
+    ]
+  }
+]

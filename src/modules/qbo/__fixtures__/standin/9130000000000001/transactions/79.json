@@ -1,0 +1,16 @@
+[
+  {
+    "txnId": "130",
+    "idKind": "qbo",
+    "entityType": "Deposit",
+    "date": "2025-03-14",
+    "number": "D-1",
+    "memo": "March sales (Test)",
+    "accountId": "79",
+    "amountCents": -50000,
+    "otherAccountIds": [
+      "35"
+    ],
+    "attachmentIds": []
+  }
+]

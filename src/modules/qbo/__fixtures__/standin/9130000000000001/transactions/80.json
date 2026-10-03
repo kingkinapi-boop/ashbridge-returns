@@ -1,0 +1,16 @@
+[
+  {
+    "txnId": "120",
+    "idKind": "qbo",
+    "entityType": "Deposit",
+    "date": "2024-12-20",
+    "number": "D-0",
+    "memo": "Opening capital (Test)",
+    "accountId": "80",
+    "amountCents": -100000,
+    "otherAccountIds": [
+      "35"
+    ],
+    "attachmentIds": []
+  }
+]

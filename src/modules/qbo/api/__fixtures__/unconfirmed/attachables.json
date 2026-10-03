@@ -1,0 +1,42 @@
+{
+  "confirmed": false,
+  "note": "Made up for the B04 spec. The shape is what Intuit report and entity JSON is believed to look like; it is NOT confirmed (reference/research/2026-10-01-qbo-reconciled.md, reference/qbo/2026-10-01-sandbox-checks.md: the API was not reached). Amounts in report cells are debit-positive decimal strings for the account of the row or section (unconfirmed). Query response for Attachable entities. TempDownloadUri points at the fake host here; its real host and lifetime are not confirmed.",
+  "QueryResponse": {
+    "Attachable": [
+      {
+        "Id": "901",
+        "FileName": "hydro-receipt (Test).txt",
+        "ContentType": "text/plain",
+        "Size": 77,
+        "TempDownloadUri": "https://sandbox-quickbooks.api.intuit.com/v3/company/9130000000000001/download/901",
+        "AttachableRef": [
+          {
+            "EntityRef": {
+              "type": "Purchase",
+              "value": "131"
+            },
+            "IncludeOnSend": false
+          }
+        ]
+      },
+      {
+        "Id": "902",
+        "FileName": "accrual-note (Test).txt",
+        "ContentType": "text/plain",
+        "Size": 75,
+        "TempDownloadUri": "https://sandbox-quickbooks.api.intuit.com/v3/company/9130000000000001/download/902",
+        "AttachableRef": [
+          {
+            "EntityRef": {
+              "type": "JournalEntry",
+              "value": "182"
+            },
+            "IncludeOnSend": false
+          }
+        ]
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 2
+  }
+}
