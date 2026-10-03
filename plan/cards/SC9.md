@@ -2,7 +2,7 @@
 
 Phase 0. Size S. Deps: SC, SC7. Where: cloud.
 Tags: core (the rules keep every later table and reader honest).
-Paths: tools/test/rule-walker.test.mjs, tools/test/__fixtures__/rule-walker/**, tools/test/lib/walk.mjs, tools/test/rules.test.mjs, src/core/db/db.test.ts
+Paths: tools/test/rule-walker.test.mjs, tools/test/__fixtures__/rule-walker/**, tools/test/lib/walk.mjs, tools/test/rules.test.mjs, src/core/db/db.test.ts, src/contracts/schema-rules.db.test.ts, tools/test/__fixtures__/schema-contract/known.json, data/schema/contract-tables.json (A488, A490)
 Clauses: ARC-15, ARC-16
 Read: `reports/SC-spec-review-3.md` (section 3, escapes), `plan/cards/SC.md`, `.claude/rules/testing.md`.
 Spec commit: (spec-writer fills)
@@ -24,3 +24,6 @@ Shape tests the SC check asked for: NO_FILE_HOMES (tools/test/rules.test.mjs), R
 
 ## Also (A452, reports/SC3-findings.md)
 Plant the file-walker escapes SC3's review found (copied walkers that skip a folder or extension) and text inside jsonb columns.
+
+## Contract tables in R42 and R43 (A488, 3 Oct)
+R42 and R43 learn the shared contract tables from data with a reason per table: `returns.client_handoff` keeps its singular name (the onboarding contract, section 4), so no RecordSchema name maps to it, and its `fact_id` is a catalogue key, not a row pointer. Then the two KNOWN entries FX3 hands to SC9 go. Paths gain src/contracts/schema-rules.db.test.ts, tools/test/__fixtures__/schema-contract/known.json and the data file.

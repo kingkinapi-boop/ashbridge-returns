@@ -10158,7 +10158,9 @@
         "tools/test/metrics-counts.test.mjs",
         "tools/next.mjs",
         "tools/lib.mjs",
-        "tools/test/next-paths.test.mjs"
+        "tools/test/next-paths.test.mjs",
+        "tools/scope.mjs",
+        "tools/test/scope-spec-files.test.mjs"
       ],
       "clauses": [
         "ARC-15"
@@ -10860,7 +10862,10 @@
         "tools/test/__fixtures__/rule-walker/**",
         "tools/test/lib/walk.mjs",
         "tools/test/rules.test.mjs",
-        "src/core/db/db.test.ts"
+        "src/core/db/db.test.ts",
+        "src/contracts/schema-rules.db.test.ts",
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "data/schema/contract-tables.json"
       ],
       "clauses": [
         "ARC-15",
@@ -10934,7 +10939,10 @@
       ],
       "paths": [
         "tools/test/fs-rules.test.mjs",
-        "tools/test/__fixtures__/fs-rules/**"
+        "tools/test/__fixtures__/fs-rules/**",
+        "src/modules/auth/testusers/engine.ts",
+        "src/core/db/index.ts",
+        "src/modules/auth/auth.acceptance.db.test.ts"
       ],
       "clauses": [
         "SEC-10",

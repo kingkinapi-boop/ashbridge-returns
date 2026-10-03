@@ -1,5 +1,7 @@
 # FX3 Rule defects in landed code (found by SC)
 
+**Lead directive, 3 Oct 14:27Z (A488): spec patch, one item, when known.json is free (after W00c and FX8 land, A481); then the build.** Put back the two db KNOWN entries for `returns.client_handoff` (R42: no record schema; R43: fact_id not a foreign key) with owner SC9: the table's name and its fact_id are fixed by the onboarding contract (section 4), so no FX3 build can pass them. Every other FX3 entry stays deleted. FX3's build must not touch them.
+
 Phase 0. Size M. Deps: SC. Where: cloud.
 Tags: core (permissions and citations: schemas, append-only tables, blank rules).
 Paths: db/schema/**, src/contracts/ids.ts, src/contracts/checks.ts, src/contracts/records.ts, src/contracts/jobs.ts, src/contracts/ai.ts, src/modules/gaps/index.ts, src/modules/gaps/bank/index.ts, src/modules/jobs/queue.ts, src/modules/bridge/run.ts, tools/test/__fixtures__/schema-contract/known.json
