@@ -2,11 +2,11 @@
  "card": "DB16",
  "role": "spec",
  "worker": "local-2",
- "state": "reported",
- "at": "2026-10-03T04:24:27.647Z",
+ "state": "reopened",
+ "at": "2026-10-03T04:33:31.883Z",
  "mode": "turbo",
  "beat": "2026-10-03T04:09:55.807Z",
- "note": "34 tests (29 unit, 5 db); PG16 path not run on laptop; reports/DB16-spec.md",
+ "note": "A411: gaps in reports/DB16-spec-review.md; see bold directive",
  "commit": "d6f3a1b1",
  "validated": "73751b0e"
 }
