@@ -31,6 +31,7 @@
 //     Every JSON leaf is scanned (keys and values, strings and numbers, from the source text and the value),
 //     whatever its class. Text kinds: .json, .csv, .md, .txt, .tsv, .xml, .ts. Anything else, a file with no
 //     extension and a dotfile cannot be checked.
+//     Text units: a JSON key or value, a line of .md, .txt, .xml or .ts, a CSV cell (quoted or not), a TSV cell.
 //     Declared persons: answer-key parties of kind "person" (the guard may declare more).
 //   testworld/index.ts
 //     loadKind(id: KindId, opts?: { root?: string }): Kind   the kind folder is `<root>/<id>` (default root
@@ -45,6 +46,7 @@
 // profile.md line 33), 09 (Wei Zhang, Olu Adeyemi: answer-key flags detail and profile.md line 33), 14 (Declan
 // Murphy: answer-key flags detail and profile.md line 36). Until then the two "S1 no false alarm" tests fail for C07,
 // C09 and C14, and so do the W00 tests that load those three clients (once guardIssues refuses bare names in text).
+// Re-scanned 3 Oct 2026 on W00c merged with main: the same three folders, nothing else.
 import fc from 'fast-check'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -78,9 +80,12 @@ import {
   fullWidth,
   leaves,
   namePathPlants,
+  pruneTo,
   readJson,
   removeTemps,
   sampleFolders,
+  sampleLeaves,
+  samplePatterns,
   setAt,
   tempFolder,
   valueFindings,
@@ -162,6 +167,18 @@ describe('W00b S1: SEC-11 closed world, every JSON leaf path is classed', () => 
     })
     const findings = await folderFindings(dir)
     expectFinding(findings, UNCLASSIFIED, file, String(steps.at(-1)))
+  })
+
+  test.each([
+    ['a number', 7],
+    ['a boolean', true],
+    ['null', null],
+    ['an object', { inner: 'x' }],
+    ['a list', ['x']],
+  ] as const)('SEC-11 S1 an unclassified leaf holding %s is refused (every leaf, not only strings)', async (_kind, value) => {
+    expectFinding(await valueFindings({ nickname: value }), UNCLASSIFIED, 'nickname')
+    const dir = tempFolder({ 'onboarding.json': JSON.stringify({ client_notes: ['made up'], nickname: value }) })
+    expectFinding(await folderFindings(dir), UNCLASSIFIED, 'onboarding.json', 'nickname')
   })
 
   test('SEC-11 S1 guardValue refuses an unclassified leaf, at the top and nested', async () => {
@@ -324,6 +341,12 @@ const nineShape: fc.Arbitrary<NineShape> = fc.record({
   wide: fc.boolean(),
 })
 
+// Money: cents up to ten billion dollars, half of them built from a real-looking nine-digit number (7 + 2 digits).
+const moneyCents = fc.oneof(
+  fc.bigInt({ min: 0n, max: 1_000_000_000_000n }),
+  digits8.map((d8) => BigInt(withCheckDigit(d8))),
+)
+
 /** One placement of a piece of text: where it goes and how the guard is asked. Each returns the findings. */
 type Placement = [string, (text: string) => Promise<{ findings: Finding[]; file: string }>]
 const csvQuote = (s: string): string => `"${s.replace(/"/g, '""')}"`
@@ -422,11 +445,6 @@ describe('W00b S3: SEC-11 a nine-digit number that passes its check digit is ref
     )
   })
 
-  // Money: cents up to ten billion dollars, half of them built from a real-looking nine-digit number (7 + 2 digits).
-  const moneyCents = fc.oneof(
-    fc.bigInt({ min: 0n, max: 1_000_000_000_000n }),
-    digits8.map((d8) => BigInt(withCheckDigit(d8))),
-  )
   const group = (int: string): string => int.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   const moneyText = fc.tuple(moneyCents, fc.constantFrom('plain', 'grouped', 'dollar', 'minus', 'brackets', 'minus-dollar')).map(([c, style]) => {
     const int = (c / 100n).toString()
@@ -470,6 +488,88 @@ describe('W00b S3: SEC-11 a nine-digit number that passes its check digit is ref
     expect(caught, 'C01 with a real-looking SIN should be refused').toBeInstanceOf(TestWorldLoadError)
     const issues = (caught as TestWorldLoadError).issues
     expect(issues.some((i) => i.check === 'made-up-data' && CHECK_DIGIT.test(i.reason)), JSON.stringify(issues)).toBe(true)
+  })
+})
+
+// Every leaf the walk finds is scanned, whatever its class: one plant at a time, at the first leaf of each distinct
+// pattern (folder order), as a JSON number where the leaf is a number and as text otherwise.
+const LEAF_PLANTS = (() => {
+  const seen = new Set<string>()
+  return sampleLeaves().filter((l) => !seen.has(l.pattern) && (seen.add(l.pattern), true))
+})()
+const LEAF_PLANTS_BY_FOLDER = FOLDERS.map((f) => [f.id, LEAF_PLANTS.filter((l) => l.folder.id === f.id)] as const).filter(([, ls]) => ls.length > 0)
+const lastKey = (steps: readonly (string | number)[]): string => [...steps].reverse().find((s) => typeof s === 'string') ?? ''
+
+describe('W00b S3: SEC-11 every JSON leaf path the walk finds is scanned for numbers', () => {
+  test('SEC-11 S3 the walk plants at every distinct path (hundreds)', () => {
+    expect(LEAF_PLANTS.length).toBe(samplePatterns().length)
+    expect(LEAF_PLANTS.length).toBeGreaterThan(400)
+  })
+
+  // Each plant goes into the smallest document that still holds the leaf at its path (pruneTo), so the walk stays fast;
+  // the guard is asked with and without the plant, and only the new findings count.
+  test.each(LEAF_PLANTS_BY_FOLDER)('SEC-11 S3 a real-looking SIN at each path first found in %s is refused (guardFolder and guardValue)', async (_id, plants) => {
+    const spaced = `${REAL9.slice(0, 3)} ${REAL9.slice(3, 6)} ${REAL9.slice(6)}`
+    const misses: string[] = []
+    const key = (f: Finding): string => JSON.stringify([f.record, f.reason])
+    const fresh = (after: Finding[], before: Finding[]): Finding[] => {
+      const old = new Set(before.map(key))
+      return after.filter((f) => !old.has(key(f)))
+    }
+    const hit = (fs: Finding[], ...hints: string[]): boolean => fs.some((f) => CHECK_DIGIT.test(f.reason) && hints.every((h) => `${f.record} ${f.reason}`.includes(h)))
+    for (const leaf of plants) {
+      const small = pruneTo(readJson(join(leaf.folder.dir, leaf.file)), leaf.steps)
+      const beforeFolder = await folderFindings(tempFolder({ [leaf.file]: JSON.stringify(small.doc) }))
+      const beforeValue = await valueFindings(small.doc)
+      setAt(small.doc, small.steps, typeof leaf.value === 'number' ? Number(REAL9) : `ref ${spaced}`)
+      const name = lastKey(leaf.steps)
+      if (!hit(fresh(await folderFindings(tempFolder({ [leaf.file]: JSON.stringify(small.doc, null, 2) })), beforeFolder), leaf.file, name)) misses.push(`guardFolder ${leaf.file} ${leaf.pattern}`)
+      if (!hit(fresh(await valueFindings(small.doc), beforeValue), name)) misses.push(`guardValue ${leaf.file} ${leaf.pattern}`)
+    }
+    expect(misses).toEqual([])
+  })
+})
+
+// More placements: every text kind the guard reads (S4) holds a number or a phone the same way. A bare (unquoted)
+// CSV cell cannot hold a comma, so its shapes leave the comma out.
+const MORE_PLACEMENTS: [string, (text: string) => Promise<{ findings: Finding[]; file: string }>, boolean][] = [
+  ['a .txt line', async (text) => ({ findings: await folderFindings(tempFolder({ 'notes.txt': `Made up (Test).\nOn file: ${text}\n` })), file: 'notes.txt' }), true],
+  ['a .tsv cell', async (text) => ({ findings: await folderFindings(tempFolder({ 'data.tsv': `Date\tDescription\tAmount\n2025-01-02\tNOTE ${text}\t1.00\n` })), file: 'data.tsv' }), true],
+  ['an .xml element', async (text) => ({ findings: await folderFindings(tempFolder({ 'data.xml': `<?xml version="1.0"?>\n<note>On file: ${text}</note>\n` })), file: 'data.xml' }), true],
+  ['a .ts string', async (text) => ({ findings: await folderFindings(tempFolder({ 'kind.ts': `export const note = 'On file: ${text}'\n` })), file: 'kind.ts' }), true],
+  ['an unquoted CSV cell', async (text) => ({ findings: await folderFindings(tempFolder({ 'accounts/chq.csv': `Date,Description,Amount\n2025-01-02,NOTE ${text},1.00\n` })), file: 'accounts/chq.csv' }), false],
+]
+const nineShapeNoComma: fc.Arbitrary<NineShape> = nineShape.filter((s) => s.sep1 !== ',' && s.sep2 !== ',')
+
+describe('W00b S3: SEC-11 numbers in every text kind', () => {
+  test.each(MORE_PLACEMENTS)('SEC-11 S3 property: any shape in %s is refused', async (_where, place, commas) => {
+    await fc.assert(
+      fc.asyncProperty(digits8, commas ? nineShape : nineShapeNoComma, async (d8, shape) => {
+        const { findings, file } = await place(writeNine(withCheckDigit(d8), shape))
+        expectFinding(findings, CHECK_DIGIT, file)
+      }),
+      { seed: SEED, numRuns: RUNS },
+    )
+  })
+
+  test.each(MORE_PLACEMENTS)('SEC-11 S3 control property: a number that fails its check digit, in any shape in %s, is accepted', async (_where, place, commas) => {
+    await fc.assert(
+      fc.asyncProperty(digits8, commas ? nineShape : nineShapeNoComma, async (d8, shape) => {
+        const { findings } = await place(writeNine(withWrongDigit(d8), shape))
+        expect(findings).toEqual([])
+      }),
+      { seed: SEED, numRuns: RUNS },
+    )
+  })
+
+  test.each(MORE_PLACEMENTS)('SEC-11 S3 control property: money in %s is accepted', async (_where, place) => {
+    await fc.assert(
+      fc.asyncProperty(moneyCents, async (c) => {
+        const { findings } = await place(`${(c / 100n).toString()}.${(c % 100n).toString().padStart(2, '0')}`)
+        expect(findings).toEqual([])
+      }),
+      { seed: SEED, numRuns: RUNS },
+    )
   })
 })
 

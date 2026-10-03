@@ -154,6 +154,29 @@ export function setAt(doc: Json, steps: readonly Step[], value: Json): void {
   else throw new Error(`fixture: cannot set ${patternOf(steps)}`)
 }
 
+/**
+ * The smallest document that still holds one leaf at the same pattern path: every object keeps only the key on the
+ * way, every array only the element on the way (moved to index 0). Returns the document and the leaf's new steps.
+ */
+export function pruneTo(doc: Json, steps: readonly Step[]): { doc: Json; steps: Step[] } {
+  const build = (v: Json, i: number): Json => {
+    if (i === steps.length) return v
+    const s = steps[i]
+    if (Array.isArray(v) && typeof s === 'number') {
+      const x = v[s]
+      if (x === undefined) throw new Error(`fixture: no ${patternOf(steps)}`)
+      return [build(x, i + 1)]
+    }
+    if (v !== null && typeof v === 'object' && !Array.isArray(v) && typeof s === 'string') {
+      const x = v[s]
+      if (x === undefined) throw new Error(`fixture: no ${patternOf(steps)}`)
+      return { [s]: build(x, i + 1) }
+    }
+    throw new Error(`fixture: cannot follow ${patternOf(steps)}`)
+  }
+  return { doc: build(doc, 0), steps: steps.map((s) => (typeof s === 'number' ? 0 : s)) }
+}
+
 /** Rewrites one JSON file in place (a temp copy, never the samples). */
 export function editJson(path: string, edit: (doc: Json) => void): void {
   const doc = readJson(path)
