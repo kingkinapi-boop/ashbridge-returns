@@ -2,8 +2,11 @@
  "card": "FX4",
  "role": "spec",
  "worker": "local-1",
- "state": "working",
- "at": "2026-10-03T06:27:34.716Z",
+ "state": "reported",
+ "at": "2026-10-03T06:59:48.737Z",
  "mode": "turbo",
- "beat": "2026-10-03T06:46:10.964Z"
+ "beat": "2026-10-03T06:46:10.964Z",
+ "note": "15 tests (13 fail on main by name, item 1 guards pass), 14 SC4 KNOWN entries removed; SC known.json Paths gap, see reports/FX4-spec.md",
+ "commit": "63df226e",
+ "validated": "25fc96d084130c5f695a4e9e05af5e1517a8fe80"
 }
