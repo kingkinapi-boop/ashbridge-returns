@@ -2,7 +2,11 @@
  "card": "SC11",
  "role": "spec",
  "worker": "cloud-7e75a4",
- "state": "working",
- "at": "2026-10-03T09:06:11.344Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T09:08:10.500Z",
+ "mode": "turbo",
+ "note": "Paths gap: add src/core/db/index.ts and vitest-setup.ts; pick spec file name matching protect-spec; see reports/SC11-spec.md on claude/SC11-report",
+ "lastRelease": {
+  "tip": "none"
+ }
 }
