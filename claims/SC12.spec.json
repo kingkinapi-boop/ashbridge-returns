@@ -2,10 +2,9 @@
  "card": "SC12",
  "role": "spec",
  "note": "40 tests; owners to re-home (FX18, FX7, FX4, SC3, SC11, A04C G4); paths gap: auth.acceptance.db.test.ts createAuth calls need owner",
- "worker": "cloud-e9b38e",
- "state": "reopened",
- "at": "2026-10-03T14:27:44.081Z",
- "mode": "turbo",
- "commit": "b6bc226f",
- "validated": "2bb7db20"
+ "reopenedFrom": "b6bc226f",
+ "worker": "cloud-e6a4bc",
+ "state": "working",
+ "at": "2026-10-03T14:41:13.870Z",
+ "mode": "turbo"
 }
