@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 19:40Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 19:50Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 19:40Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| Train 3 | A04C, CQ11 (3712d3d9) | request at 20:00Z with W00c if its check passes by then, else without it |
+| Train 3 | A04C, CQ11, FX14 at f4e43c51, requested 19:45Z | land if green (rehearsal: two vitest runs); W00c boards train 4 on PASS |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
 | A08 | spec review GAPS 11 (A509): spec patch reopened | build after it; then Opus check and a security review |
 | W00c | round 3 check FAIL on items 1 to 5 only: split to W00d (A501) | fresh check working (cloud-f09ae7, from 17:36Z); board on PASS |
@@ -21,16 +21,15 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 19:40Z by the Lea
 | SC6 | second spec patch reported (111 tests, A513); build marked reported 19:38Z | Opus check of the landing form; board |
 | SC3 | round 3 spec reported; S4 added (A511: module order under isolate false broke test:flake) and reopened | then mark the build reported; Opus read; security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
-| FX14 | spec-only patch reported; build marked reported 19:10Z | check; board on PASS |
 | SC11 | findings review 2 done (A508): round 3, the last: spec S4 to S12 plus R118 reopened 18:30Z | then the Lead reopens the build (B3 to B14); Opus read; security review; board |
-| GL3 | round 4 check FAIL (lint in a spec file; mutate gate stops on db.ts, index.ts, manifest.ts) | findings review 3 (local Opus, from 19:40Z); then the smallest patch |
-| SC5 | check FAIL (KNOWN owner gaps for FX16 and FX11; R101, R84, R73 coverage holes) | findings review 1 (local Opus, from 19:40Z); FX11 waits for SC5 |
+| GL3 | findings review 3 done (A515): one-line spec patch reopened; build adds three header lines | then re-check, Opus read, fresh security review; board |
+| SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
 | SC8, A08 | SC8 build reported (check opens); A08 spec patch reported (218 tests) | SC8 check; A08 build, then Opus check and security review |
 | FX7, W00d, FX16 | A511 rulings: FX7 and W00d specs reopened (FX7 then an Opus spec review) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | W00b, FX6, FX18, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
-| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), panel running locally; designers 2 (D03 B+), 3 (D02) local; then a panel each; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
+| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), its panel done (A516); designers 2 (D03 B+), 3 (D02) local; then a panel each; designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
 
 ## Next, in order
 
