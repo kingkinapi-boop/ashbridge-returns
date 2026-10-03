@@ -22,8 +22,16 @@
 //   an answer:  { jobId, output, stamp }  exactly A04's OutboxFileSchema; `output` is the model's JSON as returned;
 //               `stamp` is F04's VersionStamp (modelId as the CLI reported it, promptVersion, promptHash, inputHash,
 //               ocrEngine, ocrEngineVersion, mappingRelease copied from the job).
-//   a refusal:  { jobId, refusal: { reason: string, problems: string[] } }  (no output, no stamp). A job whose id
-//               breaks the grammar is refused in `outbox/<inbox file stem>.json`.
+//   a refusal:  { jobId, refusal: { reason: string, problems: string[], stage } }  (no output, no stamp): exactly
+//               A04's OutboxRefusalSchema, so A04 fails the job at once with the reason (A446). `stage` is 'input'
+//               for every refusal before the call (redaction, a sensitive value, is_test, the approved triple, the
+//               job id, an inbox entry that is not a regular file), 'run' for the call itself (the CLI did not finish
+//               in time, or reported no model id or another one), 'output' for the answer (not one JSON value, or
+//               fails F04's schema; A04 counts only these against the step, AI-1).
+// Job ids (A446, reports/A04-findings-5.md fix 9): the id is the inbox file's stem, checked with A04's AiJobIdSchema;
+//   every outbox file is `outbox/<stem>.json` and its `jobId` is the stem. An inbox file whose content `jobId` differs
+//   from its stem (`../escape` included) is refused at stage 'input' with a reason naming the job id. A stem outside
+//   AiJobIdSchema is never a file name: no outbox file, no call (see exchange-safety.acceptance.test.ts).
 // Per-job folder: a fresh folder under the exchange folder, the working folder of the CLI call; it holds a copy of
 //   the job's inputs. Temp files (the outbox write is a temp file then a rename) live outside `outbox/` (A420):
 //   `outbox/` only ever holds `<job id>.json` result files, even mid-run.
@@ -34,6 +42,9 @@
 //   (`--system-prompt` or `--system-prompt-file`), the project's settings (`--settings`), each input inside a
 //   `<data ...>...</data>` block in the prompt with every `<` inside the data escaped.
 // The model id the CLI reports is the key of `modelUsage` in its JSON (the fake prints it that way).
+// Clocks (A469): every A04 runner these tests make has its `now` pinned; the launcher reads no clock.
+// The rest of round 3's shape (inbox reads through readRegularFile, files created `wx`, the CLI timeout stopped by
+//   the child's own PID, A498's sensitive facts) is written at the top of exchange-safety.acceptance.test.ts.
 // Amber choices: see reports/A08-spec.md (the refusal shape; the `<data>` wrapper; the reasons below; the orders
 //   version as a run-log line).
 import { spawnSync } from 'node:child_process'
@@ -43,7 +54,7 @@ import { afterEach, describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { aiStepSchemas, validateAiOutput, versionStampSchema } from '../../../contracts/ai'
 import { readOwnSource } from '../../../core/testing/read-own-source'
-import { createAiRunner, InboxFileSchema, type AiJob } from '../index'
+import { createAiRunner, InboxFileSchema, OutboxFileSchema, OutboxRefusalSchema, type AiJob } from '../index'
 import { runAiProjectOnce } from './index'
 import {
   AI_PROJECT_DIR,
@@ -81,6 +92,9 @@ import {
 } from './__fixtures__/harness'
 
 const SLOW = { timeout: 60_000 }
+/** A469: the instant every A04 runner here is pinned to. */
+const T0 = Date.parse('2026-10-02T14:00:00.000Z')
+const pinnedNow = (): Date => new Date(T0)
 
 let worlds: World[] = []
 afterEach(() => {
@@ -132,12 +146,17 @@ function cli(env: Record<string, string | undefined>, args: string[] = []): { st
 }
 
 const outboxNames = (w: World): string[] => (fs.existsSync(w.outbox) ? fs.readdirSync(w.outbox).sort() : [])
-const refusalOf = (w: World, stem: string): { reason: string; problems: string[] } => {
+type Stage = 'input' | 'run' | 'output'
+/** A job's outbox refusal: exactly A04's OutboxRefusalSchema (stage included), for this file's own job id. */
+const refusalOf = (w: World, stem: string): { reason: string; problems: string[]; stage: Stage } => {
   const file = outboxOf(w, stem)
   expect(file, `${stem} should be a refusal`).toHaveProperty('refusal')
   expect(file).not.toHaveProperty('output')
   expect(file).not.toHaveProperty('stamp')
-  return file['refusal'] as { reason: string; problems: string[] }
+  const parsed = OutboxRefusalSchema.safeParse(file)
+  expect(parsed.success, `${stem}: not A04's refusal shape: ${JSON.stringify(parsed.error?.issues ?? [])}`).toBe(true)
+  expect(file['jobId'], `${stem}: the refusal names the file's own job id`).toBe(stem)
+  return file['refusal'] as { reason: string; problems: string[]; stage: Stage }
 }
 const golden = (file: Json): string => JSON.stringify(canonical(file), null, 2) + '\n'
 const stampOf = (j: Json, modelId?: string): Json => stampFromJob(j, modelId)
@@ -180,20 +199,20 @@ const withText = (text: string, variant: string) => (j: Json): void => {
 }
 
 /** The expected outcome of each fixture after one run with the fixture answers. */
-const EXPECTED: Record<FixtureName, { answered: true } | { reason: RegExp }> = {
+const EXPECTED: Record<FixtureName, { answered: true } | { reason: RegExp; stage: Stage }> = {
   'c01-clean': { answered: true },
   'c01-injected': { answered: true },
-  'c01-unredacted': { reason: /^inputs not redacted \(AI-9\)$/ },
-  'c01-planted-sin': { reason: /AI-9/ },
-  'c01-dob': { reason: /AI-9/ },
-  'c01-bank': { reason: /AI-9/ },
-  'c01-not-test': { reason: /SEC-11/ },
-  'c01-unapproved': { reason: /not approved/ },
-  'dotdot-escape': { reason: /job id/i },
-  'c01-answer-not-json': { reason: /AI-1/ },
-  'c01-answer-schema': { reason: /AI-1/ },
-  'c01-answer-other-model': { reason: /model id/i },
-  'c01-answer-no-model': { reason: /model id/i },
+  'c01-unredacted': { reason: /^inputs not redacted \(AI-9\)$/, stage: 'input' },
+  'c01-planted-sin': { reason: /AI-9/, stage: 'input' },
+  'c01-dob': { reason: /AI-9/, stage: 'input' },
+  'c01-bank': { reason: /AI-9/, stage: 'input' },
+  'c01-not-test': { reason: /SEC-11/, stage: 'input' },
+  'c01-unapproved': { reason: /not approved/, stage: 'input' },
+  'dotdot-escape': { reason: /job id/i, stage: 'input' },
+  'c01-answer-not-json': { reason: /AI-1/, stage: 'output' },
+  'c01-answer-schema': { reason: /AI-1/, stage: 'output' },
+  'c01-answer-other-model': { reason: /model id/i, stage: 'run' },
+  'c01-answer-no-model': { reason: /model id/i, stage: 'run' },
 }
 const PRE_CALL_REFUSED: FixtureName[] = ['c01-unredacted', 'c01-planted-sin', 'c01-dob', 'c01-bank', 'c01-not-test', 'c01-unapproved', 'dotdot-escape']
 
@@ -212,9 +231,13 @@ describe('ARC-22 AI-1 one run answers the inbox once and stops', SLOW, () => {
       const file = outboxOf(w, name)
       if ('answered' in want) {
         expect(file, name).toEqual({ jobId: inboxJob(name)['jobId'], output: VALID_OUTPUT, stamp: stampOf(inboxJob(name)) })
+        expect(OutboxFileSchema.safeParse(file).success, name).toBe(true)
       } else {
-        expect(refusalOf(w, name).reason, name).toMatch(want.reason)
-        if (name !== 'dotdot-escape') expect(file['jobId'], name).toBe(name)
+        const refusal = refusalOf(w, name)
+        expect(refusal.reason, name).toMatch(want.reason)
+        expect(refusal.stage, name).toBe(want.stage)
+        // A446: the job id is the file name's, even for the "../escape" job
+        expect(file['jobId'], name).toBe(name)
       }
     }
   })
@@ -224,6 +247,7 @@ describe('ARC-22 AI-1 one run answers the inbox once and stops', SLOW, () => {
     await runOnce(w)
     const file = outboxOf(w, 'c01-clean')
     expect(Object.keys(file).sort()).toEqual(['jobId', 'output', 'stamp'])
+    expect(OutboxFileSchema.safeParse(file).success).toBe(true)
     expect(validateAiOutput('finding', file['output'], file['stamp']).ok).toBe(true)
   })
 
@@ -357,6 +381,7 @@ describe('ARC-22 AI-10 A04 runner with the project engine and this launcher on o
       approvedPath: w.approvedPath,
       env: { AI_EXCHANGE_DIR: w.exchange },
       pollMs: 5,
+      now: pinnedNow,
       sink: () => undefined,
     })
     expect(ai.useEngine('project')).toEqual({ ok: true })
@@ -377,6 +402,7 @@ describe('ARC-22 AI-10 A04 runner with the project engine and this launcher on o
       approvedPath: w.approvedPath,
       env: { AI_EXCHANGE_DIR: w.exchange },
       pollMs: 5,
+      now: pinnedNow,
       sink: () => undefined,
     })
     expect(ai.useEngine('project')).toEqual({ ok: true })
@@ -385,6 +411,47 @@ describe('ARC-22 AI-10 A04 runner with the project engine and this launcher on o
     expect(await runOnce(w)).toMatchObject({ result: { ok: true } })
     expect(listTree(w.exchange).filter((f) => f.startsWith('inbox/') || f.startsWith('outbox/'))).toEqual([])
     expect(w.calls()).toEqual([])
+  })
+
+  /** A04's runner on the project engine (clock pinned, A469) with a step started for one fixture; the launcher runs once its inbox file is there. */
+  async function throughA04(w: World, name: FixtureName): Promise<{ ai: ReturnType<typeof createAiRunner>; got: unknown }> {
+    const ai = createAiRunner({
+      recordingsDir: path.join(w.root, 'no-recordings'),
+      approvedPath: w.approvedPath,
+      env: { AI_EXCHANGE_DIR: w.exchange },
+      pollMs: 5,
+      now: pinnedNow,
+      sink: () => undefined,
+    })
+    expect(ai.useEngine('project')).toEqual({ ok: true })
+    const pending = ai.runAiStep(aiJobOf(name), { jobId: name })
+    const until = Date.now() + 10_000
+    while (!fs.existsSync(path.join(w.inbox, `${name}.json`)) && Date.now() < until) await new Promise((r) => setTimeout(r, 5))
+    expect(fs.existsSync(path.join(w.inbox, `${name}.json`)), `A04 wrote no inbox file for ${name}`).toBe(true)
+    expect(await runOnce(w)).toMatchObject({ result: { ok: true } })
+    const got = await within(pending, 10_000, `A04's runner never took the launcher's refusal for ${name}`)
+    return { ai, got }
+  }
+
+  test("ARC-22 AI-9 SEC-5 a job A04 passes but the launcher refuses before the call (the planted SIN) fails in A04 at once with the launcher's reason, not counted against the step", async () => {
+    const w = world([])
+    const { ai, got } = await throughA04(w, 'c01-planted-sin')
+    expect(got).toMatchObject({ ok: false, reason: expect.stringMatching(/^the Claude project refused the job: .*AI-9/) as unknown })
+    expect(JSON.stringify(got)).not.toContain(PLANTED_SIN_DIGITS)
+    expect(JSON.stringify(got)).not.toContain(PLANTED_SIN)
+    expect(refusalOf(w, 'c01-planted-sin').stage).toBe('input')
+    expect(ai.refusals('finding')).toBe(0)
+    expect(w.calls()).toEqual([])
+  })
+
+  test('ARC-22 AI-1 an answer the launcher refuses at stage output (not JSON) fails in A04 with its problems and is counted against the step once', async () => {
+    const w = world([])
+    const { ai, got } = await throughA04(w, 'c01-answer-not-json')
+    const refusal = refusalOf(w, 'c01-answer-not-json')
+    expect(refusal.stage).toBe('output')
+    expect(got).toEqual({ ok: false, reason: `the Claude project refused the job: ${refusal.reason}`, problems: refusal.problems })
+    expect(ai.refusals('finding')).toBe(1)
+    expect(w.calls()).toHaveLength(1)
   })
 
   test("ARC-22 every fixture but c01-unredacted is a valid A04 inbox file whose schema is F04's JSON Schema for its step today", () => {
@@ -403,7 +470,7 @@ describe('AI-9 SEC-5 unredacted or sensitive input is refused before any call', 
   test('AI-9 the job with no redaction stamp is refused with "inputs not redacted (AI-9)" and the fake is never called for it', async () => {
     const w = world(['c01-unredacted', 'c01-clean'])
     await runOnce(w)
-    expect(refusalOf(w, 'c01-unredacted')).toEqual({ reason: 'inputs not redacted (AI-9)', problems: [] })
+    expect(refusalOf(w, 'c01-unredacted')).toEqual({ reason: 'inputs not redacted (AI-9)', problems: [], stage: 'input' })
     expect(callsFor(w, 'c01-unredacted')).toHaveLength(0)
     expect(callsFor(w, 'c01-clean')).toHaveLength(1)
   })
@@ -575,6 +642,7 @@ describe('AI-1 an answer that is not one JSON value, or breaks the schema, becom
     await runOnce(w)
     const r = refusalOf(w, 'c01-answer-not-json')
     expect(r.reason).toMatch(/AI-1/)
+    expect(r.stage).toBe('output')
     expect(r.problems.length).toBeGreaterThan(0)
     expect(callsFor(w, 'c01-answer-not-json')).toHaveLength(1)
   })
@@ -584,6 +652,7 @@ describe('AI-1 an answer that is not one JSON value, or breaks the schema, becom
     await runOnce(w)
     const r = refusalOf(w, 'c01-answer-schema')
     expect(r.reason).toMatch(/AI-1/)
+    expect(r.stage).toBe('output')
     const f04 = validateAiOutput('finding', SCHEMA_BREAKING_OUTPUT, stampOf(inboxJob('c01-answer-schema')))
     expect(f04.ok).toBe(false)
     if (f04.ok) return
@@ -601,6 +670,7 @@ describe('AI-1 an answer that is not one JSON value, or breaks the schema, becom
     await runOnce(w)
     const r = refusalOf(w, 'c01-clean')
     expect(r.reason).toMatch(/AI-1/)
+    expect(r.stage).toBe('output')
   })
 })
 
@@ -663,12 +733,15 @@ describe('AI-10 every answer carries its versions', SLOW, () => {
     const r = refusalOf(w, 'c01-answer-other-model')
     expect(r.reason).toContain('claude-opus-5-5')
     expect(r.reason).toContain(OTHER_MODEL)
+    expect(r.stage).toBe('run')
   })
 
   test('AI-10 an answer with no model id reported becomes a refusal', async () => {
     const w = world(['c01-answer-no-model'])
     await runOnce(w)
-    expect(refusalOf(w, 'c01-answer-no-model').reason).toMatch(/model id/i)
+    const r = refusalOf(w, 'c01-answer-no-model')
+    expect(r.reason).toMatch(/model id/i)
+    expect(r.stage).toBe('run')
   })
 })
 

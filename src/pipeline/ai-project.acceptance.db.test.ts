@@ -3,6 +3,8 @@
 // It sits in src/pipeline, the composition root (F10), as A04's queue tests do (ARC-7). The launcher's API is
 // written out at the top of src/modules/ai/project/project.acceptance.test.ts. No real `claude`: the launcher
 // runs the fake program from src/modules/ai/project/__fixtures__/fake-claude.mjs (installed in a temp folder).
+// Clocks (A469, reports/A04-findings-6.md): the queue, the job runner and the AI runner share one pinned Clock, so
+// the AI wait's deadline (the runner's now() + lease - 10 minutes) and the lease are in one frame on any date.
 import fs from 'node:fs'
 import path from 'node:path'
 import type { PGlite } from '@electric-sql/pglite'
@@ -14,6 +16,8 @@ import { createAiRunner, createAiStepHandler } from '../modules/ai/index'
 import { runAiProjectOnce } from '../modules/ai/project/index'
 import { createJobQueue, createRunner } from '../modules/jobs/index'
 import {
+  PLANTED_SIN,
+  PLANTED_SIN_DIGITS,
   VALID_OUTPUT,
   inboxJob,
   makeWorld,
@@ -82,6 +86,7 @@ async function setup() {
     approvedPath: w.approvedPath,
     env: { AI_EXCHANGE_DIR: w.exchange },
     pollMs: 5,
+    now: () => clock.now(),
     sink: (l) => { lines.push(l) },
   })
   expect(ai.useEngine('project')).toEqual({ ok: true })
@@ -123,6 +128,24 @@ describe('ARC-22 A04 runner and the A08 launcher together on one exchange folder
     expect(r.last_error).toMatch(/inputs not redacted/)
     expect(filesIn(w.inbox)).toEqual([])
     expect(filesIn(w.outbox)).toEqual([])
+    expect(w.calls()).toEqual([])
+  })
+
+  test("ARC-22 AI-9 SEC-5 a job A04 passes but the launcher refuses (the planted SIN) ends failed in Returns with the launcher's reason, without waiting for the lease", async () => {
+    const { w, db, queue, runner, launch } = await setup()
+    const queued = await queue.enqueue('ai:finding', 'ai-finding-c01-a08-planted-sin', aiJob('c01-planted-sin'))
+    const running = runner.runOnce()
+    await waitFor(() => filesIn(w.inbox).length > 0, 'the inbox file')
+    expect(filesIn(w.inbox)).toEqual([`${queued.id}.json`])
+    expect(await launch()).toEqual({ ok: true })
+    expect(await running).toBe(true)
+    const r = await row(db, queued.id)
+    expect(r.status).not.toBe('done')
+    expect(r.result).toBeNull()
+    expect(r.last_error).toMatch(/the Claude project refused the job: .*AI-9/)
+    expect(r.last_error).not.toContain(PLANTED_SIN_DIGITS)
+    expect(r.last_error).not.toContain(PLANTED_SIN)
+    expect(filesIn(w.outbox)).toEqual([`${queued.id}.json`])
     expect(w.calls()).toEqual([])
   })
 })

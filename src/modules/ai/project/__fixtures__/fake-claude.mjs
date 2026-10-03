@@ -4,18 +4,21 @@
 // AI_PROJECT_CLAUDE_BIN at the copy. The launcher runs a program path ending in .mjs with the running Node.
 //
 // Each call appends one JSON line to `fake-claude.calls.jsonl` beside this file:
-//   { argv, stdin, cwd, envNames, systemPrompt, settingsText, cwdFiles }
+//   { argv, stdin, cwd, envNames, systemPrompt, settingsText, cwdFiles, pid }
 //   systemPrompt: the text given by --system-prompt <text> or --system-prompt-file <path> (null if neither)
 //   settingsText: the text given by --settings <path or JSON> (the file's text when it names a file; null if absent)
 //   cwdFiles: every file under the working folder, by relative path, with its text
+//   pid: this process's id (so a test can see whether the launcher stopped it)
 // Then it prints an answer shaped like `claude -p --output-format json` (one JSON object):
 //   { type: 'result', subtype: 'success', is_error: false, result: <the model's text>, num_turns: 1,
 //     session_id, modelUsage: { <model id>: { inputTokens, outputTokens } } }
 // The model id it reports is the rule's `model` when given (null: no modelUsage at all), else the --model value.
 // Without --output-format json it prints the model's text alone, as the real CLI does.
 //
-// Control file: { rules: [{ match, result, model? }], defaultResult, arrive?: { match, file, text } }
+// Control file: { rules: [{ match, result, model?, hangMs? }], defaultResult, hangMs?, arrive?: { match, file, text } }
 //   The first rule whose `match` occurs in any argument or in stdin picks the answer.
+//   `hangMs` (on the rule, else at the top): after logging the call the fake waits that long before answering, so a
+//   test can see the launcher's timeout stop it.
 //   `arrive`: when `match` occurs, the fake writes `text` to `file` (if absent) before answering, so a test can
 //   add an inbox job while a run is in progress.
 import fs from 'node:fs'
@@ -106,6 +109,7 @@ fs.appendFileSync(
     systemPrompt,
     settingsText,
     cwdFiles: listFiles(process.cwd()),
+    pid: process.pid,
   }) + '\n',
 )
 
@@ -116,6 +120,8 @@ if (control.arrive && haystack.includes(control.arrive.match) && !fs.existsSync(
 const rule = (control.rules ?? []).find((r) => haystack.includes(r.match))
 const result = rule ? rule.result : control.defaultResult
 const model = rule && 'model' in rule ? rule.model : (flagValue('--model') ?? 'claude-default (Test)')
+const hangMs = rule && typeof rule.hangMs === 'number' ? rule.hangMs : control.hangMs
+if (typeof hangMs === 'number' && hangMs > 0) await new Promise((r) => setTimeout(r, hangMs))
 
 if (flagValue('--output-format') === 'json') {
   const envelope = {
