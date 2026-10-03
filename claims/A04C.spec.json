@@ -1,11 +1,9 @@
 {
  "card": "A04C",
  "role": "spec",
- "worker": "cloud-359204",
- "state": "reported",
- "at": "2026-10-03T13:58:50.812Z",
- "mode": "turbo",
- "note": "4 tests (G1 to G4); runner 141, exchange 95; reports/A04C-spec.md",
- "commit": "bdf80180",
- "validated": "a2ee55d388fe4b45920cc3d657388be37c2f0fcf"
+ "note": "toolchain refit",
+ "worker": "cloud-b1e6bc",
+ "state": "working",
+ "at": "2026-10-03T15:20:05.367Z",
+ "mode": "turbo"
 }
