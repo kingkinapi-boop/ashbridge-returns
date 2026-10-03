@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 05:56Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 06:16Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -21,13 +21,13 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 05:56Z by the Lea
 | SC | spec patch reported (110 tests); build open (A424) | build, check with Opus read and test:flake |
 | SC3 | spec reported (security) | build, check, security review |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | check FAIL (AI-10: runner compares 4 of 7 stamp parts); Opus findings review running | fix list into the card, spec patch, build round, check, security review |
+| A04 | findings done (A426): round 4 narrow patch, spec reopened | spec patch (21 stamp cases), build runner.ts, check, security review |
 | DB16 | round 3 build reported (565 db tests on Postgres 16) | check (cloud), security review, board |
 | FX2 | round 2 spec reported; build open | build (one auth line), check, security review; lands before FX7 |
 | JH0 | spec reported | build after W00c lands |
 | CQ3, CQ4 | specs reported (CQ3 Paths gain claim.test.mjs) | build, check |
 
-Cloud runs: 3 at 05:56Z (W16, SC, W00c, FX2, CQ3, CQ4 builds; DB16 check needs one). Local (Opus): local-1, local-3 workers; local-2 (FX10 spec). Helper: A04 findings review.
+Cloud runs: 3 at 05:56Z, 2 at 06:16Z. Local (Opus): local-1 (CQ3 refit), local-3 (W16 refit), local-2 (FX10 spec). The CQ2 landing set off toolchain refits on every reported spec (06:15Z): for the Critic, a refit only when a spec's own commands changed.
 
 ## Next, in order
 

@@ -9953,6 +9953,26 @@
     },
     {
       "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC5"
+      ],
+      "paths": [
+        "src/modules/ocr/**"
+      ],
+      "clauses": [
+        "AI-10",
+        "EV-5"
+      ],
+      "id": "FX11",
+      "title": "Recorded OCR: the engine named by the result matches the source (R84)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/A04-findings.md, 3 Oct (A426)."
+    },
+    {
+      "status": "carded",
       "spec": "bd0e2fe2",
       "deps": [
         "F02",
