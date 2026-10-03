@@ -1,5 +1,5 @@
 {
-  "status": "requested",
+  "status": "checking",
   "branch": "claude/train",
   "head": "df6f1249",
   "cards": [
@@ -8,5 +8,6 @@
     "CQ6"
   ],
   "requested_at": "2026-10-03T12:35:00Z",
-  "note": "Train 25ea2736 red on A04 only (a clock mix; findings review running); A04 is off. Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462): npm test with TEST_DB=pg16 and on PGlite; print select version(). FX15 is not core (A465). CQ6 and CQ7 change tools/mutate-changed.mjs, test-homes.json and claim.mjs: every tools test, and mutate:changed for one landed core card (F00T) to show the gate still scores. A refused command makes the train blocked, not red."
+  "note": "Train 25ea2736 red on A04 only (a clock mix; findings review running); A04 is off. Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462): npm test with TEST_DB=pg16 and on PGlite; print select version(). FX15 is not core (A465). CQ6 and CQ7 change tools/mutate-changed.mjs, test-homes.json and claim.mjs: every tools test, and mutate:changed for one landed core card (F00T) to show the gate still scores. A refused command makes the train blocked, not red.",
+  "by": "cloud-9e54a6"
 }
