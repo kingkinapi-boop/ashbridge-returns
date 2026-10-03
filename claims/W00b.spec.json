@@ -1,10 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-a61550",
- "state": "released",
- "at": "2026-10-03T23:05:15.695Z",
- "mode": "turbo",
- "note": "wait: W00c not landed on main (round 4 spec merges main and reuses W00c's json-keys.ts scanner, A423); no code base",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "worker": "cloud-086697",
+ "state": "working",
+ "at": "2026-10-03T23:43:18.713Z",
+ "mode": "turbo"
 }
