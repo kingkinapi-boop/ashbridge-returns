@@ -1,12 +1,10 @@
 {
  "card": "SC11",
  "role": "build",
- "round": 2,
- "spec": "ffa2f8f",
- "worker": "cloud-7c6fec",
- "state": "reopened",
- "at": "2026-10-03T21:06:56.091Z",
- "mode": "turbo",
- "beat": "2026-10-03T17:08:44.794Z",
- "note": "A508 round 3: build items B3 to B14 against spec ffa2f8f3 plus round 3 spec"
+ "round": 3,
+ "spec": "7e2f5034",
+ "worker": "cloud-fbb2e3",
+ "state": "working",
+ "at": "2026-10-03T23:04:49.520Z",
+ "mode": "turbo"
 }
