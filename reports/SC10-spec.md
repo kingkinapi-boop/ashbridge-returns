@@ -1,6 +1,6 @@
 # SC10 spec report: round 2 spec patch (A502, P1 to P8)
 
-Worker cloud-3a2ec0, 3 Oct 2026. Spec commit befeffc on claude/SC10. Validated on main b99a711 (origin/main merged) and on a scratch merge with CQ11's tip dc401bd (never pushed; the worktree is removed).
+Worker cloud-3a2ec0, 3 Oct 2026. Spec commit befeffc on claude/SC10. Validated on main 03e933e (merged twice: b99a711, then 03e933e, which changes only plan/ and .claude/rules/testing.md; the tools tests and the landing form were rerun on it, green) and on a scratch merge with CQ11's tip dc401bd (never pushed; the worktree is removed).
 
 ## What changed
 - tools/test/card-rules.test.mjs: 78 tests (was 27), all pass. SC10 has no build: the rules live in the test file, so "fails first" was measured by running each new plant through the rules as at 73fe6af4 (scratch script, not committed; results below).
@@ -9,7 +9,7 @@ Worker cloud-3a2ec0, 3 Oct 2026. Spec commit befeffc on claude/SC10. Validated o
 - The closed forms are written in words in the test file header (reading cards, R85, R86, R87, R89, KNOWN).
 
 ## Items
-- P1: origin/main b99a711 merged. typecheck, lint, npm test green (unit 136 files 3253 tests; db 14 files 662 pass, 1 expected fail, 5 skipped). Landing form (SC10 set done in plan/slices.json, not committed): tools/test 26 files 539 tests green. Scratch merge with CQ11: tools/test 28 files 632 green; full unit 138 files 3346 green.
+- P1: origin/main b99a711 merged, then 03e933e. typecheck, lint, npm test green (unit 136 files 3253 tests; db 14 files 662 pass, 1 expected fail, 5 skipped). Landing form (SC10 set done in plan/slices.json, not committed): tools/test 26 files 539 tests green. Scratch merge with CQ11: tools/test 28 files 632 green; full unit 138 files 3346 green.
 - P2: KNOWN = []. knownShape also fails an owner that is done or parked, or whose Paths do not cover tools/test/card-rules.test.mjs. Plants: FX7 pinned done (and parked) owning an entry; the six entries as at 73fe6af4 (each owner lacks this file). At 73fe6af4 both plants gave no problem.
 - P3: floors(world) over every card whatever its status: at least 300 cards read, a family card read with one of its own params put in, SC10 read with the Tags word core. R85, R86 and R87 judge open cards only (not done, not parked); an open card with no text fails by id under each rule (the line 146 silent skip is gone). Plants: the live world with SC10 set done passes every rule and the floor; every card set done passes the floor and R85 to R87; a pinned open card with no file (and a family card with no template) fails by id. At 73fe6af4: R86 and R87 skipped the no-text card; with SC10 done, R89 failed on its stale KNOWN rows.
 - P4: R85's closed Tags form, as the directive words it; the flags compared are core, security and screens (all 262 open cards agree on all three). The line 88 comment is replaced (core read one way: the flag or the closed Tags word, which R85 holds equal; core inside a non-core reason is refused because CQ6's gate reads any core token). Plants that fail: F03R's one-line form, SK0 and kind.md before A502, A04C's and SC3's lines before A502, core in a non-core reason, plus 13 malformed forms (test.each). B04's line passes; A04C's and SC3's lines after A502 pass. At 73fe6af4 every one of the named plants passed (no problem).
