@@ -1,10 +1,10 @@
 {
  "card": "A04",
  "role": "spec",
- "note": "round 5c (A469): 18 new or restated tests fail first, 233 unit in the two files, none retired",
+ "note": "A474: G1 to G4 (card directive)",
  "worker": "local-3",
- "state": "reported",
- "at": "2026-10-03T13:08:12.637Z",
+ "state": "reopened",
+ "at": "2026-10-03T13:12:45.439Z",
  "mode": "turbo",
  "commit": "71a8efe8",
  "validated": "0eccaccd48c07696135250f496de99fc2d1e4003"
