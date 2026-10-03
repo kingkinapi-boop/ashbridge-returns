@@ -1,11 +1,9 @@
 {
  "card": "JH0",
  "role": "spec",
- "note": "refit on main f7705608: typecheck, lint clean; 38 harness tests fail only for unbuilt e2e/_harness modules",
- "worker": "cloud-a98eee",
- "state": "reported",
- "at": "2026-10-03T08:27:40.475Z",
- "mode": "turbo",
- "commit": "e295acc",
- "validated": "f770560870a7594b351bbce4e8118676d645e8f4"
+ "note": "toolchain refit",
+ "worker": "cloud-c5d3df",
+ "state": "working",
+ "at": "2026-10-03T16:17:01.780Z",
+ "mode": "turbo"
 }
