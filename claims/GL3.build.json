@@ -4,9 +4,9 @@
  "round": 4,
  "spec": "c4a5a4bd",
  "worker": "cloud-dfe211",
- "state": "reported",
- "at": "2026-10-03T19:09:37.280Z",
+ "state": "hold-findings",
+ "at": "2026-10-03T19:16:49.087Z",
  "mode": "turbo",
  "beat": "2026-10-03T19:08:52.658Z",
- "note": "round 4 B1-B6: bridge 56 unit + 42 db pass on PGlite and pg16, test:flake 5 of 5; BLOCKED lint (spec file reach.acceptance.test.ts:56) and mutate:changed gate (db.ts, index.ts, manifest.ts unmarked), see reports/GL3-build.md"
+ "note": "FAIL: lint error in spec file reach.acceptance.test.ts:56 and mutate gate unmarked db.ts/index.ts/manifest.ts, see reports/GL3-check.md"
 }

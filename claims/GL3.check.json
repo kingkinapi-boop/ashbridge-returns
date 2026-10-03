@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-03T19:09:37.280Z",
  "worker": "cloud-fce4c0",
- "state": "working",
- "at": "2026-10-03T19:14:13.997Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-03T19:16:49.087Z",
+ "mode": "turbo",
+ "note": "FAIL: lint error in spec file reach.acceptance.test.ts:56 and mutate gate unmarked db.ts/index.ts/manifest.ts, see reports/GL3-check.md"
 }
