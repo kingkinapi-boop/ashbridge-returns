@@ -2031,7 +2031,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A04"
@@ -2050,7 +2050,8 @@
       "phase": 1,
       "size": "S",
       "core": false,
-      "note": "Split from A04 (A477, Review 3 Oct finding 2)."
+      "note": "Split from A04 (A477, Review 3 Oct finding 2).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -10190,7 +10191,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ8"
@@ -10214,7 +10215,8 @@
       "phase": 0,
       "size": "M",
       "core": false,
-      "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+      "note": "Decision 0027 (Critic 3 Oct, proposal 2).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -10687,7 +10689,7 @@
       "note": "From reports/FX2-security.md, 3 Oct (A435)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "FX12"
@@ -10710,7 +10712,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX12-spec.md, 3 Oct (A443)."
+      "note": "From reports/FX12-spec.md, 3 Oct (A443).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
