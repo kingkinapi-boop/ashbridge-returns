@@ -1984,7 +1984,7 @@
     },
     {
       "status": "carded",
-      "spec": null,
+      "spec": "fb82b8c",
       "deps": [
         "F04",
         "F06",
@@ -9511,6 +9511,26 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ2"
+      ],
+      "paths": [
+        "tools/scope.mjs",
+        "tools/test/scope-spec-files.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ4",
+      "title": "scope.mjs: files the Spec names belong to the spec job (R82)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/FX8-findings.md, 3 Oct (A417)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [
@@ -9768,7 +9788,9 @@
     {
       "status": "carded",
       "spec": null,
-      "deps": [],
+      "deps": [
+        "W16"
+      ],
       "paths": [
         "reference/sample-clients/clients/c07_08.mjs",
         "reference/sample-clients/clients/c09_10.mjs",
