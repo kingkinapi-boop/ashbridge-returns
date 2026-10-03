@@ -14,7 +14,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 04:55Z by the Lea
 | Card | State | Next action |
 |---|---|---|
 | W00c | round 2 spec patch reopened (A413: 4 gaps); build held | spec, build, check; unblocks W00b, JH0, B04, SC2 |
-| W00b | spec round 3 reported (504 tests); Opus review running; build waits on W00c and FX8 | GO: build after both land |
+| W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | findings done (A417): round 2 on claude/FX8-r2 after W16 lands | spec, build, check; before W00b's build |
 | W16 | fixup spec GO (A415); build open | build, check; then SC6, FX9 |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
