@@ -1,11 +1,9 @@
 {
  "card": "SC8",
  "role": "spec",
- "note": "37 tests (28 new), G1 to G6",
- "worker": "cloud-06fcfe",
- "state": "reported",
- "at": "2026-10-03T08:29:17.393Z",
- "mode": "turbo",
- "commit": "99791441debe48e6dc77fe3efc680eeb90467ce9",
- "validated": "913ded6795563e5a7adc69dc24a5b54ca3575e76"
+ "note": "toolchain refit",
+ "worker": "cloud-64f020",
+ "state": "working",
+ "at": "2026-10-03T11:28:16.542Z",
+ "mode": "turbo"
 }
