@@ -1,11 +1,11 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 17:35Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 18:22Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, "turbo on" 13:26Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 78% of the week at 15:42Z, about 4% an hour: the limit comes about 21:00Z; then pause until Zo's saved reset and `go`.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims and `list_runs`). SC11's build cloud-7c6fec (cse_01BHfxxvYJHN5tJWuHXbzZJD) runs test:flake on pg16; 4 queue runs fired 17:36Z. Laptop (decision 0026): designers 1 to 3; GL3 spec review (16:58Z).
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims and `list_runs`). SC11's build cloud-7c6fec (cse_01BHfxxvYJHN5tJWuHXbzZJD) runs test:flake on pg16; 4 queue runs fired 17:36Z. Laptop (decision 0026): designers 1 to 3; SC11 findings review 2 and A08 spec review (18:21Z).
 - **Landed (63):** train 2b (A04, CQ8, CQ9, CQ12; checked 092598f3) on main ba6d7ee5 at 17:30Z. Auto mode refused the Lead's landing push at 17:25Z; Zo ran the fast-forward and push himself. Never route around that refusal: at each next landing, put the commands in TODO-ZO and wait for Zo (or a settings rule he adds).
 - **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
 
@@ -15,15 +15,16 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 17:35Z by the Lea
 |---|---|---|
 | Train 3 | A04C (40169142, 18:00Z) | board each PASS; request at 6 cards or by 19:00Z |
 | B04 | spec review GAPS 9 (A507): second spec patch reopened | build after the patch and W00c; Opus check |
+| A08 | spec reported (121 tests; core, security) | Opus spec review (local, from 18:21Z); build held `wait:`; then Opus check and a security review |
 | W00c | round 3 check FAIL on items 1 to 5 only: split to W00d (A501) | fresh check working (cloud-f09ae7, from 17:36Z); board on PASS |
 | SC10 | findings review 1 done (A502): Lead plan commit on main; round 2 spec patch P1 to P8, no build | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check on the landing form |
 | SC6 | spec review GAPS (A503): second spec patch G1 to G8 plus grammar coverage | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check |
 | SC3 | findings review 1 done (A504): round 3 is spec patch S1 to S3, no build | spec reopened 17:36Z; then mark the build reported; Opus read; security review |
-| G18 | spec review GAPS (A505): three plant fixes | spec reopened 17:35Z (Opus); then the build (Opus, data only); third Opus check; fill the card's Spec commit line |
+| G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | FX14 | spec reopened 17:35Z (A504: the walker counts test.each bodies; build held) | build after the spec |
-| SC11 | round 2 build reported; check working (cloud-6345e6) | then a security review (local); board (scope note b accepted by hand, A500) |
+| SC11 | round 2 check FAIL (Opus read: close(), template and withAdmin paths lose failures; reports/SC11-check.md on claude/SC11) | findings review 2 (local Opus, from 18:21Z); round 3 is the last |
 | GL3 | spec review 4 GAPS (A506): second spec patch G1 to G4 reopened | then reopen the build (B1 to B6); Opus check; fresh security review |
-| CQ11 | spec reopened (A500: R82 clean merges) | build after CQ8 lands |
+| CQ11 | build reported 18:15Z | check; board on PASS |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | FX17, A04C | FX17 spec reported (re-merges main after SC3, A504); A04C spec reported | FX17 build after SC3 lands; A04C build after A04 lands, Opus check |
 | W00b, A08, FX6, FX18, SC5, SC12 | held `wait:` | reopen when W00c, A04, SC3, SC11 or SC5's deps land |
