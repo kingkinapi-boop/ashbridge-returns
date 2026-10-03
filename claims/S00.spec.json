@@ -1,11 +1,9 @@
 {
  "card": "S00",
  "role": "spec",
- "worker": "cloud-fdf303",
- "state": "reported",
- "at": "2026-10-03T04:06:48.143Z",
- "mode": "turbo",
- "note": "18 tests added (105 total), gaps 2 to 11 closed; fails-first in reports/S00-spec.md",
- "commit": "e2dca05",
- "validated": "0355e1e"
+ "note": "toolchain refit",
+ "worker": "cloud-117624",
+ "state": "working",
+ "at": "2026-10-03T08:24:59.888Z",
+ "mode": "turbo"
 }
