@@ -1,11 +1,10 @@
 {
  "card": "FX7",
  "role": "spec",
- "worker": "cloud-120b8f",
- "state": "reopened",
- "at": "2026-10-03T19:13:38.539Z",
- "mode": "turbo",
  "note": "51 tests; Lead decides 2 items in reports/FX7-spec.md: business_number R45 KNOWN entry kept, safe-read.ts Paths gap",
- "commit": "72aa3482",
- "validated": "5a21f65a"
+ "reopenedFrom": "72aa3482",
+ "worker": "cloud-fce4c0",
+ "state": "working",
+ "at": "2026-10-03T19:30:09.491Z",
+ "mode": "turbo"
 }
