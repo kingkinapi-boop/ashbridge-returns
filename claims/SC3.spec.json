@@ -2,10 +2,9 @@
  "card": "SC3",
  "role": "spec",
  "note": "A452: patch, see card directive",
- "worker": "cloud-a98eee",
- "state": "reopened",
- "at": "2026-10-03T09:34:15.923Z",
- "mode": "turbo",
- "commit": "72943edb",
- "validated": "f770560870a7594b351bbce4e8118676d645e8f4"
+ "reopenedFrom": "72943edb",
+ "worker": "cloud-e9d462",
+ "state": "working",
+ "at": "2026-10-03T09:36:20.698Z",
+ "mode": "turbo"
 }
