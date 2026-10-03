@@ -58,7 +58,7 @@ export function cleanCatalogue(): { entries: FixtureEntry[] } {
         options: ['alpha', 'beta'],
         label: 'Gadget kind (Test)',
         suppliedBy: ['judgment'],
-        cites: [{ kind: 'cra_form', ref: 'T2 line 070 (Test)' }],
+        cites: [{ kind: 'cra_form', ref: 'T2 line 070' }],
       }),
       cleanEntry({
         key: 'testarea.slip_test.amount',

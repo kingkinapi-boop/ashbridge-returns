@@ -213,8 +213,9 @@ describe('EV-5 EV-10 SEC-4 every refusal says why, word for word', () => {
     expect(reasonsFor({ cites: [null] })).toEqual(bad)
     expect(reasonsFor({ cites: [[]] })).toEqual(bad)
     expect(reasonsFor({ cites: [{ kind: 'answer_key', ref: 'a' }, { kind: 'x', ref: 'a' }] })).toEqual(bad)
-    for (const kind of ['cra_form', 'onboarding_contract', 'answer_key']) {
-      expect(reasonsFor({ cites: [{ kind, ref: 'x' }] }), kind).toEqual([])
+    // FX7 spec (R45-cite): a cra_form ref must fit its pattern, so the cra_form case uses a T2 line, not free text.
+    for (const [kind, ref] of [['cra_form', 'T2 line 070'], ['onboarding_contract', 'x'], ['answer_key', 'x']]) {
+      expect(reasonsFor({ cites: [{ kind, ref }] }), kind).toEqual([])
     }
   })
 

@@ -82,69 +82,6 @@
       "why": "a core file without // @mutate"
     },
     {
-      "rule": "R18",
-      "file": "src/modules/storage/drive/index.ts",
-      "problems": [
-        "src/modules/storage/drive/index.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
-      ],
-      "owner": "FX7",
-      "why": "a core file without // @mutate"
-    },
-    {
-      "rule": "R18",
-      "file": "src/modules/storage/files/index.ts",
-      "problems": [
-        "src/modules/storage/files/index.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
-      ],
-      "owner": "FX7",
-      "why": "a core file without // @mutate"
-    },
-    {
-      "rule": "R18",
-      "file": "src/modules/storage/index.ts",
-      "problems": [
-        "src/modules/storage/index.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
-      ],
-      "owner": "FX7",
-      "why": "a core file without // @mutate"
-    },
-    {
-      "rule": "R18",
-      "file": "src/modules/storage/safe.ts",
-      "problems": [
-        "src/modules/storage/safe.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
-      ],
-      "owner": "FX7",
-      "why": "a core file without // @mutate"
-    },
-    {
-      "rule": "R18",
-      "file": "src/contracts/auth.ts",
-      "problems": [
-        "src/contracts/auth.ts: a core card lists it, but it has no // @mutate in its first 5 lines"
-      ],
-      "owner": "FX7",
-      "why": "FX7 (core) lists src/contracts/auth.ts in its Paths since A414; FX7 adds // @mutate when it edits the file"
-    },
-    {
-      "rule": "R23",
-      "file": "src/contracts/auth.ts",
-      "problems": [
-        "src/contracts/auth.ts#StaffUserSchema: a stray key is accepted at (top)"
-      ],
-      "owner": "FX7",
-      "why": "plain z.object: a stray key passes"
-    },
-    {
-      "rule": "R23",
-      "file": "src/contracts/auth.ts",
-      "problems": [
-        "src/contracts/auth.ts#SessionSchema: a stray key is accepted at (top)"
-      ],
-      "owner": "FX7",
-      "why": "plain z.object: a stray key passes"
-    },
-    {
       "rule": "R23",
       "file": "src/contracts/checks.ts",
       "problems": [
@@ -169,15 +106,6 @@
         "src/contracts/checks.ts#CheckExceptionSchema: a stray key is accepted at (top)"
       ],
       "owner": "FX3",
-      "why": "plain z.object: a stray key passes"
-    },
-    {
-      "rule": "R23",
-      "file": "src/contracts/facts.ts",
-      "problems": [
-        "src/contracts/facts.ts#factEntrySchema: a stray key is accepted at (top)"
-      ],
-      "owner": "FX7",
       "why": "plain z.object: a stray key passes"
     },
     {
@@ -489,15 +417,6 @@
       ],
       "owner": "FX6",
       "why": "number-like text with an apostrophe passes as plain text (B1)"
-    },
-    {
-      "rule": "R34",
-      "file": "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
-      "problems": [
-        "tools/test/__fixtures__/planted-interpolated-log.ts.txt: a Luhn-valid nine-digit number \"046454286\" (a SIN or business number shape)"
-      ],
-      "owner": "FX7",
-      "why": "the A05 log plant uses a Luhn-valid number; give it a non-Luhn one"
     },
     {
       "rule": "R36",
@@ -853,60 +772,6 @@
       "why": "windows-1252 TextDecoder or no Node 24 setup guard"
     },
     {
-      "rule": "R38",
-      "file": "src/core/test-no-network.ts",
-      "problems": [
-        "no Vitest setup file refuses a Node major below 24"
-      ],
-      "owner": "FX7",
-      "why": "windows-1252 TextDecoder or no Node 24 setup guard"
-    },
-    {
-      "rule": "R39",
-      "file": "src/contracts/amount-grammar.ts",
-      "problems": [
-        "amountGroups joins words from two pages: [123456]"
-      ],
-      "owner": "FX7",
-      "why": "amountGroups joins words across pages"
-    },
-    {
-      "rule": "R41",
-      "file": "src/contracts/amount-grammar.ts",
-      "problems": [
-        "src/contracts/amount-grammar.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
-      ],
-      "owner": "FX7",
-      "why": "a private blank rule; go through src/contracts/text.ts"
-    },
-    {
-      "rule": "R41",
-      "file": "src/contracts/facts.ts",
-      "problems": [
-        "src/contracts/facts.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
-      ],
-      "owner": "FX7",
-      "why": "a private blank rule; go through src/contracts/text.ts"
-    },
-    {
-      "rule": "R41",
-      "file": "src/contracts/reading.ts",
-      "problems": [
-        "src/contracts/reading.ts: a .trim() blank rule (non-blank goes through src/contracts/text.ts)"
-      ],
-      "owner": "FX7",
-      "why": "a private blank rule; go through src/contracts/text.ts"
-    },
-    {
-      "rule": "R41",
-      "file": "src/contracts/reading.ts",
-      "problems": [
-        "src/contracts/reading.ts: a z.string().min(1) non-blank rule (use NonBlankSchema)"
-      ],
-      "owner": "FX7",
-      "why": "a private blank rule; go through src/contracts/text.ts"
-    },
-    {
       "rule": "R41",
       "file": "src/contracts/sheets.ts",
       "problems": [
@@ -955,64 +820,10 @@
       "rule": "R45",
       "file": "src/contracts/facts.ts",
       "problems": [
-        "sensitiveKindForKey(\"corp.bank.bank_transit\") is \"none\""
-      ],
-      "owner": "FX7",
-      "why": "the sensitive-key rule misses this key"
-    },
-    {
-      "rule": "R45",
-      "file": "src/contracts/facts.ts",
-      "problems": [
-        "sensitiveKindForKey(\"corp.bank.institution_no\") is \"none\""
-      ],
-      "owner": "FX7",
-      "why": "the sensitive-key rule misses this key"
-    },
-    {
-      "rule": "R45",
-      "file": "src/contracts/facts.ts",
-      "problems": [
-        "sensitiveKindForKey(\"owner.person.dob\") is \"none\""
-      ],
-      "owner": "FX7",
-      "why": "the sensitive-key rule misses this key"
-    },
-    {
-      "rule": "R45",
-      "file": "src/contracts/facts.ts",
-      "problems": [
         "sensitiveKindForKey(\"corp.identity.business_number\") is \"none\""
       ],
       "owner": "FX7",
       "why": "the sensitive-key rule misses this key"
-    },
-    {
-      "rule": "R45",
-      "file": "src/contracts/facts.ts",
-      "problems": [
-        "sensitiveKindForKey(\"corp.bank.transit_number\") is \"none\""
-      ],
-      "owner": "FX7",
-      "why": "the sensitive-key rule misses this key"
-    },
-    {
-      "rule": "R45-enum",
-      "file": "src/contracts/facts.ts",
-      "problems": [
-        "loadFactCatalogue accepts duplicate enum options"
-      ],
-      "owner": "FX7",
-      "why": "the loader accepts duplicate enum options"
-    },
-    {
-      "rule": "R45-cite",
-      "file": "src/contracts/facts.ts",
-      "problems": [
-        "loadFactCatalogue accepts a cra_form cite that is free text"
-      ],
-      "owner": "FX7",
-      "why": "the loader does not enforce the cite pattern"
     },
     {
       "rule": "R46",
@@ -1031,24 +842,6 @@
       ],
       "owner": "FX4",
       "why": "library value to text without a typed switch"
-    },
-    {
-      "rule": "R49",
-      "file": "src/contracts/reading.ts",
-      "problems": [
-        "src/contracts/reading.ts: a z.string().trim() transform rewrites the stored value (non-blank goes through text.ts)"
-      ],
-      "owner": "FX7",
-      "why": "a z.string().trim() transform"
-    },
-    {
-      "rule": "R54",
-      "file": "src/modules/ocr/textlayer/index.ts",
-      "problems": [
-        "A01: a zero-size MediaBox under statement (Test).pdf was not refused with a reason ({\"documentFingerprint\":\"r54-A01-a zero-size MediaBox (Test)\",\"engine\":{\"name\":\"textlayer\",\"version\":\"pdfjs-dist 6.3.289\")"
-      ],
-      "owner": "FX7",
-      "why": "a wrong-kind container is not refused with a reason"
     },
     {
       "rule": "R54",
