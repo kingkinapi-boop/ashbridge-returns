@@ -164,7 +164,7 @@ const SHELL_ALLOWED = new Set([path.join(ROOT, 'tools', 'heavy.mjs')])
 /** No spawn/exec in tools with a truthy shell; no exec/execSync (always a shell); no spawning npx (needs a shell on Windows). */
 function shellProblems(src: string): string[] {
   const problems: string[] = []
-  if (/\bshell\s*:\s*(?!false\b)/.test(src)) problems.push('a child process option sets shell to something other than false')
+  if (/\bshell\s*:(?!\s*false\b)/.test(src)) problems.push('a child process option sets shell to something other than false')
   if (/import\s*\{[^}]*\b(?:exec|execSync)\b[^}]*\}\s*from\s*['"](?:node:)?child_process['"]/.test(src)) problems.push('imports exec/execSync, which always run a shell')
   if (/\b(?:spawn|spawnSync|execFile|execFileSync)\(\s*['"]npx(?:\.cmd)?['"]/.test(src)) problems.push('spawns npx (needs a shell on Windows); run the bin through process.execPath')
   return problems
@@ -272,6 +272,13 @@ describe('F00 egress and shell-out rules (SEC-10, ARC-15)', () => {
 
   test('SEC-10 rule: a planted tool spawning npx with shell on Windows is caught', () => {
     expect(shellProblems(read(FIX, 'planted-shell-tool.mjs.txt')).length).toBeGreaterThanOrEqual(2)
+  })
+  test('SEC-10 rule: shell false passes with or without a space; any other shell value is caught', () => {
+    expect(shellProblems('spawn(cmd, args, { shell: false })')).toEqual([])
+    expect(shellProblems('spawn(cmd, args, { shell:false })')).toEqual([])
+    expect(shellProblems('spawn(cmd, args, { shell: true })')).toHaveLength(1)
+    expect(shellProblems("spawn(cmd, args, { shell: 'bash' })")).toHaveLength(1)
+    expect(shellProblems('spawn(cmd, args, { shell: someVar })')).toHaveLength(1)
   })
   test('SEC-10 no spawn or exec in tools/ runs a shell, except tools/heavy.mjs', () => {
     const files = walk(path.join(ROOT, 'tools'), /\.(?:mjs|js|cjs|ts)$/).filter((f) => !SHELL_ALLOWED.has(f))
