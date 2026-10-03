@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
+import { NonBlankSchema } from '../../../contracts/text'
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
 export const DRAFT_DIR = path.join(REPO_ROOT, 'db', 'bridge')
@@ -17,7 +18,7 @@ const SourceSchema = z.strictObject({
 })
 
 export const ViewsManifestSchema = z.strictObject({
-  contract: z.strictObject({ clientAppCommit: z.string().min(1), lastMigration: z.number().int() }),
+  contract: z.strictObject({ clientAppCommit: NonBlankSchema, lastMigration: z.number().int() }),
   views: z
     .array(
       z.strictObject({
@@ -27,7 +28,7 @@ export const ViewsManifestSchema = z.strictObject({
         derived: z.array(
           z.strictObject({
             field: Ident,
-            rule: z.string().min(1),
+            rule: NonBlankSchema,
             from: z.array(Dotted).min(1),
             cite: z.string().regex(/^(M\d{4}:\d+|U\d{1,2})$/),
           }),

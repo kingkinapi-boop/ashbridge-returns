@@ -11,3 +11,6 @@ Ambers (all reversible, edit the file named):
 3. bridge.document reads one upload pointer per answer (name|drive:id); several entries in one answer need a later card.
 4. findSentenceLiterals does not nest block comments or read E'..' strings (the draft files use neither); written as one regex so mutation 100 holds.
 5. Security review (/security-review) not run by me: the Lead boards it. Scan code split from db code so only pure scans carry @mutate.
+
+## Round 2 (cloud-0ac9e9, 3 Oct)
+Merged origin/main 66de2c9 (DB16 in). R41 fix: manifest.ts uses NonBlankSchema from src/contracts/text.ts for clientAppCommit and rule. Run on Node 24.21, Postgres 16.14: `TEST_DB=pg16` db project 638 passed, 1 skipped (the PGlite-only DB16 test; the pg16 identity test passes); unit project 2820 passed; typecheck, lint, deps:check (214 modules) clean; scope OK (17 files). No @mutate file changed. BLOCKED: none. /security-review still the Lead's to board. Permission gaps: none. Model: Sonnet 5.5.
