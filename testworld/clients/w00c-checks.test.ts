@@ -23,18 +23,19 @@ const tx = (id: string, date: string, amountCents: number, over: Partial<Tx> = {
 })
 const account = (key: string, months: Month[], closingCents = 0): Account => ({ key, role: 'bank', currency: 'CAD', glAccount: '1000', openingCents: 0, closingCents, exportRows: 0, qboRows: 0, months })
 const row = (name: string, debitCents: number, creditCents: number): Line => ({ account: name, gifi: 1000, gifiStatus: null, debitCents, creditCents })
-const empty = { rows: [], totalDebitCents: 0, totalCreditCents: 0 }
+/** W00c round 2 (RC2): a trial balance needs a row, so the quiet one holds a single zero row. */
+const zero = (): Client['trialBalance']['opening'] => ({ rows: [row('Suspense (Test)', 0, 0)], totalDebitCents: 0, totalCreditCents: 0 })
 
-/** A client whose one account CHQ rolls 0 to 0 through Jan to Mar 2025 with no rows: nothing to report. */
+/** A client whose one account CHQ rolls 0 to 0 through Jan to Mar 2025 with no rows, one owner and zero trial balances: nothing to report. */
 function base(): Client {
   return {
     id: 'C01',
     corporation: { name: 'X (Test)', businessNumber: '', yearStart: '2025-01-01', yearEnd: '2025-03-31' },
-    owners: [],
+    owners: [{ name: 'Owner (Test)' }],
     accounts: [account('CHQ', [month('2025-01', 0, 0), month('2025-02', 0, 0), month('2025-03', 0, 0)])],
     transactions: [],
     adjustingEntries: [],
-    trialBalance: { opening: empty, unadjusted: empty, adjusted: empty },
+    trialBalance: { opening: zero(), unadjusted: zero(), adjusted: zero() },
     flags: [],
     priorYear: null,
   }
@@ -46,7 +47,13 @@ const run = (c: Client, cat: FaultEntry[] = []): LoadIssue[] => {
   c.flags = cat.flatMap((f) => (f.flagId === undefined ? [] : [{ id: f.flagId, rule: 'r', detail: 'd', severity: null, action: null }]))
   return modelIssues(c, cat)
 }
-const dupMarker = (rows: number, totalCents: number): Marker => ({ field: 'dupOf', account: 'CHQ', month: '2025-02', rows, totalCents })
+/** W00c round 2 (RC1): a pin is one listed row; cast through unknown so the file type-checks before and after the build. */
+type Pin = { id: string; date: string; amountCents: number; dupOf?: string }
+const pinOf = (t: Tx, field: Marker['field']): Pin => ({ id: t.id, date: t.date, amountCents: t.amountCents, ...(field === 'dupOf' && t.dupOf !== undefined ? { dupOf: t.dupOf } : {}) })
+const marker = (field: Marker['field'], m: string, rows: Pin[]): Marker => ({ field, account: 'CHQ', month: m, rows }) as unknown as Marker
+const dupMarker = (rows: Pin[]): Marker => marker('dupOf', '2025-02', rows)
+/** True when one issue of the check names every word in its record or reason. */
+const names = (out: LoadIssue[], check: LoadIssue['check'], words: string[]): boolean => out.some((i) => i.check === check && words.every((w) => `${i.record} ${i.reason}`.includes(w)))
 
 describe('ARC-8 W00c repeats and inherited names', () => {
   it('a clean client has no issue', () => {
@@ -89,8 +96,8 @@ describe('ARC-8 W00c repeats and inherited names', () => {
     const c = base()
     c.trialBalance = {
       opening: { rows: [row('A', 100, 0), row('A', 0, 0), row('B', 0, 100)], totalDebitCents: 0, totalCreditCents: 0 },
-      unadjusted: empty,
-      adjusted: empty,
+      unadjusted: zero(),
+      adjusted: zero(),
     }
     expect(run(c).filter((i) => i.reason.includes('two rows'))).toEqual([issue('trial-balance', 'opening A', 'the trial balance has two rows for this account')])
   })
@@ -98,7 +105,7 @@ describe('ARC-8 W00c repeats and inherited names', () => {
     const c = base()
     c.transactions = [tx('T1', '2025-01-05', 0, { postings: [{ account: 'A', debitCents: 100, creditCents: 0 }, { account: 'B', debitCents: 0, creditCents: 100 }] })]
     const split = { rows: [row('A', 60, 0), row('A', 40, 0), row('B', 0, 100)], totalDebitCents: 100, totalCreditCents: 100 }
-    c.trialBalance = { opening: empty, unadjusted: split, adjusted: split }
+    c.trialBalance = { opening: zero(), unadjusted: split, adjusted: split }
     expect(run(c).filter((i) => i.check === 'trial-balance' && !i.reason.includes('two rows'))).toEqual([])
   })
 })
@@ -115,8 +122,10 @@ describe('ARC-8 W00c a duplicate names a real, plain original of the same accoun
     return c
   }
   const waiver: FaultEntry = { id: 'W', client: 'C01', planted: 'p', expected: 'e', roll: { account: 'CHQ', month: '2025-02', cause: 'duplicate' } }
-  const cat = (rows = 1, total = 5): FaultEntry[] => [entry('M', dupMarker(rows, total)), waiver]
-  const only = (c: Client, rows = 1, total = 5): LoadIssue[] => run(fix(c), cat(rows, total)).filter((i) => i.check === 'fault-catalogue')
+  /** The marker entry lists every dupOf row of CHQ in February, unless the test hands it other pins. */
+  const listedDups = (c: Client): Pin[] => c.transactions.filter((t) => t.dupOf !== undefined && t.accountKey === 'CHQ' && t.date.startsWith('2025-02')).map((t) => pinOf(t, 'dupOf'))
+  const cat = (pins: Pin[]): FaultEntry[] => [entry('M', dupMarker(pins)), waiver]
+  const only = (c: Client, pins?: Pin[]): LoadIssue[] => run(fix(c), cat(pins ?? listedDups(c))).filter((i) => i.check === 'fault-catalogue')
 
   it('a good pair passes', () => {
     expect(only(dups({}))).toEqual([])
@@ -144,26 +153,33 @@ describe('ARC-8 W00c a duplicate names a real, plain original of the same accoun
   })
   it('a second duplicate of one original is named with the original and the first duplicate', () => {
     const c = dups({}, [tx('D2', '2025-02-06', 5, { dupOf: 'O1' })])
-    expect(only(c, 2, 10)).toEqual([issue('fault-catalogue', 'D2', 'its original O1 already has a duplicate, D1')])
+    expect(only(c)).toEqual([issue('fault-catalogue', 'D2', 'its original O1 already has a duplicate, D1')])
   })
-  it('ARC-13 the pinned rows and cents must equal the marked rows', () => {
-    expect(only(dups({}), 2, 5)).toEqual([
-      issue('fault-catalogue', 'M', "its pinned 2 row(s) totalling 5 cents do not match the answer key's 1 row(s) totalling 5 cents"),
-    ])
-    expect(only(dups({}), 1, 6)).toEqual([
-      issue('fault-catalogue', 'M', "its pinned 1 row(s) totalling 6 cents do not match the answer key's 1 row(s) totalling 5 cents"),
-    ])
+  // W00c round 2 (RC1) retires the row count and signed total: each listed row is pinned by id, date, cents and original.
+  const d1 = (): Pin => pinOf(tx('D1', '2025-02-06', 5, { dupOf: 'O1' }), 'dupOf')
+  it('ARC-13 the listed rows must be the marked rows, each with its own date, cents and original', () => {
+    expect(only(dups({}), [d1()])).toEqual([])
+    const ghost = only(dups({}), [d1(), { id: 'GHOST', date: '2025-02-06', amountCents: 0, dupOf: 'O1' }])
+    expect(ghost.length).toBeGreaterThan(0)
+    expect(names(ghost, 'fault-catalogue', ['GHOST'])).toBe(true)
+    for (const wrong of [{ ...d1(), amountCents: 6 }, { ...d1(), date: '2025-02-07' }, { ...d1(), dupOf: 'X9' }]) {
+      const out = only(dups({}), [wrong])
+      expect(out.map((i) => i.record), JSON.stringify(wrong)).toContain('M')
+      expect(names(out, 'fault-catalogue', ['D1']), JSON.stringify(wrong)).toBe(true)
+    }
   })
-  it('ARC-13 a marker entry with no pins is refused', () => {
+  it('ARC-13 a marked row the entry does not list is named with its id and the field', () => {
+    expect(names(only(dups({}), [{ ...d1(), id: 'D9' }]), 'fault-catalogue', ['D1', 'dupOf'])).toBe(true)
+  })
+  it('ARC-13 a marker entry with no rows listed is refused', () => {
     const noPins: FaultEntry = { id: 'M', client: 'C01', flagId: 'M', planted: 'p', expected: 'e', marker: { field: 'dupOf', account: 'CHQ', month: '2025-02' } }
     const out = run(fix(dups({})), [noPins, waiver]).filter((i) => i.check === 'fault-catalogue')
-    expect(out).toEqual([
-      issue('fault-catalogue', 'M', "its pinned undefined row(s) totalling undefined cents do not match the answer key's 1 row(s) totalling 5 cents"),
-    ])
+    expect(out.map((i) => i.record)).toContain('M')
+    expect(only(dups({}), []).map((i) => i.record)).toContain('M')
   })
-  it('ARC-13 rows of another account or another month are not counted for the pins', () => {
+  it('ARC-13 rows of another account are not the entry\'s to list', () => {
     const c = dups({}, [tx('X1', '2025-02-06', 7, { accountKey: 'SAV', dupOf: 'O1' })])
-    const out = run(fix(c), cat()).filter((i) => i.record === 'M')
+    const out = run(fix(c), cat([d1()])).filter((i) => i.record === 'M')
     expect(out).toEqual([])
   })
 })
@@ -172,14 +188,15 @@ describe('ARC-8 W00c a priorYear row is dated before the fiscal year starts', ()
   const prior = (date: string): LoadIssue[] => {
     const c = base()
     c.transactions = [tx('P1', date, 5, { priorYear: true })]
-    const m: Marker = { field: 'priorYear', account: 'CHQ', month: date.slice(0, 7), rows: 1, totalCents: 5 }
-    return run(c, [entry('P', m)])
+    const p1 = c.transactions[0]
+    if (p1 === undefined) throw new Error('fixture')
+    return run(c, [entry('P', marker('priorYear', date.slice(0, 7), [pinOf(p1, 'priorYear')]))])
   }
   it('the day before the year starts passes', () => {
     expect(prior('2024-12-31')).toEqual([])
   })
-  it('the first day of the year is refused, naming the row and both dates', () => {
-    expect(prior('2025-01-01')).toContainEqual(issue('fault-catalogue', 'P1', 'it is marked priorYear but dated 2025-01-01, not before the fiscal year starts on 2025-01-01'))
+  it('the first day of the year is refused, naming the row and the date', () => {
+    expect(names(prior('2025-01-01'), 'fault-catalogue', ['P1', '2025-01-01'])).toBe(true)
   })
   it('a later day of the year is refused', () => {
     expect(prior('2025-02-10').map((i) => i.record)).toContain('P1')

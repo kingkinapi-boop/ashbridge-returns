@@ -239,3 +239,54 @@ describe('W00c RC2 a "(...)" qualifier on an onboarding source must name the rec
     for (const id of citing(c, source)) expectIssueWith(issues, 'adjusting-entry', [id], [planted])
   })
 })
+
+// W00c round 2, RC5 (reports/W00c-findings.md, fix 5): a "(NNNN Name)" qualifier matches only a record whose
+// account and name are both strings. A record with no name, or a numeric name, is never turned into text
+// ("undefined", "5") to be matched; every entry citing such a source is an 'adjusting-entry' issue naming the source.
+describe('W00c RC5 a qualifier matches only a record whose account and name are written as strings', () => {
+  /** Edits the one onboarding record a qualified source names (the fixture fails when it is not there). */
+  const editRecord = (c: WalkClient, source: string, edit: (r: Record<string, unknown>) => void): void => {
+    const p = parts(source)
+    sb.editOnboarding(c, (o) => {
+      const list = (o[p.base] as { accounts?: Record<string, unknown>[] }).accounts ?? []
+      const r = list.find((x) => x['account'] === p.account && x['name'] === p.name)
+      if (r === undefined) throw new Error(`fixture: ${c.id} has no record for "${source}"`)
+      edit(r)
+    })
+  }
+
+  test.each(qualifiedSources)('ARC-8 %s against its record with the name taken out, cited as "(NNNN undefined)", is refused for every entry citing it', async (_l, { c, source }) => {
+    const p = parts(source)
+    const planted = `${p.base} (${p.account} undefined)`
+    editRecord(c, source, (r) => {
+      Reflect.deleteProperty(r, 'name')
+    })
+    sb.editKey(c, (k) => {
+      swapSource(k, source, planted)
+    })
+    const issues = await refusal(sb, c.id)
+    for (const id of citing(c, source)) expectIssueWith(issues, 'adjusting-entry', [id], [planted])
+  })
+
+  test.each(qualifiedSources)('ARC-8 %s against its record with a numeric name 5, cited as "(NNNN 5)", is refused for every entry citing it', async (_l, { c, source }) => {
+    const p = parts(source)
+    const planted = `${p.base} (${p.account} 5)`
+    editRecord(c, source, (r) => {
+      r['name'] = 5
+    })
+    sb.editKey(c, (k) => {
+      swapSource(k, source, planted)
+    })
+    const issues = await refusal(sb, c.id)
+    for (const id of citing(c, source)) expectIssueWith(issues, 'adjusting-entry', [id], [planted])
+  })
+
+  test.each(qualifiedSources)('ARC-8 %s against its record with a numeric account number, cited unchanged, is refused for every entry citing it', async (_l, { c, source }) => {
+    const p = parts(source)
+    editRecord(c, source, (r) => {
+      r['account'] = Number(p.account)
+    })
+    const issues = await refusal(sb, c.id)
+    for (const id of citing(c, source)) expectIssueWith(issues, 'adjusting-entry', [id], [source])
+  })
+})

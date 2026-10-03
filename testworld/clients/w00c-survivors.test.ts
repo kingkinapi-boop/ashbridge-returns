@@ -102,16 +102,17 @@ const tx = (id: string, date: string, amountCents: number, over: Partial<Tx> = {
   postings: [],
   ...over,
 })
-const empty = { rows: [], totalDebitCents: 0, totalCreditCents: 0 }
+/** W00c round 2 (RC2): one owner and a zero row in each trial balance, so only the checks under test speak. */
+const zero = (): Client['trialBalance']['opening'] => ({ rows: [{ account: 'Suspense (Test)', gifi: 1000, gifiStatus: null, debitCents: 0, creditCents: 0 }], totalDebitCents: 0, totalCreditCents: 0 })
 function base(months: Month[], closing = 0): Client {
   return {
     id: 'C01',
     corporation: { name: 'X (Test)', businessNumber: '', yearStart: '2025-01-01', yearEnd: '2025-03-31' },
-    owners: [],
+    owners: [{ name: 'Owner (Test)' }],
     accounts: [{ key: 'CHQ', role: 'bank', currency: 'CAD', glAccount: '1000', openingCents: 0, closingCents: closing, exportRows: 0, qboRows: 0, months }],
     transactions: [],
     adjustingEntries: [],
-    trialBalance: { opening: empty, unadjusted: empty, adjusted: empty },
+    trialBalance: { opening: zero(), unadjusted: zero(), adjusted: zero() },
     flags: [],
     priorYear: null,
   }
@@ -123,6 +124,9 @@ const run = (c: Client, cat: FaultEntry[]): LoadIssue[] => {
   c.flags = cat.flatMap((f) => (f.flagId === undefined ? [] : [{ id: f.flagId, rule: 'r', detail: 'd', severity: null, action: null }]))
   return modelIssues(c, cat)
 }
+/** W00c round 2 (RC1): the entry lists each row by id, date and cents (and original); cast so both marker types take it. */
+const marker = (field: Marker['field'], m: string, rows: Tx[]): Marker =>
+  ({ field, account: 'CHQ', month: m, rows: rows.map((t) => ({ id: t.id, date: t.date, amountCents: t.amountCents, ...(field === 'dupOf' ? { dupOf: t.dupOf } : {}) })) }) as unknown as Marker
 const zeroYear = (): Month[] => [month('2025-01', 0, 0), month('2025-02', 0, 0), month('2025-03', 0, 0)]
 
 describe('ARC-8 W00c the statement roll leaves a duplicate and a priorYear row out', () => {
@@ -130,17 +134,16 @@ describe('ARC-8 W00c the statement roll leaves a duplicate and a priorYear row o
     const c = base([month('2025-01', 0, 0), month('2025-02', 0, 5), month('2025-03', 5, 5)], 5)
     c.transactions = [tx('O1', '2025-02-06', 5), tx('D1', '2025-02-06', 5, { dupOf: 'O1' })]
     const waiver: FaultEntry = { id: 'W', client: 'C01', planted: 'p', expected: 'e', roll: { account: 'CHQ', month: '2025-02', cause: 'duplicate' } }
-    const dup: Marker = { field: 'dupOf', account: 'CHQ', month: '2025-02', rows: 1, totalCents: 5 }
+    const dup = marker('dupOf', '2025-02', c.transactions.filter((t) => t.dupOf !== undefined))
     expect(run(c, [entry('M', dup), waiver])).toEqual([])
   })
   it('a priorYear row dated inside a listed month is not on that month\'s statement', () => {
     const c = base(zeroYear(), 0)
     c.transactions = [tx('P1', '2025-02-10', 5, { priorYear: true })]
-    const m: Marker = { field: 'priorYear', account: 'CHQ', month: '2025-02', rows: 1, totalCents: 5 }
-    expect(run(c, [entry('P', m)])).toEqual([
-      issue('roll', 'CHQ 2025-02', 'the export gives 0.05, not the closing 0.00, and the fault catalogue lists no planted fault for it'),
-      issue('fault-catalogue', 'P1', 'it is marked priorYear but dated 2025-02-10, not before the fiscal year starts on 2025-01-01'),
-    ])
+    const out = run(c, [entry('P', marker('priorYear', '2025-02', c.transactions))])
+    expect(out).toContainEqual(issue('roll', 'CHQ 2025-02', 'the export gives 0.05, not the closing 0.00, and the fault catalogue lists no planted fault for it'))
+    // W00c round 2: the row is named for its date; the exact wording is the build's.
+    expect(out.some((i) => i.check === 'fault-catalogue' && `${i.record} ${i.reason}`.includes('P1') && `${i.record} ${i.reason}`.includes('2025-02-10'))).toBe(true)
   })
 })
 
@@ -148,8 +151,7 @@ describe('ARC-8 W00c a priorYear row is excused from "in no month" only when it 
   const lone = (date: string, months: Month[]): LoadIssue[] => {
     const c = base(months, 0)
     c.transactions = [tx('P1', date, 0, { priorYear: true })]
-    const m: Marker = { field: 'priorYear', account: 'CHQ', month: date.slice(0, 7), rows: 1, totalCents: 0 }
-    return run(c, [entry('P', m)]).filter((i) => i.record === 'P1' && i.check === 'roll')
+    return run(c, [entry('P', marker('priorYear', date.slice(0, 7), c.transactions))]).filter((i) => i.record === 'P1' && i.check === 'roll')
   }
   it('a row dated after the year ends, in a marked month, is still in no month', () => {
     expect(lone('2025-04-10', zeroYear())).toEqual([issue('roll', 'P1', 'it is dated 2025-04-10, in no month of CHQ')])

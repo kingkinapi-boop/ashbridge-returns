@@ -6,14 +6,15 @@
 //
 // The catalogue (testworld/model/faults.ts, faults()), two additions to FaultEntry:
 //   roll?:   { account: string; month: string; cause: 'missing' | 'duplicate' }   (cause is new)
-//   marker?: { field: 'missingFromExport' | 'dupOf' | 'priorYear'; account: string; month: string }
+//   marker?: { field: 'missingFromExport' | 'dupOf' | 'priorYear'; account: string; month: string;
+//              rows: { id; date; amountCents; dupOf? }[] }   (rows: W00c round 2, A400; see marker-pins)
 //            on the entry of the flag the planted fault raises (it has a flagId; each flag is still listed once).
 //
-// The marker check: transactions carrying a marker (missingFromExport: true, dupOf: "<id>", priorYear: true),
-// grouped by (client, field, account, YYYY-MM of the date), each need a catalogue entry for that client whose
-// marker equals the group and which has a flagId; otherwise a 'fault-catalogue' issue, record "<account> <YYYY-MM>",
-// record or reason naming the field. A marker entry no transaction carries, or one with no flagId, is a
-// 'fault-catalogue' issue whose record is the entry id. A roll entry is never a marker entry.
+// The marker check (W00c round 2 rewrite): every transaction carrying a marker (missingFromExport: true,
+// dupOf: "<id>", priorYear: true) must be listed by id in the rows of a catalogue entry of that client whose
+// marker has that field and which has a flagId; otherwise a 'fault-catalogue' issue whose record or reason names
+// the row id and the field. A marker entry whose listed rows are not in its account and month, or one with no
+// flagId, is a 'fault-catalogue' issue naming the entry id. A roll entry is never a marker entry.
 //
 // The two rolls (card and pcard subtract activity):
 //   statement roll: opening plus the month's rows with dupOf and priorYear rows out and missingFromExport rows in
@@ -25,17 +26,18 @@
 //                   record "<account> <YYYY-MM>". A listed month that rolls is still refused (round 2).
 //   loaded month.rolls stays the export roll (C10 CHQ 2025-03 and 2025-05 false, as the answer key says).
 import { afterAll, afterEach, describe, expect, test } from 'vitest'
+import { expectNamed } from './__fixtures__/w00c-walk'
 import {
   Sandbox,
   addMonth,
   catalogue,
   causeOf,
   expectIssue,
-  expectIssueWith,
   expectLoads,
   groupLabel,
   markerGroups,
   monthRolls,
+  pinOf,
   plainMonth,
   refusal,
   shiftFrom,
@@ -77,6 +79,8 @@ const sameMarker = (e: CatalogueEntry, g: MarkerGroup): boolean =>
 const isRollFor = (e: CatalogueEntry, r: { client: string; account: string; month: string }): boolean =>
   e.client === r.client && e.roll?.account === r.account && e.roll.month === r.month
 const plantedId = (c: WalkClient, what: string): string => `${c.id}-${what}-(Test)`
+const markedWith = (t: RawTx, field: string): boolean =>
+  field === 'dupOf' ? typeof t.dupOf === 'string' : field === 'missingFromExport' ? t.missingFromExport === true : t.priorYear === true
 
 /** A copy of row t with a new id and no postings (a planted row posts nothing, so the trial balance is untouched). */
 function copyRow(t: RawTx, id: string, changes: Partial<RawTx>): RawTx {
@@ -121,23 +125,24 @@ describe('W00a S6 the sample clients and the catalogue agree (walk)', () => {
 })
 
 describe('W00a S6 every marker needs its catalogue entry', () => {
-  test.each(groups)('ARC-8 %s: with its marker taken off the catalogue entry, the client is refused naming the account, month and marker', async (_l, g) => {
+  test.each(groups)('ARC-8 %s: with its marker taken off the catalogue entry, the client is refused naming every marked row and the marker', async (_l, g) => {
     const cat = catalogue()
     const hits = cat.filter((e) => sameMarker(e, g))
     expect(hits, `the catalogue lists ${groupLabel(g)} once`).toHaveLength(1)
     for (const e of hits) delete e.marker
-    expectIssueWith(await refusal(sb, g.client, cat), 'fault-catalogue', [g.account, g.month], [g.field])
+    const issues = await refusal(sb, g.client, cat)
+    const marked = clientOf(g.client).key.transactions.filter((t) => t.acct === g.account && t.date.slice(0, 7) === g.month && markedWith(t, g.field))
+    expect(marked.length).toBeGreaterThan(0)
+    for (const t of marked) expectNamed(issues, 'fault-catalogue', [t.id, g.field])
   })
 
-  test.each(groups)('ARC-8 %s: a marker entry moved to a month no row carries is refused, naming the entry', async (_l, g) => {
+  test.each(groups)('ARC-8 %s: a marker entry moved to a month its listed rows are not dated in is refused, naming the entry', async (_l, g) => {
     const cat = catalogue()
     const e = cat.find((x) => sameMarker(x, g))
     if (e?.marker === undefined) throw new Error(`the catalogue has no marker entry for ${groupLabel(g)}`)
     const elsewhere = addMonth(g.month, 7)
     e.marker = { ...e.marker, month: elsewhere }
-    const issues = await refusal(sb, g.client, cat)
-    expectIssue(issues, 'fault-catalogue', e.id)
-    expectIssueWith(issues, 'fault-catalogue', [g.account, g.month], [g.field])
+    expectIssue(await refusal(sb, g.client, cat), 'fault-catalogue', e.id)
   })
 
   test.each(groups)('ARC-8 %s: a marker entry with no flag is refused, naming the entry', async (_l, g) => {
@@ -158,7 +163,7 @@ describe('W00a S6 every marker needs its catalogue entry', () => {
     // The export roll's gap is the duplicate exactly and the waiver explains it: only the marker check can refuse.
     const cat = catalogue()
     cat.push({ id: plantedId(c, 'dup-roll'), client: c.id, planted: 'duplicate (Test)', expected: 'roll waiver (Test)', roll: { account: a.key, month, cause: 'duplicate' } })
-    expectIssueWith(await refusal(sb, c.id, cat), 'fault-catalogue', [a.key, month], ['dupOf'])
+    expectNamed(await refusal(sb, c.id, cat), 'fault-catalogue', [`${tx.id}-DUP`, 'dupOf'])
   })
 
   test.each(accountCases)('ARC-8 %s: a missingFromExport row in a month the catalogue waives as "missing" but lists no marker for is refused', async (_l, { c, a }) => {
@@ -170,10 +175,10 @@ describe('W00a S6 every marker needs its catalogue entry', () => {
     })
     const cat = catalogue()
     cat.push({ id: plantedId(c, 'missing-roll'), client: c.id, planted: 'missing (Test)', expected: 'roll waiver (Test)', roll: { account: a.key, month, cause: 'missing' } })
-    expectIssueWith(await refusal(sb, c.id, cat), 'fault-catalogue', [a.key, month], ['missingFromExport'])
+    expectNamed(await refusal(sb, c.id, cat), 'fault-catalogue', [tx.id, 'missingFromExport'])
   })
 
-  test.each(accountCases)('ARC-8 %s: a planted priorYear row dated before the year with no catalogue entry is refused, naming the account and its month', async (_l, { c, a }) => {
+  test.each(accountCases)('ARC-8 %s: a planted priorYear row dated before the year with no catalogue entry listing it is refused, naming the row and the field', async (_l, { c, a }) => {
     const { tx } = plainMonth(c, a)
     // The month before the year that no listed priorYear group already covers (C10 CHQ 2024-12 is listed).
     let before = addMonth(c.key.fiscalYear.start.slice(0, 7), -1)
@@ -181,7 +186,7 @@ describe('W00a S6 every marker needs its catalogue entry', () => {
     sb.editKey(c, (k) => {
       k.transactions.push(copyRow(tx, `${tx.id}-PRIOR`, { priorYear: true, date: `${before}-15`, account: 'PRIOR YEAR: already in the opening balances, not this year', accountNo: null }))
     })
-    expectIssueWith(await refusal(sb, c.id), 'fault-catalogue', [a.key, before], ['priorYear'])
+    expectNamed(await refusal(sb, c.id), 'fault-catalogue', [`${tx.id}-PRIOR`, 'priorYear'])
   })
 })
 
@@ -195,7 +200,7 @@ describe('W00a S6 a marker never changes the arithmetic: both rolls', () => {
     })
     const issues = await refusal(sb, c.id)
     expectIssue(issues, 'roll', a.key, month)
-    expectIssueWith(issues, 'fault-catalogue', [a.key, month], ['missingFromExport'])
+    expectNamed(issues, 'fault-catalogue', [tx.id, 'missingFromExport'])
   })
 
   test.each(accountCases)(
@@ -212,7 +217,7 @@ describe('W00a S6 a marker never changes the arithmetic: both rolls', () => {
       const cat = catalogue()
       const flagEntry = cat.find((e) => e.client === c.id && e.flagId !== undefined && e.marker === undefined)
       if (flagEntry === undefined) throw new Error(`fixture: ${c.id} has no flag entry to carry the marker`)
-      flagEntry.marker = { field: 'missingFromExport', account: a.key, month }
+      flagEntry.marker = { field: 'missingFromExport', account: a.key, month, rows: [pinOf(tx, 'missingFromExport')] }
       expectIssue(await refusal(sb, c.id, cat), 'roll', a.key, month)
     },
   )

@@ -68,7 +68,9 @@ describe('ARC-8 W00c every date is a real calendar date', () => {
     edit('answer-key.json', (j) => {
       ;((j['adjustingEntries'] as Obj[])[0] as Obj)['date'] = '2024-02-29'
     })
-    expect(issues()).toEqual([])
+    // W00c round 2 (RC3): the date falls outside C01's year, so the entry may be named for that; it is never refused as
+    // not a calendar date.
+    expect(issues().filter((i) => i.reason === 'it is not a calendar date written YYYY-MM-DD')).toEqual([])
   })
 })
 

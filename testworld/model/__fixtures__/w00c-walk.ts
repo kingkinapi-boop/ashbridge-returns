@@ -1,20 +1,26 @@
 // Spec-owned helpers for the W00c acceptance tests (reports/W00a-findings.md, "Tests to add", RC1 to RC4).
 //
+// Round 2 (reports/W00c-findings.md): marker pins are lists of row ids with date and amount (A400), and the
+// Planter also makes symbolic links, swaps a folder for a link to it, and puts copies outside the client folder.
+//
 // Every case comes from the walk over the numbered folders of reference/sample-clients/ in sample-walk.ts (all 15
-// today), never from a typed list. Expected values (marked rows, their counts and cent totals, fiscal months, the
-// roles in use) are computed here from the raw files with this file's own code, never by the module under test.
-// Planter adds what Sandbox cannot: a new file, a directory in place of a file, and a file's text replaced.
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+// today), never from a typed list. Expected values (marked rows and their pins, fiscal months, the roles in use)
+// are computed here from the raw files with this file's own code, never by the module under test.
+// Planter adds what Sandbox cannot: a new file, a directory in place of a file, a file's text replaced, and links.
+import { copyFileSync, mkdirSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { expect } from 'vitest'
 import {
   cents,
   markerGroups,
+  pinOf,
   markersOf,
   monthOf,
   type CatalogueEntry,
   type Issue,
   type MarkerField,
   type MarkerGroup,
+  type PinRow,
   type RawKey,
   type RawTx,
   type Sandbox,
@@ -44,13 +50,12 @@ export interface FullKey extends RawKey {
 }
 export const full = (k: RawKey): FullKey => k as FullKey
 
-/** A catalogue marker entry as W00c pins it (fix 2): the group it covers plus hand-written rows and totalCents. */
+/** A catalogue marker entry as W00c round 2 pins it (A400): the group it covers plus every marked row by id. */
 export interface PinnedMarker {
   field: string
   account: string
   month: string
-  rows?: unknown
-  totalCents?: unknown
+  rows?: PinRow[]
 }
 export const pinned = (e: CatalogueEntry): PinnedMarker | undefined => e.marker
 
@@ -87,12 +92,37 @@ export function entryFor(cat: CatalogueEntry[], g: MarkerGroup): CatalogueEntry 
   return e as CatalogueEntry & { marker: PinnedMarker }
 }
 
-/** Moves a pinned marker's hand-written numbers by a row count and a cent amount (when the entry carries them). */
-export function bumpPins(e: CatalogueEntry, rows: number, totalCents: number): void {
-  const m = pinned(e)
-  if (m === undefined) throw new Error(`fixture: ${e.id} has no marker`)
-  if (typeof m.rows === 'number') m.rows += rows
-  if (typeof m.totalCents === 'number') m.totalCents += totalCents
+/** The pins the catalogue must hold for one marker group: its marked rows in answer-key order (computed here). */
+export function groupPins(c: WalkClient, g: MarkerGroup): PinRow[] {
+  return groupRows(c, g).rows.map((t) => pinOf(t, g.field))
+}
+
+/** The pinned rows of a marker entry (the fixture fails when the entry has no list). */
+export function pinsOf(e: CatalogueEntry): PinRow[] {
+  const rows = e.marker?.rows
+  if (!Array.isArray(rows)) throw new Error(`the catalogue entry ${e.id} lists no marker rows (W00c round 2: marker.rows lists every marked row by id, date and amountCents)`)
+  return rows
+}
+
+/** Changes one pinned row of the entry in place (the fixture fails when the id is not pinned there). */
+export function editPin(e: CatalogueEntry, id: string, change: (p: PinRow) => void): void {
+  const p = pinsOf(e).find((x) => x.id === id)
+  if (p === undefined) throw new Error(`fixture: ${e.id} does not pin ${id}`)
+  change(p)
+}
+
+/** Adds a pinned row to the entry's list. */
+export function addPin(e: CatalogueEntry, pin: PinRow): void {
+  pinsOf(e).push(pin)
+}
+
+/** Takes a pinned row off the entry; when it was the last, the marker goes too (an empty list is itself refused). */
+export function dropPin(e: CatalogueEntry, id: string): void {
+  const rows = pinsOf(e)
+  const i = rows.findIndex((x) => x.id === id)
+  if (i < 0) throw new Error(`fixture: ${e.id} does not pin ${id}`)
+  rows.splice(i, 1)
+  if (rows.length === 0) Reflect.deleteProperty(e, 'marker')
 }
 
 /** A flag entry of this client that carries no marker yet (to hold a planted marker). */
@@ -189,7 +219,41 @@ export class Planter {
     writeFileSync(this.sb.path(c, rel), body)
   }
 
+  /** A symbolic link at rel in the client folder pointing at target (written as given: relative to the link's folder, or absolute). */
+  link(c: WalkClient, rel: string, target: string): void {
+    const p = this.sb.path(c, rel)
+    symlinkSync(target, p)
+    this.made.push(p)
+  }
+
+  /** The client file replaced by a link to a byte-for-byte copy outside every client folder (in the sandbox root). */
+  linkToOutsideCopy(c: WalkClient, rel: string): void {
+    const dir = join(this.sb.root, 'links-(Test)', c.folder)
+    mkdirSync(dir, { recursive: true })
+    const copy = join(dir, rel)
+    mkdirSync(dirname(copy), { recursive: true })
+    copyFileSync(this.sb.path(c, rel), copy)
+    this.sb.remove(c, rel)
+    symlinkSync(copy, this.sb.path(c, rel))
+    this.made.push(this.sb.path(c, rel), join(this.sb.root, 'links-(Test)'))
+  }
+
+  /** The client subfolder dir renamed to "<dir>-real-(Test)" and dir made a link to it (relative, inside the folder). */
+  folderAsLink(c: WalkClient, dir: string): void {
+    const p = this.sb.path(c, dir)
+    const real = `${p}-real-(Test)`
+    renameSync(p, real)
+    symlinkSync(`${dir}-real-(Test)`, p)
+    this.undos.push(() => {
+      rmSync(p, { force: true })
+      renameSync(real, p)
+    })
+  }
+
+  private readonly undos: (() => void)[] = []
+
   undo(): void {
     for (const p of this.made.splice(0)) rmSync(p, { recursive: true, force: true })
+    for (const u of this.undos.splice(0).reverse()) u()
   }
 }

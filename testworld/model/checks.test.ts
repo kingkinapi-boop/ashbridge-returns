@@ -36,7 +36,8 @@ const month = (m: string, openingCents: number, activityCents: number, closingCe
 })
 const entry = (over: Partial<Entry> = {}): Entry => ({
   id: 'J1',
-  date: '2025-12-31',
+  // W00c round 2 (RC3): an adjusting entry falls inside the fiscal year, here its last day.
+  date: '2025-01-31',
   type: 'adjust',
   reason: 'because',
   sources: ['src'],
@@ -49,7 +50,8 @@ function clean(): Client {
   return {
     id: 'C01',
     corporation: { name: 'X (Test)', businessNumber: '', yearStart: '2025-01-01', yearEnd: '2025-01-31' },
-    owners: [],
+    // W00c round 2 (RC2): a client has an owner, and its opening trial balance holds a row (a zero one here).
+    owners: [{ name: 'Owner (Test)' }],
     // W00a spec (S5): a clean client's months are its whole year and its account closes where its last month does.
     accounts: [{ ...account('CHQ', 'bank', [month('2025-01', 0, 1000, 1000)]), closingCents: 1000 }],
     transactions: [
@@ -68,7 +70,7 @@ function clean(): Client {
       },
     ],
     adjustingEntries: [],
-    trialBalance: { opening: tb([]), unadjusted: tb(rows), adjusted: tb(rows.map((r) => ({ ...r }))) },
+    trialBalance: { opening: tb([line('Bank', 0, 0)]), unadjusted: tb(rows), adjusted: tb(rows.map((r) => ({ ...r }))) },
     flags: [],
     priorYear: null,
   }

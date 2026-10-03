@@ -280,7 +280,27 @@ export function shiftFrom(k: RawKey, account: string, from: number, d: number, a
 
 // ---- the catalogue and the loader, through the public API ----
 
-/** A catalogue entry as these tests read and plant it (A353 plus the W00a decisions: roll.cause and marker). */
+/**
+ * One marked row as the catalogue pins it (W00c round 2, A400): the transaction id, its date, its amount in integer
+ * cents as written in the answer key, and (on a dupOf marker only) the id its dupOf names.
+ */
+export interface PinRow {
+  id: string
+  date: string
+  amountCents: number
+  dupOf?: string
+}
+
+/** The pin of one marked row, computed from the raw file (dupOf only for a dupOf marker). */
+export function pinOf(t: RawTx, field: string): PinRow {
+  return { id: t.id, date: t.date, amountCents: cents(t.amount), ...(field === 'dupOf' ? { dupOf: String(t.dupOf) } : {}) }
+}
+
+/**
+ * A catalogue entry as these tests read and plant it (A353, the W00a decisions roll.cause and marker, and W00c
+ * round 2: marker.rows lists every marked row by id, date and amount; `empty: 'accounts'` declares a client with no
+ * accounts by design).
+ */
 export interface CatalogueEntry {
   id: string
   client?: string
@@ -288,7 +308,8 @@ export interface CatalogueEntry {
   planted?: string
   expected?: string
   roll?: { account: string; month: string; cause?: string }
-  marker?: { field: string; account: string; month: string }
+  marker?: { field: string; account: string; month: string; rows?: PinRow[] }
+  empty?: string
   [field: string]: unknown
 }
 

@@ -10,11 +10,14 @@ const golden = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.ur
 describe('ARC-8 the fault catalogue', () => {
   // W00a spec (card B4, findings W00 r2 card decisions): roll entries gain a cause and C10's flag entries gain a
   // marker; those two fields are pinned by testworld/model/fault-markers.acceptance.test.ts, so the golden compare
-  // leaves them out and still pins every other field word for word.
+  // leaves them out and still pins every other field word for word. W00c round 2: the marker's listed rows and the
+  // `empty: 'accounts'` declaration of 12-F02 are pinned by marker-pins.acceptance.test.ts and
+  // empties.acceptance.test.ts, so `empty` is left out here too.
   const withoutRollCauseAndMarker = (fs: FaultEntry[]): unknown[] =>
     fs.map((f) => {
-      const { roll, ...rest } = f as FaultEntry & { marker?: unknown }
+      const { roll, ...rest } = f as FaultEntry & { marker?: unknown; empty?: unknown }
       delete rest.marker
+      delete rest.empty
       return roll === undefined ? rest : { ...rest, roll: { account: roll.account, month: roll.month } }
     })
 
