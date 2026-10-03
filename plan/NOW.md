@@ -1,34 +1,34 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:15Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:45Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
 - **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (53):** through FX2, then SC, CQ4, CQ5 and FX10 (train 12af2528 green: unit 2703, db 587, flake 5 of 5, FX10 db x20 20 of 20; landed 10:52Z as 6ca8b48f). Train 26e84345 (DB16, FX15) requested 10:56Z.
+- **Landed (54):** through FX10 (train 12af2528), then DB16 (train 65f59a22 green on pg16 16.14, landed 12:15Z as dc36b33d). Train df6f1249 (FX15, CQ7, CQ6) requested 12:35Z.
 - **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
 
 ## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | round 3 spec review: 4 gaps (A459), spec patch reopened | spec, build round 3, mutation on cloud, check |
+| W00c | spec rows 1 to 9 in (5c8d8469); owner-rule ruling (A467) for rows 2 and 11 | spec finishes, build round 3, mutation on cloud, check |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| Train | DB16, FX15 on 26e84345 (checking): R18 will be red (A461); FX15 comes off | rebuild with DB16 after the check; land; SC11 and GL3 follow |
+| Train | 25ea2736 red on A04 (clock mix, A468); FX15, CQ7, CQ6 on df6f1249, requested 12:35Z | check; land |
 | SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
 | S00, FX5 | builds open (A410) | build, check |
-| A04 | lint fix in; main merged: R41 flags .trim() in engines.ts and runner.ts (A461) | build round 5b (contracts/text.ts), check, security review |
-| DB16, SC11, GL3 | DB16 PASS, CLEAN; SC11 spec reported (39 tests, A453 in); GL3 build waits for DB16 on main (pg16) | board DB16 next train; SC11 build; GL3 pg16 re-run, check |
+| A04 | findings 6: one clock (A469), round 5c in-round; CQ10 carded, R105 R106 to SC12 | spec (Opus), build, check, security read, train |
+| SC11, GL3 | DB16 landed: SC11 spec refit open (cloud); GL3 build reopened (pg16 run, R41 fix) | SC11 build; GL3 check |
 | JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
-| FX12, FX14, FX15, FX17 | FX15 build round 2 (@mutate on jobs/runner.ts, A461); FX12 build open; FX17 spec reported | builds, checks |
-| CQ6 to CQ8, SC10, A08 | CQ4 and CQ5 landed: CQ6, CQ7, CQ8 builds open; A08 waits for A04 | builds, checks |
+| FX12, FX14, FX15, FX17 | FX15 off core, round 1 PASS stands, boards (A465); FX12, FX17 specs refit | FX12 build; FX17 build |
+| CQ6, CQ8, CQ9, SC10, A08 | CQ6 spec patch in, build round 2 open; CQ9 spec reported; CQ8 build; SC10 spec working; A08 after A04 lands | builds, checks |
 
-Cloud runs: 3 at 10:58Z (train 26e84345, A04 spec fix, CQ builds). Local: local-1, local-2 (any local job, 10:58Z).
+Cloud runs: 4 fired 12:47Z (train df6f1249 first, then W00c build, SC11, FX17, FX12 builds). Local: local-1 CQ8 build, local-2 CQ10 spec, local-3 next spec (`next --roles spec`; A04, SC12 open; update cannot pass a reopened job to a new worker).
 
 ## Next, in order
 

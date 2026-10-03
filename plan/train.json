@@ -1,13 +1,13 @@
 {
-  "status": "red",
+  "status": "checking",
   "branch": "claude/train",
-  "head": "26e84345",
+  "head": "df6f1249",
   "cards": [
-    "DB16",
-    "FX15"
+    "FX15",
+    "CQ7",
+    "CQ6"
   ],
-  "requested_at": "2026-10-03T10:56:00Z",
-  "note": "Run the full check (checker.md, check train full) and npm run test:flake (A405). Both cards run on Postgres 16.5 or later: print select version() and run the db project on pg16 (TEST_DB=pg16) as well as PGlite. DB16 is core and security (CLEAN): mutate:changed for DB16. FX15 is core: mutate:changed for FX15. Run the db project 5 times on pg16 (DB16 changes pooled sessions).",
-  "by": "cloud-d9f338",
-  "report": "reports/train-20261003-1103.md"
+  "requested_at": "2026-10-03T12:35:00Z",
+  "note": "Train 25ea2736 red on A04 only (a clock mix; findings review running); A04 is off. Run the full check (checker.md, check train full) and npm run test:flake (A405). Postgres 16 per .claude/cloud-worker-run.md (A462): npm test with TEST_DB=pg16 and on PGlite; print select version(). FX15 is not core (A465). CQ6 and CQ7 change tools/mutate-changed.mjs, test-homes.json and claim.mjs: every tools test, and mutate:changed for one landed core card (F00T) to show the gate still scores. A refused command makes the train blocked, not red.",
+  "by": "cloud-9e54a6"
 }

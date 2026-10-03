@@ -33,3 +33,6 @@ By a third worker (Opus read): acceptance tests unchanged since the spec commit,
 
 ## Not in this card
 Applying anything to the client app's database or repo, or probing its live database (LIVE-6 and LIVE-4: live data and another repo, Zo's yes). The live bridge reader that turns view rows into F07's snapshot (go-live, with GL1's live adapters). The client app's wording and its own reader of the shared table (client repo). Whether the client app retires its overlapping tables (U8, Zo at LIVE-6).
+
+## Also (A462)
+Build: SC's R41 flags `z.string().min(1)` in `src/modules/golive/bridge/manifest.ts`: use the blank-check from `src/contracts/text.ts`. Re-run pg16 after DB16 lands.
