@@ -1,11 +1,10 @@
 {
  "card": "SC3",
  "role": "build",
- "round": 5,
- "spec": "edf23e0",
- "worker": "cloud-a416a1",
- "state": "reopened",
- "at": "2026-10-03T08:44:36.310Z",
- "mode": "turbo",
- "note": "round 2 on the A443 spec patch (cloud)"
+ "round": 6,
+ "spec": "72943edb",
+ "worker": "cloud-652c84",
+ "state": "working",
+ "at": "2026-10-03T08:45:43.112Z",
+ "mode": "turbo"
 }
