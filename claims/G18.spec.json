@@ -1,9 +1,11 @@
 {
  "card": "G18",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit only: 15 of 15 tests pass on main 8e4698a (node 24.21); no test change",
  "worker": "cloud-beb1e2",
- "state": "working",
- "at": "2026-10-03T15:23:26.688Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T15:24:46.345Z",
+ "mode": "turbo",
+ "commit": "4ce0202",
+ "validated": "8e4698a"
 }
