@@ -1,10 +1,11 @@
 {
  "card": "B04",
  "role": "spec",
- "note": "A454: rename to 56_qbo.sql",
- "reopenedFrom": "9ba0e6a9",
+ "note": "A454: 56_qbo.sql rename in tests; card Paths text still 35_qbo.sql (Lead); Opus review owed",
  "worker": "cloud-7c6fec",
- "state": "working",
- "at": "2026-10-03T17:41:04.546Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T17:43:47.892Z",
+ "mode": "turbo",
+ "commit": "a34f8ce7",
+ "validated": "f73707b82c4b871f3ca94d47e2d15e91f04b6d74"
 }
