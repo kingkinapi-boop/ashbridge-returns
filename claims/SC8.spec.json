@@ -1,9 +1,11 @@
 {
  "card": "SC8",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: G5 baseline recaptured at spec tip; 10 R79 tests fail by design; see reports/SC8-spec-refit.md",
  "worker": "cloud-07698b",
- "state": "working",
- "at": "2026-10-03T19:00:27.994Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T19:06:06.720Z",
+ "mode": "turbo",
+ "commit": "7849b700",
+ "validated": "89be70a6"
 }
