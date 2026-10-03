@@ -1,10 +1,9 @@
 {
  "card": "GL3",
  "role": "check",
- "for": "2026-10-03T12:30:43.535Z",
- "worker": "cloud-6ca6b4",
- "state": "failed",
- "at": "2026-10-03T12:52:19.896Z",
- "mode": "turbo",
- "note": "FAIL: unasked blanket grant execute to returns_app (0002_grants.sql:20), see reports/GL3-check.md"
+ "for": "2026-10-03T14:04:15.285Z",
+ "worker": "cloud-92d46e",
+ "state": "working",
+ "at": "2026-10-03T14:04:19.404Z",
+ "mode": "turbo"
 }
