@@ -4,7 +4,8 @@
  "round": 7,
  "spec": "fb82b8c",
  "worker": "cloud-88d9d7",
- "state": "working",
- "at": "2026-10-03T05:25:48.307Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-03T05:25:55.517Z",
+ "mode": "turbo",
+ "note": "claimed by mistake before train check; re-offer"
 }
