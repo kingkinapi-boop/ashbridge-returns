@@ -38,6 +38,7 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { z } from 'zod'
 import { aiStepSchemas, validateAiOutput } from '../../../contracts/ai'
+import { readSettings } from '../../../core/env'
 import { readOwnSource } from '../../../core/testing/read-own-source'
 import {
   AI_JOB_LEASE_MS,
@@ -59,6 +60,7 @@ import {
   job,
   outboxResult,
   recording,
+  sha256,
   startFakeProject,
   tempDir,
   tripleOf,
@@ -70,6 +72,8 @@ import {
 const NOT_REDACTED = /inputs not redacted/
 const DECISION_0008 = 'AI runs only through the Claude project (decision 0008)'
 const JOB_ID = 'job-c01-finding-test'
+const NEEDS_JOB_ID = 'the project engine needs a job id (the inbox file is named by it)'
+const LIST_UNREADABLE = 'not approved: the approved list cannot be read (AI-11)'
 const ALL_JOBS = ['good', 'broken', 'strayKey', 'noModelId', 'noPromptHash', 'noInputHash', 'injected'] as const
 
 let tmp: { dir: string; cleanup: () => void }
@@ -396,6 +400,7 @@ describe('ARC-22 the project engine writes one inbox file in the fixed format an
   test('ARC-22 the project engine without a job id is refused and writes nothing', async () => {
     const res = await projectRunner().runAiStep(job('good'))
     expect(res.ok).toBe(false)
+    if (!res.ok) expect(res.reason).toBe(NEEDS_JOB_ID)
     expect(inbox()).toEqual([])
   })
 })
@@ -656,5 +661,397 @@ describe('AI-1 AI-9 a document with planted instructions has no effect', () => {
     if (!res.ok) expect(res.problems.join(' ')).toMatch(/approved/)
     expect(r.engine()).toBe('project')
     expect(filesIn(path.join(exchange, 'outbox')).some((n) => n.includes('approved'))).toBe(false)
+  })
+})
+
+// ---------- Round 2 (reports/A04-findings.md, "Tests to add"): branches the first build added without a test ----------
+// The settings come through src/core/env.ts (fix 2); the exchange folder is captured when the project engine is
+// switched on, never re-read at run time; a missing or malformed approved list has its own reason (fix 5); the
+// default log sink is the core logger (fix 4). Every behaviour the db test proves also has a unit twin here (RC2).
+
+const LISTED_NOT_APPROVED = 'not approved: run the evaluation set first (AI-11)'
+const pause = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
+const GOOD_REC = (): ReturnType<typeof recording> => recording('finding-c01-good')
+
+/** A recordings folder in the temp dir holding exactly the given recordings (one file each). */
+function recordingsWith(label: string, recs: readonly object[]): string {
+  const dir = path.join(tmp.dir, `recordings-${label}`)
+  fs.mkdirSync(dir)
+  recs.forEach((rec, i) => {
+    fs.writeFileSync(path.join(dir, `rec-${String(i)}.json`), JSON.stringify(rec, null, 2) + '\n')
+  })
+  return dir
+}
+
+describe('AI-11 round 2: an approved list that cannot be read refuses with its own reason', () => {
+  const cases: readonly (readonly [string, string | undefined])[] = [
+    ['missing', undefined],
+    ['malformed JSON', '{ "triples": [ '],
+    ['the wrong shape', JSON.stringify({ triples: 'every triple (Test)' })],
+  ]
+  for (const [label, content] of cases) {
+    test(`AI-11 an approved list that is ${label} is refused with "${LIST_UNREADABLE}" and neither engine is called`, async () => {
+      const list = path.join(tmp.dir, `approved-${label.replace(/\W+/g, '-')}.json`)
+      if (content !== undefined) fs.writeFileSync(list, content)
+      const rec = vi.spyOn(aiEngines.recorded, 'run')
+      const proj = vi.spyOn(aiEngines.project, 'run')
+      const viaRecorded = await runner({ approvedPath: list }).runAiStep(job('good'))
+      expect(viaRecorded).toEqual({ ok: false, reason: LIST_UNREADABLE, problems: [] })
+      const viaProject = await projectRunner({ approvedPath: list }).runAiStep(job('good'), { jobId: JOB_ID })
+      expect(viaProject).toEqual({ ok: false, reason: LIST_UNREADABLE, problems: [] })
+      expect(rec).not.toHaveBeenCalled()
+      expect(proj).not.toHaveBeenCalled()
+      expect(inbox()).toEqual([])
+    })
+  }
+
+  test('AI-11 a readable list without the triple keeps the card wording, distinct from the unreadable-list reason', async () => {
+    const res = await runner({ approvedPath: writeApproved(tmp.dir, [], 'approved-none.json') }).runAiStep(job('good'))
+    expect(res).toEqual({ ok: false, reason: LISTED_NOT_APPROVED, problems: [] })
+    expect(LISTED_NOT_APPROVED).not.toBe(LIST_UNREADABLE)
+  })
+})
+
+describe('ARC-16 round 2: recordings that cannot be matched', () => {
+  test('ARC-16 a recordings folder that does not exist fails with re-record and the three key parts; no engine but the recorded one runs', async () => {
+    const proj = vi.spyOn(aiEngines.project, 'run')
+    const j = job('good')
+    const res = await runner({ recordingsDir: path.join(tmp.dir, 'no-recordings-here') }).runAiStep(j)
+    expect(res.ok).toBe(false)
+    if (res.ok) return
+    const text = allText(res)
+    expect(text).toMatch(/re-record/)
+    expect(text).toContain(j.modelId)
+    expect(text).toContain(j.promptHash)
+    expect(text).toContain(expectedInputHash(j.inputs))
+    expect(proj).not.toHaveBeenCalled()
+  })
+
+  test('ARC-16 SC R23 a recording with a stray top-level key is not read as a recording: re-record, never its answer', async () => {
+    const dir = recordingsWith('stray', [{ ...GOOD_REC(), note: 'recorded by someone (Test)' }])
+    const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+    expect(res.ok).toBe(false)
+    if (!res.ok) expect(allText(res)).toMatch(/re-record/)
+  })
+
+  test('ARC-16 the same recording without the stray key is matched (the stray-key test is live)', async () => {
+    const dir = recordingsWith('clean', [GOOD_REC()])
+    expect(await runner({ recordingsDir: dir }).runAiStep(job('good'))).toMatchObject({ ok: true, output: GOOD_REC().output })
+  })
+})
+
+describe('AI-10 round 2: a F04-valid answer stamped for another job is refused, naming exactly the part that differs', () => {
+  const PARTS = {
+    modelId: /model ?id/i,
+    promptVersion: /prompt ?version/i,
+    promptHash: /prompt ?hash/i,
+    inputHash: /input ?hash/i,
+  } as const
+  const OTHER: Record<keyof typeof PARTS, string> = {
+    modelId: 'claude-other-model-test',
+    promptVersion: 'finding-v2-test',
+    promptHash: 'e'.repeat(64),
+    inputHash: 'f'.repeat(64),
+  }
+  for (const part of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
+    test(`AI-10 a recorded answer stamped with another ${part} is refused naming ${part} and no other part; nothing is counted as output`, async () => {
+      const good = GOOD_REC()
+      const stamp = { ...good.stamp, [part]: OTHER[part] }
+      expect(validateAiOutput('finding', good.output, stamp).ok).toBe(true)
+      const dir = recordingsWith(`stamp-${part}`, [{ ...good, stamp }])
+      const res = await runner({ recordingsDir: dir }).runAiStep(job('good'))
+      expect(res.ok).toBe(false)
+      if (res.ok) return
+      const text = allText(res)
+      expect(text).toMatch(/AI-10/)
+      expect(text).toMatch(PARTS[part])
+      for (const other of Object.keys(PARTS) as (keyof typeof PARTS)[]) {
+        if (other !== part) expect(text, other).not.toMatch(PARTS[other])
+      }
+      expect(text).not.toContain(OTHER[part])
+    })
+  }
+
+  test('AI-10 the same recording with its own stamp runs (the stamp tests are live)', async () => {
+    const dir = recordingsWith('stamp-own', [GOOD_REC()])
+    expect((await runner({ recordingsDir: dir }).runAiStep(job('good'))).ok).toBe(true)
+  })
+})
+
+describe('SEC-11 round 2: the is_test gate is for the project engine only', () => {
+  test('SEC-11 a recorded-engine job for a return with is_test = false runs on its recorded answer', async () => {
+    const rec = vi.spyOn(aiEngines.recorded, 'run')
+    const j = job('good')
+    j.isTest = false
+    const res = await runner().runAiStep(j)
+    expect(res).toMatchObject({ ok: true, output: GOOD_REC().output })
+    expect(rec).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('ARC-20 round 2: the exchange folder is read once, through env.ts, when the project engine is switched on', () => {
+  test('ARC-20 SEC-10 env.ts reads AI_EXCHANGE_DIR by name beside the other settings, and a blank one does not break the read', () => {
+    expect(readSettings({ AI_EXCHANGE_DIR: 'exchange folder (Test)', AUTH_ENGINE: 'live' })).toEqual({
+      NODE_ENV: 'development',
+      AUTH_ENGINE: 'live',
+      AI_EXCHANGE_DIR: 'exchange folder (Test)',
+    })
+    expect(readSettings({ NODE_ENV: 'test' })).toEqual({ NODE_ENV: 'test' })
+    expect(readSettings({ AI_EXCHANGE_DIR: '', AUTH_ENGINE: '' }).NODE_ENV).toBe('development')
+    expect(() => readSettings({ AI_EXCHANGE_DIR: 'exchange folder (Test)', NODE_ENV: 'PLANTED-bad (Test)' })).toThrow(new Error('Invalid settings: NODE_ENV'))
+  })
+
+  test('ARC-20 the AI module reads its settings only through src/core/env.ts: no process.env in its sources', () => {
+    const dir = path.join(REPO_ROOT, 'src', 'modules', 'ai')
+    const files: string[] = []
+    const walk = (d: string): void => {
+      for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+        const p = path.join(d, e.name)
+        if (e.isDirectory()) {
+          if (!e.name.startsWith('__')) walk(p)
+        } else if (/\.tsx?$/.test(e.name) && !/\.test\.tsx?$/.test(e.name)) files.push(p)
+      }
+    }
+    walk(dir)
+    expect(files.length).toBeGreaterThan(1)
+    for (const f of files) expect(readOwnSource(path.relative(process.cwd(), f)), f).not.toMatch(/process\.env/)
+  })
+
+  test('ARC-20 the setting cleared after the switch: the job still runs on the folder captured at the switch', async () => {
+    const env: Record<string, string | undefined> = { AI_EXCHANGE_DIR: exchange }
+    const r = runner({ env })
+    expect(r.useEngine('project')).toEqual({ ok: true })
+    delete env['AI_EXCHANGE_DIR']
+    answeringProject()
+    const res = await r.runAiStep(job('good'), { jobId: JOB_ID })
+    expect(res).toMatchObject({ ok: true, output: GOOD_REC().output })
+    expect(inbox()).toEqual([`${JOB_ID}.json`])
+  })
+
+  test('ARC-20 the setting changed after the switch: the inbox file still goes to the folder captured at the switch', async () => {
+    const other = path.join(tmp.dir, 'other-exchange')
+    fs.mkdirSync(other)
+    const env: Record<string, string | undefined> = { AI_EXCHANGE_DIR: exchange }
+    const r = runner({ env })
+    expect(r.useEngine('project')).toEqual({ ok: true })
+    env['AI_EXCHANGE_DIR'] = other
+    answeringProject()
+    // a second fake on the other folder, so a runner that re-reads the setting ends instead of hanging
+    const otherFake = startFakeProject(other, ({ json }) => {
+      const id = String(json['jobId'])
+      writeOutbox(other, `${id}.json`, outboxResult(id, GOOD_REC().output, GOOD_REC().stamp))
+    })
+    stops.push(otherFake.stop)
+    const res = await r.runAiStep(job('good'), { jobId: JOB_ID })
+    expect(res.ok).toBe(true)
+    expect(inbox()).toEqual([`${JOB_ID}.json`])
+    expect(filesIn(path.join(other, 'inbox'))).toEqual([])
+  })
+
+  test('ARC-20 aiEngines.project.run with no exchange folder refuses naming the setting and writes nothing', async () => {
+    const write = vi.spyOn(fs, 'writeFileSync')
+    const mkdir = vi.spyOn(fs, 'mkdirSync')
+    const { lines, sink } = collectLines()
+    const ctx: Parameters<typeof aiEngines.project.run>[1] = {
+      jobId: JOB_ID,
+      recordingsDir: RECORDINGS_DIR,
+      pollMs: 5,
+      sink,
+      waiting: new Set<string>(),
+      seen: new Set<string>(),
+    }
+    const res = await aiEngines.project.run(job('good'), ctx)
+    expect(res.ok).toBe(false)
+    if (!res.ok) expect(res.reason).toMatch(/AI_EXCHANGE_DIR/)
+    expect(write).not.toHaveBeenCalled()
+    expect(mkdir).not.toHaveBeenCalled()
+    expect(fs.existsSync(path.join(process.cwd(), 'inbox'))).toBe(false)
+    expect(lines).toEqual([])
+  })
+
+  test('ARC-22 a blank job id ("  ") is refused with the job-id reason and no inbox file is written', async () => {
+    const write = vi.spyOn(fs, 'writeFileSync')
+    const res = await projectRunner().runAiStep(job('good'), { jobId: '  ' })
+    expect(res).toEqual({ ok: false, reason: NEEDS_JOB_ID, problems: [] })
+    expect(inbox()).toEqual([])
+    expect(write).not.toHaveBeenCalled()
+  })
+})
+
+describe('ARC-22 round 2: outbox files the job is not waiting for', () => {
+  test('ARC-22 an outbox file named for this job but holding another job id is ignored and logged once, by name only', async () => {
+    const { lines, sink } = collectLines()
+    const canary = 'PLANTED-CANARY-OTHER-ID (Test)'
+    fakeProject(async ({ json }) => {
+      const id = String(json['jobId'])
+      writeOutbox(exchange, `${id}.json`, outboxResult('job-someone-else-test', { ...GOOD_REC().output, summary: canary }, GOOD_REC().stamp))
+      await waitFor(() => lines.some((l) => l.includes(`${id}.json`)), 'the mislabelled file to be logged', 1000).catch(() => undefined)
+      await pause(40) // several more polls see the same file
+      writeOutbox(exchange, `${id}.json`, outboxResult(id, GOOD_REC().output, GOOD_REC().stamp))
+    })
+    const res = await projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
+    expect(res).toMatchObject({ ok: true, output: GOOD_REC().output })
+    expect(lines.filter((l) => l.includes(`${JOB_ID}.json`))).toHaveLength(1)
+    expect(lines.join('\n')).not.toContain(canary)
+    expect(lines.join('\n')).not.toContain('job-someone-else-test')
+    expect(lines.join('\n')).not.toContain(exchange)
+  })
+
+  test('ARC-22 two jobs waiting at once: neither logs the other job\'s outbox file while both wait', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const { lines, sink } = collectLines()
+      const r = projectRunner({ sink })
+      const A = 'job-c01-first-test'
+      const B = 'job-c01-second-test'
+      const pa = r.runAiStep(job('good'), { jobId: A })
+      const pb = r.runAiStep(job('good'), { jobId: B })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(inbox()).toEqual([`${A}.json`, `${B}.json`])
+      // A started first, so A polls first and sees B's file while B still waits; then B reads it
+      writeOutbox(exchange, `${B}.json`, outboxResult(B, GOOD_REC().output, GOOD_REC().stamp))
+      await vi.advanceTimersByTimeAsync(5)
+      expect(await pb).toMatchObject({ ok: true, output: GOOD_REC().output })
+      expect(lines).toEqual(['ai step finding: ok'])
+      writeOutbox(exchange, `${A}.json`, outboxResult(A, GOOD_REC().output, GOOD_REC().stamp))
+      await vi.advanceTimersByTimeAsync(5)
+      expect(await pa).toMatchObject({ ok: true, output: GOOD_REC().output })
+      expect(lines.filter((l) => l.includes(`${A}.json`))).toEqual([])
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  test('ARC-22 a folder named like a result file in the outbox is logged once by name and the job waits for its real file', async () => {
+    const { lines, sink } = collectLines()
+    const folder = 'folder-not-a-result-test.json'
+    fs.mkdirSync(path.join(exchange, 'outbox', folder), { recursive: true })
+    fakeProject(async ({ json }) => {
+      const id = String(json['jobId'])
+      await waitFor(() => lines.some((l) => l.includes(folder)), 'the folder to be logged', 1000).catch(() => undefined)
+      await pause(40)
+      writeOutbox(exchange, `${id}.json`, outboxResult(id, GOOD_REC().output, GOOD_REC().stamp))
+    })
+    const res = await projectRunner({ sink }).runAiStep(job('good'), { jobId: JOB_ID })
+    expect(res).toMatchObject({ ok: true, output: GOOD_REC().output })
+    expect(lines.filter((l) => l.includes(folder))).toHaveLength(1)
+    expect(lines.join('\n')).not.toContain(exchange)
+  })
+
+  test('ARC-22 a second outbox file for a job already done is ignored and logged by name only (unit twin of the db test)', async () => {
+    const { lines, sink } = collectLines()
+    const canary = 'PLANTED-CANARY-SECOND-UNIT (Test)'
+    const A = 'job-c01-done-first-test'
+    const B = 'job-c01-after-it-test'
+    fakeProject(async ({ json }) => {
+      const id = String(json['jobId'])
+      if (id === A) {
+        writeOutbox(exchange, `${A}.json`, outboxResult(A, GOOD_REC().output, GOOD_REC().stamp))
+        return
+      }
+      writeOutbox(exchange, `${A}.json`, outboxResult(A, { ...GOOD_REC().output, summary: canary }, GOOD_REC().stamp))
+      await waitFor(() => lines.some((l) => l.includes(`${A}.json`)), 'the second file for the done job to be logged', 1000).catch(() => undefined)
+      writeOutbox(exchange, `${id}.json`, outboxResult(id, GOOD_REC().output, GOOD_REC().stamp))
+    })
+    const r = projectRunner({ sink })
+    expect(await r.runAiStep(job('good'), { jobId: A })).toMatchObject({ ok: true, output: GOOD_REC().output })
+    expect(await r.runAiStep(job('good'), { jobId: B })).toMatchObject({ ok: true, output: GOOD_REC().output })
+    expect(lines.some((l) => l.includes(`${A}.json`))).toBe(true)
+    expect(lines.join('\n')).not.toContain(canary)
+    expect(lines.join('\n')).not.toContain(exchange)
+  })
+
+  test('ARC-22 with no sink given, an ignored outbox file is logged through the core logger by name only', async () => {
+    const written: string[] = []
+    vi.spyOn(process.stdout, 'write').mockImplementation((chunk: string | Uint8Array) => {
+      written.push(typeof chunk === 'string' ? chunk : Buffer.from(chunk).toString('utf8'))
+      return true
+    })
+    const canary = 'PLANTED-CANARY-DEFAULT-SINK (Test)'
+    const stranger = 'job-nobody-waits-default-sink-test.json'
+    fakeProject(async ({ json }) => {
+      const id = String(json['jobId'])
+      writeOutbox(exchange, stranger, outboxResult('job-nobody-waits-default-sink-test', { ...GOOD_REC().output, summary: canary }, GOOD_REC().stamp))
+      await waitFor(() => written.some((w) => w.includes(stranger)), 'the stranger to reach the core logger', 1000).catch(() => undefined)
+      writeOutbox(exchange, `${id}.json`, outboxResult(id, GOOD_REC().output, GOOD_REC().stamp))
+    })
+    const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5 })
+    expect(r.useEngine('project')).toEqual({ ok: true })
+    const res = await r.runAiStep(job('good'), { jobId: JOB_ID })
+    expect(res.ok).toBe(true)
+    const all = written.join('\n')
+    expect(all).toContain(stranger)
+    expect(all).not.toContain(canary)
+    expect(all).not.toContain(exchange)
+  })
+
+  test('ARC-22 the outbox is polled every 1000 ms by default: no read at 999 ms, the result read at 1000 ms', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange } })
+      expect(r.useEngine('project')).toEqual({ ok: true })
+      let settled = false
+      const p = r.runAiStep(job('good'), { jobId: JOB_ID }).then((res) => {
+        settled = true
+        return res
+      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(inbox()).toEqual([`${JOB_ID}.json`])
+      writeOutbox(exchange, `${JOB_ID}.json`, outboxResult(JOB_ID, GOOD_REC().output, GOOD_REC().stamp))
+      await vi.advanceTimersByTimeAsync(999)
+      expect(settled).toBe(false)
+      await vi.advanceTimersByTimeAsync(1)
+      expect(settled).toBe(true)
+      expect(await p).toMatchObject({ ok: true, output: GOOD_REC().output })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
+
+describe('ARC-22 round 2: the log line and the handler, exactly', () => {
+  test('ARC-22 each run logs exactly one line, "ai step finding: ok" or "ai step finding: refused", and nothing else', async () => {
+    const { lines, sink } = collectLines()
+    const r = runner({ sink })
+    await r.runAiStep(job('good'))
+    expect(lines).toEqual(['ai step finding: ok'])
+    await r.runAiStep(job('broken'))
+    expect(lines).toEqual(['ai step finding: ok', 'ai step finding: refused'])
+    const unstamped = job('good')
+    delete unstamped.redaction
+    await r.runAiStep(unstamped)
+    expect(lines).toEqual(['ai step finding: ok', 'ai step finding: refused', 'ai step finding: refused'])
+  })
+
+  test('ARC-22 the handler versions are exactly { handler: "ai:finding", runner: "a04-1" }', () => {
+    expect(createAiStepHandler('finding', runner()).versions).toEqual({ handler: 'ai:finding', runner: 'a04-1' })
+  })
+
+  test('ARC-22 AI-1 a refusal through the handler throws a message holding the reason and every problem', async () => {
+    const expected = await runner().runAiStep(job('broken'))
+    if (expected.ok) throw new Error('fixture must be refused')
+    expect(expected.problems.length).toBeGreaterThan(0)
+    const h = createAiStepHandler('finding', runner())
+    const ctx = { jobId: JOB_ID, attempt: 1, now: new Date('2026-10-02T12:00:00Z'), returnId: null }
+    let message = ''
+    try {
+      await h.run(job('broken'), ctx)
+    } catch (e) {
+      message = e instanceof Error ? e.message : String(e)
+    }
+    expect(message).toContain(expected.reason)
+    for (const p of expected.problems) expect(message).toContain(p)
+  })
+})
+
+describe('AI-10 round 2: the input hash on nulls and arrays of objects', () => {
+  test('AI-10 inputHashOf keeps nulls, sorts keys inside arrays of objects at every depth and keeps array order', () => {
+    const a = { note: null, rows: [{ b: 1, a: { d: null, c: [2, 1] } }, { y: 'x (Test)', x: 0 }] }
+    const shuffled = { rows: [{ a: { c: [2, 1], d: null }, b: 1 }, { x: 0, y: 'x (Test)' }], note: null }
+    const literal = '{"note":null,"rows":[{"a":{"c":[2,1],"d":null},"b":1},{"x":0,"y":"x (Test)"}]}'
+    expect(inputHashOf(a)).toBe(sha256(literal))
+    expect(inputHashOf(shuffled)).toBe(sha256(literal))
+    expect(inputHashOf({ note: null, rows: [...shuffled.rows].reverse() })).not.toBe(sha256(literal))
+    expect(inputHashOf({ only: null })).toBe(expectedInputHash({ only: null }))
   })
 })
