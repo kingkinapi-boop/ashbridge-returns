@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "6ac7457",
  "worker": "cloud-fd4d7f",
- "state": "hold-findings",
- "at": "2026-10-03T04:34:36.904Z",
+ "state": "released",
+ "at": "2026-10-03T04:56:44.272Z",
  "mode": "turbo",
- "note": "FAIL: scope (3 storage files not in card Paths) and mutation dry run blocked by spec source-text test, see reports/FX2-check.md"
+ "note": "wait: round 2 spec (A414)",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A06\"],\"depStatus\":[\"done\"]}"
 }
