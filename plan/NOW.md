@@ -13,7 +13,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:20Z by the Lea
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | spec patch A459 in; main merge needs SC rule rows (A463: no Zo question) | spec merges main and fixes rows, build round 3, mutation on cloud, check |
+| W00c | spec rows 1 to 9 in (5c8d8469); owner-rule ruling (A467) for rows 2 and 11 | spec finishes, build round 3, mutation on cloud, check |
 | W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
 | FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
 | SC6 | spec reopened (A408); depends on W16 | spec, build, check |
@@ -26,7 +26,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:20Z by the Lea
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
 | FX12, FX14, FX15, FX17 | FX15 off core, round 1 PASS stands, boards (A465); FX12, FX17 specs refit | FX12 build; FX17 build |
-| CQ6 to CQ8, SC10, A08 | CQ6 build in, spec patch for the real setup path (A464); CQ7 build reported; CQ8 spec reported; A08 waits for A04 | CQ6 spec, build; CQ7 check; CQ8 build |
+| CQ6, CQ8, CQ9, SC10, A08 | CQ6 spec patch in, build round 2 open; CQ9 spec reported; CQ8 build; SC10 spec working; A08 after A04 lands | builds, checks |
 
 Cloud runs: about 6 since 10:58Z (train DB16, A04 and FX15 builds, specs). Local: none; local workers only for a named local job until CQ8 lands (claim.mjs offers Where: cloud jobs to them).
 
