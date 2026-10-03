@@ -547,3 +547,7 @@
 {"ts":"2026-10-03T10:49:45.122Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-03T10:49:47.836Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 1 (Opus)","allowed":true}
 {"ts":"2026-10-03T10:49:50.435Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 2 (Opus)","allowed":true}
+{"ts":"2026-10-03T11:17:31.551Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T11:17:31.561Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 1 (Opus)","allowed":true}
+{"ts":"2026-10-03T11:17:31.569Z","day":"2026-10-03","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-03T11:17:31.603Z","day":"2026-10-03","mode":"turbo","tool":"Agent","type":"worker","model":"opus","where":"worktree","desc":"Local worker 2 (Opus)","allowed":true}
