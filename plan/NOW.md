@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:25Z by the Lea
 | FX12, FX14, FX15, FX17 | FX15 build round 2 (@mutate on jobs/runner.ts, A461); FX12 build open; FX17 spec reported | builds, checks |
 | CQ6 to CQ8, SC10, A08 | CQ4 and CQ5 landed: CQ6, CQ7, CQ8 builds open; A08 waits for A04 | builds, checks |
 
-Cloud runs: 3 at 10:58Z (train 26e84345, A04 spec fix, CQ builds). Local: local-1, local-2 (any local job, 10:58Z).
+Cloud runs: about 6 since 10:58Z (train DB16, A04 and FX15 builds, specs). Local: none; local workers only for a named local job until CQ8 lands (claim.mjs offers Where: cloud jobs to them).
 
 ## Next, in order
 
