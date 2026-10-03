@@ -1,6 +1,6 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:45Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:55Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
@@ -26,7 +26,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 11:45Z by the Lea
 | FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
 | SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
 | FX12, FX14, FX15, FX17 | FX15 build round 2 (@mutate on jobs/runner.ts, A461); FX12 build open; FX17 spec reported | builds, checks |
-| CQ6 to CQ8, SC10, A08 | CQ4 and CQ5 landed: CQ6, CQ7, CQ8 builds open; A08 waits for A04 | builds, checks |
+| CQ6 to CQ8, SC10, A08 | CQ6 build in, spec patch for the real setup path (A464); CQ7 build reported; CQ8 spec reported; A08 waits for A04 | CQ6 spec, build; CQ7 check; CQ8 build |
 
 Cloud runs: about 6 since 10:58Z (train DB16, A04 and FX15 builds, specs). Local: none; local workers only for a named local job until CQ8 lands (claim.mjs offers Where: cloud jobs to them).
 
