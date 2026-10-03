@@ -1,9 +1,11 @@
 {
  "card": "FX17",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: main merged, typecheck, lint, tools tests green; only the spec's own 61 tests fail (11 unit, 50 db), as before the build",
  "worker": "cloud-91d3cf",
- "state": "working",
- "at": "2026-10-03T11:25:44.691Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T11:31:46.256Z",
+ "mode": "turbo",
+ "commit": "ac6e3f21",
+ "validated": "2f472bdf40d5d20c9d6311b6058d7a8f1cb04978"
 }
