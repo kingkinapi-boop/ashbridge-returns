@@ -1,10 +1,10 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "wait: A04 findings review 5 decides where the refusal-file reading goes",
+ "note": "wait: A04 round 5 lands (A446 directive)",
  "worker": "cloud-42f06c",
  "state": "released",
- "at": "2026-10-03T08:45:14.491Z",
+ "at": "2026-10-03T08:52:54.921Z",
  "mode": "turbo",
  "beat": "2026-10-03T08:02:10.659Z",
  "commit": "87231747",
