@@ -1,5 +1,7 @@
 # CQ8 next.mjs names path holds; the Lead can reopen a check
 
+**Lead directive, 3 Oct 13:51Z (A482): round 2 from reports/CQ8-findings-1.md (on claude/CQ8). Spec patch first, then build round 2, then a check by a worker who wrote neither.** Rule 3 stays on CQ8 and gets its tests here (A473's test half reversed). In `tools/test/next-paths.test.mjs`, "ARC-15 CQ8 rule 3" (about 8 tests): local-1 gets NOTHING for the spec, build and check of a card whose Where line is "cloud." and of a card whose Where line is "cloud (Postgres 16)."; a cloud-* worker gets each; a card whose Where line is "local or cloud." and a card with no Where line go to local-1; a cloud-only card is skipped and the next one taken; next.mjs tags only the cloud card "cloud only". Do not pin mixed wordings (CQ11 rules them). The refusals fail on main. Build round 2: merge the spec and run; change claim.mjs or next.mjs only if a new test fails (none expected).
+
 Phase 0. Size S. Deps: CQ5. Where: local or cloud.
 Tags: none (queue tooling).
 Paths: tools/next.mjs, tools/claim.mjs, tools/test/next-paths.test.mjs
