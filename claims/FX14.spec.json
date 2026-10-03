@@ -2,7 +2,10 @@
  "card": "FX14",
  "role": "spec",
  "worker": "cloud-4b5725",
- "state": "working",
- "at": "2026-10-03T13:03:11.677Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T13:13:30.255Z",
+ "mode": "turbo",
+ "note": "split done in spec; 3 harness tests stay KNOWN owner ARC4 (amber); build none",
+ "commit": "9bd1e9d",
+ "validated": "01bad2ecb8116ee6e2404e9d01b446677fe65e29"
 }
