@@ -1,10 +1,11 @@
 {
  "card": "W00c",
  "role": "spec",
- "note": "A459: spec patch gaps 1 to 4",
- "reopenedFrom": "963c78b7",
+ "note": "A459 patch: +225 tests (gaps 1-4), all fail first; stub passes. NOT validated on current main 6ca8b48f: merging it fails 11 SC rule tests (stale PENDING rows R35,R51,R52,R34-guard,R50-guard; R18,R28,R34,R37,R38,R50,R51) needing Lead/W00b/FX9 decisions (A414); merge not pushed",
  "worker": "cloud-94926d",
- "state": "working",
- "at": "2026-10-03T10:34:59.173Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T11:09:05.151Z",
+ "mode": "turbo",
+ "commit": "62681e23",
+ "validated": "78dd0eed"
 }
