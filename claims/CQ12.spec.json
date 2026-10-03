@@ -2,7 +2,10 @@
  "card": "CQ12",
  "role": "spec",
  "worker": "cloud-a2c0b4",
- "state": "working",
- "at": "2026-10-03T13:48:50.179Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-03T14:02:32.358Z",
+ "mode": "turbo",
+ "note": "10 new tests, 17 assertion-free fixed, floor-on unit+db green with stub; Paths gap: vitest.mutate.config.ts (R22), see reports/CQ12-spec.md",
+ "commit": "ef4f933",
+ "validated": "310ffa6029417e879f78fd6a02f0151f264aeb39"
 }
