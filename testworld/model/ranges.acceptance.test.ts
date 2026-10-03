@@ -14,6 +14,10 @@
 //   Unmarked transactions and adjusting entries are dated within [yearStart, yearEnd] (issue naming the row or entry
 //   id and the bound it breaks, the yearStart or yearEnd date as written; spec review 3, gap 1); a February 29 is a
 //   date only in a leap year (gap 4); a priorYear row is dated within the 12 months before yearStart.
+//
+// W00d (RC-C, the id rule): every planted row takes an id that follows the rule <nn>-<TAG>-<YYYY>-<MM>-<seq> for its
+// own date (ruleId below, seq 9001 and up, which no folder writes), and a row moved to another month is renamed with
+// every reference to it, so each test here still proves only its own date rule.
 import { afterAll, afterEach, describe, expect, test } from 'vitest'
 import { loadClient, type FaultEntry } from '../index'
 import { TestWorldLoadError } from './index'
@@ -53,6 +57,18 @@ function addDays(date: string, n: number): string {
   const d = new Date(`${date}T00:00:00Z`)
   d.setUTCDate(d.getUTCDate() + n)
   return d.toISOString().slice(0, 10)
+}
+
+/** An id that follows the id rule for a row copied from src and dated `date` (W00d RC-C): src's folder and tag, the date's month, seq. */
+function ruleId(src: { id: string }, date: string, seq: number): string {
+  const [nn, tag] = src.id.split('-')
+  if (nn === undefined || tag === undefined) throw new Error(`fixture: ${src.id} is not a transaction id`)
+  return `${nn}-${tag}-${date.slice(0, 7)}-${String(seq)}`
+}
+
+/** A JSON value with every quoted copy of one id renamed (the row and every reference to it). */
+function renamed<T>(value: T, from: string, to: string): T {
+  return JSON.parse(JSON.stringify(value).split(JSON.stringify(from)).join(JSON.stringify(to))) as T
 }
 
 /** The issues a load gives through the public loader ([] when it loads). */
@@ -220,16 +236,17 @@ describe('W00c RC3 unmarked rows and adjusting entries are dated inside the fisc
   const zeroRow = (c: WalkClient): { id: string; plant: (date: string) => void } => {
     const src = c.key.transactions.find((t) => markersOf(t).length === 0)
     if (src === undefined) throw new Error(`fixture: ${c.id} has no unmarked row`)
-    const id = `${src.id}-DATED-(Test)`
-    return {
-      id,
-      plant: (date) => {
+    const row = {
+      id: '',
+      plant: (date: string) => {
+        row.id = ruleId(src, date, 9001)
         sb.editKey(c, (k) => {
-          k.transactions.push(plantRow(src, id, { date, amount: 0 }))
+          k.transactions.push(plantRow(src, row.id, { date, amount: 0 }))
           addRowsIn(k, src.acct, 1)
         })
       },
     }
+    return row
   }
 
   // Spec review 3, gap 1: the issue names the row and the bound it breaks (the yearStart or yearEnd date as written),
@@ -280,8 +297,8 @@ describe('W00c RC3 unmarked rows and adjusting entries are dated inside the fisc
     const src = c.key.transactions.find((t) => markersOf(t).length === 0)
     if (src === undefined) throw new Error('fixture: no unmarked row')
     sb.editKey(c, (k) => {
-      k.transactions.push(plantRow(src, `${src.id}-START-(Test)`, { date: c.key.fiscalYear.start, amount: 0 }))
-      k.transactions.push(plantRow(src, `${src.id}-END-(Test)`, { date: c.key.fiscalYear.end, amount: 0 }))
+      k.transactions.push(plantRow(src, ruleId(src, c.key.fiscalYear.start, 9001), { date: c.key.fiscalYear.start, amount: 0 }))
+      k.transactions.push(plantRow(src, ruleId(src, c.key.fiscalYear.end, 9002), { date: c.key.fiscalYear.end, amount: 0 }))
       addRowsIn(k, src.acct, 2)
     })
     await expectLoads(sb, c.id)
@@ -316,15 +333,22 @@ describe('W00c RC3 a priorYear row is dated within the 12 months before the fisc
   const priorCases = markedRows(clients)
     .filter((r) => r.field === 'priorYear')
     .map((r): [string, MarkedRow] => [`${r.c.id} ${r.t.id}`, r])
-  /** The row moved to `date`, with its pin moved to a new priorYear entry for that month (pins kept true). */
+  /**
+   * The row moved to `date`, with its pin moved to a new priorYear entry for that month (pins kept true). W00d RC-C:
+   * the row is renamed to the id the rule gives that month (seq 9003), with every reference to it in the answer key
+   * and the catalogue, so only the priorYear date rule can refuse it.
+   */
+  const movedId = (r: MarkedRow, date: string): string => ruleId(r.t, date, 9003)
   const moved = (r: MarkedRow, date: string): CatalogueEntry[] => {
+    const id = movedId(r, date)
     const cat = catalogue()
     dropPin(entryFor(cat, r.group), r.t.id)
     freeFlagEntry(cat, r.c.id).marker = { field: 'priorYear', account: r.t.acct, month: monthOf(date), rows: [{ ...pinOf(r.t, 'priorYear'), date }] }
     sb.editKey(r.c, (k) => {
       txIn(k, r.t.id).date = date
+      Object.assign(k, renamed(k, r.t.id, id))
     })
-    return cat
+    return renamed(cat, r.t.id, id)
   }
 
   test('ARC-8 the walk finds priorYear rows (C10 today)', () => {
@@ -333,7 +357,7 @@ describe('W00c RC3 a priorYear row is dated within the 12 months before the fisc
 
   test.each(priorCases)('ARC-8 %s dated 13 months before the fiscal year start, its pin moved to match, is refused, naming the row', async (_l, r) => {
     const date = `${addMonth(monthOf(r.c.key.fiscalYear.start), -13)}-15`
-    expectNamed(await refusal(sb, r.c.id, moved(r, date)), undefined, [r.t.id])
+    expectNamed(await refusal(sb, r.c.id, moved(r, date)), undefined, [movedId(r, date)])
   })
 
   test.each(priorCases)('ARC-8 %s dated on the first day of the month 11 months before the fiscal year start, its pin moved to match, still loads', async (_l, r) => {
@@ -359,7 +383,7 @@ describe('W00c RC3 February 29 is a date only in a leap year (spec review 3, gap
     if (src === undefined && !entry) throw new Error(`fixture: ${c.id} has neither an unmarked row nor an adjusting entry`)
     sb.editKey(c, (k) => {
       if (src !== undefined) {
-        k.transactions.push(plantRow(src, `${src.id}-FEB29-(Test)`, { date, amount: 0 }))
+        k.transactions.push(plantRow(src, ruleId(src, date, 9001), { date, amount: 0 }))
         addRowsIn(k, src.acct, 1)
       }
       const j = full(k).adjustingEntries[0]
