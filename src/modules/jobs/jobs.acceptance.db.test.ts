@@ -15,8 +15,9 @@
 //   exists, and nothing is written); claim(workerId, kinds?, leaseMsFor?) -> Job | null, where
 //   leaseMsFor(kind) names a handler's own lease (undefined gives the 10 minute default); the
 //   claim counts the attempt (attempts + 1), sets status running, lease_holder and lease_until from
-//   the injected clock; complete(id, result, versions) -> Job; fail(id, error, { retry?: boolean })
-//   -> Job (retry defaults to true: queued again with the fixed backoff, or dead at max attempts;
+//   the injected clock; complete(id, workerId, result, versions) -> Job; fail(id, workerId, error,
+//   { retry?: boolean }) -> Job, each from the worker holding the lease (FX15, A449; its tests are in
+//   lease.acceptance.db.test.ts) (retry defaults to true: queued again with the fixed backoff, or dead at max attempts;
 //   retry false is the terminal status `failed`); statusForReturn(returnId) ->
 //   { counts: { [kind]: { queued, running, done, failed, dead } (all five, zeros included) },
 //     dead: { id, kind, last_error }[],
@@ -39,7 +40,7 @@ import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import type { Clock } from '../../core/clock'
 import { cloneTestDb } from '../../core/db'
-import type { Handler } from '../../contracts/jobs'
+import type { Handler, Job, JobQueue, VersionStamp } from '../../contracts/jobs'
 import { createJobQueue, createRunner, createSyncRunner } from './index'
 
 const T0 = '2026-03-02T15:00:00.000Z'
@@ -58,6 +59,13 @@ function mutableClock(iso: string): Clock & { advance(ms: number): void; set(iso
     },
   }
 }
+
+/** FX15 (A449): complete and fail take the lease holder; the cast keeps typecheck green before that build. */
+interface LeaseWrites {
+  complete(id: string, workerId: string, result: unknown, versions: VersionStamp): Promise<Job>
+  fail(id: string, workerId: string, error: string, options?: { retry?: boolean }): Promise<Job>
+}
+const lease = (queue: JobQueue): LeaseWrites => queue as unknown as LeaseWrites
 
 const ms = (x: unknown): number => new Date(x as string | Date).getTime()
 const STAMP = { handler: 'jobs-test', version: 1 }
@@ -169,8 +177,8 @@ describe('ARC-5 enqueue is idempotent by key', () => {
     expect(onlyAi?.id).toBe(second.id)
     const oldest = await queue.claim('w1')
     expect(oldest?.id).toBe(first.id)
-    await queue.complete(first.id, { ok: true }, STAMP)
-    await queue.complete(second.id, { ok: true }, STAMP)
+    await lease(queue).complete(first.id, 'w1', { ok: true }, STAMP)
+    await lease(queue).complete(second.id, 'w1', { ok: true }, STAMP)
     await db.query(`update returns.jobs set run_after = $1 where idempotency_key = 'k-3'`, [
       new Date(ms(T0) + HOUR).toISOString(),
     ])
@@ -282,8 +290,8 @@ describe('ARC-5 retries follow a fixed backoff and end dead, never deleted', () 
     const b = await queue.enqueue('read:page', 'k-2', { n: 2 })
     await queue.claim('w1')
     await queue.claim('w1')
-    await queue.fail(a.id, 'boom')
-    await queue.fail(b.id, 'never retry', { retry: false })
+    await lease(queue).fail(a.id, 'w1', 'boom')
+    await lease(queue).fail(b.id, 'w1', 'never retry', { retry: false })
     const ra = await row(db, a.id)
     expect([ra.status, ra.last_error, ms(ra.run_after)]).toEqual(['queued', 'boom', ms(clock.now()) + MIN])
     expect(ra.lease_holder).toBeNull()
@@ -509,7 +517,7 @@ describe('ARC-10 a done job carries the version stamp of what produced it', () =
     const j = await queue.enqueue('read:page', 'k-1', { n: 1 })
     await queue.claim('w1')
     for (const bad of [undefined, null, {}, { x: '' }, { x: '  ' }, { x: null }, { x: { y: 1 } }]) {
-      const msg = await refusal(queue.complete(j.id, { ok: true }, bad as never))
+      const msg = await refusal(lease(queue).complete(j.id, 'w1', { ok: true }, bad as never))
       expect(msg, JSON.stringify(bad)).toMatch(/stamp/i)
       const r = await row(db, j.id)
       expect(r.status).toBe('running')
@@ -522,7 +530,7 @@ describe('ARC-10 a done job carries the version stamp of what produced it', () =
     const j = await queue.enqueue('read:page', 'k-1', { n: 1 })
     await queue.claim('w1')
     clock.advance(3 * MIN)
-    const done = await queue.complete(j.id, { ok: true }, { reader: 'pdf-text', rules: 4, schema: '2026-03-01' })
+    const done = await lease(queue).complete(j.id, 'w1', { ok: true }, { reader: 'pdf-text', rules: 4, schema: '2026-03-01' })
     expect(done.status).toBe('done')
     const r = await row(db, j.id)
     expect(r.status).toBe('done')
@@ -608,11 +616,11 @@ describe('ARC-5 statusForReturn', () => {
     await queue.claim('w2', ['ai:read'])
     s = await queue.statusForReturn('r-1')
     expect(ms(s.oldestOpen['ai:read'])).toBe(ms(T0))
-    await queue.complete(early.id, { ok: true }, STAMP)
+    await lease(queue).complete(early.id, 'w2', { ok: true }, STAMP)
     s = await queue.statusForReturn('r-1')
     expect(ms(s.oldestOpen['ai:read'])).toBe(ms(T0) + 2 * HOUR)
     await queue.claim('w2', ['ai:read'])
-    await queue.complete(late.id, { ok: true }, STAMP)
+    await lease(queue).complete(late.id, 'w2', { ok: true }, STAMP)
     s = await queue.statusForReturn('r-1')
     expect(s.oldestOpen['ai:read']).toBeUndefined()
     expect(s.counts['ai:read']?.done).toBe(2)

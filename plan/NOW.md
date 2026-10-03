@@ -1,60 +1,55 @@
 # NOW
 
-True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 12:20Z by the Lead. Times are UTC from `date -u`.
+True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 15:22Z by the Lead. Times are UTC from `date -u`.
 
 ## State
 
-- **Mode: turbo** (Zo, 2 Oct 15:30Z; again `turbo on` 3 Oct 03:20Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 53% of the week at 03:18Z. Blueprint v1.2.
-- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`). RemoteTrigger works again (03:20Z). Runs cannot notify: poll `node tools/claim.mjs list` (ScheduleWakeup 15 to 20 min). Laptop: up to 3 local workers, any job (Zo, 3 Oct, decision 0026; heavy_slots 2).
-- **Landed (54):** through FX10 (train 12af2528), then DB16 (train 65f59a22 green on pg16 16.14, landed 12:15Z as dc36b33d). Train 25ea2736 (A04, FX15, CQ7) requested 12:20Z.
-- **Zo 2 Oct evening:** "Critic ok" (decision 0024, applied: compaction at 200k with reload hook, raised to 300k by 0025, CQ2 item 6, layouts before W21, A387 one record for every role). Auto-fill notes in (0023). To-do part 1 empty.
+- **Mode: turbo** (Zo, "turbo on" 13:26Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 74% of the week at 14:36Z: at this pace it runs out late tonight; then pause until Zo's saved reset and `go`.
+- **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims); 4 runs fired 15:22Z (train 2 and the queue). Laptop (decision 0026): designers 1 to 3; GL3 security review and SC10 Opus read (15:18Z); G18 findings review (15:22Z).
+- **Landed (59):** train 725bc456 (FX12, CQ10, and FX5's code) at 15:20Z, main 04dbb004. FX5 stays open for round 3 (A494). Train 2 (A04, SC3, CQ8, CQ9) head 6587e0a0 requested 15:22Z.
+- **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
 
 ## In flight
 
 | Card | State | Next action |
 |---|---|---|
-| W00c | spec rows 1 to 9 in (5c8d8469); owner-rule ruling (A467) for rows 2 and 11 | spec finishes, build round 3, mutation on cloud, check |
-| W00b | spec round 4 after W00c lands (A423: 6 tests, merge refit); build after W00c and FX8 | spec, build, check, security review |
-| FX8 | round 2 spec reported (a9dd4aa3 on claude/FX8-r2, 19 tests, README 556) | build on a cloud box (LF), check; before W00b's build |
-| SC6 | spec reopened (A408); depends on W16 | spec, build, check |
-| Train | A04, FX15, CQ7 on 25ea2736, requested 12:20Z | cloud check full on pg16, mutation A04; land |
-| SC3 | second spec patch reported (68 tests, A458) | Opus re-check, security review, board |
-| S00, FX5 | builds open (A410) | build, check |
-| A04 | on the train (PASS by ruling A465, security CLEAN A466) | land; then A08 spec, FX18, SC12 |
-| SC11, GL3 | DB16 landed: SC11 spec refit open (cloud); GL3 build reopened (pg16 run, R41 fix) | SC11 build; GL3 check |
-| JH0, S00, B04, SC2 | JH0 and S00 specs refit; B04 and SC2 specs working | builds after W00c lands |
-| FX4 | spec patch reported (40 tests, A434); build waits for SC | SC lands, known.json patch, build |
-| SC6 | W16 landed: spec open (Where: cloud) | spec, build, check |
-| FX12, FX14, FX15, FX17 | FX15 off core, round 1 PASS stands, boards (A465); FX12, FX17 specs refit | FX12 build; FX17 build |
-| CQ6, CQ8, CQ9, SC10, A08 | CQ6 spec patch in, build round 2 open; CQ9 spec reported; CQ8 build; SC10 spec working; A08 after A04 lands | builds, checks |
-
-Cloud runs: about 6 since 10:58Z (train DB16, A04 and FX15 builds, specs). Local: none; local workers only for a named local job until CQ8 lands (claim.mjs offers Where: cloud jobs to them).
+| Train 2 | A04, SC3, CQ8, CQ9 requested 15:22Z | land if green (rehearsal: two vitest runs, A495); then A04C build, FX18 spec, SC8 build, A08 and SC5 specs; FX17 build; SC12 spec after SC11 lands |
+| Train 3 | GL3 (security review local), SC10 (Opus read local), SC11 (check working) | board each when clean; request hourly or at 6 cards |
+| W00c | toolchain refit (FX12), then build round 3 (last) | FX8's spec patch (A493) once W00c's build is taken; then FX8's build, FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
+| G18 | Opus read FAIL: 26 of 105 mappings wrong (reports/G18-check-opus.md on claude/G18-check, 1308ab4f); build on hold-findings | findings review (local Opus); fix list into the card; then its round |
+| SC6, CQ11 | spec patches reopened (A493) | SC6 then an Opus check; CQ11's build after CQ8 lands |
+| CQ12 | spec reopened: refit plus A495 (a groupOrder per vitest project) | build, check |
+| FX17 | spec open | build after SC3 lands |
+| A04C | spec reported (G1 to G4) | build after A04 lands; Opus check |
+| W00b, A08, FX6, FX18, SC5, SC12 | held `wait:` | reopen when W00c, A04, SC3, SC11 or SC5's deps land |
+| JH0, S00, B04, SC2, FX7, S01 | wait for W00c (S01's reopened spec waits for S00) | builds after W00c lands |
+| Design lane | base claude/design-base; rulings A485 | designers 1 (D13, D04), 2 (D03 B+), 3 (D02) local; then a panel per family; workbench brief check, designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
 
 ## Next, in order
 
-1. Poll claims; board every PASS (scope by hand while scope.mjs prints 0 files for some branches: CQ2 rewrites it); request the train hourly or at 6 cards.
-2. W00c lands, then W00b (merge W00c in, re-run its 242 tests), S00, JH0, B04, SC2. SK0, W01 to W13, W20, I40 follow.
-3. FX2 and A04 round 2 specs, then SC3, SC5 (R71 to R73); DB16.
-4. Phase 3 and 4 cards reviewed and fixed (A437, A438, A447: 28 fixes, cpa-check items 34 and 35). N19, GL2 to GL6 carded (A448). Go-live reds (SEC-9, LIVE-3, LL-8, amended-return client view) wait for the go-live questions.
-5. Designs: fix cards Q1 to Q8 from reports/design-retest-2026-10-01.md, then D02 to D13 (design lane, A352).
-6. Taxprep: fold O8 (Auto-fill, reference/taxprep/2026-10-04-day4/) into FINDINGS.md, CK-12 and RT-14; day 6 Sun 4 Oct.
-7. Critic about every two days (next about 4 Oct); Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
+1. Poll claims; land train 2 if green; board GL3, SC10, SC11 as each clears.
+2. W00c refit and build, then W00c lands: W00b, S00, JH0, B04, SC2, FX7; SK0, W01 to W13, W20, I40 follow.
+3. G18 findings review, then its round 2.
+4. Design lane as above (lane plan reports/design-lane-2026-10-03.md, section 4).
+5. G-family sample sweep after W00c lands; Taxprep day 6 Sun 4 Oct (O8 folded, A487).
+6. Critic about 5 Oct; Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
 
 ## Watch out
 
-- The permission system refuses edits to `.gitleaks.toml` for every agent; changes go to Zo by hand (0021). Cloud boxes lack gitleaks; GitHub checks run it.
-- No real client data: Assets/ is excluded from git; never commit it.
-- Cloud boxes need Node 24.21 or later; see .claude/cloud-worker-run.md.
-- Local workers have no subagent tool: start them with model opus so they can do core specs and checks themselves (Sonnet ones release core jobs). They cannot run `cmd //c rmdir`: the Lead removes each worktree's node_modules junction, then the worktree. The main checkout's node_modules lacks exceljs and pdfjs-dist (SC check released 03:47Z): run `node tools/heavy.mjs -- npm ci` in the main checkout when no local worker is running, before firing more (`npm install` is refused; never route around it).
-- claim.mjs drops the Lead's reopen note on specs (CQ2 item 5): put a bold directive at the top of the card.
-- Code guard at landing lists design/ docs too (A388): a doc-only path is not a reason to re-check.
-- Mutation bar is 100 per `@mutate` file (testing.md, ARC-15; agent orders fixed, A391).
+- `.gitleaks.toml` edits go to Zo by hand (0021). Cloud boxes lack gitleaks; GitHub checks run it.
+- No real client data: Assets/ is excluded from git (and so is any folder named assets on Windows): never commit it, never force-add.
+- Local workers: a fresh name per dispatch (local-6 next), model opus for core jobs; use `next --roles` (CQ11). They cannot run `cmd //c rmdir`: the Lead removes each worktree's node_modules junction, then the worktree. Worktrees under .claude/worktrees resolve node_modules from the main checkout: `npm ci` there only when no local process runs.
+- Path holds: a working spec and a reported build hold their Paths; next.mjs START ignores holds until CQ8 lands. After a findings round's spec reports, the Lead reopens the build.
+- claim.mjs drops the Lead's reopen note on specs (CQ2 item 5): a bold directive at the top of the card; never a new Spec rule while its spec job works.
+- Mutation bar is 100 per `@mutate` file (testing.md, ARC-15).
 - Network to GitHub drops now and then: retry a push up to three times.
-- Landing: never rebase a train; merge main in; never force-push.
-- Findings review before every fix round; a third failure parks or splits (split cards carry a landing rule: new edge cases go to SC cards).
+- Landing: never rebase a train; merge main in; commit the ledger before the last merge; never force-push. The train worktree junction was refused (A483): run its tools tests with the main checkout's vitest; never retry the junction another way.
+- Findings review before every fix round; a third failure parks or splits.
 - Never weaken redaction, permissions or security checks to pass a test (A329); never route a refused edit through another worker.
 - Only the "Ashbridge Test" Chrome (browser 8f110f0a), one walker at a time.
 - Always `git add plan/ledger.jsonl` before `git pull --rebase`; never `git stash`, never `git add -A`.
 - Commit no new Taxprep CSV to main before FX9 lands (SC's R37, A415).
-- A job released twice at one tip is held "needs Lead": re-release a check with a note starting "wait:", reopen a spec or build (07:40Z). Local workers skip Where: cloud cards (FX10, SC6): tell them to leave those untouched.
+- A job released twice at one tip is held "needs Lead": re-release a check with a note starting "wait:", reopen a spec or build. Local workers skip cloud-only cards.
+- Python edits: write a backslash as chr(92) (a heredoc halves a doubled one); run `date -u` before writing any time.
+- Local helpers never push: the A04 security and SC6 findings report pushes were refused (A492, A493); they stay on local branches a04-sec and sc6-findings; never push them another way. One project per `vitest run` until CQ12 lands (A495).
 - Never kill processes by name. Another Lead works in ashbridge-app: read-only there.

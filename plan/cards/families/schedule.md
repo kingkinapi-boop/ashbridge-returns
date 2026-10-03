@@ -1,5 +1,7 @@
 # Family: mapping and simulator cells ({schedule})
 
+Phase (the card's own, in plan/slices.json). Where: local or cloud.
+
 Cards M10 to M23. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 04 (RT-4, RT-7, RT-13, RT-21, RT-22, RT-24, RT-25), 03 (TB-6), `plan/cards/M00.md` and `data/taxprep/map/_format.md` (M00: the mapping format this card writes), `src/modules/mapping/core/` (M00), `src/contracts/taxprep.ts` (F03: grammar, natural-key registry, ignored-on-import list), `plan/cards/S02.md` (release files), `reference/taxprep/FINDINGS.md` (section 1, the cell map) and the trial's structure exports under `reference/taxprep/*/exports/`.
 
 ## Goal
