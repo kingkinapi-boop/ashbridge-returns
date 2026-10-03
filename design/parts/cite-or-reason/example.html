@@ -1,0 +1,21 @@
+<!-- cite-or-reason: copy and change X and the source labels. Classes are GOV.UK except app-cor and app-cor__reason. -->
+<form data-form data-cor novalidate>
+  <div class="govuk-error-summary" data-summary hidden tabindex="-1"><div role="alert"><h2 class="govuk-error-summary__title">There is a problem</h2><div class="govuk-error-summary__body"><ul class="govuk-list govuk-error-summary__list"></ul></div></div></div>
+  <div class="govuk-form-group app-cor">
+    <fieldset class="govuk-fieldset" aria-describedby="X-src-error">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Source or reason <span class="app-req" aria-hidden="true">*</span><span class="govuk-visually-hidden"> (required)</span></legend>
+      <p class="govuk-error-message" id="X-src-error" hidden></p>
+      <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        <div class="govuk-radios__item"><input class="govuk-radios__input" id="X-src-0" name="X-src" type="radio" value="0" data-req data-msg="Choose a source or write a reason"><label class="govuk-label govuk-radios__label" for="X-src-0">First source document</label></div>
+        <div class="govuk-radios__item app-cor__row"><input class="govuk-radios__input" id="X-src-reason" name="X-src" type="radio" value="reason" data-cor-reason-radio><label class="govuk-label govuk-radios__label" for="X-src-reason">A written reason</label>
+          <div class="govuk-form-group app-cor__reason">
+        <label class="govuk-label govuk-visually-hidden" for="X-why">Reason for the CPA (required if you chose a written reason)</label>
+        <p class="govuk-error-message" id="X-why-error" hidden></p>
+        <textarea class="govuk-textarea" id="X-why" name="reason" rows="1" data-cor-reason data-req data-msg="Write the reason the CPA will read beside the number" data-req-if="X-src-reason" aria-describedby="X-why-error"></textarea>
+      </div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="app-actions"><button type="submit" class="govuk-button" data-module="govuk-button" data-primary>Cite this source</button></div>
+</form>

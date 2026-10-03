@@ -1,0 +1,15 @@
+/*
+  Part: cite-or-reason (design/parts/cite-or-reason/). One decision: cite a source OR write a reason.
+  Built from the GOV.UK radios (small) and textarea; only the layout below is composed (app-cor-*), see README.md.
+  Shared by the workbench Trace pane and the source viewer (D03). Needs the GOV.UK 6 and Ashbridge CSS loaded first.
+*/
+.app-cor { margin-bottom: 6px; }
+.app-cor .govuk-fieldset__legend { margin-bottom: 4px; }
+.app-cor .govuk-radios__item { margin-bottom: 2px; }
+.app-cor .govuk-radios--small .govuk-radios__label { padding-top: 2px; padding-bottom: 2px; }
+/* the reason row: the radio and its box share a line, the box is always visible, so typing in it is the choice (V8) */
+.app-cor__row { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 8px; }
+.app-cor__row .govuk-radios__label { flex: none; max-width: none; padding-right: 0; }
+.app-cor__reason { flex: 1 1 8em; min-width: 0; margin: 0; }
+.app-cor__reason .govuk-textarea { min-height: 0; padding: 3px 8px; margin-bottom: 0; resize: vertical; }
+.app-cor__reason .govuk-error-message { margin-bottom: 4px; }

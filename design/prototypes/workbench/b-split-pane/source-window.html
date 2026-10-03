@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template"><head><meta charset="utf-8"><title>Source - Ashbridge Tax</title><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="data:,"><link rel="stylesheet" href="../vendor/govuk-frontend.min.css"><link rel="stylesheet" href="../vendor/moj-frontend.min.css"><link rel="stylesheet" href="assets/b.css"></head>
+<body class="govuk-template__body"><a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+<header class="govuk-header"><div class="govuk-header__container govuk-width-container app-wide"><div class="govuk-header__logo"><span class="govuk-header__homepage-link app-logo">Ashbridge Tax</span></div></div></header>
+<div class="app-source-window"><main id="main-content"><h1 class="govuk-heading-m">Source, second window</h1><p class="govuk-body" id="sw-for">Waiting for a selection in the workbench window.</p><div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes"><div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="sw-follow" type="checkbox" checked><label class="govuk-label govuk-checkboxes__label" for="sw-follow">Follow the workbench window</label></div></div><div class="app-viewer"><h2 class="govuk-heading-s" id="sw-title">No source selected yet</h2><div class="app-viewer__box app-viewer__box--tall" id="sw-box" tabindex="0" role="region" aria-label="Source excerpt, scrollable"></div><p class="govuk-body-s" id="sw-cap"></p></div></main></div>
+<div id="live" class="app-live" role="status" aria-live="polite"></div>
+<script src="assets/sources.js"></script>
+<script>(function(){
+var last=0;
+function show(m){if(!m||m.t===last&&!m.close){return;}if(m.close){window.close();return;}if(!document.getElementById('sw-follow').checked||!m.key){return;}last=m.t;var s=window.ASH_SOURCES[m.key];if(!s){return;}
+document.getElementById('sw-for').textContent='For: '+(m.label||'selection');document.getElementById('sw-title').textContent=s.title;document.getElementById('sw-box').innerHTML=window.ASH_RENDER(m.key);document.getElementById('sw-cap').textContent=s.caption;
+var box=document.getElementById('sw-box'),hl=box.querySelector('[data-hl]');if(hl){box.scrollTop=Math.max(0,hl.offsetTop-box.clientHeight/2);}document.getElementById('live').textContent='Source: '+s.title;}
+window.addEventListener('message',function(e){show(e.data);});
+try{var c=new BroadcastChannel('ashbridge-source');c.onmessage=function(e){show(e.data);};}catch(x){}
+window.addEventListener('storage',function(e){if(e.key==='ash.src'&&e.newValue){try{show(JSON.parse(e.newValue));}catch(x){}}});
+try{var v=localStorage.getItem('ash.src');if(v){show(JSON.parse(v));}}catch(x){}
+})();</script></body></html>
