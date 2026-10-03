@@ -771,14 +771,16 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00c"
+        "W00c",
+        "FX8"
       ],
       "paths": [
         "testworld/model/guard.ts",
         "testworld/model/guard-fields.ts",
         "testworld/model/made-up-data.acceptance.test.ts",
         "testworld/model/kinds.ts",
-        "testworld/model/__fixtures__/guard/**"
+        "testworld/model/__fixtures__/guard/**",
+        "testworld/clients/load.ts"
       ],
       "clauses": [
         "SEC-11",
@@ -1055,7 +1057,8 @@
         ".dependency-cruiser.cjs",
         "e2e/skeleton/**",
         "e2e/steps/**",
-        "e2e/_harness/pipeline.ts"
+        "e2e/_harness/pipeline.ts",
+        "playwright.config.ts"
       ],
       "clauses": [
         "ARC-5",
@@ -9488,6 +9491,26 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "CQ2"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-wait.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ3",
+      "title": "Queue: no build while its spec is open, and wait: holds",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the DB16 double offer, 3 Oct (A416)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "DG2"
       ],
       "paths": [
@@ -9589,7 +9612,10 @@
       "paths": [
         "src/core/env.ts",
         "src/modules/ocr/index.ts",
-        "src/modules/storage/index.ts",
+        "src/modules/storage/safe.ts",
+        "src/modules/storage/files/index.ts",
+        "src/modules/storage/drive/index.ts",
+        "src/modules/auth/index.ts",
         "src/modules/ocr/engine-setting.test.ts",
         "src/modules/storage/engine-setting.test.ts"
       ],
@@ -9661,11 +9687,13 @@
       "spec": null,
       "deps": [
         "A07D",
-        "SC4"
+        "SC4",
+        "SC"
       ],
       "paths": [
         "src/modules/sheets/**",
-        "src/contracts/sheets.ts"
+        "src/contracts/sheets.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-14",
@@ -9686,10 +9714,13 @@
       "spec": null,
       "deps": [
         "W00c",
-        "SC4"
+        "SC4",
+        "SC"
       ],
       "paths": [
-        "src/contracts/taxprep.ts"
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-5",
@@ -9706,7 +9737,90 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F02"
+        "SC",
+        "W00c",
+        "FX2"
+      ],
+      "paths": [
+        "src/contracts/facts.ts",
+        "src/contracts/reading.ts",
+        "src/contracts/amount-grammar.ts",
+        "src/modules/ocr/textlayer/**",
+        "src/modules/storage/**",
+        "src/core/test-no-network.ts",
+        "src/contracts/auth.ts",
+        "tools/test/__fixtures__/planted-interpolated-log.ts.txt"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "ARC-10",
+        "ARC-15",
+        "SEC-11"
+      ],
+      "id": "FX7",
+      "title": "Rule defects in landed contracts and readers (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "reference/sample-clients/clients/c07_08.mjs",
+        "reference/sample-clients/clients/c09_10.mjs",
+        "reference/sample-clients/clients/c13_15.mjs",
+        "reference/sample-clients/07-*/**",
+        "reference/sample-clients/09-*/**",
+        "reference/sample-clients/14-*/**",
+        "reference/sample-clients/15-*/**",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md",
+        "tools/test/sample-names.test.mjs"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-8"
+      ],
+      "id": "FX8",
+      "title": "Sample clients: the four bare names in flag text",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/W00b-spec-review.md, 3 Oct (A409)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W16",
+        "FX8"
+      ],
+      "paths": [
+        ".gitattributes",
+        "reference/**/*.csv"
+      ],
+      "clauses": [
+        "ARC-10",
+        "RT-14"
+      ],
+      "id": "FX9",
+      "title": "CSV line endings: .gitattributes and the committed CSVs (R37)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Split from FX7, 3 Oct (A415)."
+    },
+    {
+      "status": "carded",
+      "spec": "bd0e2fe2",
+      "deps": [
+        "F02",
+        "SC"
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
@@ -9751,7 +9865,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "SC"
+        "SC",
+        "W16"
       ],
       "paths": [
         "tools/test/card-rules.test.mjs",
@@ -9772,6 +9887,86 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "SC",
+        "SC2",
+        "SC3",
+        "SC4",
+        "SC5",
+        "SC6"
+      ],
+      "paths": [
+        "tools/test/lib/known.mjs",
+        "tools/test/lib/known.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC7",
+      "title": "One shared KNOWN helper for every rules file",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "FX2"
+      ],
+      "paths": [
+        "tools/test/source-read-rules.test.mjs",
+        "tools/test/__fixtures__/source-read-rules/**",
+        "src/core/testing/read-own-source.acceptance.test.ts",
+        "src/contracts/amount-grammar.acceptance.test.ts",
+        "src/contracts/reading.acceptance.test.ts",
+        "src/contracts/reading-strict.acceptance.test.ts",
+        "src/core/clock.acceptance.test.ts",
+        "src/core/env.acceptance.test.ts",
+        "src/core/ids.acceptance.test.ts",
+        "src/core/log.acceptance.test.ts",
+        "src/core/money.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC8",
+      "title": "Source reads go through readOwnSource (R79)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/FX2-findings.md, 3 Oct (A414)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "SC7"
+      ],
+      "paths": [
+        "tools/test/rule-walker.test.mjs",
+        "tools/test/__fixtures__/rule-walker/**",
+        "tools/test/lib/walk.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC9",
+      "title": "Rule walkers: no escape by name, kind or path",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-spec-review-3.md, 3 Oct (A415)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "SC"
       ],
       "paths": [
@@ -9783,7 +9978,9 @@
         "src/modules/gaps/bank/index.ts",
         "src/modules/jobs/queue.ts",
         "src/modules/bridge/run.ts",
-        "tools/test/__fixtures__/schema-contract/known.json"
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/contracts/ids.ts",
+        "src/contracts/checks.ts"
       ],
       "clauses": [
         "SEC-7",
@@ -9802,7 +9999,7 @@
     },
     {
       "status": "carded",
-      "spec": null,
+      "spec": "d6f3a1b1",
       "deps": [
         "A06"
       ],
