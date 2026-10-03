@@ -14,7 +14,7 @@ True at every moment. 60 lines max. Last rewritten: 3 Oct 2026 17:35Z by the Lea
 | Card | State | Next action |
 |---|---|---|
 | Train 3 | A04C (40169142, 18:00Z) | board each PASS; request at 6 cards or by 19:00Z |
-| B04 | spec reported (A454 rename) | Opus spec review (local, from 18:00Z); build held `wait:` until it passes and W00c lands |
+| B04 | spec review GAPS 9 (A507): second spec patch reopened | build after the patch and W00c; Opus check |
 | W00c | round 3 check FAIL on items 1 to 5 only: split to W00d (A501) | fresh check working (cloud-f09ae7, from 17:36Z); board on PASS |
 | SC10 | findings review 1 done (A502): Lead plan commit on main; round 2 spec patch P1 to P8, no build | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check on the landing form |
 | SC6 | spec review GAPS (A503): second spec patch G1 to G8 plus grammar coverage | spec reopened 17:35Z (Opus); after it reports, mark the build reported by hand; Opus check |
