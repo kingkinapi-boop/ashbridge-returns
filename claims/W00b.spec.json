@@ -1,10 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-843548",
- "state": "released",
- "at": "2026-10-04T00:38:34.568Z",
- "mode": "turbo",
- "note": "wait: deps W00c and FX8 not landed (Lead hold)",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "worker": "cloud-ae80c1",
+ "state": "working",
+ "at": "2026-10-04T02:44:45.892Z",
+ "mode": "turbo"
 }
