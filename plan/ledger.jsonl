@@ -743,3 +743,6 @@
 {"ts":"2026-10-04T03:09:50.968Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-04T03:30:31.069Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-04T03:52:43.911Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"A08 survivors plan without disables","allowed":true}
+{"ts":"2026-10-04T03:58:45.382Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T03:58:46.010Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T03:58:46.635Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}

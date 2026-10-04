@@ -72,3 +72,6 @@ From SC10's findings review 1 and SC6's spec review (3 Oct, Opus; both reports s
 ## Also (A535, SC6 parked, 4 Oct)
 - R78 joins SC7 (from SC6, branch claude/SC6 at 7355b03, tools/test/spec-rules.test.mjs). Its reader: split only shell strings at &&, ||, ; and | (never argv arrays or quoted format strings); strip shell quotes anywhere in a word; skip git's global options and their values (-C dir, -c key=value, --git-dir) before the subcommand; an init call is a real call, never a regex `.exec` with or without a space; the file itself never imports exec or execSync (SEC-10: use spawnSync with an argv array). Plants: the five forms in reports/SC6-check.md round 4, each failing on 7355b03.
 - Rule (from the same check): a reader that splits text splits only text of the class that has those separators, and every dropped segment has a planted near-miss.
+
+## Also (A551, A08 findings review 3, 4 Oct)
+- Rule: no range disable and no `next-line all` disable in the files of a card tagged security; plant: src/modules/ai/project/index.ts:327 at a6d12735 (a `next-line all` that hid the inbox sort). KNOWN today: src/modules/ai/runner/engines.ts:163 (a file-range BlockStatement disable on a catch; owner FX18 or SC12) and src/core/log.ts:40 to 44 (three disables in the SEC-4 redaction; owner named at SC7's spec).

@@ -22,7 +22,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | SC11 | round 4 build reported (unit 809, pg16 green, flake 5 of 5) | check; Opus read; security review; board; a fourth failure parks it |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
-| A08 | the A548 edits were refused as security test removal (A550): withdrawn | local Opus findings review 3 (from 03:53Z): each survivor killed by a spec test or a behaviour-keeping rewrite, no disables; then spec, build |
+| A08 | findings review 3 (A551): 18 survivors to spec tests, 9 to behaviour-keeping rewrites, no disables | spec S0 to S14 reopened; Lead reopens build B1 to B9; mutate --force to 100; Opus check; security review |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | FX18 | round 3 check FAIL on one item, its third: re-carded smaller (A549), the item to SC12 | check reopened on the reduced scope; board on PASS |
