@@ -1,10 +1,10 @@
 {
  "card": "FX18",
  "role": "spec",
- "note": "round 2: 9 new tests, 20 fail on tip for their B item; caveats in reports/FX18-spec.md",
+ "note": "A546: round 3, the last: S10 to S12 at the top of the card",
  "worker": "cloud-3fa261",
- "state": "reported",
- "at": "2026-10-04T00:52:47.991Z",
+ "state": "reopened",
+ "at": "2026-10-04T02:16:42.110Z",
  "mode": "turbo",
  "commit": "6e1bff63",
  "validated": "48fbf42c"
