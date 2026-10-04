@@ -1,12 +1,9 @@
 {
  "card": "FX7",
  "role": "spec",
- "note": "A520 patch: 94 tests in 6 files; Opus spec review next",
- "worker": "cloud-aae833",
- "state": "reported",
- "at": "2026-10-03T20:56:13.696Z",
- "mode": "turbo",
- "beat": "2026-10-03T20:55:50.676Z",
- "commit": "6af02364",
- "validated": "b151c592"
+ "note": "toolchain refit",
+ "worker": "cloud-24d389",
+ "state": "working",
+ "at": "2026-10-04T00:28:38.141Z",
+ "mode": "turbo"
 }
