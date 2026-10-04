@@ -19,7 +19,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 | SC6 | parked (A535): R77, R81, R78 moved to SC7 | none |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
-| SC11 | round 3 check FAIL (db-budget; endPool ended on timeout; teardown bounds): third failure (A539) | local Opus findings review (from 00:39Z): re-card smaller or park; then SC3 round 3 (A517) |
+| SC11 | re-carded smaller (A540): round 4, the last: spec S13 to S20 reopened, build held `wait:`; rest to SC11b (deps SC11) | spec; Lead reopens build; check; Opus read; security review; board; a fourth failure parks it |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
 | A08 | round 2 spec reported (360 tests; 26 survivors ruled, A539) | local Opus spec review 2 (from 00:39Z); then build B1 to B6, Opus check, fresh security review |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
