@@ -2,11 +2,9 @@
  "card": "A08",
  "role": "spec",
  "note": "A541: spec review 2 GAPS 8; gaps at the top of the card",
- "worker": "cloud-3fa261",
- "state": "reopened",
- "at": "2026-10-04T00:51:28.471Z",
- "mode": "turbo",
- "beat": "2026-10-03T23:08:07.200Z",
- "commit": "f58dc034",
- "validated": "0d631db4"
+ "reopenedFrom": "f58dc034",
+ "worker": "cloud-80dec5",
+ "state": "working",
+ "at": "2026-10-04T00:55:43.851Z",
+ "mode": "turbo"
 }
