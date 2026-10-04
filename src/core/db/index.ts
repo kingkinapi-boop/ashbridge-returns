@@ -115,8 +115,12 @@ function quoteIdent(name: string): string {
 
 // SC11 (R116, R117): every connection this file opens has an error listener that records, and a pool is ended only
 // by endPool, which waits for every connection the pool ever opened to close.
-const POOL_END_BOUND_MS = 5000
+/** SC11 S18: endPool's own bound, inside close's endPool step so its message (with the count still open) comes first. */
+export const POOL_END_BOUND_MS = 4500
 const DROP_BOUND_MS = 5000
+const CLOSE_END_STEP_MS = 5000
+/** SC11 S17: the time a nested or outer step keeps back, so the inner step's names are reported before the outer bound fires. */
+export const DEADLINE_MARGIN_MS = 250
 /** SC11 S4: the bound of one cleanup step that names no bound of its own. */
 export const STEP_BOUND_MS = 3000
 /** SC11 S11: the bound of each step of PgDb.close, in order. With the assert step they stay inside 0.8 of the db hookTimeout. */
@@ -124,9 +128,16 @@ export const CLOSE_BOUNDS_MS = {
   inspectIdle: STEP_BOUND_MS,
   dropOwnedRoles: STEP_BOUND_MS,
   mainEnd: STEP_BOUND_MS,
-  endPool: POOL_END_BOUND_MS,
+  endPool: CLOSE_END_STEP_MS,
   drop: DROP_BOUND_MS,
 }
+/** The sum of the close steps: the deadline inside close, and (with the margin) the bound closeClones gives one close. */
+export const CLOSE_TOTAL_MS = Object.values(CLOSE_BOUNDS_MS).reduce((a, b) => a + b, 0)
+export const CLOSE_STEP_MS = CLOSE_TOTAL_MS + DEADLINE_MARGIN_MS
+/** SC11 S18: the teardown steps in run order. With two margins they stay inside 0.8 of vitest's default 10 s teardownTimeout. */
+export const TEARDOWN_BOUNDS_MS = { roleCheck: 2000, list: 1500, drop: 3500 }
+/** The bound of dropRunDatabases inside the teardown: its list and drop bounds plus the margin. */
+export const DROP_RUN_STEP_MS = TEARDOWN_BOUNDS_MS.list + TEARDOWN_BOUNDS_MS.drop + DEADLINE_MARGIN_MS
 // Errors that arrive when no live handle can take them (after their pool ended): named by the next assertCleanClones.
 const lateErrors: string[] = []
 // Errors on a live connection whose creator named no owner (openPool without a sink): named "no owner" by assertCleanClones.
@@ -151,31 +162,51 @@ interface SettleStep {
   boundMs?: number
 }
 
+/** Runs one step against its bound; rejects naming the bound when it is still running (the step is left behind). */
+async function runBounded(run: () => unknown, boundMs: number): Promise<unknown> {
+  let timer: NodeJS.Timeout | undefined
+  try {
+    return await Promise.race([
+      new Promise<unknown>((resolve) => {
+        resolve(run())
+      }),
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error(`did not finish within ${String(boundMs)} ms`))
+        }, boundMs)
+      }),
+    ])
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 /**
  * SC11 S4 (RC1): runs the steps one after another, each after the earlier ones settled, failed or hung. A step still running
- * at its bound (its own, else opts.boundMs, else STEP_BOUND_MS) is named and left behind. Rejects naming every failure in
- * order, a primary error first and as the cause; resolves when no step failed and no primary was given.
+ * at its bound (its own, else opts.boundMs, else STEP_BOUND_MS) is named and left behind. With opts.deadlineMs (a duration from
+ * the call) each bound is also at most the time left minus DEADLINE_MARGIN_MS, and a step with no time left is named "not reached"
+ * and never runs (S17). Rejects naming every failure in order, a primary error first and as the cause; resolves when no step
+ * failed and no primary was given.
  */
-export async function settleAll(label: string, steps: SettleStep[], opts: { primary?: unknown; boundMs?: number } = {}): Promise<void> {
+export async function settleAll(
+  label: string,
+  steps: SettleStep[],
+  opts: { primary?: unknown; boundMs?: number; deadlineMs?: number } = {},
+): Promise<void> {
   const failures: { name: string; text: string; error: unknown }[] = []
+  const started = Date.now()
   for (const step of steps) {
-    const bound = step.boundMs ?? opts.boundMs ?? STEP_BOUND_MS
-    let timer: NodeJS.Timeout | undefined
+    const own = step.boundMs ?? opts.boundMs ?? STEP_BOUND_MS
+    const bound = opts.deadlineMs === undefined ? own : Math.min(own, opts.deadlineMs - (Date.now() - started) - DEADLINE_MARGIN_MS)
+    if (bound <= 0) {
+      const text = `not reached: the deadline of ${String(opts.deadlineMs)} ms is used up`
+      failures.push({ name: step.name, text, error: new Error(text) })
+      continue
+    }
     try {
-      await Promise.race([
-        new Promise<unknown>((resolve) => {
-          resolve(step.run())
-        }),
-        new Promise<never>((_resolve, reject) => {
-          timer = setTimeout(() => {
-            reject(new Error(`did not finish within ${String(bound)} ms`))
-          }, bound)
-        }),
-      ])
+      await runBounded(step.run, bound)
     } catch (e) {
       failures.push({ name: step.name, text: errorText(e), error: e })
-    } finally {
-      clearTimeout(timer)
     }
   }
   const primary = opts.primary
@@ -244,9 +275,16 @@ export function openPool(config: pg.PoolConfig, sink?: { label: string; problems
   return pool
 }
 
+/** SC11 B15: the owner calls this once its own end work (the database drop) is done: from then on an error on the pool is late. */
+export function markPoolEnded(pool: pg.Pool): void {
+  const tracker = trackers.get(pool)
+  if (tracker !== undefined) tracker.ended = true
+}
+
 /**
  * R117: ends a pool made by openPool and resolves only when every connection it ever opened has ended; fails, naming the pool,
- * after 5 s. The pool owns an error until its end has resolved, not from the moment ending starts (RC2).
+ * after POOL_END_BOUND_MS. A pool whose end resolved is ended; one whose end timed out stays owned (its errors still go to its
+ * owner, or "no owner") until the owner calls markPoolEnded (RC-B2).
  */
 export async function endPool(pool: pg.Pool): Promise<void> {
   const tracker = trackers.get(pool)
@@ -259,20 +297,21 @@ export async function endPool(pool: pg.Pool): Promise<void> {
         run: () => pool.end().then(() => Promise.all([...tracker.open.values()])),
       },
     ])
-  } finally {
     tracker.ended = true
+  } catch (e) {
+    const open = tracker.open.size
+    throw new Error(`${messageOf(e)}\n${String(open)} connections of ${tracker.label} still open (checked out and never released?)`, { cause: e })
   }
 }
 
 const ADMIN_CONNECT_BOUND_MS = 3000
 
-/** One admin connection: connect (bounded), run, end; every error recorded on it, with its code, is attached on every exit. */
+/** One admin connection: connect (bounded), run, end; every error recorded on it, with its code, is attached; one after it returned is late. */
 export async function withAdmin<T>(url: string, run: (admin: pg.Client) => Promise<T>): Promise<T> {
   const admin = new pg.Client({ ...connOpts(url), connectionTimeoutMillis: ADMIN_CONNECT_BOUND_MS })
-  const errors: unknown[] = []
-  admin.on('error', (e: Error) => {
-    errors.push(e)
-  })
+  const errors: string[] = []
+  let returned = false
+  admin.on('error', recorderFor('admin', errors, () => returned))
   const outcome: { value?: T; failure?: Error } = {}
   try {
     await admin.connect()
@@ -286,9 +325,9 @@ export async function withAdmin<T>(url: string, run: (admin: pg.Client) => Promi
   } catch (e) {
     ending = e
   }
+  returned = true
   if (ending === undefined && errors.length === 0) return outcome.value as T
-  const lines = errors.map((e) => errorLine('admin', e))
-  throw new Error([ending === undefined ? 'admin connection error:' : messageOf(ending), ...lines].join('\n'), { cause: ending ?? errors[0] })
+  throw new Error([ending === undefined ? 'admin connection error:' : messageOf(ending), ...errors].join('\n'), { cause: ending })
 }
 
 interface QueryResult<T> {
@@ -462,7 +501,6 @@ class PgDb {
       }
       throw e
     } finally {
-      state.ended = true
       // Nothing set in this transaction's connection may reach the next one: wipe it, or destroy it.
       let failure: Error | boolean = this.customSeen !== seenBefore
       try {
@@ -497,7 +535,7 @@ class PgDb {
         { name: `drop owned by ${rolname}`, run: () => (present.has(rolname) ? this.main.query(`drop owned by ${quoteIdent(rolname)}`) : undefined) },
         { name: `drop role ${rolname}`, run: () => (present.has(rolname) ? this.main.query(`drop role if exists ${quoteIdent(rolname)}`) : undefined) },
       ]),
-    ])
+    ], { deadlineMs: CLOSE_BOUNDS_MS.dropOwnedRoles - DEADLINE_MARGIN_MS })
   }
 
   async close(): Promise<void> {
@@ -530,12 +568,13 @@ class PgDb {
         },
         { name: 'endPool', boundMs: CLOSE_BOUNDS_MS.endPool, run: () => endPool(this.pool) },
         { name: 'drop', boundMs: CLOSE_BOUNDS_MS.drop, run: () => dropDatabase(this.adminUrl, this.name) },
-      ])
+      ], { deadlineMs: CLOSE_TOTAL_MS })
     } catch (e) {
       failure = e
     }
-    // Read last: an error that arrived while the steps ran belongs to this close, not to the next test.
+    // Read last: an error that arrived while the steps ran, the drop included, belongs to this close, not to the next test.
     this.mainEnded = true
+    markPoolEnded(this.pool)
     const lines = [...dirty, ...(failure === undefined ? [] : [messageOf(failure)]), ...this.problems]
     if (lines.length > 0) throw new Error(`database handle ${this.name} closed with problems:\n${lines.join('\n')}`)
   }
@@ -553,30 +592,51 @@ async function dropDatabase(adminUrl: string, name: string): Promise<void> {
   })
 }
 
-/** Drops every database this run made (the global setup's teardown); one that will not drop does not stop the others, and each is named. */
-export async function dropRunDatabases(url: string): Promise<void> {
-  const found: string[] = []
-  await settleAll('dropping the databases of this run', [
-    {
-      name: 'list',
-      run: () =>
-        withAdmin(url, async (admin) => {
-          const r = await admin.query<{ datname: string }>('select datname from pg_database where datname like $1', [
-            `${DB_PREFIX}${pg16RunId().replaceAll('_', '\\_')}\\_%`,
-          ])
-          found.push(...r.rows.map((x) => x.datname))
-        }),
-    },
-    {
-      name: 'drop',
-      boundMs: 7500,
-      run: () =>
-        settleAll(
-          'drop',
-          found.map((datname) => ({ name: `drop ${datname}`, boundMs: DROP_BOUND_MS, run: () => dropDatabase(url, datname) })),
-        ),
-    },
-  ])
+interface RunDatabasesIo {
+  list(url: string): Promise<string[]>
+  drop(url: string, name: string): Promise<void>
+}
+const realRunDatabasesIo: RunDatabasesIo = {
+  list: (url) =>
+    withAdmin(url, async (admin) => {
+      const r = await admin.query<{ datname: string }>('select datname from pg_database where datname like $1', [
+        `${DB_PREFIX}${pg16RunId().replaceAll('_', '\\_')}\\_%`,
+      ])
+      return r.rows.map((x) => x.datname)
+    }),
+  drop: dropDatabase,
+}
+
+/**
+ * Drops every database this run made (the global setup's teardown): lists them, then drops all at once, each with its own bound
+ * inside the drop step's; one that will not drop does not stop the others, and each one not dropped is named.
+ */
+export async function dropRunDatabases(url: string, io: RunDatabasesIo = realRunDatabasesIo): Promise<void> {
+  let found: string[] = []
+  await settleAll(
+    'dropping the databases of this run',
+    [
+      {
+        name: 'list',
+        boundMs: TEARDOWN_BOUNDS_MS.list,
+        run: async () => {
+          found = await io.list(url)
+        },
+      },
+      {
+        name: 'drop',
+        boundMs: TEARDOWN_BOUNDS_MS.drop,
+        run: async () => {
+          const results = await Promise.allSettled(
+            found.map((datname) => runBounded(() => io.drop(url, datname), TEARDOWN_BOUNDS_MS.drop - DEADLINE_MARGIN_MS)),
+          )
+          const failed = results.flatMap((r, n) => (r.status === 'rejected' ? [`drop ${found[n] ?? '?'}: ${errorText(r.reason)}`] : []))
+          if (failed.length > 0) throw new Error(`${String(failed.length)} of ${String(found.length)} databases not dropped:\n${failed.join('\n')}`)
+        },
+      },
+    ],
+    { deadlineMs: TEARDOWN_BOUNDS_MS.list + TEARDOWN_BOUNDS_MS.drop },
+  )
 }
 
 async function createPg16Template(url: string, schemaDir: string): Promise<DbTemplate> {
@@ -601,30 +661,45 @@ async function createPg16Template(url: string, schemaDir: string): Promise<DbTem
   // Failure or success, the pool ends, its recorded problems are read after it ended, and a broken template is dropped:
   // every step runs and every failure is named, the schema error first (RC1).
   let broken = schemaError !== undefined
-  await settleAll(
-    `template ${tplName}`,
-    [
-      {
-        name: 'endPool',
-        boundMs: CLOSE_BOUNDS_MS.endPool,
-        run: () =>
-          endPool(schemaPool).catch((e: unknown) => {
-            broken = true
-            throw e
-          }),
-      },
-      {
-        name: 'schemaProblems',
-        run: () => {
-          if (schemaProblems.length === 0) return
-          broken = true
-          throw new Error(`template database had connection problems:\n${schemaProblems.join('\n')}`)
+  let problemsSeen = 0
+  let templateFailure: Error | undefined
+  try {
+    await settleAll(
+      `template ${tplName}`,
+      [
+        {
+          name: 'endPool',
+          boundMs: CLOSE_BOUNDS_MS.endPool,
+          run: () =>
+            endPool(schemaPool).catch((e: unknown) => {
+              broken = true
+              throw e
+            }),
         },
-      },
-      { name: 'drop', boundMs: CLOSE_BOUNDS_MS.drop, run: () => (broken ? dropDatabase(url, tplName) : undefined) },
-    ],
-    { primary: schemaError },
-  )
+        {
+          name: 'schemaProblems',
+          run: () => {
+            problemsSeen = schemaProblems.length
+            if (problemsSeen === 0) return
+            broken = true
+            throw new Error(`template database had connection problems:\n${schemaProblems.join('\n')}`)
+          },
+        },
+        { name: 'drop', boundMs: CLOSE_BOUNDS_MS.drop, run: () => (broken ? dropDatabase(url, tplName) : undefined) },
+      ],
+      { primary: schemaError },
+    )
+  } catch (e) {
+    templateFailure = e instanceof Error ? e : new Error(String(e))
+  }
+  // The owner's end work is done: an error from here on is late. One that arrived during the drop (a kill of a live backend) is named now.
+  markPoolEnded(schemaPool)
+  if (schemaProblems.length > problemsSeen) {
+    const after = new Error(`template database had connection problems after its drop:\n${schemaProblems.slice(problemsSeen).join('\n')}`)
+    if (templateFailure === undefined) templateFailure = after
+    else templateFailure = new Error(`${messageOf(templateFailure)}\n${after.message}`, { cause: templateFailure })
+  }
+  if (templateFailure !== undefined) throw templateFailure
   return {
     clone: async () => {
       const name = freshDbName('db')

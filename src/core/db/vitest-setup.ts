@@ -6,7 +6,7 @@ import {
   assertCleanClones,
   closeClones,
   createTemplate,
-  CLOSE_BOUNDS_MS,
+  CLOSE_STEP_MS,
   hasActiveTemplate,
   setActiveTemplate,
   settleAll,
@@ -20,12 +20,12 @@ beforeAll(async () => {
 })
 
 // A clone left dirty fails the test that left it (R90); the clones close either way, and every failure is named (SC11 S4).
-// The step bounds add up to a worst case of 0.8 of the hookTimeout at most (S11).
+// The step bounds add up to a worst case of 0.8 of the hookTimeout at most (S11, S18).
 afterEach(async () => {
   try {
     await settleAll('afterEach', [
       { name: 'assertCleanClones', run: () => assertCleanClones(), boundMs: STEP_BOUND_MS },
-      { name: 'closeClones', run: () => closeClones(), boundMs: Object.values(CLOSE_BOUNDS_MS).reduce((a, b) => a + b, 0) },
+      { name: 'closeClones', run: () => closeClones(), boundMs: CLOSE_STEP_MS },
     ])
   } finally {
     setClock(systemClock)
