@@ -110,3 +110,5 @@ Throwaway `index.ts` with the full API and empty bodies (no core files): 90 of 1
 
 ## Toolchain refit (cloud-117624, 3 Oct)
 Old validated sha 0355e1e, new validated on main 6f3ce66 (main merged in; the only toolchain change was the new tools/test/reading-rules.test.mjs). No spec file changed. typecheck, lint: the only errors are in sim.acceptance.test.ts and __fixtures__/harness.ts, all from `../index` not existing yet (the build creates it). npm test unit: 114 files, 2599 tests pass; the one failing file is sim.acceptance.test.ts (module missing, the card's own fails-first). reading-rules and every other rule test are green.
+
+Refit 3 (4 Oct): old validated sha 6f3ce66, new validated on main 351f0846 (card-rules and source-read-rules changed). No spec file changed. Lint and typecheck errors only in sim.acceptance.test.ts and __fixtures__/harness.ts (the build creates ../index); tools/test 672 pass; unit 3448 pass, only sim.acceptance.test.ts fails (module missing).
