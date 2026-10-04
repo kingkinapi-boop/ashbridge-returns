@@ -4,9 +4,10 @@
  "round": 3,
  "spec": "6e1bff63",
  "worker": "cloud-1916ac",
- "state": "hold-findings",
- "at": "2026-10-04T01:48:13.441Z",
+ "state": "released",
+ "at": "2026-10-04T02:16:46.510Z",
  "mode": "turbo",
  "beat": "2026-10-04T01:15:53.668Z",
- "note": "FAIL: engines.ts:212 exempts every <id>.* name from the stranger cap, see reports/FX18-check.md"
+ "note": "wait: round 3 spec (A546) first; the Lead reopens the build after it",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
 }
