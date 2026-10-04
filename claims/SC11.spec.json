@@ -2,10 +2,9 @@
  "card": "SC11",
  "role": "spec",
  "note": "A540: round 4, the last: S13 to S20 at the top of the card",
- "worker": "cloud-24d389",
- "state": "reopened",
- "at": "2026-10-04T00:44:38.499Z",
- "mode": "turbo",
- "commit": "7e2f5034",
- "validated": "861ad88c08943f324e85508eb32fd4f6af01984a"
+ "reopenedFrom": "7e2f5034",
+ "worker": "cloud-c7a694",
+ "state": "working",
+ "at": "2026-10-04T00:49:14.134Z",
+ "mode": "turbo"
 }
