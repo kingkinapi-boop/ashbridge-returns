@@ -719,3 +719,6 @@
 {"ts":"2026-10-04T00:13:18.035Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
 {"ts":"2026-10-04T00:17:04.608Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-04T00:17:05.097Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T00:22:46.037Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T00:39:22.252Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC11 round 3 findings review","allowed":true}
+{"ts":"2026-10-04T00:39:30.842Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"A08 round 2 spec review","allowed":true}

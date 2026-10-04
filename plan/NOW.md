@@ -19,9 +19,9 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 | SC6 | parked (A535): R77, R81, R78 moved to SC7 | none |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
-| SC11 | round 3 build reported (unit 114, pg16 752, flake 10 of 10) | check working (cloud-086697); Opus read; security review; board; then SC3 round 3 (A517) |
+| SC11 | round 3 check FAIL (db-budget; endPool ended on timeout; teardown bounds): third failure (A539) | local Opus findings review (from 00:39Z): re-card smaller or park; then SC3 round 3 (A517) |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
-| A08 | findings review 1 done (A529): round 2 spec S0 to S5 (S0 a cloud survivor map), then build B1 to B6 | spec reopened; build after it; Opus check; fresh security review |
+| A08 | round 2 spec reported (360 tests; 26 survivors ruled, A539) | local Opus spec review 2 (from 00:39Z); then build B1 to B6, Opus check, fresh security review |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | FX18 | spec review 2 GAPS 6 (A537): spec reopened; runner.acceptance.test.ts joins Paths | spec (cloud); build held `wait:`; then build, cloud mutate --force, Opus read, security review |
@@ -31,7 +31,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 
 ## Next, in order
 
-1. Poll claims and runs; board each PASS; land train 4 if green.
+1. Poll claims and runs; board each PASS onto train 5.
 2. After each no-build spec patch reports (SC10, SC6, SC3): `claim.mjs update <card> build reported --worker lead` so the Opus check opens.
 3. W00c lands: W00b, S00, JH0, B04, SC2, FX7, FX8, W00d; SK0, W01 to W13 (decide reference/cpa-check.md item 43's flags before W01's spec, A499), W20, I40.
 4. Before SC7's spec: name the card that marks GL1's 6 auth files (A502); add the "Spec owns:" lines to open cards (A528). SC10 landed: the push guard gains the card rules and schema contract rules files (A502) next.
