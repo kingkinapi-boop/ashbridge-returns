@@ -4,11 +4,8 @@
  "round": 3,
  "spec": "7e9890ba",
  "worker": "cloud-c37c7e",
- "state": "released",
- "at": "2026-10-04T02:48:56.290Z",
+ "state": "reopened",
+ "at": "2026-10-04T03:05:56.723Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "f0bc00467b8813c15590f2c3ab7a2cbf04448f5b"
- },
- "note": "mutation 96.08 on the round 3 build: 27 survivors, see reports/A08-build.md; needs findings review then spec patch"
+ "note": "A548: apply the A539 rulings to the 27 survivors in the build (rewrite or one reasoned next-line disable each); directive at the top of the card"
 }
