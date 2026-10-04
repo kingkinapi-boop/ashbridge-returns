@@ -1,11 +1,9 @@
 {
  "card": "S00",
  "role": "spec",
- "note": "refit 2: merged main, 3175 unit pass; only S00's own file fails on missing ../index",
- "worker": "cloud-7d7878",
- "state": "reported",
- "at": "2026-10-03T17:41:46.862Z",
- "mode": "turbo",
- "commit": "a15f3355577a85135320f205e4c856768e03ca92",
- "validated": "f73707b82c4b871f3ca94d47e2d15e91f04b6d74"
+ "note": "toolchain refit",
+ "worker": "cloud-3fa261",
+ "state": "working",
+ "at": "2026-10-04T00:18:43.946Z",
+ "mode": "turbo"
 }
