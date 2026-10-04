@@ -537,6 +537,8 @@ describe('AI-9 SEC-5 A498 a value of a fact E03 marks sensitive, or text after r
     const r = refusalOf(w, 'c01-marked-fact')
     expect(r.reason).toMatch(/AI-9/)
     expect(r.stage).toBe('input')
+    // A529 S3: the exact problems: the fact kind alone (the tail holds no SIN, date or bank shape)
+    expect(r.problems).toEqual(['a value of a fact marked sensitive'])
     expect(w.calls()).toEqual([])
     expect(JSON.stringify(r)).not.toContain('4821')
     expect(lines.join('\n')).not.toContain(TAIL)
@@ -557,13 +559,15 @@ describe('AI-9 SEC-5 A498 a value of a fact E03 marks sensitive, or text after r
     }],
     ['as an answer value', (inputs: Json) => { inputs['answers'] = [{ questionId: 'PY3.dob', answer: 'restricted-provided 4821' }] }],
     ['with no space before the digits', (inputs: Json) => { inputs['answers'] = [{ questionId: 'BQ7.sin', answer: 'restricted-provided4821' }] }],
-  ] as const)('AI-9 SEC-5 A498 text after restricted-provided %s is refused at stage input before any call', async (_label, plant) => {
+  ] as const)('AI-9 SEC-5 A498 text after restricted-provided %s is refused at stage input before any call', async (label, plant) => {
     const w = world([])
     writeJob(w.inbox, 'c01-marker.json', cleanJob('a08-marker', 'c01-marker', (j) => { plant(j['inputs'] as Json) }))
     const { lines } = await runOnce(w)
     const r = refusalOf(w, 'c01-marker')
     expect(r.reason).toMatch(/AI-9/)
     expect(r.stage).toBe('input')
+    // A529 S3: the exact problems; the answer row's question id PY3.dob also reads as a date-of-birth label
+    expect(r.problems).toEqual(label === 'as an answer value' ? ['a date of birth', 'text after the restricted-provided marker'] : ['text after the restricted-provided marker'])
     expect(w.calls()).toEqual([])
     expect(JSON.stringify(r)).not.toContain('4821')
     expect(lines.join('\n')).not.toMatch(/restricted-provided\s*4821/)
@@ -576,7 +580,14 @@ describe('AI-9 SEC-5 A498 a value of a fact E03 marks sensitive, or text after r
  * The only setting names the claude child may see (A509 gap 3): what a program needs to start on Windows or Linux,
  * the subscription's own token (gap 4) and the fresh config folder (gap 2). Compared without case (Windows' Path).
  */
-const CHILD_ENV_ALLOWLIST = ['PATH', 'HOME', 'USERPROFILE', 'APPDATA', 'SystemRoot', 'TEMP', 'TMP', 'TZ', 'LANG', 'CLAUDE_CODE_OAUTH_TOKEN', 'CLAUDE_CONFIG_DIR']
+const CHILD_ENV_BASE = ['PATH', 'HOME', 'USERPROFILE', 'APPDATA', 'SystemRoot', 'TEMP', 'TMP', 'TZ', 'LANG', 'CLAUDE_CODE_OAUTH_TOKEN', 'CLAUDE_CONFIG_DIR']
+/**
+ * A529 S5 (RC5a): on Windows, libuv adds these to every child's environment whatever the launcher passes (seen on Zo's
+ * laptop: the allowlist row failed there only). They are allowed on win32 only, so Linux still holds the launcher to
+ * the base list.
+ */
+const LIBUV_WINDOWS_NAMES = ['HOMEDRIVE', 'HOMEPATH', 'LOGONSERVER', 'SYSTEMDRIVE', 'USERDOMAIN', 'USERNAME', 'WINDIR']
+const CHILD_ENV_ALLOWLIST = [...CHILD_ENV_BASE, ...(onWin32 ? LIBUV_WINDOWS_NAMES : [])]
 const notAllowed = (names: readonly string[]): string[] => {
   const ok = new Set(CHILD_ENV_ALLOWLIST.map((n) => n.toUpperCase()))
   return names.filter((n) => !ok.has(n.toUpperCase()))
@@ -600,6 +611,12 @@ describe('ARC-22 SEC-10 A509 the claude child sees only allowlisted settings', S
     expect(call.envNames.map((n) => n.toUpperCase())).toContain('PATH')
     expect(notAllowed(call.envNames)).toEqual([])
     expect(lines.join('\n')).not.toContain('planted-a08-test')
+  })
+
+  test('ARC-22 A529 S5 the libuv Windows names are allowed on win32 only: on Linux the allowlist is the base list', () => {
+    expect(LIBUV_WINDOWS_NAMES).toHaveLength(7)
+    expect(notAllowed(LIBUV_WINDOWS_NAMES)).toEqual(onWin32 ? [] : LIBUV_WINDOWS_NAMES)
+    expect(notAllowed(CHILD_ENV_BASE)).toEqual([])
   })
 
   test('ARC-22 A509 rule: the allowlist check catches the pass-through launcher (spawn with env: process.env) and passes the allowlisted names', () => {
@@ -675,6 +692,32 @@ const SCAN_ROWS: readonly ScanRow[] = [
   ['the marker written with a U+2011 hyphen', (inputs) => { inputs['answers'] = [{ questionId: 'PY3.sin', answer: 'restricted‑provided 4821' }] }, ['4821']],
 ]
 
+/** A529 S3 (RC2): the exact problems list each scan row's refusal carries (the scan's kinds, pinned whole). */
+const K_SIN = 'a SIN'
+const K_BIRTH = 'a date of birth'
+const K_BANK = 'a bank account'
+const K_MARKER = 'text after the restricted-provided marker'
+const SCAN_KINDS: Readonly<Record<string, readonly string[]>> = Object.fromEntries<readonly string[]>([
+  ...SEPARATORS.map(([label]) => [`a SIN separated by ${label}`, [K_SIN]] as const),
+  ['a SIN in full-width digits (NFKC)', [K_SIN]],
+  ['a SIN in spaced full-width digits', [K_SIN]],
+  ['a SIN as a JSON number nested three deep (ledger[0].memo)', [K_SIN]],
+  ['a DOB label', [K_BIRTH]],
+  ['a D.O.B. label', [K_BIRTH]],
+  ['a born label', [K_BIRTH]],
+  ['a birth date label', [K_BIRTH]],
+  ['a date de naissance label', [K_BIRTH]],
+  ['a dob key', [K_BIRTH]],
+  ['a birth_date key nested in a document', [K_BIRTH]],
+  ['a birthDate key nested in an owner object', [K_BIRTH]],
+  ['an accountNumber key', [K_BANK]],
+  ['a transitNumber key', [K_BANK]],
+  ['an institutionNumber key', [K_BANK]],
+  ['a bank account shape with spaces', [K_BANK]],
+  ['the marker written RESTRICTED-PROVIDED', [K_MARKER]],
+  ['the marker written with a U+2011 hyphen', [K_MARKER]],
+])
+
 /** No false alarm, one row per kind: values a correct scan leaves alone. */
 const CLEAN_ROWS: readonly (readonly [string, (inputs: Json) => void])[] = [
   [
@@ -701,15 +744,19 @@ describe('AI-9 SEC-5 A509 the sensitive-value scan reads Unicode, numbers, nesti
     expect(SEPARATORS.map(([, sep]) => sep).join('')).toBe('.   ‐‑‒–—―')
     expect(CLEAN_ROWS.length).toBe(4)
     expect(Number(SIN_DIGITS) + 1).not.toBe(Number(SIN_DIGITS))
+    // A529 S3: every row has its exact problems list, and no list is left over
+    expect(Object.keys(SCAN_KINDS).sort()).toEqual(SCAN_ROWS.map(([label]) => label).sort())
   })
 
-  test.each(SCAN_ROWS)('AI-9 SEC-5 A509 %s is refused at stage input before any call, the value in no log line and no refusal', async (_label, plant, secrets) => {
+  test.each(SCAN_ROWS)('AI-9 SEC-5 A509 %s is refused at stage input before any call, the value in no log line and no refusal', async (label, plant, secrets) => {
     const w = world([])
     writeJob(w.inbox, 'c01-scan.json', cleanJob('a08-scan', 'c01-scan', (j) => { plant(j['inputs'] as Json) }))
     const { lines } = await runOnce(w)
     const r = refusalOf(w, 'c01-scan')
     expect(r.reason).toMatch(/AI-9/)
     expect(r.stage).toBe('input')
+    // A529 S3: the exact problems, not just "some"
+    expect(r.problems).toEqual(SCAN_KINDS[label])
     expect(w.calls()).toEqual([])
     const told = `${JSON.stringify(r)}\n${lines.join('\n')}`
     for (const secret of secrets) expect(told).not.toContain(secret)
@@ -728,6 +775,7 @@ describe('AI-9 SEC-5 A509 the sensitive-value scan reads Unicode, numbers, nesti
     const r = refusalOf(w, 'c01-scan-escaped')
     expect(r.reason).toMatch(/AI-9/)
     expect(r.stage).toBe('input')
+    expect(r.problems).toEqual([K_SIN])
     expect(w.calls()).toEqual([])
     expect(`${JSON.stringify(r)}\n${lines.join('\n')}`).not.toContain(SIN_DIGITS)
   })

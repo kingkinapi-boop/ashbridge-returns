@@ -162,10 +162,9 @@ const refusalOf = (w: World, stem: string): { reason: string; problems: string[]
 }
 const golden = (file: Json): string => JSON.stringify(canonical(file), null, 2) + '\n'
 const stampOf = (j: Json, modelId?: string): Json => stampFromJob(j, modelId)
-const isInside = (child: string, parent: string): boolean => {
-  const rel = path.relative(fs.realpathSync(parent), fs.realpathSync(child))
-  return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel))
-}
+/** A529 S5 (RC5d): on real paths, the folder itself or a path under it; a sibling named `..x` is inside, `<parent>-x` is not. */
+const insideReal = (child: string, parent: string): boolean => child === parent || child.startsWith(parent + path.sep)
+const isInside = (child: string, parent: string): boolean => insideReal(fs.realpathSync(child), fs.realpathSync(parent))
 /** The prompt texts a call received: every argument except the system prompt's value, and stdin. */
 function promptTexts(call: FakeCall): string[] {
   const out: string[] = []
@@ -266,19 +265,23 @@ describe('ARC-22 AI-1 one run answers the inbox once and stops', SLOW, () => {
     const w = world()
     const repoWatched = ['ai-project', path.join('src', 'modules', 'ai'), 'data']
     const repoBefore = repoWatched.map((d) => hashTree(path.join(REPO_ROOT, d)))
-    const topBefore = fs.readdirSync(REPO_ROOT).sort()
+    // A529 S5 (RC5b): only the top-level names the launcher could make are compared (other tools, Stryker's own
+    // files among them, may add names at the repo top while the suite runs)
+    const launcherMade = (): string[] => fs.readdirSync(REPO_ROOT).filter((n) => /^(?:inbox|outbox|job-.*|\.tmp-.*|\.ai-once\.lock)$/.test(n)).sort()
+    const topBefore = launcherMade()
+    expect(topBefore).toEqual([])
     const inboxBefore = hashTree(w.inbox)
     const fakeBefore = listTree(w.fakeDir)
     await runOnce(w)
     expect(repoWatched.map((d) => hashTree(path.join(REPO_ROOT, d)))).toEqual(repoBefore)
-    expect(fs.readdirSync(REPO_ROOT).sort()).toEqual(topBefore)
+    expect(launcherMade()).toEqual(topBefore)
     expect(hashTree(w.inbox)).toEqual(inboxBefore)
     // the fake's own folder gains only its call log
     expect(listTree(w.fakeDir)).toEqual([...fakeBefore, 'fake-claude.calls.jsonl'].sort())
     expect(listTree(w.root).filter((f) => !f.startsWith('exchange/') && !f.startsWith('fake/'))).toEqual(['approved.json'])
     const jobFolders = w.calls().map((c) => path.relative(w.exchange, c.cwd).split(path.sep).join('/'))
+    for (const c of w.calls()) expect(isInside(c.cwd, w.exchange) && fs.realpathSync(c.cwd) !== fs.realpathSync(w.exchange), c.cwd).toBe(true)
     for (const f of jobFolders) {
-      expect(f.startsWith('..') || path.isAbsolute(f) || f === '', f).toBe(false)
       expect(f === 'inbox' || f === 'outbox' || f.startsWith('inbox/') || f.startsWith('outbox/'), f).toBe(false)
     }
     const stray = listTree(w.exchange).filter(
@@ -965,6 +968,19 @@ describe("AI-8 the project's settings allow Read only", () => {
   })
 })
 
+describe('AI-8 A529 S5 the inside test of these tests: real paths and a path separator, not a ".." prefix', () => {
+  test('AI-8 A529 rule: a folder named ..x under the parent is inside, a sibling <parent>-x and the parent of the parent are not', () => {
+    const parent = path.resolve(os.tmpdir(), 'a08-parent-test')
+    expect(insideReal(parent, parent)).toBe(true)
+    expect(insideReal(path.join(parent, '..x'), parent)).toBe(true)
+    expect(insideReal(path.join(parent, 'a', 'b'), parent)).toBe(true)
+    expect(insideReal(`${parent}-x`, parent)).toBe(false)
+    expect(insideReal(path.dirname(parent), parent)).toBe(false)
+    // the ".." prefix form this replaces gets ..x wrong
+    expect(path.relative(parent, path.join(parent, '..x')).startsWith('..')).toBe(true)
+  })
+})
+
 describe('AI-8 the call: the project settings, the orders, the job folder, no permission skipping', SLOW, () => {
   test("AI-8 the fake's recorded arguments show the project's settings file, the orders as the system prompt, print mode, JSON output, the job's model and no permission-skipping flag", async () => {
     const w = world(['c01-clean'])
@@ -1044,8 +1060,7 @@ describe('AI-8 A509 the call loads no user, repo or parent-folder config', SLOW,
       expect(call.configDirFiles, `${dir} does not exist when the CLI starts`).not.toBeNull()
       expect(call.configDirFiles, `${dir} is not empty`).toEqual([])
       expect(isInside(dir, REPO_ROOT), dir).toBe(false)
-      const rel = path.relative(userConfig, dir)
-      expect(rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel)), `${dir} is the user config`).toBe(false)
+      expect(insideReal(path.resolve(dir), path.resolve(userConfig)), `${dir} is the user config`).toBe(false)
       expect(isInside(dir, call.cwd), `${dir} is inside the job folder the model reads`).toBe(false)
     }
   })

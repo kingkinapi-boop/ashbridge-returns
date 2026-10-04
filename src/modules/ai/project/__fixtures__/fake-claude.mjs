@@ -28,6 +28,18 @@
 //   test can see the launcher's timeout stop it.
 //   `arrive`: when `match` occurs, the fake writes `text` to `file` (if absent) before answering, so a test can
 //   add an inbox job while a run is in progress.
+//   `remove` ({ match, file }; round 2, A529 S0): when `match` occurs, the fake deletes `file` (if there) before
+//   answering, so a test can take away a file the launcher made (its run lock) while the run is in progress.
+// Round 2 controls (A529 fix list S1, S2; on the rule, else at the top, except `exitBeforeStdin` and `ignoreTerm`,
+//   which act before any rule can be matched and so are read from the top only):
+//   `exitBeforeStdin`: the fake logs the call (stdin "") and exits at once with `exitCode` (default 0), never
+//   reading stdin, so a launcher writing a big prompt meets a closed pipe (EPIPE).
+//   `ignoreTerm`: the fake ignores SIGTERM, so only a SIGKILL stops it.
+//   `stdoutBytes`: stdout is exactly this many bytes: the envelope (or the text), then spaces, then one newline
+//   (JSON allows the trailing spaces). Smaller than the envelope: the envelope alone.
+//   `hangAfterMs`: after printing, the fake waits this long before it exits.
+//   `writeConfigDir`: before answering, the fake writes `settings.json` and `projects/session.jsonl` into
+//   CLAUDE_CONFIG_DIR, as the real CLI does, so a test can see whether the next call starts with it empty.
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -119,6 +131,16 @@ function listEntries(dir, base = dir, out = []) {
   return out
 }
 
+if (control.ignoreTerm === true) process.on('SIGTERM', () => undefined)
+
+if (control.exitBeforeStdin === true) {
+  fs.appendFileSync(
+    path.join(here, 'fake-claude.calls.jsonl'),
+    JSON.stringify({ argv, stdin: '', cwd: process.cwd(), envNames: Object.keys(process.env).sort(), systemPrompt: null, settingsText: null, cwdFiles: {}, pid: process.pid, configDir: process.env.CLAUDE_CONFIG_DIR ?? null, configDirFiles: null }) + '\n',
+  )
+  process.exit(typeof control.exitCode === 'number' ? control.exitCode : 0)
+}
+
 const stdin = await readStdin()
 const promptFile = flagValue('--system-prompt-file')
 const systemPrompt = promptFile !== undefined ? textOf(promptFile) : (flagValue('--system-prompt') ?? null)
@@ -147,6 +169,7 @@ const haystack = [...argv, stdin].join('\n')
 if (control.arrive && haystack.includes(control.arrive.match) && !fs.existsSync(control.arrive.file)) {
   fs.writeFileSync(control.arrive.file, control.arrive.text)
 }
+if (control.remove && haystack.includes(control.remove.match)) fs.rmSync(control.remove.file, { force: true })
 const rule = (control.rules ?? []).find((r) => haystack.includes(r.match))
 const result = rule ? rule.result : control.defaultResult
 const model = rule && 'model' in rule ? rule.model : (flagValue('--model') ?? 'claude-default (Test)')
@@ -158,6 +181,23 @@ const subtype = typeof pick('subtype') === 'string' ? pick('subtype') : 'success
 const emptyStdout = pick('emptyStdout') === true
 const stderr = pick('stderr')
 const exitCode = typeof pick('exitCode') === 'number' ? pick('exitCode') : 0
+const stdoutBytes = pick('stdoutBytes')
+const hangAfterMs = pick('hangAfterMs')
+
+if (pick('writeConfigDir') === true && process.env.CLAUDE_CONFIG_DIR !== undefined) {
+  const dir = process.env.CLAUDE_CONFIG_DIR
+  fs.mkdirSync(path.join(dir, 'projects'), { recursive: true })
+  fs.writeFileSync(path.join(dir, 'settings.json'), '{"planted": "by the fake (Test)"}\n')
+  fs.writeFileSync(path.join(dir, 'projects', 'session.jsonl'), '{"planted": "session (Test)"}\n')
+}
+
+/** Writes the text, padded to exactly `stdoutBytes` bytes when that is asked for. */
+function print(text) {
+  const bytes = Buffer.byteLength(text, 'utf8')
+  if (typeof stdoutBytes === 'number' && stdoutBytes > bytes) {
+    process.stdout.write(text + ' '.repeat(stdoutBytes - bytes - 1) + '\n')
+  } else process.stdout.write(text + (typeof stdoutBytes === 'number' ? '' : '\n'))
+}
 
 if (!emptyStdout) {
   if (flagValue('--output-format') === 'json') {
@@ -171,10 +211,11 @@ if (!emptyStdout) {
     }
     if (rule && rule.modelUsage) envelope.modelUsage = rule.modelUsage
     else if (model !== null) envelope.modelUsage = { [model]: { inputTokens: 10, outputTokens: 10 } }
-    process.stdout.write(JSON.stringify(envelope) + '\n')
+    print(JSON.stringify(envelope))
   } else {
-    process.stdout.write(result + '\n')
+    print(result)
   }
 }
 if (typeof stderr === 'string') process.stderr.write(stderr + '\n')
+if (typeof hangAfterMs === 'number' && hangAfterMs > 0) await new Promise((r) => setTimeout(r, hangAfterMs))
 process.exitCode = exitCode

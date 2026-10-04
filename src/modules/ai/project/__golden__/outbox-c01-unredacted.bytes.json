@@ -1,0 +1,8 @@
+{
+  "jobId": "c01-unredacted",
+  "refusal": {
+    "reason": "inputs not redacted (AI-9)",
+    "problems": [],
+    "stage": "input"
+  }
+}

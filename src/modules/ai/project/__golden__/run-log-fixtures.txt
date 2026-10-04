@@ -1,0 +1,20 @@
+ai:once: orders version <orders version>
+ai:once job c01-answer-no-model: models reported: 
+ai:once job c01-answer-no-model: refused at run: the Claude CLI reported no model id (the approved model id is "claude-opus-5-5")
+ai:once job c01-answer-not-json: models reported: "claude-opus-5-5"
+ai:once job c01-answer-not-json: refused at output: the answer is not one JSON value (AI-1)
+ai:once job c01-answer-other-model: models reported: "claude-other-model-test"
+ai:once job c01-answer-other-model: refused at run: the approved model id "claude-opus-5-5" did not answer: the CLI reported model id "claude-other-model-test"
+ai:once job c01-answer-schema: models reported: "claude-opus-5-5"
+ai:once job c01-answer-schema: refused at output: the answer does not fit the step's schema (AI-1)
+ai:once job c01-bank: refused at input: the inputs still hold a sensitive value (AI-9, SEC-5)
+ai:once job c01-clean: models reported: "claude-opus-5-5"
+ai:once job c01-clean: answered
+ai:once job c01-dob: refused at input: the inputs still hold a sensitive value (AI-9, SEC-5)
+ai:once job c01-injected: models reported: "claude-opus-5-5"
+ai:once job c01-injected: answered
+ai:once job c01-not-test: refused at input: this is not a made-up return: isTest must be true until go-live (SEC-11)
+ai:once job c01-planted-sin: refused at input: the inputs still hold a sensitive value (AI-9, SEC-5)
+ai:once job c01-unapproved: refused at input: the step type, prompt version and model id are not approved (ARC-22)
+ai:once job c01-unredacted: refused at input: inputs not redacted (AI-9)
+ai:once job dotdot-escape: refused at input: the job id inside the file does not match the file name (SEC-10)

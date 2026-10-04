@@ -90,13 +90,19 @@ export interface FakeFailure {
   emptyStdout?: boolean
   /** Written to stderr. */
   stderr?: string
+  /** Round 2 (A529 S2): stdout is exactly this many bytes (the envelope, spaces, one newline). */
+  stdoutBytes?: number
+  /** Round 2 (A529 S2): after printing, the fake waits this long before it exits. */
+  hangAfterMs?: number
+  /** Round 2 (A529 S1): the fake writes files into CLAUDE_CONFIG_DIR before answering, as the real CLI does. */
+  writeConfigDir?: boolean
 }
 export interface FakeRule extends FakeFailure {
   match: string
   result: string
   model?: string | null
   /** The exact modelUsage object to print (several models); wins over `model`. */
-  modelUsage?: Record<string, { inputTokens: number; outputTokens: number }>
+  modelUsage?: Record<string, { inputTokens: number; outputTokens?: number | string }>
   /** The fake waits this long (after logging the call) before answering. */
   hangMs?: number
 }
@@ -105,6 +111,12 @@ export interface FakeControl extends FakeFailure {
   defaultResult: string
   hangMs?: number
   arrive?: { match: string; file: string; text: string }
+  /** Round 2 (A529 S0): when `match` occurs, the fake deletes `file` (if there) before answering. */
+  remove?: { match: string; file: string }
+  /** Round 2 (A529 S2): the fake logs the call and exits at once, never reading stdin (top level only). */
+  exitBeforeStdin?: boolean
+  /** Round 2 (A529 S2): the fake ignores SIGTERM (top level only). */
+  ignoreTerm?: boolean
 }
 
 /** The answers the fixture inbox gets: matched on each job's `variant` marker. */
