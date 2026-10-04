@@ -272,6 +272,26 @@ describe('ARC-22 L4 the listing is read in bounded batches and closed', () => {
   })
 })
 
+describe('ARC-22 L4 an entry that vanishes between the listing and the look is not logged', () => {
+  test('ARC-22 a stranger whose lstat fails is never named in the log', async () => {
+    fs.mkdirSync(path.join(exchange, 'outbox'), { recursive: true })
+    fs.writeFileSync(path.join(exchange, 'outbox', 'vanishing-test.txt'), 'x')
+    const real = fs.lstatSync.bind(fs)
+    vi.spyOn(fs, 'lstatSync').mockImplementation(((p: fs.PathLike, ...rest: unknown[]) => {
+      if (String(p).endsWith('vanishing-test.txt')) throw new Error(`gone ${String(p)}`)
+      return (real as (...a: unknown[]) => unknown)(p, ...rest)
+    }) as typeof fs.lstatSync)
+    const { lines, sink } = collectLines()
+    const ctx: EngineContext = { jobId: JOB_ID, recordingsDir: tmp.dir, exchangeDir: exchange, pollMs: 5, sink, waiting: new Map<string, number>(), seen: new Set<string>(), now, deadline: new Date(T0 + 60_000) }
+    const pending = aiEngines.project.run(job('good'), ctx)
+    await vi.advanceTimersByTimeAsync(20)
+    clockMs = T0 + 60_000
+    await vi.advanceTimersByTimeAsync(10)
+    expect(await pending).toMatchObject({ ok: false })
+    expect(lines.filter((l) => l.includes('vanishing'))).toEqual([])
+  })
+})
+
 describe('ARC-22 L3 the folders are looked at again before the rename, and nothing is written when one is not real', () => {
   /** After the staging file is written, runs `change` once (the exchange folder as another process might alter it). */
   function afterStaging(change: () => void): void {

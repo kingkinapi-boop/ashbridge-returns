@@ -73,6 +73,7 @@ function logOnce(
   if (seen.has(key)) return
   if (!exempt && seen.size >= EXCHANGE_LIMITS.seenMax) {
     const more = `ai exchange: more than ${String(EXCHANGE_LIMITS.seenMax)} ${what} ignored; the rest are not logged by name (ARC-22)`
+    // Stryker disable next-line ArrayDeclaration: the key only has to differ from the two-element keys of lines, whatever the array holds
     const moreKey = JSON.stringify([more])
     if (seen.has(moreKey)) return
     seen.add(moreKey)
@@ -196,8 +197,9 @@ const isWaitedJsonFile = (ctx: EngineContext, name: string): boolean => name.end
 export function attempt<T>(fn: () => T): T | undefined {
   try {
     return fn()
-    // Stryker disable next-line BlockStatement: an emptied catch falls through to the same implicit undefined
-  } catch {
+  }
+  // Stryker disable next-line BlockStatement: an emptied catch falls through to the same implicit undefined
+  catch {
     return undefined
   }
 }
