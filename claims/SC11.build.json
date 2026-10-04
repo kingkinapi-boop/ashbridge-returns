@@ -4,9 +4,9 @@
  "round": 3,
  "spec": "7e2f5034",
  "worker": "cloud-fbb2e3",
- "state": "reported",
- "at": "2026-10-03T23:45:06.463Z",
+ "state": "hold-findings",
+ "at": "2026-10-04T00:20:09.369Z",
  "mode": "turbo",
  "beat": "2026-10-03T23:44:52.436Z",
- "note": "round 3: B3 to B13, unit 114, db pg16 752 pass, flake 10 of 10"
+ "note": "FAIL: db-budget (6 multi-world spec tests) and Opus read (endPool marks ended on timeout; teardown bounds), see reports/SC11-check.md"
 }
