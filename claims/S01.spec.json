@@ -1,12 +1,8 @@
 {
  "card": "S01",
  "role": "spec",
- "worker": "cloud-3d81d3",
- "state": "reopened",
- "at": "2026-10-03T13:51:45.470Z",
- "mode": "turbo",
- "beat": "2026-10-02T05:48:50.592Z",
- "note": "62 tests",
- "commit": "b6a188e",
- "validated": "422e04e"
+ "worker": "cloud-24d389",
+ "state": "working",
+ "at": "2026-10-04T00:17:28.396Z",
+ "mode": "turbo"
 }
