@@ -4,10 +4,9 @@
  "round": 3,
  "spec": "6e1bff63",
  "worker": "cloud-1916ac",
- "state": "released",
- "at": "2026-10-04T02:16:46.510Z",
+ "state": "reopened",
+ "at": "2026-10-04T03:05:28.241Z",
  "mode": "turbo",
  "beat": "2026-10-04T01:15:53.668Z",
- "note": "wait: round 3 spec (A546) first; the Lead reopens the build after it",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
+ "note": "A546 round 3 spec reported: build B9 to B12, then mutate --force"
 }
