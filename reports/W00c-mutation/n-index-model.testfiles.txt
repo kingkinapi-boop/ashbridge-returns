@@ -1,0 +1,5 @@
+testworld/model/links.acceptance.test.ts
+testworld/model/ranges.acceptance.test.ts
+testworld/model/marker-pins.acceptance.test.ts
+testworld/model/money.acceptance.test.ts
+testworld/model/kinds-faults.acceptance.test.ts

@@ -1,0 +1,55 @@
+[32m03:32:40 (3214) INFO ProjectReader[39m No incremental result file found at reports/W00c-mutation/n-kinds-incr.json, a full mutation testing run will be performed.
+[32m03:32:40 (3214) INFO ProjectReader[39m Found 1 of 1512 file(s) to be mutated.
+[32m03:32:40 (3214) INFO Instrumenter[39m Instrumented 1 source file(s) with 50 mutant(s)
+[32m03:32:41 (3214) INFO ConcurrencyTokenProvider[39m Creating 4 test runner process(es).
+[32m03:32:42 (3214) INFO BroadcastReporter[39m Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter
+[32m03:32:42 (3214) INFO DryRunExecutor[39m Starting initial test run (vitest test runner with "perTest" coverage analysis). This may take a while.
+[32m03:32:43 (3214) INFO DryRunExecutor[39m Initial test run succeeded. Ran 28 tests in 0 seconds (net 143.84219099999984 ms, overhead 715.1578090000002 ms).
+[33m03:32:43 (3214) WARN MutantTestPlanner[39m Detected 27 static mutants (54% of total) that are estimated to take 94% of the time running the tests!
+  You might want to enable "ignoreStatic" to ignore these static mutants for your next run. 
+  For more information about static mutants visit: https://stryker-mutator.io/docs/mutation-testing-elements/static-mutants
+  (disable "warnings.slow" to ignore this warning)
+
+All tests
+  kinds-faults.acceptance.test.ts
+    ✓ W00 kinds register (card check 6) END-9 listKinds returns K01 to K13 in order with the starting sample clients blueprint 00 names (killed 9)
+    ✓ W00 kinds register (card check 6) END-9 a kind is "built" only when its folder exists, otherwise "not built" (killed 1)
+    ✓ W00 kinds register (card check 6) END-9 asking for a kind that is not built fails with "not built", never skips or returns a stub (killed 3)
+    ✓ W00 kinds register (card check 6) END-9 an id outside K01 to K13 is refused, naming the id (killed 1)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C01 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C02 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C03 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C04 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C05 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C06 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C07 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C08 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C09 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C10 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C11 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C12 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C13 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C14 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 every flag in the C15 answer key is in the fault catalogue with a non-empty expected result (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 the catalogue names no flag a sample client does not have, and every entry has an owner and a unique id (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 the catalogue holds the roll waivers by client, account and month: exactly C10 CHQ 2025-03 and 2025-05 (covered 0)
+    ✘ W00 fault catalogue (card check 7) ARC-8 the catalogue is hand-written: testworld/model/faults.ts never reads the answer keys or the loader (covered 0)
+  kinds.test.ts
+    ✓ listKinds END-9 lists the thirteen kinds in order with the blueprint start points (killed 21)
+    ✓ listKinds END-9 a kind is built exactly when its own folder testworld/kinds/<id> exists (killed 3)
+    ✓ loadKind END-9 a built kind loads with its entry and its folder (killed 8)
+    ~ loadKind END-9 loading one built kind does not pick another kind (covered 20)
+    ✓ loadKind END-9 a kind with no folder throws "not built" with its id and folder text (killed 2)
+    ✓ loadKind END-9 an id outside K01 to K13 throws naming the id (killed 2)
+
+Ran 1.84 tests per mutant on average.
+----------|------------------|----------|-----------|------------|----------|----------|
+          | % Mutation score |          |           |            |          |          |
+File      |  total | covered | # killed | # timeout | # survived | # no cov | # errors |
+----------|--------|---------|----------|-----------|------------|----------|----------|
+All files | 100.00 |  100.00 |       50 |         0 |          0 |        0 |        0 |
+ kinds.ts | 100.00 |  100.00 |       50 |         0 |          0 |        0 |        0 |
+----------|--------|---------|----------|-----------|------------|----------|----------|
+[32m03:32:47 (3214) INFO JsonReporter[39m Your report can be found at: file:///home/user/ashbridge-returns/reports/W00c-mutation/n-kinds.json
+[32m03:32:47 (3214) INFO MutationTestReportHelper[39m Final mutation score of 100.00 is greater than or equal to break threshold 70
+[32m03:32:47 (3214) INFO MutationTestExecutor[39m Done in 6 seconds.

@@ -1,0 +1,33 @@
+[32m03:38:39 (6010) INFO ProjectReader[39m No incremental result file found at reports/W00c-mutation/n-generate-incr.json, a full mutation testing run will be performed.
+[32m03:38:39 (6010) INFO ProjectReader[39m Found 1 of 1528 file(s) to be mutated.
+[32m03:38:39 (6010) INFO Instrumenter[39m Instrumented 1 source file(s) with 50 mutant(s)
+[32m03:38:40 (6010) INFO ConcurrencyTokenProvider[39m Creating 4 test runner process(es).
+[32m03:38:40 (6010) INFO BroadcastReporter[39m Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter
+[32m03:38:41 (6010) INFO DryRunExecutor[39m Starting initial test run (vitest test runner with "perTest" coverage analysis). This may take a while.
+[32m03:38:44 (6010) INFO DryRunExecutor[39m Initial test run succeeded. Ran 9 tests in 3 seconds (net 2477.7618589999997 ms, overhead 611.2381410000003 ms).
+Mutation testing 97% (elapsed: <1m, remaining: n/a) 45/46 tested (0 survived, 0 timed out)
+
+All tests
+  clients/regenerate.acceptance.test.ts
+    ✓ W00 regeneration (card check 8) ARC-16 a clean checkout regenerates byte-identical and the sample folder is not written to (killed 1)
+    ~ W00 regeneration (card check 8) ARC-16 one byte changed in one sample file is reported by name (covered 41)
+    ~ W00 regeneration (card check 8) ARC-16 a changed Taxprep import file is reported by name too (make-csv output) (covered 41)
+  model/generate.test.ts
+    ✓ checkRegeneration ARC-16 identical output is reported identical; ignored names are not compared; the temp folder is removed (killed 29)
+    ✓ checkRegeneration ARC-16 changed, stale and missing files are listed, sorted, relative to the root (killed 13)
+    ✓ checkRegeneration ARC-16 the list is sorted even when the missing file sorts before the stale one (killed 1)
+    ✓ checkRegeneration ARC-16 a backslash in a name is written as a slash in the list (killed 1)
+    ~ checkRegeneration ARC-16 an explicit root is compared instead of the sample folder (covered 41)
+    ~ checkRegeneration ARC-16 a failing generator rejects and still removes the temp folder (covered 17)
+
+Ran 1.28 tests per mutant on average.
+-------------|------------------|----------|-----------|------------|----------|----------|
+             | % Mutation score |          |           |            |          |          |
+File         |  total | covered | # killed | # timeout | # survived | # no cov | # errors |
+-------------|--------|---------|----------|-----------|------------|----------|----------|
+All files    | 100.00 |  100.00 |       45 |         1 |          0 |        0 |        0 |
+ generate.ts | 100.00 |  100.00 |       45 |         1 |          0 |        0 |        0 |
+-------------|--------|---------|----------|-----------|------------|----------|----------|
+[32m03:39:04 (6010) INFO JsonReporter[39m Your report can be found at: file:///home/user/ashbridge-returns/reports/W00c-mutation/n-generate.json
+[32m03:39:04 (6010) INFO MutationTestReportHelper[39m Final mutation score of 100.00 is greater than or equal to break threshold 70
+[32m03:39:04 (6010) INFO MutationTestExecutor[39m Done in 25 seconds.

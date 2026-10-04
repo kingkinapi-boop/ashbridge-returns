@@ -1,0 +1,8 @@
+src/contracts/blank-rule.acceptance.test.ts
+src/contracts/checks.acceptance.test.ts
+src/contracts/checks.test.ts
+testworld/clients/checks-rolls.test.ts
+testworld/clients/model-issues.acceptance.test.ts
+testworld/clients/w00c-checks.test.ts
+testworld/clients/w00c-survivors.test.ts
+testworld/model/checks.test.ts

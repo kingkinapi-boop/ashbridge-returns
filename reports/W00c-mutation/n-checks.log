@@ -1,0 +1,1100 @@
+[32m03:37:00 (4679) INFO ProjectReader[39m No incremental result file found at reports/W00c-mutation/n-checks-incr.json, a full mutation testing run will be performed.
+[32m03:37:00 (4679) INFO ProjectReader[39m Found 1 of 1520 file(s) to be mutated.
+[32m03:37:00 (4679) INFO Instrumenter[39m Instrumented 1 source file(s) with 702 mutant(s)
+[32m03:37:00 (4679) INFO ConcurrencyTokenProvider[39m Creating 4 test runner process(es).
+[32m03:37:01 (4679) INFO BroadcastReporter[39m Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter
+[32m03:37:02 (4679) INFO DryRunExecutor[39m Starting initial test run (vitest test runner with "perTest" coverage analysis). This may take a while.
+[32m03:37:04 (4679) INFO DryRunExecutor[39m Initial test run succeeded. Ran 109 tests in 1 second (net 553.6128979999996 ms, overhead 1202.3871020000004 ms).
+Mutation testing 10% (elapsed: <1m, remaining: ~1m) 87/695 tested (18 survived, 0 timed out)
+Mutation testing 36% (elapsed: <1m, remaining: <1m) 216/695 tested (21 survived, 0 timed out)
+Mutation testing 45% (elapsed: <1m, remaining: <1m) 264/695 tested (47 survived, 0 timed out)
+Mutation testing 59% (elapsed: <1m, remaining: <1m) 337/695 tested (58 survived, 1 timed out)
+Mutation testing 77% (elapsed: <1m, remaining: <1m) 427/695 tested (60 survived, 1 timed out)
+Mutation testing 92% (elapsed: ~1m, remaining: <1m) 581/695 tested (63 survived, 1 timed out)
+
+All tests
+  clients
+    checks-rolls.test.ts
+      ✓ ARC-8 W00a month sequences a clean year has no issue (killed 48)
+      ✓ ARC-8 W00a month sequences a month listed twice in a row says so once (killed 7)
+      ✓ ARC-8 W00a month sequences months out of order are named (killed 2)
+      ✓ ARC-8 W00a month sequences a missing month names the month (killed 4)
+      ✓ ARC-8 W00a month sequences a month after the year is outside the fiscal year (killed 3)
+      ~ ARC-8 W00a month sequences the year runs across a new year (Nov to Feb) (covered 301)
+      ✓ ARC-8 W00a month sequences a closing that is not the next opening names the month that opens wrong, with both figures (killed 5)
+      ✓ ARC-8 W00a month sequences the first opening and the last closing must be the account balances (killed 8)
+      ✓ ARC-8 W00a month sequences a transaction dated in no month of its account is named (killed 6)
+      ✓ ARC-8 W00a month sequences an account with transactions and no months says there is nothing to roll (killed 2)
+      ✓ ARC-8 W00a both rolls a card subtracts the month (killed 4)
+      ✓ ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month (killed 4)
+      ✓ ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement (killed 64)
+      ~ ARC-8 W00a both rolls a waived duplicate month explains its gap exactly (covered 479)
+      ✓ ARC-8 W00a both rolls a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows (killed 7)
+      ✓ ARC-8 W00a both rolls a waived missing month explains its gap exactly, and only the missing rows count (killed 9)
+      ✓ ARC-8 W00a both rolls missing rows that do not make up the gap do not explain it (killed 2)
+      ✓ ARC-8 W00a both rolls an unlisted export gap says what the export gives (killed 4)
+      ✓ ARC-8 W00a both rolls a waiver on a month that rolls, or on a month the client lacks, is refused (killed 10)
+      ~ ARC-8 W00a both rolls another client's waiver does not apply (covered 323)
+      ✓ ARC-8 W00a markers a marker with no entry is named with the row and the field (killed 3)
+      ✓ ARC-8 W00a markers a marker entry with no flag does not cover the marker and is named (killed 7)
+      ~ ARC-8 W00a markers a covered marker passes (covered 428)
+      ~ ARC-8 W00a markers another client's marker entry does not cover (covered 351)
+      ✓ ARC-8 W00a markers a marker entry that no row carries is named (killed 3)
+      ✓ ARC-8 W00a markers a roll entry that is also a marker entry is refused (killed 4)
+      ✓ ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month (killed 1)
+      ✓ ARC-8 W00a markers a row outside every month that is not priorYear is refused even when a priorYear marker covers its month (killed 4)
+    model-issues.acceptance.test.ts
+      ✓ ARC-8 R35 modelIssues: a planted fault is named, and an empty input says nothing to check ARC-8 planted adjusting entry whose debits and credits differ by one cent is named by modelIssues (killed 3)
+      ✓ ARC-8 R35 modelIssues: a planted fault is named, and an empty input says nothing to check ARC-8 modelIssues([]) returns a "nothing to check" issue and does not throw (SC R35 calls it this way) (killed 4)
+    w00c-checks.test.ts
+      ✓ ARC-8 W00c repeats and inherited names a clean client has no issue (killed 8)
+      ✓ ARC-8 W00c repeats and inherited names two accounts with one key are named once (killed 10)
+      ✓ ARC-8 W00c repeats and inherited names an account keyed toString is refused, naming the key (killed 3)
+      ~ ARC-8 W00c repeats and inherited names an account keyed __proto__ is refused, naming the key (covered 174)
+      ~ ARC-8 W00c repeats and inherited names an account keyed constructor is refused, naming the key (covered 174)
+      ~ ARC-8 W00c repeats and inherited names an account keyed hasOwnProperty is refused, naming the key (covered 174)
+      ~ ARC-8 W00c repeats and inherited names an ordinary account key is not an Object.prototype name (covered 213)
+      ✓ ARC-8 W00c repeats and inherited names two transactions with one id are named (killed 10)
+      ✓ ARC-8 W00c repeats and inherited names two adjusting entries with one id are named (killed 4)
+      ✓ ARC-8 W00c repeats and inherited names two flags with one id are named (killed 3)
+      ✓ ARC-8 W00c repeats and inherited names TB-3 two rows of one account in one trial balance are named with the trial balance (killed 3)
+      ~ ARC-8 W00c repeats and inherited names TB-3 a trial-balance line is tied out against the sum of its rows for the account (covered 302)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount a good pair passes (killed 33)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount a duplicate of nothing is named with its dangling original (killed 7)
+      ~ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an empty dupOf names no transaction (covered 460)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount a duplicate of itself is named (killed 2)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named (killed 2)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount a duplicate differing from its original in account is named (killed 6)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount a duplicate differing from its original in date is named (killed 1)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount a duplicate differing from its original in amount is named (killed 1)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount a second duplicate of one original is named with the original and the first duplicate (killed 5)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 the listed rows must be the marked rows, each with its own date, cents and original (killed 8)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 a marked row the entry does not list is named with its id and the field (killed 5)
+      ✓ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 a marker entry with no rows listed is refused (killed 2)
+      ~ ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 rows of another account are not the entry's to list (covered 488)
+      ✓ ARC-8 W00c a priorYear row is dated before the fiscal year starts the day before the year starts passes (killed 14)
+      ✓ ARC-8 W00c a priorYear row is dated before the fiscal year starts the first day of the year is refused, naming the row and the date (killed 5)
+      ~ ARC-8 W00c a priorYear row is dated before the fiscal year starts a later day of the year is refused (covered 420)
+      ✓ ARC-8 W00c every account is checked when its month list is empty an account with no months and no rows has each month of the year named (killed 3)
+      ✓ ARC-8 W00c every account is checked when its month list is empty an account with rows and no months is named for both (killed 2)
+      ✓ ARC-8 W00c every account is checked when its month list is empty the first month must open at the account opening and the last close at its closing, and months are matched on the YYYY-MM slice (killed 3)
+      ✓ ARC-8 W00c every account is checked when its month list is empty a row dated on the last day of a month belongs to that month only (killed 1)
+    w00c-survivors.test.ts
+      ✓ ARC-8 W00c an account file that is the folder above is refused as leading out a link to the parent folder is "leads out", not "not a regular file" (killed 81)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "prior_year_closing_balances(1200 Prepaid expenses)" resolves (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "prior_year_closing_balances   (1200 Prepaid expenses)" resolves (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "prior_year_closing_balances (1200 Prepaid expenses) " resolves (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "prior_year_closing_balances (1200 Prepaid expenses)	" resolves (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "first line\nprior_year_closing_balances (1200 Prepaid expenses)" is refused (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "prior_year_closing_balances (1200 Prepaid expenses) and more" is refused (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "prior_year_closing_balances (X1200 Prepaid expenses)" is refused (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "prior_year_closing_balances (1200 Prepaid expenses\nmore)" is refused (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source "prior_year_closing_balances (1200 Prepaid expenses) (1200 Prepaid expenses)x" is refused (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source a qualifier on a key whose value is null is refused, not a crash (covered 352)
+      ~ ARC-8 W00c the exact shape of a "(...)" qualifier on an onboarding source a qualifier on a key whose value is plain text, a number or a boolean is refused (covered 352)
+      ✓ ARC-8 W00c the statement roll leaves a duplicate and a priorYear row out a clean duplicate pair with its waiver and marker gives no issue at all, roll included (killed 21)
+      ✓ ARC-8 W00c the statement roll leaves a duplicate and a priorYear row out a priorYear row dated inside a listed month is not on that month's statement (killed 3)
+      ✓ ARC-8 W00c a priorYear row is excused from "in no month" only when it is before the year and its month is marked a row dated after the year ends, in a marked month, is still in no month (killed 1)
+      ✓ ARC-8 W00c a priorYear row is excused from "in no month" only when it is before the year and its month is marked a row dated on the first day of the year, in a month the account lacks, is still in no month (killed 1)
+      ~ ARC-8 W00c a priorYear row is excused from "in no month" only when it is before the year and its month is marked a row dated the day before the year, in a marked month, is excused (covered 399)
+      ✓ ARC-8 W00c a repeated transaction id never lets a later row stand in for the first original a duplicate that matches the first row of a repeated id is not called a mismatch (killed 1)
+      ✘ ARC-8 W00c a calendar date is the whole text, nothing before or after "x2025-03-05" is not a date (covered 0)
+      ✘ ARC-8 W00c a calendar date is the whole text, nothing before or after "2025-03-05x" is not a date (covered 0)
+      ✘ ARC-8 W00c a calendar date is the whole text, nothing before or after " 2025-03-05" is not a date (covered 0)
+      ✘ ARC-8 W00c a calendar date is the whole text, nothing before or after "2025-03-05\n" is not a date (covered 0)
+      ✘ ARC-8 W00c a calendar date is the whole text, nothing before or after "12025-03-05" is not a date (covered 0)
+      ✘ ARC-8 W00c a calendar date is the whole text, nothing before or after a plain date is one (covered 0)
+  model/checks.test.ts
+    ✓ model checks a clean client has no issues (killed 34)
+    ✓ model checks adjusting entries an entry with no lines is refused (killed 11)
+    ✓ model checks adjusting entries an unbalanced entry names both totals, and the adjusted balance follows the entry (killed 13)
+    ✓ model checks adjusting entries a blank reason is refused, a real one passes (killed 5)
+    ✓ model checks adjusting entries an entry with no source is refused (killed 3)
+    ~ model checks adjusting entries a balanced entry with a reason and a source passes (covered 318)
+    ✓ model checks trial balances an unbalanced opening trial balance is refused, with the line it leaves out (killed 7)
+    ~ model checks trial balances an unbalanced unadjusted trial balance is refused, the adjusted one is not touched (covered 298)
+    ~ model checks trial balances an unbalanced adjusted trial balance is refused, with a credit line shown negative (covered 298)
+    ~ model checks trial balances lines the books do not have are refused (covered 296)
+    ~ model checks trial balances adjusting entries are counted in the adjusted tie-out only (covered 318)
+    ✓ model checks roll a waived month that rolls is refused (killed 3)
+    ✓ model checks roll a waiver for an account or a month the client does not have is refused (killed 2)
+    ✓ model checks roll an account with transactions but no statement balances is refused (killed 1)
+    ✓ model checks transactions a transaction with a blank account name is refused (killed 6)
+    ✓ model checks transactions a transaction on an undeclared account is refused (killed 3)
+    ✓ model checks GIFI codes a line with no code that is not marked confirm is refused (killed 8)
+    ✓ model checks GIFI codes a line with no code marked confirm passes (killed 2)
+    ✓ model checks GIFI codes a code that is not exactly four digits is refused (killed 5)
+    ~ model checks GIFI codes trial balance rows are checked as well (covered 295)
+    ✓ model checks flags and the fault catalogue a flag in the answer key and the catalogue passes (killed 9)
+    ✓ model checks flags and the fault catalogue a flag the catalogue does not list is refused (killed 5)
+    ✓ model checks flags and the fault catalogue a catalogue flag the answer key does not have is refused; a roll-only entry is not a flag (killed 4)
+
+[NoCoverage] BlockStatement
+testworld/model/checks.ts:37:32
+-     if (c.accounts.length === 0) {
+-       if (!noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
+-       else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
+-     }
++     if (c.accounts.length === 0) {}
+
+[NoCoverage] BooleanLiteral
+testworld/model/checks.ts:38:9
+-       if (!noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
++       if (noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
+
+[NoCoverage] ConditionalExpression
+testworld/model/checks.ts:38:9
+-       if (!noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
++       if (true) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
+
+[NoCoverage] ConditionalExpression
+testworld/model/checks.ts:38:9
+-       if (!noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
++       if (false) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:38:26
+-       if (!noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
++       if (!noAccounts) add("", 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:38:36
+-       if (!noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
++       if (!noAccounts) add('schema', "", 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:38:48
+-       if (!noAccounts) add('schema', 'accounts', 'the client has no accounts and the fault catalogue does not declare that (empty: accounts)')
++       if (!noAccounts) add('schema', 'accounts', "")
+
+[NoCoverage] ConditionalExpression
+testworld/model/checks.ts:39:14
+-       else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
++       else if (true) add('schema', 'accounts', 'the client has no accounts but has transactions')
+
+[NoCoverage] ConditionalExpression
+testworld/model/checks.ts:39:14
+-       else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
++       else if (false) add('schema', 'accounts', 'the client has no accounts but has transactions')
+
+[NoCoverage] EqualityOperator
+testworld/model/checks.ts:39:14
+-       else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
++       else if (c.transactions.length >= 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
+
+[NoCoverage] EqualityOperator
+testworld/model/checks.ts:39:14
+-       else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
++       else if (c.transactions.length <= 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:39:45
+-       else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
++       else if (c.transactions.length > 0) add("", 'accounts', 'the client has no accounts but has transactions')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:39:55
+-       else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
++       else if (c.transactions.length > 0) add('schema', "", 'the client has no accounts but has transactions')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:39:67
+-       else if (c.transactions.length > 0) add('schema', 'accounts', 'the client has no accounts but has transactions')
++       else if (c.transactions.length > 0) add('schema', 'accounts', "")
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:41:34
+-     if (c.owners.length === 0) add('schema', 'owners', 'the client has no owners')
++     if (c.owners.length === 0) add("", 'owners', 'the client has no owners')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:41:44
+-     if (c.owners.length === 0) add('schema', 'owners', 'the client has no owners')
++     if (c.owners.length === 0) add('schema', "", 'the client has no owners')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:41:54
+-     if (c.owners.length === 0) add('schema', 'owners', 'the client has no owners')
++     if (c.owners.length === 0) add('schema', 'owners', "")
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:43:53
+-       if (c.trialBalance[name].rows.length === 0) add('trial-balance', name, 'the trial balance has no rows, so nothing is tied out')
++       if (c.trialBalance[name].rows.length === 0) add("", name, 'the trial balance has no rows, so nothing is tied out')
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:43:76
+-       if (c.trialBalance[name].rows.length === 0) add('trial-balance', name, 'the trial balance has no rows, so nothing is tied out')
++       if (c.trialBalance[name].rows.length === 0) add('trial-balance', name, "")
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:140:32
+-     if (yearStart > yearEnd) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
++     if (yearStart > yearEnd) add("", 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:140:42
+-     if (yearStart > yearEnd) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
++     if (yearStart > yearEnd) add('schema', "", `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:140:56
+-     if (yearStart > yearEnd) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
++     if (yearStart > yearEnd) add('schema', 'fiscalYear', ``)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:141:79
+-     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
++     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add("", 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:141:89
+-     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
++     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', "", `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:141:103
+-     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
++     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', ``)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:150:33
+-       if (j.date < yearStart) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
++       if (j.date < yearStart) add("", j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:150:58
+-       if (j.date < yearStart) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
++       if (j.date < yearStart) add('adjusting-entry', j.id, ``)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:151:36
+-       else if (j.date > yearEnd) add('adjusting-entry', j.id, `it is dated ${j.date}, after the fiscal year ends on ${yearEnd}`)
++       else if (j.date > yearEnd) add("", j.id, `it is dated ${j.date}, after the fiscal year ends on ${yearEnd}`)
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:151:61
+-       else if (j.date > yearEnd) add('adjusting-entry', j.id, `it is dated ${j.date}, after the fiscal year ends on ${yearEnd}`)
++       else if (j.date > yearEnd) add('adjusting-entry', j.id, ``)
+
+[NoCoverage] ArrayDeclaration
+testworld/model/checks.ts:174:144
+-     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
++     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? ["Stryker was here"]).map((r) => r.id)))
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:276:15
+-               ? 'the fault catalogue lists it more than once'
++               ? ""
+
+[NoCoverage] StringLiteral
+testworld/model/checks.ts:278:17
+-                 ? `it is not in the account ${account}`
++                 ? ``
+
+[Survived] StringLiteral
+testworld/model/checks.ts:26:48
+-     if (!('corporation' in c)) return [{ client: 'C00', check: 'schema', record: 'client', reason: 'nothing to check: no client was given' }]
++     if (!('corporation' in c)) return [{ client: "", check: 'schema', record: 'client', reason: 'nothing to check: no client was given' }]
+Tests ran:
+    ARC-8 R35 modelIssues: a planted fault is named, and an empty input says nothing to check ARC-8 modelIssues([]) returns a "nothing to check" issue and does not throw (SC R35 calls it this way)
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:26:62
+-     if (!('corporation' in c)) return [{ client: 'C00', check: 'schema', record: 'client', reason: 'nothing to check: no client was given' }]
++     if (!('corporation' in c)) return [{ client: 'C00', check: "", record: 'client', reason: 'nothing to check: no client was given' }]
+Tests ran:
+    ARC-8 R35 modelIssues: a planted fault is named, and an empty input says nothing to check ARC-8 modelIssues([]) returns a "nothing to check" issue and does not throw (SC R35 calls it this way)
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:26:80
+-     if (!('corporation' in c)) return [{ client: 'C00', check: 'schema', record: 'client', reason: 'nothing to check: no client was given' }]
++     if (!('corporation' in c)) return [{ client: 'C00', check: 'schema', record: "", reason: 'nothing to check: no client was given' }]
+Tests ran:
+    ARC-8 R35 modelIssues: a planted fault is named, and an empty input says nothing to check ARC-8 modelIssues([]) returns a "nothing to check" issue and does not throw (SC R35 calls it this way)
+
+
+[Survived] CallExpression
+testworld/model/checks.ts:33:3
+-     yearIssues(c, add)
++     ;
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] MethodExpression
+testworld/model/checks.ts:36:22
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.every(f => f.client === c.id && f.empty === 'accounts')
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ArrowFunction
+testworld/model/checks.ts:36:37
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some(() => undefined)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:36:44
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some((f) => true)
+Tests ran:
+    ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+  and 52 more tests!
+
+
+[Survived] LogicalOperator
+testworld/model/checks.ts:36:44
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some((f) => f.client === c.id || f.empty === 'accounts')
+Tests ran:
+    ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+  and 52 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:36:44
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some((f) => false)
+Tests ran:
+    ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+  and 52 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:36:44
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some((f) => true && f.empty === 'accounts')
+Tests ran:
+    ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+  and 52 more tests!
+
+
+[Survived] EqualityOperator
+testworld/model/checks.ts:36:44
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some((f) => f.client !== c.id && f.empty === 'accounts')
+Tests ran:
+    ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+  and 52 more tests!
+
+
+[Survived] EqualityOperator
+testworld/model/checks.ts:36:65
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty !== 'accounts')
+Tests ran:
+    ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+  and 49 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:36:65
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some((f) => f.client === c.id && true)
+Tests ran:
+    ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+  and 49 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:36:77
+-     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === 'accounts')
++     const noAccounts = catalogue.some((f) => f.client === c.id && f.empty === "")
+Tests ran:
+    ARC-8 W00a both rolls a statement that does not roll names both figures even when a waiver lists the month
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+  and 49 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:37:7
+-     if (c.accounts.length === 0) {
++     if (false) {
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:41:7
+-     if (c.owners.length === 0) add('schema', 'owners', 'the client has no owners')
++     if (false) add('schema', 'owners', 'the client has no owners')
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] BlockStatement
+testworld/model/checks.ts:42:59
+-     for (const name of ['unadjusted', 'adjusted'] as const) {
+-       if (c.trialBalance[name].rows.length === 0) add('trial-balance', name, 'the trial balance has no rows, so nothing is tied out')
+-     }
++     for (const name of ['unadjusted', 'adjusted'] as const) {}
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:43:9
+-       if (c.trialBalance[name].rows.length === 0) add('trial-balance', name, 'the trial balance has no rows, so nothing is tied out')
++       if (false) add('trial-balance', name, 'the trial balance has no rows, so nothing is tied out')
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:129:53
+-   const dayNumber = (d: string): number => Date.parse(`${d}T00:00:00Z`) / 86_400_000
++   const dayNumber = (d: string): number => Date.parse(``) / 86_400_000
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] BlockStatement
+testworld/model/checks.ts:132:59
+-   function monthsBefore(date: string, back: number): string {
+-     const i = Number(date.slice(0, 4)) * 12 + Number(date.slice(5, 7)) - 1 - back
+-     return `${String(Math.floor(i / 12))}-${String((i % 12) + 1).padStart(2, '0')}-01`
+-   }
++   function monthsBefore(date: string, back: number): string {}
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ArithmeticOperator
+testworld/model/checks.ts:133:13
+-     const i = Number(date.slice(0, 4)) * 12 + Number(date.slice(5, 7)) - 1 - back
++     const i = Number(date.slice(0, 4)) * 12 + Number(date.slice(5, 7)) + 1 - back
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ArithmeticOperator
+testworld/model/checks.ts:133:13
+-     const i = Number(date.slice(0, 4)) * 12 + Number(date.slice(5, 7)) - 1 - back
++     const i = Number(date.slice(0, 4)) * 12 - Number(date.slice(5, 7)) - 1 - back
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ArithmeticOperator
+testworld/model/checks.ts:133:13
+-     const i = Number(date.slice(0, 4)) * 12 + Number(date.slice(5, 7)) - 1 - back
++     const i = Number(date.slice(0, 4)) / 12 + Number(date.slice(5, 7)) - 1 - back
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:134:10
+-     return `${String(Math.floor(i / 12))}-${String((i % 12) + 1).padStart(2, '0')}-01`
++     return ``
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ArithmeticOperator
+testworld/model/checks.ts:134:50
+-     return `${String(Math.floor(i / 12))}-${String((i % 12) + 1).padStart(2, '0')}-01`
++     return `${String(Math.floor(i / 12))}-${String(i % 12 - 1).padStart(2, '0')}-01`
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:134:76
+-     return `${String(Math.floor(i / 12))}-${String((i % 12) + 1).padStart(2, '0')}-01`
++     return `${String(Math.floor(i / 12))}-${String((i % 12) + 1).padStart(2, "")}-01`
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] BlockStatement
+testworld/model/checks.ts:138:48
+-   function yearIssues(c: Client, add: Add): void {
+-     const { yearStart, yearEnd } = c.corporation
+-     if (yearStart > yearEnd) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
+-     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
+-     const earliest = monthsBefore(yearStart, 12)
+-     for (const t of c.transactions) {
+-       if (t.priorYear === true) {
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+-       } else if (t.date < yearStart) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
+-       else if (t.date > yearEnd) add('schema', t.id, `it is dated ${t.date}, after the fiscal year ends on ${yearEnd}`)
+-     }
+-     for (const j of c.adjustingEntries) {
+-       if (j.date < yearStart) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
+-       else if (j.date > yearEnd) add('adjusting-entry', j.id, `it is dated ${j.date}, after the fiscal year ends on ${yearEnd}`)
+-     }
+-   }
++   function yearIssues(c: Client, add: Add): void {}
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:140:7
+-     if (yearStart > yearEnd) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
++     if (false) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] EqualityOperator
+testworld/model/checks.ts:140:7
+-     if (yearStart > yearEnd) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
++     if (yearStart >= yearEnd) add('schema', 'fiscalYear', `the fiscal year starts ${yearStart}, after it ends ${yearEnd}`)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:141:12
+-     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
++     else if (false) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] EqualityOperator
+testworld/model/checks.ts:141:12
+-     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
++     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 >= MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ArithmeticOperator
+testworld/model/checks.ts:141:12
+-     else if (dayNumber(yearEnd) - dayNumber(yearStart) + 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
++     else if (dayNumber(yearEnd) - dayNumber(yearStart) - 1 > MAX_YEAR_DAYS) add('schema', 'fiscalYear', `the fiscal year ${yearStart} to ${yearEnd} is longer than ${String(MAX_YEAR_DAYS)} days`)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] BlockStatement
+testworld/model/checks.ts:143:35
+-     for (const t of c.transactions) {
+-       if (t.priorYear === true) {
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+-       } else if (t.date < yearStart) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
+-       else if (t.date > yearEnd) add('schema', t.id, `it is dated ${t.date}, after the fiscal year ends on ${yearEnd}`)
+-     }
++     for (const t of c.transactions) {}
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 86 more tests!
+
+
+[Survived] BlockStatement
+testworld/model/checks.ts:144:31
+-       if (t.priorYear === true) {
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+-       } else if (t.date < yearStart) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
++       if (t.priorYear === true) {} else if (t.date < yearStart) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+  and 7 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:145:11
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
++         if (false) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+  and 7 more tests!
+
+
+[Survived] LogicalOperator
+testworld/model/checks.ts:145:11
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
++         if (t.date < earliest && t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+  and 7 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:145:11
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
++         if (false || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+  and 7 more tests!
+
+
+[Survived] EqualityOperator
+testworld/model/checks.ts:145:11
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
++         if (t.date <= earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+  and 7 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:145:32
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
++         if (t.date < earliest || false) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+  and 7 more tests!
+
+
+[Survived] EqualityOperator
+testworld/model/checks.ts:145:32
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
++         if (t.date < earliest || t.date > yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+  and 7 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:145:57
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
++         if (t.date < earliest || t.date >= yearStart) add("", t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+    ARC-8 W00c a priorYear row is dated before the fiscal year starts the first day of the year is refused, naming the row and the date
+    ARC-8 W00c a priorYear row is dated before the fiscal year starts a later day of the year is refused
+  and 3 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:145:73
+-         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, `it is a priorYear row dated ${t.date}, outside the 12 months before the fiscal year starts on ${yearStart}`)
++         if (t.date < earliest || t.date >= yearStart) add('schema', t.id, ``)
+Tests ran:
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount an original that carries a marker itself is named
+    ARC-8 W00c a priorYear row is dated before the fiscal year starts the first day of the year is refused, naming the row and the date
+    ARC-8 W00c a priorYear row is dated before the fiscal year starts a later day of the year is refused
+  and 3 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:146:40
+-       } else if (t.date < yearStart) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
++       } else if (t.date < yearStart) add("", t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a markers a row outside every month that is not priorYear is refused even when a priorYear marker covers its month
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:146:56
+-       } else if (t.date < yearStart) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
++       } else if (t.date < yearStart) add('schema', t.id, ``)
+Tests ran:
+    ARC-8 W00a markers a row outside every month that is not priorYear is refused even when a priorYear marker covers its month
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:146:16
+-       } else if (t.date < yearStart) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
++       } else if (false) add('schema', t.id, `it is dated ${t.date}, before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 79 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:147:36
+-       else if (t.date > yearEnd) add('schema', t.id, `it is dated ${t.date}, after the fiscal year ends on ${yearEnd}`)
++       else if (t.date > yearEnd) add("", t.id, `it is dated ${t.date}, after the fiscal year ends on ${yearEnd}`)
+Tests ran:
+    ARC-8 W00a month sequences the year runs across a new year (Nov to Feb)
+    ARC-8 W00a month sequences a transaction dated in no month of its account is named
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:147:52
+-       else if (t.date > yearEnd) add('schema', t.id, `it is dated ${t.date}, after the fiscal year ends on ${yearEnd}`)
++       else if (t.date > yearEnd) add('schema', t.id, ``)
+Tests ran:
+    ARC-8 W00a month sequences the year runs across a new year (Nov to Feb)
+    ARC-8 W00a month sequences a transaction dated in no month of its account is named
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:147:14
+-       else if (t.date > yearEnd) add('schema', t.id, `it is dated ${t.date}, after the fiscal year ends on ${yearEnd}`)
++       else if (false) add('schema', t.id, `it is dated ${t.date}, after the fiscal year ends on ${yearEnd}`)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 79 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:150:9
+-       if (j.date < yearStart) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
++       if (false) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00c repeats and inherited names two adjusting entries with one id are named
+    model checks adjusting entries an entry with no lines is refused
+    model checks adjusting entries an unbalanced entry names both totals, and the adjusted balance follows the entry
+  and 20 more tests!
+
+
+[Survived] BlockStatement
+testworld/model/checks.ts:149:39
+-     for (const j of c.adjustingEntries) {
+-       if (j.date < yearStart) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
+-       else if (j.date > yearEnd) add('adjusting-entry', j.id, `it is dated ${j.date}, after the fiscal year ends on ${yearEnd}`)
+-     }
++     for (const j of c.adjustingEntries) {}
+Tests ran:
+    ARC-8 W00c repeats and inherited names two adjusting entries with one id are named
+    model checks adjusting entries an entry with no lines is refused
+    model checks adjusting entries an unbalanced entry names both totals, and the adjusted balance follows the entry
+  and 20 more tests!
+
+
+[Survived] EqualityOperator
+testworld/model/checks.ts:150:9
+-       if (j.date < yearStart) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
++       if (j.date <= yearStart) add('adjusting-entry', j.id, `it is dated ${j.date}, before the fiscal year starts on ${yearStart}`)
+Tests ran:
+    ARC-8 W00c repeats and inherited names two adjusting entries with one id are named
+    model checks adjusting entries an entry with no lines is refused
+    model checks adjusting entries an unbalanced entry names both totals, and the adjusted balance follows the entry
+  and 20 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:151:14
+-       else if (j.date > yearEnd) add('adjusting-entry', j.id, `it is dated ${j.date}, after the fiscal year ends on ${yearEnd}`)
++       else if (false) add('adjusting-entry', j.id, `it is dated ${j.date}, after the fiscal year ends on ${yearEnd}`)
+Tests ran:
+    ARC-8 W00c repeats and inherited names two adjusting entries with one id are named
+    model checks adjusting entries an entry with no lines is refused
+    model checks adjusting entries an unbalanced entry names both totals, and the adjusted balance follows the entry
+  and 20 more tests!
+
+
+[Survived] ArrayDeclaration
+testworld/model/checks.ts:173:61
+-     for (const f of markers) for (const r of f.marker.rows ?? []) listedRows.set(r.id, (listedRows.get(r.id) ?? 0) + 1)
++     for (const f of markers) for (const r of f.marker.rows ?? ["Stryker was here"]) listedRows.set(r.id, (listedRows.get(r.id) ?? 0) + 1)
+Tests ran:
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 a marker entry with no rows listed is refused
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:174:53
+-     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
++     const pinnedPrior = new Set(markers.filter((f) => true).flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+    ARC-8 W00a both rolls a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows
+  and 30 more tests!
+
+
+[Survived] LogicalOperator
+testworld/model/checks.ts:174:53
+-     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
++     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined || f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+    ARC-8 W00a both rolls a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows
+  and 30 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:174:53
+-     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
++     const pinnedPrior = new Set(markers.filter((f) => true && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+    ARC-8 W00a both rolls a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows
+  and 30 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:174:79
+-     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
++     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && true).flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+    ARC-8 W00a both rolls a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows
+  and 29 more tests!
+
+
+[Survived] MethodExpression
+testworld/model/checks.ts:174:31
+-     const pinnedPrior = new Set(markers.filter((f) => f.flagId !== undefined && f.marker.field === 'priorYear').flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
++     const pinnedPrior = new Set(markers.flatMap((f) => (f.marker.rows ?? []).map((r) => r.id)))
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 99 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:192:102
+-         const statement = m.openingCents + sign * total(inMonth.filter((t) => t.dupOf === undefined && t.priorYear !== true))
++         const statement = m.openingCents + sign * total(inMonth.filter((t) => t.dupOf === undefined && true))
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 78 more tests!
+
+
+[Survived] BooleanLiteral
+testworld/model/checks.ts:192:118
+-         const statement = m.openingCents + sign * total(inMonth.filter((t) => t.dupOf === undefined && t.priorYear !== true))
++         const statement = m.openingCents + sign * total(inMonth.filter((t) => t.dupOf === undefined && t.priorYear !== false))
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 78 more tests!
+
+
+[Survived] EqualityOperator
+testworld/model/checks.ts:207:84
+-               : cause === 'duplicate' && gap === -sign * total(inMonth.filter((t) => t.dupOf !== undefined))
++               : cause === 'duplicate' && gap === -sign * total(inMonth.filter((t) => t.dupOf === undefined))
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+    ARC-8 W00a both rolls a waived missing month explains its gap exactly, and only the missing rows count
+  and 13 more tests!
+
+
+[Survived] ArrayDeclaration
+testworld/model/checks.ts:233:104
+-         if (!markers.some((f) => f.flagId !== undefined && f.marker.field === field && (f.marker.rows ?? []).some((r) => r.id === t.id))) {
++         if (!markers.some((f) => f.flagId !== undefined && f.marker.field === field && (f.marker.rows ?? ["Stryker was here"]).some((r) => r.id === t.id))) {
+Tests ran:
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 a marker entry with no rows listed is refused
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:233:58
+-         if (!markers.some((f) => f.flagId !== undefined && f.marker.field === field && (f.marker.rows ?? []).some((r) => r.id === t.id))) {
++         if (!markers.some((f) => f.flagId !== undefined && true && (f.marker.rows ?? []).some((r) => r.id === t.id))) {
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+    ARC-8 W00a both rolls a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows
+  and 27 more tests!
+
+
+[Survived] ArrayDeclaration
+testworld/model/checks.ts:268:35
+-       const rows = f.marker.rows ?? []
++       const rows = f.marker.rows ?? ["Stryker was here"]
+Tests ran:
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 a marker entry with no rows listed is refused
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:269:57
+-       if (rows.length === 0) add('fault-catalogue', f.id, 'its marker lists no rows')
++       if (rows.length === 0) add('fault-catalogue', f.id, "")
+Tests ran:
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 a marker entry with no rows listed is refused
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:274:13
+-             ? 'it is not a transaction of this client'
++             ? ""
+Tests ran:
+    ARC-8 W00a markers a marker entry that no row carries is named
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 the listed rows must be the marked rows, each with its own date, cents and original
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 a marked row the entry does not list is named with its id and the field
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:265:39
+-     for (const t of c.transactions) if (!firstById.has(t.id)) firstById.set(t.id, t)
++     for (const t of c.transactions) if (true) firstById.set(t.id, t)
+Tests ran:
+    ARC-8 W00a month sequences a clean year has no issue
+    ARC-8 W00a month sequences a month listed twice in a row says so once
+    ARC-8 W00a month sequences months out of order are named
+  and 86 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:275:13
+-             : listedRows.get(r.id) !== 1
++             : false
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+    ARC-8 W00a both rolls a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows
+  and 27 more tests!
+
+
+[Survived] ConditionalExpression
+testworld/model/checks.ts:277:15
+-               : t.accountKey !== account
++               : false
+Tests ran:
+    ARC-8 W00a both rolls a dupOf row is off the statement and a priorYear row is off the statement
+    ARC-8 W00a both rolls a waived duplicate month explains its gap exactly
+    ARC-8 W00a both rolls a waiver with no cause explains nothing, even when the gap is exactly the duplicate rows
+  and 27 more tests!
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:280:19
+-                   ? `it is not dated in ${month}`
++                   ? ``
+Tests ran:
+    ARC-8 W00a markers a priorYear row outside every month passes only when its marker is listed for its own account and month
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:284:23
+-                       ? `it does not carry ${field}`
++                       ? ``
+Tests ran:
+    ARC-8 W00a markers a row outside every month that is not priorYear is refused even when a priorYear marker covers its month
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:282:21
+-                     ? `the catalogue pins ${r.date} ${String(r.amountCents)} cents but the answer key has ${t.date} ${String(t.amountCents)} cents`
++                     ? ``
+Tests ran:
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 the listed rows must be the marked rows, each with its own date, cents and original
+
+
+[Survived] StringLiteral
+testworld/model/checks.ts:286:25
+-                         ? `the catalogue pins its original as ${String(r.dupOf)} but the answer key has ${String(t.dupOf)}`
++                         ? ``
+Tests ran:
+    ARC-8 W00c a duplicate names a real, plain original of the same account, date and amount ARC-13 the listed rows must be the marked rows, each with its own date, cents and original
+
+
+[Survived] ArrowFunction
+testworld/model/checks.ts:129:19
+-   const dayNumber = (d: string): number => Date.parse(`${d}T00:00:00Z`) / 86_400_000
++   const dayNumber = () => undefined
+Ran all tests for this mutant.
+
+Ran 10.50 tests per mutant on average.
+-----------|------------------|----------|-----------|------------|----------|----------|
+           | % Mutation score |          |           |            |          |          |
+File       |  total | covered | # killed | # timeout | # survived | # no cov | # errors |
+-----------|--------|---------|----------|-----------|------------|----------|----------|
+All files  |  84.75 |   88.84 |      588 |         1 |         74 |       32 |        0 |
+ checks.ts |  84.75 |   88.84 |      588 |         1 |         74 |       32 |        0 |
+-----------|--------|---------|----------|-----------|------------|----------|----------|
+[32m03:38:12 (4679) INFO JsonReporter[39m Your report can be found at: file:///home/user/ashbridge-returns/reports/W00c-mutation/n-checks.json
+[32m03:38:12 (4679) INFO MutationTestReportHelper[39m Final mutation score of 84.75 is greater than or equal to break threshold 70
+[32m03:38:12 (4679) INFO MutationTestExecutor[39m Done in 1 minute and 12 seconds.

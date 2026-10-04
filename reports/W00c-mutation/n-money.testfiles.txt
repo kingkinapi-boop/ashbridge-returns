@@ -1,0 +1,5 @@
+src/contracts/checks.acceptance.test.ts
+src/core/money.acceptance.test.ts
+testworld/clients/load.test.ts
+testworld/model/money-converter.test.ts
+testworld/model/money.acceptance.test.ts

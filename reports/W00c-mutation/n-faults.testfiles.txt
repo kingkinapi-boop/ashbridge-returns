@@ -1,0 +1,8 @@
+testworld/clients/checks-rolls.test.ts
+testworld/clients/clients.acceptance.test.ts
+testworld/clients/w00c-checks.test.ts
+testworld/clients/w00c-survivors.test.ts
+testworld/model/checks.test.ts
+testworld/model/fault-markers.acceptance.test.ts
+testworld/model/faults.test.ts
+testworld/model/kinds-faults.acceptance.test.ts

@@ -1,0 +1,98 @@
+[32m03:38:13 (5788) INFO ProjectReader[39m No incremental result file found at reports/W00c-mutation/n-schema-incr.json, a full mutation testing run will be performed.
+[32m03:38:13 (5788) INFO ProjectReader[39m Found 1 of 1524 file(s) to be mutated.
+[32m03:38:13 (5788) INFO Instrumenter[39m Instrumented 1 source file(s) with 57 mutant(s)
+[32m03:38:14 (5788) INFO ConcurrencyTokenProvider[39m Creating 4 test runner process(es).
+[32m03:38:15 (5788) INFO BroadcastReporter[39m Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter
+[32m03:38:15 (5788) INFO DryRunExecutor[39m Starting initial test run (vitest test runner with "perTest" coverage analysis). This may take a while.
+[32m03:38:21 (5788) INFO DryRunExecutor[39m Initial test run succeeded. Ran 72 tests in 5 seconds (net 4901.311004999998 ms, overhead 864.6889950000023 ms).
+Mutation testing 66% (elapsed: <1m, remaining: <1m) 34/49 tested (0 survived, 0 timed out)
+
+All tests
+  clients
+    load.test.ts
+      ✘ ARC-8 clientFolders ARC-8 lists only numbered folders that hold an answer-key.json, as C01 upward in order (covered 0)
+      ✘ ARC-8 clientFolders ARC-8 the default root is reference/sample-clients and holds C01 to C15 (covered 0)
+      ✘ ARC-8 loadClient: no such client ARC-8 an unknown id names the client and the default folder (covered 0)
+      ✘ ARC-8 loadClient: no such client ARC-8 an unknown id names the root it was looked up in (covered 0)
+      ✓ ARC-13 money fields read as cents from their text ARC-13 a one-decimal too many amount is refused with the record, the field and the reason (killed 2)
+      ~ ARC-13 money fields read as cents from their text ARC-13 a bad amount on a line with no id names the file and the field only (covered 17)
+      ✓ ARC-13 money fields read as cents from their text ARC-13 a number that only looks like money (wrong holder, other key) is left alone (killed 7)
+      ~ ARC-13 money fields read as cents from their text ARC-13 text in a money field is a schema refusal, not a money issue (covered 16)
+      ~ ARC-13 money fields read as cents from their text ARC-13 a bad amount in onboarding.json is named by its own file (covered 16)
+      ~ ARC-8 schema refusals ARC-8 a missing answer-key field is named with its path (covered 16)
+      ~ ARC-8 schema refusals ARC-8 a missing onboarding field is named with its path (covered 16)
+      ~ ARC-8 schema refusals ARC-8 both files failing gives the answer-key issue first, then the onboarding one (covered 16)
+      ~ ARC-8 schema refusals ARC-8 the optional onboarding sections are still checked when they are there (covered 16)
+      ~ ARC-8 schema refusals ARC-8 the optional Schedule 50 list of the answer key is still checked (covered 16)
+      ~ ARC-8 schema refusals ARC-8 the model schema refuses an empty name, naming the dotted path (covered 17)
+      ~ ARC-8 the loaded model, field by field ARC-8 each account exportRows is its written rowsInExport, and qboRows is its QBO CSV lines without the header and blank lines (covered 10)
+      ~ ARC-8 the loaded model, field by field ARC-8 CRLF line ends and blank or spaces-only lines do not change a row count (covered 10)
+      ~ ARC-8 the loaded model, field by field ARC-8 a transaction with no account number has an empty glAccount, and the others keep theirs (covered 10)
+      ~ ARC-8 the loaded model, field by field ARC-8 an adjusting entry is typed by where its sources come from, and lists transactions then onboarding sources (covered 10)
+      ~ SEC-11 the guard sees every person and every file of the folder SEC-11 a bank line naming an owner, holder, lender, spouse or person party without TEST is refused, naming the line (covered 17)
+      ~ SEC-11 the guard sees every person and every file of the folder SEC-11 a client with no spouse and no loans adds nobody to the people list (covered 10)
+      ~ SEC-11 the guard sees every person and every file of the folder SEC-11 the same lines naming the people with the word TEST pass (covered 10)
+      ~ SEC-11 the guard sees every person and every file of the folder SEC-11 files by kind: json, csv and md are scanned; other files are not; nested paths use slashes (covered 17)
+      ~ SEC-11 the guard sees every person and every file of the folder SEC-11 a client folder that loads clean has every file of its folder read (no refusal, sorted walk) (covered 10)
+    w00c-load.test.ts
+      ✓ ARC-8 W00c every date is a real calendar date a transaction dated "2025-03-99" is refused, naming the field (killed 3)
+      ~ ARC-8 W00c every date is a real calendar date a transaction dated "2025-02-30" is refused, naming the field (covered 16)
+      ✓ ARC-8 W00c every date is a real calendar date a transaction dated "2025-03" is refused, naming the field (killed 1)
+      ~ ARC-8 W00c every date is a real calendar date a transaction dated "2025-3-05" is refused, naming the field (covered 17)
+      ~ ARC-8 W00c every date is a real calendar date a transaction dated "25-03-05" is refused, naming the field (covered 17)
+      ~ ARC-8 W00c every date is a real calendar date a transaction dated "" is refused, naming the field (covered 17)
+      ~ ARC-8 W00c every date is a real calendar date an adjusting entry date and both fiscal year dates are refused the same way (covered 16)
+      ✓ ARC-8 W00c every date is a real calendar date the last day of a leap February is a date (killed 8)
+      ~ ARC-8 W00c an account role is one of the four known a role outside the list is refused, naming the field (covered 16)
+      ✓ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "" is refused with the account, the field and the folder (killed 6)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "accounts" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "accounts/" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "accounts/.csv" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "accounts/x.txt" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "accounts/sub/x.csv" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "qbo/x.csv" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "answer-key.json" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder file set to "accountsx/x.csv" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder qboFile set to "accounts/x.csv" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder qboFile set to "qbo" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder qboFile set to "qbo/a.txt" is refused with the account, the field and the folder (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder a one-letter file name is a file name (covered 10)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder a directory named like a CSV is not a regular file (covered 17)
+      ~ ARC-8 W00c account files are regular CSV files of their own subfolder a link out of the folder is still refused as leading out (covered 17)
+      ~ ARC-8 W00c a client JSON file that is a directory or not JSON is a file issue answer-key.json replaced by a directory (covered 7)
+      ~ ARC-8 W00c a client JSON file that is a directory or not JSON is a file issue onboarding.json replaced by a directory (covered 7)
+      ~ ARC-8 W00c a client JSON file that is a directory or not JSON is a file issue answer-key.json that is not valid JSON (covered 7)
+      ~ ARC-8 W00c a client JSON file that is a directory or not JSON is a file issue onboarding.json that is not valid JSON (covered 7)
+      ~ ARC-8 W00c a client JSON file that is a directory or not JSON is a file issue both files broken give both issues (covered 7)
+      ~ ARC-8 W00c a client JSON file that is a directory or not JSON is a file issue a missing onboarding.json is still a file issue (covered 7)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key the real qualifier resolves (covered 10)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key "prior_year_closing_balances (1200 Wrong)" is refused, naming the source (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key "prior_year_closing_balances (9999 Prepaid expenses)" is refused, naming the source (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key "prior_year_closing_balances (x)" is refused, naming the source (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key "prior_year_closing_balances ()" is refused, naming the source (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key "prior_year_closing_balances (1200)" is refused, naming the source (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key "nothing (1200 Prepaid expenses)" is refused, naming the source (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key "tenants (1200 Prepaid expenses)" is refused, naming the source (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key "prior_year_closing_balances (A200 Prepaid expenses)" is refused, naming the source (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key a qualifier on a key with no account list is refused (covered 17)
+      ~ ARC-8 W00c a "(...)" qualifier on an onboarding source names a record of its key an answer id resolves whole (covered 9)
+  model/schema.test.ts
+    ✓ ClientSchema END-9 a well-formed client parses unchanged, owners keep their names (killed 11)
+    ~ ClientSchema END-9 an owner needs a non-empty name (covered 9)
+    ✓ ClientSchema END-9 the client id is C and two digits, anchored at both ends (killed 2)
+    ~ ClientSchema END-9 the year start and end are full dates, anchored at both ends (covered 10)
+    ✓ ClientSchema END-9 a month is YYYY-MM, anchored at both ends (killed 2)
+    ✓ TestWorldLoadError END-9 the message names the client, the count and the first issue (killed 5)
+    ✓ TestWorldLoadError END-9 with no issues the message has no first-issue part (killed 2)
+
+Ran 8.98 tests per mutant on average.
+-----------|------------------|----------|-----------|------------|----------|----------|
+           | % Mutation score |          |           |            |          |          |
+File       |  total | covered | # killed | # timeout | # survived | # no cov | # errors |
+-----------|--------|---------|----------|-----------|------------|----------|----------|
+All files  | 100.00 |  100.00 |       49 |         0 |          0 |        0 |        0 |
+ schema.ts | 100.00 |  100.00 |       49 |         0 |          0 |        0 |        0 |
+-----------|--------|---------|----------|-----------|------------|----------|----------|
+[32m03:38:38 (5788) INFO JsonReporter[39m Your report can be found at: file:///home/user/ashbridge-returns/reports/W00c-mutation/n-schema.json
+[32m03:38:38 (5788) INFO MutationTestReportHelper[39m Final mutation score of 100.00 is greater than or equal to break threshold 70
+[32m03:38:38 (5788) INFO MutationTestExecutor[39m Done in 24 seconds.

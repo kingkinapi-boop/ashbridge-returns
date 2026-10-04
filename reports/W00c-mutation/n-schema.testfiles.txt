@@ -1,0 +1,5 @@
+testworld/model/schema.test.ts
+testworld/model/guard.test.ts
+testworld/model/checks.test.ts
+testworld/clients/load.test.ts
+testworld/clients/w00c-load.test.ts

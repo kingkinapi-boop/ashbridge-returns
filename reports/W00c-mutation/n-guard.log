@@ -1,0 +1,61 @@
+[32m03:32:04 (2505) INFO ProjectReader[39m No incremental result file found at reports/W00c-mutation/n-guard-incr.json, a full mutation testing run will be performed.
+[32m03:32:04 (2505) INFO ProjectReader[39m Found 1 of 1504 file(s) to be mutated.
+[32m03:32:04 (2505) INFO Instrumenter[39m Instrumented 1 source file(s) with 249 mutant(s)
+[32m03:32:05 (2505) INFO ConcurrencyTokenProvider[39m Creating 4 test runner process(es).
+[32m03:32:06 (2505) INFO BroadcastReporter[39m Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter
+[32m03:32:06 (2505) INFO DryRunExecutor[39m Starting initial test run (vitest test runner with "perTest" coverage analysis). This may take a while.
+[32m03:32:07 (2505) INFO DryRunExecutor[39m Initial test run succeeded. Ran 35 tests in 0 seconds (net 27.985504999998966 ms, overhead 510.01449500000103 ms).
+[33m03:32:07 (2505) WARN MutantTestPlanner[39m Detected 68 static mutants (30% of total) that are estimated to take 58% of the time running the tests!
+  You might want to enable "ignoreStatic" to ignore these static mutants for your next run. 
+  For more information about static mutants visit: https://stryker-mutator.io/docs/mutation-testing-elements/static-mutants
+  (disable "warnings.slow" to ignore this warning)
+Mutation testing 62% (elapsed: <1m, remaining: <1m) 184/228 tested (0 survived, 1 timed out)
+
+All tests/guard.test.ts
+  ✓ passesCheckDigit accepts numbers whose Luhn sum is a multiple of ten (killed 19)
+  ✓ passesCheckDigit refuses numbers whose Luhn sum is not (killed 4)
+  ✓ passesCheckDigit refuses anything that is not all digits, and the empty string (killed 4)
+  ✓ nine-digit numbers a plain, spaced or hyphenated number that passes the check digit is refused (killed 32)
+  ~ nine-digit numbers a program suffix may follow (covered 54)
+  ✓ nine-digit numbers a number that fails the check digit passes (killed 3)
+  ✓ nine-digit numbers part of a longer number, a decimal or mixed separators are not a nine-digit number (killed 1)
+  ~ nine-digit numbers a number at the end of a sentence is still a number (covered 54)
+  ✓ nine-digit numbers numbers are found in JSON string values with their path (killed 26)
+  ✓ e-mail addresses an address outside a reserved domain is refused with the whole address (killed 13)
+  ✓ e-mail addresses reserved domains pass (killed 3)
+  ✓ e-mail addresses a reserved name only at the start or end of a longer domain does not pass (killed 1)
+  ✓ phone numbers a ten-digit number outside 555-0100 to 555-0199 is refused in every written form (killed 26)
+  ✓ phone numbers a bracketed area code is read (killed 13)
+  ~ phone numbers a seven-digit number outside the range is refused (covered 32)
+  ✓ phone numbers 555-0100 to 555-0199 pass, with or without an area code (killed 10)
+  ✓ phone numbers the exchange must be 555 and the last four must be 01xx (killed 2)
+  ✓ phone numbers the last seven of a ten-digit number are not read twice, and decimals or longer numbers are not phones (killed 1)
+  ✓ name fields in JSON every name key is checked, with its path (killed 19)
+  ✓ name fields in JSON a name ending (Test), even with spaces after it, passes; one with text after it does not (killed 2)
+  ~ name fields in JSON a key that is not a name key is not checked (covered 42)
+  ✓ name fields in JSON an account line, a GIFI line or a keyed record is not a person (killed 7)
+  ✓ walking JSON a top-level string, a top-level array and nested arrays carry their paths (killed 1)
+  ✓ walking JSON null, numbers and booleans are skipped without error (killed 1)
+  ✓ walking JSON a file that is not JSON is refused and the next file is still read (killed 2)
+  ✓ descriptions that name a person a JSON description naming a person without TEST is refused (killed 18)
+  ✓ descriptions that name a person the word TEST in any case, as a whole word, clears it (killed 2)
+  ✓ descriptions that name a person only a description key is scanned (killed 1)
+  ~ descriptions that name a person a description that does not name the person passes (covered 61)
+  ✓ descriptions that name a person each person named is a separate issue, and the text is cut at 80 characters (killed 1)
+  ✓ descriptions that name a person a name is matched without its (Test) suffix, with spaces or none around it (killed 4)
+  ✓ descriptions that name a person only a trailing (Test) is removed from a person name (killed 1)
+  ✓ descriptions that name a person empty or (Test)-only people never match everything (killed 3)
+  ✓ descriptions that name a person CSV lines are scanned one by one, with LF or CRLF line ends (killed 6)
+  ✓ descriptions that name a person a markdown file is not scanned for names, but a CSV is still scanned for numbers (killed 1)
+
+Ran 4.89 tests per mutant on average.
+----------|------------------|----------|-----------|------------|----------|----------|
+          | % Mutation score |          |           |            |          |          |
+File      |  total | covered | # killed | # timeout | # survived | # no cov | # errors |
+----------|--------|---------|----------|-----------|------------|----------|----------|
+All files | 100.00 |  100.00 |      227 |         1 |          0 |        0 |        0 |
+ guard.ts | 100.00 |  100.00 |      227 |         1 |          0 |        0 |        0 |
+----------|--------|---------|----------|-----------|------------|----------|----------|
+[32m03:32:19 (2505) INFO JsonReporter[39m Your report can be found at: file:///home/user/ashbridge-returns/reports/W00c-mutation/n-guard.json
+[32m03:32:19 (2505) INFO MutationTestReportHelper[39m Final mutation score of 100.00 is greater than or equal to break threshold 70
+[32m03:32:19 (2505) INFO MutationTestExecutor[39m Done in 15 seconds.
