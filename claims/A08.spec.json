@@ -1,11 +1,12 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "A541: spec review 2 GAPS 8; gaps at the top of the card",
- "reopenedFrom": "f58dc034",
+ "note": "386 tests (383 unit, 3 db); G1-G8; fails first 19 on Linux; main rule test claim-wait-check fails: SC11b no Where line (Lead)",
  "worker": "cloud-80dec5",
- "state": "working",
- "at": "2026-10-04T00:55:43.851Z",
+ "state": "reported",
+ "at": "2026-10-04T01:21:52.955Z",
  "mode": "turbo",
- "beat": "2026-10-04T01:01:43.221Z"
+ "beat": "2026-10-04T01:01:43.221Z",
+ "commit": "7e9890ba",
+ "validated": "d3ad2ec9"
 }
