@@ -34,7 +34,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 
 1. Poll claims and runs; board each PASS onto train 5.
 2. After each no-build spec patch reports (SC10, SC6, SC3): `claim.mjs update <card> build reported --worker lead` so the Opus check opens.
-3. W00c lands: W00b, S00, JH0, B04, SC2, FX7, FX8, W00d; SK0, W01 to W13 (item 43's tiers decided, A543: fold them and CK-38's T4A and T5018 into the clauses by skill blueprint-change before W01's spec), W20, I40.
+3. W00c lands: W00b, S00, JH0, B04, SC2, FX7, FX8, W00d; SK0, W01 to W13 (item 43's tiers are clauses CK-51 to CK-59 and AI-13, carded Q51 to Q59, I23, I24; A544), W20, I40.
 4. Before SC7's spec: name the card that marks GL1's 6 auth files (A502); add the "Spec owns:" lines to open cards (A528). SC10 landed: the push guard gains the card rules and schema contract rules files (A502) next.
 5. Design lane as above (lane plan reports/design-lane-2026-10-03.md, section 4). Taxprep day 6 Sun 4 Oct (O8 folded, A487).
 6. After W00c lands: G-family sample sweep; contract-ids.json's marker notes and BQ1.bn's flag (A498). After FX8 lands: the sample-facts card (A499) with A543's answer key changes (04, 05, 03).

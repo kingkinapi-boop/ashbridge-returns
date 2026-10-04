@@ -7117,6 +7117,222 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck51/**"
+      ],
+      "clauses": [
+        "CK-51"
+      ],
+      "id": "Q51",
+      "title": "Check CK-51: Non-capital loss continuity",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-51",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck52/**"
+      ],
+      "clauses": [
+        "CK-52"
+      ],
+      "id": "Q52",
+      "title": "Check CK-52: ITCs before HST registration",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-52",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck53/**"
+      ],
+      "clauses": [
+        "CK-53"
+      ],
+      "id": "Q53",
+      "title": "Check CK-53: Relative paid with no payroll",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-53",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck54/**"
+      ],
+      "clauses": [
+        "CK-54"
+      ],
+      "id": "Q54",
+      "title": "Check CK-54: Small supplier limit",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-54",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck55/**"
+      ],
+      "clauses": [
+        "CK-55"
+      ],
+      "id": "Q55",
+      "title": "Check CK-55: Late-filing exposure",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-55",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck56/**"
+      ],
+      "clauses": [
+        "CK-56"
+      ],
+      "id": "Q56",
+      "title": "Check CK-56: Foreign-currency balance not revalued",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-56",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck57/**"
+      ],
+      "clauses": [
+        "CK-57"
+      ],
+      "id": "Q57",
+      "title": "Check CK-57: Closing inventory against the onboarding count",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-57",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck58/**"
+      ],
+      "clauses": [
+        "CK-58"
+      ],
+      "id": "Q58",
+      "title": "Check CK-58: Prepaid not deferred",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-58",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "Q00",
+        "B05"
+      ],
+      "paths": [
+        "src/modules/checks/flags/ck59/**"
+      ],
+      "clauses": [
+        "CK-59"
+      ],
+      "id": "Q59",
+      "title": "Check CK-59: Quick method eligibility",
+      "phase": 3,
+      "size": "S",
+      "family": "check",
+      "params": {
+        "check": "CK-59",
+        "kind": "flags"
+      },
+      "note": "A544: from the Lead's best guess on reference/cpa-check.md item 42 or 43 (A543); the CPA may still correct it (item 44)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "I00",
         "Q00"
       ],
@@ -7427,6 +7643,52 @@
         "topic": "shareholder-loan-signs"
       },
       "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "I01"
+      ],
+      "paths": [
+        "src/modules/ai/checklist/government-grant/**"
+      ],
+      "clauses": [
+        "AI-2",
+        "AI-13"
+      ],
+      "id": "I23",
+      "title": "AI checklist: a government grant (income, cost reduction or research pool)",
+      "phase": 3,
+      "size": "S",
+      "family": "aicheck",
+      "params": {
+        "topic": "government-grant"
+      },
+      "note": "A544: raised by code on its trigger (AI-13); the CPA decides every outcome."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "I01"
+      ],
+      "paths": [
+        "src/modules/ai/checklist/sred-eligibility/**"
+      ],
+      "clauses": [
+        "AI-2",
+        "AI-13"
+      ],
+      "id": "I24",
+      "title": "AI checklist: whether research costs qualify as SR&ED",
+      "phase": 3,
+      "size": "S",
+      "family": "aicheck",
+      "params": {
+        "topic": "sred-eligibility"
+      },
+      "note": "A544: raised by code on its trigger (AI-13); the CPA decides every outcome."
     },
     {
       "status": "carded",
