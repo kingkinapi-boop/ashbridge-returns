@@ -10804,7 +10804,8 @@
         "src/modules/ai/index.ts",
         "data/ai/exchange-limits.json",
         "src/core/safe-read.test.ts",
-        "src/modules/ai/runner/exchange-limits.build.test.ts"
+        "src/modules/ai/runner/exchange-limits.build.test.ts",
+        "src/modules/ai/runner/runner.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-22",
