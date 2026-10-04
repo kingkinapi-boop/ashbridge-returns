@@ -16,7 +16,7 @@ const DASHES = String.fromCharCode(0x2010) + '-' + String.fromCharCode(0x2015)
 const SEP = `[\\s.${DASHES}-]`
 const SEP_NO_DOT = `[\\s${DASHES}-]`
 // every start position is tried (lookahead), so "999 729 458 133" still finds the SIN inside it
-const SIN_SHAPE = new RegExp(`(?<!\\d)(?=(\\d{3}${SEP}?\\d{3}${SEP}?\\d{3})(?!\\d))`, 'gu')
+const SIN_SHAPE = new RegExp(`(?<!\\d)(?=(\\d{3}${SEP}?\\d{3}${SEP}?\\d{3})(?!\\d))`, 'g')
 // transit (5), institution (3), account (7 to 12), written with separators
 const BANK_SHAPE = new RegExp(`(?<!\\d)\\d{5}${SEP_NO_DOT}\\d{3}${SEP_NO_DOT}\\d{7,12}(?!\\d)`, 'u')
 const BIRTH_LABEL = /(?<![\p{L}\p{N}])(?:d\.?o\.?b\.?|born|birth\s*date|date\s+of\s+birth|date\s+de\s+na[iï]ssance|birthday)(?![\p{L}\p{N}])/iu
@@ -29,14 +29,14 @@ const BANK_KEYS: ReadonlySet<string> = new Set(['accountnumber', 'transitnumber'
 // the doubled value of each digit, summed as digits (0 2 4 6 8 1 3 5 7 9)
 const doubledDigitSum = (d: number): number => Math.trunc(d / 5) + ((d + d) % 10)
 
-/** True when the digits pass the SIN check digit (the Luhn sum, written as a table of digit sums). */
+/** True when the ninth digit is the check digit the first eight call for (the Luhn sum, written as a table of digit sums). */
 function checkDigitHolds(digits: string): boolean {
   let sum = 0
-  for (let i = 0; i < digits.length; i++) {
-    const d = digits.charCodeAt(digits.length - 1 - i) - 48
+  for (let i = 0; i < 8; i++) {
+    const d = digits.charCodeAt(i) - 48
     sum += i % 2 === 1 ? doubledDigitSum(d) : d
   }
-  return sum % 10 === 0
+  return (10 - (sum % 10)) % 10 === digits.charCodeAt(8) - 48
 }
 
 const readable = (text: string): string => text.normalize('NFKC').replace(/\p{Cf}/gu, '')
@@ -44,7 +44,7 @@ const readable = (text: string): string => text.normalize('NFKC').replace(/\p{Cf
 function scanText(raw: string, found: Set<string>): void {
   const text = readable(raw)
   for (const m of text.matchAll(SIN_SHAPE)) {
-    if (checkDigitHolds((m[1] ?? '').replace(/\D/g, ''))) found.add(KIND_SIN)
+    if (checkDigitHolds(String(m[1]).replace(/\D/g, ''))) found.add(KIND_SIN)
   }
   if (BANK_SHAPE.test(text)) found.add(KIND_BANK)
   if (BIRTH_LABEL.test(text)) found.add(KIND_BIRTH)
@@ -62,10 +62,12 @@ function walk(value: unknown, markedKeys: ReadonlySet<string>, found: Set<string
   else if (Array.isArray(value)) for (const v of value) walk(v, markedKeys, found)
   else if (value !== null && typeof value === 'object') {
     const obj = value as Record<string, unknown>
+    // a Set of strings asked about any value: a non-string is simply not in it
+    const keys: ReadonlySet<unknown> = markedKeys
     // an object { key, value } or { factKey, value } naming a marked fact
     for (const name of ['key', 'factKey']) {
       const fact = obj[name]
-      if (typeof fact === 'string' && markedKeys.has(fact) && present(obj['value'])) found.add(KIND_FACT)
+      if (keys.has(fact) && present(obj['value'])) found.add(KIND_FACT)
     }
     for (const [k, v] of Object.entries(obj)) {
       if (markedKeys.has(k) && present(v)) found.add(KIND_FACT)

@@ -43,12 +43,13 @@ interface Refusal {
 type InboxFile = z.infer<typeof InboxFileSchema>
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
-const realNative = fs.realpathSync.native
+/** Read when called (not captured at load), so the file system's own answer is always the one used. */
+const realNative = (p: string): string => fs.realpathSync.native(p)
 const PROJECT_DIR = path.join(REPO_ROOT, 'ai-project')
 const LOCK_NAME = '.ai-once.lock'
 
 // Model-vendor settings that would send a run to a paid route (END-8, SEC-10), checked by name only.
-const VENDOR_SETTINGS: readonly string[] = [
+export const VENDOR_SETTINGS: readonly string[] = [
   'ANTHROPIC_API_KEY',
   'ANTHROPIC_AUTH_TOKEN',
   'ANTHROPIC_BASE_URL',
@@ -77,18 +78,13 @@ function isInside(child: string, parent: string): boolean {
   return child === parent || child.startsWith(parent + path.sep)
 }
 
-/** The real path of a folder that may not exist yet: the nearest existing parent's real path plus the rest. */
+/** The real path of a folder that may not exist yet: the nearest existing parent's real path plus the rest. A missing root (a drive that is not there) has none. */
 function realPathOf(p: string): string | undefined {
-  const rest: string[] = []
-  let at = p
-  // Stryker disable next-line all: on Linux the loop always stops at "/", which exists; only a missing Windows drive reaches the guard (the Q: row, win32)
-  while (!fs.existsSync(at) && path.dirname(at) !== at) {
-    rest.unshift(path.basename(at))
-    at = path.dirname(at)
-  }
-  // a root that does not exist (a missing drive) is no folder
-  if (!fs.existsSync(at)) return undefined
-  return path.join(realNative(at), ...rest)
+  if (fs.existsSync(p)) return realNative(p)
+  const parent = path.dirname(p)
+  if (parent === p) return undefined
+  const above = realPathOf(parent)
+  return above === undefined ? undefined : path.join(above, path.basename(p))
 }
 
 /** A CLAUDE.md in the exchange folder or any parent would be loaded by the CLI (AI-8): the first one found. */
@@ -102,23 +98,24 @@ function claudeMdAbove(start: string): string | undefined {
   }
 }
 
-/** A folder of the exchange that is a real folder inside the exchange folder's real path. */
-function isRealFolder(root: string, name: 'inbox' | 'outbox'): boolean {
+/** Why a folder of the exchange is not a real folder inside the exchange folder's real path, or undefined when it is. */
+function folderProblem(root: string, name: 'inbox' | 'outbox'): string | undefined {
   const dir = path.join(root, name)
   try {
-    return fs.lstatSync(dir).isDirectory() && realNative(dir) === path.join(realNative(root), name)
+    if (fs.lstatSync(dir).isDirectory() && realNative(dir) === path.join(realNative(root), name)) return undefined
   } catch {
-    return false
+    // unreadable is no folder: it falls through to the refusal
   }
+  return `the exchange ${name} folder is not a real folder (ARC-22)`
 }
 
-function loadApproved(file: string, sink: (line: string) => void): ApprovedList {
+function loadApproved(file: string, sink: (line: string) => void): ApprovedList | undefined {
   try {
-    return ApprovedListSchema.parse(JSON.parse(fs.readFileSync(file, 'utf8')))
+    return ApprovedListSchema.parse(JSON.parse(fs.readFileSync(file).toString()))
   } catch {
     // fail closed: with no readable list every job is "not approved"
     sink('ai:once: the approved list could not be read, so no job is approved')
-    return { triples: [] }
+    return undefined
   }
 }
 
@@ -163,9 +160,14 @@ interface Context {
   childEnv: Record<string, string>
   /** This run's own empty CLAUDE_CONFIG_DIR: no user, repo or parent settings load (AI-8). */
   configDir: string
-  approved: ApprovedList
+  approved: ApprovedList | undefined
   markedKeys: ReadonlySet<string>
   sink: (line: string) => void
+}
+
+/** One line per schema problem: the dotted path, then the message. */
+export function issueProblems(issues: readonly z.core.$ZodIssue[]): string[] {
+  return issues.map((i) => `${i.path.map(String).join('.')}: ${i.message}`)
 }
 
 /** The checks before any call (AI-9, SEC-5, SEC-10, SEC-11, ARC-22): the first problem, or the job. */
@@ -187,9 +189,9 @@ function checkInbox(stem: string, text: string, ctx: Context): Refusal | InboxFi
   if (!stamped('redactedBy') || !stamped('redactorVersion')) return inputRefusal('inputs not redacted (AI-9)')
   if (file['isTest'] !== true) return inputRefusal('this is not a made-up return: isTest must be true until go-live (SEC-11)')
   const parsed = InboxFileSchema.safeParse(raw)
-  if (!parsed.success) return inputRefusal('the inbox file is not a valid job (SEC-10)', parsed.error.issues.map((i) => `${i.path.map(String).join('.')}: ${i.message}`))
+  if (!parsed.success) return inputRefusal('the inbox file is not a valid job (SEC-10)', issueProblems(parsed.error.issues))
   const job = parsed.data
-  if (!ctx.approved.triples.some((t) => t.stepType === job.stepType && t.promptVersion === job.promptVersion && t.modelId === job.modelId)) {
+  if (ctx.approved === undefined || !ctx.approved.triples.some((t) => t.stepType === job.stepType && t.promptVersion === job.promptVersion && t.modelId === job.modelId)) {
     return inputRefusal('the step type, prompt version and model id are not approved (ARC-22)')
   }
   const kinds = sensitiveKinds(job.inputs, ctx.markedKeys)
@@ -290,7 +292,7 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
   try {
     ordersBytes = fs.readFileSync(path.join(PROJECT_DIR, 'ORDERS.md'))
     settingsBytes = fs.readFileSync(path.join(PROJECT_DIR, 'settings.json'))
-    catalogue = loadFactCatalogue(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'data', 'facts', 'catalogue.json'), 'utf8')))
+    catalogue = loadFactCatalogue(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'data', 'facts', 'catalogue.json')).toString()))
   } catch {
     return refuse('the orders, the settings or the fact catalogue could not be read')
   }
@@ -306,10 +308,16 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
   try {
     // AI-10: the orders version goes to the run log, not the stamp
     sink(`ai:once: orders version ${sha256(ordersBytes, settingsBytes)}`)
-    fs.mkdirSync(path.join(exchange, 'outbox'), { recursive: true })
-    if (!isRealFolder(exchange, 'outbox')) return refuse('the exchange outbox folder is not a real folder (ARC-22)')
+    const outbox = path.join(exchange, 'outbox')
+    // anything there that is not a folder (a file, a link) is refused, never replaced
+    const there = fs.lstatSync(outbox, { throwIfNoEntry: false })
+    if (there !== undefined && !there.isDirectory()) return refuse(folderProblem(exchange, 'outbox') ?? 'the exchange outbox folder is not a real folder (ARC-22)')
+    fs.mkdirSync(outbox, { recursive: true })
+    const outboxProblem = folderProblem(exchange, 'outbox')
+    if (outboxProblem !== undefined) return refuse(outboxProblem)
     if (!fs.existsSync(path.join(exchange, 'inbox'))) return { ok: true }
-    if (!isRealFolder(exchange, 'inbox')) return refuse('the exchange inbox folder is not a real folder (ARC-22)')
+    const inboxProblem = folderProblem(exchange, 'inbox')
+    if (inboxProblem !== undefined) return refuse(inboxProblem)
     const ctx: Context = {
       exchange,
       orders: new TextDecoder().decode(ordersBytes),
@@ -324,7 +332,6 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
       sink,
     }
     // the jobs there are now, in job id order; a job that arrives during the run waits for the next one
-    // Stryker disable next-line all: a name without .json has a stem that reads a missing file, which is skipped as gone (the listing row shows the order)
     const stems = fs.readdirSync(path.join(exchange, 'inbox')).filter((n) => n.endsWith('.json')).map((n) => n.slice(0, -'.json'.length)).sort()
     for (const stem of stems) {
       if (!AiJobIdSchema.safeParse(stem).success) {
@@ -333,7 +340,6 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
       }
       if (fs.lstatSync(path.join(exchange, 'outbox', `${stem}.json`), { throwIfNoEntry: false }) !== undefined) continue
       const read = readRegularFile(path.join(exchange, 'inbox', `${stem}.json`), OUTBOX_MAX_BYTES)
-      // Stryker disable next-line all: a file removed between the listing and the read is a race no test can plant
       if (!read.ok && read.reason === 'gone') continue
       const checked: Refusal | InboxFile = read.ok
         ? checkInbox(stem, read.text, ctx)

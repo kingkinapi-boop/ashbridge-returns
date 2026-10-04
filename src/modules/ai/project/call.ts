@@ -34,7 +34,6 @@ export function runClaude(call: ClaudeCall): Promise<ClaudeCallResult> {
       env: call.env as NodeJS.ProcessEnv,
       stdio: ['pipe', 'pipe', 'ignore'],
       shell: false,
-      // Stryker disable next-line all: windowsHide only keeps a console window from opening on Windows; no test can see a window
       windowsHide: true,
     })
     const chunks: Buffer[] = []
@@ -44,7 +43,6 @@ export function runClaude(call: ClaudeCall): Promise<ClaudeCallResult> {
       if (stopped !== undefined) return
       stopped = why
       child.kill()
-      // Stryker disable next-line all: unref only lets the process exit before the grace ends; the SIGKILL row (ignores SIGTERM) shows the kill itself
       setTimeout(() => child.kill('SIGKILL'), KILL_GRACE_MS).unref()
     }
     const timer = setTimeout(() => {
