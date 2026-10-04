@@ -2,9 +2,8 @@
  "card": "FX18",
  "role": "check",
  "for": "2026-10-04T04:19:25.632Z",
- "worker": "probe-lead",
- "state": "reopened",
- "at": "2026-10-04T04:20:13.677Z",
- "mode": "turbo",
- "note": "A549: re-check on the reduced scope (quotedName cleaning moved to SC12); directive at the top of the card (a Lead probe claimed it by mistake at 04:20Z, released)"
+ "worker": "cloud-34b629",
+ "state": "working",
+ "at": "2026-10-04T04:21:02.575Z",
+ "mode": "turbo"
 }
