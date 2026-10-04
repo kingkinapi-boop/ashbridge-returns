@@ -2,11 +2,9 @@
  "card": "A08",
  "role": "spec",
  "note": "A551: S0 to S14 at the top of the card (replaces A548)",
- "worker": "cloud-80dec5",
- "state": "reopened",
- "at": "2026-10-04T04:03:20.956Z",
- "mode": "turbo",
- "beat": "2026-10-04T01:01:43.221Z",
- "commit": "7e9890ba",
- "validated": "d3ad2ec9"
+ "reopenedFrom": "7e9890ba",
+ "worker": "cloud-7d3564",
+ "state": "working",
+ "at": "2026-10-04T04:06:36.567Z",
+ "mode": "turbo"
 }
