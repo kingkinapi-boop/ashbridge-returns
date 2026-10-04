@@ -2,7 +2,8 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-5e4a47",
- "state": "working",
- "at": "2026-10-04T03:26:22.088Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-04T03:26:28.439Z",
+ "mode": "turbo",
+ "note": "wait: W00c not landed on main; queue keeps re-offering this spec, Lead to hold it"
 }
