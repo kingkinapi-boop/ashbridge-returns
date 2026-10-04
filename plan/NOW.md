@@ -7,6 +7,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 - **Mode: turbo** (Zo, "turbo on" 13:26Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 78% of the week at 15:42Z, about 4% an hour: the limit comes about 21:00Z; then pause until Zo's saved reset and `go`.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims and `list_runs`). 4 queue runs fired 17:36Z. Laptop (decision 0026): designers 1 to 3. 
 - **Landed (69):** train 4 (SC8, GL3, SC10; checked 40e9173c) on main b127c608 at 00:08Z 4 Oct.
+- **Zo 4 Oct 00:59Z:** "for the 7 tax questions, do the research and put in your best guess and continue building." (A542: research pair from 00:59Z, then an Opus checker; guesses go under items 37 to 43.)
 - **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
 
 ## In flight
@@ -19,12 +20,12 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 | SC6 | parked (A535): R77, R81, R78 moved to SC7 | none |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
-| SC11 | round 3 check FAIL (db-budget; endPool ended on timeout; teardown bounds): third failure (A539) | local Opus findings review (from 00:39Z): re-card smaller or park; then SC3 round 3 (A517) |
+| SC11 | re-carded smaller (A540): round 4, the last: spec S13 to S20 reopened, build held `wait:`; rest to SC11b (deps SC11) | spec; Lead reopens build; check; Opus read; security review; board; a fourth failure parks it |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
-| A08 | round 2 spec reported (360 tests; 26 survivors ruled, A539) | local Opus spec review 2 (from 00:39Z); then build B1 to B6, Opus check, fresh security review |
+| A08 | spec review 2 GAPS 8 (A541): spec reopened | spec; then build B1 to B6 with the A539 rulings; Opus check; fresh security review |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
-| FX18 | spec review 2 GAPS 6 (A537): spec reopened; runner.acceptance.test.ts joins Paths | spec (cloud); build held `wait:`; then build, cloud mutate --force, Opus read, security review |
+| FX18 | round 2 spec patched for A537 (9 new tests) | build reopened 01:01Z (B1 to B8); then cloud mutate --force, Opus read, security review; board |
 | W00b, FX6, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
 | Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), its panel done (A516); designer 2 done (D03 B+, claude/design-source-viewer-3, A519), its panel done (A522, local branch panel-source-viewer-3); designer 3 done (D02 v3, A531), its panel done (A532); designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |

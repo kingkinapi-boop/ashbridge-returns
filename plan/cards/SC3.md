@@ -1,5 +1,7 @@
 # SC3 Security rules R62 to R66
 
+**Lead note, 4 Oct 00:44Z (A540):** when round 3 moves index.ts state to globalThis (A517), lateErrors, ownerlessErrors and the pool trackers move with it, or errors recorded before a module reset are lost (SC11 findings review 3).
+
 **Lead ruling, 3 Oct 19:58Z (A517), S4's Paths gap:** S4's `vi.resetModules()` also resets src/core/db/index.ts's module state (active, clones, dbCounter), so the next file builds a second template with the same name. SC3's round 3 waits for SC11 to land (SC11 rewrites index.ts now); then SC3's Paths gain src/core/db/index.ts and its round 3 build keeps that state on globalThis (one build item), with S4's patch (reports/SC3-s4.patch on claude/SC3) applied as spec. Gate: test:flake 5 of 5 with TEST_DB=pg16 on a shuffled run.
 
 **Lead directive, 3 Oct 19:05Z (A511): spec item S4 before the Opus read.** SC3's round 3 spec (S1 to S3) reported; test:flake on pg16 then failed 4 of 5 on auth.acceptance.db's SEC-1 scrypt count: with isolate false, SC3's db file loads the auth module before that file's vi.mock runs, so the mock never applies. S4: SC3's db files load no product module at the top level that another db file mocks (import inside the test, then `vi.resetModules()` in afterAll), so module load order between files cannot change a mock. Gate: test:flake 5 of 5 with TEST_DB=pg16. Then the Lead marks the build reported; Opus read; security review.
