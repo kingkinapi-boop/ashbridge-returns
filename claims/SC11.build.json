@@ -4,10 +4,9 @@
  "round": 3,
  "spec": "7e2f5034",
  "worker": "cloud-fbb2e3",
- "state": "released",
- "at": "2026-10-04T00:44:43.118Z",
+ "state": "reopened",
+ "at": "2026-10-04T01:47:37.702Z",
  "mode": "turbo",
  "beat": "2026-10-03T23:44:52.436Z",
- "note": "wait: round 4 spec (A540) first; the Lead reopens the build after it",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"DB16\"],\"depStatus\":[\"done\"]}"
+ "note": "A540 round 4, the last: build B15 to B20 plus S20's needs; a fourth failure parks SC11"
 }
