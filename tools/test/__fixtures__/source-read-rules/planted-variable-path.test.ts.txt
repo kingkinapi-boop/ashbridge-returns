@@ -1,0 +1,15 @@
+// Planted for R79: the path to a @mutate file is built through variables, never written out in the read call.
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { expect, test } from 'vitest'
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
+const dir = path.join(ROOT, 'src', 'core')
+const stem = 'mon'
+const target = path.join(dir, `${stem}ey` + '.ts')
+
+test('ARC-15 money.ts carries its marker', () => {
+  const text = fs.readFileSync(target, 'utf8')
+  expect(text).toContain('// @mutate')
+})

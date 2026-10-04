@@ -17,8 +17,19 @@ afterEach(() => {
 
 const ORIGINAL = '// planted module\n// header line\n// @mutate\nexport const add = (a: number, b: number): number => a + b\n'
 const BROKEN = 'export const add = (a: number, b: number): number => a + b\nimport http from "node:http"\nexport { http }\n'
-const instrument = (src: string): string =>
-  `// @ts-nocheck\nfunction stryNS_9fa48() { return globalThis.__stryker__ ?? (globalThis.__stryker__ = {}) }\nconst __STRYKER_ACTIVE_MUTANT__ = stryNS_9fa48().activeMutant\n${src.replace('a + b', '__STRYKER_ACTIVE_MUTANT__ === 1 ? a - b : a + b')}`
+// A real sandbox copy (card SC8; FX2 findings RC2): ORIGINAL as @stryker-mutator/instrumenter 10.0.0 writes it into
+// the sandbox (instrument, then disableTypeChecks), captured 3 Oct 2026. Its preamble reads
+// `g.process.env.__STRYKER_ACTIVE_MUTANT__`, which a made-up preamble never modelled.
+const CAPTURED = fs.readFileSync(path.join(import.meta.dirname, '..', '..', '..', 'tools', 'test', '__fixtures__', 'source-read-rules', 'stryker-sandbox-mod.ts.txt'), 'utf8')
+const PREAMBLE = CAPTURED.slice(CAPTURED.indexOf('function stryNS_9fa48'), CAPTURED.indexOf('export const add'))
+// Stryker's layout on any module: the type-check opt-out, the module's leading comments, the real preamble, the body.
+const instrument = (src: string): string => {
+  const lines = src.split('\n')
+  const lead = lines.findIndex((l) => !l.startsWith('//'))
+  const head = lines.slice(0, lead).map((l) => `${l}\n`).join('')
+  const body = lines.slice(lead).join('\n').replace('a + b', 'stryMutAct_9fa48("1") ? a - b : (stryCov_9fa48("1"), a + b)')
+  return `// @ts-nocheck\n${head}${PREAMBLE}${body}`
+}
 
 // A temp repo with src/mod.ts, and a Stryker sandbox beside it holding an instrumented copy of the same relative path.
 function repo(original: string) {
@@ -61,9 +72,28 @@ describe('R20 readOwnSource: the committed text of a module, in and out of the S
   test('R20 ARC-15: a "first 5 lines carry // @mutate" scan passes through the helper on the instrumented sandbox copy', () => {
     const { sandbox } = repo(ORIGINAL)
     const onDisk = fs.readFileSync(`${sandbox}/src/mod.ts`, 'utf8')
-    expect(carriesMarker(onDisk)).toBe(false) // the sandbox header pushes the marker out of the first 5 lines
+    // SC8: real Stryker keeps the module's leading comments above its preamble, so the marker stays within 5 lines
+    expect(onDisk.split('\n').slice(0, 5)).toEqual(['// @ts-nocheck', '// planted module', '// header line', '// @mutate', 'function stryNS_9fa48() {'])
     vi.spyOn(process, 'cwd').mockReturnValue(sandbox)
     expect(carriesMarker(readOwnSource('src/mod.ts'))).toBe(true)
+  })
+
+  test('R20 ARC-15 SC8: the planted sandbox preamble is the real captured one, with process.env', () => {
+    expect(CAPTURED).toContain('g.process.env.__STRYKER_ACTIVE_MUTANT__')
+    expect(PREAMBLE).toMatch(/^function stryNS_9fa48\(\) \{\n/)
+    expect(PREAMBLE).toContain('function stryMutAct_9fa48(id)')
+    expect(instrument(ORIGINAL).slice(0, instrument(ORIGINAL).indexOf('export const add'))).toBe(CAPTURED.slice(0, CAPTURED.indexOf('export const add')))
+  })
+
+  test('R20 ARC-15 SC8: a "no process.env" scan (as ocr/engine-setting.test.ts runs) fails on the raw sandbox copy and passes through the helper', () => {
+    const { root, sandbox } = repo(ORIGINAL)
+    expect(fs.readFileSync(`${sandbox}/src/mod.ts`, 'utf8')).toMatch(/process\.env/) // FX2's dry-run failure
+    vi.spyOn(process, 'cwd').mockReturnValue(sandbox)
+    for (const p of ['src/mod.ts', `${sandbox}/src/mod.ts`]) {
+      expect(readOwnSource(p)).toBe(ORIGINAL)
+      expect(readOwnSource(p)).not.toMatch(/process\.env/)
+    }
+    expect(fs.readFileSync(`${root}/src/mod.ts`, 'utf8')).toBe(ORIGINAL)
   })
 
   test('R20 ARC-15: a "no network import" scan passes on a clean module and still fails on a planted real violation, in the sandbox too', () => {

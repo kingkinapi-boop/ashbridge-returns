@@ -802,17 +802,17 @@ describe('DB16 ARC-16 round 5: a pooled transaction connection carries only what
     async () => {
       const role = `db16_t5_${RUN_TAG}`
       const db = await cloneTestDb()
+      const other = await cloneTestDb()
       try {
         await db.exec(`create role ${role} nologin`)
         await db.exec(`set session authorization ${role}`)
         expect((await who(db)).s).toBe(role)
         await db.close()
-        const other = await cloneTestDb()
         expect(await rolesNamed(other, role), `role ${role} is gone from pg_roles once its handle closed`).toBe(0)
       } finally {
-        // A failing build leaves the role in the cluster: remove it so a rerun starts clean.
-        const sweep = await cloneTestDb()
-        await sweep.exec(`drop role if exists ${role}`)
+        // A failing build leaves the role in the cluster: remove it so a rerun starts clean (FX14: through the
+        // second handle, which is open already, so the test makes two databases and not three).
+        await other.exec(`drop role if exists ${role}`)
       }
     },
     BOOT_MS,
