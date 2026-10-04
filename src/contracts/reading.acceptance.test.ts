@@ -39,9 +39,10 @@
 //   height, and a page of zero width or height. ReadingResultSchema refuses a page list that is not
 //   exactly pages 1 to pageCount. reading.ts carries `// @mutate` in its first 5 lines.
 
-import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, expectTypeOf, test } from 'vitest'
 import fc from 'fast-check'
+import { readOwnSource } from '../core/testing/read-own-source'
 import {
   BoxSchema,
   ReadingResultSchema,
@@ -752,7 +753,7 @@ describe('whole-box validity (round 2)', () => {
 
 describe('mutation testing marker (round 2)', () => {
   test('ARC-15 (f) reading.ts carries "// @mutate" in its first 5 lines, so mutate:changed runs Stryker on it', () => {
-    const source = readFileSync(new URL('./reading.ts', import.meta.url), 'utf8')
+    const source = readOwnSource(fileURLToPath(new URL('./reading.ts', import.meta.url)))
     const head = source.split('\n').slice(0, 5)
     expect(head.some((l) => l.includes('// @mutate'))).toBe(true)
   })
