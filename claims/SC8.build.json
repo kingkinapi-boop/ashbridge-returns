@@ -4,9 +4,12 @@
  "round": 1,
  "spec": "7849b700",
  "worker": "cloud-fce4c0",
- "state": "reported",
- "at": "2026-10-03T19:30:06.267Z",
+ "state": "released",
+ "at": "2026-10-04T00:04:08.033Z",
  "mode": "turbo",
  "beat": "2026-10-03T19:17:29.490Z",
- "note": "13 reads switched, R79 and G5 tests green, npm test pass"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "fb6751bae2ec30638f792f5266197bfe67895fb0"
+ }
 }
