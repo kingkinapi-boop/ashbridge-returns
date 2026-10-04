@@ -22,10 +22,10 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | SC11 | round 4 spec reported (S13 to S20) | build reopened 01:48Z (B15 to B20), the last; check; Opus read; security review; board |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
-| A08 | round 2 spec patched for A541 (386 tests) | build reopened 01:48Z (B1 to B6, A539 rulings); Opus check; fresh security review; board |
+| A08 | build at 96.08: survivors are A539's ruled equivalents (A548) | build reopened 03:07Z to apply the rulings; mutate --force to 100; Opus check; fresh security review; board |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
-| FX18 | findings review 2 done (A546): round 3, the last: spec S10 to S12 reopened, build held `wait:` | spec; Lead reopens build B9 to B12; cloud mutate --force; Opus read; security review; board |
+| FX18 | round 3 spec reported (S10 to S12) | build reopened 03:07Z (B9 to B12); cloud mutate --force; Opus read; security review; board |
 | W00b, FX6, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
 | Design lane | base claude/design-base (brief re-check 6b8d2b24, A547) | designers 1 to 3 and panels done (A512, A516, A519, A522, A531, A532); designers 4 (D07, D05; workbench-3a) and 5 (D08, D12; workbench-3b) local from 02:20Z; then the workbench panel; findings review Mon; sitting Tue 6 Oct |
