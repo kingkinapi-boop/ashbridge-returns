@@ -7,6 +7,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 - **Mode: turbo** (Zo, "turbo on" 13:26Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 78% of the week at 15:42Z, about 4% an hour: the limit comes about 21:00Z; then pause until Zo's saved reset and `go`.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims and `list_runs`). 4 queue runs fired 17:36Z. Laptop (decision 0026): designers 1 to 3. 
 - **Landed (69):** train 4 (SC8, GL3, SC10; checked 40e9173c) on main b127c608 at 00:08Z 4 Oct.
+- **Zo 4 Oct 00:59Z:** "for the 7 tax questions, do the research and put in your best guess and continue building." (A542: research pair from 00:59Z, then an Opus checker; guesses go under items 37 to 43.)
 - **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
 
 ## In flight
