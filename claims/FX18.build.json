@@ -4,8 +4,9 @@
  "round": 2,
  "spec": "eb8d158c",
  "worker": "cloud-725535",
- "state": "hold-findings",
- "at": "2026-10-03T23:17:58.610Z",
+ "state": "released",
+ "at": "2026-10-04T00:05:06.726Z",
  "mode": "turbo",
- "note": "FAIL: spec (c) disable comments over-broad (engines.ts:188,241, schemas.ts:34-53), see reports/FX18-check.md"
+ "note": "wait: Opus spec review of FX18 round 2 (local, from 00:10Z; core) before the build",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
 }
