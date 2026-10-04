@@ -1,9 +1,11 @@
 {
  "card": "G18",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit, validated on main 861ad88c (merge ec17c7dd); A505 F1 to F3 already in; 44 acceptance tests fail by name",
  "worker": "cloud-6d2e46",
- "state": "working",
- "at": "2026-10-04T00:23:06.250Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T00:33:19.914Z",
+ "mode": "turbo",
+ "commit": "4291c5661e7b0a3c58c6a22e6a965a2da639a941",
+ "validated": "861ad88c"
 }
