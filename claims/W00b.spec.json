@@ -2,7 +2,8 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-843548",
- "state": "working",
- "at": "2026-10-04T00:17:52.013Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-04T00:17:57.724Z",
+ "mode": "turbo",
+ "note": "wait: deps W00c and FX8 not landed; claim.mjs re-offers it at once, needs Lead to reopen as wait"
 }
