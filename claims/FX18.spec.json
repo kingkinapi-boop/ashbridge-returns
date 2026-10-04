@@ -2,10 +2,9 @@
  "card": "FX18",
  "role": "spec",
  "note": "A537: spec review 2 GAPS 6; gaps at the top of the card; runner.acceptance.test.ts joins Paths",
- "worker": "cloud-086697",
- "state": "reopened",
- "at": "2026-10-04T00:12:58.516Z",
- "mode": "turbo",
- "commit": "31f5579",
- "validated": "0d631db"
+ "reopenedFrom": "31f5579",
+ "worker": "cloud-3fa261",
+ "state": "working",
+ "at": "2026-10-04T00:33:57.629Z",
+ "mode": "turbo"
 }
