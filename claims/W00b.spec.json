@@ -2,7 +2,8 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-5e4a47",
- "state": "working",
- "at": "2026-10-04T03:26:12.531Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-04T03:26:19.785Z",
+ "mode": "turbo",
+ "note": "wait: W00c not landed on main; needs Lead (released twice at one tip)"
 }
