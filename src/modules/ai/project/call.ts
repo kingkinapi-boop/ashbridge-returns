@@ -5,13 +5,15 @@ import { spawn, type ChildProcessByStdio } from 'node:child_process'
 import type { Readable, Writable } from 'node:stream'
 
 export interface ClaudeCall {
-  /** The program: a path ending .mjs, .cjs or .js is run with the running Node (so a fake works on every machine). */
+  /** The program: a path ending .mjs or .js is run with the running Node (so a fake works on every machine). */
   bin: string
   args: readonly string[]
   cwd: string
   env: Record<string, string>
   stdin: string
   timeoutMs: number
+  /** The most output the call may print; more stops it. */
+  outputMaxBytes: number
 }
 
 export type ClaudeCallResult = { ok: true; stdout: string } | { ok: false; reason: string }
@@ -20,14 +22,21 @@ export type ClaudeCallResult = { ok: true; stdout: string } | { ok: false; reaso
 export const CLAUDE_OUTPUT_MAX_BYTES = 8_388_608
 const KILL_GRACE_MS = 5000
 
-const isScript = (bin: string): boolean => /\.(?:mjs|cjs|js)$/i.test(bin)
+const isScript = (bin: string): boolean => /\.(?:mjs|js)$/i.test(bin)
 
 export function runClaude(call: ClaudeCall): Promise<ClaudeCallResult> {
   return new Promise((resolve) => {
     const script = isScript(call.bin)
     const file: string = script ? process.execPath : call.bin
     const args: string[] = script ? [call.bin, ...call.args] : [...call.args]
-    const child: ChildProcessByStdio<Writable, Readable, null> = spawn(file, args, { cwd: call.cwd, env: call.env as NodeJS.ProcessEnv, stdio: ['pipe', 'pipe', 'ignore'], shell: false, windowsHide: true })
+    const child: ChildProcessByStdio<Writable, Readable, null> = spawn(file, args, {
+      cwd: call.cwd,
+      env: call.env as NodeJS.ProcessEnv,
+      stdio: ['pipe', 'pipe', 'ignore'],
+      shell: false,
+      // Stryker disable next-line all: windowsHide only keeps a console window from opening on Windows; no test can see a window
+      windowsHide: true,
+    })
     const chunks: Buffer[] = []
     let bytes = 0
     let stopped: string | undefined
@@ -35,6 +44,7 @@ export function runClaude(call: ClaudeCall): Promise<ClaudeCallResult> {
       if (stopped !== undefined) return
       stopped = why
       child.kill()
+      // Stryker disable next-line all: unref only lets the process exit before the grace ends; the SIGKILL row (ignores SIGTERM) shows the kill itself
       setTimeout(() => child.kill('SIGKILL'), KILL_GRACE_MS).unref()
     }
     const timer = setTimeout(() => {
@@ -46,7 +56,7 @@ export function runClaude(call: ClaudeCall): Promise<ClaudeCallResult> {
     })
     child.stdout.on('data', (chunk: Buffer) => {
       bytes += chunk.length
-      if (bytes > CLAUDE_OUTPUT_MAX_BYTES) stop('the Claude CLI printed more than it may')
+      if (bytes > call.outputMaxBytes) stop(`the Claude CLI printed more than it may (${String(call.outputMaxBytes)} bytes)`)
       else chunks.push(chunk)
     })
     // the program may exit before it reads the prompt

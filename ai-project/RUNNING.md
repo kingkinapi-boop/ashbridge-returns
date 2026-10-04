@@ -11,8 +11,8 @@ It runs once and stops. There is no timer, no watcher and no schedule (decision 
 ## Settings
 
 - `AI_EXCHANGE_DIR`: the exchange folder, outside this repo. It holds `inbox/` (jobs the app wrote), `outbox/` (what comes back) and one `job-<hex>` folder per call.
-- `AI_PROJECT_CLAUDE_BIN`: the Claude program to run. On Windows point it at `claude.exe` or at a script run by node: a `claude.cmd` cannot be started without a shell, and the launcher never uses a shell.
-- `CLAUDE_CODE_OAUTH_TOKEN`: the subscription token for the run. Each run uses a fresh empty config folder, so there is no saved login. This is the Claude subscription; no vendor API key is used, and a run refuses if any `*_API_KEY` or `ANTHROPIC_BASE_URL` is set (names only are shown).
+- `AI_PROJECT_CLAUDE_BIN`: the Claude program to run. On Windows point it at `claude.exe`, or at the CLI's `cli.js` (a path ending `.js` or `.mjs` is run through Node). Never `claude.cmd`: npm's launcher cannot be started without a shell, and the launcher never uses a shell.
+- `CLAUDE_CODE_OAUTH_TOKEN`: the subscription token for the run. Each run uses a fresh empty config folder, so there is no saved login. This is the Claude subscription; no vendor API key is used, and a run refuses if any setting name holding `_API_KEY` (anywhere in the name) or `ANTHROPIC_BASE_URL` is set (names only are shown).
 
 ## What an outbox refusal means
 

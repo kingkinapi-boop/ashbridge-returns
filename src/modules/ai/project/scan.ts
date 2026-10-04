@@ -80,5 +80,5 @@ function walk(value: unknown, markedKeys: ReadonlySet<string>, found: Set<string
 export function sensitiveKinds(inputs: unknown, markedKeys: ReadonlySet<string>): string[] {
   const found = new Set<string>()
   walk(inputs, markedKeys, found)
-  return [...found].sort()
+  return [...found]
 }

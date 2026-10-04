@@ -11,6 +11,8 @@ const schema = z.object({
   AUTH_ENGINE: z.preprocess((v) => (v === '' ? undefined : v), z.enum(['testusers', 'live']).optional()),
   // ARC-22: the folder the Claude project exchange uses. Blank is as unset as missing; the AI runner checks that (a throw here would break every caller).
   AI_EXCHANGE_DIR: z.string().optional(),
+  // ARC-20: the Claude program the AI project launcher runs (A08); blank or unset means `claude` (the launcher decides).
+  AI_PROJECT_CLAUDE_BIN: z.string().optional(),
   // FX2, ARC-6: the stand-in engines. Unset means the stand-in outside production; in production the module refuses (SEC-11).
   OCR_ENGINE: blankIsUnset,
   STORAGE_FILES_ENGINE: blankIsUnset,

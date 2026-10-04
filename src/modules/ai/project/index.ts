@@ -15,7 +15,7 @@ import { isBlank } from '../../../contracts/text'
 import { readRegularFile } from '../../../core/safe-read'
 import { AiJobIdSchema, ApprovedListSchema, InboxFileSchema, OUTBOX_MAX_BYTES } from '../index'
 import type { ApprovedList } from '../runner/schemas'
-import { runClaude } from './call'
+import { CLAUDE_OUTPUT_MAX_BYTES, runClaude } from './call'
 import { sensitiveKinds } from './scan'
 
 /** The most time one claude call may take: 15 minutes, written as one number. A04's wait (the lease minus its margin) outlives it. */
@@ -29,6 +29,8 @@ export interface AiProjectOptions {
   approvedPath?: string
   sink?: (line: string) => void
   claudeTimeoutMs?: number
+  /** The most output one call may print (default CLAUDE_OUTPUT_MAX_BYTES). */
+  claudeOutputMaxBytes?: number
 }
 export type AiProjectResult = { ok: true } | { ok: false; reason: string }
 
@@ -41,6 +43,7 @@ interface Refusal {
 type InboxFile = z.infer<typeof InboxFileSchema>
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
+const realNative = fs.realpathSync.native
 const PROJECT_DIR = path.join(REPO_ROOT, 'ai-project')
 const LOCK_NAME = '.ai-once.lock'
 
@@ -56,7 +59,7 @@ const VENDOR_SETTINGS: readonly string[] = [
   'GEMINI_API_KEY',
   'GOOGLE_API_KEY',
 ]
-const VENDOR_PATTERN = /_API_KEY$/i
+const VENDOR_PATTERN = /_API_KEY/i
 // The only settings the claude child sees (compared without case, for Windows' Path), plus its fresh CLAUDE_CONFIG_DIR.
 const CHILD_SETTINGS: readonly string[] = ['PATH', 'HOME', 'USERPROFILE', 'APPDATA', 'SYSTEMROOT', 'TEMP', 'TMP', 'TZ', 'LANG', 'CLAUDE_CODE_OAUTH_TOKEN']
 
@@ -69,20 +72,23 @@ const sha256 = (...parts: Buffer[]): string => {
 const refuse = (reason: string): AiProjectResult => ({ ok: false, reason })
 const inputRefusal = (reason: string, problems: string[] = []): Refusal => ({ reason, problems, stage: 'input' })
 
+/** Both are real paths (native: the file system's own case and long names), so a plain prefix test decides. */
 function isInside(child: string, parent: string): boolean {
-  const rel = path.relative(parent, child)
-  return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel))
+  return child === parent || child.startsWith(parent + path.sep)
 }
 
 /** The real path of a folder that may not exist yet: the nearest existing parent's real path plus the rest. */
-function realPathOf(p: string): string {
+function realPathOf(p: string): string | undefined {
   const rest: string[] = []
   let at = p
+  // Stryker disable next-line all: on Linux the loop always stops at "/", which exists; only a missing Windows drive reaches the guard (the Q: row, win32)
   while (!fs.existsSync(at) && path.dirname(at) !== at) {
     rest.unshift(path.basename(at))
     at = path.dirname(at)
   }
-  return path.join(fs.realpathSync(at), ...rest)
+  // a root that does not exist (a missing drive) is no folder
+  if (!fs.existsSync(at)) return undefined
+  return path.join(realNative(at), ...rest)
 }
 
 /** A CLAUDE.md in the exchange folder or any parent would be loaded by the CLI (AI-8): the first one found. */
@@ -100,7 +106,7 @@ function claudeMdAbove(start: string): string | undefined {
 function isRealFolder(root: string, name: 'inbox' | 'outbox'): boolean {
   const dir = path.join(root, name)
   try {
-    return fs.lstatSync(dir).isDirectory() && fs.realpathSync(dir) === path.join(fs.realpathSync(root), name)
+    return fs.lstatSync(dir).isDirectory() && realNative(dir) === path.join(realNative(root), name)
   } catch {
     return false
   }
@@ -145,7 +151,7 @@ const EnvelopeSchema = z.looseObject({
   modelUsage: z.record(z.string(), z.looseObject({ outputTokens: z.number().optional() })).optional(),
 })
 
-const shown = (id: string): string => JSON.stringify(id.slice(0, 100))
+const shown = (id: string): string => JSON.stringify(id)
 
 interface Context {
   exchange: string
@@ -153,6 +159,7 @@ interface Context {
   settingsPath: string
   bin: string
   timeoutMs: number
+  outputMaxBytes: number
   childEnv: Record<string, string>
   /** This run's own empty CLAUDE_CONFIG_DIR: no user, repo or parent settings load (AI-8). */
   configDir: string
@@ -220,6 +227,7 @@ async function answer(job: InboxFile, ctx: Context): Promise<Answer> {
       env: { ...ctx.childEnv, CLAUDE_CONFIG_DIR: ctx.configDir },
       stdin: promptFor(job),
       timeoutMs: ctx.timeoutMs,
+      outputMaxBytes: ctx.outputMaxBytes,
     })
   } finally {
     // whatever the CLI wrote there is removed, so the next call starts with an empty folder too
@@ -267,11 +275,12 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
   const exchangeSetting = env['AI_EXCHANGE_DIR']
   if (exchangeSetting === undefined || isBlank(exchangeSetting)) return refuse('the Claude project is off: AI_EXCHANGE_DIR is not set')
   const vendor = Object.entries(env)
-    .filter(([name, value]) => value !== undefined && value !== '' && (VENDOR_SETTINGS.includes(name.toUpperCase()) || VENDOR_PATTERN.test(name)))
+    .filter(([name, value]) => value !== undefined && (VENDOR_SETTINGS.includes(name.toUpperCase()) || VENDOR_PATTERN.test(name)))
     .map(([name]) => name)
   if (vendor.length > 0) return refuse(`the run must use the subscription, not a paid route: ${vendor.join(', ')} is set (END-8, SEC-10)`)
   const exchange = realPathOf(path.resolve(exchangeSetting))
-  if (isInside(exchange, fs.realpathSync(REPO_ROOT))) return refuse('the exchange folder sits inside this repo: use a folder outside it (AI-8, SEC-10)')
+  if (exchange === undefined) return refuse('the exchange folder does not exist')
+  if (isInside(exchange, realNative(REPO_ROOT))) return refuse('the exchange folder sits inside this repo: use a folder outside it (AI-8, SEC-10)')
   if (!fs.existsSync(exchange)) return refuse('the exchange folder does not exist')
   const claudeMd = claudeMdAbove(exchange)
   if (claudeMd !== undefined) return refuse(`a ${claudeMd} sits in the exchange folder or a parent folder and the Claude CLI would load it: remove it or move the exchange folder (AI-8)`)
@@ -289,10 +298,11 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
   const lock = path.join(exchange, LOCK_NAME)
   try {
     fs.writeFileSync(lock, `${String(process.pid)}\n`, { flag: 'wx' })
-  } catch (e) {
-    if ((e as NodeJS.ErrnoException).code === 'EEXIST') return refuse(`a run is already going on this exchange folder (if none is, delete ${LOCK_NAME} in it)`)
-    throw e
+  } catch {
+    // no run goes ahead without the lock: every failure to make it is the one refusal
+    return refuse(`a run is already going on this exchange folder (if none is, delete ${LOCK_NAME} in it)`)
   }
+  let configDir: string | undefined
   try {
     // AI-10: the orders version goes to the run log, not the stamp
     sink(`ai:once: orders version ${sha256(ordersBytes, settingsBytes)}`)
@@ -306,13 +316,15 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
       settingsPath: path.join(PROJECT_DIR, 'settings.json'),
       bin: env['AI_PROJECT_CLAUDE_BIN'] === undefined || isBlank(env['AI_PROJECT_CLAUDE_BIN']) ? 'claude' : env['AI_PROJECT_CLAUDE_BIN'],
       timeoutMs: options.claudeTimeoutMs ?? CLAUDE_TIMEOUT_MS,
+      outputMaxBytes: options.claudeOutputMaxBytes ?? CLAUDE_OUTPUT_MAX_BYTES,
       childEnv: childSettings(env),
-      configDir: fs.mkdtempSync(path.join(os.tmpdir(), 'ai-once-config-')),
+      configDir: (configDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-once-config-'))),
       approved: loadApproved(options.approvedPath ?? path.join(REPO_ROOT, 'data', 'ai', 'approved.json'), sink),
       markedKeys: new Set(catalogue.catalogue.entries.filter((e) => e.sensitive !== 'none').map((e) => e.key)),
       sink,
     }
     // the jobs there are now, in job id order; a job that arrives during the run waits for the next one
+    // Stryker disable next-line all: a name without .json has a stem that reads a missing file, which is skipped as gone (the listing row shows the order)
     const stems = fs.readdirSync(path.join(exchange, 'inbox')).filter((n) => n.endsWith('.json')).map((n) => n.slice(0, -'.json'.length)).sort()
     for (const stem of stems) {
       if (!AiJobIdSchema.safeParse(stem).success) {
@@ -321,6 +333,7 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
       }
       if (fs.lstatSync(path.join(exchange, 'outbox', `${stem}.json`), { throwIfNoEntry: false }) !== undefined) continue
       const read = readRegularFile(path.join(exchange, 'inbox', `${stem}.json`), OUTBOX_MAX_BYTES)
+      // Stryker disable next-line all: a file removed between the listing and the read is a race no test can plant
       if (!read.ok && read.reason === 'gone') continue
       const checked: Refusal | InboxFile = read.ok
         ? checkInbox(stem, read.text, ctx)
@@ -336,6 +349,8 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
     }
     return { ok: true }
   } finally {
+    // nothing else is left anywhere: the run's config folder goes with its lock
+    if (configDir !== undefined) fs.rmSync(configDir, { recursive: true, force: true })
     fs.rmSync(lock, { force: true })
   }
 }
