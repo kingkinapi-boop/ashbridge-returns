@@ -2031,7 +2031,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A04"
@@ -2050,7 +2050,8 @@
       "phase": 1,
       "size": "S",
       "core": false,
-      "note": "Split from A04 (A477, Review 3 Oct finding 2)."
+      "note": "Split from A04 (A477, Review 3 Oct finding 2).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -2203,8 +2204,7 @@
         "ai-project/**",
         "src/modules/ai/project/**",
         "package.json",
-        "src/core/env.ts",
-        "tools/test/settings-rules.test.mjs"
+        "src/core/env.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -10190,7 +10190,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ8"
@@ -10214,7 +10214,8 @@
       "phase": 0,
       "size": "M",
       "core": false,
-      "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+      "note": "Decision 0027 (Critic 3 Oct, proposal 2).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -10687,7 +10688,7 @@
       "note": "From reports/FX2-security.md, 3 Oct (A435)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "FX12"
@@ -10710,7 +10711,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX12-spec.md, 3 Oct (A443)."
+      "note": "From reports/FX12-spec.md, 3 Oct (A443).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -10799,7 +10801,9 @@
         "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
         "src/modules/ai/runner/schemas.ts",
         "src/modules/ai/index.ts",
-        "data/ai/exchange-limits.json"
+        "data/ai/exchange-limits.json",
+        "src/core/safe-read.test.ts",
+        "src/modules/ai/runner/exchange-limits.build.test.ts"
       ],
       "clauses": [
         "ARC-22",
