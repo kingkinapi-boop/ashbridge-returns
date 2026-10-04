@@ -1,5 +1,7 @@
 # SC11b Db harness rules, the rest of SC11's round 3 (connection peak, connect timeout, setup bounds, R119 and R120 everywhere)
 
+Phase 0. Size S. Deps: SC11. Where: cloud (Postgres 16).
+
 Tags: security (a leaked connection or an unbounded setup query can make db tests falsely green).
 Paths: tools/measure-db-peak.mjs, src/core/db/index.ts, src/core/db/global-setup.ts, src/core/db/pool-rules.acceptance.test.ts
 Clauses: ARC-6, SEC-1, ARC-15
