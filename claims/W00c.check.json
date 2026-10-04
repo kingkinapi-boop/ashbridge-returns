@@ -3,8 +3,12 @@
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
  "worker": "cloud-ee5eef",
- "state": "working",
- "at": "2026-10-04T03:30:51.456Z",
+ "state": "released",
+ "at": "2026-10-04T03:41:42.815Z",
  "mode": "turbo",
- "beat": "2026-10-04T03:32:04.493Z"
+ "beat": "2026-10-04T03:32:04.493Z",
+ "note": "continue: pass 1b. 1a done for all 11 (reports/W00c-mutation/n-rest.md): guard, money, kinds, faults, schema, generate 100; checks.ts 84.75 (106 survivors/no-cov in n-checks-survivors.txt); load.ts 65 (314); both index.ts 0 mutants (RC-M2, Lead rules); generate.ts:33 Timeout not on a loop, re-run in 1b",
+ "lastRelease": {
+  "tip": "03f512eee0a076206c080faac2fcc8ce0b54a9ca"
+ }
 }
