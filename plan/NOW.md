@@ -16,16 +16,16 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 |---|---|---|
 | Train 5 | none boarded yet | board W00c on its mutation check, SC11 and FX18 on PASS; request at 6 cards or hourly |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
-| W00c | pass 1a: json-keys.ts done (84.16, survivors to the cascade; 53 min a file) | check sessions continue: load.ts next, then the other 9 targets; 120 s vitest timeout in pass 1 accepted (A545); then survivors, merge, PASS or FAIL |
+| W00c | pass 1a done on all 11 targets (n-json-keys, n-load, n-rest) | check reopened for pass 1b (run scripts outside the repo, A549); then merge, proof, PASS or FAIL; board |
 | SC6 | parked (A535): R77, R81, R78 moved to SC7 | none |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
-| SC11 | round 4 spec reported (S13 to S20) | build reopened 01:48Z (B15 to B20), the last; check; Opus read; security review; board |
+| SC11 | round 4 build reported (unit 809, pg16 green, flake 5 of 5) | check; Opus read; security review; board; a fourth failure parks it |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
-| A08 | build at 96.08: survivors are A539's ruled equivalents (A548) | build reopened 03:07Z to apply the rulings; mutate --force to 100; Opus check; fresh security review; board |
+| A08 | the A548 edits were refused as security test removal (A550): withdrawn | local Opus findings review 3 (from 03:53Z): each survivor killed by a spec test or a behaviour-keeping rewrite, no disables; then spec, build |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
-| FX18 | round 3 spec reported (S10 to S12) | build reopened 03:07Z (B9 to B12); cloud mutate --force; Opus read; security review; board |
+| FX18 | round 3 check FAIL on one item, its third: re-carded smaller (A549), the item to SC12 | check reopened on the reduced scope; board on PASS |
 | W00b, FX6, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
 | Design lane | base claude/design-base (brief re-check 6b8d2b24, A547) | designers 1 to 3 and panels done (A512, A516, A519, A522, A531, A532); designers 4 (D07, D05; workbench-3a) and 5 (D08, D12; workbench-3b) local from 02:20Z; then the workbench panel; findings review Mon; sitting Tue 6 Oct |

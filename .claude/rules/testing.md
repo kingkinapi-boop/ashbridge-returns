@@ -47,3 +47,4 @@ Assert outcomes (a value, a state, a refusal with its reason), never just "does 
 - Source-scan tests (a test that reads its own module's text, for example a marker or a "no network import" scan) read the file through `readOwnSource` (`src/core/testing/read-own-source.ts`), so they still hold inside Stryker's sandbox (DG, ARC-15).
 - A KNOWN (expected-failure) entry in any rules file names one rule, one file, the exact problem strings (no regex) and an open owner card; an unlisted problem fails, a listed string no longer produced fails as stale, and every file scan asserts it read at least one file and a named sentinel (A407, reports/SC-findings.md).
 - An exemption from a cap is tested with two exempt names and with a flood of them (cap plus 5), never with one (FX18, A546).
+- A cleaner (escape, strip or mask) is tested with one code point from each class it claims to handle (FX18, A549).
