@@ -1,9 +1,9 @@
 // F00T (spec job): env.ts tests by a worker who did not build it. Settings are read by name and never printed (SEC-10).
-import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { readSettings } from './env'
+import { readOwnSource } from './testing/read-own-source'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const PLANTED = 'mk-planted-setting-value-7f3a (Test)'
@@ -74,7 +74,7 @@ describe('F00T env.ts (SEC-10)', () => {
   })
 
   test('ARC-15 env.ts is a mutation target (// @mutate in its first 5 lines)', () => {
-    const head = fs.readFileSync(path.join(ROOT, 'src', 'core', 'env.ts'), 'utf8').split('\n').slice(0, 5).join('\n')
+    const head = readOwnSource(path.join(ROOT, 'src', 'core', 'env.ts')).split('\n').slice(0, 5).join('\n')
     expect(head).toMatch(/\/\/ @mutate/)
   })
 })
