@@ -1,10 +1,11 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "A540: round 4, the last: S13 to S20 at the top of the card",
- "reopenedFrom": "7e2f5034",
+ "note": "14 SC11 tests fail as intended (S13 to S20, R119, R120); db-budget green; claim-wait-check fails on main (SC11b: no Where line)",
  "worker": "cloud-c7a694",
- "state": "working",
- "at": "2026-10-04T00:49:14.134Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T01:38:37.247Z",
+ "mode": "turbo",
+ "commit": "09ef20c9",
+ "validated": "241e2dd0"
 }
