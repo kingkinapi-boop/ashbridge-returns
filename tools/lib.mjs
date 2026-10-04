@@ -1,6 +1,7 @@
 // Shared helpers for the Lead's tools. No dependencies: runs before `npm ci`.
 import fs from 'node:fs'
 import path from 'node:path'
+import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -72,13 +73,18 @@ export function isExpectationFile(file) {
   const base = file.split('/').pop()
   return (
     /\.test\./.test(base) ||
+    /\.spec\./.test(base) ||
     /\.acceptance\./.test(base) ||
     /(^|\/)__fixtures__\//.test(file) ||
     /(^|\/)__golden__\//.test(file) ||
-    /^verify[^/]*\.mjs$/.test(base) ||
-    base === 'README.md'
+    /^verify[^/]*\.mjs$/i.test(base) ||
+    /^readme\.md$/i.test(base)
   )
 }
+
+// CQ11 (A465): a test the build writes itself (`*.build.test.ts`, `*.build.db.test.ts`) is in the expectation class but
+// belongs to the build: a spec commit may have touched it and the build may still edit it.
+export const isBuildOwnedTest = (file) => /\.build\.(?:db\.)?test\.[a-z]+$/.test(file.split('/').pop())
 
 // The text of a card's "## <heading>" section (up to the next "## " heading), or undefined when it has none.
 export function cardSection(cardText, heading) {
@@ -112,4 +118,83 @@ export function specOwnedFiles(cardText, files) {
 
 export function todayUtc() {
   return new Date().toISOString().slice(0, 10)
+}
+
+// ---- CQ11 (A482): the Where line, read in one place -------------------------------------------------------------
+// A card's header line is the first line starting "Phase" (else the first line starting "Where:"); only that line counts.
+// parseWhere answers { spec, build, check }, each 'cloud' (only a cloud-* worker may take that role) or 'any', or null
+// when there is no Where text or it is outside the vocabulary: cloud, cloud only, local, local or cloud, local or cloud;
+// check: cloud, local for unit tests; cloud for the journeys, local or cloud (...); cloud (...) for the check.
+export function headerLine(text) {
+  const lines = String(text || '').split(/\r?\n/)
+  return lines.find((l) => /^Phase\b/.test(l)) ?? lines.find((l) => /^\s*Where:/.test(l)) ?? ''
+}
+const hasWhere = (text) => /\bWhere:/.test(headerLine(text))
+
+export function parseWhere(text) {
+  const line = headerLine(text)
+  const at = line.indexOf('Where:')
+  if (at < 0) return null
+  let rest = line.slice(at + 'Where:'.length).replace(/\([^)]*\)/g, ' ')
+  const dot = rest.indexOf('.')
+  if (dot >= 0) rest = rest.slice(0, dot)
+  const parts = rest.split(';').map((x) => x.replace(/\s+/g, ' ').trim().toLowerCase()).filter(Boolean)
+  if (!parts.length) return null
+  const out = {}
+  const [first, ...more] = parts
+  if (/^cloud(?: only)?$/.test(first)) out.spec = out.build = out.check = 'cloud'
+  else if (/^local(?: or cloud| for .+)?$/.test(first)) out.spec = out.build = out.check = 'any'
+  else return null
+  for (const seg of more) {
+    let m
+    if ((m = /^(spec|build|check):\s*(cloud|local or cloud|local)(?: only)?$/.exec(seg))) out[m[1]] = m[2] === 'cloud' ? 'cloud' : 'any'
+    else if ((m = /^cloud for the (spec|build|check)$/.exec(seg))) out[m[1]] = 'cloud'
+    else if (/^cloud for the journeys$/.test(seg)) out.check = 'cloud'
+    else if (/^[a-z]+:/.test(seg)) continue // Deps: and the like
+    else return null
+  }
+  return out
+}
+export const whereFor = (text, role) => parseWhere(text)?.[role] ?? 'any'
+export const cloudOnlyText = (text) => {
+  const w = parseWhere(text)
+  return Boolean(w && w.spec === 'cloud' && w.build === 'cloud' && w.check === 'cloud')
+}
+// The text the reader reads for a card: slices.json `where` first, then the card's own header line, then its family's.
+export function whereOf(cardText, familyText, whereField) {
+  if (typeof whereField === 'string') return `Where: ${whereField}`
+  if (hasWhere(cardText)) return headerLine(cardText)
+  return hasWhere(familyText) ? headerLine(familyText) : ''
+}
+// R1: cards [{ id, text, family, familyText, where }] whose Where line is missing or outside the vocabulary.
+export function whereLines(cards) {
+  const bad = []
+  for (const c of cards) {
+    const text = whereOf(c.text, c.familyText, c.where)
+    if (!text) bad.push({ id: c.id, why: c.family ? `no Where line in the card or in family ${c.family}` : 'no Where line' })
+    else if (!parseWhere(text)) bad.push({ id: c.id, why: `Where line outside the vocabulary: ${text.trim().slice(0, 100)}` })
+  }
+  return bad
+}
+
+// ---- CQ11 (A493): a new file a reported spec names holds every other card that names it ---------------------------
+export function existsOnMain(rel) {
+  for (const ref of ['origin/main', 'main']) {
+    try {
+      execFileSync('git', ['cat-file', '-e', `${ref}:${rel}`], { cwd: ROOT, stdio: 'ignore' })
+      return true
+    } catch {}
+  }
+  return false
+}
+// The cards (not done) other than `card` whose spec has reported (`specHolders`: their ids, from the claims and from slices
+// `spec`) and whose Paths name a new file of the expectation class (a test or fixture the spec job writes, not on main) that
+// `card` names too. Two cards that both qualify hold each other, which next.mjs prints, so the Lead splits their Paths.
+export function newFileHolders(card, cards, specHolders) {
+  const mine = (card.paths || []).filter((p) => !p.includes('*') && isExpectationFile(p))
+  if (!mine.length) return []
+  return cards
+    .filter((k) => k.id !== card.id && k.status !== 'done' && specHolders.has(k.id))
+    .filter((k) => (k.paths || []).some((p) => mine.includes(p) && !existsOnMain(p)))
+    .map((k) => k.id)
 }

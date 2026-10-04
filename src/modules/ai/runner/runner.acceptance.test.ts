@@ -601,7 +601,7 @@ describe('AI-11 only approved (step type, prompt version, model id) triples run'
   test('AI-11 the shipped data/ai/approved.json is a strict list with no triples, and the runner refuses the fixture job by default', async () => {
     const shipped = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'data', 'ai', 'approved.json'), 'utf8')) as unknown
     expect(ApprovedListSchema.parse(shipped)).toEqual({ triples: [] })
-    const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, env: {} })
+    const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, env: {}, now: () => new Date(RUNNER_NOW) })
     const res = await r.runAiStep(job('good'))
     // round 3: the default list is read (the shipped file, not a missing one), so the reason is the absent triple
     expect(res).toEqual({ ok: false, reason: 'not approved: run the evaluation set first (AI-11)', problems: [] })
@@ -665,6 +665,29 @@ describe('ARC-22 the ai:<step> handler', () => {
     const unstamped = job('good')
     delete unstamped.redaction
     await expect(Promise.resolve().then(() => h.run(unstamped, ctx))).rejects.toThrow(NOT_REDACTED)
+  })
+
+  // Round 5c G1 (A474, reports/A04-spec-review-5c.md): the class, not examples. No value of ctx.now (here an Invalid
+  // Date) can reach the wait, because the handler hands the runner exactly { jobId } and never reads ctx.now.
+  test('ARC-22 the handler passes exactly { jobId: ctx.jobId } to runAiStep and reads ctx.now 0 times, so an Invalid Date there changes nothing', async () => {
+    const r = runner()
+    const spy = vi.spyOn(r, 'runAiStep')
+    const h = createAiStepHandler('finding', r)
+    let nowReads = 0
+    const ctx = {
+      jobId: JOB_ID,
+      attempt: 1,
+      get now(): Date {
+        nowReads += 1
+        return new Date(Number.NaN)
+      },
+      returnId: null,
+    }
+    const out = await h.run(job('good'), ctx)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy.mock.calls[0]?.[1], 'the second argument the handler passes').toStrictEqual({ jobId: JOB_ID })
+    expect(nowReads, 'reads of ctx.now by the handler').toBe(0)
+    expect(out).toEqual({ output: recording('finding-c01-good').output, stamp: recording('finding-c01-good').stamp })
   })
 
   test('ARC-7 the AI module does not import the jobs module (F00 boundary)', () => {
@@ -1224,7 +1247,7 @@ describe('ARC-22 round 2: outbox files the job is not waiting for', () => {
       await waitFor(() => written.some((w) => w.includes(stranger)), 'the stranger to reach the core logger', 1000).catch(() => undefined)
       writeOutbox(exchange, `${id}.json`, outboxResult(id, GOOD_REC().output, GOOD_REC().stamp))
     })
-    const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5 })
+    const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5, now: () => new Date(RUNNER_NOW) })
     expect(r.useEngine('project')).toEqual({ ok: true })
     const res = await r.runAiStep(job('good'), { jobId: JOB_ID })
     expect(res.ok).toBe(true)
@@ -1237,7 +1260,7 @@ describe('ARC-22 round 2: outbox files the job is not waiting for', () => {
   test('ARC-22 the outbox is polled every 1000 ms by default: no read at 999 ms, the result read at 1000 ms', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
     try {
-      const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange } })
+      const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, now: () => new Date(RUNNER_NOW) })
       expect(r.useEngine('project')).toEqual({ ok: true })
       let settled = false
       const p = r.runAiStep(job('good'), { jobId: JOB_ID }).then((res) => {

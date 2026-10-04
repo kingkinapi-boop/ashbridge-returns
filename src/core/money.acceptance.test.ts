@@ -1,11 +1,11 @@
 // F00T (spec job): money.ts tests by a worker who did not build it (reviews/REVIEW.md 2 Oct 01:50Z, findings 1 and 2).
 // Every survivor of reports/F00T-mutants.md for money.ts is killed here or classed equivalent there.
-import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import { addCents, cents, formatCents, roundCentsToDollars } from './money'
+import { readOwnSource } from './testing/read-own-source'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const MAX = Number.MAX_SAFE_INTEGER
@@ -151,7 +151,7 @@ describe('F00T money.ts (ARC-13)', () => {
   })
 
   test('ARC-15 money.ts is a mutation target (// @mutate in its first 5 lines)', () => {
-    const head = fs.readFileSync(path.join(ROOT, 'src', 'core', 'money.ts'), 'utf8').split('\n').slice(0, 5).join('\n')
+    const head = readOwnSource(path.join(ROOT, 'src', 'core', 'money.ts')).split('\n').slice(0, 5).join('\n')
     expect(head).toMatch(/\/\/ @mutate/)
   })
 })

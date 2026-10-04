@@ -1,0 +1,20 @@
+// Planted for R79 (SC8 review G2): money.ts read through other callee forms, one per line.
+import fs from 'node:fs'
+import { readFileSync as rf } from 'node:fs'
+import { open } from 'node:fs/promises'
+import { expect, test } from 'vitest'
+
+const MONEY = 'src/core/money.ts'
+
+test('ARC-15 money.ts is marked, read six ways', async () => {
+  const a = rf(MONEY, 'utf8')
+  const b = fs['readFileSync'](MONEY, 'utf8')
+  const c = fs.readFileSync.call(fs, MONEY, 'utf8')
+  const d = fs.readFileSync.apply(fs, [MONEY, 'utf8'])
+  const handle = await open(MONEY)
+  const fd = fs.openSync(MONEY, 'r')
+  const e = await handle.readFile('utf8')
+  const buf = Buffer.alloc(64)
+  fs.readSync(fd, buf)
+  expect([a, b, c, d, e, buf.toString()].every((t) => t.includes('// @mutate'))).toBe(true)
+})

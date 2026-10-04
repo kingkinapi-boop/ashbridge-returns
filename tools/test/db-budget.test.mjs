@@ -114,9 +114,21 @@ describe('ARC-15 FX12: the db worker count is a named setting with a pinned defa
 export function worldsPerTest(file, text) {
   const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true)
   const nameOf = (e) => (ts.isIdentifier(e) ? e.text : undefined)
+  // A test is a call whose callee chain starts at `test` or `it`: test(...), test.skip(...), and the table forms
+  // test.each(rows)(title, fn), test.for(rows)(title, fn), it.each`table`(title, fn) (A504: each body is one test
+  // run once per row, so a body that makes two worlds is two worlds per row).
+  const rootName = (e) =>
+    ts.isIdentifier(e)
+      ? e.text
+      : ts.isPropertyAccessExpression(e)
+        ? rootName(e.expression)
+        : ts.isCallExpression(e)
+          ? rootName(e.expression)
+          : ts.isTaggedTemplateExpression(e)
+            ? rootName(e.tag)
+            : ''
   const isTest = (c) => {
-    const e = c.expression
-    const base = ts.isIdentifier(e) ? e.text : ts.isPropertyAccessExpression(e) && ts.isIdentifier(e.expression) ? e.expression.text : ''
+    const base = rootName(c.expression)
     return base === 'test' || base === 'it'
   }
   const fns = new Map()
@@ -156,7 +168,10 @@ export function worldsPerTest(file, text) {
         const c = nameOf(n.expression)
         if (c && makers.has(c)) k += loop ? 2 : 1
       }
-      const l = loop || ts.isForStatement(n) || ts.isForOfStatement(n) || ts.isForInStatement(n) || ts.isWhileStatement(n) || ts.isDoStatement(n)
+      // A property body (fc.property / fc.asyncProperty) runs once per generated run, so a world made in it is a
+      // world per run: it counts like a loop (FX14: the bridge RT-5 and jobs lease properties made one per run).
+      const prop = ts.isCallExpression(n) && /^(?:fc\.)?(?:async)?[pP]roperty$/.test(ts.isPropertyAccessExpression(n.expression) ? `${nameOf(n.expression.expression) ?? ''}.${n.expression.name.text}` : (nameOf(n.expression) ?? ''))
+      const l = loop || prop || ts.isForStatement(n) || ts.isForOfStatement(n) || ts.isForInStatement(n) || ts.isWhileStatement(n) || ts.isDoStatement(n)
       ts.forEachChild(n, (x) => w(x, l))
     }
     w(node, inLoop)
@@ -194,19 +209,18 @@ function dbTestFiles() {
   return out.sort()
 }
 
-// KNOWN: tests that still build more than one database. One entry per test: file, exact title, the count
-// and an owner card that splits it (card FX14, to be written by the Lead: these files are outside FX12's
-// paths). Any problem not listed fails; a listed one not produced fails as stale.
-const KNOWN = [
-  { file: 'src/core/db/db.db.test.ts', title: 'ARC-4 a database is created from the schema folder and cloned per test', worlds: 2, owner: 'FX14' },
-  { file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'RT-5 the number is never built from client data: names, business numbers and quote references change nothing', worlds: 2, owner: 'FX14' },
-  { file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'END-1 a year end the client never confirmed becomes an ops-confirms item and no return', worlds: 2, owner: 'FX14' },
-  { file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-16 two runs of the same scenario give identical rows (no randomness in the backoff)', worlds: 2, owner: 'FX14' },
-  { file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-5 given the same jobs, handlers and clock both runners end with deep-equal statuses and results', worlds: 2, owner: 'FX14' },
-  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 two test databases are isolated: a table made in one is not in the other', worlds: 2, owner: 'FX14' },
-  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: "ARC-4 closing one test database never drops a role another open test database made and uses; each database's roles go when it closes", worlds: 3, owner: 'FX14' },
+// CONCURRENT: the only tests allowed more than one database (FX14, A504). Every other db test is split into
+// one test per world. These three prove a fact between databases that are open at the same time in one cluster
+// (isolation; a role one database made surviving another's close; a role gone once its handle closed, seen from
+// a second handle), so they cannot be split; each names its exact title, its exact count and why. A test over
+// its count fails, and an entry no test produces fails as stale. The list does not grow without a Lead's
+// amber: it is for a cluster-level fact, never for convenience.
+const CONCURRENT = [
+  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 two test databases are isolated: a table made in one is not in the other', worlds: 2, why: 'isolation is a fact about two databases open at once' },
+  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: "ARC-4 closing one test database never drops a role another open test database made and uses; each database's roles go when it closes", worlds: 3, why: 'a role made by A must survive A closing while B uses its own, and a third handle shows none are left' },
+  { file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 T5 a handle that made a role and ran set session authorization to it closes with the role gone from the cluster', worlds: 2, why: 'a role gone from the cluster is seen from a second open handle' },
 ]
-const knownStrings = KNOWN.map((k) => `${k.file}: "${k.title}" builds ${k.worlds} databases`)
+const concurrentStrings = CONCURRENT.map((k) => `${k.file}: "${k.title}" builds ${k.worlds} databases`)
 
 const PLANTED_TWO = `import { test } from 'vitest'
 import { cloneTestDb } from '../core/db'
@@ -229,6 +243,54 @@ it('ARC-4 planted two worlds through a helper', async () => {
 })
 it('ARC-4 planted one world through a helper', async () => { await twin() })
 `
+const PLANTED_EACH = `import { test, it } from 'vitest'
+import { cloneTestDb } from '../core/db'
+test.each([1, 2])('ARC-4 planted two worlds in a test.each body %i', async (n) => {
+  await cloneTestDb()
+  await cloneTestDb()
+  void n
+})
+test.each([1, 2])('ARC-4 planted one world in a test.each body %i', async (n) => {
+  await cloneTestDb()
+  void n
+})
+it.each\`
+  n
+  \${1}
+\`('ARC-4 planted two worlds in a tagged it.each body', async () => {
+  await cloneTestDb()
+  await cloneTestDb()
+})
+test.for([1, 2])('ARC-4 planted two worlds in a test.for body', async () => {
+  await cloneTestDb()
+  await cloneTestDb()
+})
+test.runIf(true)('ARC-4 planted two worlds in a test.runIf body', async () => {
+  await cloneTestDb()
+  await cloneTestDb()
+})
+test.skipIf(false)('ARC-4 planted two worlds in a test.skipIf body', async () => {
+  await cloneTestDb()
+  await cloneTestDb()
+})
+test.concurrent.each([1])('ARC-4 planted a world per loop turn in a chained each body', async () => {
+  for (const y of [1, 2]) { await cloneTestDb(); void y }
+})
+`
+const PLANTED_PROPERTY = `import fc from 'fast-check'
+import { test } from 'vitest'
+import { cloneTestDb } from '../core/db'
+test('ARC-4 planted a world per property run', async () => {
+  await fc.assert(fc.asyncProperty(fc.integer(), async () => { await cloneTestDb() }), { numRuns: 8 })
+})
+test('ARC-4 planted a world per sync property run', () => {
+  fc.assert(fc.property(fc.integer(), () => { void cloneTestDb() }))
+})
+test('ARC-4 planted a property with no world', async () => {
+  await cloneTestDb()
+  await fc.assert(fc.asyncProperty(fc.integer(), async (n) => { void n }), { numRuns: 8 })
+})
+`
 const PLANTED_LOOP = `import { test } from 'vitest'
 import { cloneTestDb } from '../core/db'
 test('ARC-4 planted a world per loop turn', async () => {
@@ -250,6 +312,13 @@ describe('ARC-15 FX12: no db test builds more than one database', () => {
     expect(problems('planted.db.test.ts', PLANTED_LOOP)).toEqual(['planted.db.test.ts: "ARC-4 planted a world per loop turn" builds 2 databases'])
   })
 
+  test('ARC-15 a world made inside a property body counts as more than one: it is a database per generated run (FX14)', () => {
+    expect(problems('planted.db.test.ts', PLANTED_PROPERTY)).toEqual([
+      'planted.db.test.ts: "ARC-4 planted a world per property run" builds 2 databases',
+      'planted.db.test.ts: "ARC-4 planted a world per sync property run" builds 2 databases',
+    ])
+  })
+
   test('ARC-15 every db test file is scanned (at least the nine known homes, and the auth file with its tests)', () => {
     const files = dbTestFiles()
     expect(files.length).toBeGreaterThanOrEqual(9)
@@ -259,44 +328,65 @@ describe('ARC-15 FX12: no db test builds more than one database', () => {
     expect(auth.length).toBeGreaterThanOrEqual(57)
   })
 
-  test('ARC-15 every db test in the repo builds at most one database, apart from the KNOWN list with its owner cards', () => {
-    const found = dbTestFiles().flatMap((f) => problems(f, fs.readFileSync(path.join(ROOT, f), 'utf8')))
-    const unlisted = found.filter((p) => !knownStrings.includes(p))
-    expect(unlisted, `new multi-world db tests: split each into one test per world (FX10 did)`).toEqual([])
+  test('ARC-15 a test.each, test.for, it.each (tagged), test.runIf, test.skipIf or chained each body that builds two databases is reported by its title and count; a one-world body next to it is not (A504)', () => {
+    expect(problems('planted.db.test.ts', PLANTED_EACH)).toEqual([
+      'planted.db.test.ts: "ARC-4 planted two worlds in a test.each body %i" builds 2 databases',
+      'planted.db.test.ts: "ARC-4 planted two worlds in a tagged it.each body" builds 2 databases',
+      'planted.db.test.ts: "ARC-4 planted two worlds in a test.for body" builds 2 databases',
+      'planted.db.test.ts: "ARC-4 planted two worlds in a test.runIf body" builds 2 databases',
+      'planted.db.test.ts: "ARC-4 planted two worlds in a test.skipIf body" builds 2 databases',
+      'planted.db.test.ts: "ARC-4 planted a world per loop turn in a chained each body" builds 2 databases',
+    ])
   })
 
-  test('ARC-15 KNOWN has no stale entries: every listed problem is still produced', () => {
-    const found = dbTestFiles().flatMap((f) => problems(f, fs.readFileSync(path.join(ROOT, f), 'utf8')))
-    expect(knownStrings.filter((p) => !found.includes(p)), 'a listed problem that no longer exists: remove it from KNOWN').toEqual([])
+  test('ARC-15 the table forms are read as tests: a test.each body with one world is counted as a test, not skipped', () => {
+    const t = worldsPerTest('planted.db.test.ts', PLANTED_EACH)
+    expect(t.find((x) => x.title === 'ARC-4 planted one world in a test.each body %i')?.worlds).toBe(1)
+    expect(t).toHaveLength(7)
   })
 
-  test('ARC-15 every KNOWN entry names its file, exact title, count and an owner card id', () => {
-    for (const k of KNOWN) {
-      expect(k.file).toMatch(/\.db\.test\.ts$/)
+  test('ARC-15 every db test in the repo builds at most one database, apart from the CONCURRENT list', () => {
+    const found = dbTestFiles().flatMap((f) => problems(f, fs.readFileSync(path.join(ROOT, f), 'utf8')))
+    const unlisted = found.filter((p) => !concurrentStrings.includes(p))
+    expect(unlisted, `multi-world db tests: split each into one test per world (FX10 and FX14 did)`).toEqual([])
+  })
+
+  test('ARC-15 CONCURRENT has no stale entries: every listed test is still produced, at exactly its count', () => {
+    const found = dbTestFiles().flatMap((f) => problems(f, fs.readFileSync(path.join(ROOT, f), 'utf8')))
+    expect(concurrentStrings.filter((p) => !found.includes(p)), 'a listed test that no longer exists or no longer has that count: remove or fix its entry').toEqual([])
+  })
+
+  test('ARC-15 CONCURRENT is short, in one file, and each entry names its file, exact title, count (2 or 3) and why', () => {
+    expect(CONCURRENT.length).toBeLessThanOrEqual(3)
+    for (const k of CONCURRENT) {
+      expect(k.file).toBe('src/core/db/pg16.acceptance.db.test.ts')
       expect(k.title.length).toBeGreaterThan(10)
-      expect(k.worlds).toBeGreaterThan(1)
-      expect(k.owner).toMatch(/^[A-Z]{1,3}\d+[a-z]?$/)
+      expect([2, 3]).toContain(k.worlds)
+      expect(k.why.length).toBeGreaterThan(20)
     }
-    expect(new Set(knownStrings).size).toBe(KNOWN.length)
+    expect(new Set(concurrentStrings).size).toBe(CONCURRENT.length)
   })
 })
 
 // ---- 3. the measured table -------------------------------------------------------------------------------
-// The 10 slowest db tests, measured 3 Oct on a cloud box (4 CPUs, 2 db workers, `vitest run --project db
-// --sequence.shuffle --sequence.seed=20261001`, 564 tests, all passed, 210 s wall). Each under half the
-// test budget, or named with the owner card that splits or speeds it. The check re-measures with
-// `npm run test:flake` and the Lead refreshes the numbers; this test keeps the table honest.
+// The 10 slowest db tests with a plain written title, measured 3 Oct after FX14's split on a cloud box (4 CPUs,
+// 2 db workers, Postgres 16.14, `vitest run --project db --sequence.shuffle --sequence.seed=20261001`, 704 tests,
+// all passed). Tests that a table form writes once per row (test.each) are not in the table: each row is its own
+// test and none was over 1100 ms. Each under half the test budget, or named with the owner card that splits or
+// speeds it. FX14 took the three slow ones (the RT-5 property at 4506 ms, the ARC-5 lease property at 4804 ms and
+// ARC-16 at 1998 ms) out of the table by one test per world; the check re-measures with `npm run test:flake`
+// and the Lead refreshes the numbers; this test keeps the table honest.
 const MEASURED = [
-  { ms: 4506, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'RT-5 property (fixed seed): any order of runs gives unique, stable, contiguous refs numbered in order of first sight', owner: 'FX14' },
-  { ms: 1998, file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-16 two runs of the same scenario give identical rows (no randomness in the backoff)' },
-  { ms: 1404, file: 'src/modules/auth/auth.acceptance.db.test.ts', title: 'SEC-1 a mix of wrong passwords and wrong codes counts toward the five' },
-  { ms: 1378, file: 'src/contracts/records.acceptance.db.test.ts', title: 'EV-1 returns.is_blank agrees with isBlank on every code point except U+0000 and the surrogates' },
-  { ms: 1317, file: 'src/modules/jobs/jobs.acceptance.db.test.ts', title: 'ARC-5 given the same jobs, handlers and clock both runners end with deep-equal statuses and results' },
-  { ms: 1312, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'OUT-6 a T1-only client and a company with no T2 are skipped; the rest of the batch still goes through' },
-  { ms: 1305, file: 'src/core/db/db.db.test.ts', title: 'ARC-4 a database is created from the schema folder and cloned per test' },
-  { ms: 1239, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'RT-5 the number is never built from client data: names, business numbers and quote references change nothing' },
-  { ms: 1172, file: 'src/modules/auth/auth.acceptance.db.test.ts', title: 'SEC-1 an unknown user, a locked user, a non-test user and a wrong password each cost exactly one scrypt call' },
-  { ms: 1114, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'END-1 a year end the client never confirmed becomes an ops-confirms item and no return' },
+  { ms: 960, file: 'src/modules/auth/auth.acceptance.db.test.ts', title: 'SEC-1 an unknown user, a locked user, a non-test user and a wrong password each cost exactly one scrypt call' },
+  { ms: 836, file: 'src/core/db/pg16.acceptance.db.test.ts', title: "ARC-4 closing one test database never drops a role another open test database made and uses; each database's roles go when it closes" },
+  { ms: 771, file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 with TEST_DB=pg16, createTemplate(DEFAULT_SCHEMA_DIR) called directly also gives Postgres 16 on 127.0.0.1, not PGlite' },
+  { ms: 593, file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 T5 a handle that made a role and ran set session authorization to it closes with the role gone from the cluster' },
+  { ms: 470, file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-4 two test databases are isolated: a table made in one is not in the other' },
+  { ms: 456, file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-16 a template built from a custom folder (as the contract tests build theirs) honours the switch, and its clones keep the pinned settings and the same types, inside a transaction too' },
+  { ms: 324, file: 'src/modules/bridge/bridge.acceptance.db.test.ts', title: 'END-1 a snapshot that is not made-up data, or does not parse, is refused and writes nothing' },
+  { ms: 312, file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-16 T2 set session authorization on the handle: the transaction runs as that user (current_user and session_user) and row-level security holds inside it (0 rows, never the superuser count), or it is refused naming the user' },
+  { ms: 302, file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-16 two overlapping transactions on a handle with a role set both run as that role, or are refused naming it; neither runs as another user' },
+  { ms: 298, file: 'src/core/db/pg16.acceptance.db.test.ts', title: 'ARC-16 parity on every connection: inside a transaction and in both of two overlapping transactions, the pinned settings and the same-types row are unchanged' },
 ]
 
 describe('ARC-15 FX12: the 10 slowest db tests sit under half the test budget, or have an owner', () => {
