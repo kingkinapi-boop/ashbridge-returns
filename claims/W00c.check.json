@@ -2,11 +2,8 @@
  "card": "W00c",
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
- "worker": "cloud-c7a694",
+ "worker": "cloud-ee5eef",
  "state": "working",
- "at": "2026-10-04T01:48:20.435Z",
- "mode": "turbo",
- "lastRelease": {
-  "tip": "853b91ea145116dbba4cdb278f1a7cddab9d1780"
- }
+ "at": "2026-10-04T03:30:51.456Z",
+ "mode": "turbo"
 }
