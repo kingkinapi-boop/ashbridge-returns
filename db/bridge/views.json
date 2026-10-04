@@ -1,0 +1,1423 @@
+{
+  "contract": {
+    "clientAppCommit": "f87a0043",
+    "lastMigration": 34
+  },
+  "views": [
+    {
+      "name": "answer",
+      "columns": [
+        {
+          "name": "id",
+          "sources": [
+            {
+              "source": "answers.id",
+              "cite": "M0006:35"
+            }
+          ]
+        },
+        {
+          "name": "entity_id",
+          "sources": [
+            {
+              "source": "answers.entity_id",
+              "cite": "M0029:95"
+            }
+          ]
+        },
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "answers.corporation_id",
+              "cite": "M0006:39"
+            }
+          ]
+        },
+        {
+          "name": "person_id",
+          "sources": [
+            {
+              "source": "answers.person_id",
+              "cite": "M0006:40"
+            }
+          ]
+        },
+        {
+          "name": "engagement_id",
+          "sources": [
+            {
+              "source": "answers.engagement_id",
+              "cite": "M0006:49"
+            }
+          ]
+        },
+        {
+          "name": "tax_year",
+          "sources": [
+            {
+              "source": "answers.tax_year",
+              "cite": "M0006:45"
+            }
+          ]
+        },
+        {
+          "name": "what_it_resolves",
+          "sources": [
+            {
+              "source": "answers.what_it_resolves",
+              "cite": "M0006:43"
+            }
+          ]
+        },
+        {
+          "name": "question_asked",
+          "sources": [
+            {
+              "source": "answers.question_asked",
+              "cite": "M0006:41"
+            }
+          ]
+        },
+        {
+          "name": "answer_verbatim",
+          "sources": [
+            {
+              "source": "answers.answer_verbatim",
+              "cite": "M0006:42"
+            },
+            {
+              "source": "answers.question_asked",
+              "cite": "M0006:41"
+            }
+          ]
+        },
+        {
+          "name": "status",
+          "sources": [
+            {
+              "source": "answers.status",
+              "cite": "M0006:46"
+            }
+          ]
+        },
+        {
+          "name": "superseded_by_id",
+          "sources": [
+            {
+              "source": "answers.superseded_by_id",
+              "cite": "M0006:54"
+            }
+          ]
+        },
+        {
+          "name": "channel",
+          "sources": [
+            {
+              "source": "answers.channel",
+              "cite": "M0006:44"
+            }
+          ]
+        },
+        {
+          "name": "source",
+          "sources": [
+            {
+              "source": "answers.source",
+              "cite": "M0022:12"
+            }
+          ]
+        },
+        {
+          "name": "document_id",
+          "sources": [
+            {
+              "source": "answers.document_id",
+              "cite": "M0020:128"
+            }
+          ]
+        },
+        {
+          "name": "created_at",
+          "sources": [
+            {
+              "source": "answers.created_at",
+              "cite": "M0006:56"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "answers.is_test",
+              "cite": "M0006:57"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [],
+      "derived": []
+    },
+    {
+      "name": "client",
+      "columns": [
+        {
+          "name": "person_id",
+          "sources": [
+            {
+              "source": "people.id",
+              "cite": "M0002:14"
+            }
+          ]
+        },
+        {
+          "name": "full_name",
+          "sources": [
+            {
+              "source": "people.full_name",
+              "cite": "M0002:15"
+            }
+          ]
+        },
+        {
+          "name": "entity_id",
+          "sources": [
+            {
+              "source": "entity_people.entity_id",
+              "cite": "M0029:74"
+            }
+          ]
+        },
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "corporation_people.corporation_id",
+              "cite": "M0002:111"
+            }
+          ]
+        },
+        {
+          "name": "role",
+          "sources": [
+            {
+              "source": "entity_people.role",
+              "cite": "M0029:76"
+            },
+            {
+              "source": "corporation_people.role",
+              "cite": "M0002:116"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "people.is_test",
+              "cite": "M0002:33"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "entity_people.person_id",
+          "cite": "M0029:75"
+        },
+        {
+          "source": "corporation_people.person_id",
+          "cite": "M0002:110"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "corporation",
+      "columns": [
+        {
+          "name": "id",
+          "sources": [
+            {
+              "source": "corporations.id",
+              "cite": "M0002:49"
+            }
+          ]
+        },
+        {
+          "name": "legal_name",
+          "sources": [
+            {
+              "source": "corporations.legal_name",
+              "cite": "M0002:50"
+            }
+          ]
+        },
+        {
+          "name": "business_number",
+          "sources": [
+            {
+              "source": "corporations.business_number",
+              "cite": "M0002:55"
+            }
+          ]
+        },
+        {
+          "name": "financial_year_end",
+          "sources": [
+            {
+              "source": "corporations.financial_year_end",
+              "cite": "M0002:57"
+            }
+          ]
+        },
+        {
+          "name": "incorporation_date",
+          "sources": [
+            {
+              "source": "corporations.incorporation_date",
+              "cite": "M0002:58"
+            }
+          ]
+        },
+        {
+          "name": "jurisdiction",
+          "sources": [
+            {
+              "source": "corporations.jurisdiction",
+              "cite": "M0002:59"
+            }
+          ]
+        },
+        {
+          "name": "client_type",
+          "sources": [
+            {
+              "source": "corporations.client_type",
+              "cite": "M0002:72"
+            }
+          ]
+        },
+        {
+          "name": "all_prior_years_filed",
+          "sources": [
+            {
+              "source": "corporations.all_prior_years_filed",
+              "cite": "M0002:74"
+            }
+          ]
+        },
+        {
+          "name": "outstanding_years",
+          "sources": [
+            {
+              "source": "corporations.outstanding_years",
+              "cite": "M0002:75"
+            }
+          ]
+        },
+        {
+          "name": "has_cra_login",
+          "sources": [
+            {
+              "source": "corporations.has_cra_login",
+              "cite": "M0002:77"
+            }
+          ]
+        },
+        {
+          "name": "is_partnership_member",
+          "sources": [
+            {
+              "source": "corporations.is_partnership_member",
+              "cite": "M0002:82"
+            }
+          ]
+        },
+        {
+          "name": "holds_ontario_company_key",
+          "sources": [
+            {
+              "source": "corporations.holds_ontario_company_key",
+              "cite": "M0002:88"
+            }
+          ]
+        },
+        {
+          "name": "holds_federal_login",
+          "sources": [
+            {
+              "source": "corporations.holds_federal_login",
+              "cite": "M0002:89"
+            }
+          ]
+        },
+        {
+          "name": "filed_initial_return",
+          "sources": [
+            {
+              "source": "corporations.filed_initial_return",
+              "cite": "M0002:92"
+            }
+          ]
+        },
+        {
+          "name": "claims_small_business_deduction",
+          "sources": [
+            {
+              "source": "corporations.claims_small_business_deduction",
+              "cite": "M0012:41"
+            }
+          ]
+        },
+        {
+          "name": "hst_filing_frequency",
+          "sources": [
+            {
+              "source": "corporations.hst_filing_frequency",
+              "cite": "M0012:42"
+            }
+          ]
+        },
+        {
+          "name": "hst_basis",
+          "sources": [
+            {
+              "source": "corporations.hst_basis",
+              "cite": "M0012:43"
+            }
+          ]
+        },
+        {
+          "name": "books_kept_by",
+          "sources": [
+            {
+              "source": "corporations.books_kept_by",
+              "cite": "M0012:62"
+            }
+          ]
+        },
+        {
+          "name": "drive_folder_url",
+          "sources": [
+            {
+              "source": "corporations.drive_folder_url",
+              "cite": "M0017:160"
+            }
+          ]
+        },
+        {
+          "name": "entity_id",
+          "sources": [
+            {
+              "source": "entities.id",
+              "cite": "M0029:23"
+            }
+          ]
+        },
+        {
+          "name": "intake_id",
+          "sources": [
+            {
+              "source": "entities.intake_id",
+              "cite": "M0029:39"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "entities.corporation_id",
+          "cite": "M0029:27"
+        },
+        {
+          "source": "entities.kind",
+          "cite": "M0029:24"
+        }
+      ],
+      "derived": [
+        {
+          "field": "services",
+          "rule": "the distinct service of every t2_return row with this corporation id, sorted; null when there is none (never guessed)",
+          "from": [
+            "t2_return.service",
+            "t2_return.corporation_id"
+          ],
+          "cite": "M0003:83"
+        },
+        {
+          "field": "financial_year_end_confirmed",
+          "rule": "false: the client app stores a guessed last day of the month and no question confirms it",
+          "from": [
+            "corporation.financial_year_end"
+          ],
+          "cite": "U4"
+        },
+        {
+          "field": "associated_corporation_ids",
+          "rule": "empty: no client-app column names an associated corporation by id, a person adds them",
+          "from": [
+            "corporation.id"
+          ],
+          "cite": "U3"
+        }
+      ]
+    },
+    {
+      "name": "cra_access",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "answers.corporation_id",
+              "cite": "M0006:39"
+            },
+            {
+              "source": "cra_authorization_requests.corporation_id",
+              "cite": "M0013:110"
+            },
+            {
+              "source": "cra_program_accounts.corporation_id",
+              "cite": "M0002:143"
+            }
+          ]
+        },
+        {
+          "name": "kind",
+          "sources": [
+            {
+              "source": "answers.what_it_resolves",
+              "cite": "M0006:43"
+            },
+            {
+              "source": "cra_authorization_requests.corporation_id",
+              "cite": "M0013:110"
+            },
+            {
+              "source": "cra_program_accounts.corporation_id",
+              "cite": "M0002:143"
+            }
+          ]
+        },
+        {
+          "name": "submitted_at",
+          "sources": [
+            {
+              "source": "cra_authorization_requests.submitted_at",
+              "cite": "M0013:111"
+            }
+          ]
+        },
+        {
+          "name": "approved_at",
+          "sources": [
+            {
+              "source": "cra_authorization_requests.approved_at",
+              "cite": "M0013:113"
+            }
+          ]
+        },
+        {
+          "name": "expired_at",
+          "sources": [
+            {
+              "source": "cra_authorization_requests.expired_at",
+              "cite": "M0013:114"
+            }
+          ]
+        },
+        {
+          "name": "program",
+          "sources": [
+            {
+              "source": "cra_program_accounts.program",
+              "cite": "M0002:144"
+            }
+          ]
+        },
+        {
+          "name": "account_number",
+          "sources": [
+            {
+              "source": "cra_program_accounts.account_number",
+              "cite": "M0002:145"
+            }
+          ]
+        },
+        {
+          "name": "is_open",
+          "sources": [
+            {
+              "source": "cra_program_accounts.is_open",
+              "cite": "M0002:146"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "answers.is_test",
+              "cite": "M0006:57"
+            },
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "answers.channel",
+          "cite": "M0006:44"
+        },
+        {
+          "source": "answers.superseded_by_id",
+          "cite": "M0006:54"
+        },
+        {
+          "source": "answers.status",
+          "cite": "M0006:46"
+        },
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "document",
+      "columns": [
+        {
+          "name": "id",
+          "sources": [
+            {
+              "source": "documents.id",
+              "cite": "M0004:245"
+            },
+            {
+              "source": "answers.id",
+              "cite": "M0006:35"
+            }
+          ]
+        },
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "documents.corporation_id",
+              "cite": "M0004:246"
+            },
+            {
+              "source": "answers.corporation_id",
+              "cite": "M0006:39"
+            }
+          ]
+        },
+        {
+          "name": "engagement_id",
+          "sources": [
+            {
+              "source": "documents.engagement_id",
+              "cite": "M0004:247"
+            },
+            {
+              "source": "answers.engagement_id",
+              "cite": "M0006:49"
+            }
+          ]
+        },
+        {
+          "name": "drive_file_id",
+          "sources": [
+            {
+              "source": "documents.drive_file_id",
+              "cite": "M0004:249"
+            },
+            {
+              "source": "answers.answer_verbatim",
+              "cite": "M0006:42"
+            }
+          ]
+        },
+        {
+          "name": "drive_folder_id",
+          "sources": [
+            {
+              "source": "documents.drive_folder_id",
+              "cite": "M0004:251"
+            }
+          ]
+        },
+        {
+          "name": "filename",
+          "sources": [
+            {
+              "source": "documents.filename",
+              "cite": "M0004:252"
+            },
+            {
+              "source": "answers.answer_verbatim",
+              "cite": "M0006:42"
+            }
+          ]
+        },
+        {
+          "name": "mime_type",
+          "sources": [
+            {
+              "source": "documents.mime_type",
+              "cite": "M0004:253"
+            }
+          ]
+        },
+        {
+          "name": "document_kind",
+          "sources": [
+            {
+              "source": "documents.document_kind",
+              "cite": "M0004:254"
+            }
+          ]
+        },
+        {
+          "name": "uploaded_at",
+          "sources": [
+            {
+              "source": "documents.uploaded_at",
+              "cite": "M0004:257"
+            },
+            {
+              "source": "answers.created_at",
+              "cite": "M0006:56"
+            }
+          ]
+        },
+        {
+          "name": "content_sha256",
+          "sources": [
+            {
+              "source": "documents.content_sha256",
+              "cite": "M0020:115"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "documents.is_test",
+              "cite": "M0004:258"
+            },
+            {
+              "source": "answers.is_test",
+              "cite": "M0006:57"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "answers.superseded_by_id",
+          "cite": "M0006:54"
+        },
+        {
+          "source": "answers.status",
+          "cite": "M0006:46"
+        },
+        {
+          "source": "answers.question_asked",
+          "cite": "M0006:41"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "flag",
+      "columns": [
+        {
+          "name": "engagement_id",
+          "sources": [
+            {
+              "source": "flags.engagement_id",
+              "cite": "M0003:145"
+            }
+          ]
+        },
+        {
+          "name": "flag",
+          "sources": [
+            {
+              "source": "flags.flag",
+              "cite": "M0003:146"
+            }
+          ]
+        },
+        {
+          "name": "raised_at",
+          "sources": [
+            {
+              "source": "flags.raised_at",
+              "cite": "M0003:148"
+            }
+          ]
+        },
+        {
+          "name": "cleared_at",
+          "sources": [
+            {
+              "source": "flags.cleared_at",
+              "cite": "M0003:151"
+            }
+          ]
+        },
+        {
+          "name": "quote_reference",
+          "sources": [
+            {
+              "source": "intakes.quote_reference",
+              "cite": "M0021:24"
+            }
+          ]
+        },
+        {
+          "name": "latest_event",
+          "sources": [
+            {
+              "source": "intakes.latest_event",
+              "cite": "M0021:30"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "flags.is_test",
+              "cite": "M0003:154"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "engagements.id",
+          "cite": "M0003:80"
+        },
+        {
+          "source": "engagements.entity_id",
+          "cite": "M0029:89"
+        },
+        {
+          "source": "entities.id",
+          "cite": "M0029:23"
+        },
+        {
+          "source": "entities.intake_id",
+          "cite": "M0029:39"
+        },
+        {
+          "source": "intakes.id",
+          "cite": null
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "t2_return",
+      "columns": [
+        {
+          "name": "id",
+          "sources": [
+            {
+              "source": "engagements.id",
+              "cite": "M0003:80"
+            }
+          ]
+        },
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "engagements.corporation_id",
+              "cite": "M0003:81"
+            }
+          ]
+        },
+        {
+          "name": "entity_id",
+          "sources": [
+            {
+              "source": "engagements.entity_id",
+              "cite": "M0029:89"
+            }
+          ]
+        },
+        {
+          "name": "service",
+          "sources": [
+            {
+              "source": "engagements.service",
+              "cite": "M0003:83"
+            }
+          ]
+        },
+        {
+          "name": "recurrence",
+          "sources": [
+            {
+              "source": "engagements.recurrence",
+              "cite": "M0003:84"
+            }
+          ]
+        },
+        {
+          "name": "tax_year",
+          "sources": [
+            {
+              "source": "engagements.tax_year",
+              "cite": "M0003:89"
+            }
+          ]
+        },
+        {
+          "name": "current_state",
+          "sources": [
+            {
+              "source": "engagements.current_state",
+              "cite": "M0003:98"
+            }
+          ]
+        },
+        {
+          "name": "created_at",
+          "sources": [
+            {
+              "source": "engagements.created_at",
+              "cite": "M0003:105"
+            }
+          ]
+        },
+        {
+          "name": "submitted_at",
+          "sources": [
+            {
+              "source": "flow_progress.submitted_at",
+              "cite": "M0030:29"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "engagements.is_test",
+              "cite": "M0003:107"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "flow_progress.entity_id",
+          "cite": "M0030:24"
+        },
+        {
+          "source": "flow_progress.step_key",
+          "cite": "M0030:27"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_business_operations",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "business_operations.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "tax_year",
+          "sources": [
+            {
+              "source": "business_operations.tax_year",
+              "cite": "M0004:100"
+            }
+          ]
+        },
+        {
+          "name": "earns_money",
+          "sources": [
+            {
+              "source": "business_operations.earns_money",
+              "cite": "M0004:102"
+            }
+          ]
+        },
+        {
+          "name": "operates_from",
+          "sources": [
+            {
+              "source": "business_operations.operates_from",
+              "cite": "M0004:108"
+            }
+          ]
+        },
+        {
+          "name": "holds_inventory",
+          "sources": [
+            {
+              "source": "business_operations.holds_inventory",
+              "cite": "M0004:110"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_connections",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "connections.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "account_kind",
+          "sources": [
+            {
+              "source": "connections.account_kind",
+              "cite": "M0004:222"
+            }
+          ]
+        },
+        {
+          "name": "method",
+          "sources": [
+            {
+              "source": "connections.method",
+              "cite": "M0004:227"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_declared_dividends",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "declared_dividends.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "declared_on",
+          "sources": [
+            {
+              "source": "declared_dividends.declared_on",
+              "cite": "M0017:130"
+            }
+          ]
+        },
+        {
+          "name": "amount_cents",
+          "sources": [
+            {
+              "source": "declared_dividends.amount_cents",
+              "cite": "M0017:131"
+            }
+          ]
+        },
+        {
+          "name": "resolution_on_file",
+          "sources": [
+            {
+              "source": "declared_dividends.resolution_on_file",
+              "cite": "M0017:133"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_ownership_changes",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "ownership_changes.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "tax_year",
+          "sources": [
+            {
+              "source": "ownership_changes.tax_year",
+              "cite": "M0012:86"
+            }
+          ]
+        },
+        {
+          "name": "changed",
+          "sources": [
+            {
+              "source": "ownership_changes.changed",
+              "cite": "M0012:87"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_payroll_people",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "payroll_people.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "full_legal_name",
+          "sources": [
+            {
+              "source": "payroll_people.full_legal_name",
+              "cite": "M0004:197"
+            }
+          ]
+        },
+        {
+          "name": "pay_basis",
+          "sources": [
+            {
+              "source": "payroll_people.pay_basis",
+              "cite": "M0004:201"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_predecessor_requests",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "predecessor_requests.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "firm_name",
+          "sources": [
+            {
+              "source": "predecessor_requests.firm_name",
+              "cite": "M0013:76"
+            }
+          ]
+        },
+        {
+          "name": "records_arrived_at",
+          "sources": [
+            {
+              "source": "predecessor_requests.records_arrived_at",
+              "cite": "M0013:80"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_related_entities",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "related_entities.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "entity_role",
+          "sources": [
+            {
+              "source": "related_entities.entity_role",
+              "cite": "M0004:61"
+            }
+          ]
+        },
+        {
+          "name": "entity_name",
+          "sources": [
+            {
+              "source": "related_entities.entity_name",
+              "cite": "M0004:62"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_shareholders",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "shareholders.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "holder_name",
+          "sources": [
+            {
+              "source": "shareholders.holder_name",
+              "cite": "M0004:19"
+            }
+          ]
+        },
+        {
+          "name": "holder_kind",
+          "sources": [
+            {
+              "source": "shareholders.holder_kind",
+              "cite": "M0004:20"
+            }
+          ]
+        },
+        {
+          "name": "approximate_share_percent",
+          "sources": [
+            {
+              "source": "shareholders.approximate_share_percent",
+              "cite": "M0004:31"
+            }
+          ]
+        },
+        {
+          "name": "share_class",
+          "sources": [
+            {
+              "source": "shareholders.share_class",
+              "cite": "M0004:39"
+            }
+          ]
+        },
+        {
+          "name": "tax_residency",
+          "sources": [
+            {
+              "source": "shareholders.tax_residency",
+              "cite": "M0004:42"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    },
+    {
+      "name": "v1_slip_recipients",
+      "columns": [
+        {
+          "name": "corporation_id",
+          "sources": [
+            {
+              "source": "slip_recipients.corporation_id",
+              "cite": null
+            }
+          ]
+        },
+        {
+          "name": "full_legal_name",
+          "sources": [
+            {
+              "source": "slip_recipients.full_legal_name",
+              "cite": "M0004:149"
+            }
+          ]
+        },
+        {
+          "name": "is_test",
+          "sources": [
+            {
+              "source": "corporations.is_test",
+              "cite": "M0002:96"
+            }
+          ]
+        }
+      ],
+      "alsoReads": [
+        {
+          "source": "corporations.id",
+          "cite": "M0002:49"
+        }
+      ],
+      "derived": []
+    }
+  ]
+}

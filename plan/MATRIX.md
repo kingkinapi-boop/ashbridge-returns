@@ -31,5 +31,7 @@ Acceptance tests whose name opens with no clause ID:
 - src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: outside the sandbox it reads the path as given
 - src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: inside the sandbox it returns the original text, not the instrumented copy, for a relative and an absolute path
 - src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: a "first 5 lines carry // @mutate" scan passes through the helper on the instrumented sandbox copy
+- src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15 SC8: the planted sandbox preamble is the real captured one, with process.env
+- src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15 SC8: a "no process.env" scan (as ocr/engine-setting.test.ts runs) fails on the raw sandbox copy and passes through the helper
 - src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: a "no network import" scan passes on a clean module and still fails on a planted real violation, in the sandbox too
 - src/core/testing/read-own-source.acceptance.test.ts: R20 ARC-15: a missing file throws, it is not read as empty text

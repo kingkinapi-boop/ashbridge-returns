@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import fc from 'fast-check'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { CIRCULAR, makeLogger, redact, REDACTED, SENSITIVE_KINDS } from './log'
+import { readOwnSource } from './testing/read-own-source'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 
@@ -225,7 +226,7 @@ describe('F00 logger redaction (SEC-5, SEC-10)', () => {
   })
 
   test('ARC-15 log.ts is a mutation target (// @mutate in its first 5 lines)', () => {
-    const head = fs.readFileSync(path.join(ROOT, 'src', 'core', 'log.ts'), 'utf8').split('\n').slice(0, 5).join('\n')
+    const head = readOwnSource(path.join(ROOT, 'src', 'core', 'log.ts')).split('\n').slice(0, 5).join('\n')
     expect(head).toMatch(/\/\/ @mutate/)
   })
 })
