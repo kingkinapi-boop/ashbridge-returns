@@ -1,13 +1,12 @@
 {
  "card": "A08",
  "role": "build",
- "round": 4,
+ "round": 5,
  "spec": "7e9890ba",
- "worker": "cloud-f14272",
- "state": "released",
- "at": "2026-10-04T03:31:13.374Z",
+ "worker": "cloud-fff44d",
+ "state": "working",
+ "at": "2026-10-04T03:59:15.375Z",
  "mode": "turbo",
- "note": "permission refused on the A548 edits (Stryker disables, vendor list), see reports/A08-build-round4.md",
  "lastRelease": {
   "tip": "59de50d0cab8a6eb62dbe8c9cdbd8c0edb337ee5"
  }
