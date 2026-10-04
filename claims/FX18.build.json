@@ -1,11 +1,10 @@
 {
  "card": "FX18",
  "role": "build",
- "round": 2,
- "spec": "eb8d158c",
- "worker": "cloud-725535",
- "state": "reopened",
- "at": "2026-10-04T01:00:22.862Z",
- "mode": "turbo",
- "note": "A537 gaps patched (spec round 2 reported); build B1 to B8, then cloud mutate --force"
+ "round": 3,
+ "spec": "6e1bff63",
+ "worker": "cloud-1916ac",
+ "state": "working",
+ "at": "2026-10-04T01:01:19.498Z",
+ "mode": "turbo"
 }
