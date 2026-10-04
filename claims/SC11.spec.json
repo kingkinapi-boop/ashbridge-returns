@@ -1,9 +1,11 @@
 {
  "card": "SC11",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: merged main 351f0846. unit 3480 pass, 2 fail on the branch: (1) db-budget, the 6 multi-world tests in rules.acceptance.db.test.ts (already in the check FAIL); (2) NEW sql-rules R107: GL3's landed db/bridge/0002_grants.sql has no dbGrantAllow entries in tools/test-homes.json, and db/bridge/__fixtures__/client-app-standin.sql holds default-privilege grants R107 refuses outright. Not edited: allow entries and a refused rule are the Lead's call (security). Typecheck clean",
  "worker": "cloud-24d389",
- "state": "working",
- "at": "2026-10-04T00:35:29.336Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T00:39:19.926Z",
+ "mode": "turbo",
+ "commit": "7e2f5034",
+ "validated": "861ad88c08943f324e85508eb32fd4f6af01984a"
 }
