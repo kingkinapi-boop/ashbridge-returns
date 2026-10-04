@@ -3,13 +3,13 @@
 // The clock is pinned (clock.ts) and the random part is pinned through the injection point the build adds:
 //   setIdRandom(source: (byteCount: number) => Uint8Array): void   and   resetIdRandom(): void
 // (exported from ids.ts; name chosen by the spec job, amber).
-import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import fc from 'fast-check'
 import { afterEach, describe, expect, test } from 'vitest'
 import { fixedClock, setClock, systemClock } from './clock'
 import * as ids from './ids'
+import { readOwnSource } from './testing/read-own-source'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 
@@ -122,7 +122,7 @@ describe('F00T ids.ts (ARC-16)', () => {
   })
 
   test('ARC-15 ids.ts is a mutation target (// @mutate in its first 5 lines)', () => {
-    const head = fs.readFileSync(path.join(ROOT, 'src', 'core', 'ids.ts'), 'utf8').split('\n').slice(0, 5).join('\n')
+    const head = readOwnSource(path.join(ROOT, 'src', 'core', 'ids.ts')).split('\n').slice(0, 5).join('\n')
     expect(head).toMatch(/\/\/ @mutate/)
   })
 })
