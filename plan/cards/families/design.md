@@ -19,7 +19,8 @@ A static, clickable design of the "{screen}" screens, with made-up data from the
 6. The brief names the blueprint commit it was written from; a lint fails any brief or prototype naming a removed clause or retired term (export 1, export 2, review-lines export, receipt export, gate 1, judgment input sheet, AI-proposed GIFI). A brief older than the last commit touching its clauses is re-checked before design starts.
 7. A prototype lint finds no self-link, no `#` link that changes nothing, no control drawn as plain text, no filler text in a data column, and no two counts that disagree.
 8. Before pushing, the designer serves the pages over http (never file://) and runs axe (contrast "incomplete" counts as a failure until checked), a keyboard Tab walk, 320 px reflow and the budget counter at both sizes of staff-screens rule 18, and the shared rule checks V1 to V8 of `design/verify/rules.mjs` (reports/findings-designs-2.md), and reports the numbers. Every verify script is committed with its family.
-9. Built on `design/basis/`: listed `app-` parts only, no CSS `zoom`, no third-party fonts; a new part goes into the basis with its reason.
+9. Every href and src resolves from a clean clone of the pushed branch (checked after the push, from a fresh checkout); no folder is named assets or Assets, which git excludes here (A554).
+10. Built on `design/basis/`: listed `app-` parts only, no CSS `zoom`, no third-party fonts; a new part goes into the basis with its reason.
 
 ## Not in this card
 The React build (V cards).

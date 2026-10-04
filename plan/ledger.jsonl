@@ -746,3 +746,8 @@
 {"ts":"2026-10-04T03:58:45.382Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-04T03:58:46.010Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
 {"ts":"2026-10-04T03:58:46.635Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T04:05:53.891Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T04:20:41.749Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T04:34:50.533Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"tester","model":"sonnet","where":"worktree","desc":"Workbench usability panel","allowed":true}
+{"ts":"2026-10-04T04:42:31.420Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Designer 4 asset repair","allowed":true}
+{"ts":"2026-10-04T04:42:35.658Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"designer","model":"sonnet","where":"worktree","desc":"Designer 5 asset repair","allowed":true}
