@@ -4,8 +4,9 @@
  "round": 4,
  "spec": "09ef20c9",
  "worker": "cloud-bebd43",
- "state": "working",
- "at": "2026-10-04T01:53:10.840Z",
+ "state": "reported",
+ "at": "2026-10-04T03:38:00.983Z",
  "mode": "turbo",
- "beat": "2026-10-04T02:11:53.016Z"
+ "beat": "2026-10-04T02:11:53.016Z",
+ "note": "round 4 B15 to B20: unit 809 of 809, db PGlite and pg16 green, flake 5 of 5 + shifted clean, see reports/SC11-build.md"
 }
