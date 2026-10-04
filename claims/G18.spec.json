@@ -1,12 +1,9 @@
 {
  "card": "G18",
  "role": "spec",
- "note": "A505 spec patch: 77 tests, 33 pass as planted, 44 fail by name on today's data; validated on main 8180805e",
- "worker": "cloud-7d7878",
- "state": "reported",
- "at": "2026-10-03T18:01:46.250Z",
- "mode": "turbo",
- "beat": "2026-10-03T17:44:05.621Z",
- "commit": "4291c566",
- "validated": "8180805e"
+ "note": "toolchain refit",
+ "worker": "cloud-6d2e46",
+ "state": "working",
+ "at": "2026-10-04T00:23:06.250Z",
+ "mode": "turbo"
 }
