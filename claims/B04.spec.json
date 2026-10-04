@@ -1,12 +1,9 @@
 {
  "card": "B04",
  "role": "spec",
- "note": "A507: items 1 to 9 added; failing by design on missing modules; READERS entry for QBO is amber, see reports/B04-spec-2.md",
- "worker": "cloud-07698b",
- "state": "reported",
- "at": "2026-10-03T18:35:49.853Z",
- "mode": "turbo",
- "beat": "2026-10-03T18:14:11.306Z",
- "commit": "c17bd825",
- "validated": "6e6f6348"
+ "note": "toolchain refit",
+ "worker": "cloud-24d389",
+ "state": "working",
+ "at": "2026-10-04T00:22:27.111Z",
+ "mode": "turbo"
 }
