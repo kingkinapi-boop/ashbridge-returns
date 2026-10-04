@@ -1,22 +1,19 @@
-# FX18 check (cloud-4b9dab)
+# FX18 check (round 2 build), cloud-c7a694, 4 Oct 2026
 
-FAIL: spec (c) not met, see below.
+Result: FAIL (one item, Opus read). Everything else passed.
 
-Passed: typecheck, lint, deps:check, npm test (unit 3369, db 698 on PGlite), mutation canary, mutate:changed FX18 = 100 on safe-read.ts, engines.ts, runner.ts, schemas.ts, acceptance test file identical to spec commit eb8d158. pg16 and test:flake not run (card touches no db files).
+Passed: typecheck, lint, deps:check; `npm test` 3568 of 3569 (the one failure, tools/test/claim-wait-check "SC11b: no Where line", is on main and not this card's); spec files unchanged since 6e1bff63; `node tools/scope.mjs FX18` clean; mutate:canary 100; mutate:changed FX18 100 on safe-read.ts, engines.ts, runner.ts, schemas.ts, index.ts. No db files touched, so no pg16 run.
 
-## Failures (Opus read, reports/FX18-opus-read.md)
-1. Spec (c): engines.ts:188 `// Stryker disable next-line BlockStatement` sits on the one-line `try { return fn() } catch { return undefined }`, so it disables the try block too (an emptied try makes attempt() always undefined; tests should kill that). Same over-broad disable at engines.ts:241 (ConditionalExpression `if (true)` is killable) and schemas.ts:34-53 (StringLiteral/ObjectLiteral ranges the card did not ask for). Fix: split try and catch onto separate lines, disable only the catch; narrow the others. Mutation must stay 100.
-Rule candidate: a Stryker disable comment names the mutants it covers and sits on a line holding only the equivalent code.
+## Failure
+1. src/modules/ai/runner/engines.ts:212 (lookAtStranger): the cap exemption is `name.startsWith(`${jobId}.`)`, so every `<id>.*` name is exempt, not the one waited-id other-extension file B4 means. An outbox writer can plant `<id>.1`, `<id>.2`, ... and each is logged and added to the per-wait set with no limit, defeating seenMax (R104, L4) and allowing log flooding. The R104 marker at :357 ("exempt, and counted once") is false. The builder listed this choice as amber.
+   Fix: exempt only the first `<id>.*` name met in a wait. Test to add: seenMax + 3 strangers plus two `<id>.*` names; only one of the two is logged past the cap.
+Rule candidate: any "exempt from a cap" test plants two exempt names, not one.
 
-## Scope note
-tools/scope.mjs FX18 on the branch lists safe-read.test.ts and exchange-limits.build.test.ts outside Paths because the branch's slices.json is old; main's slices.json already lists both (A530). Not a failure on the landing form.
+## Lows (card or SC12, not failures)
+- engines.ts:213 JSON.stringify leaves U+2028, U+2029, U+202E, U+200B in a logged stranger name (L5 cleans only last_error).
+- engines.ts:279 chmodSync follows symlinks after the realpath check (narrowing only, same-owner folder).
+- schemas.ts:35, :41, :53 disable reasons claim import-failure kills; say why they survive instead.
+- engines.ts:43 EngineContext.seen comment is stale (holds recordings only).
 
-## Lows
-- runner.ts:153-158 lastErrorLine keeps U+2028/2029 and bidi controls; slice can split a surrogate pair.
-- engines.ts:262 engine does not repeat the isTest SEC-11 gate; aiEngines still exported from engines.ts.
-- engines.ts:162 `seen` never cleared; after 200 entries spec (b) logging stops for the runner's life.
-- engines.ts:296-306 staging file left on refusal; mkdir 0700 does not tighten existing folders.
-- contracts/ai.ts:34-40 versionStampSchema free text for the four N5 fields (outside Paths).
-KNOWN lists: none name FX18 (fs-rules.test.mjs not on main yet).
-
-Permission gaps: none. Model: Sonnet 5.5 check, Opus 5.5 read.
+Security review (Opus read on the diff): no medium or higher finding beyond item 1.
+Permission gaps: none. Model: Sonnet checker; Opus subagent for the adversarial read and security read.
