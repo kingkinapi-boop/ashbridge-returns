@@ -4,12 +4,8 @@
  "round": 5,
  "spec": "7e9890ba",
  "worker": "cloud-fff44d",
- "state": "released",
- "at": "2026-10-04T04:03:26.037Z",
+ "state": "reopened",
+ "at": "2026-10-04T04:44:06.618Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "59de50d0cab8a6eb62dbe8c9cdbd8c0edb337ee5"
- },
- "note": "wait: A551 spec first; the Lead reopens the build after it",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
+ "note": "A551 spec reported (22 tests, 23 plants caught): build B1 to B9, no new disable, then mutate:changed A08 --force to 100"
 }
