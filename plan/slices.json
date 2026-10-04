@@ -11050,6 +11050,31 @@
       "status": "carded",
       "spec": null,
       "deps": [
+        "SC11"
+      ],
+      "paths": [
+        "tools/measure-db-peak.mjs",
+        "src/core/db/index.ts",
+        "src/core/db/global-setup.ts",
+        "src/core/db/pool-rules.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-6",
+        "SEC-1",
+        "ARC-15"
+      ],
+      "id": "SC11b",
+      "title": "Db harness rules, the rest of SC11's round 3 (connection peak, connect timeout, setup bounds, R119 and R120 everywhere)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "Split from SC11 at round 3 (A540); does not block SC3."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
         "A04"
       ],
       "paths": [
