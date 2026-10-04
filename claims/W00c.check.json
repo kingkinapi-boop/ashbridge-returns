@@ -2,10 +2,8 @@
  "card": "W00c",
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
- "worker": "cloud-331e27",
- "state": "reopened",
- "at": "2026-10-04T00:38:30.189Z",
- "mode": "turbo",
- "beat": "2026-10-04T00:01:26.824Z",
- "note": "continue: A538 narrow-first cascade at the top of the card; session 1 pass 1a on all 11 targets, json-keys.ts first"
+ "worker": "cloud-6d2e46",
+ "state": "working",
+ "at": "2026-10-04T00:39:32.033Z",
+ "mode": "turbo"
 }
