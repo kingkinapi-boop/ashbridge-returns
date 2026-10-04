@@ -1,10 +1,8 @@
 {
  "card": "W00b",
  "role": "spec",
- "worker": "cloud-ae80c1",
- "state": "released",
- "at": "2026-10-04T02:45:03.043Z",
- "mode": "turbo",
- "note": "wait: round 4 spec needs W00c landed on main (json-keys.ts, load.ts, w00c-load, w00c-survivors not on main; no code base); W00c check still working",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
+ "worker": "cloud-5e4a47",
+ "state": "working",
+ "at": "2026-10-04T03:25:58.594Z",
+ "mode": "turbo"
 }
