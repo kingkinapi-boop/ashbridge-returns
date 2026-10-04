@@ -98,6 +98,8 @@ function claudeMdAbove(start: string): string | undefined {
   }
 }
 
+const notFolder = (name: 'inbox' | 'outbox'): string => `the exchange ${name} folder is not a real folder (ARC-22)`
+
 /** Why a folder of the exchange is not a real folder inside the exchange folder's real path, or undefined when it is. */
 function folderProblem(root: string, name: 'inbox' | 'outbox'): string | undefined {
   const dir = path.join(root, name)
@@ -106,7 +108,7 @@ function folderProblem(root: string, name: 'inbox' | 'outbox'): string | undefin
   } catch {
     // unreadable is no folder: it falls through to the refusal
   }
-  return `the exchange ${name} folder is not a real folder (ARC-22)`
+  return notFolder(name)
 }
 
 function loadApproved(file: string, sink: (line: string) => void): ApprovedList | undefined {
@@ -311,7 +313,7 @@ export async function runAiProjectOnce(options: AiProjectOptions): Promise<AiPro
     const outbox = path.join(exchange, 'outbox')
     // anything there that is not a folder (a file, a link) is refused, never replaced
     const there = fs.lstatSync(outbox, { throwIfNoEntry: false })
-    if (there !== undefined && !there.isDirectory()) return refuse(folderProblem(exchange, 'outbox') ?? 'the exchange outbox folder is not a real folder (ARC-22)')
+    if (there !== undefined && !there.isDirectory()) return refuse(notFolder('outbox'))
     fs.mkdirSync(outbox, { recursive: true })
     const outboxProblem = folderProblem(exchange, 'outbox')
     if (outboxProblem !== undefined) return refuse(outboxProblem)

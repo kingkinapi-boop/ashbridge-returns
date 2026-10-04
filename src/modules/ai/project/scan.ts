@@ -18,7 +18,7 @@ const SEP_NO_DOT = `[\\s${DASHES}-]`
 // every start position is tried (lookahead), so "999 729 458 133" still finds the SIN inside it
 const SIN_SHAPE = new RegExp(`(?<!\\d)(?=(\\d{3}${SEP}?\\d{3}${SEP}?\\d{3})(?!\\d))`, 'g')
 // transit (5), institution (3), account (7 to 12), written with separators
-const BANK_SHAPE = new RegExp(`(?<!\\d)\\d{5}${SEP_NO_DOT}\\d{3}${SEP_NO_DOT}\\d{7,12}(?!\\d)`, 'u')
+const BANK_SHAPE = new RegExp(`(?<!\\d)\\d{5}${SEP_NO_DOT}\\d{3}${SEP_NO_DOT}\\d{7,12}(?!\\d)`)
 const BIRTH_LABEL = /(?<![\p{L}\p{N}])(?:d\.?o\.?b\.?|born|birth\s*date|date\s+of\s+birth|date\s+de\s+na[iï]ssance|birthday)(?![\p{L}\p{N}])/iu
 const MARKER = new RegExp(`restricted${SEP_NO_DOT}*provided`, 'giu')
 
