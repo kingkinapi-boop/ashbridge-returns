@@ -21,7 +21,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
 | SC11 | re-carded smaller (A540): round 4, the last: spec S13 to S20 reopened, build held `wait:`; rest to SC11b (deps SC11) | spec; Lead reopens build; check; Opus read; security review; board; a fourth failure parks it |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
-| A08 | round 2 spec reported (360 tests; 26 survivors ruled, A539) | local Opus spec review 2 (from 00:39Z); then build B1 to B6, Opus check, fresh security review |
+| A08 | spec review 2 GAPS 8 (A541): spec reopened | spec; then build B1 to B6 with the A539 rulings; Opus check; fresh security review |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
 | FX18 | spec review 2 GAPS 6 (A537): spec reopened; runner.acceptance.test.ts joins Paths | spec (cloud); build held `wait:`; then build, cloud mutate --force, Opus read, security review |
