@@ -4,11 +4,12 @@
  "for": "2026-10-03T20:23:12.710Z",
  "worker": "cloud-331e27",
  "state": "released",
- "at": "2026-10-04T00:09:38.087Z",
+ "at": "2026-10-04T00:12:00.195Z",
  "mode": "turbo",
  "beat": "2026-10-04T00:01:26.824Z",
- "note": "continue: json-keys.ts shard stalled at 10 of 101 (reports/W00c-check-5.md); next json-keys.ts:10-10 and :25-25 alone, rule ARC-8 exportRows test heavy",
+ "note": "wait: check 5 stalled again (no score in five sessions, A536): Opus findings review of the mutation stall first; the Lead re-releases with continue: after it",
  "lastRelease": {
   "tip": "04dff208d53d8c076f0d2a1257276b590c608db6"
- }
+ },
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"DG2\"],\"depStatus\":[\"done\"]}"
 }
