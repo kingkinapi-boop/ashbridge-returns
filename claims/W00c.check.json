@@ -2,9 +2,8 @@
  "card": "W00c",
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
- "worker": "cloud-c7a694",
- "state": "reopened",
- "at": "2026-10-04T03:52:04.206Z",
- "mode": "turbo",
- "note": "continue: pass 1b (A549). Run scripts as check 5 did: in the box's temp folder outside the repo, quoted in reports/W00c-mutation/ as .txt, then deleted; no new .mjs under the repo"
+ "worker": "cloud-10d478",
+ "state": "working",
+ "at": "2026-10-04T03:59:06.539Z",
+ "mode": "turbo"
 }
