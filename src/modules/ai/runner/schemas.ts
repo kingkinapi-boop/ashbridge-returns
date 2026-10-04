@@ -42,11 +42,11 @@ const positiveInt = z.number().int().positive()
 export const ExchangeLimitsSchema = z.strictObject({
   /** The most an outbox file may hold (ARC-22): the Claude project's one result is far smaller. */
   outboxMaxBytes: positiveInt,
-  /** The most outbox names (and flagged recordings) logged by name per runner; then one line says the rest are not. */
+  /** The most flagged recordings per runner, and outbox names per wait, logged by name; then one line says the rest are not. */
   seenMax: positiveInt,
   /** The most strangers one poll looks at; the next poll carries on from there. */
   strangerBatch: positiveInt,
-  /** The most characters of a refusal that reach jobs.last_error. */
+  /** The most code points of a refusal that reach jobs.last_error. */
   lastErrorMaxChars: positiveInt,
 })
 

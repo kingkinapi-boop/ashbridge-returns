@@ -40,7 +40,7 @@ export interface EngineContext {
   now: () => Date
   /** The wait ends here: the lease minus a margin (ARC-22). */
   deadline: Date
-  /** Outbox files already seen, by name and content, so each is logged once. */
+  /** Flagged recordings already seen, by name and content, so each is logged once. */
   seen: Set<string>
 }
 
@@ -67,11 +67,10 @@ function logOnce(
   line: string,
   detail: string | undefined,
   what: 'recordings' | 'outbox files',
-  exempt = false,
 ): void {
   const key = JSON.stringify([line, detail])
   if (seen.has(key)) return
-  if (!exempt && seen.size >= EXCHANGE_LIMITS.seenMax) {
+  if (seen.size >= EXCHANGE_LIMITS.seenMax) {
     const more = `ai exchange: more than ${String(EXCHANGE_LIMITS.seenMax)} ${what} ignored; the rest are not logged by name (ARC-22)`
     // Stryker disable next-line ArrayDeclaration: the key only has to differ from the two-element keys of lines, whatever the array holds
     const moreKey = JSON.stringify([more])
@@ -204,20 +203,38 @@ export function attempt<T>(fn: () => T): T | undefined {
   }
 }
 
-/** One other entry of the outbox: looked at, never opened, and logged once per wait by quoted name (the waited id's own other-extension file is exempt from the cap). */
-function lookAtStranger(ctx: EngineContext, seen: Set<string>, outbox: string, name: string): void {
+/** What one wait has seen of the outbox: the names logged (bounded), and the one `<id>.<other extension>` name held apart from the cap. */
+interface WaitState {
+  seen: Set<string>
+  waitedName: string | undefined
+}
+
+/** A name as JSON text, with every Cf, Zl and Zp code point written as \u and its hex (escaped, never dropped, so two names stay apart). */
+export const quotedName = (name: string): string =>
+  JSON.stringify(name).replace(/[\p{Cf}\p{Zl}\p{Zp}]/gu, (c) => `\\u${Number(c.codePointAt(0)).toString(16).padStart(4, '0')}`)
+
+/**
+ * One other entry of the outbox: looked at, never opened, and logged once per wait by quoted name. The first `<id>.<other extension>`
+ * name met in a wait is held apart from the cap (one name); any other `<id>.*` counts as a stranger.
+ */
+function lookAtStranger(ctx: EngineContext, wait: WaitState, outbox: string, name: string): void {
   const looked = attempt(() => fs.lstatSync(path.join(outbox, name)))
   if (looked === undefined) return
+  if (name === wait.waitedName) return
   // a project wait always has its job id (projectRun refuses a blank one first)
-  const exempt = name.startsWith(`${String(ctx.jobId)}.`)
-  logOnce(ctx, seen, `ai exchange: ignored outbox file ${JSON.stringify(name)}`, undefined, 'outbox files', exempt)
+  if (wait.waitedName === undefined && name.startsWith(`${String(ctx.jobId)}.`)) {
+    wait.waitedName = name
+    ctx.sink(`ai exchange: ignored outbox file ${quotedName(name)}`)
+    return
+  }
+  logOnce(ctx, wait.seen, `ai exchange: ignored outbox file ${quotedName(name)}`, undefined, 'outbox files')
 }
 
 /**
  * One poll's look at the other entries of the outbox, in a bounded batch (R104): at most strangerBatch are looked at, and
  * the next poll carries on after them (the cursor); the listing is read in buffers of the same size. 'unreadable' when it cannot be read.
  */
-function logStrangers(ctx: EngineContext, seen: Set<string>, outbox: string, cursor: { passed: number }): 'unreadable' | undefined {
+function logStrangers(ctx: EngineContext, wait: WaitState, outbox: string, cursor: { passed: number }): 'unreadable' | undefined {
   const { strangerBatch } = EXCHANGE_LIMITS
   const dir = attempt(() => fs.opendirSync(outbox, { bufferSize: strangerBatch }))
   if (dir === undefined) return 'unreadable'
@@ -232,7 +249,7 @@ function logStrangers(ctx: EngineContext, seen: Set<string>, outbox: string, cur
         cursor.passed += looked
         return undefined
       }
-      lookAtStranger(ctx, seen, outbox, entry.name)
+      lookAtStranger(ctx, wait, outbox, entry.name)
       looked++
     }
     cursor.passed = 0
@@ -354,8 +371,8 @@ async function waitForResult(
     else ctx.waiting.delete(jobId)
   }
   const cursor = { passed: 0 }
-  // R104 bounded: strangers seen in this wait, at most seenMax (the waited id's own file is exempt, and counted once)
-  const seen = new Set<string>()
+  // R104 bounded: the names logged in this wait, at most seenMax + 1 keys (the cap, then the one "more" line); the held-apart waited name is not stored
+  const wait: WaitState = { seen: new Set<string>(), waitedName: undefined }
   pollers(1)
   try {
     for (;;) {
@@ -364,7 +381,7 @@ async function waitForResult(
       if (realFolder(exchangeDir, 'outbox', false) === undefined) return refuse(OUTBOX_NOT_REAL)
       const own = readOwn(jobId, outbox)
       if (own !== undefined) return own.ok ? checkedOutput(job, own) : own
-      if (logStrangers(ctx, seen, outbox, cursor) === 'unreadable') return refuse(OUTBOX_READ_FAILED)
+      if (logStrangers(ctx, wait, outbox, cursor) === 'unreadable') return refuse(OUTBOX_READ_FAILED)
       await sleep(ctx.pollMs)
     }
   } finally {
