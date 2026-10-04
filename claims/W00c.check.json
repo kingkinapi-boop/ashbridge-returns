@@ -3,12 +3,8 @@
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
  "worker": "cloud-c7a694",
- "state": "released",
- "at": "2026-10-04T03:43:58.574Z",
+ "state": "reopened",
+ "at": "2026-10-04T03:52:04.206Z",
  "mode": "turbo",
- "lastRelease": {
-  "tip": "03f512eee0a076206c080faac2fcc8ce0b54a9ca"
- },
- "note": "continue: pass 1b. Not started: the hook refused my Write of reports/W00c-mutation/run1b.scratch.mjs (protect-spec: a checker edits nothing except its report); not retried another way. Pass 1a is complete (n-rest.md, n-load.md, n-json-keys.md). Needs a hook allowance for scratch run scripts under reports/W00c-mutation/",
- "needsLead": true
+ "note": "continue: pass 1b (A549). Run scripts as check 5 did: in the box's temp folder outside the repo, quoted in reports/W00c-mutation/ as .txt, then deleted; no new .mjs under the repo"
 }
