@@ -12,6 +12,6 @@ Turbo continues; 63 cards are on main. The batch of four (the AI runner, two que
 
 The card whose security tests failed the first batch has its fix plan: one more round of test changes, then a security review. Four other cards (two rule checkers, the question-bank mapping and a database test helper) have their fixes written into their cards and are back with the spec writers. The test-world fix most of the build waits on gets its final check now; about ten cards start building once it lands.
 
-Seven tax questions sit on the CPA check list: `reference/cpa-check.md`, items 37 to 43. Nothing waits on them today; item 43 is needed before the test-world kinds are built.
+The seven tax questions (items 37 to 43 in `reference/cpa-check.md`) now carry my best guess under each, from two researchers and a checker, as you asked. Building goes on with them. If any is wrong, write the correction under the item.
 
 The week's allowance was 78% used at 15:42 UTC; at this pace it runs out about 21:00 UTC. Then work pauses until you use your saved reset (Settings, Usage) and type `go`. Screen designs are being drawn for the design sitting about Tue 6 Oct.
