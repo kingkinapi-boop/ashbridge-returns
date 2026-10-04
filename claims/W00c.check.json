@@ -2,11 +2,10 @@
  "card": "W00c",
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
- "worker": "cloud-6d2e46",
- "state": "released",
- "at": "2026-10-04T01:40:02.782Z",
+ "worker": "cloud-c7a694",
+ "state": "working",
+ "at": "2026-10-04T01:48:20.435Z",
  "mode": "turbo",
- "note": "continue: pass 1a json-keys.ts done (84.16, 15 survivors, 1 no cov, 6 Timeout on loops; reports/W00c-mutation/n-json-keys.md, 853b91ea); 53 min per file on 4 cores, so next: pass 1a load.ts, then guard, money, kinds, schema, checks, faults, generate, two index.ts; 30 s vitest timeout fails the RC5 every-depth test in the dry run, use 120 s",
  "lastRelease": {
   "tip": "853b91ea145116dbba4cdb278f1a7cddab9d1780"
  }
