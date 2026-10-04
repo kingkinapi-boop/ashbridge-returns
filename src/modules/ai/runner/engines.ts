@@ -208,7 +208,8 @@ export function attempt<T>(fn: () => T): T | undefined {
 function lookAtStranger(ctx: EngineContext, seen: Set<string>, outbox: string, name: string): void {
   const looked = attempt(() => fs.lstatSync(path.join(outbox, name)))
   if (looked === undefined) return
-  const exempt = ctx.jobId !== undefined && name.startsWith(`${ctx.jobId}.`)
+  // a project wait always has its job id (projectRun refuses a blank one first)
+  const exempt = name.startsWith(`${String(ctx.jobId)}.`)
   logOnce(ctx, seen, `ai exchange: ignored outbox file ${JSON.stringify(name)}`, undefined, 'outbox files', exempt)
 }
 
