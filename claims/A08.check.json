@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T21:21:35.397Z",
  "worker": "cloud-331e27",
- "state": "working",
- "at": "2026-10-04T00:10:00.416Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-04T00:10:07.164Z",
+ "mode": "turbo",
+ "note": "wait: stale build (mutation not 100) while round 2 spec is working; Lead reopens after spec and build",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
 }
