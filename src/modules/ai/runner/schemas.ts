@@ -32,13 +32,13 @@ export function inputHashOf(inputs: unknown): string {
 export const readUtf8 = (file: string): string => new TextDecoder().decode(fs.readFileSync(file))
 
 /** The repository's root folder: the exchange folder must lie outside it (ARC-22) and the data files sit inside it. */
-// Stryker disable next-line StringLiteral: mutants 647 to 650 (the four '..' segments) are static: they run at import, outside any one test's coverage, so no test is credited with the kill; the data file read below fails the import when REPO_ROOT is wrong
+// Stryker disable next-line StringLiteral: mutants 647 to 650 (the four '..' segments) are static, run at import outside any test's coverage, and the cloud run with this disable removed (4 Oct) scored all four Survived, not killed
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
 
 const positiveInt = z.number().int().positive()
 
 /** data/ai/exchange-limits.json: every cap of the exchange is data (R104). */
-// Stryker disable next-line ObjectLiteral: mutant 651 is static (it runs at import, outside any one test's coverage); an emptied shape makes every key of the data file unknown, which fails the import
+// Stryker disable next-line ObjectLiteral: mutant 651 is static, run at import outside any test's coverage, and the cloud run with this disable removed (4 Oct) scored it Survived, not killed
 export const ExchangeLimitsSchema = z.strictObject({
   /** The most an outbox file may hold (ARC-22): the Claude project's one result is far smaller. */
   outboxMaxBytes: positiveInt,
@@ -50,7 +50,7 @@ export const ExchangeLimitsSchema = z.strictObject({
   lastErrorMaxChars: positiveInt,
 })
 
-// Stryker disable next-line StringLiteral: mutants 652 to 654 (the data file's path segments) are static; a wrong segment fails the import because the file is not found
+// Stryker disable next-line StringLiteral: mutants 652 to 654 (the data file's path segments) are static, run at import outside any test's coverage, and the cloud run with this disable removed (4 Oct) scored all three Survived, not killed
 export const EXCHANGE_LIMITS = ExchangeLimitsSchema.parse(JSON.parse(new TextDecoder().decode(fs.readFileSync(path.join(REPO_ROOT, 'data', 'ai', 'exchange-limits.json')))))
 
 /** One identifier grammar for the stamp fields that are not free text: 1 to 128 characters, a letter or digit first, then . _ - + : too. */

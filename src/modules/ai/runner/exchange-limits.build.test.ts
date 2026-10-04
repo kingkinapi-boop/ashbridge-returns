@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { aiStepTypes } from '../../../contracts/ai'
-import { aiEngines, insideRepo, type EngineContext } from './engines'
+import { aiEngines, insideRepo, quotedName, type EngineContext } from './engines'
 import { AI_JOB_LEASE_MS, createAiRunner, createAiStepHandler, lastErrorLine } from './runner'
 import { EXCHANGE_LIMITS, ExchangeLimitsSchema, OUTBOX_MAX_BYTES, REPO_ROOT } from './schemas'
 import { RECORDINGS_DIR, collectLines, job, outboxResult, recording, tempDir, tripleOf, writeApproved, writeOutbox } from './__fixtures__/harness'
@@ -370,5 +370,14 @@ describe('SEC-11 the lease still ends the wait (the deadline compare)', () => {
     clockMs = T0 + AI_JOB_LEASE_MS
     await polls(1)
     expect(t.settled()).toBe(true)
+  })
+})
+
+describe('ARC-22 quotedName writes hidden code points as text', () => {
+  test('ARC-22 a soft hyphen, a zero-width space and a line separator are escaped to four hex digits, never dropped', () => {
+    expect(quotedName('a\u00adb')).toBe('"a\\u00adb"')
+    expect(quotedName('a\u200bb')).toBe('"a\\u200bb"')
+    expect(quotedName('a\u2028b\u2029c')).toBe('"a\\u2028b\\u2029c"')
+    expect(quotedName('plain.json')).toBe('"plain.json"')
   })
 })
