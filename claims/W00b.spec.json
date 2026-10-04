@@ -2,8 +2,7 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-843548",
- "state": "released",
- "at": "2026-10-04T00:17:49.712Z",
- "mode": "turbo",
- "note": "wait: deps W00c and FX8 not landed on main; no code base (card directive says the build opens only after both land)"
+ "state": "working",
+ "at": "2026-10-04T00:17:52.013Z",
+ "mode": "turbo"
 }
