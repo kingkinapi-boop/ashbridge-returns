@@ -120,6 +120,39 @@ const ALARM: readonly Row[] = [
   ['a nine-digit SIN after a longer run and a space', { memo: `Reference (Test) 999 ${SIN_GROUPS.join(' ')}` }, [SIN]],
 ]
 
+/**
+ * A541 G6: the separators SC rule R34 knows beyond ASCII (U+00A0, U+2009, U+202F, U+2010 to U+2015), each made from its
+ * code point (never written raw, G7). The bank shape, the birth-label words and the marker are tested with each class,
+ * not only with an ASCII space or dash.
+ */
+const R34_CODES: readonly number[] = [0xa0, 0x2009, 0x202f, 0x2010, 0x2011, 0x2012, 0x2013, 0x2014, 0x2015]
+const ch = (code: number): string => String.fromCharCode(code)
+const hex = (code: number): string => `U+${code.toString(16).toUpperCase().padStart(4, '0')}`
+const NBSP = ch(0xa0)
+const fullWidthDigits = (digits: string): string => Array.from(digits, (d) => (/\d/.test(d) ? ch(0xff10 + Number(d)) : d)).join('')
+
+const SEPARATOR_CLASS: readonly Row[] = [
+  ...R34_CODES.map((code): Row => [`a bank shape separated by ${hex(code)}`, { memo: `Deposit (Test) to 00123${ch(code)}004${ch(code)}7654321` }, [BANK]]),
+  ['a bank shape in full-width digits', { memo: `Deposit (Test) to ${fullWidthDigits('00123 004 7654321')}` }, [BANK]],
+  ['the label date of birth with U+00A0 between its words', { memo: `Date${NBSP}of${NBSP}birth (Test) 1971-04-12` }, [BIRTH]],
+  ['the label birth date with U+00A0 between its words', { memo: `Birth${NBSP}date (Test): 1971-04-12` }, [BIRTH]],
+  ['the marker written restricted provided (a space) with a tail', { answer: 'restricted provided 4821' }, [MARKER]],
+  ['the marker written restricted provided with U+00A0 and a tail', { answer: `restricted${NBSP}provided 4821` }, [MARKER]],
+]
+
+describe('AI-9 SEC-5 A541 G6 the separator classes: the bank shape, the birth words and the marker beyond ASCII', () => {
+  test('AI-9 A541 G6 the class table covers every R34 separator by code point, and the full-width digits are not ASCII (sentinel)', () => {
+    expect(R34_CODES.map(hex)).toEqual(['U+00A0', 'U+2009', 'U+202F', 'U+2010', 'U+2011', 'U+2012', 'U+2013', 'U+2014', 'U+2015'])
+    expect(SEPARATOR_CLASS.length).toBe(R34_CODES.length + 5)
+    expect(NBSP.codePointAt(0)).toBe(0xa0)
+    expect(Array.from(fullWidthDigits('0'), (c) => c.codePointAt(0))).toEqual([0xff10])
+  })
+
+  test.each(SEPARATOR_CLASS)('AI-9 SEC-5 A541 G6 %s is reported as exactly its kind', (_label, inputs, kinds) => {
+    expect(kindsOf(inputs)).toEqual(kinds)
+  })
+})
+
 describe('AI-9 SEC-5 A529 S4 the scan edges: no alarm where nothing is sensitive, the exact kind where something is', () => {
   test('AI-9 A529 the edge tables are not empty (sentinel)', () => {
     expect(NO_ALARM.length).toBeGreaterThan(10)

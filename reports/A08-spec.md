@@ -1,5 +1,51 @@
 # A08 spec
 
+# Round 3 (A541: spec review 2, G1 to G8)
+
+Spec-writer (Opus, cloud, Linux), 4 Oct 2026. Commit `spec(A08): acceptance tests round 3 (G1 to G8)` on claude/A08 (the hash is on the card's Spec commit line). Validated on main d3ad2ec9 (merged into claude/A08 as 0018c6ab).
+
+## Tests: 386 (383 unit, 3 db); was 360
+
+- `launcher-round2.acceptance.test.ts`: 103 (was 94): G1 sentinel; G2; G3; G4 relative, trailing separator (2), `..` segments, win32 lower case; G5 (win32); G8 (2).
+- `scan-edges.acceptance.test.ts`: 61 (was 46): G6, 14 class rows and a code-point sentinel.
+- `exchange-safety.acceptance.test.ts`: 93 (unchanged count): G7, the R34 separators made from code points, the sentinel compares code points and labels, the U+2011 marker row made with `String.fromCharCode`.
+- `project.acceptance.test.ts`: 124 (unchanged count): the helper `isInside` uses `fs.realpathSync.native` (G4); one A509 test rewritten for G8 (below).
+- On Linux 2 rows skip (G4 lower case, G5: both `skipIf(!win32)`); they run on the laptop at the check.
+
+## Gap by gap
+
+| Gap | Rows | On today's tip (Linux) | Plant that shows the row bites (run in the stub worktree, never committed) |
+|---|---|---|---|
+| G1 | the `.js` copy is `claude-copy.js`, the shim `claude-shim.MJS` (imports `fake-claude.mjs` beside it); a sentinel that neither stem is `fake-claude` in any case; the row checks the fake is untouched | pass (2 rows renamed; titles now name the new stems) | by reading: on a case-insensitive disk the old `fake-claude.MJS` overwrote the fake |
+| G2 | `X_API_KEY_FILE` set: the whole vendor reason, nothing called, no outbox, value never logged | **fails first** (`{ ok: true }`) | n/a. Build item: RUNNING.md's "any `*_API_KEY`" becomes "any name holding `_API_KEY`" (no test pins that wording) |
+| G3 | `fs.readdirSync` spied on the default import, the inbox (only) listed in reverse; jobs still in id order; sentinels: the stub reverses, and the launcher listed through it | pass | drop the inbox `.sort()`: the G3 row fails (`a08-listing-05` first). The old S0 order row still passes on this Linux box, which confirms the gap |
+| G4 | relative `AI_EXCHANGE_DIR` with `process.cwd` at the repo; the repo and a missing folder under it with a trailing separator; `..` from outside the repo (same drive) and from inside it; (win32) the repo path lower-cased plus `tmp-a08-case-planted`; each `R.inRepo`, nothing created, nothing called | pass (win32 row skipped) | inside check on the setting as given with `startsWith(REPO_ROOT + sep)`: relative and `..` rows fail; with `=== REPO_ROOT` or a dirname check only: the trailing-separator root row fails too |
+| G5 | (win32) `Q:\a08-no-drive\exchange`: `{ ok: false, reason: 'the exchange folder does not exist' }`, nothing thrown, nothing called; asserts no drive Q: first | skipped on Linux; fails first on win32 (today's realPathOf throws ENOENT lstat 'Q:\') | n/a |
+| G6 | bank shape with each of U+00A0, U+2009, U+202F, U+2010 to U+2015 and in full-width digits: `[a bank account]`; "date of birth" and "birth date" with U+00A0: `[a date of birth]`; "restricted provided 4821" with a space and with U+00A0: `[text after ...]`; every character from `String.fromCharCode` | pass | ASCII classes (`[ -]` for the bank shape, literal spaces in the birth words, `restricted-?provided`) and no NFKC: all 14 fail. With `[ -]` alone the U+2010 to U+2015 rows fail (NFKC turns the three spaces to ASCII) |
+| G7 | SEPARATORS built from code points; the sentinel compares `Array.from(s, c => c.codePointAt(0))` and the labels | pass | plant 0x20 for 0xa0: the sentinel fails |
+| G8 | after an answered run, and after a run whose call exits 3, the config folder the fake saw (and saw empty) no longer exists | **fails first** (2: the folder is emptied, never removed) | n/a |
+
+## Fails first: 19 on Linux (16 from round 2, plus G2 and G8 x2); G5 adds one on win32
+
+The 16 are unchanged (B1 `..x`, B2 x6, B3 x3, the cap option x3, B5 x2, B6). Every other test passes on the branch: unit 146 files, 3809 passed, 20 failed (the 19 and main's `tools/test/claim-wait-check.test.mjs` "ARC-15 on main every carded, non-design card passes": `SC11b: no Where line`, a card on main, not A08's); db 17 files, 743 passed, 1 expected fail, 5 skipped; typecheck and `npm run lint` clean.
+
+## Step 6b sweep
+
+Stub (G2: VENDOR_PATTERN without `$`; G8: the config folder removed in the run's `finally`) in a throwaway worktree, whole unit and db projects. One other test failed: `project.acceptance.test.ts:1049` "AI-8 A509 the call passes --strict-mcp-config and sets CLAUDE_CONFIG_DIR to a fresh empty folder outside the repo and the user config": it took `realpathSync` of the config folder after the run, which G8 (A541) removes. Rewritten, not retired: the same three assertions (not in the repo, not the user config, not in the job folder) on the folder's real path read through its parent, which stays. Retired: none. db: no change.
+
+## Notes for the build
+
+- B1 and G4: `realPathOf` and `REPO_ROOT` both on `fs.realpathSync.native`; the G4 relative row spies `process.cwd` (path.resolve reads it).
+- G3 and B2 spy on the default `fs` import (`readdirSync`, `writeFileSync`, `openSync`): keep `import fs from 'node:fs'`.
+- G5: a missing root becomes the refusal; the guard keeps one next-line disable naming the G5 row.
+- G8: remove the config folder in the run's `finally` (answered, refused and failed calls).
+
+## Amber choices (for AMBER.md)
+
+- G6 rows live in scan-edges (direct `sensitiveKinds`, exact kinds), not in the launcher table: the launcher-level "no value in a log" rows already cover each kind; reverse: move them into exchange-safety's SCAN_ROWS.
+- G4 "REPO_ROOT trailing separator" read as `AI_EXCHANGE_DIR` set to the repo path with a trailing separator (the setting is what a person types); reverse: add a row that stubs the launcher's root.
+- G2's RUNNING.md wording is left to the build, untested (Lead brief); reverse: add a RUNNING.md row.
+
 # Round 2 (A529: S0 to S5, and the spec-owned tests for B1 to B6)
 
 Spec-writer (Opus, cloud), 3 to 4 Oct 2026. Commit `spec(A08): acceptance tests round 2` on claude/A08 (the hash is on the card's Spec commit line). Validated on main 0d631db4 (merged into claude/A08; main moved from 860f086e with plan/ files only, so the suites below ran on the same code).

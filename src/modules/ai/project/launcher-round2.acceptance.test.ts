@@ -17,6 +17,11 @@
 //   (fail closed); a model id is shown whole; the scan's kinds keep the order found. B5: AI_PROJECT_CLAUDE_BIN is read
 //   through src/core/env.ts like every setting the launcher reads (R71). B6: RUNNING.md names the Windows program
 //   choice: claude.exe, or the CLI's cli.js run by Node (a claude.cmd cannot start without a shell).
+// Round 3 (A541, spec review 2): G1 the .js and .MJS copies have stems of their own; G2 any setting name holding
+//   _API_KEY refuses (A539: no `$` on the vendor pattern); G3 the inbox order survives a reversed listing (the stub
+//   spies on the default `fs` import's readdirSync); G4 relative, trailing-separator, `..` and (win32) lower-case
+//   forms of the repo are inside it (B1 on `fs.realpathSync.native`); G5 (win32) a missing drive is the refusal "the
+//   exchange folder does not exist", never a throw; G8 the run removes its CLI config folder (answered and failed).
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
@@ -565,6 +570,15 @@ describe('END-8 SEC-10 ARC-22 A529 S1 setting names are compared without case; u
     expect(w.calls()).toEqual([])
   })
 
+  test('END-8 A539 A541 G2 a setting whose name holds _API_KEY anywhere (X_API_KEY_FILE, not only at the end) refuses the run with the whole vendor reason and calls nothing', async () => {
+    const w = world(['c01-clean'])
+    const { result, lines } = await runOnce(w, { env: { ...w.env, X_API_KEY_FILE: 'PLANTED-k-file-a08 (Test)' } })
+    expect(result).toEqual({ ok: false, reason: R.vendor('X_API_KEY_FILE') })
+    expect(w.calls()).toEqual([])
+    expect(fs.existsSync(w.outbox)).toBe(false)
+    expect(lines.join('\n')).not.toContain('PLANTED-k-file-a08')
+  })
+
   test('END-8 A529 no false alarm: a vendor setting whose value is undefined is not set, and the run goes ahead', async () => {
     const w = world(['c01-clean'])
     const { result } = await runOnce(w, { env: { ...w.env, ANTHROPIC_API_KEY: undefined } })
@@ -770,15 +784,25 @@ describe('ARC-22 A529 B2 the run lock: no run without it, one refusal for every 
  * Node runs no file named .MJS as a module (its loader knows only the lower-case extension), so the .MJS row is a
  * CommonJS shim that imports the fake beside it: what the row tests is that the launcher runs the path with Node,
  * whatever the case of its extension (a file that is not executable cannot start on its own).
+ * A541 G1: each copy has its own stem. On a disk that ignores case (Windows), `fake-claude.MJS` IS `fake-claude.mjs`:
+ * the shim would overwrite the fake and then import itself, so no launcher could pass.
  */
 const SHIM = "import(require('node:url').pathToFileURL(require('node:path').join(__dirname, 'fake-claude.mjs')).href)\n"
+const COPY_NAMES = ['claude-copy.js', 'claude-shim.MJS'] as const
 
 describe('ARC-20 A529 S5 a program path ending .js or .MJS is run with the running Node', SLOW, () => {
-  test.each(['fake-claude.js', 'fake-claude.MJS'])('ARC-20 A529 the fake copied as %s (not executable) is run through Node and answers', async (name) => {
+  test('ARC-20 A541 G1 the .js copy and the .MJS shim have stems of their own, never the fake\'s, in any case (sentinel)', () => {
+    expect(COPY_NAMES.length).toBe(2)
+    for (const name of COPY_NAMES) expect(path.parse(name).name.toLowerCase()).not.toBe('fake-claude')
+  })
+
+  test.each(COPY_NAMES)('ARC-20 A529 A541 G1 the fake copied as %s (not executable) is run through Node and answers', async (name) => {
     const w = world(['c01-clean'])
     const copy = path.join(w.fakeDir, name)
     if (name.endsWith('.MJS')) fs.writeFileSync(copy, SHIM)
     else fs.copyFileSync(w.fakeBin, copy)
+    // the fake itself is untouched beside the copy
+    expect(fs.readFileSync(w.fakeBin, 'utf8')).toBe(fs.readFileSync(path.join(FIXTURES_DIR, 'fake-claude.mjs'), 'utf8'))
     fs.chmodSync(copy, 0o644)
     const { result } = await runOnce(w, { env: { ...w.env, AI_PROJECT_CLAUDE_BIN: copy } })
     expect(result).toEqual({ ok: true })
@@ -985,6 +1009,139 @@ describe('ARC-22 AI-8 SEC-10 A529 S0 the survivor rows', SLOW, () => {
     const { lines } = await runOnce(w)
     const taken = lines.filter((l) => l.startsWith('ai:once job a08-order-')).map((l) => l.slice('ai:once job '.length).split(':')[0])
     expect(taken).toEqual([...stems].sort())
+  })
+})
+
+// ---------- A541 (spec review 2): G3 the inbox order, G4 Windows path forms, G5 a missing drive, G8 the config folder ----------
+
+/** The names the launcher could make at the top of a folder it took as the exchange folder (S5's listing form). */
+const launcherMade = (dir: string): string[] => fs.readdirSync(dir).filter((n) => /^(?:inbox|outbox|job-.*|\.tmp-.*|\.ai-once\.lock)$/.test(n)).sort()
+
+describe('ARC-22 A541 G3 the inbox order does not rely on how the file system lists a folder', SLOW, () => {
+  test('ARC-22 A539 A541 G3 with the inbox listed in reverse (readdirSync stubbed for that folder only), the jobs are still taken in job id order', async () => {
+    const w = world([])
+    const stems = Array.from({ length: 6 }, (_, i) => `a08-listing-${String(i).padStart(2, '0')}`)
+    for (const stem of stems) writeRaw(w, stem, 'null')
+    const inboxForms = new Set([path.resolve(w.inbox), fs.realpathSync.native(w.inbox), fs.realpathSync(w.inbox)])
+    const real = fs.readdirSync.bind(fs) as (...a: unknown[]) => unknown
+    let reversed = 0
+    vi.spyOn(fs as unknown as Record<string, (...a: unknown[]) => unknown>, 'readdirSync').mockImplementation((...args: unknown[]) => {
+      const listed = real(...args)
+      if (typeof args[0] === 'string' && inboxForms.has(path.resolve(args[0])) && Array.isArray(listed)) {
+        reversed += 1
+        return [...(listed as unknown[])].reverse()
+      }
+      return listed
+    })
+    // sentinel: the stub lists this inbox in reverse job id order
+    expect(fs.readdirSync(w.inbox).filter((n) => n.startsWith('a08-listing-'))).toEqual(stems.map((s) => `${s}.json`).reverse())
+    reversed = 0
+    const { lines } = await runOnce(w)
+    vi.restoreAllMocks()
+    expect(reversed, 'the launcher listed the inbox through fs.readdirSync').toBeGreaterThan(0)
+    const taken = lines.filter((l) => l.startsWith('ai:once job a08-listing-')).map((l) => l.slice('ai:once job '.length).split(':')[0])
+    expect(taken).toEqual(stems)
+  })
+})
+
+describe('AI-8 SEC-10 A541 G4 every path form that reaches the repo is inside it (B1 on native real paths)', SLOW, () => {
+  test('AI-8 SEC-10 A541 G4 a relative AI_EXCHANGE_DIR, resolved with the working folder at the repo, is refused as inside the repo, and nothing is created', async () => {
+    const w = world(['c01-clean'])
+    vi.spyOn(process, 'cwd').mockReturnValue(REPO_ROOT)
+    const relative = ['tmp-a08-relative-planted', 'exchange'].join(path.sep)
+    expect(path.isAbsolute(relative)).toBe(false)
+    const { result } = await runOnce(w, { env: { ...w.env, AI_EXCHANGE_DIR: relative } })
+    vi.restoreAllMocks()
+    expect(result).toEqual({ ok: false, reason: R.inRepo })
+    expect(fs.existsSync(path.join(REPO_ROOT, 'tmp-a08-relative-planted'))).toBe(false)
+    expect(w.calls()).toEqual([])
+  })
+
+  test.each([
+    ['the repo itself', (): string => REPO_ROOT + path.sep],
+    ['a missing folder under the repo', (): string => path.join(REPO_ROOT, 'tmp-a08-trailing-planted') + path.sep],
+  ])('AI-8 SEC-10 A541 G4 %s written with a trailing separator is refused as inside the repo, and nothing is created', async (_label, at) => {
+    const w = world(['c01-clean'])
+    const before = launcherMade(REPO_ROOT)
+    const { result } = await runOnce(w, { env: { ...w.env, AI_EXCHANGE_DIR: at() } })
+    expect(result).toEqual({ ok: false, reason: R.inRepo })
+    expect(launcherMade(REPO_ROOT)).toEqual(before)
+    expect(fs.existsSync(path.join(REPO_ROOT, 'tmp-a08-trailing-planted'))).toBe(false)
+    expect(w.calls()).toEqual([])
+  })
+
+  test('AI-8 SEC-10 A541 G4 a path that reaches the repo through .. segments (from outside it and from inside it) is refused as inside the repo, and nothing is created', async () => {
+    const w = world(['c01-clean'])
+    const up = path.relative(w.root, path.parse(w.root).root).split(path.sep).filter((s) => s !== '')
+    expect(up.every((s) => s === '..')).toBe(true)
+    const forms = [
+      // into a folder of the repo and back out of it
+      [REPO_ROOT, 'src', '..', 'tmp-a08-dotdot-planted', 'exchange'].join(path.sep),
+    ]
+    // from the world's own folder up to the file system root, then down into the repo (when both are on one drive)
+    if (path.parse(w.root).root === path.parse(REPO_ROOT).root) {
+      forms.push([w.root, ...up, ...path.relative(path.parse(REPO_ROOT).root, REPO_ROOT).split(path.sep), 'tmp-a08-dotdot-planted', 'exchange'].join(path.sep))
+    }
+    for (const form of forms) {
+      expect(form.split(path.sep)).toContain('..')
+      const { result } = await runOnce(w, { env: { ...w.env, AI_EXCHANGE_DIR: form } })
+      expect(result, form).toEqual({ ok: false, reason: R.inRepo })
+    }
+    expect(fs.existsSync(path.join(REPO_ROOT, 'tmp-a08-dotdot-planted'))).toBe(false)
+    expect(w.calls()).toEqual([])
+  })
+
+  test.skipIf(!onWin32)('AI-8 SEC-10 A541 G4 (win32) the repo path in lower case plus a missing folder is refused as inside the repo, and nothing is created', async () => {
+    const w = world(['c01-clean'])
+    const lower = path.join(REPO_ROOT.toLowerCase(), 'tmp-a08-case-planted')
+    expect(lower).not.toBe(path.join(REPO_ROOT, 'tmp-a08-case-planted'))
+    const { result } = await runOnce(w, { env: { ...w.env, AI_EXCHANGE_DIR: lower } })
+    expect(result).toEqual({ ok: false, reason: R.inRepo })
+    expect(fs.existsSync(path.join(REPO_ROOT, 'tmp-a08-case-planted'))).toBe(false)
+    expect(w.calls()).toEqual([])
+  })
+})
+
+describe('ARC-22 A541 G5 an exchange folder on a drive that does not exist', SLOW, () => {
+  test.skipIf(!onWin32)('ARC-22 A541 G5 (win32) Q:\\a08-no-drive\\exchange is the refusal "the exchange folder does not exist": nothing thrown, nothing called', async () => {
+    const w = world(['c01-clean'])
+    const missing = 'Q:' + String.fromCharCode(92) + 'a08-no-drive' + String.fromCharCode(92) + 'exchange'
+    expect(fs.existsSync('Q:' + String.fromCharCode(92)), 'this row needs a machine with no drive Q:').toBe(false)
+    let run: Run | undefined
+    let thrown: unknown
+    try {
+      run = await runOnce(w, { env: { ...w.env, AI_EXCHANGE_DIR: missing } })
+    } catch (e) {
+      thrown = e
+    }
+    expect(thrown).toBeUndefined()
+    expect(run?.result).toEqual({ ok: false, reason: R.noExchange })
+    expect(w.calls()).toEqual([])
+  })
+})
+
+describe('AI-8 A541 G8 nothing else is written anywhere: the run removes its config folder', SLOW, () => {
+  test("AI-8 A541 G8 after an answered run, the CLI's config folder the fake saw no longer exists", async () => {
+    const w = world(['c01-clean'], { rules: [{ match: markerOf('c01-clean'), result: VALID_TEXT, writeConfigDir: true }], defaultResult: VALID_TEXT })
+    const { result } = await runOnce(w)
+    expect(result).toEqual({ ok: true })
+    expect(outboxOf(w, 'c01-clean')).toMatchObject({ output: VALID_OUTPUT })
+    const [call] = w.calls()
+    expect(call?.configDir).toEqual(expect.any(String))
+    // sentinel: the folder existed while the CLI ran
+    expect(call?.configDirFiles).toEqual([])
+    expect(fs.existsSync(call?.configDir ?? '')).toBe(false)
+  })
+
+  test("AI-8 A541 G8 after a run whose call failed (exit code 3), the CLI's config folder the fake saw no longer exists", async () => {
+    const w = world(['c01-clean'], { rules: [{ match: markerOf('c01-clean'), result: VALID_TEXT, writeConfigDir: true, exitCode: 3 }], defaultResult: VALID_TEXT })
+    const { result } = await runOnce(w)
+    expect(result).toEqual({ ok: true })
+    expect(refusalOf(w, 'c01-clean')).toEqual({ reason: R.exitCode(3), problems: [], stage: 'run' })
+    const [call] = w.calls()
+    expect(call?.configDir).toEqual(expect.any(String))
+    expect(call?.configDirFiles).toEqual([])
+    expect(fs.existsSync(call?.configDir ?? '')).toBe(false)
   })
 })
 

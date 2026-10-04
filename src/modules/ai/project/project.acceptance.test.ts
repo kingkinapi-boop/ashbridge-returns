@@ -164,7 +164,8 @@ const golden = (file: Json): string => JSON.stringify(canonical(file), null, 2) 
 const stampOf = (j: Json, modelId?: string): Json => stampFromJob(j, modelId)
 /** A529 S5 (RC5d): on real paths, the folder itself or a path under it; a sibling named `..x` is inside, `<parent>-x` is not. */
 const insideReal = (child: string, parent: string): boolean => child === parent || child.startsWith(parent + path.sep)
-const isInside = (child: string, parent: string): boolean => insideReal(fs.realpathSync(child), fs.realpathSync(parent))
+/** A541 G4: the native real path (the JS one keeps the case and the 8.3 short names it is given on Windows). */
+const isInside = (child: string, parent: string): boolean => insideReal(fs.realpathSync.native(child), fs.realpathSync.native(parent))
 /** The prompt texts a call received: every argument except the system prompt's value, and stdin. */
 function promptTexts(call: FakeCall): string[] {
   const out: string[] = []
@@ -1059,9 +1060,11 @@ describe('AI-8 A509 the call loads no user, repo or parent-folder config', SLOW,
       expect(path.isAbsolute(dir), dir).toBe(true)
       expect(call.configDirFiles, `${dir} does not exist when the CLI starts`).not.toBeNull()
       expect(call.configDirFiles, `${dir} is not empty`).toEqual([])
-      expect(isInside(dir, REPO_ROOT), dir).toBe(false)
+      // A541 G8: the run removes its config folder, so its real path is read through its parent (which stays)
+      const real = path.join(fs.realpathSync.native(path.dirname(dir)), path.basename(dir))
+      expect(insideReal(real, fs.realpathSync.native(REPO_ROOT)), dir).toBe(false)
       expect(insideReal(path.resolve(dir), path.resolve(userConfig)), `${dir} is the user config`).toBe(false)
-      expect(isInside(dir, call.cwd), `${dir} is inside the job folder the model reads`).toBe(false)
+      expect(insideReal(real, fs.realpathSync.native(call.cwd)), `${dir} is inside the job folder the model reads`).toBe(false)
     }
   })
 

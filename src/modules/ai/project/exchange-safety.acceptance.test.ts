@@ -637,18 +637,12 @@ const [G1, G2, G3] = SIN_GROUPS
 const SIN_DIGITS = `${G1}${G2}${G3}`
 const fullWidth = (digits: string): string => digits.split('').map((d) => String.fromCharCode(0xff10 + Number(d))).join('')
 /** The separators SC rule R34 already knows: a dot, the no-break and thin spaces, and the Unicode hyphens and dashes. */
-const SEPARATORS: readonly (readonly [string, string])[] = [
-  ['a dot', '.'],
-  ['U+00A0', ' '],
-  ['U+2009', ' '],
-  ['U+202F', ' '],
-  ['U+2010', '‐'],
-  ['U+2011', '‑'],
-  ['U+2012', '‒'],
-  ['U+2013', '–'],
-  ['U+2014', '—'],
-  ['U+2015', '―'],
-]
+/** A541 G7: built from code points, never written raw (an editor that turns them into ASCII would leave every row ASCII). */
+const SEPARATOR_CODES: readonly number[] = [0x2e, 0xa0, 0x2009, 0x202f, 0x2010, 0x2011, 0x2012, 0x2013, 0x2014, 0x2015]
+const SEPARATORS: readonly (readonly [string, string])[] = SEPARATOR_CODES.map((code) => [
+  code === 0x2e ? 'a dot' : `U+${code.toString(16).toUpperCase().padStart(4, '0')}`,
+  String.fromCharCode(code),
+])
 const setText = (text: string) => (inputs: Json): void => {
   const docs = inputs['documents'] as Json[]
   if (docs[0]) docs[0]['text'] = text
@@ -689,7 +683,7 @@ const SCAN_ROWS: readonly ScanRow[] = [
   ['an institutionNumber key', (inputs) => { inputs['payee'] = { institutionNumber: '004' } }, []],
   ['a bank account shape with spaces', setText('Direct deposit (Test) to account 00123 004 7654321'), ['7654321']],
   ['the marker written RESTRICTED-PROVIDED', (inputs) => { inputs['answers'] = [{ questionId: 'PY3.bank', answer: 'RESTRICTED-PROVIDED 4821' }] }, ['4821']],
-  ['the marker written with a U+2011 hyphen', (inputs) => { inputs['answers'] = [{ questionId: 'PY3.sin', answer: 'restricted‑provided 4821' }] }, ['4821']],
+  ['the marker written with a U+2011 hyphen', (inputs) => { inputs['answers'] = [{ questionId: 'PY3.sin', answer: `restricted${String.fromCharCode(0x2011)}provided 4821` }] }, ['4821']],
 ]
 
 /** A529 S3 (RC2): the exact problems list each scan row's refusal carries (the scan's kinds, pinned whole). */
@@ -741,7 +735,9 @@ const CLEAN_ROWS: readonly (readonly [string, (inputs: Json) => void])[] = [
 describe('AI-9 SEC-5 A509 the sensitive-value scan reads Unicode, numbers, nesting and escapes, not ASCII text only', SLOW, () => {
   test('AI-9 A509 the scan tables are not empty and cover every R34 separator (sentinel)', () => {
     expect(SCAN_ROWS.length).toBeGreaterThan(SEPARATORS.length)
-    expect(SEPARATORS.map(([, sep]) => sep).join('')).toBe('.   ‐‑‒–—―')
+    // A541 G7: the separators are checked by code point, so a raw character turned into ASCII cannot pass
+    expect(Array.from(SEPARATORS.map(([, sep]) => sep).join(''), (c) => c.codePointAt(0))).toEqual([0x2e, 0xa0, 0x2009, 0x202f, 0x2010, 0x2011, 0x2012, 0x2013, 0x2014, 0x2015])
+    expect(SEPARATORS.map(([label]) => label)).toEqual(['a dot', 'U+00A0', 'U+2009', 'U+202F', 'U+2010', 'U+2011', 'U+2012', 'U+2013', 'U+2014', 'U+2015'])
     expect(CLEAN_ROWS.length).toBe(4)
     expect(Number(SIN_DIGITS) + 1).not.toBe(Number(SIN_DIGITS))
     // A529 S3: every row has its exact problems list, and no list is left over
