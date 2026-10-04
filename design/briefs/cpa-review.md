@@ -60,3 +60,12 @@ Measured at **1366 x 650 and 1093 x 525** (125% zoom); the panes never stack at 
 
 ## For the designer
 One version, the record tabs, on sample client data from `reference/sample-clients/`: one red tier return (first review, and back from rework with a mark that came off) and one green (first review, and every section marked). The usability panel re-walks tasks 2, 3 and 6 at both sizes.
+
+## Added 3 Oct 2026 (re-check against blueprint v1.2; ambers A421, A433, A444, A485)
+- Judge an accepted risk (A421, V03, EX-1): the CPA sees the exception, the preparer's answer tagged "for you to judge" with its source or reason, amount and tax effect, and the source in the viewer; Accept (reason required, 1 field) or Comment instead, naming the exception. Budget 0 loads, 2 clicks, 1 field. Task 3 and task 7 change: an unjudged accepted risk reads "For you to judge", and Approve waits for every section mark and every accepted risk judged; the page lists "N sections left" and "M accepted risks to judge" as links, and `a` only focuses Approve.
+- Comment (A421, V04): type (error, question, missing evidence, presentation) and severity (must fix, should fix, note), none preselected. A fix draft (V13) is a read-only card for the CPA with the "AI draft" tag and no Approve control; only the assigned preparer approves.
+- Brief extras (A421, Z20-5): the ten largest changes since last year (ties by natural key; fewer than ten lists all); attestations red with what remains; the approval record pauses time over 5 minutes (RV-11).
+- CPA queue page (A433, V15, D02): caption "overdue first, then tier, then due date; ties by longest wait"; columns corporation and year end, tier with "Why this tier", filing due, balance-due date, waiting since, round, preparer who signed; views All and Back from rework; search and a tier filter; Back keeps search, filter, sort and scroll. Budget: 1 load, 1 click, under 2 s.
+- Keys follow D01's one list (A485 K1): n next flag, p previous flag, m next number, o open the source, r reviewed and next, a focus Approve, c comment, ] and [ source steps, s search; the prototype's f and j become n and m. The second window is a checkbox saved per person, default off (A485 K2).
+- Notice and follow-up controls (A444): "Close follow-up" and "Start amended return" appear to the CPA and the owner only.
+

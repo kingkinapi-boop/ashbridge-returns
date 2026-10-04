@@ -56,3 +56,12 @@ Option A with Option C's count strip for the owner. The record is a hub: header 
 
 ## Open points (amber)
 - Column sets per role; saved views stored per staff account (staff-only, no client data). Review marks and Approve belong to the CPA review brief, not here.
+
+## Added 3 Oct 2026 (re-check against blueprint v1.2; ambers A421, A433, A444, A485)
+- Sign in and Two-step code are D13's. Each role lands on its own list: preparer My returns, CPA the review queue, ops the Ops queue, owner the Board; the kept address first if there is one (A485 M4, K5). No Today page. "My rework" and "All rework" are the names (A252).
+- Order and columns (A433, V15): the CPA queue reads "overdue first, then tier, then due date; ties by longest wait"; columns corporation and year end, tier in words with "Why this tier", filing due, balance-due date, waiting since, round (first review or back from rework), preparer who signed; views All and Back from rework (with count). A past balance-due date shows in words but is not overdue (FLOW-12); tier "not set" is a real value. D02's brief gains this CPA queue page.
+- Bulk assign on New returns (A444, V10, D09): sticky bar, select all visible, one preparer, one click; a flagged row has no box; the previous preparer loses sight of the return; the result is announced and focus moves to the next row. Ops queue holds approved, client_sign, ready_to_file, filed, and assessed while a follow-up is open; New returns holds intake, evidence and any pre-review return with no preparer; order overdue first, then filing due date, then lifecycle order, then id, stated in the caption.
+- Notice of assessment (A444, FLOW-8): compare filed and assessed values per line; when they differ, a follow-up item. "Close follow-up" (outcome, reason) and "Start amended return" show to the CPA and owner only; for ops the page says the CPA closes it (the action is absent, rule 8). "Record a client dispute" on the T183CORP step in client_sign: one or more of the six summary items or "other", a non-blank reason, no state change (LL-6). Chase is a dated staff note ("chased on <date>"), never a sent message (A485 QR16, RULE-19).
+- D10 and D11 pages (A444, V11): the week's ten lessons and the seven LL-9 measures; "Mark fixed" for owner and CPA with a non-blank card id, in place. The board for owner and CPA (V11) shows every return once under its state with due-date bands. D11 is parked in the design lane.
+- Accepted-risk answers (A421) show on the queue as "M accepted risks to judge" for the CPA; Approve waits for them.
+
