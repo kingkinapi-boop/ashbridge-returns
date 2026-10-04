@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-04T03:25:52.275Z",
  "worker": "cloud-f14272",
- "state": "working",
- "at": "2026-10-04T03:31:24.161Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-04T03:44:53.248Z",
+ "mode": "turbo",
+ "note": "FAIL: quotedName leaves DEL and C1 controls raw (engines.ts:214), see reports/FX18-check-r3.md"
 }
