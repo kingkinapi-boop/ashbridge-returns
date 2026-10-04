@@ -1,10 +1,10 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "386 tests (383 unit, 3 db); G1-G8; fails first 19 on Linux; main rule test claim-wait-check fails: SC11b no Where line (Lead)",
+ "note": "A551: S0 to S14 at the top of the card (replaces A548)",
  "worker": "cloud-80dec5",
- "state": "reported",
- "at": "2026-10-04T01:21:52.955Z",
+ "state": "reopened",
+ "at": "2026-10-04T04:03:20.956Z",
  "mode": "turbo",
  "beat": "2026-10-04T01:01:43.221Z",
  "commit": "7e9890ba",
