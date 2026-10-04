@@ -2,7 +2,10 @@
  "card": "S01",
  "role": "spec",
  "worker": "cloud-24d389",
- "state": "working",
- "at": "2026-10-04T00:17:28.396Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T00:22:21.386Z",
+ "mode": "turbo",
+ "note": "refit: merged main 351f0846; unit 3448 pass, only S01's file fails on missing ../index (S00 not on main); typecheck 16 errors all taxprep-sim",
+ "commit": "b6a188e6",
+ "validated": "351f0846affa5587e5519153971fe4ecd46d01be"
 }
