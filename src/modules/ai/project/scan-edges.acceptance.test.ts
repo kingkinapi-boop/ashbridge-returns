@@ -153,6 +153,21 @@ describe('AI-9 SEC-5 A541 G6 the separator classes: the bank shape, the birth wo
   })
 })
 
+describe('AI-9 SEC-5 A551 S13 a list is walked as a list: its positions are not keys', () => {
+  test('AI-9 SEC-5 A551 S13 a marked key "0" is not the first position of a list: sensitiveKinds(["4821"], {"0"}) is []', () => {
+    expect(sensitiveKinds(['4821'], new Set(['0']))).toEqual([])
+  })
+
+  test('AI-9 SEC-5 A551 S13 sentinel: the same marked key "0" on an object holding "4821" is a value of a fact marked sensitive', () => {
+    expect(sensitiveKinds({ '0': '4821' }, new Set(['0']))).toEqual([FACT])
+  })
+
+  test('AI-9 SEC-5 A551 S13 the Luhn properties are seeded and run at least 100 cases (testing.md: a fixed seed)', () => {
+    expect(Number.isInteger(SEEDED.seed)).toBe(true)
+    expect(SEEDED.numRuns).toBeGreaterThanOrEqual(100)
+  })
+})
+
 describe('AI-9 SEC-5 A529 S4 the scan edges: no alarm where nothing is sensitive, the exact kind where something is', () => {
   test('AI-9 A529 the edge tables are not empty (sentinel)', () => {
     expect(NO_ALARM.length).toBeGreaterThan(10)

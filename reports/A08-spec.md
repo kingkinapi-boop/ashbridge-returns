@@ -1,5 +1,44 @@
 # A08 spec
 
+# Round 4 (A551: findings review 3, S0 to S14)
+
+Spec-writer (Opus, cloud-7d3564, Linux), 4 Oct 2026. Commit `spec(A08): acceptance tests (A551)` on claude/A08 (the hash is on the card's Spec commit line). Validated on main ed67e3dd (merged into claude/A08 as bb89d344).
+
+## S0: the 27 survivors, re-read from the cloud json report
+
+`npm run mutate:changed -- A08 -- --force` on bb89d344 (the build f01217d9 plus main; 717 mutants, 846 tests): call.ts 98.25, index.ts 95.19, scan.ts 97.02, env.ts 100; overall 96.08. `reports/mutation/mutation.json` lists 27 Survived or NoCoverage mutants, and each one is the card's row, file, line and mutator (StringLiteral, ConditionalExpression, BlockStatement, BooleanLiteral, ArrayDeclaration, AssignmentOperator), the no-coverage flags included. No mismatch, so nothing went to the Lead.
+
+## Tests: 22 new (unit); the S4 Luhn properties are seeded (20261003) and run 2000 cases each
+
+- `launcher-round2.acceptance.test.ts`: S1 (1), S2 (1), S3 (2: inbox, outbox), S4 (1), S5a (3: ORDERS.md, settings.json, catalogue.json), S5b (1), S6a (1), S6b (1), S7 (1), S8 (1), S14 (1).
+- `spawn-seam.acceptance.test.ts` (new; its own file because `vi.mock('node:child_process')` is hoisted; the mock passes through to the real spawn and records arguments and options): S9 (2: through the launcher's outbox, and runClaude itself), S10 (1), S11 (1), S12 (1, fake timers on a fake child).
+- `scan-edges.acceptance.test.ts`: S13 (2: the list row and its `{ '0': '4821' }` sentinel), plus one row that the Luhn properties' seed is an integer and their runs at least 100.
+
+Every spy sits on the default `fs` import or on `fs.realpathSync.native`, filters on one exact resolved path, and is restored in `finally`. S1 and S8 read the exports at run time (`await import('./index')`), so typecheck stays green and they fail by name.
+
+## Fails first: 5 (S1, S3 x2, S8, S14), each for its B item
+
+- S1: `VENDOR_SETTINGS` is not exported (B1). S8: `issueProblems` is not exported (B6).
+- S3 inbox and outbox: `{ ok: true }`: `realNative` is captured at load, so the stub of `fs.realpathSync.native` never reaches the launcher (B2).
+- S14: the run rejects with EEXIST from `mkdirSync` (B9).
+- Every other new row passes on the tip and bites on its mutant. Plants, each run alone in the stub worktree (never committed), each caught: S2 the recursive guard `false` (stack overflow) and line 282 `false` and its string; S3 the realpath clause `true`; S4 the catch returning `true`; S5a an empty catch and the reason string; S5b `if (false)` and its string; S6a and S6b `force: false`; S7 the `gone` line `false`; S8 `join('')`; S1 one name emptied; S14 no lstat before mkdir; S9 `?? ''`; S10 `value !== undefined` as `true`; S11 `windowsHide: false` and `stdio: []`; S12 the grace minus 1 ms, `kill('')` and an empty timer callback; S13 `Array.isArray` as `false`.
+
+## Step 6b sweep
+
+Stub (B1 export, B2 `realNative` read when called and a recursive realPathOf, B6 export, B9 lstat of the outbox before mkdir) in a throwaway worktree: unit 147 files, 3851 passed, 2 skipped, none failed; db 17 files, 743 passed, 1 expected fail, 5 skipped. No other test fails, so none is retired or rewritten. The stub worktree is removed.
+
+On the branch (bb89d344 plus these files): typecheck and `npm run lint` clean; unit 147 files, 3846 passed, 2 skipped, and exactly the 5 above failed; db 17 files, 743 passed, 1 expected fail, 5 skipped. Flake: launcher-round2 and spawn-seam together, 10 runs in the stub worktree, 122 passed and 2 skipped each time.
+
+## Amber choices (for AMBER.md)
+
+- S2's missing root is the temp folder's file system root plus `a08-missing-root/exchange` on every platform; the stubs answer only the root and that tree. Reverse: plant a real missing drive on win32 (G5 does that already).
+- S9 has two rows (the launcher's outbox refusal and runClaude's own result), so the reason is pinned where A04 reads it and where it is made.
+- S5b's stub returns the same two bytes as text or as a buffer, so the row holds before and after B4's `.toString()`.
+- S13's extra row pins the property options (seed, at least 100 runs) the directive asked to confirm. Reverse: delete the row.
+- The card's Paths line names spawn-seam.acceptance.test.ts (already under `src/modules/ai/project/**` in slices.json; the Lead's file is unchanged).
+
+Files the spec owns (changed this round): the three test files above and this report.
+
 # Round 3 (A541: spec review 2, G1 to G8)
 
 Spec-writer (Opus, cloud, Linux), 4 Oct 2026. Commit `spec(A08): acceptance tests round 3 (G1 to G8)` on claude/A08 (the hash is on the card's Spec commit line). Validated on main d3ad2ec9 (merged into claude/A08 as 0018c6ab).

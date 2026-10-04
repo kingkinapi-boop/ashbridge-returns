@@ -22,11 +22,21 @@
 //   spies on the default `fs` import's readdirSync); G4 relative, trailing-separator, `..` and (win32) lower-case
 //   forms of the repo are inside it (B1 on `fs.realpathSync.native`); G5 (win32) a missing drive is the refusal "the
 //   exchange folder does not exist", never a throw; G8 the run removes its CLI config folder (answered and failed).
+// Round 4 (A551, findings review 3: no disable in security code; every survivor a test or a behaviour-keeping
+//   rewrite): S1 VENDOR_SETTINGS is exported and pinned whole (B1); S2 a missing file system root is the refusal,
+//   never a throw; S3 an inbox or outbox whose native real path is elsewhere refuses (fs.realpathSync.native is read
+//   when called, B2); S4 an inbox whose lstat fails refuses; S5a/S5b the orders, settings or catalogue unreadable or
+//   not loading refuse; S6a/S6b a config folder entry or the folder itself gone mid-run does not fail the run; S7 an
+//   inbox name gone before its read is skipped silently; S8 issueProblems is exported (B6) and joins a nested path
+//   with "."; S14 an outbox that is a regular file refuses (B9). Spies sit on the default `fs` import (and on
+//   `fs.realpathSync.native`), filter on exact paths and are restored in `finally`. S9 to S12 (the spawn seam) are in
+//   spawn-seam.acceptance.test.ts, because their `vi.mock('node:child_process')` is hoisted over a whole file.
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import { z } from 'zod'
 import { validateAiOutput } from '../../../contracts/ai'
 import { readSettings } from '../../../core/env'
 import { readOwnSource } from '../../../core/testing/read-own-source'
@@ -1142,6 +1152,344 @@ describe('AI-8 A541 G8 nothing else is written anywhere: the run removes its con
     expect(call?.configDir).toEqual(expect.any(String))
     expect(call?.configDirFiles).toEqual([])
     expect(fs.existsSync(call?.configDir ?? '')).toBe(false)
+  })
+})
+
+// ---------- A551 (findings review 3): S1 to S8 and S14, each survivor a row through a seam, never a disable ----------
+
+type AnyFn = (...a: unknown[]) => unknown
+/** The default `fs` import, whose functions the launcher reads when it calls them (the seam every spy below uses). */
+const fsFns = fs as unknown as Record<string, AnyFn>
+/** `fs.realpathSync.native` lives on its own object: B2 reads it when called, so a spy there reaches the launcher. */
+const nativeHost = fs.realpathSync as unknown as Record<string, AnyFn>
+/** True when a path argument is exactly this path (resolved; never a prefix or a pattern). */
+const same = (p: unknown, want: string): boolean => typeof p === 'string' && path.resolve(p) === path.resolve(want)
+const errno = (code: string): NodeJS.ErrnoException => Object.assign(new Error(`planted ${code} (Test)`), { code })
+/** The launcher module's exports by name, read at run time, so an export B1 or B6 adds fails by name until it exists. */
+const exportOf = async (name: string): Promise<unknown> => ((await import('./index')) as unknown as Record<string, unknown>)[name]
+
+interface Caught {
+  run?: Run
+  thrown?: unknown
+}
+/** A run whose rejection is caught and returned, so "nothing thrown" is an assertion, not a crash. */
+async function runCaught(w: World, extra: Extra = {}): Promise<Caught> {
+  try {
+    return { run: await runOnce(w, extra) }
+  } catch (e) {
+    return { thrown: e }
+  }
+}
+
+const R4 = {
+  unreadable: 'the orders, the settings or the fact catalogue could not be read',
+  catalogue: 'the fact catalogue does not load',
+} as const
+
+describe('END-8 SEC-10 A551 S1 the vendor list is a pinned security list', () => {
+  test('END-8 SEC-10 A551 S1 B1 VENDOR_SETTINGS is exported and is exactly the nine model-vendor setting names, in order', async () => {
+    expect(await exportOf('VENDOR_SETTINGS')).toEqual([
+      'ANTHROPIC_API_KEY',
+      'ANTHROPIC_AUTH_TOKEN',
+      'ANTHROPIC_BASE_URL',
+      'OPENAI_API_KEY',
+      'CLAUDE_CODE_USE_BEDROCK',
+      'CLAUDE_CODE_USE_VERTEX',
+      'AWS_BEARER_TOKEN_BEDROCK',
+      'GEMINI_API_KEY',
+      'GOOGLE_API_KEY',
+    ])
+  })
+})
+
+describe('ARC-22 AI-8 SEC-10 A551 S2 to S5 the folder and project-file checks, through stubs of the disk', SLOW, () => {
+  test('ARC-22 A551 S2 an exchange folder under a file system root that does not exist (existsSync false, its native real path ENOENT) is the refusal "the exchange folder does not exist": nothing thrown, nothing called', async () => {
+    const w = world(['c01-clean'])
+    const root = path.parse(os.tmpdir()).root
+    const top = path.join(root, 'a08-missing-root')
+    const missing = path.join(top, 'exchange')
+    expect(fs.existsSync(top), 'this row needs no a08-missing-root folder at the root').toBe(false)
+    const realExists = fs.existsSync.bind(fs) as AnyFn
+    const realNative = fs.realpathSync.native.bind(fs.realpathSync) as AnyFn
+    let rootAsked = 0
+    const exists = vi.spyOn(fsFns, 'existsSync').mockImplementation((...args: unknown[]) => {
+      if (same(args[0], root)) {
+        rootAsked += 1
+        return false
+      }
+      if (same(args[0], top) || same(args[0], missing)) return false
+      return realExists(...args)
+    })
+    const native = vi.spyOn(nativeHost, 'native').mockImplementation((...args: unknown[]) => {
+      if (same(args[0], root)) throw errno('ENOENT')
+      return realNative(...args)
+    })
+    let out: Caught
+    try {
+      out = await runCaught(w, { env: { ...w.env, AI_EXCHANGE_DIR: missing } })
+    } finally {
+      exists.mockRestore()
+      native.mockRestore()
+    }
+    expect(out.thrown).toBeUndefined()
+    expect(out.run?.result).toEqual({ ok: false, reason: R.noExchange })
+    expect(rootAsked, 'the launcher asked whether the root exists').toBeGreaterThan(0)
+    expect(w.calls()).toEqual([])
+    expect(fs.existsSync(top)).toBe(false)
+  })
+
+  test.each([
+    ['inbox', R.inboxNotFolder],
+    ['outbox', R.outboxNotFolder],
+  ] as const)('ARC-22 SEC-10 A551 S3 an %s whose native real path is elsewhere (an alias lstat cannot see) refuses the run: nothing called, nothing written there, the lock gone', async (name, reason) => {
+    const w = world(['c01-clean'])
+    const elsewhere = path.join(w.root, `elsewhere-${name}`)
+    fs.mkdirSync(elsewhere)
+    const dir = path.join(w.exchange, name)
+    const realNative = fs.realpathSync.native.bind(fs.realpathSync) as AnyFn
+    let aliased = 0
+    const native = vi.spyOn(nativeHost, 'native').mockImplementation((...args: unknown[]) => {
+      if (same(args[0], dir)) {
+        aliased += 1
+        return elsewhere
+      }
+      return realNative(...args)
+    })
+    let out: Caught
+    try {
+      out = await runCaught(w)
+    } finally {
+      native.mockRestore()
+    }
+    expect(out.thrown).toBeUndefined()
+    expect(out.run?.result).toEqual({ ok: false, reason })
+    expect(aliased, `the launcher read the ${name} real path through fs.realpathSync.native when it ran`).toBeGreaterThan(0)
+    expect(w.calls()).toEqual([])
+    expect(fs.readdirSync(elsewhere)).toEqual([])
+    expect(outboxNames(w)).toEqual([])
+    expect(fs.existsSync(lockOf(w))).toBe(false)
+  })
+
+  test('ARC-22 A551 S4 an inbox whose lstat fails with EACCES is the refusal "the exchange inbox folder is not a real folder": nothing thrown, nothing called', async () => {
+    const w = world(['c01-clean'])
+    const realLstat = fs.lstatSync.bind(fs) as AnyFn
+    let denied = 0
+    const lstat = vi.spyOn(fsFns, 'lstatSync').mockImplementation((...args: unknown[]) => {
+      if (same(args[0], w.inbox)) {
+        denied += 1
+        throw errno('EACCES')
+      }
+      return realLstat(...args)
+    })
+    let out: Caught
+    try {
+      out = await runCaught(w)
+    } finally {
+      lstat.mockRestore()
+    }
+    expect(out.thrown).toBeUndefined()
+    expect(out.run?.result).toEqual({ ok: false, reason: R.inboxNotFolder })
+    expect(denied, 'the launcher looked at the inbox with lstatSync').toBeGreaterThan(0)
+    expect(w.calls()).toEqual([])
+    expect(outboxNames(w)).toEqual([])
+    expect(fs.existsSync(lockOf(w))).toBe(false)
+  })
+
+  const PROJECT_FILES = [
+    ['ai-project/ORDERS.md', path.join(AI_PROJECT_DIR, 'ORDERS.md')],
+    ['ai-project/settings.json', path.join(AI_PROJECT_DIR, 'settings.json')],
+    ['data/facts/catalogue.json', path.join(REPO_ROOT, 'data', 'facts', 'catalogue.json')],
+  ] as const
+
+  test.each(PROJECT_FILES)('ARC-22 AI-8 A551 S5a %s that cannot be read refuses the run with the whole reason: nothing thrown, nothing called, no lock, no outbox', async (_label, file) => {
+    expect(fs.existsSync(file), `${file} is on disk (sentinel)`).toBe(true)
+    const w = world(['c01-clean'])
+    const realRead = fs.readFileSync.bind(fs) as AnyFn
+    let failed = 0
+    const read = vi.spyOn(fsFns, 'readFileSync').mockImplementation((...args: unknown[]) => {
+      if (same(args[0], file)) {
+        failed += 1
+        throw errno('EACCES')
+      }
+      return realRead(...args)
+    })
+    let out: Caught
+    try {
+      out = await runCaught(w)
+    } finally {
+      read.mockRestore()
+    }
+    expect(out.thrown).toBeUndefined()
+    expect(out.run?.result).toEqual({ ok: false, reason: R4.unreadable })
+    expect(failed, `the launcher read ${file} with readFileSync`).toBe(1)
+    expect(w.calls()).toEqual([])
+    expect(fs.existsSync(lockOf(w))).toBe(false)
+    expect(fs.existsSync(w.outbox)).toBe(false)
+  })
+
+  test('ARC-22 A551 S5b a fact catalogue that reads as {} (no entries list) refuses the run "the fact catalogue does not load": nothing called, no lock, no outbox', async () => {
+    const file = path.join(REPO_ROOT, 'data', 'facts', 'catalogue.json')
+    const w = world(['c01-clean'])
+    const realRead = fs.readFileSync.bind(fs) as AnyFn
+    let served = 0
+    const read = vi.spyOn(fsFns, 'readFileSync').mockImplementation((...args: unknown[]) => {
+      if (same(args[0], file)) {
+        served += 1
+        // the same two bytes whether the launcher asks for text or for a buffer
+        return args[1] === undefined ? Buffer.from('{}') : '{}'
+      }
+      return realRead(...args)
+    })
+    let out: Caught
+    try {
+      out = await runCaught(w)
+    } finally {
+      read.mockRestore()
+    }
+    expect(out.thrown).toBeUndefined()
+    expect(out.run?.result).toEqual({ ok: false, reason: R4.catalogue })
+    expect(served).toBe(1)
+    expect(w.calls()).toEqual([])
+    expect(fs.existsSync(lockOf(w))).toBe(false)
+    expect(fs.existsSync(w.outbox)).toBe(false)
+  })
+
+  test("ARC-22 A551 S14 an outbox that is a regular file is the refusal \"the exchange outbox folder is not a real folder\": nothing thrown, nothing called, the file untouched, the lock gone", async () => {
+    const w = world(['c01-clean'])
+    fs.writeFileSync(w.outbox, 'not a folder (Test)')
+    const out = await runCaught(w)
+    expect(out.thrown).toBeUndefined()
+    expect(out.run?.result).toEqual({ ok: false, reason: R.outboxNotFolder })
+    expect(w.calls()).toEqual([])
+    expect(fs.readFileSync(w.outbox, 'utf8')).toBe('not a folder (Test)')
+    expect(fs.existsSync(lockOf(w))).toBe(false)
+  })
+})
+
+/** Records every folder the launcher makes with fs.mkdtempSync (a pass-through spy; the world is made before it). */
+function recordMkdtemp(): { made: string[]; restore: () => void } {
+  const made: string[] = []
+  const real = fs.mkdtempSync.bind(fs) as AnyFn
+  const spy = vi.spyOn(fsFns, 'mkdtempSync').mockImplementation((...args: unknown[]) => {
+    const dir = real(...args)
+    if (typeof dir === 'string') made.push(dir)
+    return dir
+  })
+  return {
+    made,
+    restore: () => {
+      spy.mockRestore()
+    },
+  }
+}
+
+describe('AI-8 ARC-22 A551 S6 S7 entries that are gone by the time the launcher reaches them', SLOW, () => {
+  test("AI-8 A551 S6a a config folder listing that names an entry already gone does not stop the job: it is answered, the run ends ok and the folder is removed", async () => {
+    const w = world(['c01-clean'])
+    const mk = recordMkdtemp()
+    const realReaddir = fs.readdirSync.bind(fs) as AnyFn
+    let listedGone = 0
+    const rd = vi.spyOn(fsFns, 'readdirSync').mockImplementation((...args: unknown[]) => {
+      const listed = realReaddir(...args)
+      const dir = mk.made[0]
+      if (dir !== undefined && same(args[0], dir) && Array.isArray(listed)) {
+        listedGone += 1
+        return [...(listed as unknown[]), 'a08-gone-entry']
+      }
+      return listed
+    })
+    let out: Caught
+    try {
+      out = await runCaught(w)
+    } finally {
+      rd.mockRestore()
+      mk.restore()
+    }
+    expect(out.thrown).toBeUndefined()
+    expect(out.run?.result).toEqual({ ok: true })
+    expect(mk.made, 'the run made one config folder').toHaveLength(1)
+    expect(listedGone, 'the launcher listed the config folder through fs.readdirSync').toBeGreaterThan(0)
+    expect(outboxOf(w, 'c01-clean')).toEqual({ jobId: 'c01-clean', output: VALID_OUTPUT, stamp: stampFromJob(inboxJob('c01-clean')) })
+    expect(fs.existsSync(mk.made[0] ?? '')).toBe(false)
+    expect(fs.existsSync(lockOf(w))).toBe(false)
+  })
+
+  test('AI-8 ARC-22 A551 S6b a config folder removed during the run (when the ignored Bad-Name.json line is logged) does not fail the run: it ends ok and the lock is gone', async () => {
+    const w = world([])
+    writeJob(w, 'Bad-Name', cleanJob('a08-bad-name-s6b', 'Bad-Name'))
+    const mk = recordMkdtemp()
+    const lines: string[] = []
+    let removed = false
+    const sink = (line: string): void => {
+      lines.push(line)
+      const dir = mk.made[0]
+      if (line.includes('"Bad-Name.json"') && dir !== undefined && fs.existsSync(dir)) {
+        fs.rmSync(dir, { recursive: true })
+        removed = true
+      }
+    }
+    let result: unknown
+    let thrown: unknown
+    try {
+      result = await runAiProjectOnce({ argv: [], env: w.env, approvedPath: w.approvedPath, sink })
+    } catch (e) {
+      thrown = e
+    } finally {
+      mk.restore()
+    }
+    expect(thrown).toBeUndefined()
+    expect(result).toEqual({ ok: true })
+    expect(lines).toContain('ai:once: ignored inbox file "Bad-Name.json": its name is not a job id (SEC-10)')
+    expect(removed, 'the sink removed the config folder mid-run').toBe(true)
+    expect(mk.made).toHaveLength(1)
+    expect(fs.existsSync(mk.made[0] ?? '')).toBe(false)
+    expect(fs.existsSync(lockOf(w))).toBe(false)
+    expect(w.calls()).toEqual([])
+    expect(outboxNames(w)).toEqual([])
+  })
+
+  test('ARC-22 SEC-10 A551 S7 an inbox name that is listed but gone before it is read (a08-vanished-00.json) gets no outbox file and no log line; the pass goes on', async () => {
+    const w = world(['c01-clean'])
+    const vanished = 'a08-vanished-00.json'
+    expect(fs.existsSync(path.join(w.inbox, vanished))).toBe(false)
+    const inboxForms = [path.resolve(w.inbox), fs.realpathSync.native(w.inbox)]
+    const realReaddir = fs.readdirSync.bind(fs) as AnyFn
+    let listed = 0
+    const rd = vi.spyOn(fsFns, 'readdirSync').mockImplementation((...args: unknown[]) => {
+      const names = realReaddir(...args)
+      if (inboxForms.some((f) => same(args[0], f)) && Array.isArray(names)) {
+        listed += 1
+        return [...(names as unknown[]), vanished]
+      }
+      return names
+    })
+    let out: Caught
+    try {
+      out = await runCaught(w)
+    } finally {
+      rd.mockRestore()
+    }
+    expect(out.thrown).toBeUndefined()
+    expect(out.run?.result).toEqual({ ok: true })
+    expect(listed, 'the launcher listed the inbox through fs.readdirSync').toBeGreaterThan(0)
+    expect(outboxNames(w)).toEqual(['c01-clean.json'])
+    expect((out.run?.lines ?? []).filter((l) => l.includes('a08-vanished-00'))).toEqual([])
+    expect(outboxOf(w, 'c01-clean')).toMatchObject({ output: VALID_OUTPUT })
+    expect(w.calls()).toHaveLength(1)
+  })
+})
+
+describe('SEC-10 A551 S8 B6 issueProblems: each schema problem as "<path>: <message>"', () => {
+  test('SEC-10 A551 S8 B6 issueProblems is exported and joins a nested path with "." (a.b), and a list index as its number (items.0.name)', async () => {
+    const issueProblems = await exportOf('issueProblems')
+    expect(typeof issueProblems, 'index.ts exports issueProblems (B6)').toBe('function')
+    const schema = z.object({ a: z.object({ b: z.string() }), items: z.array(z.object({ name: z.string() })) })
+    const parsed = schema.safeParse({ a: { b: 5 }, items: [{ name: 7 }] })
+    expect(parsed.success).toBe(false)
+    const issues = parsed.error?.issues ?? []
+    expect(issues.map((i) => i.path)).toEqual([['a', 'b'], ['items', 0, 'name']])
+    const problems = typeof issueProblems === 'function' ? (issueProblems as AnyFn)(issues) : undefined
+    expect(problems).toEqual([`a.b: ${issues[0]?.message ?? ''}`, `items.0.name: ${issues[1]?.message ?? ''}`])
   })
 })
 
