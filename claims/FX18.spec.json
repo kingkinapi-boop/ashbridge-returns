@@ -2,10 +2,9 @@
  "card": "FX18",
  "role": "spec",
  "note": "A546: round 3, the last: S10 to S12 at the top of the card",
- "worker": "cloud-3fa261",
- "state": "reopened",
- "at": "2026-10-04T02:16:42.110Z",
- "mode": "turbo",
- "commit": "6e1bff63",
- "validated": "48fbf42c"
+ "reopenedFrom": "6e1bff63",
+ "worker": "cloud-ae80c1",
+ "state": "working",
+ "at": "2026-10-04T02:45:05.772Z",
+ "mode": "turbo"
 }
