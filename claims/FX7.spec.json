@@ -1,9 +1,11 @@
 {
  "card": "FX7",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: merged main 351f0846 (no conflicts); unit 3458 pass, 88 fail, all in FX7's own tests and the rule tests it drives (unbuilt FX7); typecheck clean",
  "worker": "cloud-24d389",
- "state": "working",
- "at": "2026-10-04T00:28:38.141Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T00:35:26.740Z",
+ "mode": "turbo",
+ "commit": "6af02364",
+ "validated": "861ad88c08943f324e85508eb32fd4f6af01984a"
 }
