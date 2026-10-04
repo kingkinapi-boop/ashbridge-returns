@@ -2,7 +2,8 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-843548",
- "state": "working",
- "at": "2026-10-04T00:18:00.067Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-04T00:18:06.100Z",
+ "mode": "turbo",
+ "note": "wait: deps W00c and FX8 not landed; re-offered after each release (needs Lead: reopen with a wait: hold)"
 }
