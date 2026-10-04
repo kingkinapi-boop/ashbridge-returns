@@ -4,10 +4,11 @@
  "round": 3,
  "spec": "7e9890ba",
  "worker": "cloud-c37c7e",
- "state": "working",
- "at": "2026-10-04T02:24:00.534Z",
+ "state": "released",
+ "at": "2026-10-04T02:48:56.290Z",
  "mode": "turbo",
  "lastRelease": {
-  "tip": "596b4a48ab0767027aa9cb4cf76738530c8bf47f"
- }
+  "tip": "f0bc00467b8813c15590f2c3ab7a2cbf04448f5b"
+ },
+ "note": "mutation 96.08 on the round 3 build: 27 survivors, see reports/A08-build.md; needs findings review then spec patch"
 }
