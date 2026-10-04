@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-04T04:19:25.632Z",
  "worker": "probe-lead",
- "state": "working",
- "at": "2026-10-04T04:20:04.598Z",
- "mode": "turbo"
+ "state": "reopened",
+ "at": "2026-10-04T04:20:13.677Z",
+ "mode": "turbo",
+ "note": "A549: re-check on the reduced scope (quotedName cleaning moved to SC12); directive at the top of the card (a Lead probe claimed it by mistake at 04:20Z, released)"
 }
