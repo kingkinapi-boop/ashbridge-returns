@@ -1,11 +1,12 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "218 tests (215 unit, 3 db); see reports/A08-spec.md",
- "reopenedFrom": "05edddb6",
+ "note": "360 tests (357 unit, 3 db); S0 survivors mapped, 26 held for Lead (see reports/A08-spec.md)",
  "worker": "cloud-3fa261",
- "state": "working",
- "at": "2026-10-03T23:05:06.800Z",
+ "state": "reported",
+ "at": "2026-10-04T00:18:38.392Z",
  "mode": "turbo",
- "beat": "2026-10-03T23:08:07.200Z"
+ "beat": "2026-10-03T23:08:07.200Z",
+ "commit": "f58dc034",
+ "validated": "0d631db4"
 }
