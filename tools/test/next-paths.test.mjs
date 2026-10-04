@@ -276,3 +276,67 @@ describe('ARC-15 CQ8 rule 3: local workers skip cards that run in the cloud only
     expect(tag('EITHER')).not.toMatch(/cloud only/)
   })
 })
+
+// CQ11 (A493 item 2): a file that is not on main and is named in the Paths of a card whose spec has reported and which has
+// not landed is held; no other card's spec or build naming it is offered. Planted as on 3 Oct: SC6 and SC10 both wrote
+// tools/test/card-rules.test.mjs.
+describe('ARC-15 CQ11 A493: a new file in the Paths of a reported spec holds every other card naming it', () => {
+  const NEWFILE = 'tools/test/card-rules.test.mjs'
+  // SC6 has a reported spec (w0); its Paths name NEWFILE, which main does not have.
+  async function sc6Reported(others, sc6Extra = {}) {
+    const w = await world([card('SC6', 'carded', { paths: ['tools/scope.mjs', NEWFILE], ...sc6Extra }), ...others])
+    const sha = await git(w.work, 'rev-parse', 'origin/main')
+    expect(await nextFor(w, 'w0', 'spec')).toBe('CLAIMED SC6 spec')
+    await claim(w, ['update', 'SC6', 'spec', 'reported', '--worker', 'w0', '--commit', 'abc123', '--validated', sha])
+    return w
+  }
+
+  test('ARC-15 A493 SC10 (spec needed) naming the same new file is "waiting on paths: SC6", never START, and claim.mjs offers it nothing', async () => {
+    const w = await sc6Reported([card('SC10', 'carded', { paths: ['tools/check.mjs', NEWFILE] })])
+    const out = await nextOut(w)
+    expect(starts(out)).not.toContain('SC10')
+    expect(out).toMatch(/^SC10 waiting on paths: SC6\b/m)
+    expect(await nextFor(w, 'w2', 'spec')).toBe('NOTHING')
+  })
+
+  test('ARC-15 A493 a card with a spec naming the new file is held for its build too', async () => {
+    const w = await sc6Reported([card('SC10', 'carded', { spec: 'abc', paths: [NEWFILE] })])
+    const out = await nextOut(w)
+    expect(starts(out)).not.toContain('SC10')
+    expect(out).toMatch(/^SC10 waiting on paths: SC6\b/m)
+    expect(await nextFor(w, 'w2', 'build')).toBe('NOTHING')
+  })
+
+  test('ARC-15 A493 a card that names other files only still starts', async () => {
+    const w = await sc6Reported([card('SC10', 'carded', { paths: ['tools/check.mjs'] })])
+    expect(starts(await nextOut(w))).toContain('SC10')
+    expect(await nextFor(w, 'w2', 'spec')).toBe('CLAIMED SC10 spec')
+  })
+
+  test('ARC-15 A493 the hold lifts when SC6 has landed (status done)', async () => {
+    const w = await world([card('SC6', 'done', { paths: ['tools/scope.mjs', NEWFILE] }), card('SC10', 'carded', { paths: [NEWFILE] })])
+    const out = await nextOut(w)
+    expect(starts(out)).toContain('SC10')
+    expect(out).not.toMatch(/waiting on paths: SC6/)
+  })
+
+  test('ARC-15 A493 a file that already exists on main holds nothing: a reported spec on it does not hold a spec job', async () => {
+    const w = await world([card('SC6', 'carded', { paths: ['tools/scope.mjs', NEWFILE] }), card('SC10', 'carded', { paths: [NEWFILE] })])
+    fs.mkdirSync(path.join(w.work, 'tools', 'test'), { recursive: true })
+    fs.writeFileSync(path.join(w.work, NEWFILE), '// exists\n')
+    await git(w.work, 'add', NEWFILE)
+    await git(w.work, 'commit', '-q', '-m', 'the file lands')
+    await git(w.work, 'push', '-q', 'origin', 'main')
+    const sha = await git(w.work, 'rev-parse', 'origin/main')
+    expect(await nextFor(w, 'w0', 'spec')).toBe('CLAIMED SC6 spec')
+    await claim(w, ['update', 'SC6', 'spec', 'reported', '--worker', 'w0', '--commit', 'abc123', '--validated', sha])
+    expect(await nextOut(w)).not.toMatch(/^SC10 waiting on paths/m)
+    expect(await nextFor(w, 'w2', 'spec')).toBe('CLAIMED SC10 spec')
+  })
+
+  test('ARC-15 A493 a spec still being written (not reported) does not hold the new file', async () => {
+    const w = await world([card('SC6', 'carded', { paths: [NEWFILE] }), card('SC10', 'carded', { paths: [NEWFILE] })])
+    expect(await nextFor(w, 'w0', 'spec')).toBe('CLAIMED SC6 spec')
+    expect(starts(await nextOut(w))).toContain('SC10')
+  })
+})

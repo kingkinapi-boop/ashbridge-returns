@@ -1,5 +1,7 @@
 # FX3 Rule defects in landed code (found by SC)
 
+**Lead note, 3 Oct 23:38Z (A534):** src/contracts/ai.ts carries 9 Stryker disables claiming a load crash survives (a crash at module load is killed) and src/contracts/ids.ts:9-52 is one 43-line disable range: FX3's build narrows each to a next-line disable on the equivalent code alone, mutation 100 (SC7's R-B2 lists them as KNOWN under FX3).
+
 **Lead directive, 3 Oct 14:27Z (A488): spec patch, one item, when known.json is free (after W00c and FX8 land, A481); then the build.** Put back the two db KNOWN entries for `returns.client_handoff` (R42: no record schema; R43: fact_id not a foreign key) with owner SC9: the table's name and its fact_id are fixed by the onboarding contract (section 4), so no FX3 build can pass them. Every other FX3 entry stays deleted. FX3's build must not touch them.
 
 Phase 0. Size M. Deps: SC. Where: cloud.

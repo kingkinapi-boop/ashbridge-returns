@@ -16,7 +16,8 @@
 //       'output' } }, strict at every depth (A08 writes it; `stage` is new).
 //   createAiRunner options gain `now?: () => Date` (default: `now` from src/core/clock.ts, read at each call, so
 //     setClock moves it; never `new Date()` here). runAiStep's ctx gains `deadline?: Date` (default: now() at the call
-//     + AI_JOB_LEASE_MS - 10 minutes). Round 5c (A469, reports/A04-findings-6.md): one deadline, one clock. The
+//     + AI_JOB_LEASE_MS - 10 minutes; never a time taken when the runner is made, round 5c G2 and G3). Round 5c (A469,
+//     reports/A04-findings-6.md): one deadline, one clock. The
 //     ai:<step> handler passes only { jobId: ctx.jobId }, so its wait ends at the runner's now() at the call +
 //     AI_JOB_LEASE_MS - 10 minutes whatever ctx.now holds (F10 gives the queue and the runner one Clock).
 //     Before every outbox read the engine compares now() with the deadline;
@@ -879,6 +880,53 @@ describe('ARC-22 the wait ends at the lease minus 10 minutes, on the pinned cloc
     } finally {
       setClock(systemClock)
     }
+  })
+
+  // Round 5c G2 (A474): the default clock is read at each call, not captured when the runner is made. F10 makes its
+  // runner once at boot; a journey that pins the clock after boot must still move the runner's deadline.
+  test('ARC-22 the default clock is read at each call: setClock after createAiRunner still moves the default deadline', async () => {
+    const T1 = Date.parse('2031-05-17T06:30:00.000Z') // far from any real date, so the system clock cannot stand in
+    let coreMs = T1
+    setClock(systemClock)
+    try {
+      // R106 exception: the default clock is what this test proves.
+      const r = createAiRunner({ recordingsDir: RECORDINGS_DIR, approvedPath, env: { AI_EXCHANGE_DIR: exchange }, pollMs: 5 })
+      expect(r.useEngine('project')).toEqual({ ok: true })
+      setClock({ now: () => new Date(coreMs) })
+      const t = track(start(r, JOB_ID))
+      await polls(2)
+      expect(t.settled()).toBe(false)
+      coreMs = T1 + AI_JOB_LEASE_MS - MARGIN_MS - 1
+      await polls(2)
+      expect(t.settled(), 'the step ended 1 ms before the deadline on the clock set after the runner was made').toBe(false)
+      coreMs = T1 + AI_JOB_LEASE_MS - MARGIN_MS
+      await polls(1)
+      expect(t.settled(), 'the default clock was captured when the runner was made, not read at the call').toBe(true)
+      expect(await t.promise).toEqual({ ok: false, reason: DEADLINE, problems: [] })
+      await expectStopped()
+    } finally {
+      setClock(systemClock)
+    }
+  })
+
+  // Round 5c G3 (A474): a long-lived runner. F10 makes the runner once at boot; a start time taken at createAiRunner
+  // would refuse every job at once after the first day. The wait starts at the call, on the runner's clock.
+  test('ARC-22 a runner made 3 days before the call waits the full lease from the call: AI_JOB_LEASE_MS - 10 minutes after it, no less', async () => {
+    const h = createAiStepHandler('finding', projectRunner())
+    const CALL = T0 + 3 * 24 * HOUR
+    clockMs = CALL
+    const run = Promise.resolve().then(() => h.run(job('good'), { jobId: JOB_ID, attempt: 1, now: new Date(CALL), returnId: null }))
+    const t = track(run)
+    await polls(2)
+    expect(t.settled(), 'the step ended at once: its start was taken when the runner was made').toBe(false)
+    clockMs = CALL + AI_JOB_LEASE_MS - MARGIN_MS - 1
+    await polls(2)
+    expect(t.settled(), 'the step ended 1 ms before the call + AI_JOB_LEASE_MS - 10 minutes').toBe(false)
+    clockMs = CALL + AI_JOB_LEASE_MS - MARGIN_MS
+    await polls(1)
+    expect(t.settled()).toBe(true)
+    await expect(run).rejects.toThrow(DEADLINE)
+    await expectStopped()
   })
 
   test('ARC-22 the retry takes a result already in the outbox at once (unit twin of the db test): first attempt out of time, second done', async () => {
