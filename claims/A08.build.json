@@ -5,11 +5,11 @@
  "spec": "7e9890ba",
  "worker": "cloud-fff44d",
  "state": "released",
- "at": "2026-10-04T03:59:51.173Z",
+ "at": "2026-10-04T04:03:26.037Z",
  "mode": "turbo",
  "lastRelease": {
   "tip": "59de50d0cab8a6eb62dbe8c9cdbd8c0edb337ee5"
  },
- "note": "wait: A548 route withdrawn (A550); needs findings review 3 and spec patch first, see reports/A08-build-round5.md",
+ "note": "wait: A551 spec first; the Lead reopens the build after it",
  "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
 }
