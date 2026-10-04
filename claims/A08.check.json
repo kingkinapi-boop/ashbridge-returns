@@ -3,7 +3,9 @@
  "role": "check",
  "for": "2026-10-03T21:21:35.397Z",
  "worker": "cloud-331e27",
- "state": "working",
- "at": "2026-10-04T00:09:44.390Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-04T00:09:58.036Z",
+ "mode": "turbo",
+ "note": "wait: offered while A08 round 2 spec is working (cloud-3fa261) and the reported build already failed mutation (reports/A08-build.md); a check now would test a stale build. Lead: reopen after round 2 spec and build",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
 }
