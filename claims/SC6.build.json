@@ -4,8 +4,9 @@
  "round": 1,
  "spec": "c526b32d",
  "worker": "cloud-1ba1dc",
- "state": "hold-findings",
- "at": "2026-10-03T23:53:27.861Z",
+ "state": "released",
+ "at": "2026-10-04T00:05:02.241Z",
  "mode": "turbo",
- "note": "FAIL: SEC-10 exec import plus 4 R78 forms, see reports/SC6-check.md"
+ "note": "wait: parked (A535); R77, R81, R78 to SC7",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"SC\",\"W16\"],\"depStatus\":[\"done\",\"done\"]}"
 }
