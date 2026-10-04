@@ -1,11 +1,10 @@
 {
  "card": "A08",
  "role": "build",
- "round": 3,
+ "round": 4,
  "spec": "7e9890ba",
- "worker": "cloud-c37c7e",
- "state": "reopened",
- "at": "2026-10-04T03:05:56.723Z",
- "mode": "turbo",
- "note": "A548: apply the A539 rulings to the 27 survivors in the build (rewrite or one reasoned next-line disable each); directive at the top of the card"
+ "worker": "cloud-f14272",
+ "state": "working",
+ "at": "2026-10-04T03:10:13.649Z",
+ "mode": "turbo"
 }
