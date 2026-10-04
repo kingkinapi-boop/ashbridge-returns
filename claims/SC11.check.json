@@ -1,10 +1,9 @@
 {
  "card": "SC11",
  "role": "check",
- "for": "2026-10-03T23:45:06.463Z",
- "worker": "cloud-086697",
- "state": "failed",
- "at": "2026-10-04T00:20:09.369Z",
- "mode": "turbo",
- "note": "FAIL: db-budget (6 multi-world spec tests) and Opus read (endPool marks ended on timeout; teardown bounds), see reports/SC11-check.md"
+ "for": "2026-10-04T03:38:00.983Z",
+ "worker": "cloud-660074",
+ "state": "working",
+ "at": "2026-10-04T03:59:10.825Z",
+ "mode": "turbo"
 }
