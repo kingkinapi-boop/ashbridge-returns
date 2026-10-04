@@ -4,8 +4,9 @@
  "round": 3,
  "spec": "6e1bff63",
  "worker": "cloud-1916ac",
- "state": "working",
- "at": "2026-10-04T01:01:19.498Z",
+ "state": "reported",
+ "at": "2026-10-04T01:29:38.964Z",
  "mode": "turbo",
- "beat": "2026-10-04T01:15:53.668Z"
+ "beat": "2026-10-04T01:15:53.668Z",
+ "note": "round 2 B1 to B8: all acceptance pass, mutation 100, pg16 db green"
 }
