@@ -4,8 +4,11 @@
  "round": 5,
  "spec": "43d42761",
  "worker": "cloud-7035d1",
- "state": "reported",
- "at": "2026-10-03T20:04:42.254Z",
+ "state": "released",
+ "at": "2026-10-04T00:04:13.705Z",
  "mode": "turbo",
- "note": "98 of 98 acceptance tests pass (56 unit, 42 db pg16); mutate 100"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "45ffcf0748a839c6e5d10bbf8f6cf04ce389bf20"
+ }
 }
