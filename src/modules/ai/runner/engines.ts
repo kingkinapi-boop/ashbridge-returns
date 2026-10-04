@@ -61,18 +61,25 @@ function tryRead(file: string): Read {
  * Logs a flagged file once per name and content (an unreadable entry: per name and error code). Names only, never content.
  * At most seenMax are held and logged by name (R104); the first one over is answered with one line saying the rest are not.
  */
-function logOnce(ctx: EngineContext, line: string, detail: string | undefined, what: 'recordings' | 'outbox files'): void {
+function logOnce(
+  ctx: EngineContext,
+  seen: Set<string>,
+  line: string,
+  detail: string | undefined,
+  what: 'recordings' | 'outbox files',
+  exempt = false,
+): void {
   const key = JSON.stringify([line, detail])
-  if (ctx.seen.has(key)) return
-  if (ctx.seen.size >= EXCHANGE_LIMITS.seenMax) {
+  if (seen.has(key)) return
+  if (!exempt && seen.size >= EXCHANGE_LIMITS.seenMax) {
     const more = `ai exchange: more than ${String(EXCHANGE_LIMITS.seenMax)} ${what} ignored; the rest are not logged by name (ARC-22)`
     const moreKey = JSON.stringify([more])
-    if (ctx.seen.has(moreKey)) return
-    ctx.seen.add(moreKey)
+    if (seen.has(moreKey)) return
+    seen.add(moreKey)
     ctx.sink(more)
     return
   }
-  ctx.seen.add(key)
+  seen.add(key)
   ctx.sink(line)
 }
 
@@ -93,7 +100,7 @@ type Recording = z.infer<typeof RecordingSchema>
 function readRecording(ctx: EngineContext, name: string): Recording | undefined {
   const read = tryRead(path.join(ctx.recordingsDir, name))
   const flag = (reason: string, detail: string | undefined): void => {
-    logOnce(ctx, `ai exchange: ignored recording ${name}: ${reason}`, detail, 'recordings')
+    logOnce(ctx, ctx.seen, `ai exchange: ignored recording ${name}: ${reason}`, detail, 'recordings')
   }
   if (!read.ok) {
     flag(String(read.code), read.code)
@@ -143,6 +150,8 @@ const OUTBOX_READ_FAILED = 'the exchange outbox could not be read (ARC-22)'
 const INBOX_NOT_REAL = 'the exchange inbox folder is not a real folder (ARC-22)'
 const OUTBOX_NOT_REAL = 'the exchange outbox folder is not a real folder (ARC-22)'
 const INSIDE_REPO = 'the exchange folder is inside the repository (ARC-22)'
+/** SEC-11: one sentence for both gates, the runner's and the engine's own. */
+export const SEC11_TEST_ONLY = 'the project engine runs only made-up returns until go-live (SEC-11)'
 const NOT_AN_INBOX_FILE = 'the job does not fit the inbox file (ARC-22)'
 
 /** The own file is not what a result looks like: the job fails at once, naming the file and the cause (never content). */
@@ -184,23 +193,28 @@ const isWaitedJsonFile = (ctx: EngineContext, name: string): boolean => name.end
  * What `fn` returns, or undefined when it throws: the error is dropped, because the system's message carries the exchange path.
  * The one place a failed look is turned into "nothing there".
  */
-function attempt<T>(fn: () => T): T | undefined {
-  // Stryker disable next-line BlockStatement: the catch block returns what an empty one would fall through to; an emptied try block returns the same undefined
-  try { return fn() } catch { return undefined }
+export function attempt<T>(fn: () => T): T | undefined {
+  try {
+    return fn()
+    // Stryker disable next-line BlockStatement: an emptied catch falls through to the same implicit undefined
+  } catch {
+    return undefined
+  }
 }
 
-/** One other entry of the outbox: looked at, never opened, and logged once by quoted name, size and time. */
-function lookAtStranger(ctx: EngineContext, outbox: string, name: string): void {
+/** One other entry of the outbox: looked at, never opened, and logged once per wait by quoted name (the waited id's own other-extension file is exempt from the cap). */
+function lookAtStranger(ctx: EngineContext, seen: Set<string>, outbox: string, name: string): void {
   const looked = attempt(() => fs.lstatSync(path.join(outbox, name)))
   if (looked === undefined) return
-  logOnce(ctx, `ai exchange: ignored outbox file ${JSON.stringify(name)}`, `${String(looked.size)}:${String(looked.mtimeMs)}`, 'outbox files')
+  const exempt = ctx.jobId !== undefined && name.startsWith(`${ctx.jobId}.`)
+  logOnce(ctx, seen, `ai exchange: ignored outbox file ${JSON.stringify(name)}`, undefined, 'outbox files', exempt)
 }
 
 /**
  * One poll's look at the other entries of the outbox, in a bounded batch (R104): at most strangerBatch are looked at, and
  * the next poll carries on after them (the cursor); the listing is read in buffers of the same size. 'unreadable' when it cannot be read.
  */
-function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: number }): 'unreadable' | undefined {
+function logStrangers(ctx: EngineContext, seen: Set<string>, outbox: string, cursor: { passed: number }): 'unreadable' | undefined {
   const { strangerBatch } = EXCHANGE_LIMITS
   const dir = attempt(() => fs.opendirSync(outbox, { bufferSize: strangerBatch }))
   if (dir === undefined) return 'unreadable'
@@ -215,7 +229,7 @@ function logStrangers(ctx: EngineContext, outbox: string, cursor: { passed: numb
         cursor.passed += looked
         return undefined
       }
-      lookAtStranger(ctx, outbox, entry.name)
+      lookAtStranger(ctx, seen, outbox, entry.name)
       looked++
     }
     cursor.passed = 0
@@ -238,9 +252,13 @@ function realPathOrAncestor(folder: string): string {
 /** N6: the exchange folder (by real path) lies inside the repository, where a commit could pick it up. */
 export function insideRepo(exchangeDir: string, repoRoot: string = REPO_ROOT): boolean {
   const rel = path.relative(realPathOrAncestor(repoRoot), realPathOrAncestor(path.resolve(exchangeDir)))
-  // Stryker disable next-line ConditionalExpression,BooleanLiteral: path.relative gives an absolute path only across Windows drives, which a posix run cannot reach
-  if (path.isAbsolute(rel)) return false
-  return !(rel === '..' || rel.startsWith(`..${path.sep}`))
+  return relIsInside(rel)
+}
+
+/** A path relative to the repo root is inside it unless it climbs out, or is absolute (another Windows drive). */
+export function relIsInside(rel: string, p: Pick<typeof path, 'isAbsolute' | 'sep'> = path): boolean {
+  if (p.isAbsolute(rel)) return false
+  return !(rel === '..' || rel.startsWith(`..${p.sep}`))
 }
 
 /**
@@ -253,13 +271,17 @@ function realFolder(root: string, name: 'inbox' | 'outbox', make: boolean): stri
     if (make) fs.mkdirSync(dir, { recursive: true, mode: 0o700 })
     return fs.realpathSync(dir) === path.join(fs.realpathSync(root), name)
   })
-  return real === true ? dir : undefined
+  if (real !== true) return undefined
+  // N6: a folder made earlier with looser modes is tightened too
+  if (make && attempt(() => (fs.chmodSync(dir, 0o700), true)) !== true) return undefined
+  return dir
 }
 
 async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult> {
   const { jobId, exchangeDir } = ctx
   // AI-9, SEC-11: no redaction stamp, no exchange file, whoever calls the engine.
   if (!isRedacted(job)) return refuse(NOT_REDACTED)
+  if (!job.isTest) return refuse(SEC11_TEST_ONLY)
   if (jobId === undefined || isBlank(jobId)) return refuse('the project engine needs a job id (the inbox file is named by it)')
   if (exchangeDir === undefined || isBlank(exchangeDir)) return refuse('the project engine is off: AI_EXCHANGE_DIR is not set')
   // SEC-10: the id becomes a file name in a folder another process writes; it is never printed.
@@ -299,6 +321,22 @@ async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult>
   } catch {
     return refuse(INBOX_WRITE_FAILED)
   }
+  try {
+    return await waitForResult(job, ctx, { jobId, exchangeDir, inbox, outbox, staging, inboxFile })
+  } finally {
+    // L3, ARC-22: whatever refused after the write, the staging file (redacted inputs) does not stay behind; errors ignored
+    attempt(() => {
+      fs.unlinkSync(staging)
+    })
+  }
+}
+
+async function waitForResult(
+  job: AiJob,
+  ctx: EngineContext,
+  at: { jobId: string; exchangeDir: string; inbox: string; outbox: string; staging: string; inboxFile: InboxFile },
+): Promise<EngineResult> {
+  const { jobId, exchangeDir, inbox, outbox, staging } = at
   // L3: both folders are looked at again just before the rename, in case one was swapped for a link since the first look
   if (realFolder(exchangeDir, 'inbox', false) === undefined) return refuse(INBOX_NOT_REAL)
   if (realFolder(exchangeDir, 'outbox', false) === undefined) return refuse(OUTBOX_NOT_REAL)
@@ -313,6 +351,8 @@ async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult>
     else ctx.waiting.delete(jobId)
   }
   const cursor = { passed: 0 }
+  // R104 bounded: strangers seen in this wait, at most seenMax (the waited id's own file is exempt, and counted once)
+  const seen = new Set<string>()
   pollers(1)
   try {
     for (;;) {
@@ -321,7 +361,7 @@ async function projectRun(job: AiJob, ctx: EngineContext): Promise<EngineResult>
       if (realFolder(exchangeDir, 'outbox', false) === undefined) return refuse(OUTBOX_NOT_REAL)
       const own = readOwn(jobId, outbox)
       if (own !== undefined) return own.ok ? checkedOutput(job, own) : own
-      if (logStrangers(ctx, outbox, cursor) === 'unreadable') return refuse(OUTBOX_READ_FAILED)
+      if (logStrangers(ctx, seen, outbox, cursor) === 'unreadable') return refuse(OUTBOX_READ_FAILED)
       await sleep(ctx.pollMs)
     }
   } finally {

@@ -9,7 +9,7 @@ import { makeLogger } from '../../../core/log'
 import { validateAiOutput, versionStampSchema, type VersionStamp } from '../../../contracts/ai'
 import { isBlank } from '../../../contracts/text'
 import type { Handler } from '../../../contracts/jobs'
-import { OUTPUT_CHECK_REASON, aiEngines, type EngineContext } from './engines'
+import { OUTPUT_CHECK_REASON, SEC11_TEST_ONLY, aiEngines, type EngineContext } from './engines'
 import { AiJobSchema, ApprovedListSchema, EXCHANGE_LIMITS, REPO_ROOT, inputHashOf, isRedacted, readUtf8, type AiJob, type ApprovedList } from './schemas'
 
 export const AI_JOB_LEASE_MS = 24 * 60 * 60 * 1000
@@ -91,7 +91,7 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
     // SEC-11: before go-live only made-up returns go to the project. The gate trusts `isTest` because F10 sets it
     // from returns.returns.is_test for the job's return; no module sets it (R97).
     if (engine === 'project' && !job.isTest) {
-      return refuse('the project engine runs only made-up returns until go-live (SEC-11)')
+      return refuse(SEC11_TEST_ONLY)
     }
     const deadline = ctx.deadline ?? new Date(now().getTime() + AI_JOB_LEASE_MS - AI_LEASE_MARGIN_MS)
     const engineCtx: EngineContext = { jobId: ctx.jobId, recordingsDir: options.recordingsDir, exchangeDir, pollMs, sink, waiting, seen, now, deadline }
@@ -149,13 +149,9 @@ export function createAiRunner(options: AiRunnerOptions): AiRunner {
   }
 }
 
-/** One line for jobs.last_error: control characters (code points 0 to 31 and 127 to 159) removed, then cut to the cap (AI-9, ARC-22). */
+/** One line for jobs.last_error: control, format and line-break characters (Cc, Cf, Zl, Zp) removed, then cut to the cap in code points (AI-9, ARC-22). */
 export function lastErrorLine(text: string, maxChars: number): string {
-  const kept = Array.from(text).filter((c) => {
-    const code = c.codePointAt(0) ?? 0
-    return !(code <= 31 || (code >= 127 && code <= 159))
-  })
-  return kept.join('').slice(0, maxChars)
+  return Array.from(text.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, '')).slice(0, maxChars).join('')
 }
 
 const resultSchema = z.strictObject({ output: z.unknown(), stamp: versionStampSchema })

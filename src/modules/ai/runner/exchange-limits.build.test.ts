@@ -257,9 +257,10 @@ describe('ARC-22 L4 the listing is read in bounded batches and closed', () => {
     await aiEngines.recorded.run(job('good'), ctx())
     expect(lines).toEqual([`ai exchange: more than ${String(seenMax)} recordings ignored; the rest are not logged by name (ARC-22)`])
     fs.mkdirSync(outbox(), { recursive: true })
-    fs.writeFileSync(path.join(outbox(), strangerName(1)), 'x')
+    // B4: the strangers of a wait have a set of their own (per wait), so the recordings' full set leaves them room
+    for (let i = 0; i < seenMax + 1; i++) fs.writeFileSync(path.join(outbox(), strangerName(i)), 'x')
     const pending = aiEngines.project.run(job('good'), ctx())
-    await polls(3)
+    await polls(Math.ceil((seenMax + 1) / EXCHANGE_LIMITS.strangerBatch) + 2)
     clockMs = T0 + 60_000
     await polls(1)
     expect(await pending).toMatchObject({ ok: false })
@@ -267,7 +268,7 @@ describe('ARC-22 L4 the listing is read in bounded batches and closed', () => {
       `ai exchange: more than ${String(seenMax)} recordings ignored; the rest are not logged by name (ARC-22)`,
       `ai exchange: more than ${String(seenMax)} outbox files ignored; the rest are not logged by name (ARC-22)`,
     ])
-    expect(lines.some((l) => l.includes(strangerName(1)))).toBe(false)
+    expect(lines.filter((l) => l.includes('ignored outbox file'))).toHaveLength(seenMax)
   })
 })
 
