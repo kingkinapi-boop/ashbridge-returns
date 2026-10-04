@@ -4,8 +4,8 @@
  "round": 4,
  "spec": "68ce1093",
  "worker": "cloud-5e4a47",
- "state": "hold-findings",
- "at": "2026-10-04T03:44:53.248Z",
+ "state": "reported",
+ "at": "2026-10-04T04:19:25.632Z",
  "mode": "turbo",
- "note": "FAIL: quotedName leaves DEL and C1 controls raw (engines.ts:214), see reports/FX18-check-r3.md"
+ "note": "A549: round 3 build d9c2712a stands on the reduced scope; check reopened"
 }
