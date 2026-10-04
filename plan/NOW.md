@@ -15,7 +15,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 |---|---|---|
 | Train 5 | none boarded yet | board W00c on its mutation check, SC11 and FX18 on PASS; request at 6 cards or hourly |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
-| W00c | check 5 stalled again, no score in five sessions (A536): check held `wait:` | local Opus findings review of the stall (from 00:13Z); then one fix and re-release the check `continue:` |
+| W00c | stall findings (A538): timeouts sized from the 12-minute dry run, so spinners take 10 to 15 minutes; check re-released `continue:` with a narrow-first cascade | session 1 pass 1a on all 11 targets; session 2 survivors, merge, proof, PASS or FAIL; board |
 | SC6 | parked (A535): R77, R81, R78 moved to SC7 | none |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |

@@ -717,3 +717,5 @@
 {"ts":"2026-10-04T00:05:17.167Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"FX18 round 2 spec review (Opus)","allowed":true}
 {"ts":"2026-10-04T00:12:15.261Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"W00c mutation stall findings review","allowed":true}
 {"ts":"2026-10-04T00:13:18.035Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"list_runs","allowed":true}
+{"ts":"2026-10-04T00:17:04.608Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T00:17:05.097Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
