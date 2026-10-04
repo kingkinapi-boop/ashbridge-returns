@@ -1,0 +1,34 @@
+// Planted for R79 (SC8 review G1): reads hidden behind local functions, as egress-rules and auth/rules do on main.
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { expect, test } from 'vitest'
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
+const src = (f: string): string => fs.readFileSync(f, 'utf8')
+const read = (...p: string[]): string => fs.readFileSync(path.join(...p), 'utf8')
+
+function walk(dir: string): string[] {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = path.join(dir, e.name)
+    return e.isDirectory() ? walk(p) : /\.ts$/.test(e.name) ? [p] : []
+  })
+}
+function srcFiles(): string[] {
+  return walk(path.join(ROOT, 'src'))
+}
+
+test('ARC-15 money.ts and ids.ts are marked', () => {
+  expect(src('src/core/money.ts')).toContain('// @mutate')
+  expect(read(ROOT, 'src', 'core', 'ids.ts')).toContain('// @mutate')
+})
+
+test('ARC-16 no src file is empty', () => {
+  const lines = srcFiles().flatMap((f) => fs.readFileSync(f, 'utf8').split('\n'))
+  expect(lines.length).toBeGreaterThan(0)
+})
+
+test('ARC-16 every src file is read by its relative path', () => {
+  const files = walk(path.join(ROOT, 'src')).map((f) => path.relative(ROOT, f))
+  expect(files.filter((f) => fs.readFileSync(path.join(ROOT, f), 'utf8') === '')).toEqual([])
+})

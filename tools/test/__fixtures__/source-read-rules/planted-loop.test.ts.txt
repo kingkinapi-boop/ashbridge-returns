@@ -1,0 +1,18 @@
+// Planted for R79: @mutate files read in a loop over a list of names, and over a directory listing.
+import { readFileSync, readdirSync } from 'node:fs'
+import path from 'node:path'
+import { expect, test } from 'vitest'
+
+const CORE = path.join(import.meta.dirname, '..', 'core')
+const listTs = (dir: string): string[] => readdirSync(dir).filter((f) => f.endsWith('.ts')).map((f) => path.join(dir, f))
+
+for (const name of ['clock.ts', 'env.ts']) {
+  test(`ARC-15 ${name} is marked`, () => {
+    expect(readFileSync(new URL(`./${name}`, import.meta.url), 'utf8')).toContain('// @mutate')
+  })
+}
+
+test('ARC-16 every core file is seeded', () => {
+  const texts = listTs(CORE).map((f) => readFileSync(f, 'utf8'))
+  expect(texts.length).toBeGreaterThan(0)
+})

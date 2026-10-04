@@ -1,0 +1,22 @@
+{
+  "about": "SC10 R89 (FLOW-2, C1 of reports/phase3-card-review-2026-10-03b.md): every guard in MOVES (src/modules/lifecycle/moves.ts) that src/pipeline/deps.ts does not yet register with F02's lifecycle, with the card that owns it. An owner removes its row when it registers the guard. The list must be empty at the phase 4 gate.",
+  "guards": [
+    { "guard": "intake_to_evidence", "owner": "E00" },
+    { "guard": "evidence_to_gaps", "owner": "E01" },
+    { "guard": "gaps_to_qa", "owner": "G00" },
+    { "guard": "gaps_to_build", "owner": "G00" },
+    { "guard": "qa_to_build", "owner": "Q00" },
+    { "guard": "build_to_prepare", "owner": "T01" },
+    { "guard": "prepare_to_trace", "owner": "T12" },
+    { "guard": "trace_to_respond", "owner": "T12" },
+    { "guard": "respond_to_review", "owner": "V09" },
+    { "guard": "review_to_approved", "owner": "T08" },
+    { "guard": "review_to_rework", "owner": "V04" },
+    { "guard": "rework_to_review", "owner": "V04" },
+    { "guard": "approved_to_client_sign", "owner": "T11" },
+    { "guard": "client_sign_to_ready_to_file", "owner": "T11" },
+    { "guard": "ready_to_file_to_filed", "owner": "T09" },
+    { "guard": "filed_to_assessed", "owner": "T13" },
+    { "guard": "assessed_to_closed", "owner": "T10" }
+  ]
+}

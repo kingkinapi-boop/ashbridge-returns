@@ -29,11 +29,12 @@
 //     its first sign; the extra mark joins nothing).
 //   - Zero formats with no negative mark: formatAmount(-0, f) equals formatAmount(0, f).
 
-import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import fc from 'fast-check'
 import { fixedClock, getClock, setClock, type Clock } from '../core/clock'
 import { AMOUNT_FORMATS, amountGroups, formatAmount, normaliseAmount } from './amount-grammar'
+import { readOwnSource } from '../core/testing/read-own-source'
 import {
   ReadingResultSchema,
   WordSchema,
@@ -598,7 +599,7 @@ describe('check 19: AMOUNT_FORMATS and formatAmount', () => {
 // ---------- check 20 (ARC-15): markers ----------
 
 describe('check 20: mutation and money markers', () => {
-  const source = (): string => readFileSync(new URL('./amount-grammar.ts', import.meta.url), 'utf8')
+  const source = (): string => readOwnSource(fileURLToPath(new URL('./amount-grammar.ts', import.meta.url)))
 
   test('ARC-15 amount-grammar.ts carries "// @mutate" in its first 5 lines', () => {
     const head = source().split('\n').slice(0, 5)
@@ -734,7 +735,7 @@ describe('F09B check 1: gap geometry (amountGroups)', () => {
 })
 
 describe('F09B check 2: rule, every geometry predicate has a backwards and an overlapping row', () => {
-  const source = (): string => readFileSync(new URL('./amount-grammar.ts', import.meta.url), 'utf8')
+  const source = (): string => readOwnSource(fileURLToPath(new URL('./amount-grammar.ts', import.meta.url)))
   /** Functions or arrows whose first two parameters share one position type (Spot, Box or Word). */
   const predicates = (src: string): string[] => {
     const names = new Set<string>()
