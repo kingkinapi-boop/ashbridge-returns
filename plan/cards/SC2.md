@@ -42,3 +42,6 @@ Each first failing on a planted copy of C10, C12 or C14:
 - **R102** priorYear money is integer cents (ARC-13).
 - **R103** one GIFI code per account across the three trial balances and the adjusting lines (TB-3).
 - **R75 reworded:** compare `rowsInExport` with the account's transaction count, never CSV lines.
+
+## Also (A521, W00c findings review 4, 3 Oct)
+- Rule for everywhere: any test under testworld/ or src/ that imports CLIENT_IDS, FOLDERS, SAMPLE_ROOT, copySamples or a walk fixture module sets its own timeout of at least 30 s. Built like FX1's cold-tool timeout rule in toolchain-rules; shown failing first on a planted test with a client-id loop and no timeout. Today's offenders become KNOWN rows owned by W00d.

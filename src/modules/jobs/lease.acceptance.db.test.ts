@@ -278,43 +278,47 @@ const op: fc.Arbitrary<Op> = fc.oneof(
   fc.record({ t: fc.constant('fail' as const), w: worker, retry: fc.boolean() }),
 )
 
+// FX14: the property made one database per generated run (25 in one test, 4804 ms of 6000). The same 25 sequences
+// (same arbitrary, seed and run count) are drawn once and each is its own test with its own one world.
+const LEASE_RUNS = 25
+const sequences = fc.sample(fc.array(op, { minLength: 1, maxLength: 14 }), { seed: SEED, numRuns: LEASE_RUNS }).map((ops, i) => ({ n: i + 1, ops }))
+
 describe('ARC-5 property: no job is ever finished by a worker that did not hold its lease at that moment', () => {
-  test(
-    'ARC-5 over random claim, expire, complete and fail orders on two workers, a write lands only from the live lease holder and every other write is refused with the row unchanged',
-    async () => {
-      await fc.assert(
-        fc.asyncProperty(fc.array(op, { minLength: 1, maxLength: 14 }), async (ops) => {
-          const { db, clock, queue } = await world()
-          const j = await queue.enqueue('read:page', 'k-1', { n: 1 })
-          for (const o of ops) {
-            if (o.t === 'wait') {
-              clock.advance(o.ms)
-              continue
-            }
-            if (o.t === 'claim') {
-              const got = await queue.claim(o.w)
-              if (got) expect(got.lease_holder).toBe(o.w)
-              continue
-            }
-            const before = await row(db, j.id)
-            const holds = before.status === 'running' && before.lease_holder === o.w && ms(before.lease_until) > ms(clock.now())
-            const msg = await refusal(
-              o.t === 'complete' ? queue.complete(j.id, o.w, { ok: true }, STAMP) : queue.fail(j.id, o.w, `error by ${o.w}`, { retry: o.retry }),
-            )
-            const after = await row(db, j.id)
-            if (holds) {
-              expect(msg, `${o.t} by the holder ${o.w}`).toBe('')
-              if (o.t === 'complete') expect(after.status).toBe('done')
-              else expect(after.last_error).toBe(`error by ${o.w}`)
-            } else {
-              expect(msg, `${o.t} by ${o.w}, who does not hold the lease`).not.toBe('')
-              expect(msg).toContain(j.id)
-              expect(after).toEqual(before)
-            }
-          }
-        }),
-        { seed: SEED, numRuns: 25 },
-      )
+  test('ARC-5 the lease property draws exactly the pinned 25 sequences from its fixed seed', () => {
+    expect(sequences).toHaveLength(25)
+  })
+
+  test.each(sequences)(
+    'ARC-5 over random claim, expire, complete and fail orders on two workers (sequence $n of 25), a write lands only from the live lease holder and every other write is refused with the row unchanged',
+    async ({ ops }) => {
+      const { db, clock, queue } = await world()
+      const j = await queue.enqueue('read:page', 'k-1', { n: 1 })
+      for (const o of ops) {
+        if (o.t === 'wait') {
+          clock.advance(o.ms)
+          continue
+        }
+        if (o.t === 'claim') {
+          const got = await queue.claim(o.w)
+          if (got) expect(got.lease_holder).toBe(o.w)
+          continue
+        }
+        const before = await row(db, j.id)
+        const holds = before.status === 'running' && before.lease_holder === o.w && ms(before.lease_until) > ms(clock.now())
+        const msg = await refusal(
+          o.t === 'complete' ? queue.complete(j.id, o.w, { ok: true }, STAMP) : queue.fail(j.id, o.w, `error by ${o.w}`, { retry: o.retry }),
+        )
+        const after = await row(db, j.id)
+        if (holds) {
+          expect(msg, `${o.t} by the holder ${o.w}`).toBe('')
+          if (o.t === 'complete') expect(after.status).toBe('done')
+          else expect(after.last_error).toBe(`error by ${o.w}`)
+        } else {
+          expect(msg, `${o.t} by ${o.w}, who does not hold the lease`).not.toBe('')
+          expect(msg).toContain(j.id)
+          expect(after).toEqual(before)
+        }
+      }
     },
     60_000,
   )

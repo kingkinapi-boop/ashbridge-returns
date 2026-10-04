@@ -22,6 +22,7 @@ paths:
 - Two Vitest projects: `unit` (no database) and `db` (PGlite, loaded once per worker from `db/schema/*.sql`, then `clone()` per test). Run `unit` first. A third project, `evals`, is outside the default run (AI-11).
 - On the laptop run only affected tests (`vitest related <files>` or `--changed`), through `node tools/heavy.mjs --`. Use the `agent` reporter: failures only.
 - The `db` project also runs on Postgres 16 in cloud checks; the schema avoids features newer than the oldest Postgres in use.
+- A core file the mutation gate cannot score (database glue, or a reader whose whole input the spec pins) carries `// @mutate` then `// Stryker disable all: <reason>`, and the reason names the db test or the pinning test that covers it (A515). The logic that decides money, tax or who sees what is never in such a file.
 - PGlite runs one transaction at a time, so a once, at-most-N or lost-update claim is proven on Postgres 16 in DB16's form (a barrier between the read and the write), and a twin called serialised holds a lock (A504).
 
 ## Determinism

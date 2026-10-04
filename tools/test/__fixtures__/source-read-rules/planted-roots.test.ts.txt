@@ -1,0 +1,18 @@
+// Planted for R79 (SC8 review G3): money.ts found from other roots, one read per root.
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { expect, test } from 'vitest'
+
+const require = createRequire(import.meta.url)
+
+test('ARC-15 money.ts is marked, found six ways', () => {
+  const a = fs.readFileSync(path.join(process.cwd(), 'src', 'core', 'money.ts'), 'utf8')
+  const b = fs.readFileSync(require.resolve('./money'), 'utf8')
+  const c = fs.readFileSync(createRequire(import.meta.url).resolve('./money.ts'), 'utf8')
+  const d = fs.readFileSync(new URL(import.meta.resolve('./money.ts')), 'utf8')
+  const e = fs.readFileSync(new URL('./money.ts', import.meta.url).pathname, 'utf8')
+  const f = fs.readFileSync(fileURLToPath(new URL('../core/money.ts', import.meta.url).href), 'utf8')
+  expect([a, b, c, d, e, f].every((t) => t.includes('// @mutate'))).toBe(true)
+})

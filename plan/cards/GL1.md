@@ -54,3 +54,7 @@ The live bridge reader is not carded yet. When it is, it refuses a marker answer
 - SC3 leaves two R62-inventory KNOWN entries for createAiRunner owned by this card: delete them when the runner calls `assertEngineAllowed`, and list createAiRunner as a factory or a registry-gated adapter.
 - Register Taxprep's simulator (S00's createSimulator, ARC-6's Taxprep stand-in) in the engine registry; delete any KNOWN entry for it that SC3 or S00 left with this card as owner.
 - Rule test, the ARC-6 anchor: every ARC-6 adapter row has registered engines and a gated factory. Plant: the Taxprep row with none.
+
+## Also (A525, GL3 read 5, 3 Oct)
+- The reach probe also reports role attributes (superuser, bypassrls, createrole); for every table a role can select, whether row security is on and which policies apply; and default privileges in each schema that name the role or PUBLIC. Plants: a reader role with bypassrls; an extra permissive policy on a handoff table; row security switched off; a default privilege in the bridge schema handing later views to anon. Each must fail the reach check (today they pass probeReach plus reachDiff and are caught only by stand-in tests and README words).
+- View dependencies follow reads through functions and views in other schemas. Plant: a bridge view reading a table through a function in another schema.

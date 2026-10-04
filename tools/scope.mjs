@@ -13,7 +13,7 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
-import { loadIndex, globToRegExp, specOwnedFiles, ROOT } from './lib.mjs'
+import { loadIndex, globToRegExp, specOwnedFiles, isBuildOwnedTest, ROOT } from './lib.mjs'
 
 const argv = process.argv.slice(2)
 const board = argv.includes('--board')
@@ -115,7 +115,7 @@ function listedTestPaths() {
 // R82: the changed files the Spec section owns from the start (tools/lib.mjs).
 const specNamedFiles = new Set(specOwnedFiles(cardSource, files))
 /** Reports and plan files are never spec edits: the spec job's own report and Spec commit line live there. */
-const neverSpec = (f) => /^(reports|plan)\//.test(f)
+const neverSpec = (f) => /^(reports|plan)\//.test(f) || isBuildOwnedTest(f) // CQ11 A465: a build-owned test is the build's
 
 const testGlobs = ['**/*.acceptance.test.ts', '**/__golden__/**', ...listedTestPaths()]
 // Spec files by commit: walk the branch's own commits oldest first.
@@ -149,12 +149,33 @@ commits.forEach((c, i) => {
     else edited.push(`${f} in ${c.sha.slice(0, 7)}`)
   }
 })
-// R82: --cc lists only files whose merged content differs from every parent.
+// R82: only a merged file that differs from what git's own merge of the parents gives is hand editing. `--cc` also names a
+// file both parents changed in different places, which a clean merge takes line by line (CQ11 A500); the merge's own result
+// is compared instead. A merge git cannot redo cleanly (a conflict, an octopus) is compared with the conflicted result,
+// so a hand resolution is still named.
+function autoMerged(sha, file) {
+  const parents = git('rev-list', '--parents', '-n', '1', sha).split(' ').slice(1)
+  if (parents.length !== 2) return null
+  let tree
+  try {
+    tree = git('merge-tree', '--write-tree', '--no-messages', parents[0], parents[1])
+  } catch (e) {
+    tree = String(e.stdout || '').split('\n')[0].trim()
+  }
+  if (!/^[0-9a-f]{40,64}$/.test(tree)) return null
+  try {
+    return git('rev-parse', `${tree}:${file}`)
+  } catch {
+    return null
+  }
+}
 const handMerged = []
 for (const sha of git('log', '--merges', '--format=%H', `${base}..${ref}`).split('\n').filter(Boolean)) {
   const before = new Set(specCommits.filter((c) => isAncestor(c.sha, sha)).flatMap((c) => c.touched))
   for (const f of git('diff-tree', '--cc', '--no-commit-id', '--name-only', '-r', sha).split('\n').filter(Boolean)) {
     if (neverSpec(f) || !(before.has(f) || specNamedFiles.has(f))) continue
+    const auto = autoMerged(sha, f)
+    if (auto !== null && auto === git('rev-parse', `${sha}:${f}`)) continue
     const later = specCommits.find((c) => c.touched.includes(f) && c.sha !== sha && isAncestor(sha, c.sha))
     if (later) superseded.push(`${f} in merge ${sha.slice(0, 7)}: note: superseded by ${later.sha.slice(0, 7)}`)
     else handMerged.push(`${f} in merge ${sha.slice(0, 7)}`)
