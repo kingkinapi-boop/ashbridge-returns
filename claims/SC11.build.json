@@ -1,12 +1,10 @@
 {
  "card": "SC11",
  "role": "build",
- "round": 3,
- "spec": "7e2f5034",
- "worker": "cloud-fbb2e3",
- "state": "reopened",
- "at": "2026-10-04T01:47:37.702Z",
- "mode": "turbo",
- "beat": "2026-10-03T23:44:52.436Z",
- "note": "A540 round 4, the last: build B15 to B20 plus S20's needs; a fourth failure parks SC11"
+ "round": 4,
+ "spec": "09ef20c9",
+ "worker": "cloud-bebd43",
+ "state": "working",
+ "at": "2026-10-04T01:53:10.840Z",
+ "mode": "turbo"
 }
