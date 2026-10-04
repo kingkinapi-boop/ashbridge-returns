@@ -1,9 +1,11 @@
 {
  "card": "FX8",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit: merged main 861ad88c into claude/FX8-r2 (067227f0), no spec edits; 9 FX8 tests red by name; verify.mjs 551 pass 5 fail",
  "worker": "cloud-6d2e46",
- "state": "working",
- "at": "2026-10-04T00:33:22.639Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T00:39:29.471Z",
+ "mode": "turbo",
+ "commit": "a9dd4aa3",
+ "validated": "861ad88c"
 }
