@@ -1139,6 +1139,86 @@ describe('ARC-22 S4 S5 (b) a stranger is logged once per wait, and the waited-id
     expect(t.settled()).toBe(true)
     expect(await t.promise).toMatchObject({ ok: true, output: GOOD().output })
   }, 60_000)
+
+  // round 3 (A546): the exemption is one name, not a pattern. Each plant fails on today's startsWith exemption.
+  const moreLine = (seenMax: number): string => `ai exchange: more than ${String(seenMax)} outbox files ignored; the rest are not logged by name (ARC-22)`
+  const ignoredLines = (lines: string[]): string[] => lines.filter((l) => l.startsWith('ai exchange: ignored outbox file '))
+
+  test('ARC-22 S10 with the cap full, <id>.txt and <id>.log written in one poll: exactly one of the two is logged, "more" once, the job still takes its result', async () => {
+    const { seenMax, strangerBatch } = limits()
+    const total = seenMax + 3
+    fs.mkdirSync(outbox(), { recursive: true })
+    for (let i = 0; i < total; i++) fs.writeFileSync(path.join(outbox(), `job-stranger-${String(i).padStart(5, '0')}-test.json`), 'x')
+    const more = moreLine(seenMax)
+    const { lines, sink } = collectLines()
+    const t = track(start(projectRunner({ sink })))
+    await polls(0)
+    const rounds = Math.ceil(total / strangerBatch) + 3
+    for (let i = 0; i < rounds && !lines.includes(more); i++) await polls(1)
+    expect(lines.filter((l) => l === more), 'the cap is full before the two files are written').toHaveLength(1)
+    const txt = `${JOB_ID}.txt`
+    const log = `${JOB_ID}.log`
+    fs.writeFileSync(path.join(outbox(), txt), 'PLANTED-EXEMPT-ONE (Test)')
+    fs.writeFileSync(path.join(outbox(), log), 'PLANTED-EXEMPT-TWO (Test)')
+    await polls(rounds)
+    expect(t.settled()).toBe(false)
+    const logged = [txt, log].filter((n) => lines.includes(ignoredLine(n)))
+    expect(logged, 'exactly one of the two waited-id names is held apart from the cap').toHaveLength(1)
+    expect(lines.filter((l) => l === more)).toHaveLength(1)
+    expect(lines.join('\n')).not.toContain('PLANTED-EXEMPT')
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    await polls(1)
+    expect(t.settled()).toBe(true)
+    expect(await t.promise).toMatchObject({ ok: true, output: GOOD().output })
+  }, 60_000)
+
+  test('ARC-22 S11 a flood of <id>.eNNNNN names and no other stranger: at most seenMax + 1 are logged by name, "more" exactly once', async () => {
+    const { seenMax, strangerBatch } = limits()
+    const total = seenMax + 5
+    fs.mkdirSync(outbox(), { recursive: true })
+    for (let i = 0; i < total; i++) fs.writeFileSync(path.join(outbox(), `${JOB_ID}.e${String(i).padStart(5, '0')}`), 'x')
+    const more = moreLine(seenMax)
+    const { lines, sink } = collectLines()
+    const t = track(start(projectRunner({ sink })))
+    await polls(0)
+    const rounds = Math.ceil(total / strangerBatch) + 3
+    for (let i = 0; i < rounds; i++) await polls(1)
+    expect(t.settled()).toBe(false)
+    expect(ignoredLines(lines).length).toBeLessThanOrEqual(seenMax + 1)
+    expect(ignoredLines(lines).length).toBeGreaterThan(0)
+    expect(lines.filter((l) => l === more)).toHaveLength(1)
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    await polls(1)
+    expect(t.settled()).toBe(true)
+  }, 60_000)
+
+  test('ARC-22 S12 a stranger whose name holds line, bidi and zero-width characters is logged as one clean, well-formed line', async () => {
+    // the hidden characters are escapes in this source (A537 gap 3)
+    const name = 'x\u2028y\u202Ez\u200B.bin'
+    fs.mkdirSync(outbox(), { recursive: true })
+    try {
+      fs.writeFileSync(path.join(outbox(), name), 'x')
+    } catch {
+      // this file system refuses the name: nothing to plant here
+      return
+    }
+    const { lines, sink } = collectLines()
+    const t = track(start(projectRunner({ sink })))
+    await polls(3)
+    const named = ignoredLines(lines)
+    expect(named).toHaveLength(1)
+    const [line] = named
+    expect(line).toBeDefined()
+    expect(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u.test(line ?? '')).toBe(false)
+    expect(wellFormed(line ?? '')).toBe(true)
+    expect(line).toContain('\\u2028')
+    expect(line).toMatch(/\\u202[eE]/)
+    expect(line).toMatch(/\\u200[bB]/)
+    expect(line).toContain('.bin')
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    await polls(1)
+    expect(t.settled()).toBe(true)
+  })
 })
 
 /** No lone surrogate: encoding to UTF-8 and back changes nothing. */
