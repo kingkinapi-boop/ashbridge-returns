@@ -4,8 +4,11 @@
  "round": 3,
  "spec": "e578b6e2858d07a116ea59ef2d0f275dc911b263",
  "worker": "cloud-e6a4bc",
- "state": "reported",
- "at": "2026-10-03T20:19:39.220Z",
+ "state": "released",
+ "at": "2026-10-04T00:04:19.491Z",
  "mode": "turbo",
- "note": "A502: spec-only round 2 (P1 to P8); check the spec commit; Opus check on the landing form"
+ "note": "merged",
+ "lastRelease": {
+  "tip": "22bc886d3179eb7653c5941c5ed3d01d2bf4182a"
+ }
 }
