@@ -72,7 +72,7 @@ if (on('lint')) {
     const t = fs.readFileSync(f, 'utf8')
     const isBrief = f.endsWith('workbench.md')
     if (RETIRED.test(t.replace(/Judgment: 0 found/g, ''))) { retired++; console.log('retired term in', path.relative(DESIGN, f)) }
-    if (/2014/.test(t)) { dash++; console.log('em dash in', path.relative(DESIGN, f)) }
+    if (/\u2014/.test(t)) { dash++; console.log('em dash in', path.relative(DESIGN, f)) }
     if (/[^-]zoom\s*:/.test(t) && f.endsWith('.css')) zoom++
     if (/https?:\/\/(?!127\.0\.0\.1|localhost)/.test(t) && !isBrief && !f.endsWith('.md') && /fonts\.googleapis|cdn\.|unpkg|jsdelivr|cdnjs/.test(t)) cdn++
     if (/lorem ipsum|coming soon|\bTODO\b|placeholder text/i.test(t) && !isBrief) filler++
