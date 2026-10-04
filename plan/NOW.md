@@ -28,7 +28,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 | FX18 | round 3 check FAIL on one item, its third: re-carded smaller (A549), the item to SC12 | check reopened on the reduced scope; board on PASS |
 | W00b, FX6, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
-| Design lane | base claude/design-base (brief re-check 6b8d2b24, A547) | designers 1 to 5 done (A512, A519, A531, A552, A553); panels 1 to 3 done; workbench panel local from 04:25Z (panel-workbench-3); findings review over all panels Mon; one fix round; sitting Tue 6 Oct |
+| Design lane | base claude/design-base (brief re-check 6b8d2b24, A547) | designers 1 to 5 done (A512, A519, A531, A552, A553); panels 1 to 3 done; workbench panel BLOCKED (assets/ never pushed, A554; report panel-workbench-3 461e88f0): designers 4 and 5 rebuild CSS and JS in static/ (local, from 04:45Z), then the panel re-runs; findings review over all panels Mon; one fix round; sitting Tue 6 Oct |
 
 ## Next, in order
 
