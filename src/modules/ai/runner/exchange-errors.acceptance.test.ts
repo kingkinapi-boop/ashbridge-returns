@@ -21,8 +21,9 @@
 //   at most strangerBatch stranger entries and carries on from where it stopped, so every entry is reached within a
 //   few polls; the stranger log holds at most seenMax names, then logs once
 //   `ai exchange: more than ${seenMax} outbox files ignored; the rest are not logged by name (ARC-22)`.
-//   L5: the handler's message is reason and problems joined by a space, control characters (code points 0 to 31, 127 to
-//   159) removed, at most lastErrorMaxChars long.
+//   L5: the handler's message is reason and problems joined by a space, with every character of the Unicode categories
+//   Cc (controls), Cf (format and bidi controls), Zl and Zp (line and paragraph separators) removed, then cut to at most
+//   lastErrorMaxChars code points (never through a surrogate pair).
 //   N2: createAiStepHandler(type).input refuses another step type with an issue at the path stepType.
 //   N5: promptHash, ocrEngine, ocrEngineVersion and mappingRelease (AiJobSchema, InboxFileSchema) are 1 to 128 characters,
 //   the first a letter or digit, the rest letters, digits or one of . _ - + :
@@ -55,6 +56,18 @@ const OUTBOX_NOT_REAL = 'the exchange outbox folder is not a real folder (ARC-22
 const INSIDE_REPO = 'the exchange folder is inside the repository (ARC-22)'
 const OUTPUT_CHECK = 'the answer failed the output check (AI-1)'
 const onWin32 = process.platform === 'win32'
+
+/** Whether the temp folder the tests use folds case: a file written as `probe.json` is found as `PROBE.JSON` (A537 gap 5). */
+function probeFoldsCase(): boolean {
+  const probe = tempDir('case-probe')
+  try {
+    fs.writeFileSync(path.join(probe.dir, 'case-probe-test.json'), '{}')
+    return fs.existsSync(path.join(probe.dir, 'CASE-PROBE-TEST.JSON'))
+  } finally {
+    probe.cleanup()
+  }
+}
+const foldsCase = probeFoldsCase()
 
 // ---------- the limits file: every cap is read from here ----------
 
@@ -214,11 +227,23 @@ describe('ARC-22 (a) a file-system error thrown inside the project run reaches t
         }) as typeof fs.readdirSync)
       },
     },
+    // A537 gap 6 (B7): tightening a folder to 0700 throws with the path in its message; the refusal is the fixed sentence
+    ...(['inbox', 'outbox'] as const).map((name) => ({
+      label: `chmod of the ${name} to 0700 fails`,
+      sentence: name === 'inbox' ? INBOX_NOT_REAL : OUTBOX_NOT_REAL,
+      plant: (): void => {
+        const real = fs.chmodSync.bind(fs)
+        vi.spyOn(fs, 'chmodSync').mockImplementation(((p: fs.PathLike, mode: fs.Mode) => {
+          if (path.basename(String(p)) === name) throw planted('EPERM', String(p))
+          real(p, mode)
+        }))
+      },
+    })),
   ]
 
   test('ARC-22 the plants list is not empty and each names a different failure', () => {
-    expect(plants.length).toBe(4)
-    expect(new Set(plants.map((p) => p.label)).size).toBe(4)
+    expect(plants.length).toBe(6)
+    expect(new Set(plants.map((p) => p.label)).size).toBe(6)
   })
 
   for (const { label, sentence, plant } of plants) {
@@ -246,8 +271,14 @@ describe('ARC-22 (a) a file-system error thrown inside the project run reaches t
 describe('ARC-22 (b) <waiting id>.<other extension> in the outbox is logged, quoted, once during the wait', () => {
   const ignoredLine = (name: string): string => `ai exchange: ignored outbox file ${JSON.stringify(name)}`
 
+  test('ARC-22 the case probe answers for the folder the tests use (a file written in lower case is found, or not, by its upper-case name)', () => {
+    expect(typeof foldsCase).toBe('boolean')
+    if (process.platform === 'linux') expect(foldsCase).toBe(false)
+  })
+
   for (const ext of ['.txt', '.JSON', '.json5', '.tmp', '.json.bak']) {
-    test(`ARC-22 a file named <waiting id>${ext} is logged once over several polls, and the job still takes its own file`, async () => {
+    // A537 gap 5: on a disk that folds case (NTFS, APFS), <id>.JSON is the job's own <id>.json by the OS's own answer
+    test.skipIf(ext === '.JSON' && foldsCase)(`ARC-22 a file named <waiting id>${ext} is logged once over several polls, and the job still takes its own file`, async () => {
       fs.mkdirSync(outbox(), { recursive: true })
       const name = `${JOB_ID}${ext}`
       fs.writeFileSync(path.join(outbox(), name), 'PLANTED-CANARY-WAITING (Test)')
@@ -346,13 +377,37 @@ describe('ARC-22 (c) the mutation disable comment in engines.ts covers only the 
     expect(attempt?.(() => 0)).toBe(0)
   })
 
-  test('ARC-22 S2 schemas.ts has no range disable: every Stryker disable there is a next-line one', () => {
-    const lines = readOwnSource('src/modules/ai/runner/schemas.ts').split('\n')
-    for (const [i, line] of lines.entries()) {
-      if (/Stryker disable\b/.test(line)) expect(line, `schemas.ts:${String(i + 1)}`).toMatch(/Stryker disable next-line\b/)
-      expect(line, `schemas.ts:${String(i + 1)}`).not.toMatch(/Stryker restore\b/)
-    }
+  /** The 1-based lines of a text that open or close a range disable: a `Stryker disable` that is not next-line, or any `Stryker restore`. */
+  const rangeDisableLines = (text: string): number[] =>
+    text
+      .split('\n')
+      .map((line, i) => ((/Stryker disable\b/.test(line) && !/Stryker disable next-line\b/.test(line)) || /Stryker restore\b/.test(line) ? i + 1 : 0))
+      .filter((n) => n > 0)
+
+  test('ARC-22 S2 the range scanner flags attempt() wrapped in a range disable (the plant, A537 gap 1) and passes a next-line form', () => {
+    const plantedRange = [
+      '// Stryker disable BlockStatement: the catch block returns what an empty one would fall through to',
+      'function attempt<T>(fn: () => T): T | undefined {',
+      '  try {',
+      '    return fn()',
+      '  } catch {',
+      '    return undefined',
+      '  }',
+      '}',
+      '// Stryker restore BlockStatement',
+    ].join('\n')
+    expect(rangeDisableLines(plantedRange)).toEqual([1, 9])
+    const nextLine = ['  try {', '    return fn()', '  // Stryker disable next-line BlockStatement: an emptied catch falls through to the same implicit undefined', '  } catch {'].join('\n')
+    expect(rangeDisableLines(nextLine)).toEqual([])
   })
+
+  for (const file of ['src/modules/ai/runner/schemas.ts', 'src/modules/ai/runner/engines.ts']) {
+    test(`ARC-22 S2 ${file} has no range disable: every Stryker disable there is a next-line one, and nothing is restored`, () => {
+      const text = readOwnSource(file)
+      expect(text.split('\n').length).toBeGreaterThan(10)
+      expect(rangeDisableLines(text), file).toEqual([])
+    })
+  }
 
   test('ARC-22 S3 the cross-drive test of insideRepo is a pure helper: an absolute relative path (another Windows drive) is outside', () => {
     const relIsInside = (engines as unknown as { relIsInside?: (rel: string, p?: typeof path) => boolean }).relIsInside
@@ -1058,6 +1113,32 @@ describe('ARC-22 S4 S5 (b) a stranger is logged once per wait, and the waited-id
     await polls(1)
     expect(t.settled()).toBe(true)
   })
+
+  test('ARC-22 S5b the waited-id file is exempt from the cap: after seenMax + 3 strangers fill it, <id>.txt is still logged once, by name', async () => {
+    const { seenMax, strangerBatch } = limits()
+    const total = seenMax + 3
+    fs.mkdirSync(outbox(), { recursive: true })
+    for (let i = 0; i < total; i++) fs.writeFileSync(path.join(outbox(), `job-stranger-${String(i).padStart(5, '0')}-test.json`), 'x')
+    const more = `ai exchange: more than ${String(seenMax)} outbox files ignored; the rest are not logged by name (ARC-22)`
+    const { lines, sink } = collectLines()
+    const t = track(start(projectRunner({ sink })))
+    await polls(0)
+    const rounds = Math.ceil(total / strangerBatch) + 3
+    for (let i = 0; i < rounds && !lines.includes(more); i++) await polls(1)
+    expect(lines.filter((l) => l === more), 'the cap is full before <id>.txt is written').toHaveLength(1)
+    expect(t.settled()).toBe(false)
+    const waited = `${JOB_ID}.txt`
+    fs.writeFileSync(path.join(outbox(), waited), 'PLANTED-CANARY-EXEMPT (Test)')
+    await polls(rounds)
+    expect(t.settled()).toBe(false)
+    expect(lines.filter((l) => l === ignoredLine(waited))).toEqual([ignoredLine(waited)])
+    expect(lines.filter((l) => l === more)).toHaveLength(1)
+    expect(lines.join('\n')).not.toContain('PLANTED-CANARY-EXEMPT')
+    writeOutbox(exchange, `${JOB_ID}.json`, goodResult())
+    await polls(1)
+    expect(t.settled()).toBe(true)
+    expect(await t.promise).toMatchObject({ ok: true, output: GOOD().output })
+  }, 60_000)
 })
 
 /** No lone surrogate: encoding to UTF-8 and back changes nothing. */
@@ -1065,9 +1146,12 @@ const wellFormed = (text: string): boolean => new TextDecoder().decode(new TextE
 
 describe('AI-9 S6 L5 the one line has no line breaks, no format or bidi characters, and no lone surrogate; the cap counts code points', () => {
   test('AI-9 S6 U+2028, a right-to-left override and an isolate are removed, the letters kept', () => {
-    const out = lastErrorLine('a b‮c⁦d', 99)
+    // every hidden character is written as an escape (A537 gap 3): a test source holds no raw bidi or format character
+    const out = lastErrorLine('a\u2028b\u202Ec\u2066d', 99)
     expect(out).toBe('abcd')
-    for (const bad of [' ', ' ', '‮', '⁦', '​', '﻿']) expect(lastErrorLine(`x${bad}y`, 99)).toBe('xy')
+    const hidden = ['\u2028', '\u2029', '\u202E', '\u2066', '\u200B', '\uFEFF']
+    expect(hidden).toHaveLength(6)
+    for (const bad of hidden) expect(lastErrorLine(`x${bad}y`, 99), `U+${(bad.codePointAt(0) ?? 0).toString(16).toUpperCase()}`).toBe('xy')
   })
 
   test('AI-9 S6 a cut through an emoji leaves no lone surrogate, and the cap counts code points', () => {
@@ -1096,6 +1180,35 @@ describe('ARC-22 S7 S8 L3 N6 cleanup on every refusal, and folders that already 
     const res = await within(start(projectRunner()), 3)
     expect(res).toEqual({ ok: false, reason: INBOX_WRITE_FAILED, problems: [] })
     expect(stagingLeft()).toEqual([])
+  })
+
+  test('ARC-22 S7 B6 the cleanup itself throws (with the path in its message): the staging file is tried and the original refusal stands, no path in it', async () => {
+    const tried: string[] = []
+    const realRename = fs.renameSync.bind(fs)
+    vi.spyOn(fs, 'renameSync').mockImplementation(((from: fs.PathLike, to: fs.PathLike) => {
+      if (typeof to === 'string' && to.startsWith(exchange)) throw planted('EXDEV', to)
+      realRename(from, to)
+    }))
+    const realUnlink = fs.unlinkSync.bind(fs)
+    vi.spyOn(fs, 'unlinkSync').mockImplementation(((p: fs.PathLike) => {
+      if (path.basename(String(p)).startsWith('.staging-')) {
+        tried.push(String(p))
+        throw planted('EBUSY', String(p))
+      }
+      realUnlink(p)
+    }))
+    const realRm = fs.rmSync.bind(fs)
+    vi.spyOn(fs, 'rmSync').mockImplementation(((p: fs.PathLike, o?: fs.RmOptions) => {
+      if (path.basename(String(p)).startsWith('.staging-')) {
+        tried.push(String(p))
+        throw planted('EBUSY', String(p))
+      }
+      realRm(p, o)
+    }))
+    const res = await within(start(projectRunner()), 3)
+    expect(res).toEqual({ ok: false, reason: INBOX_WRITE_FAILED, problems: [] })
+    expectNoExchangePath(JSON.stringify(res))
+    expect(tried.length, 'the refusal after the staging write tries to remove the staging file').toBeGreaterThanOrEqual(1)
   })
 
   test.skipIf(onWin32)('ARC-22 S7 the inbox swapped for a link after the staging write: the refusal leaves no staging file', async () => {

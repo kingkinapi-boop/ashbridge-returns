@@ -1537,11 +1537,11 @@ describe('ARC-16 round 3: two recordings for one key are refused, naming both fi
   })
 })
 
-describe('ARC-22 round 3: an ignored outbox file is logged once per content', () => {
-  // Round 5 (fix 5): restated. A stranger is never opened, so "logged once" is keyed by its name, size and mtime
-  // (lstat), not its content. The mtimes are set with utimes, so a same-size rewrite in the same millisecond is no part
-  // of this test (reports/A04-findings-5.md, risks).
-  test('ARC-22 a stranger file is logged once over many polls, again only when its size or mtime changes, by name only', async () => {
+describe('ARC-22 round 3: an ignored outbox file is logged once per wait, by name', () => {
+  // Round 5 (fix 5) keyed "logged once" by name, size and mtime. FX18 round 2 (A534 B4, A537 gap 4) restates it: a
+  // stranger is never opened, and it is logged once per wait by its name alone, whatever its size or mtime; rewrites
+  // add no line. The canary and path checks of round 5 stay.
+  test('ARC-22 a stranger file is logged once per wait by name only, whatever its size or mtime (rewrites add no line)', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
     try {
       const { lines, sink } = collectLines()
@@ -1567,25 +1567,23 @@ describe('ARC-22 round 3: an ignored outbox file is logged once per content', ()
       await polls(6)
       expect(strangerLines()).toHaveLength(1)
 
-      plant(content(first), at(1)) // the same bytes and the same mtime again: nothing new to flag
+      plant(content(first), at(1)) // the same bytes and the same mtime again: nothing new
       await polls(6)
       expect(strangerLines()).toHaveLength(1)
 
-      plant(content(first), at(2)) // the same size, a new mtime: flagged again
+      plant(content(first), at(2)) // the same size, a new mtime: still the same name, no new line
       await polls(6)
-      expect(strangerLines()).toHaveLength(2)
+      expect(strangerLines()).toHaveLength(1)
 
       expect(Buffer.byteLength(content(second))).not.toBe(Buffer.byteLength(content(first)))
-      plant(content(second), at(2)) // a new size (SECOND is one letter longer than FIRST), the same mtime: flagged again
+      plant(content(second), at(3)) // a new size and a new mtime: still the same name, no new line
       await polls(6)
-      expect(strangerLines()).toHaveLength(3)
+      expect(strangerLines()).toHaveLength(1)
 
       writeOutbox(exchange, `${JOB_ID}.json`, outboxResult(JOB_ID, GOOD_REC().output, GOOD_REC().stamp))
       await polls(1)
       expect(await p).toMatchObject({ ok: true, output: GOOD_REC().output })
-      const logged = strangerLines()
-      expect(logged).toHaveLength(3)
-      expect(new Set(logged)).toEqual(new Set([`ai exchange: ignored outbox file ${JSON.stringify(stranger)}`]))
+      expect(strangerLines()).toEqual([`ai exchange: ignored outbox file ${JSON.stringify(stranger)}`])
       const all = lines.join('\n')
       expect(all).not.toContain(first)
       expect(all).not.toContain(second)
