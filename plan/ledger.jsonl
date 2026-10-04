@@ -723,3 +723,9 @@
 {"ts":"2026-10-04T00:39:22.252Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"SC11 round 3 findings review","allowed":true}
 {"ts":"2026-10-04T00:39:30.842Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"findings-reviewer","model":"opus","where":"worktree","desc":"A08 round 2 spec review","allowed":true}
 {"ts":"2026-10-04T00:39:54.601Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T00:48:50.163Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T00:55:25.555Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T00:59:33.869Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"researcher","model":"sonnet","where":"local","desc":"Tax research A: law and CRA","allowed":true}
+{"ts":"2026-10-04T00:59:41.372Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"researcher","model":"sonnet","where":"local","desc":"Tax research B: practice view","allowed":true}
+{"ts":"2026-10-04T01:00:53.742Z","day":"2026-10-04","mode":"turbo","tool":"RemoteTrigger","type":null,"model":null,"where":"cloud","desc":"run","allowed":true}
+{"ts":"2026-10-04T01:03:09.608Z","day":"2026-10-04","mode":"turbo","tool":"Agent","type":"research-checker","model":"opus","where":"local","desc":"Reconcile tax research 37-43","allowed":true}

@@ -4,6 +4,7 @@ Dated research, newest first. Each file marks claims as fact (with a source), in
 
 | Date | File | Question it answers |
 |---|---|---|
+| 4 Oct 2026 | 2026-10-04-cpa-items-37-43-reconciled.md (from cpa-items-37-43-A, -B) | CPA check items 37 to 43: quick method line 101 and 1% credit, passive income (portfolio dividends count), incorporation costs, shareholder balances, T4A and T5018, tiers for 14 unraised flags; best guess lines to paste |
 | 3 Oct 2026 | 2026-10-03-critic-progress.md | How complete the build is (cards, clauses, end-state items), plan-use burn and when the week runs out, critical path, projection to the 9 Oct wind-down |
 | 3 Oct 2026 | 2026-10-03-critic-system-since-2050.md | System numbers 2 Oct 20:50Z to 3 Oct 12:40Z: landings, repair versus product, trains, dispatches, W00c, the biggest waste, metrics gaps |
 | 3 Oct 2026 | 2026-10-03-outside-world.md | Claude Code and model news since 2 Oct: nothing that changes the build |
