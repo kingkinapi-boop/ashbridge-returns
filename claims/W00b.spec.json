@@ -2,7 +2,9 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-7d3564",
- "state": "working",
- "at": "2026-10-04T04:06:13.955Z",
- "mode": "turbo"
+ "state": "released",
+ "at": "2026-10-04T04:06:34.086Z",
+ "mode": "turbo",
+ "note": "wait: spec round 4 (A423) needs W00c on main (json-keys.ts, load.ts); W00c check still working",
+ "waitKey": "{\"status\":\"carded\",\"deps\":[\"FX8\",\"W00c\"],\"depStatus\":[\"carded\",\"carded\"]}"
 }
