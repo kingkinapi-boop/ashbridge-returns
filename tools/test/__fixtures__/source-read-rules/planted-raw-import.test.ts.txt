@@ -1,0 +1,14 @@
+// Planted for R79 (SC8 review G4): Vite ?raw imports give the text of the file Vite serves, the sandbox copy.
+import { expect, test } from 'vitest'
+import moneySource from './money.ts?raw'
+import moneyUrl from './money.ts?url'
+import * as money from './money'
+
+test('ARC-15 the core sources are marked', async () => {
+  const ids = ((await import('./ids.ts?raw')) as { default: string }).default
+  const core = import.meta.glob('./*.ts', { query: '?raw', import: 'default', eager: true })
+  const ocr = import.meta.glob('../modules/ocr/*.ts', { as: 'raw', eager: true })
+  const modules = import.meta.glob('./*.ts', { eager: true })
+  expect([moneySource, ids, ...Object.values(core), ...Object.values(ocr)].every((t) => String(t).includes('// @mutate'))).toBe(true)
+  expect([moneyUrl, money, modules]).toHaveLength(3)
+})

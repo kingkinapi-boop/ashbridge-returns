@@ -2031,7 +2031,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A04"
@@ -2050,7 +2050,8 @@
       "phase": 1,
       "size": "S",
       "core": false,
-      "note": "Split from A04 (A477, Review 3 Oct finding 2)."
+      "note": "Split from A04 (A477, Review 3 Oct finding 2).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -3102,7 +3103,8 @@
         "db/schema/56_qbo.sql",
         "testworld/qbo/export.ts",
         "src/core/env.ts",
-        "tools/test/schema-contract-rules.test.mjs"
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/settings-rules.test.mjs"
       ],
       "clauses": [
         "TB-1",
@@ -9865,7 +9867,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F07",
@@ -9887,7 +9889,8 @@
       "size": "M",
       "security": true,
       "core": true,
-      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Draft only; never applied to the client repo by this build; the client repo's own Lead takes it at LIVE-6. Security and core: its views and grants decide what this system reads of the client app's data. Carded 3 Oct (A448). RED (go-live): applying the draft in the client repo and probing the client app database (LIVE-6, LIVE-4)."
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Draft only; never applied to the client repo by this build; the client repo's own Lead takes it at LIVE-6. Security and core: its views and grants decide what this system reads of the client app's data. Carded 3 Oct (A448). RED (go-live): applying the draft in the client repo and probing the client app database (LIVE-6, LIVE-4).",
+      "done": "2026-10-04"
     },
     {
       "status": "carded",
@@ -10188,7 +10191,7 @@
       "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "CQ8"
@@ -10212,7 +10215,8 @@
       "phase": 0,
       "size": "M",
       "core": false,
-      "note": "Decision 0027 (Critic 3 Oct, proposal 2)."
+      "note": "Decision 0027 (Critic 3 Oct, proposal 2).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -10302,7 +10306,15 @@
         "testworld/model/checks.ts",
         "testworld/clients/w00d-*.acceptance.test.ts",
         "testworld/model/__fixtures__/w00d-*.ts",
-        "testworld/model/__fixtures__/w00c-r3-walk.ts"
+        "testworld/model/__fixtures__/w00c-r3-walk.ts",
+        "reference/sample-clients/*/answer-key.json",
+        "reference/sample-clients/lib/**",
+        "reference/sample-clients/clients/**",
+        "vitest.mutate.config.ts",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-args.test.mjs",
+        "tools/mutate-shards.json",
+        "testworld/**/*.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -10518,7 +10530,10 @@
         "src/core/test-no-network.ts",
         "src/contracts/auth.ts",
         "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
-        "tools/test/__fixtures__/schema-contract/known.json"
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/core/safe-read.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "src/contracts/text.ts"
       ],
       "clauses": [
         "EV-1",
@@ -10674,7 +10689,7 @@
       "note": "From reports/FX2-security.md, 3 Oct (A435)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "FX12"
@@ -10697,7 +10712,8 @@
       "phase": 0,
       "size": "S",
       "core": false,
-      "note": "From reports/FX12-spec.md, 3 Oct (A443)."
+      "note": "From reports/FX12-spec.md, 3 Oct (A443).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -10730,7 +10746,12 @@
       ],
       "paths": [
         "src/contracts/records.ts",
-        "src/contracts/records.acceptance.test.ts"
+        "src/contracts/records.acceptance.test.ts",
+        "src/contracts/bridge.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/runner/engines.ts",
+        "src/modules/ai/runner/runner.ts",
+        "src/modules/gaps/bank/index.ts"
       ],
       "clauses": [
         "SEC-10",
@@ -10781,7 +10802,10 @@
         "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
         "src/modules/ai/runner/schemas.ts",
         "src/modules/ai/index.ts",
-        "data/ai/exchange-limits.json"
+        "data/ai/exchange-limits.json",
+        "src/core/safe-read.test.ts",
+        "src/modules/ai/runner/exchange-limits.build.test.ts",
+        "src/modules/ai/runner/runner.acceptance.test.ts"
       ],
       "clauses": [
         "ARC-22",
@@ -10845,7 +10869,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "SC",
@@ -10864,7 +10888,7 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "From reports/W16-findings.md, 3 Oct (A404)."
+      "note": "From reports/W16-findings.md, 3 Oct (A404). Parked 4 Oct (A535): R78 round 4 check FAIL (SEC-10 exec import; argv split at | and ;; quotes mid-word; option values read as subcommands). R77, R81 and R78 go to SC7. Branch claude/SC6 at 7355b03 keeps the work."
     },
     {
       "status": "carded",
@@ -10875,7 +10899,6 @@
         "SC3",
         "SC4",
         "SC5",
-        "SC6",
         "SC10"
       ],
       "paths": [
@@ -10902,7 +10925,7 @@
       "note": "From reports/SC-findings.md, 3 Oct (A407)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "SC",
@@ -10933,7 +10956,8 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "From reports/FX2-findings.md, 3 Oct (A414)."
+      "note": "From reports/FX2-findings.md, 3 Oct (A414).",
+      "done": "2026-10-04"
     },
     {
       "status": "carded",
@@ -10967,7 +10991,7 @@
       "note": "From reports/SC-spec-review-3.md, 3 Oct (A415)."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "SC",
@@ -10990,7 +11014,8 @@
       "phase": 0,
       "size": "S",
       "core": true,
-      "note": "From the DB16 and CQ4 findings, 3 Oct (A430). R89 added 3 Oct from C1 of reports/phase3-card-review-2026-10-03b.md."
+      "note": "From the DB16 and CQ4 findings, 3 Oct (A430). R89 added 3 Oct from C1 of reports/phase3-card-review-2026-10-03b.md.",
+      "done": "2026-10-04"
     },
     {
       "status": "carded",
@@ -11004,7 +11029,9 @@
         "src/core/db/global-setup.ts",
         "src/core/db/index.ts",
         "src/core/db/vitest-setup.ts",
-        "tools/test-homes.json"
+        "tools/test-homes.json",
+        "src/core/db/pool-rules.acceptance.test.ts",
+        "src/core/db/__fixtures__/**"
       ],
       "clauses": [
         "ARC-6",
