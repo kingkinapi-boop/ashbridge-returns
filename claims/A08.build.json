@@ -1,11 +1,10 @@
 {
  "card": "A08",
  "role": "build",
- "round": 5,
- "spec": "7e9890ba",
- "worker": "cloud-fff44d",
- "state": "reopened",
- "at": "2026-10-04T04:44:06.618Z",
- "mode": "turbo",
- "note": "A551 spec reported (22 tests, 23 plants caught): build B1 to B9, no new disable, then mutate:changed A08 --force to 100"
+ "round": 6,
+ "spec": "f46b303d",
+ "worker": "cloud-a9949e",
+ "state": "working",
+ "at": "2026-10-04T04:44:46.908Z",
+ "mode": "turbo"
 }
