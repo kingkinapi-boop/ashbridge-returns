@@ -1,9 +1,11 @@
 {
  "card": "B04",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "refit: merged main 351f0846 (no conflicts). Unit: only B04's own qbo files (missing src/modules/qbo) and 13 rule tests in schema-contract-rules fail; the rule failures come from W00 testworld files the branch carries that are not on main (stale PENDING rows, guard/checks), plus 3 R47/48/54 on missing qbo/index.ts; they clear when W00c lands. typecheck errors only in qbo/testworld spec files",
  "worker": "cloud-24d389",
- "state": "working",
- "at": "2026-10-04T00:22:27.111Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T00:28:35.476Z",
+ "mode": "turbo",
+ "commit": "c17bd825",
+ "validated": "351f0846affa5587e5519153971fe4ecd46d01be"
 }
