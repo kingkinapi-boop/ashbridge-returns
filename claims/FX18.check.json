@@ -3,7 +3,8 @@
  "role": "check",
  "for": "2026-10-04T01:29:38.964Z",
  "worker": "cloud-c7a694",
- "state": "working",
- "at": "2026-10-04T01:38:43.979Z",
- "mode": "turbo"
+ "state": "failed",
+ "at": "2026-10-04T01:48:13.441Z",
+ "mode": "turbo",
+ "note": "FAIL: engines.ts:212 exempts every <id>.* name from the stranger cap, see reports/FX18-check.md"
 }
