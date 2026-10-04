@@ -1,7 +1,9 @@
-# A08 build report
-Branch claude/A08, build head a43211b8 (this report commits after it).
-Files: ai-project/{ORDERS.md,settings.json,RUNNING.md,ai-once.mjs,ts-resolve.mjs}, package.json (ai:once), src/modules/ai/project/{index,scan,call}.ts (all @mutate).
-Tests: 215 unit + 3 db acceptance = 218 of 218 pass. Full npm test: unit 3390 pass, db 665 pass. typecheck, lint, deps:check, scope A08 clean.
-Mutation: NOT 100. `npm run mutate:changed -- A08` (692 mutants): call.ts 57.38, index.ts 73.81, scan.ts 75.15 (149 survived, 40 no coverage). The spec tests are frozen, so closing the gap needs a spec round (findings review, then added tests); survivors are in /tmp/a08-mut.txt on the build machine.
-Ambers: (1) scan.ts has its own table-based SIN check digit, not the shared Luhn (guard.ts/W00b not landed, src cannot import reference/); swap later. (2) --system-prompt used: --system-prompt-file is not in claude --help (2.1.288). (3) mcp__* wildcard deny is not in claude --help: marked unverified in RUNNING.md; --strict-mcp-config also set. (4) Added --no-session-persistence and --permission-prompts none (both in help). (5) ai:once runs through ai-once.mjs plus ts-resolve.mjs (Node type stripping; no tsx installed). (6) One per-run empty config folder in os.tmpdir(), emptied between calls, left after the run. (7) Stale .ai-once.lock after a crash is deleted by hand (RUNNING.md). (8) Stderr is never logged; any argument is refused; missing exchange folder is refused; unreadable approved list means nothing approved; a DOB label alone is refused. Reverse: each is a one-line change in index.ts/scan.ts/RUNNING.md.
-Not done: tools/test/settings-rules.test.mjs does not exist (SC5 not landed), so the A514 note is unapplied; src/core/env.ts unchanged (names read from the options env, like A04).
+# A08 build, round 3 (BLOCKED: mutation not 100)
+Worker cloud-0cc6b0. Branch claude/A08, build commit "build(A08): round 3 B1 to B6, G2, G5, G8" (on top of spec 5ed532c2).
+Files: src/modules/ai/project/{call,index,scan}.ts, src/core/env.ts, ai-project/RUNNING.md.
+Done: B1 (isInside on realpath.native, prefix test), B2 (every lock error is one refusal), B3 (no slice, no sort in scan, no .cjs, empty vendor value refuses), B4 (four reasoned next-line disables), B5 (AI_PROJECT_CLAUDE_BIN in env.ts), B6 (RUNNING.md), G2 (pattern without `$`), G5 (missing root refuses), G8 (config folder removed at run end), claudeOutputMaxBytes option.
+Numbers (Node 24.21, Linux): the 4 unit files 381 passed, 2 skipped; db ai-project joint test 3 passed; src/core + tools/test 888 passed; typecheck, lint, deps:check clean; scope OK (40 files).
+BLOCKED: `mutate:changed -- A08` overall 96.08. env.ts 100; call.ts 98.25 (line 55 StringLiteral, NoCoverage); index.ts 95.19 (survivors lines 52 55 59 60 90 109 110 111 117 121 190 234 266 282 293 294 295 297 353); scan.ts 97.02 (lines 21 37 47 62 68). Tests are spec-owned, so I did not edit them: needs a spec patch for these rows (findings review first), or Lead rulings on the equivalent ones.
+Not run: pg16 run, Windows rows (G4/G5 win32), security review.
+Ambers: none new beyond the card's rulings.
+Permission gaps: none. Model: Sonnet 5.5.
