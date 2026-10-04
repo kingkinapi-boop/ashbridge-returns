@@ -1,10 +1,10 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "360 tests (357 unit, 3 db); S0 survivors mapped, 26 held for Lead (see reports/A08-spec.md)",
+ "note": "A541: spec review 2 GAPS 8; gaps at the top of the card",
  "worker": "cloud-3fa261",
- "state": "reported",
- "at": "2026-10-04T00:18:38.392Z",
+ "state": "reopened",
+ "at": "2026-10-04T00:51:28.471Z",
  "mode": "turbo",
  "beat": "2026-10-03T23:08:07.200Z",
  "commit": "f58dc034",
