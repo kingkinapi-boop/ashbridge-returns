@@ -1,10 +1,9 @@
 {
  "card": "FX18",
  "role": "check",
- "for": "2026-10-04T03:25:52.275Z",
- "worker": "cloud-f14272",
- "state": "reopened",
- "at": "2026-10-04T03:52:30.968Z",
- "mode": "turbo",
- "note": "A549: re-carded smaller; re-check on the reduced scope (quotedName cleaning moved to SC12); directive at the top of the card"
+ "for": "2026-10-04T04:19:25.632Z",
+ "worker": "probe-lead",
+ "state": "working",
+ "at": "2026-10-04T04:20:04.598Z",
+ "mode": "turbo"
 }
