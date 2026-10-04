@@ -1,9 +1,11 @@
 {
  "card": "FX4",
  "role": "spec",
- "note": "toolchain refit",
+ "note": "toolchain refit 3: no spec file changed; 43 fail, all FX4-owned",
  "worker": "cloud-3fa261",
- "state": "working",
- "at": "2026-10-04T00:25:23.770Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T00:33:54.908Z",
+ "mode": "turbo",
+ "commit": "ec92554d",
+ "validated": "861ad88c"
 }
