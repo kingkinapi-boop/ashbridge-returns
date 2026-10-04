@@ -3,9 +3,11 @@
 // approved list. All strict at runtime (SC R23).
 import crypto from 'node:crypto'
 import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 import { aiStepTypes } from '../../../contracts/ai'
-import { NonBlankSchema } from '../../../contracts/text'
+import { NonBlankSchema, isBlank } from '../../../contracts/text'
 
 /** Keys sorted at every depth; arrays keep their order. */
 export function canonicalize(value: unknown): unknown {
@@ -29,6 +31,37 @@ export function inputHashOf(inputs: unknown): string {
 /** A file read as text (no encoding name to get wrong: a decoder reads UTF-8). */
 export const readUtf8 = (file: string): string => new TextDecoder().decode(fs.readFileSync(file))
 
+/** The repository's root folder: the exchange folder must lie outside it (ARC-22) and the data files sit inside it. */
+// Stryker disable next-line StringLiteral: mutants 647 to 650 (the four '..' segments) are static, run at import outside any test's coverage, and the cloud run with this disable removed (4 Oct) scored all four Survived, not killed
+export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
+
+const positiveInt = z.number().int().positive()
+
+/** data/ai/exchange-limits.json: every cap of the exchange is data (R104). */
+// Stryker disable next-line ObjectLiteral: mutant 651 is static, run at import outside any test's coverage, and the cloud run with this disable removed (4 Oct) scored it Survived, not killed
+export const ExchangeLimitsSchema = z.strictObject({
+  /** The most an outbox file may hold (ARC-22): the Claude project's one result is far smaller. */
+  outboxMaxBytes: positiveInt,
+  /** The most flagged recordings per runner, and outbox names per wait, logged by name; then one line says the rest are not. */
+  seenMax: positiveInt,
+  /** The most strangers one poll looks at; the next poll carries on from there. */
+  strangerBatch: positiveInt,
+  /** The most code points of a refusal that reach jobs.last_error. */
+  lastErrorMaxChars: positiveInt,
+})
+
+// Stryker disable next-line StringLiteral: mutants 652 to 654 (the data file's path segments) are static, run at import outside any test's coverage, and the cloud run with this disable removed (4 Oct) scored all three Survived, not killed
+export const EXCHANGE_LIMITS = ExchangeLimitsSchema.parse(JSON.parse(new TextDecoder().decode(fs.readFileSync(path.join(REPO_ROOT, 'data', 'ai', 'exchange-limits.json')))))
+
+/** One identifier grammar for the stamp fields that are not free text: 1 to 128 characters, a letter or digit first, then . _ - + : too. */
+export const IdentifierSchema = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._+:-]{0,127}$/)
+
+/** AI-9: a job carries the redaction stamp, both parts non-blank, or no engine takes it. */
+export const isRedacted = (job: AiJob): boolean => {
+  const stamp = job.redaction
+  return stamp !== undefined && !isBlank(stamp.redactedBy) && !isBlank(stamp.redactorVersion)
+}
+
 export const RedactionStampSchema = z.strictObject({ redactedBy: z.string(), redactorVersion: z.string() })
 
 const inputsSchema = z.record(z.string(), z.unknown())
@@ -37,14 +70,14 @@ const inputsSchema = z.record(z.string(), z.unknown())
 export const AiJobSchema = z.strictObject({
   stepType: z.enum(aiStepTypes),
   promptVersion: NonBlankSchema,
-  promptHash: NonBlankSchema,
+  promptHash: IdentifierSchema,
   modelId: NonBlankSchema,
   inputs: inputsSchema,
   redaction: RedactionStampSchema.optional(),
   isTest: z.boolean(),
-  ocrEngine: NonBlankSchema,
-  ocrEngineVersion: NonBlankSchema,
-  mappingRelease: NonBlankSchema,
+  ocrEngine: IdentifierSchema,
+  ocrEngineVersion: IdentifierSchema,
+  mappingRelease: IdentifierSchema,
 })
 export type AiJob = z.infer<typeof AiJobSchema>
 
@@ -53,21 +86,21 @@ export const InboxFileSchema = z.strictObject({
   jobId: NonBlankSchema,
   stepType: z.enum(aiStepTypes),
   promptVersion: NonBlankSchema,
-  promptHash: NonBlankSchema,
+  promptHash: IdentifierSchema,
   modelId: NonBlankSchema,
   inputHash: NonBlankSchema,
   schema: z.record(z.string(), z.unknown()),
   redaction: z.strictObject({ redactedBy: NonBlankSchema, redactorVersion: NonBlankSchema }),
   isTest: z.boolean(),
-  ocrEngine: NonBlankSchema,
-  ocrEngineVersion: NonBlankSchema,
-  mappingRelease: NonBlankSchema,
+  ocrEngine: IdentifierSchema,
+  ocrEngineVersion: IdentifierSchema,
+  mappingRelease: IdentifierSchema,
   inputs: inputsSchema,
 })
 export type InboxFile = z.infer<typeof InboxFileSchema>
 
-/** The most an outbox file may hold (ARC-22): the Claude project's one result is far smaller. */
-export const OUTBOX_MAX_BYTES = 4 * 1024 * 1024
+/** The most an outbox file may hold (ARC-22); the number lives in data/ai/exchange-limits.json. */
+export const OUTBOX_MAX_BYTES = EXCHANGE_LIMITS.outboxMaxBytes
 
 const DEVICE_NAMES: readonly string[] = ['con', 'prn', 'aux', 'nul', ...Array.from({ length: 10 }, (_, i) => `com${String(i)}`), ...Array.from({ length: 10 }, (_, i) => `lpt${String(i)}`)]
 

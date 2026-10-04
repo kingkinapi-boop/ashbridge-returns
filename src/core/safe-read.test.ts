@@ -91,11 +91,47 @@ describe('ARC-22 readRegularFile', () => {
     expect(read).toHaveBeenCalledTimes(1)
   })
 
-  test('ARC-22 the open flags are read-only plus O_NONBLOCK when defined', () => {
+  test('ARC-22 the open flags are read-only plus O_NONBLOCK and O_NOFOLLOW when defined', () => {
     fs.writeFileSync(at('a.json'), '{}')
     const open = vi.spyOn(fs, 'openSync')
     readRegularFile(at('a.json'), 10)
-    const nb = (fs.constants as Readonly<Record<string, number | undefined>>)['O_NONBLOCK'] ?? 0
-    expect(open.mock.calls[0]?.[1]).toBe(fs.constants.O_RDONLY | nb)
+    const constants = fs.constants as Readonly<Record<string, number | undefined>>
+    const nb = constants['O_NONBLOCK'] ?? 0
+    const nf = constants['O_NOFOLLOW'] ?? 0
+    expect(open.mock.calls[0]?.[1]).toBe(fs.constants.O_RDONLY | nb | nf)
+  })
+
+  test('ARC-22 an open the system refuses as a followed link (ELOOP) is not-a-file; any other failed open stays gone', () => {
+    fs.writeFileSync(at('a.json'), '{}')
+    for (const [code, reason] of [['ELOOP', 'not-a-file'], ['ENOENT', 'gone'], [undefined, 'gone']] as const) {
+      vi.spyOn(fs, 'openSync').mockImplementation(() => {
+        throw Object.assign(new Error('planted'), code === undefined ? {} : { code })
+      })
+      expect(readRegularFile(at('a.json'), 10), String(code)).toEqual({ ok: false, reason })
+      vi.restoreAllMocks()
+    }
+  })
+
+  test('ARC-22 one link reads; two links are many-links from the look, never opened', () => {
+    fs.writeFileSync(at('a.json'), '{}')
+    expect(readRegularFile(at('a.json'), 10)).toEqual({ ok: true, text: '{}' })
+    fs.linkSync(at('a.json'), at('b.json'))
+    const open = vi.spyOn(fs, 'openSync')
+    expect(readRegularFile(at('a.json'), 10)).toEqual({ ok: false, reason: 'many-links' })
+    expect(open).not.toHaveBeenCalled()
+  })
+
+  test('ARC-22 a link added after the look (the descriptor says two links) is many-links, closed, and nothing is read', () => {
+    fs.writeFileSync(at('a.json'), '{}')
+    const real = fs.fstatSync.bind(fs)
+    for (const nlink of [1, 2]) {
+      vi.spyOn(fs, 'fstatSync').mockImplementation(((fd: number) => Object.assign(Object.create(Object.getPrototypeOf(real(fd)) as object) as fs.Stats, real(fd), { nlink })))
+      const close = vi.spyOn(fs, 'closeSync')
+      const read = vi.spyOn(fs, 'readSync')
+      expect(readRegularFile(at('a.json'), 10)).toEqual(nlink === 1 ? { ok: true, text: '{}' } : { ok: false, reason: 'many-links' })
+      expect(close).toHaveBeenCalledTimes(1)
+      expect(read.mock.calls.length > 0).toBe(nlink === 1)
+      vi.restoreAllMocks()
+    }
   })
 })
