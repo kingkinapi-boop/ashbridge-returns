@@ -2,8 +2,7 @@
  "card": "W00b",
  "role": "spec",
  "worker": "cloud-5e4a47",
- "state": "released",
- "at": "2026-10-04T03:26:10.197Z",
- "mode": "turbo",
- "note": "wait: W00c not landed on main (no code base: its testworld files and rule tests); reopen after W00c lands"
+ "state": "working",
+ "at": "2026-10-04T03:26:12.531Z",
+ "mode": "turbo"
 }
