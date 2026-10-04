@@ -1,10 +1,11 @@
 {
  "card": "FX18",
  "role": "spec",
- "note": "A546: round 3, the last: S10 to S12 at the top of the card",
- "reopenedFrom": "6e1bff63",
+ "note": "round 3: S10 to S12 added (3 tests, fail on tip: 205 lines vs 201, hidden chars logged raw); 99 in file; typecheck clean",
  "worker": "cloud-ae80c1",
- "state": "working",
- "at": "2026-10-04T02:45:05.772Z",
- "mode": "turbo"
+ "state": "reported",
+ "at": "2026-10-04T02:46:56.139Z",
+ "mode": "turbo",
+ "commit": "68ce1093",
+ "validated": "5c093217"
 }
