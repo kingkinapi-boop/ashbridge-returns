@@ -1,0 +1,2 @@
+import base from './stryker.config.mjs'
+export default { ...base, vitest: { configFile: 'vitest.scratch.mjs', related: true }, incrementalFile: 'reports/W00c-mutation/s1-incr.json', jsonReporter: { fileName: 'reports/W00c-mutation/range1-json-keys.json' }, reporters: ['progress','clear-text','json'], dryRunTimeoutMinutes: 90, timeoutMS: 10000, timeoutFactor: 1.5, mutate: ['testworld/clients/json-keys.ts'] }

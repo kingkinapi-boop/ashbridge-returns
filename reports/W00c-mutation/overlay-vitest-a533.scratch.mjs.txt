@@ -1,0 +1,4 @@
+import fs from 'node:fs'
+import base from './vitest.mutate.config.ts'
+const inc = fs.readFileSync('reports/W00c-mutation/lean-testfiles.txt','utf8').split('\n').filter(Boolean)
+export default { ...base, test: { ...base.test, testTimeout: 30000, hookTimeout: 30000, include: inc } }
