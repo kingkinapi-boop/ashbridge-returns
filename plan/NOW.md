@@ -7,7 +7,7 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 - **Mode: turbo** (Zo, "turbo on" 13:26Z). Wind-down Fri 9 Oct 18:00 Toronto. Plan use 78% of the week at 15:42Z, about 4% an hour: the limit comes about 21:00Z; then pause until Zo's saved reset and `go`.
 - **Workers:** cloud routine trig_01MWQ7hW5yecn8VaiMTq1xbp (RemoteTrigger `run`; runs cannot notify: poll claims and `list_runs`). 4 queue runs fired 17:36Z. Laptop (decision 0026): designers 1 to 3. 
 - **Landed (69):** train 4 (SC8, GL3, SC10; checked 40e9173c) on main b127c608 at 00:08Z 4 Oct.
-- **Zo 4 Oct 00:59Z:** "for the 7 tax questions, do the research and put in your best guess and continue building." (A542: research pair from 00:59Z, then an Opus checker; guesses go under items 37 to 43.)
+- **Zo 4 Oct 00:59Z:** "for the 7 tax questions, do the research and put in your best guess and continue building." (A542; best guesses under items 37 to 43, A543.)
 - **Zo 3 Oct, Critic chat:** "critic ok" (decision 0027): design lane restarts; CQ11; no new repair card before W00c lands without a red or a measured waste.
 
 ## In flight
@@ -16,28 +16,28 @@ True at every moment. 60 lines max. Last rewritten: 4 Oct 2026 00:05Z by the Lea
 |---|---|---|
 | Train 5 | none boarded yet | board W00c on its mutation check, SC11 and FX18 on PASS; request at 6 cards or hourly |
 | B04 | A507 spec patch reported (c17bd825; A510) | build held `wait:` until W00c lands; Opus check |
-| W00c | stall findings (A538): timeouts sized from the 12-minute dry run, so spinners take 10 to 15 minutes; check re-released `continue:` with a narrow-first cascade | session 1 pass 1a on all 11 targets; session 2 survivors, merge, proof, PASS or FAIL; board |
+| W00c | pass 1a: json-keys.ts done (84.16, survivors to the cascade; 53 min a file) | check sessions continue: load.ts next, then the other 9 targets; 120 s vitest timeout in pass 1 accepted (A545); then survivors, merge, PASS or FAIL |
 | SC6 | parked (A535): R77, R81, R78 moved to SC7 | none |
 | SC3 | S4 needs index.ts state on globalThis (A517): spec held `wait:` until SC11 lands | then index.ts joins Paths, round 3 build item, Opus read, security review |
 | G18 | A505 spec patch reported (77 tests) | build (Opus, data only); third Opus check; fill the card's Spec commit line |
-| SC11 | re-carded smaller (A540): round 4, the last: spec S13 to S20 reopened, build held `wait:`; rest to SC11b (deps SC11) | spec; Lead reopens build; check; Opus read; security review; board; a fourth failure parks it |
+| SC11 | round 4 spec reported (S13 to S20) | build reopened 01:48Z (B15 to B20), the last; check; Opus read; security review; board |
 | SC5 | findings review 1 done (A514): round 2 spec S1 to S5, no build | spec held `wait:` until W00c lands; then build marked reported; Opus check |
-| A08 | spec review 2 GAPS 8 (A541): spec reopened | spec; then build B1 to B6 with the A539 rulings; Opus check; fresh security review |
+| A08 | round 2 spec patched for A541 (386 tests) | build reopened 01:48Z (B1 to B6, A539 rulings); Opus check; fresh security review; board |
 | FX7, W00d, FX16 | FX7 spec review 2 PASS (A526), build reopened (opens when W00c lands); W00d spec reopened 21:07Z for A521 (the A517 data job reported) | builds after W00c lands |
 | FX8 | A493 spec patch reported | build after W00c lands; then FX3's spec patch (A488) and build, FX4, FX5 round 3 (A494) |
-| FX18 | round 2 spec patched for A537 (9 new tests) | build reopened 01:01Z (B1 to B8); then cloud mutate --force, Opus read, security review; board |
+| FX18 | findings review 2 done (A546): round 3, the last: spec S10 to S12 reopened, build held `wait:` | spec; Lead reopens build B9 to B12; cloud mutate --force; Opus read; security review; board |
 | W00b, FX6, SC12, FX17 | held `wait:` (FX17 builds after SC3 lands, re-merging main) | reopen when W00c, SC3 or SC11 land |
 | JH0, S00, B04, SC2, FX7, S01, W00d | wait for W00c (JH0's refit splits five multi-world tests; S00 classifies createSimulator if SC3 lands first, A504) | builds after W00c lands |
-| Design lane | base claude/design-base; rulings A485 | designer 1 done (claude/design-queues-record-3, A512), its panel done (A516); designer 2 done (D03 B+, claude/design-source-viewer-3, A519), its panel done (A522, local branch panel-source-viewer-3); designer 3 done (D02 v3, A531), its panel done (A532); designers 4 (D07, D05) and 5 (D08, D12) Sun 4 Oct; findings review Mon; sitting Tue 6 Oct |
+| Design lane | base claude/design-base (brief re-check 6b8d2b24, A547) | designers 1 to 3 and panels done (A512, A516, A519, A522, A531, A532); designers 4 (D07, D05; workbench-3a) and 5 (D08, D12; workbench-3b) local from 02:20Z; then the workbench panel; findings review Mon; sitting Tue 6 Oct |
 
 ## Next, in order
 
 1. Poll claims and runs; board each PASS onto train 5.
 2. After each no-build spec patch reports (SC10, SC6, SC3): `claim.mjs update <card> build reported --worker lead` so the Opus check opens.
-3. W00c lands: W00b, S00, JH0, B04, SC2, FX7, FX8, W00d; SK0, W01 to W13 (decide reference/cpa-check.md item 43's flags before W01's spec, A499), W20, I40.
+3. W00c lands: W00b, S00, JH0, B04, SC2, FX7, FX8, W00d; SK0, W01 to W13 (item 43's tiers are clauses CK-51 to CK-59 and AI-13, carded Q51 to Q59, I23, I24; A544), W20, I40.
 4. Before SC7's spec: name the card that marks GL1's 6 auth files (A502); add the "Spec owns:" lines to open cards (A528). SC10 landed: the push guard gains the card rules and schema contract rules files (A502) next.
 5. Design lane as above (lane plan reports/design-lane-2026-10-03.md, section 4). Taxprep day 6 Sun 4 Oct (O8 folded, A487).
-6. After W00c lands: G-family sample sweep; contract-ids.json's marker notes and BQ1.bn's flag (A498). After FX8 lands and the CPA answers items 37 to 39: the sample-facts card (A499).
+6. After W00c lands: G-family sample sweep; contract-ids.json's marker notes and BQ1.bn's flag (A498). After FX8 lands: the sample-facts card (A499) with A543's answer key changes (04, 05, 03).
 7. Critic about 5 Oct; Reviewer daily. Read the top of reviews/CRITIC.md each loop (0024).
 
 ## Watch out
