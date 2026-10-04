@@ -4,8 +4,12 @@
  "round": 2,
  "spec": "7e9890ba",
  "worker": "cloud-0cc6b0",
- "state": "working",
- "at": "2026-10-04T01:53:06.103Z",
+ "state": "released",
+ "at": "2026-10-04T02:16:58.580Z",
  "mode": "turbo",
- "beat": "2026-10-04T01:57:07.607Z"
+ "beat": "2026-10-04T01:57:07.607Z",
+ "note": "BLOCKED: build done (381 pass) but mutation 96.08 (call 98.25, index 95.19, scan 97.02), survivors in reports/A08-build.md; needs findings review then spec patch",
+ "lastRelease": {
+  "tip": "596b4a48ab0767027aa9cb4cf76738530c8bf47f"
+ }
 }
