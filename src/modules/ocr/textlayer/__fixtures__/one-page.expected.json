@@ -1,0 +1,208 @@
+{
+  "file": "one-page.pdf",
+  "note": "Made up (A01 spec). One Letter page, Courier 12, words at known positions.",
+  "pageCount": 1,
+  "pages": [
+    {
+      "number": 1,
+      "widthPt": 612,
+      "heightPt": 792,
+      "hasTextLayer": true
+    }
+  ],
+  "words": [
+    {
+      "text": "Maple",
+      "box": {
+        "page": 1,
+        "left": 0.117647059,
+        "top": 0.075757576,
+        "width": 0.058823529,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Ridge",
+      "box": {
+        "page": 1,
+        "left": 0.188235294,
+        "top": 0.075757576,
+        "width": 0.058823529,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Consulting",
+      "box": {
+        "page": 1,
+        "left": 0.258823529,
+        "top": 0.075757576,
+        "width": 0.117647059,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Inc.",
+      "box": {
+        "page": 1,
+        "left": 0.388235294,
+        "top": 0.075757576,
+        "width": 0.047058824,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "(Test)",
+      "box": {
+        "page": 1,
+        "left": 0.447058824,
+        "top": 0.075757576,
+        "width": 0.070588235,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Statement",
+      "box": {
+        "page": 1,
+        "left": 0.117647059,
+        "top": 0.106060606,
+        "width": 0.105882353,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "date",
+      "box": {
+        "page": 1,
+        "left": 0.235294118,
+        "top": 0.106060606,
+        "width": 0.047058824,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "2025-12-31",
+      "box": {
+        "page": 1,
+        "left": 0.294117647,
+        "top": 0.106060606,
+        "width": 0.117647059,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Opening",
+      "box": {
+        "page": 1,
+        "left": 0.117647059,
+        "top": 0.136363636,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "balance",
+      "box": {
+        "page": 1,
+        "left": 0.211764706,
+        "top": 0.136363636,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "$100.00",
+      "box": {
+        "page": 1,
+        "left": 0.305882353,
+        "top": 0.136363636,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Closing",
+      "box": {
+        "page": 1,
+        "left": 0.117647059,
+        "top": 0.166666667,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "balance",
+      "box": {
+        "page": 1,
+        "left": 0.211764706,
+        "top": 0.166666667,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "$1,234.56",
+      "box": {
+        "page": 1,
+        "left": 0.305882353,
+        "top": 0.166666667,
+        "width": 0.105882353,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "Account",
+      "box": {
+        "page": 1,
+        "left": 0.490196078,
+        "top": 0.227272727,
+        "width": 0.082352941,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "4417",
+      "box": {
+        "page": 1,
+        "left": 0.584313725,
+        "top": 0.227272727,
+        "width": 0.047058824,
+        "height": 0.015151515
+      }
+    },
+    {
+      "text": "(Test)",
+      "box": {
+        "page": 1,
+        "left": 0.643137255,
+        "top": 0.227272727,
+        "width": 0.070588235,
+        "height": 0.015151515
+      }
+    }
+  ],
+  "boxes": {
+    "closingBalance": {
+      "page": 1,
+      "left": 0.300882353,
+      "top": 0.161666667,
+      "width": 0.115882353,
+      "height": 0.025151515
+    },
+    "statementDate": {
+      "page": 1,
+      "left": 0.289117647,
+      "top": 0.101060606,
+      "width": 0.127647059,
+      "height": 0.025151515
+    },
+    "openingBalance": {
+      "page": 1,
+      "left": 0.300882353,
+      "top": 0.131363636,
+      "width": 0.092352941,
+      "height": 0.025151515
+    }
+  }
+}

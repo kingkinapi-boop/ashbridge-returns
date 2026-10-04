@@ -24,46 +24,39 @@ Big reads go to a helper that writes a file and returns 10 lines. A research que
 - **G. Subtraction.** Guards, rules and tests that caught nothing in two weeks: propose removing them.
 
 ## Write
-Rewrite `reviews/CRITIC.md` below the line "## Latest run" (never append; keep these orders above it), at most 400 words:
-1. The date, and three plain lines for Zo.
-2. **Proposals:** at most three, numbered. Each: the problem, the evidence, the change (a test, a guard, a rule, a card, or a deleted line), its cost, how to undo it.
-3. **Watch list:** at most three things not yet worth a change.
-Then add one item to `plan/TODO-ZO.md` section 1: "Critic proposals of <date>: reply in the Lead chat `critic ok`, `critic ok 1 3` or `critic no 2`." The Lead applies what Zo approves.
-In chat say only `Critic written: reviews/CRITIC.md. Waiting on to-do #N.` and the to-do's full path.
+Rewrite `reviews/CRITIC.md` below the line "## Latest run
 
-## Rules for yourself
-- A reviewer told to find problems always finds some. Report only what would change what gets built or how; "nothing this time" is a valid run.
-- Label each finding [verified], [inferred] or [speculation].
-- Never reopen a decision Zo made. You may show new evidence against it, once.
-- Plain words. No em dashes.
+**Applied** 3 Oct 13:15Z (decision 0027). Zo, 3 Oct 2026 about 12:50Z, in the Critic chat: "critic ok" (proposals 1, 2 and 3 below): design lane restarted, CQ11 carded, the repair-card line is in skill `dispatch`.
 
-## Latest run
+Last run's proposals: approved (0024), applied 2 Oct.
 
-**2 Oct 2026, 02:50Z** (since 29 Sep).
+**3 Oct 2026, 13:00Z** (since 2 Oct 20:50Z).
 
-1. Token leakage, yes: sessions carry 300k to 780k tokens and re-read them every step. No secret leaked.
-2. Two cheap fixes, both approved, should do about a third more work per token.
-3. At today's pace, 9 Oct ends with phase 0 and part of phase 1, not a usable system.
+1. About 15% built: 54 of 351 cards on main, 71 of 198 clauses tested, no screen yet.
+2. The week's allowance (69% used) runs out about Sun 4 Oct morning. With your saved reset: 30% to 50% of cards by the 9 Oct wind-down; no phase 3 or 4 card.
+3. Turbo works mostly on the build itself: 9 of 12 cards landed today are repairs; clauses tested rose only 69 to 71.
 
 ### Proposals
 
-**1. Compact every session at about 200k tokens.** [verified numbers; saving inferred] Zo approved at 200k, 2 Oct.
-- Evidence: nothing compacts before about 650k; since 29 Sep 1,043M tokens read. Lead peaks up to 781k; 14 helpers above 320k. Replayed with a 200k limit: Lead 50 to 58% less, helpers 27 to 32% less (research file).
-- Change: `.claude/settings.json` env `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "20"`, switched on only with two guards: a "Compact instructions" section in CLAUDE.md (keep jobs in flight, unrecorded reports, half-done merges) and a SessionStart `compact` hook that reloads NOW.md, the claims list and the last hour of commits. New evidence on Z9-8; watcher stays.
-- Cost: small. 94 of 125 helpers never reach 200k; the Lead compacts about every 2 to 3 busy hours.
-- Undo: delete the env line; the guards can stay.
+**1. Restart the design lane now.** [verified]
+- Evidence: D02 to D13 left the queue on 2 Oct (A352) and nobody runs them; no design work since 2 Oct 13:52Z. They hold every V screen, J5 and J6, and do not wait on W00c.
+- Change: the Lead runs them through designers and the panel in idle slots, for one sitting about Tue 6 Oct.
+- Cost: about 30 Sonnet runs, an hour of yours. Undo: stop the lane.
 
-**2. No wait over 4.5 minutes; never revive a big helper.** [verified] Zo approved, 2 Oct.
-- Problem: a helper's cache lives 5 minutes; after a longer wait the next turn re-writes the whole context at about twelve times a read.
-- Evidence: 59 full re-writes (11.2M tokens) after gaps over 5 minutes, mostly `until` loops and heavy-slot waits. Two designers revived after a handover at 442k and 152k: 207 turns, 74M read.
-- Change: `tools/heavy.mjs` gives up after 270 s with "slot busy, run again" (small card); helper and walker orders: no command waits over 270 s, poll; skill `dispatch`: never SendMessage a helper past 150k, start a fresh one from its report.
-- Cost: one small card, three lines. Saves about a tenth of helper cost [inferred].
-- Undo: revert.
+**2. Fix re-offered checks and card counts.** [verified]
+- Evidence: `tools/claim.mjs:254-262` re-offers a check after a "wait:" release (specs and builds hold, 278, 291); CQ6's check went out 14 times since 07:00Z. `tools/metrics.mjs:44` looks for "failed X build", lines say "failed X check": 15 landed cards show 0 check fails against 19 failures; "jobs" counts heartbeats.
+- Change: one CQ card for both.
+- Cost: one small card. Undo: revert.
+
+**3. Until W00c lands, no new repair card without a red or a measured waste.** [verified numbers, inferred effect]
+- Evidence: 21 of 36 cards added since last run are repairs, taking 68% of landed jobs; 22 of 26 cards startable outside W00c's shadow are repairs. The allowance binds, not the clock: an idle slot costs nothing.
+- Change: one line in the dispatch skill.
+- Cost: idle slots until W00c lands. Undo: delete the line.
 
 ### Watch list
 
-1. Pace [verified]: 5 cards in the first 10 hours of turbo; 288 left; 6 of the last 11 checks failed. Below 60% after DG, next run proposes a spec review before core builds.
-2. Cloud is unmeasured [verified]: 49 runs, no local log; metrics tokens read 0. Method: `reference/research/2026-10-02-token-use.md`.
-3. Secrets [verified]: none; the one history hit is a planted test key (f1c8095).
+1. [verified] W00c: 15.5 hours, 7 spec reports, 2 failed checks, spec still changing in round 3 (A467); 246 cards behind it.
+2. [verified] 59 of 87 helper dispatches were Opus findings reviewers or workers; 0009 says Sonnet for building. If plan use outruns cards, local builds go to Sonnet.
+3. [inferred] Trial day 6 (Sun 4 Oct) meets the allowance's end; P02 holds S03 and all of phase 2.
 
-E to G: no model change, no canary, nothing to subtract.
+E: nothing new. F, G: none. Sources: `reference/research/2026-10-03-*.md`.

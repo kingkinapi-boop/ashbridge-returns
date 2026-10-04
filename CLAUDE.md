@@ -19,7 +19,7 @@ The firm's staff system from "onboarding done" to "return filed, binder frozen":
 
 ## Zo
 
-Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: three sections (1 Needs you now, with a short "What the Lead is doing now"; 2 Coming up; 3 What is left of the build), rewritten, never appended; each item says what it is, why, and what comes next. He answers red questions and approves the Critic's proposals; he never sees amber. If he does not answer, keep going on everything else (decision 0009). **No small questions** (decision 0014): wording, formats, conventions, layout details and anything with a sensible default are decided by the Lead and logged as amber; before adding a to-do item, ask "would a wrong guess here change the end state, cost money or touch real data?" and if not, decide.
+Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: two parts (1 Needs you; 2 What the Lead is doing now; decision 0022), rewritten, never appended; the phase table lives in `plan/PHASES.md`; each item says what it is, why, and what comes next. He answers red questions and approves the Critic's proposals; he never sees amber. If he does not answer, keep going on everything else (decision 0009). **No small questions** (decision 0014): wording, formats, conventions, layout details and anything with a sensible default are decided by the Lead and logged as amber; before adding a to-do item, ask "would a wrong guess here change the end state, cost money or touch real data?" and if not, decide.
 
 **In chat, one line only** (decision 0009): `Done. Start a new session.`, `Still working. Nothing needs you.`, `Waiting on to-do #N.` or `Blocked: to-do #N.`, then `C:\Users\User\Documents\GitHub\ashbridge-returns\plan\TODO-ZO.md`. No updates or reports in chat. No em dashes anywhere. No chat runs by itself, and he clears chats often, so everything lives in files.
 
@@ -33,7 +33,7 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 ## Modes, machines and models (skill `modes`, file `plan/mode.json`)
 
 - `pause`, `prep`, `normal`, `turbo`, `wind-down`. Only Zo raises the mode; turbo only on his word. The Lead lowers it on a usage limit, a Reviewer SLOW or HOLD, or at the wind-down time. A hook logs every dispatch to `plan/ledger.jsonl` and caps dispatches by mode.
-- **Cloud first** (decision 0009): workers run in cloud sessions the Lead starts. The laptop runs the Lead and at most two local workers (decision 0018); Zo uses it for other work.
+- **Cloud first** (decision 0009): workers run in cloud sessions the Lead starts. The laptop runs the Lead and up to three local workers (decision 0026), on top of the cloud ones; Zo uses it for other work.
 - **Models** (decision 0009): Sonnet 5.5 for building, routine checks, testers, research readers, designers and drafting. Opus 5.5 for the Lead, the Critic, the Reviewer, specs and adversarial checks on `core` cards (money, tax, CSV, citations, permissions), findings reviews and cold sign-offs. Haiku 4.5 for summaries of pages and logs.
 
 ## Where things are
@@ -65,6 +65,13 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 8. Pace with ScheduleWakeup at the mode's interval. Release stale jobs (90 minutes, no commit). After a usage-limit stop, re-fire what died.
 9. **Handover** on the code `handover`, or on your own when the session has run long: rewrite NOW.md with everything in flight and what comes next, update TODO-ZO, commit and push. After a clear, `go` resumes from NOW.md without missing a step.
 
+## Context and waits (decision 0024)
+
+- Sessions compact at 300k tokens (`CLAUDE_CODE_AUTO_COMPACT_WINDOW`; decision 0025). A SessionStart hook reloads NOW.md, the active claims and recent commits after every compaction.
+- **Compact instructions:** every summary keeps Zo's words this session verbatim, every red or amber decided, what is in flight (card, role, branch, train head), the next step, and any refused action (never retried through another route).
+- No wait over 4.5 minutes inside a turn (use ScheduleWakeup); never revive a big helper, start a fresh one with a file to read.
+- Loop step 1 also reads the top of `reviews/CRITIC.md`: an "Approved, not applied" line is applied first, then marked "Applied".
+
 ## Hard rules
 
 - Made-up data only until go-live: no real client data, no live database, no live client app, no secrets (decision 0003). The one Auto-fill test Zo chose keeps structure only, never values (decision 0008).
@@ -90,4 +97,4 @@ Owner, not a developer, and the CPA reviewer. He reads only `plan/TODO-ZO.md`: t
 
 ## Commands
 
-`npm run typecheck`, `npx vitest run <files or dirs>`, `npm run e2e` (cloud only), `node tools/status.mjs`, `node tools/next.mjs [slots]`, `node tools/claim.mjs next|update|list`, `node tools/matrix.mjs [--summary] [--plan]`, `node tools/metrics.mjs <card>`, `node tools/scope.mjs <card> [base]`, `node tools/heavy.mjs -- <cmd>`.
+`npm run typecheck`, `npx vitest run --project unit <files or dirs>` (and `--project db` for `*.db.test.ts`: one project per run until CQ12 lands, A495), `npm run e2e` (cloud only), `node tools/status.mjs`, `node tools/next.mjs [slots]`, `node tools/claim.mjs next|update|list`, `node tools/matrix.mjs [--summary] [--plan]`, `node tools/metrics.mjs <card>`, `node tools/scope.mjs <card> [base]`, `node tools/heavy.mjs -- <cmd>`.

@@ -4,6 +4,8 @@
 // Rule checks R5 to R11 (findings review W14-D01) and R12, R13 (findings review W14 round 2) run on every folder; each first proves it catches its planted fault on a
 // sample-copy (a copy of a real folder in a temp folder, one fault planted). A rule failing on 01 to 10 prints KNOWN only when
 // the KNOWN table below names the folder and its fix card; anything else is a FAIL, and a KNOWN entry that passes is a FAIL too.
+// W15 (fix round 1, findings review W14-D01): folders 13 to 15 get the same rule checks; 14 and 15 are one corporation's two years,
+// so R7, R8 and R12 must bite on 15, and the 14-to-15 opening tie (openingTie, CK-12) is its own check, proven on a planted sample-copy.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -12,7 +14,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseCsv, luhnValid } from './lib/util.mjs';
 import { CHAIN_TOKENS, GENERIC_RE } from './lib/names.mjs';
-import { GIFI } from './lib/chart.mjs';
+import { GIFI, isPL } from './lib/chart.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 let nPass = 0, nFail = 0;
@@ -38,6 +40,10 @@ const SPEC = {
   // W14: the new kinds' clients (K01 and K05). An empty layouts list means onboarding answers only (no account files).
   '11': { dir: '11-humber-bay-software', kind: 'K01', name: 'Humber Bay Software Ltd. (Test)', start: '2025-01-01', end: '2025-12-31', seed: 1111, layouts: { CHQ: 'A', BCD: 'CARD' } },
   '12': { dir: '12-kensington-market-crafts', kind: 'K05', name: 'Kensington Market Crafts Inc. (Test)', start: '2025-01-01', end: '2025-12-31', seed: 1112, layouts: {} },
+  // W15: K06 (physician corporation) and K13 (one corporation, two unfiled years: 14 is 2024, 15 is 2025 and opens from 14).
+  '13': { dir: '13-sharma-medicine', kind: 'K06', name: 'Sharma Medicine Professional Corporation (Test)', start: '2025-01-01', end: '2025-12-31', seed: 1113, layouts: { CHQ: 'C', BCD: 'CARD' } },
+  '14': { dir: '14-rouge-valley-landscaping-2024', kind: 'K13', name: 'Rouge Valley Landscaping Inc. (Test)', start: '2024-01-01', end: '2024-12-31', seed: 1114, layouts: { CHQ: 'B', BCD: 'CARD' } },
+  '15': { dir: '15-rouge-valley-landscaping-2025', kind: 'K13', name: 'Rouge Valley Landscaping Inc. (Test)', start: '2025-01-01', end: '2025-12-31', seed: 1115, layouts: { CHQ: 'B', BCD: 'CARD' } },
 };
 // Planted rows: [account, date or null, amount in dollars or null, description pattern, expected count]
 const PLANTED = {
@@ -59,6 +65,30 @@ const PLANTED = {
     ['BCD', '2025-03-18', -3275.87, /BEST BUY/, 1], ['CHQ', null, null, /ELLIOT BARROW TEST/, 0],
     // W14 fix round 1: 2024's tax is over $3,000, so 2025 has quarterly instalments (prior-year option), due the last day of each quarter.
     ['CHQ', null, null, /CORP TAX INSTALMENT/, 4], ['CHQ', '2025-03-31', null, /CORP TAX INSTALMENT/, 1], ['CHQ', '2025-06-30', null, /CORP TAX INSTALMENT/, 1], ['CHQ', '2025-09-30', null, /CORP TAX INSTALMENT/, 1], ['CHQ', '2025-12-31', null, /CORP TAX INSTALMENT/, 1]],
+  // W15. 13: twelve OHIP deposits on the 14th (the RA paid that month), four non-OHIP fees (R09), the class 8 addition, payroll, no HST.
+  '13': [['CHQ', null, null, /MOH OHIP PAYMENT TEST/, 12],
+    ['CHQ', '2025-01-14', 31240.5, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-02-14', 27915.8, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-03-14', 32410.25, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-04-14', 30880.6, /MOH OHIP PAYMENT TEST/, 1],
+    ['CHQ', '2025-05-14', 33105.4, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-06-14', 30579.75, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-07-14', 32945.7, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-08-14', 29830.35, /MOH OHIP PAYMENT TEST/, 1],
+    ['CHQ', '2025-09-14', 28415.9, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-10-14', 30807.85, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-11-14', 32670.8, /MOH OHIP PAYMENT TEST/, 1], ['CHQ', '2025-12-14', 33892.8, /MOH OHIP PAYMENT TEST/, 1],
+    ['CHQ', '2025-03-21', 650, /NORTHGATE LIFE INSURANCE TEST/, 1], ['CHQ', '2025-06-11', 2400, /BRANTLEY AND COLE LLP TEST/, 1], ['CHQ', '2025-09-17', 1850, /BRANTLEY AND COLE LLP TEST/, 1], ['CHQ', '2025-11-26', 480, /NORTHGATE LIFE INSURANCE TEST/, 1],
+    ['BCD', '2025-05-20', -6850, /MERIDIAN MEDICAL SUPPLY TEST/, 1],
+    ['CHQ', null, null, /LEAH FORTIN TEST/, 26], ['CHQ', null, null, /CRA PAYROLL DEDUCTIONS/, 12], ['CHQ', null, null, /GST\/HST/, 0], ['BCD', null, null, /GST\/HST/, 0]],
+  // 14 (2024): the owner's loan, the mower (class 8) and the trailer (class 10) from chequing; nothing paid to CRA and no penalty in the books.
+  '14': [['CHQ', '2024-04-10', 25000, /DECLAN MURPHY TEST/, 1], ['CHQ', null, null, /DECLAN MURPHY TEST/, 1],
+    ['CHQ', '2024-04-12', -16046, /GREENLINE TURF EQUIPMENT TEST/, 1], ['CHQ', '2024-04-26', -7684, /NORTHBAY TRAILER SALES TEST/, 1],
+    ['CHQ', null, null, /\bCRA\b/, 0], ['CHQ', null, null, /PENALTY/, 0]],
+  // 15 (2025): the loan carries untouched (no rows with the owner's name); still no penalty in the books.
+  '15': [['CHQ', null, null, /DECLAN MURPHY TEST/, 0], ['CHQ', null, null, /PENALTY/, 0]],
+};
+// Client 13's OHIP figures (README): RA totals by payment month, the opening and accrued receivables, the reduction and the resubmission.
+const OHIP13 = {
+  ra: [['2025-01', 31240.5], ['2025-02', 27915.8], ['2025-03', 32410.25], ['2025-04', 30880.6], ['2025-05', 33105.4], ['2025-06', 30579.75], ['2025-07', 32945.7],
+    ['2025-08', 29830.35], ['2025-09', 28415.9], ['2025-10', 30807.85], ['2025-11', 32670.8], ['2025-12', 33892.8], ['2026-01', 31905.65], ['2026-02', 26740.3]],
+  openingReceivable: { serviceMonths: ['2024-11', '2024-12'], amount: 59156.3 },
+  accruedReceivable: { serviceMonths: ['2025-11', '2025-12'], amount: 58645.95, paidIn: ['2026-01', '2026-02'] },
+  reduction: { paymentMonth: '2025-06', serviceMonth: '2025-03', amount: 1180.4 },
+  resubmission: { serviceMonth: '2025-08', amount: 412.6, rejectedOn: '2025-10', paidOn: '2025-12' },
+  revenue2025: 374185.35, nonOhipTotal: 5380,
 };
 // Client 12 has no account files: its planted issues are the onboarding answers, as the client app stores them (README).
 const PLANTED_ANSWERS = {
@@ -77,6 +107,9 @@ const MUST = {
   '10': [/missing month/i, /duplicate/i, /mixed in/i, /personal spending/i, /spouse/i, /class 10\.1/i, /late/i],
   '11': [/CCA addition/i, /payroll against T4/i, /last year's return/i],
   '12': [/no third-party evidence for revenue/i, /bank balance has no statement/i, /home office/i, /vehicle/i],
+  '13': [/OHIP accrual after year end/i, /RA reduction/i, /resubmitted claim/i, /small supplier limit/i, /no HST return/i, /payroll against T4/i, /CCA addition/i],
+  '14': [/catch-up years filed in order/i, /second return waits for the first/i, /year end to be confirmed by ops/i, /2025 bought twice/i, /late-filing exposure/i, /non-capital loss/i, /CCA additions/i, /shareholder loan/i],
+  '15': [/catch-up years filed in order/i, /second return waits for the first/i, /year end to be confirmed by ops/i, /2025 bought twice/i, /late-filing exposure/i, /opening balances from the 2024 return/i, /non-capital loss applied/i, /shareholder loan/i],
 };
 // The client app stores money in answers as text with commas and two decimals (onboarding contract U12).
 const MONEY_RE = /^-?[0-9]{1,3}(,[0-9]{3})*\.[0-9]{2}$/;
@@ -194,7 +227,181 @@ const CLIENT_CHECKS = {
     const blocking = key.flags.filter((f) => f.blocking !== false || !/person/i.test(f.action ?? '')).map((f) => f.id);
     K(num, 'END-6 every flag is for a person to look at and none blocks (blocking false)', key.flags.length >= 4 && blocking.length === 0, first(blocking) || `${key.flags.length} flags`);
   },
+  '13': (c) => {
+    const { num, spec, key, onb, accts } = c;
+    sec11(c);
+    K(num, `ARC-16 generated from the fixed seed ${spec.seed}`, key.generator?.seed === spec.seed, `seed ${key.generator?.seed}`);
+    const oh = key.ohip;
+    if (!oh || !Array.isArray(oh.raStatements)) { K(num, 'CK-21 the answer key holds the OHIP reconciliation (ohip.raStatements)', false, 'no ohip block'); return; }
+    const ras = oh.raStatements, fyS = spec.start, fyE = spec.end;
+    const raSum = (pred) => ras.reduce((s, r) => s + (r.lines ?? []).filter(pred).reduce((x, l) => x + cd(l.amount), 0), 0);
+    const redSum = (pred) => ras.reduce((s, r) => s + (r.reductions ?? []).filter(pred).reduce((x, l) => x + cd(l.amount), 0), 0);
+    // 1. every RA totals its lines less its reductions; key and onboarding agree with the README's totals by payment month
+    const raBad = ras.filter((r) => cd(r.total) !== (r.lines ?? []).reduce((x, l) => x + cd(l.amount), 0) - (r.reductions ?? []).reduce((x, l) => x + cd(l.amount), 0) || monthOf(r.paymentDate ?? '') !== r.paymentMonth).map((r) => r.paymentMonth);
+    const exp = OHIP13.ra.map(([m, v]) => `${m}:${cd(v)}`).join();
+    const gotKey = ras.map((r) => `${r.paymentMonth}:${cd(r.total)}`).join();
+    const ora = Array.isArray(onb.ohip_remittance_advice) ? onb.ohip_remittance_advice : [];
+    const gotOnb = ora.map((r) => `${r.payment_month}:${cd(r.total)}`).join();
+    K(num, 'CK-21 every OHIP remittance advice (ohip.raStatements, Jan 2025 to Feb 2026) totals its service-month lines less its reductions, and onboarding ohip_remittance_advice holds the same totals by payment month as the README', raBad.length === 0 && gotKey === exp && gotOnb === exp && ora.every((r) => monthOf(r.payment_date ?? '') === r.payment_month), first(raBad) || (gotKey !== exp ? `key ${gotKey.slice(0, 60)}` : gotOnb !== exp ? `onboarding ${gotOnb.slice(0, 60)}` : `${ras.length} RAs`));
+    // 2. each 2025 RA is one chequing deposit; RAs after year end are not in the bank file
+    const payer = typeof oh.payerDescription === 'string' ? oh.payerDescription : '';
+    const bankRows = (accts.CHQ?.rows ?? []).filter((r) => payer && r.desc.includes(payer));
+    const tx = new Map(key.transactions.map((t) => [t.id, t]));
+    const depBad = ras.flatMap((r) => {
+      if (r.paymentDate > fyE) return r.depositTransaction == null ? [] : [`${r.paymentMonth} after year end names a deposit`];
+      const t = tx.get(r.depositTransaction);
+      return t && t.acct === 'CHQ' && t.date === r.paymentDate && cd(t.amount) === cd(r.total) && t.description.includes(payer) ? [] : [`${r.paymentMonth} deposit ${r.depositTransaction}`];
+    });
+    const in25 = ras.filter((r) => r.paymentDate >= fyS && r.paymentDate <= fyE);
+    K(num, 'CK-21 each RA paid in 2025 is one chequing deposit (depositTransaction: same date and cents, bank text ohip.payerDescription); RAs paid after year end have none', /OHIP/.test(payer) && /TEST/.test(payer) && depBad.length === 0 && bankRows.length === in25.length && in25.length === 12, first(depBad) || `${bankRows.length} OHIP deposits, ${in25.length} RAs paid in the year`);
+    // 3. the identity, to the cent
+    const deposits = bankRows.filter((r) => r.date >= fyS && r.date <= fyE).reduce((s, r) => s + r.amt, 0);
+    const opening = cd(oh.openingReceivable?.amount ?? NaN), accrued = cd(oh.accruedReceivable?.amount ?? NaN);
+    const svc25 = (l) => l.serviceMonth >= fyS.slice(0, 7) && l.serviceMonth <= fyE.slice(0, 7);
+    const ra25Net = raSum(svc25) - redSum(svc25);
+    const openFromRa = raSum((l) => l.serviceMonth < fyS.slice(0, 7)), accrFromRa = ras.filter((r) => r.paymentDate > fyE).reduce((s, r) => s + (r.lines ?? []).filter(svc25).reduce((x, l) => x + cd(l.amount), 0), 0);
+    K(num, 'CK-21 OHIP deposits dated in 2025, less the opening receivable for 2024 services, plus the accrued receivable for Nov and Dec 2025 services, equal the RA totals for 2025 service months net of the reduction, to the cent', Number.isFinite(opening) && Number.isFinite(accrued) && deposits - opening + accrued === ra25Net && opening === openFromRa && accrued === accrFromRa && ra25Net === cd(OHIP13.revenue2025) && opening === cd(OHIP13.openingReceivable.amount) && accrued === cd(OHIP13.accruedReceivable.amount), `deposits ${deposits} - opening ${opening} (RA ${openFromRa}) + accrued ${accrued} (RA ${accrFromRa}) against ${ra25Net}`);
+    // 4. the books carry it: revenue by service month, the revenue account, the receivable and the accrual entry
+    const rbs = Array.isArray(oh.revenueByServiceMonth) ? oh.revenueByServiceMonth : [];
+    const adjNet = new Map(key.trialBalance.adjusted.rows.map((r) => [r.account, netCents(r)])), openNet = new Map(key.trialBalance.opening.rows.map((r) => [r.account, netCents(r)]));
+    const aje = key.adjustingEntries.find((j) => j.id === oh.accruedReceivable?.adjustingEntry);
+    const booksBad = [];
+    if (rbs.length !== 12 || rbs.map((r) => r.serviceMonth).join() !== key.statementBalances.CHQ.map((s) => s.month).join()) booksBad.push('revenueByServiceMonth is not the twelve 2025 months');
+    if (rbs.reduce((s, r) => s + cd(r.amount), 0) !== ra25Net) booksBad.push('revenueByServiceMonth does not sum to the RA total net of the reduction');
+    if (!oh.revenueAccount || -(adjNet.get(oh.revenueAccount) ?? 0) !== ra25Net) booksBad.push(`adjusted ${oh.revenueAccount} credit ${-(adjNet.get(oh.revenueAccount) ?? 0)}`);
+    if ((openNet.get(oh.receivableAccount) ?? 0) !== opening || (adjNet.get(oh.receivableAccount) ?? 0) !== accrued) booksBad.push(`receivable ${oh.receivableAccount} opening ${openNet.get(oh.receivableAccount)} adjusted ${adjNet.get(oh.receivableAccount)}`);
+    if (!aje || cd(aje.amount) !== accrued || !aje.lines.some((l) => l.account === oh.receivableAccount && cd(l.debit) === accrued)) booksBad.push('no accrual adjusting entry debiting the receivable');
+    K(num, 'CK-21 the books carry it: revenue by service month sums to the RA total net of the reduction and equals the OHIP revenue account; the receivable opens at the 2024 services and closes at the accrual (one adjusting entry)', booksBad.length === 0, first(booksBad));
+    // 5. the window: three months of claim submission plus one monthly payment cycle after year end
+    const [wy, wm] = fyE.split('-').map(Number), closes = new Date(Date.UTC(wy, wm + 4, 0)).toISOString().slice(0, 10);
+    const after = ras.filter((r) => r.paymentDate > fyE);
+    const lateSvc = (oh.accruedReceivable?.serviceMonths ?? []).join(), paidIn = after.map((r) => r.paymentMonth).join();
+    K(num, `CK-21 the payments after year end fall inside the window (three months of claim submission plus one monthly payment cycle: on or before ${closes}); the Nov and Dec 2025 services are paid in Jan and Feb 2026`, after.length === 2 && after.every((r) => r.paymentDate <= closes) && oh.window?.closesOn === closes && lateSvc === OHIP13.accruedReceivable.serviceMonths.join() && paidIn === OHIP13.accruedReceivable.paidIn.join() && after.every((r) => (r.lines ?? []).every((l) => OHIP13.accruedReceivable.serviceMonths.includes(l.serviceMonth))), `${paidIn} against window ${oh.window?.closesOn}`);
+    // 6. no HST anywhere
+    const hstBad = [];
+    for (const nm of ['opening', 'unadjusted', 'adjusted']) if (key.trialBalance[nm].rows.some((r) => r.account === '2050' || r.gifi === 2680 || r.gifi === 1066)) hstBad.push(`${nm} trial balance has an HST line`);
+    const taxed = key.transactions.filter((t) => t.hstItc || t.hstCollected).map((t) => t.id); if (taxed.length) hstBad.push(`HST on ${first(taxed, 2)}`);
+    if ((onb.cra_program_accounts ?? []).some((p) => p.program === 'hst')) hstBad.push('an hst program in onboarding');
+    if (onb.hst?.registered !== false) hstBad.push('hst.registered is not false');
+    K(num, 'CK-21 no HST payable or receivable account in any trial balance, no HST on any row, no hst program in onboarding (insured services are exempt supplies)', hstBad.length === 0, first(hstBad));
+    // 7. non-OHIP income (R09): taxable supplies under the small supplier limit
+    const no = key.nonOhipIncome ?? {}, items = Array.isArray(no.items) ? no.items : [];
+    const noBad = items.filter((i) => { const t = tx.get(i.transaction); return !t || t.acct !== 'CHQ' || t.date !== i.date || cd(t.amount) !== cd(i.amount) || (payer && t.description.includes(payer)); }).map((i) => `${i.date} ${i.transaction}`);
+    const noTot = items.reduce((s, i) => s + cd(i.amount), 0);
+    K(num, 'CK-21 non-OHIP income (R09) kept apart: nonOhipIncome items are each one chequing deposit, total under the $30,000 small supplier limit', items.length === 4 && noBad.length === 0 && noTot === cd(no.total ?? NaN) && noTot === cd(OHIP13.nonOhipTotal) && cd(no.smallSupplierLimit ?? NaN) === 3000000 && noTot < 3000000, first(noBad) || `${items.length} items, ${noTot} cents`);
+  },
+  '14': (c) => {
+    const { num, spec, key } = c;
+    sec11(c);
+    K(num, `ARC-16 generated from the fixed seed ${spec.seed}`, key.generator?.seed === spec.seed, `seed ${key.generator?.seed}`);
+    end1(c);
+    const ub = uccRoll(key);
+    const cls = (key.t2Inputs.schedule8?.closingUcc ?? []).map((r) => String(r.class)).sort().join();
+    K(num, 'CK-12 the 2024 closing UCC by class (schedule8.closingUcc) is opening + additions - disposals - CCA claimed, additions as Schedule 8 lists them (classes 8 and 10)', ub.length === 0 && cls === '10,8', first(ub) || cls);
+    const L = key.t2Inputs.losses ?? {}, ni = cd(key.t2Inputs.netIncomeLossPerBooksBeforeTax), inc = taxIncome(key);
+    K(num, 'CK-12 the 2024 non-capital loss (t2Inputs.losses.nonCapitalLossForYear) is the loss per books plus Schedule 1 add-backs, less deductions and CCA claimed', ni < 0 && inc < 0 && cd(L.nonCapitalLossForYear ?? NaN) === -inc, `per books ${ni}, for tax ${inc}, key ${cd(L.nonCapitalLossForYear ?? NaN)}`);
+  },
+  '15': (c) => {
+    const { num, spec, key, onb } = c;
+    sec11(c);
+    K(num, `ARC-16 generated from the fixed seed ${spec.seed}`, key.generator?.seed === spec.seed, `seed ${key.generator?.seed}`);
+    end1(c);
+    const p = sibling('14');
+    if (!p) { K(num, 'CK-12 the 2024 folder (14) exists to open from', false, 'no folder 14'); return; }
+    // SEC-11: one corporation, one business number, one owner
+    const bn = onb.corporation?.business_number, others = specNums.filter((n) => n !== '14' && n !== '15').filter((n) => { const d = folderOf(n); return d && (read(path.join(root, d, 'onboarding.json')) + read(path.join(root, d, 'answer-key.json'))).includes(bn); });
+    K(num, 'SEC-11 14 and 15 carry the same business number (one corporation, two years), it fails the check digit, no other client carries it, and Schedule 50 names the same owner and SIN', /^[0-9]{9}$/.test(bn ?? '') && !luhnValid(bn) && p.onb.corporation?.business_number === bn && others.length === 0 && JSON.stringify(p.key.t2Inputs.schedule50) === JSON.stringify(key.t2Inputs.schedule50), others.length ? `also in ${others.join(', ')}` : `bn ${p.onb.corporation?.business_number === bn ? 'shared' : 'differs'}`);
+    K(num, 'END-1 14 and 15 hold the same engagements (the client app has one set per corporation)', JSON.stringify(p.onb.engagements) === JSON.stringify(onb.engagements));
+    // CK-12 (fix round 1): the 14-to-15 opening tie is its own check, openingTie below; it is proven on a planted sample-copy of 15 with the rule checks.
+    const t = openingTie(c, p);
+    K(num, 'CK-12 every balance sheet line of the opening trial balance equals 14\'s adjusted closing line, in cents (no dividends line, 3700)', t.bs.length === 0, first(t.bs) || t.note.bs);
+    K(num, 'CK-12 opening 3849 retained earnings (GIFI 3600) equals 14\'s opening 3849 plus 14\'s net income, in cents', t.re.length === 0, first(t.re) || t.note.re);
+    K(num, 'CK-12 each account opens at 14\'s statement closing balance', t.bank.length === 0, first(t.bank));
+    const ub = uccRoll(key);
+    K(num, 'CK-12 opening UCC by class equals 14\'s closing UCC (and onboarding\'s prior_year_closing_balances.ucc), in cents; this year\'s closing UCC rolls the same way', t.ucc.length === 0 && ub.length === 0, first([...t.ucc, ...ub]) || t.note.ucc);
+    K(num, 'END-2 prior_year is 14\'s return in W14\'s shape (incomeStatement, retainedEarnings, rv2, schedule1, losses.nonCapital, ucc), and prior_year_closing_balances is 14\'s closing balance sheet with net income closed into 3600, so R7, R8 and R12 run on 15', t.py.length === 0, first(t.py));
+    const L = key.t2Inputs.losses ?? {}, bf = (L.nonCapitalBroughtForward ?? []).find((x) => x.taxYearEnd === '2024-12-31'), inc = taxIncome(key);
+    const appl = bf ? Math.min(cd(bf.amount), Math.max(0, inc)) : NaN, ni = cd(key.t2Inputs.netIncomeLossPerBooksBeforeTax);
+    K(num, 'CK-12 14\'s non-capital loss appears in 15\'s T2 inputs (losses.nonCapitalBroughtForward) and is applied: the lesser of the loss and this year\'s income for tax, the rest carried on; the year returns to a profit', t.loss.length === 0 && !!bf && ni > 0 && appl > 0 && cd(L.nonCapitalApplied ?? NaN) === appl && cd(L.nonCapitalClosing ?? NaN) === cd(bf.amount) - appl, first(t.loss) || (bf ? `brought forward ${cd(bf.amount)}, income ${inc}, applied ${cd(L.nonCapitalApplied ?? NaN)} expected ${appl}` : 'no 2024 loss brought forward'));
+  },
 };
+// W15 helpers. END-1 (14 and 15): the onboarding cases ops confirms, each named by a flag.
+function end1({ num, onb, key }) {
+  const corp = onb.corporation ?? {};
+  K(num, 'END-1 onboarding says not all prior years filed (all_prior_years_filed "no") and holds the unfiled years only as text (outstanding_years "2024 and 2025", contract U3)', corp.all_prior_years_filed === 'no' && corp.outstanding_years === '2024 and 2025', `${corp.all_prior_years_filed} / ${JSON.stringify(corp.outstanding_years)}`);
+  K(num, 'END-1 the year end is marked unconfirmed (corporation.financial_year_end_confirmed false, contract U4)', corp.financial_year_end_confirmed === false && /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(corp.financial_year_end ?? ''), String(corp.financial_year_end_confirmed));
+  const eng = Array.isArray(onb.engagements) ? onb.engagements : [], t2 = eng.filter((e) => e.service === 't2');
+  K(num, 'END-1 onboarding lists two T2 engagements for 2025 (the same year bought twice) and none for 2024 (an outstanding year is text only)', t2.length === 2 && t2.every((e) => e.tax_year === 2025 && e.is_test === true && e.id && e.created_at) && new Set(t2.map((e) => e.id)).size === 2 && !eng.some((e) => e.tax_year === 2024), `${t2.length} T2 engagements: ${t2.map((e) => e.tax_year).join(', ')}`);
+  const need = [[/catch-up years filed in order/i, ['corporation.all_prior_years_filed', 'corporation.outstanding_years'], /red tier/i], [/year end to be confirmed by ops/i, ['corporation.financial_year_end'], null], [/2025 bought twice/i, ['engagements'], null], [/second return waits for the first/i, [], null]];
+  const miss = need.filter(([re, fields, det]) => !key.flags.some((f) => re.test(f.rule) && fields.every((x) => (f.evidence?.onboarding ?? []).includes(x)) && (!det || det.test(f.detail)))).map(([re]) => re.source);
+  K(num, 'END-1 the flags name each case (catch-up years in order, red tier; year end unconfirmed; 2025 bought twice; the second return waits), each citing its onboarding field', miss.length === 0, first(miss));
+}
+// CK-12 (14 and 15): schedule8.closingUcc rows { class, opening, additions, disposals, ccaClaimed, ucc } roll, in cents.
+function uccRoll(key) {
+  const s8 = key.t2Inputs.schedule8 ?? {}, rows = s8.closingUcc;
+  if (!Array.isArray(rows) || !rows.length) return ['no schedule8.closingUcc'];
+  const open = uccMap(s8.openingUcc), adds = new Map();
+  for (const c2 of s8.classes ?? []) adds.set(String(c2.class), (c2.additions ?? []).reduce((s, a) => s + cd(a.capitalCost), 0));
+  const bad = [], seen = new Set(rows.map((r) => String(r.class)));
+  for (const r of rows) {
+    const k = String(r.class);
+    if (cd(r.opening ?? NaN) !== (open.get(k) ?? 0)) bad.push(`class ${k} opening`);
+    if (cd(r.additions ?? NaN) !== (adds.get(k) ?? 0)) bad.push(`class ${k} additions`);
+    if (!(cd(r.ccaClaimed ?? NaN) >= 0) || cd(r.opening) + cd(r.additions) - cd(r.disposals ?? 0) - cd(r.ccaClaimed) !== cd(r.ucc ?? NaN)) bad.push(`class ${k} does not roll`);
+  }
+  for (const k of [...open.keys(), ...adds.keys()]) if (!seen.has(k)) bad.push(`class ${k} has no closing row`);
+  return bad;
+}
+// Income for tax in cents: per books, plus Schedule 1 add-backs, less Schedule 1 deductions and the CCA claimed.
+const taxIncome = (key) => { const t = key.t2Inputs, s = (a, f) => (a ?? []).reduce((x, i) => x + cd(i[f] ?? 0), 0); return cd(t.netIncomeLossPerBooksBeforeTax) + s(t.schedule1?.addBacks, 'amount') - s(t.schedule1?.deductions, 'amount') - s(t.schedule8?.closingUcc, 'ccaClaimed'); };
+const sibling = (n) => { const d = folderOf(n); if (!d) return null; try { return { key: JSON.parse(read(path.join(root, d, 'answer-key.json'))), onb: JSON.parse(read(path.join(root, d, 'onboarding.json'))) }; } catch { return null; } };
+
+// CK-12 (fix round 1, its own check): 15 opens from 14, in cents. c15 and c14 are { key, onb } (a real folder or a sample-copy).
+// Returns the problems by part, so acceptance 5 prints one line per part and the plant proof reads them all.
+function openingTie(c15, c14) {
+  const key = c15.key, onb = c15.onb, k14 = c14.key, out = { bs: [], re: [], bank: [], ucc: [], loss: [], py: [], note: {} };
+  const byAcct = (rows) => { const m = new Map(); for (const r of rows ?? []) m.set(String(r.account), (m.get(String(r.account)) ?? 0) + netCents(r)); return m; };
+  const a14 = byAcct(k14.trialBalance?.adjusted?.rows), o15 = byAcct(key.trialBalance?.opening?.rows);
+  // balance sheet lines (everything below 4000 except retained earnings and dividends)
+  const bsKeys = [...new Set([...a14.keys(), ...o15.keys()])].filter((a) => !isPL(a) && a !== '3600' && a !== '3700').sort();
+  out.bs = bsKeys.filter((a) => (a14.get(a) ?? 0) !== (o15.get(a) ?? 0)).map((a) => `${a} 14 ${a14.get(a) ?? 0} 15 ${o15.get(a) ?? 0}`);
+  if (bsKeys.length < 5) out.bs.push(`only ${bsKeys.length} balance sheet lines`);
+  if ((a14.get('3700') ?? 0) || (o15.get('3700') ?? 0)) out.bs.push('a dividends line (3700)');
+  out.note.bs = `${bsKeys.length} lines`;
+  // retained earnings: 14's opening plus 14's net income (no dividends, no tax in a loss year)
+  const ni14 = cd(k14.trialBalance?.netIncomeLossBeforeTax ?? NaN), re14 = -(a14.get('3600') ?? 0), re15 = -(o15.get('3600') ?? NaN);
+  if (!Number.isFinite(re15) || !Number.isFinite(ni14) || re15 !== re14 + ni14) out.re.push(`14 opening ${re14} + net income ${ni14} = ${re14 + ni14}, 15 opening ${re15}`);
+  out.note.re = `14 opening ${re14} + net income ${ni14} = 15 opening ${re15}`;
+  // each account opens at 14's statement closing balance
+  out.bank = (key.accounts ?? []).filter((a) => { const b = (k14.accounts ?? []).find((x) => x.key === a.key); return !b || cd(b.closingBalance) !== cd(a.openingBalance); }).map((a) => `${a.key} opens ${a.openingBalance}`);
+  if ((key.accounts ?? []).length !== 2) out.bank.push(`${(key.accounts ?? []).length} accounts, two expected`);
+  // UCC by class
+  const u14 = uccMap(k14.t2Inputs?.schedule8?.closingUcc), u15 = uccMap(key.t2Inputs?.schedule8?.openingUcc), uo = uccMap(onb.prior_year_closing_balances?.ucc);
+  if (u14.size < 2) out.ucc.push(`14 closes ${u14.size} UCC classes, two expected (8 and 10)`);
+  if (!sameMap(u14, u15)) out.ucc.push(`opening UCC ${[...u15].map(([k, v]) => `${k}:${v}`).join(' ')} against 14's closing ${[...u14].map(([k, v]) => `${k}:${v}`).join(' ')}`);
+  if (!sameMap(u15, uo)) out.ucc.push('onboarding prior_year_closing_balances.ucc differs from the opening UCC');
+  out.note.ucc = `${u15.size} classes`;
+  // 14's non-capital loss in 15's T2 inputs
+  const loss14 = cd(k14.t2Inputs?.losses?.nonCapitalLossForYear ?? NaN), bf = (key.t2Inputs?.losses?.nonCapitalBroughtForward ?? []).find((x) => x.taxYearEnd === '2024-12-31');
+  if (!(loss14 > 0)) out.loss.push(`14's nonCapitalLossForYear ${loss14} is not a loss`);
+  if (!bf || cd(bf.amount) !== loss14) out.loss.push(`15's nonCapitalBroughtForward for 2024-12-31 is ${bf ? cd(bf.amount) : 'missing'}, 14's loss ${loss14}`);
+  // prior_year: 14's return in W14's shape, so R7, R8 and R12 bite on 15
+  const py = key.prior_year ?? {}, is = py.incomeStatement ?? {}, rr = py.retainedEarnings ?? {}, rv = py.rv2 ?? {}, s1 = py.schedule1 ?? {};
+  const cca14 = (k14.t2Inputs?.schedule8?.closingUcc ?? []).reduce((s, r) => s + cd(r.ccaClaimed ?? NaN), 0);
+  if (py.client !== '14' || py.fiscalYear?.start !== '2024-01-01' || py.fiscalYear?.end !== '2024-12-31' || py.filedByUs !== false) out.py.push('prior_year { client "14", fiscalYear 2024-01-01 to 2024-12-31, filedByUs false }');
+  if (cd(is.netIncomeBeforeTax ?? NaN) !== ni14 || cd(is.incomeTax ?? NaN) !== 0 || cd(is.netIncomeAfterTax ?? NaN) !== ni14) out.py.push(`incomeStatement ${is.netIncomeBeforeTax} / ${is.incomeTax} / ${is.netIncomeAfterTax}, 14's net income ${ni14} and no tax`);
+  if (cd(rr.opening ?? NaN) !== re14 || cd(rr.dividends ?? NaN) !== 0 || cd(rr.closing ?? NaN) !== re15 || cd(py.retainedEarnings3849 ?? NaN) !== re15) out.py.push(`retainedEarnings ${rr.opening} / ${rr.dividends} / ${rr.closing} and 3849 ${py.retainedEarnings3849}, against 14 opening ${re14} and 15 opening ${re15}`);
+  if (['taxable_income', 'federal_tax', 'ontario_tax', 'instalments', 'balance_or_refund'].some((k) => cd(rv[k] ?? NaN) !== 0) || cd(rv.net_income ?? NaN) !== ni14) out.py.push('rv2: net_income 14\'s, taxable_income, taxes, instalments and balance 0 (a loss year)');
+  if (cd(s1.cca ?? NaN) !== cca14 || !Number.isFinite(s1.amortization) || !Number.isFinite(s1.otherAddBacks)) out.py.push(`schedule1 { amortization, otherAddBacks, cca } with cca ${s1.cca} equal to 14's CCA claimed ${cca14}`);
+  if (!(py.losses?.nonCapital ?? []).some((l) => cd(l?.amount ?? NaN) === loss14)) out.py.push(`losses.nonCapital holds no entry of 14's loss ${loss14}`);
+  if (!sameMap(uccMap(py.ucc), u14)) out.py.push('prior_year.ucc differs from 14\'s closing UCC');
+  const pycb = onb.prior_year_closing_balances ?? {}, closed = new Map([...a14].filter(([a]) => !isPL(a) && a !== '3700'));
+  closed.set('3600', -re15); for (const [a, v] of [...closed]) if (!v) closed.delete(a);
+  const pa = byAcct(pycb.accounts); for (const [a, v] of [...pa]) if (!v) pa.delete(a);
+  if (pycb.as_of !== '2024-12-31' || !sameMap(pa, closed)) out.py.push(`prior_year_closing_balances (as_of ${pycb.as_of}) is not 14's adjusted balance sheet with net income closed into 3600: ${first([...new Set([...pa.keys(), ...closed.keys()])].filter((a) => pa.get(a) !== closed.get(a)).map((a) => `${a} ${pa.get(a) ?? 0} against ${closed.get(a) ?? 0}`))}`);
+  return out;
+}
+const tieBad = (t) => [...t.bs, ...t.re, ...t.bank, ...t.ucc, ...t.loss, ...t.py];
 
 // ---------- ARC-16: regenerate twice (generate.mjs, then make-csv.mjs, as the README says); lines printed at the end ----------
 const specNums = Object.keys(SPEC).sort();
@@ -327,6 +534,28 @@ for (const num of specNums) {
     for (const m of PLANTED_ANSWERS['12'].money) if (!verb.includes(m)) pl.push(`answer ${m} missing`);
     for (const n of PLANTED_ANSWERS['12'].numbers) if (!verb.some((v) => answerNumber(v) === n)) pl.push(`answer ${n} missing`);
     if (onb.hst?.registered !== false) pl.push('not HST registered (hst.registered false)');
+  }
+  if (num === '13') {
+    const t4 = (onb.payroll?.t4_summaries ?? []).find((x) => x.year === 2025); if (!t4 || t4.slips !== 1) pl.push('T4 summary 2025 with one slip');
+    const c8 = (key.t2Inputs.schedule8?.classes ?? []).find((x) => String(x.class) === '8'); if (!c8 || !c8.additions?.some((a) => cd(a.capitalCost) === 685000 && a.date === '2025-05-20')) pl.push('class 8 exam-room equipment 6850.00 (HST included) on 20 May 2025');
+    if (onb.hst?.registered !== false) pl.push('not HST registered (hst.registered false)');
+    const oh = key.ohip ?? {}, ras = oh.raStatements ?? [], ra = (m) => ras.find((r) => r.paymentMonth === m) ?? {};
+    const R = OHIP13.reduction, S = OHIP13.resubmission;
+    if (oh.reduction?.paymentMonth !== R.paymentMonth || oh.reduction?.serviceMonth !== R.serviceMonth || cd(oh.reduction?.amount ?? NaN) !== cd(R.amount) || !(ra(R.paymentMonth).reductions ?? []).some((x) => x.serviceMonth === R.serviceMonth && cd(x.amount) === cd(R.amount))) pl.push('RA reduction 1180.40 on the June 2025 RA for March 2025 services');
+    if (ras.reduce((n, r) => n + (r.reductions ?? []).length, 0) !== 1) pl.push('exactly one RA reduction');
+    if (oh.resubmission?.serviceMonth !== S.serviceMonth || cd(oh.resubmission?.amount ?? NaN) !== cd(S.amount) || oh.resubmission?.rejectedOn !== S.rejectedOn || oh.resubmission?.paidOn !== S.paidOn || !(ra(S.paidOn).lines ?? []).some((l) => l.serviceMonth === S.serviceMonth && cd(l.amount) === cd(S.amount)) || (ra(S.rejectedOn).lines ?? []).some((l) => l.serviceMonth === S.serviceMonth && cd(l.amount) === cd(S.amount))) pl.push('rejected claim 412.60 for August 2025, rejected on the October RA, paid on the December RA');
+    const rbs = new Map((oh.revenueByServiceMonth ?? []).map((r) => [r.serviceMonth, cd(r.amount)])); if (rbs.get('2025-03') !== 3192500 || rbs.get('2025-08') !== 3122045) pl.push('revenue by service month: March 31925.00 (net of the reduction), August 31220.45 (with the resubmitted claim)');
+    if (!/^MOH OHIP PAYMENT TEST$/.test(oh.payerDescription ?? '')) pl.push('payerDescription MOH OHIP PAYMENT TEST');
+  }
+  if (num === '14' || num === '15') {
+    if (onb.hst?.basis !== 'regular' || onb.hst?.frequency !== 'annual') pl.push('HST regular, annual');
+    const loan = key.trialBalance.adjusted.rows.find((r) => r.account === '2080'); if (!loan || cd(loan.credit) !== 2500000) pl.push('shareholder loan 2080 credit 25000.00 at year end');
+    if (onb.owners?.length !== 1 || onb.owners[0].name !== 'Declan Murphy (Test)' || onb.owners[0].approximate_share_percent !== 100) pl.push('one owner, Declan Murphy (Test), 100%');
+  }
+  if (num === '14') {
+    const add = (k, cost, date) => (key.t2Inputs.schedule8?.classes ?? []).find((x) => String(x.class) === k)?.additions?.some((a) => cd(a.capitalCost) === cost && a.date === date);
+    if (!add('8', 1420000, '2024-04-12')) pl.push('class 8 mower 14200.00 on 12 Apr 2024');
+    if (!add('10', 680000, '2024-04-26')) pl.push('class 10 trailer 6800.00 on 26 Apr 2024');
   }
   K(num, 'planted issues exist exactly as described', pl.length === 0, first(pl, 4));
 
@@ -654,9 +883,10 @@ const RULES = [
   { id: 'R12', clause: 'END-2', name: 'last year\'s tax recomputes: taxable = net income + amortization + other add-backs - CCA, tax = rate x taxable, balance owing = tax - instalments', fn: R12 },
   { id: 'R13', clause: 'END-2', name: 'a GIFI-keyed statement holds each code once (account lists exempt)', fn: R13 },
 ];
-// Known failures on 01 to 10 (W14 changes nothing there): each names the fix card the Lead cards. Never for 11 onward.
-const FIX_CARDS = { W16: 'proposed: asset registers for sample clients 03, 04, 07, 08 and 10 (cost, date, book method, CCA class and first-year rule in the answer key), regenerated so opening amortization and UCC recompute (R8)' };
-const KNOWN = { R8: { '03': 'W16', '04': 'W16', '07': 'W16', '08': 'W16', '10': 'W16' } };
+// Known failures on 01 to 10: each names the fix card the Lead cards. Never for 11 onward.
+// W16 spec (round 2): the five R8 entries for 03, 04, 07, 08 and 10 are removed; W16's asset registers make R8 pass on them.
+const FIX_CARDS = {};
+const KNOWN = {};
 let nKnown = 0;
 const known = (msg) => { console.log('KNOWN ' + msg); nKnown++; };
 // The sample-copy fixture: a real folder copied into a temp folder, one fault planted in its JSON, read back from the copy.
@@ -695,6 +925,24 @@ for (const [id, num, label, plant] of PLANTS) {
     line(b.length === 0 && p.length > 0, `${id} ${rule.clause} catches its planted fault on a sample-copy of ${num} (${label})` + (b.length ? `: the unchanged copy fails first: ${first(b, 1)}` : p.length ? '' : ': the planted copy passes'));
   } catch (e) { line(false, `${id} ${rule.clause} catches its planted fault on a sample-copy of ${num} (${label}): ${e.message.split('\n')[0]}`); }
 }
+// W15 fix round 1: the 14-to-15 opening tie (CK-12) proves it catches a fault planted in a sample-copy of 15, 14 read as it stands.
+const TIE_PLANTS = [
+  ['14\'s net income left out of 15\'s opening retained earnings (3600 opens at 14\'s opening)', (c) => {
+    const p = sibling('14'), r14 = (p?.key.trialBalance.adjusted.rows ?? []).find((r) => r.account === '3600'), r15 = c.key.trialBalance.opening.rows.find((r) => r.account === '3600');
+    if (r15) { r15.debit = r14?.debit ?? 0; r15.credit = r14?.credit ?? 0; }
+  }],
+  ['opening UCC of class 8 one cent above 14\'s closing (Schedule 8 and onboarding)', (c) => {
+    for (const u of [c.key.t2Inputs.schedule8?.openingUcc, c.onb.prior_year_closing_balances?.ucc]) for (const x of u ?? []) if (String(x.class) === '8') x.ucc = Math.round(x.ucc * 100 + 1) / 100;
+  }],
+];
+for (const [label, plant] of TIE_PLANTS) {
+  const msg = `15 TIE CK-12 the 14-to-15 opening tie catches its planted fault on a sample-copy of 15 (${label})`;
+  if (!folderOf('14') || !folderOf('15')) { line(false, `${msg}: folder ${folderOf('14') ? '15' : '14'} missing`); continue; }
+  try {
+    const p = sibling('14'), b = tieBad(openingTie(sampleCopy('15', null), p)), q = tieBad(openingTie(sampleCopy('15', plant), p));
+    line(b.length === 0 && q.length > 0, msg + (b.length ? `: the unchanged copy fails first: ${first(b, 1)}` : q.length ? '' : ': the planted copy passes'));
+  } catch (e) { line(false, `${msg}: ${e.message.split('\n')[0]}`); }
+}
 { // contract-ids.json: every id named on the contract line it cites; then its plant, YE2.phone cited at line 56.
   const b = contractIdsBad(IDS, contractLines);
   line(b.length === 0, `R5 END-6 contract-ids.json: ${(IDS.questions ?? []).length} question ids and ${(IDS.facts ?? []).length} fact ids, each named on the contract line it cites, no family ids` + (b.length ? `: ${first(b)}` : ''));
@@ -714,6 +962,14 @@ for (const num of specNums) {
     else if (card) line(false, `${label}: passes, so remove its KNOWN entry`);
     else line(r.bad.length === 0, label + (r.bad.length ? `: ${first(r.bad, 2)}` : r.note ? ` (${r.note})` : ''));
   }
+}
+// W15 fix round 1: R7 to R10 apply to 14 and 15 as one corporation's two years. On 15 (the second year) R7, R8 and R12 must
+// bite, not pass for want of data: its prior_year is 14's return, its prior closing balances 14's, its register 14's assets.
+for (const [id, na] of [['R7', /^no prior_year/], ['R8', /^no capital assets/], ['R12', /^no prior_year/]]) {
+  const rule = RULES.find((r) => r.id === id), msg = `15 ${id} ${rule.clause} applies to 15 as the second of one corporation's two years (14 is its prior year), not passed for want of data`;
+  const d = folderOf('15');
+  if (!d) { line(false, `${msg}: folder 15 missing`); continue; }
+  try { const r = rule.fn(ctxOf('15', path.join(root, d))); line(r.bad.length === 0 && !na.test(r.note ?? ''), msg + (r.bad.length ? `: ${first(r.bad, 1)}` : ` (${r.note})`)); } catch (e) { line(false, `${msg}: ${e.message.split('\n')[0]}`); }
 }
 
 // ---------- the associated pair (05 owns 06) ----------
@@ -737,15 +993,67 @@ line(fs.existsSync(path.join(root, 'generate.mjs')), 'generate.mjs is next to ve
   const absent = specNums.filter((n) => !k2.some((f) => f.startsWith(n + '-')));
   const differ = [...new Set([...k1, ...k2])].filter((f) => regen.h1[f] !== regen.h2[f]);
   line(!regen.err && absent.length === 0 && differ.length === 0, `ARC-16 a second generation (generate.mjs, then make-csv.mjs) is byte-identical for all ${specNums.length} folders` + (regen.err ? `: ${regen.err}` : absent.length ? `: no output for ${absent.join(', ')}` : differ.length ? `: differs in ${first(differ)}` : ` (${k2.length} files)`));
-  const old = specNums.filter((n) => n <= '10').map(folderOf).filter(Boolean);
-  const base = spawnSync('git', ['merge-base', 'HEAD', 'origin/main'], { cwd: root, encoding: 'utf8' });
-  // --ignore-cr-at-eol: main's import.csv blobs were committed with LF from a Windows checkout; make-csv.mjs writes CRLF (amber, W14 spec).
-  const q = base.status === 0 ? spawnSync('git', ['diff', '--quiet', '--ignore-cr-at-eol', base.stdout.trim(), '--', ...old], { cwd: root, encoding: 'utf8' }) : null;
-  const changed = !q || q.status > 1 ? null : q.status === 0 ? [] : spawnSync('git', ['diff', '--stat=200', '--ignore-cr-at-eol', base.stdout.trim(), '--', ...old], { cwd: root, encoding: 'utf8' }).stdout.split('\n').filter((l) => l.includes('|')).map((l) => l.trim());
-  line(old.length === 10 && changed !== null && changed.length === 0, 'ARC-16 after regeneration, folders 01 to 10 are byte-identical to main before W14 (git diff against the merge base with origin/main)' + (old.length !== 10 ? `: ${old.length} of the ten folders found` : changed === null ? `: git failed (${(base.stderr || q?.stderr || '').trim().split('\n')[0]})` : changed.length ? `: ${first(changed)}` : ''));
-  const mc = spawnSync(process.execPath, [path.join(root, 'make-csv.mjs'), '--check'], { encoding: 'utf8' });
+  // W16 spec (round 2, findings review W16): W14's "01 to 10" and W15's "01 to 12" byte-identical-to-main guards are retired.
+  // They were scope checks with hard-coded folder lists, not ARC-16 (which is determinism, the line above); tools/scope.mjs
+  // enforces "only the card's Paths change" on every card, so no per-card folder list belongs in this file (rule R78).
+  // W16 spec fixup (A408, spec review gap 1): the committed sample data is the generator's output. After the two regenerations
+  // above, every SPEC folder equals HEAD (ignoring CR at line ends: import.csv is CRLF on disk, LF in git) and holds no untracked
+  // file, so a generator change that moves a folder nobody committed (09 from c09_10.mjs, say) fails here. Compared with HEAD,
+  // never main, and over every SPEC folder, so no card's folder list lives here (R78). If git cannot run or answer, the line fails.
+  {
+    const present = specNums.map(folderOf).filter(Boolean), git = (args) => spawnSync('git', ['-c', 'core.safecrlf=false', ...args, '--', ...present], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 28 });
+    const why = [];
+    if (regen.err) why.push(`no regeneration to compare: ${regen.err}`);
+    if (present.length !== specNums.length || !present.length) why.push(`${present.length} of ${specNums.length} SPEC folders present`);
+    const q = git(['diff', '--quiet', '--ignore-cr-at-eol', 'HEAD']);
+    if (q.error || (q.status !== 0 && q.status !== 1)) why.push(`git diff could not run (${q.error ? q.error.message : `exit ${q.status}: ${(q.stderr || '').trim().split('\n').slice(-1)[0]}`})`);
+    else if (q.status === 1) { const d = git(['diff', '--ignore-cr-at-eol', 'HEAD']); why.push(`regenerated output differs from HEAD in ${first([...(d.stdout || '').matchAll(/^diff --git a\/(\S+)/gm)].map((m) => m[1])) || 'some file'}`); }
+    const u = git(['ls-files', '--others', '--exclude-standard']);
+    if (u.error || u.status !== 0) why.push(`git ls-files could not run (${u.error ? u.error.message : `exit ${u.status}`})`);
+    else if (u.stdout.trim()) why.push(`untracked generated files: ${first(u.stdout.trim().split('\n'))}`);
+    line(why.length === 0, `ARC-16 the committed sample data is the generator's output: after regeneration every one of the ${specNums.length} SPEC folders equals HEAD (git diff --ignore-cr-at-eol, no untracked file)` + (why.length ? `: ${why.join('; ')}` : ''));
+  }
+  const mc =spawnSync(process.execPath, [path.join(root, 'make-csv.mjs'), '--check'], { encoding: 'utf8' });
   const noCsv = specNums.filter((n) => { const d = folderOf(n); return !d || !fs.existsSync(path.join(root, d, 'taxprep', 'import.csv')); });
   line(mc.status === 0 && noCsv.length === 0, `ARC-8 make-csv.mjs --check passes for all ${specNums.length} folders (every row equals the answer key, Schedule 100 balances, no blank cells)` + (noCsv.length ? `: no taxprep/import.csv for ${noCsv.join(', ')}` : '') + (mc.status !== 0 ? `: ${(mc.stdout || mc.stderr || '').trim().split('\n').slice(-1)[0]}` : ''));
+}
+// ---------- W16, END-2: every opening UCC the README lists as moved equals the answer key's and onboarding's, in cents ----------
+// The README section "Opening UCC moved" holds one line per moved figure: "- <folder> class <class>: <old> to <new>. <why>".
+// Each <new> must equal the answer key's t2Inputs.schedule8.openingUcc and onboarding's prior_year_closing_balances.ucc for that
+// folder and class (R8 ties those two together and to the register; this ties the README to them). Proven first on a sample-copy.
+{
+  // Spec fixup (A408, spec review gap 3): every "- " bullet in the section must parse; one that misses the shape fails, named.
+  const BULLET_RE = /^- ([0-9]{2}) class ([0-9.]+): ([0-9,]+\.[0-9]{2}) to ([0-9,]+\.[0-9]{2})\./;
+  const movedUcc = (text) => {
+    const sec = text.split(/^## /m).find((s) => s.startsWith('Opening UCC moved')) ?? '';
+    const bullets = sec.split(/\r?\n/).filter((l) => /^- /.test(l)), rows = [];
+    rows.unparsed = bullets.filter((l) => !BULLET_RE.test(l));
+    for (const l of bullets) { const m = l.match(BULLET_RE); if (m) rows.push({ num: m[1], cls: m[2], from: cents(m[3].replace(/,/g, '')), to: cents(m[4].replace(/,/g, '')) }); }
+    return rows;
+  };
+  const movedUccBad = (rows) => {
+    const bad = (rows.unparsed ?? []).map((l) => `a bullet under "Opening UCC moved" does not parse as "- <folder> class <class>: <from> to <to>.": ${l.slice(0, 60)}`);
+    if (!rows.length) bad.push('the README section "Opening UCC moved" lists no figure');
+    for (const { num, cls, from, to } of rows) {
+      const d = folderOf(num);
+      if (!d) { bad.push(`${num}: folder missing`); continue; }
+      const c = ctxOf(num, path.join(root, d)), k = uccMap(c.key.t2Inputs?.schedule8?.openingUcc).get(cls), o = uccMap(c.onb.prior_year_closing_balances?.ucc).get(cls);
+      if (from === to) bad.push(`${num} class ${cls}: listed as moved but ${from} to ${to} is no move`);
+      if (k !== to || o !== to) bad.push(`${num} class ${cls}: the README says ${to}, the answer key's Schedule 8 opening UCC ${k ?? 'none'}, onboarding ${o ?? 'none'} (cents)`);
+    }
+    return bad;
+  };
+  const text = read(path.join(root, 'README.md')), rows = movedUcc(text), copy = path.join(tmpRoot, 'README-ucc.md');
+  // Plant: a sample-copy of the README with the first listed figure one cent off.
+  fs.writeFileSync(copy, text.replace(/^(## Opening UCC moved[\s\S]*?^- [0-9]{2} class [0-9.]+: [0-9,]+\.[0-9]{2} to [0-9,]+\.[0-9])([0-9])/m, (m, a, b) => a + ((Number(b) + 1) % 10)));
+  const b = movedUccBad(rows), p = movedUccBad(movedUcc(read(copy)));
+  line(b.length === 0 && p.length > 0, 'W16 END-2 the README-to-data opening UCC tie catches its planted fault on a sample-copy of README.md (the first moved figure one cent off)' + (b.length ? `: the unchanged copy fails first: ${first(b, 1)}` : p.length ? '' : ': the planted copy passes'));
+  // Plant 2 (gap 3): a sample-copy with the first bullet's "class 8" (or any class) written "class8", so it no longer parses.
+  const copy2 = path.join(tmpRoot, 'README-ucc-bullet.md'), planted2 = text.replace(/^(## Opening UCC moved[\s\S]*?^- [0-9]{2} class) /m, '$1');
+  fs.writeFileSync(copy2, planted2);
+  const p2 = movedUccBad(movedUcc(read(copy2))), named = p2.some((x) => /does not parse/.test(x) && /class[0-9]/.test(x));
+  line(b.length === 0 && planted2 !== text && named, 'W16 END-2 the README-to-data opening UCC tie fails, naming it, on a bullet that does not parse (a sample-copy of README.md with "class 8" written "class8")' + (b.length ? `: the unchanged copy fails first: ${first(b, 1)}` : planted2 === text ? ': nothing to plant (no bullet under "Opening UCC moved")' : named ? '' : ': the planted copy passes or does not name the bullet'));
+  line(b.length === 0, `W16 END-2 each opening UCC the README lists as moved equals the answer key's Schedule 8 opening UCC and onboarding's prior_year_closing_balances.ucc for that folder and class (${rows.length} figures: ${rows.map((r) => `${r.num} class ${r.cls}`).join(', ') || 'none'})` + (b.length ? `: ${first(b, 6)}` : ''));
 }
 // ---------- R11, ARC-8: the README's counts equal the generated data (last, so the pass count is final) ----------
 {

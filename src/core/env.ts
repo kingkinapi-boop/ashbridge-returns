@@ -2,8 +2,19 @@
 // Settings are read by name through zod and never printed (SEC-10).
 import { z } from 'zod'
 
+// A blank value reads as unset (FX2). The modules decide which names they accept.
+const blankIsUnset = z.preprocess((v) => (v === '' ? undefined : v), z.string().optional())
+
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  // ARC-6: which staff sign-in engine; unset or blank means the made-up users. No key is ever read (END-8).
+  AUTH_ENGINE: z.preprocess((v) => (v === '' ? undefined : v), z.enum(['testusers', 'live']).optional()),
+  // ARC-22: the folder the Claude project exchange uses. Blank is as unset as missing; the AI runner checks that (a throw here would break every caller).
+  AI_EXCHANGE_DIR: z.string().optional(),
+  // FX2, ARC-6: the stand-in engines. Unset means the stand-in outside production; in production the module refuses (SEC-11).
+  OCR_ENGINE: blankIsUnset,
+  STORAGE_FILES_ENGINE: blankIsUnset,
+  STORAGE_DRIVE_ENGINE: blankIsUnset,
 })
 
 export type Settings = z.infer<typeof schema>
@@ -12,7 +23,6 @@ export function readSettings(source: Record<string, string | undefined> = proces
   const parsed = schema.safeParse(source)
   if (!parsed.success) {
     // Name the settings that failed, never their values.
-    // Stryker disable next-line StringLiteral: NODE_ENV is the only setting, so one issue and no separator is ever printed; killable when a second setting arrives.
     const names = parsed.error.issues.map((i) => String(i.path[0])).join(', ')
     throw new Error(`Invalid settings: ${names}`)
   }

@@ -1,0 +1,4 @@
+# D00 spec refit (cloud-0a2392, 2 Oct)
+Fix round 1: deleted design/basis/vitest.d00.config.ts (TH R3); the tests now run in the shared unit project. Fixed what typecheck and lint flagged (import extension, one unnecessary assertion cast); every assertion kept. Validated on main 30986dd + claude/TH ccba63d: only basis.acceptance.test.ts fails (build.mjs missing, the right reason); typecheck and lint clean. Permission gaps: none. Model: Sonnet 5.5 (not core).
+
+Refit 2 (cloud-790b0c, 2 Oct): merged origin/main 7dd2c02 (TH landed). typecheck, lint clean; unit: only basis.acceptance.test.ts fails (build.mjs missing, right reason), 724 others pass. Validated on main 7dd2c02. Note: govuk-frontend, MOJ, sass, nunjucks, axe-core are not in package.json on main; the D00 build must add them (card says F00 does).

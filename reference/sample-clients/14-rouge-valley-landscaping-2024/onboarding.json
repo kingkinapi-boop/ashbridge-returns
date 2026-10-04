@@ -1,0 +1,132 @@
+{
+  "note": "Made up. Shaped like the bridge views in reference/onboarding-contract.md. The business number is nine plain digits that fail the check digit. SINs are never handed over (restricted-provided).",
+  "is_test": true,
+  "corporation": {
+    "legal_name": "Rouge Valley Landscaping Inc. (Test)",
+    "business_number": "104604112",
+    "financial_year_end": "2024-12-31",
+    "fiscal_year_start": "2024-01-01",
+    "jurisdiction": "ON",
+    "all_prior_years_filed": "no",
+    "incorporation_date": "2021-05-17",
+    "client_type": "ccpc",
+    "claims_small_business_deduction": "yes",
+    "hst_filing_frequency": "annual",
+    "hst_basis": "regular",
+    "books_kept_by": "owner, in a spreadsheet",
+    "outstanding_years": "2024 and 2025",
+    "financial_year_end_confirmed": false
+  },
+  "cra_program_accounts": [
+    {
+      "program": "corporate_tax",
+      "account_number": "104604112RC0001",
+      "is_open": true
+    },
+    {
+      "program": "hst",
+      "account_number": "104604112RT0001",
+      "is_open": true
+    }
+  ],
+  "owners": [
+    {
+      "name": "Declan Murphy (Test)",
+      "role": "owner",
+      "holder_kind": "person",
+      "approximate_share_percent": 100,
+      "share_class": "common",
+      "tax_residency": "CA",
+      "sin": "restricted-provided"
+    }
+  ],
+  "accounts_provided": [
+    {
+      "file": "accounts/maplestone-chequing-4417.csv",
+      "institution": "B: Maplestone Bank (Test) chequing",
+      "currency": "CAD",
+      "months": 12
+    },
+    {
+      "file": "accounts/aurora-business-card-9031.csv",
+      "institution": "Aurora Card (Test)",
+      "currency": "CAD",
+      "months": 12
+    }
+  ],
+  "services": ["t2", "hst", "bookkeeping"],
+  "related_entities": [],
+  "staff": {
+    "employees": 0,
+    "note": "No employees. Two crew members are paid per job by e-transfer."
+  },
+  "hst": {
+    "basis": "regular",
+    "frequency": "annual",
+    "note": "Annual filer; no HST return has been filed for 2024 or 2025."
+  },
+  "engagements": [
+    {
+      "id": "7c1f0a52-3d4e-4b8a-9c21-5e6d7f8a9b01",
+      "service": "t2",
+      "recurrence": "annual",
+      "tax_year": 2025,
+      "current_state": "intake",
+      "created_at": "2025-02-10T14:05:00Z",
+      "is_test": true
+    },
+    {
+      "id": "b94e2d17-60aa-4c35-8f1b-2a3c4d5e6f70",
+      "service": "t2",
+      "recurrence": "annual",
+      "tax_year": 2025,
+      "current_state": "intake",
+      "created_at": "2025-03-18T09:40:00Z",
+      "is_test": true
+    }
+  ],
+  "client_notes": ["I run the business from April to November. I have not filed anything for the last two years.", "I put $25,000 of my own money in when I bought the mower and trailer in 2024."],
+  "prior_year_closing_balances": {
+    "as_of": "2023-12-31",
+    "accounts": [
+      {
+        "account": "1010",
+        "name": "Chequing (CAD)",
+        "gifi": 1002,
+        "gifiName": "Deposits in Canadian banks and institutions - Canadian currency",
+        "gifiStatus": "settled",
+        "debit": 4563.31,
+        "credit": 0
+      },
+      {
+        "account": "2010",
+        "name": "Credit card payable",
+        "gifi": 2707,
+        "gifiName": "Credit card loans",
+        "gifiStatus": "confirm",
+        "note": "credit card loans (2707) or accounts payable (2620)",
+        "debit": 0,
+        "credit": 1190.87
+      },
+      {
+        "account": "3010",
+        "name": "Common shares",
+        "gifi": 3500,
+        "gifiName": "Common shares",
+        "gifiStatus": "settled",
+        "debit": 0,
+        "credit": 100
+      },
+      {
+        "account": "3600",
+        "name": "Retained earnings, opening",
+        "gifi": 3600,
+        "gifiName": "Retained earnings/deficit",
+        "gifiStatus": "settled",
+        "debit": 0,
+        "credit": 3272.44
+      }
+    ],
+    "ucc": []
+  }
+}

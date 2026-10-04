@@ -1,0 +1,100 @@
+{
+  "items": [
+    {
+      "id": "Q-SHD-001",
+      "type": "ASK",
+      "resolves": "onboarding.shareholder.holder_name",
+      "slots": [{ "name": "holder_name", "type": "fact_ref", "required": true }],
+      "answer": { "shape": "choice", "options": ["name_entry"] },
+      "label": "Shareholder name",
+      "topic": "shareholders-dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-SHD-002",
+      "type": "ASK",
+      "resolves": "onboarding.shareholder.holder_kind",
+      "slots": [
+        { "name": "holder_kind", "type": "choice", "required": true, "options": ["individual", "corporation", "trust", "partnership", "other"] }
+      ],
+      "answer": { "shape": "choice", "options": ["individual", "corporation", "trust", "partnership", "other"] },
+      "label": "Shareholder kind",
+      "topic": "shareholders-dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-SHD-003",
+      "type": "ASK",
+      "resolves": "onboarding.shareholder.percent_common",
+      "slots": [{ "name": "percent_common", "type": "percent", "required": true }],
+      "answer": { "shape": "number" },
+      "label": "Approximate share percent",
+      "topic": "shareholders-dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-SHD-004",
+      "type": "ASK",
+      "resolves": "onboarding.shareholder.share_class",
+      "slots": [
+        { "name": "share_class", "type": "choice", "required": true, "options": ["common", "preferred", "other"] }
+      ],
+      "answer": { "shape": "choice", "options": ["common", "preferred", "other"] },
+      "label": "Share class",
+      "topic": "shareholders-dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-SHD-005",
+      "type": "ASK",
+      "resolves": "onboarding.shareholder.tax_residency",
+      "slots": [
+        { "name": "tax_residency", "type": "choice", "required": true, "options": ["canada", "united_states", "other"] }
+      ],
+      "answer": { "shape": "choice", "options": ["canada", "united_states", "other"] },
+      "label": "Shareholder tax residency",
+      "topic": "shareholders-dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-SHD-006",
+      "type": "ASK",
+      "resolves": "onboarding.dividend.declared_on",
+      "slots": [{ "name": "declared_on", "type": "date", "required": true }],
+      "answer": { "shape": "date" },
+      "label": "Dividend declared on",
+      "topic": "shareholders-dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-SHD-007",
+      "type": "ASK",
+      "resolves": "onboarding.dividend.amount",
+      "slots": [{ "name": "dividend_amount", "type": "money_cents", "required": true }],
+      "answer": { "shape": "money" },
+      "label": "Declared dividend amount",
+      "topic": "shareholders-dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-SHD-008",
+      "type": "CONFIRM",
+      "resolves": "onboarding.dividend.resolution_on_file",
+      "slots": [],
+      "answer": { "shape": "yes_no" },
+      "label": "Dividend resolution on file",
+      "topic": "shareholders-dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-SHD-009",
+      "type": "ASK",
+      "resolves": "onboarding.owners.count",
+      "slots": [{ "name": "owners_count", "type": "count", "required": true }],
+      "answer": { "shape": "number" },
+      "label": "Number of owners",
+      "topic": "shareholders-dividends",
+      "retired": false
+    }
+  ]
+}

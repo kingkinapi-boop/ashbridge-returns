@@ -1,0 +1,124 @@
+{
+  "items": [
+    {
+      "id": "Q-CRA-001",
+      "type": "CONFIRM",
+      "resolves": "onboarding.hst.registered",
+      "slots": [],
+      "answer": {
+        "shape": "yes_no"
+      },
+      "label": "Registered for HST",
+      "topic": "cra-hst-instalments",
+      "retired": false
+    },
+    {
+      "id": "Q-CRA-002",
+      "type": "ASK",
+      "resolves": "onboarding.corporation.hst_filing_frequency",
+      "slots": [
+        {
+          "name": "frequency",
+          "type": "choice",
+          "required": true,
+          "options": [
+            "monthly",
+            "quarterly",
+            "annual"
+          ]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": [
+          "monthly",
+          "quarterly",
+          "annual"
+        ]
+      },
+      "label": "HST filing frequency",
+      "topic": "cra-hst-instalments",
+      "retired": false
+    },
+    {
+      "id": "Q-CRA-003",
+      "type": "ASK",
+      "resolves": "onboarding.corporation.hst_basis",
+      "slots": [
+        {
+          "name": "basis",
+          "type": "choice",
+          "required": true,
+          "options": [
+            "regular",
+            "quick_method"
+          ]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": [
+          "regular",
+          "quick_method"
+        ]
+      },
+      "label": "HST accounting basis",
+      "topic": "cra-hst-instalments",
+      "retired": false
+    },
+    {
+      "id": "Q-CRA-004",
+      "type": "ASK",
+      "resolves": "onboarding.cra_program.program",
+      "slots": [
+        {
+          "name": "program",
+          "type": "choice",
+          "required": true,
+          "options": [
+            "corporate_tax",
+            "hst",
+            "payroll",
+            "information_returns"
+          ]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": [
+          "corporate_tax",
+          "hst",
+          "payroll",
+          "information_returns"
+        ]
+      },
+      "label": "CRA program account",
+      "topic": "cra-hst-instalments",
+      "retired": false
+    },
+    {
+      "id": "Q-CRA-005",
+      "type": "CONFIRM",
+      "resolves": "onboarding.cra_program.is_open",
+      "slots": [],
+      "answer": {
+        "shape": "yes_no"
+      },
+      "label": "CRA program account open",
+      "topic": "cra-hst-instalments",
+      "retired": false
+    },
+    {
+      "id": "Q-CRA-006",
+      "type": "CONFIRM",
+      "resolves": "onboarding.cra_record.available",
+      "slots": [],
+      "answer": {
+        "shape": "yes_no"
+      },
+      "label": "CRA record available",
+      "topic": "cra-hst-instalments",
+      "retired": false
+    }
+  ]
+}

@@ -48,3 +48,7 @@ Two tests in `src/core/egress-rules.acceptance.test.ts` pass with the feature de
 ## Also (2 Oct): flaky egress test
 
 `src/core/egress-rules.acceptance.test.ts` SEC-5 ESLint case times out under whole-suite load and passes alone (local worker report, S00 spec). A flaky test is a failure (testing.md): TH's egress rewrite gives that case its own timeout budget or runs ESLint once per suite, and the flake run covers it.
+
+## Build round 2 (2 Oct, A306 single cause)
+
+The check passed, but the branch's own GitHub run still fails gitleaks with `--log-opts="HEAD"`: 1 leak in the branch history (402 commits). Run gitleaks with `-v --redact` (the CI step may add `-v`) to name the rule, file and line; never print a value. A planted test value (TH's own "planted secret still fails" case, or A05's `PLANTED-`/`k-test-` values) gets a regex allowlist entry scoped to that pattern; anything that looks like a real secret: stop, release with the rule and file, and the Lead decides. TH boards only with every GitHub step green.

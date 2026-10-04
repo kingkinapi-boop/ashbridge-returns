@@ -39,9 +39,10 @@
 //   height, and a page of zero width or height. ReadingResultSchema refuses a page list that is not
 //   exactly pages 1 to pageCount. reading.ts carries `// @mutate` in its first 5 lines.
 
-import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, expectTypeOf, test } from 'vitest'
 import fc from 'fast-check'
+import { readOwnSource } from '../core/testing/read-own-source'
 import {
   BoxSchema,
   ReadingResultSchema,
@@ -752,7 +753,7 @@ describe('whole-box validity (round 2)', () => {
 
 describe('mutation testing marker (round 2)', () => {
   test('ARC-15 (f) reading.ts carries "// @mutate" in its first 5 lines, so mutate:changed runs Stryker on it', () => {
-    const source = readFileSync(new URL('./reading.ts', import.meta.url), 'utf8')
+    const source = readOwnSource(fileURLToPath(new URL('./reading.ts', import.meta.url)))
     const head = source.split('\n').slice(0, 5)
     expect(head.some((l) => l.includes('// @mutate'))).toBe(true)
   })
@@ -1060,10 +1061,16 @@ describe('mutation survivors: amount groups (round 4)', () => {
     expect(found(['1,234.56', '-5.00'], '-5.00')).toEqual(OK)
   })
 
-  test('EV-6 r4 a trailing sign closes the group: "1,234.56" "-" "7" is -1234.56 then 7', () => {
-    // Mutant 375.
-    expect(found(['1,234.56', '-', '7'], '-1234.56')).toEqual(OK)
-    expect(found(['1,234.56', '-', '7'], '7')).toEqual(OK)
+  test('EV-6 F09A A296 leading binds first: "1,234.56" "-" "7" is 1234.56 and -7; "1,234.56" "-" with nothing after is -1234.56', () => {
+    // Rewritten by spec(F09A) (card F09A, spec round 2): the round 4 test pinned the greedy trailing
+    // dash that A296 declared wrong. Mutant 375's intent (a trailing sign closes the group) is kept by
+    // the "-" with nothing after it.
+    expect(found(['1,234.56', '-', '7'], '1234.56')).toEqual(OK)
+    expect(found(['1,234.56', '-', '7'], '-7')).toEqual(OK)
+    expect(found(['1,234.56', '-', '7'], '-1234.56')).toEqual(NOT_FOUND)
+    expect(found(['1,234.56', '-', '7'], '7')).toEqual(NOT_FOUND)
+    expect(found(['1,234.56', '-'], '-1234.56')).toEqual(OK)
+    expect(found(['1,234.56', '-'], '1234.56')).toEqual(NOT_FOUND)
   })
 
   test('EV-6 r4 "$" "-" "1,234.56" as three words is -1234.56, never 1234.56', () => {

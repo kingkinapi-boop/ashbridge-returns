@@ -1,5 +1,8 @@
 # Family: test world kind ({kind})
 
+Phase (the card's own, in plan/slices.json). Where: local or cloud.
+Tags: none.
+
 Cards W01 to W13. Deps, paths and clauses: the card's entry in `plan/slices.json`. Read blueprint 00 (the kinds table), the clauses on the card, and `testworld/model/` (W00).
 
 ## Goal
@@ -18,6 +21,14 @@ One made-up corporation, {kind}, with everything a real file would hold and the 
 2. The books balance and retained earnings roll (the model's own checks).
 3. Every clause on the card has at least one planted fault or expected result that names it.
 4. No real person, business or number (names end in "(Test)").
+5. Each planted fault drawn from a sample flag names the clause `data/question-coverage.json` (G18) gives that flag, and a test compares them; a flag the map marks cpa-judgment (owner X00) names no clause and is expected on the CPA's review, not from a check (A499).
 
 ## Not in this card
 Rendering documents (W21 to W38). Any product code.
+
+## Fault registration (2 Oct, A363)
+Each kind card registers its planted faults by adding a `KNN_FAULTS` list that `testworld/model/faults.ts` merges into the catalogue; W00's unit test that pins 107 entries is rewritten by the first kind's spec job to count the base list plus every registered kind list (computed, never a literal). A kind never edits another kind's list.
+Each marker entry lists its rows by id, with date and amount, and the checks pin every listed row (never a count or a sum; A403, reports/W00c-findings.md RC1).
+
+## From findings W00 round 2 (2 Oct, A364)
+Check 4 runs W00b's `guardFolder` on the kind's folder (through `loadKind`). Each kind adds rows to `testworld/model/guard-fields.ts` for any new JSON path its data introduces; the closed table refuses unclassified paths.

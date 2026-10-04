@@ -1,0 +1,83 @@
+{% from "govuk/components/skip-link/macro.njk" import govukSkipLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/task-list/macro.njk" import govukTaskList %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "moj/components/alert/macro.njk" import mojAlert %}
+{% from "moj/components/identity-bar/macro.njk" import mojIdentityBar %}
+{% from "moj/components/timeline/macro.njk" import mojTimeline %}
+<!doctype html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title>Design basis sample (Ashbridge Tax)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="basis.css">
+</head>
+<body class="govuk-template__body">
+  {{ govukSkipLink({ href: '#main-content', text: 'Skip to main content' }) }}
+  <header class="govuk-header">
+    <div class="govuk-header__container govuk-width-container">
+      <div class="govuk-header__logo">
+        <a href="#" class="govuk-header__homepage-link"><img src="ashbridge-tax-logo.png" alt="Ashbridge Tax home" height="40" style="width:auto;height:40px"></a>
+      </div>
+    </div>
+  </header>
+  {{ govukServiceNavigation({ serviceName: 'Ashbridge Returns', serviceUrl: '#', navigation: [{ href: '#', text: 'Queue', active: true }, { href: '#', text: 'Review' }, { href: '#', text: 'Sign out' }] }) }}
+  <div class="govuk-width-container app-width-container--wide">
+    <main class="govuk-main-wrapper" id="main-content">
+      <h1 class="govuk-heading-xl">Design basis sample</h1>
+      <p class="govuk-body">Every part the designs may use, in the Ashbridge Tax brand, with made-up data.</p>
+
+      <h2 class="govuk-heading-l">Return identity</h2>
+      {{ mojIdentityBar({
+        title: { html: 'Sample Holdings Ltd (Test)' },
+        menus: [{ items: [{ text: 'Send to preparer', href: '#' }] }]
+      }) }}
+
+      <h2 class="govuk-heading-l">Alert</h2>
+      {{ mojAlert({ variant: 'information', title: 'Approval is void', text: 'A number changed after review.', showTitleAsHeading: true, headingLevel: 3 }) }}
+
+      <h2 class="govuk-heading-l">Notification</h2>
+      {{ govukNotificationBanner({ type: 'success', text: 'Section 3 marked as reviewed.' }) }}
+
+      <h2 class="govuk-heading-l">Errors</h2>
+      {{ govukErrorSummary({ titleText: 'There is a problem', errorList: [{ text: 'Enter a reason', href: '#reason' }] }) }}
+      {{ govukInput({ label: { text: 'Reason' }, id: 'reason', name: 'reason', errorMessage: { text: 'Enter a reason' } }) }}
+      {{ govukRadios({ classes: 'govuk-radios--small', name: 'kind', fieldset: { legend: { text: 'Comment type', classes: 'govuk-fieldset__legend--m' } }, items: [{ value: 'q', text: 'Question' }, { value: 'c', text: 'Change' }] }) }}
+      {{ govukButton({ text: 'Send to preparer' }) }}
+
+      <h2 class="govuk-heading-l">Table</h2>
+      {{ govukTable({
+        caption: 'Six numbers', captionClasses: 'govuk-table__caption--m', firstCellIsHeader: true,
+        head: [{ text: 'Measure' }, { text: 'This year', format: 'numeric' }, { text: 'Last year', format: 'numeric' }],
+        rows: [
+          [{ text: 'Revenue' }, { text: '1,200,000', format: 'numeric' }, { text: '1,100,000', format: 'numeric' }],
+          [{ text: 'Net income' }, { text: '90,000', format: 'numeric' }, { text: '80,000', format: 'numeric' }]
+        ]
+      }) }}
+
+      <h2 class="govuk-heading-l">Tags</h2>
+      <p class="govuk-body">{{ govukTag({ text: 'Reviewed', classes: 'govuk-tag--green' }) }} {{ govukTag({ text: 'Not reviewed', classes: 'govuk-tag--grey' }) }}</p>
+
+      <h2 class="govuk-heading-l">Summary</h2>
+      {{ govukSummaryList({ rows: [{ key: { text: 'Corporation' }, value: { text: 'Sample Holdings Ltd (Test)' } }, { key: { text: 'Year end' }, value: { text: '31 December 2025' } }] }) }}
+
+      <h2 class="govuk-heading-l">Tasks</h2>
+      {{ govukTaskList({ items: [{ title: { text: 'Export from Taxprep' }, href: '#', status: { text: 'Completed' } }, { title: { text: 'Gate 2' }, status: { text: 'Cannot start yet', classes: 'govuk-task-list__status--cannot-start-yet' } }] }) }}
+
+      <h2 class="govuk-heading-l">Timeline</h2>
+      {{ mojTimeline({ items: [{ label: { text: 'Comment added' }, text: 'Check the CCA schedule.', datetime: { timestamp: '2026-10-01T10:00:00', type: 'datetime' }, byline: { text: 'CPA (Test)' } }] }) }}
+
+      {{ govukDetails({ summaryText: 'Keyboard shortcuts', text: 'N moves to the next section.' }) }}
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "items": [
+    {
+      "id": "Q-REV-001",
+      "type": "ASK",
+      "resolves": "qa.revenue.annual_sales",
+      "slots": [{ "name": "annual_sales", "type": "money_cents", "required": true }],
+      "answer": { "shape": "money" },
+      "label": "Annual sales amount",
+      "topic": "revenue",
+      "retired": false
+    },
+    {
+      "id": "Q-REV-002",
+      "type": "ASK",
+      "resolves": "onboarding.sales_channels.list",
+      "slots": [
+        {
+          "name": "channels",
+          "type": "choice",
+          "required": true,
+          "options": ["in_person", "online_store", "marketplace", "wholesale", "services_only", "other"]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": ["in_person", "online_store", "marketplace", "wholesale", "services_only", "other"]
+      },
+      "label": "Sales channels used",
+      "topic": "revenue",
+      "retired": false
+    },
+    {
+      "id": "Q-REV-003",
+      "type": "CONFIRM",
+      "resolves": "onboarding.fx.has_foreign_currency",
+      "slots": [],
+      "answer": { "shape": "yes_no" },
+      "label": "Foreign currency sales or accounts",
+      "topic": "revenue",
+      "retired": false
+    }
+  ]
+}

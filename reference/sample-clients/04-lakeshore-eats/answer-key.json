@@ -1483,6 +1483,40 @@
     },
     "netIncomeLossBeforeTax": 33449.45
   },
+  "assets": [
+    {
+      "description": "Kitchen equipment brought forward",
+      "glAccount": "1530",
+      "accumAccount": "1531",
+      "class": "8",
+      "cost": 50000,
+      "availableForUse": "2022-07-01",
+      "book": {
+        "method": "straight-line",
+        "years": 5,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    },
+    {
+      "description": "Walk-in cooler brought forward",
+      "glAccount": "1530",
+      "accumAccount": "1531",
+      "class": "8",
+      "cost": 12000,
+      "availableForUse": "2023-10-01",
+      "book": {
+        "method": "straight-line",
+        "years": 5,
+        "convention": "monthly"
+      },
+      "cca": {
+        "firstYear": "aii"
+      }
+    }
+  ],
   "t2Inputs": {
     "netIncomeLossPerBooksBeforeTax": 33449.45,
     "schedule1": {
@@ -1504,7 +1538,7 @@
       "openingUcc": [
         {
           "class": "8",
-          "ucc": 21400,
+          "ucc": 29120,
           "note": "brought forward from last year, made-up figure"
         }
       ],

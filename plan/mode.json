@@ -1,11 +1,12 @@
 {
   "mode": "turbo",
   "resume_to": null,
-  "set_by": "Zo, 2 Oct 2026 about 02:10Z: \"turbo on\" (decision 0018), after the Reviewer SLOW of 01:50Z (he answered its A63/A69 item in the same sitting); local_workers 2 (0018). The Reviewer HOLD on money.ts, ids.ts and clock stays (card F00T).",
-  "set_at": "2026-10-02",
-  "why": "Zo raised it. The Lead does the Reviewer fixes first in the queue: F00T (core tests by a spec job, seeded), per-file mutation break on @mutate files (DG), F09 and TH first.",
+  "set_by": "Zo, 3 Oct 2026 13:26Z: \"turbo on\" (after the Reviewer's SLOW of 13:15Z; the Lead's findings 1, 2, 5 and 8 done, A477)",
+  "set_at": "2026-10-03",
+  "cap_from": null,
+  "why": "Zo raised it. Order: W00c lands first (most cards wait on it); the design lane restarts (decision 0027); the Reviewer's open items go to CQ11 and cards. 3 Oct: local_workers 3 and heavy_slots 2 (decision 0026); a fresh local worker name per dispatch (Review 3 Oct).",
   "wind_down_at": "2026-10-09T18:00:00-04:00",
-  "heavy_slots": 1,
+  "heavy_slots": 2,
   "max_workers": 12,
-  "local_workers": 2
+  "local_workers": 3
 }

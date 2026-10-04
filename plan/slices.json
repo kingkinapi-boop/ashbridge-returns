@@ -133,7 +133,7 @@
       "closed": "2026-10-01"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -153,7 +153,9 @@
         "src/contracts/ids.ts",
         "src/contracts/index.ts",
         "src/contracts/records.test.ts",
-        "src/contracts/records.acceptance.db.test.ts"
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts"
       ],
       "clauses": [
         "EV-1",
@@ -179,7 +181,107 @@
       "hard": true,
       "security": true,
       "core": true,
-      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first."
+      "note": "Fix round 2 from reports/findings-F01-F09.md: checks 13 to 19 by a new spec worker, then build round 2; the re-check waits for both; F09 lands first. Parked 2 Oct after round 3 (A359): split into F01C, which lands its work."
+    },
+    {
+      "status": "parked",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09"
+      ],
+      "paths": [
+        "db/schema/00_schema.sql",
+        "db/schema/10_documents.sql",
+        "db/schema/20_ledger.sql",
+        "db/schema/30_books.sql",
+        "db/schema/40_figures.sql",
+        "db/schema/50_returns.sql",
+        "db/schema/60_versions.sql",
+        "db/schema/70_checks.sql",
+        "db/schema/90_learning.sql",
+        "src/contracts/records.ts",
+        "src/contracts/ids.ts",
+        "src/contracts/index.ts",
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "EV-14",
+        "FLOW-4",
+        "TB-1",
+        "TB-2",
+        "TB-3",
+        "FLOW-1",
+        "SEC-6",
+        "SEC-7",
+        "ARC-2",
+        "ARC-3",
+        "ARC-10"
+      ],
+      "id": "F01C",
+      "title": "Records and schema: the last narrow repairs (F01 split)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/F01C from claude/F01 round 3 head; lands F01 work (A359). Parked 2 Oct after its last round (A367): split into F01D, which lands F01 and F01C work."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09"
+      ],
+      "paths": [
+        "db/schema/00_schema.sql",
+        "db/schema/10_documents.sql",
+        "db/schema/20_ledger.sql",
+        "db/schema/30_books.sql",
+        "db/schema/40_figures.sql",
+        "db/schema/50_returns.sql",
+        "db/schema/60_versions.sql",
+        "db/schema/70_checks.sql",
+        "db/schema/90_learning.sql",
+        "src/contracts/records.ts",
+        "src/contracts/ids.ts",
+        "src/contracts/index.ts",
+        "src/contracts/records.test.ts",
+        "src/contracts/records.acceptance.db.test.ts",
+        "src/contracts/text.ts",
+        "src/contracts/text.test.ts",
+        "src/contracts/value-columns.db.test.ts"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "EV-8",
+        "EV-10",
+        "EV-14",
+        "FLOW-4",
+        "TB-1",
+        "TB-2",
+        "TB-3",
+        "FLOW-1",
+        "SEC-6",
+        "SEC-7",
+        "ARC-2",
+        "ARC-3",
+        "ARC-10"
+      ],
+      "id": "F01D",
+      "title": "Records and schema: closing repairs (F01C split)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/F01D from claude/F01C round head (A367).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -213,7 +315,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F03"
@@ -233,14 +335,16 @@
       "id": "F03R",
       "title": "Taxprep CSV contract: apostrophe and writer repairs",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09B"
       ],
       "paths": [
         "src/contracts/ai.ts",
@@ -257,7 +361,35 @@
       "title": "AI output contract (schemas and citations)",
       "phase": 0,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "F01D",
+        "F04",
+        "F05M"
+      ],
+      "paths": [
+        "src/contracts/ai.ts",
+        "src/contracts/ai.test.ts",
+        "src/contracts/checks.ts",
+        "src/contracts/checks.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts"
+      ],
+      "clauses": [
+        "AI-5",
+        "ARC-8"
+      ],
+      "id": "BL0",
+      "title": "One blank rule everywhere",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From F01 r2 findings and the F04, A01 checks (A357).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -315,7 +447,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -326,7 +458,10 @@
         "tools/mutate-changed.mjs",
         ".gitattributes",
         "tools/test/done-gate.test.mjs",
-        "tools/test/__fixtures__/done-gate/**"
+        "tools/test/__fixtures__/done-gate/**",
+        "stryker.config.mjs",
+        "vitest.mutate.config.ts",
+        "src/core/testing/read-own-source.ts"
       ],
       "clauses": [
         "ARC-12",
@@ -338,7 +473,32 @@
       "title": "Done gate: scope and mutation agree with how jobs make files",
       "phase": 0,
       "size": "S",
-      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW)."
+      "note": "Fix 2 of reports/findings-E03-F03.md, rule tests R19 to R21; ship with fix 1 (builder.md, checker.md, done by the Lead). Round 1 landed 8512e1d (2 Oct); round 2 adds R22 per-file 100 (Reviewer SLOW). Round 2 landed 2 Oct; round 3 (skip __fixtures__ for the marker) open.",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "DG"
+      ],
+      "paths": [
+        "tools/mutate-changed.mjs",
+        "vitest.mutate.config.ts",
+        "stryker.config.mjs",
+        "tools/test/done-gate.test.mjs",
+        "tools/test/__fixtures__/done-gate/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "DG2",
+      "title": "Mutation gate covers testworld and every core card",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From findings W00 r1 RC2 (A353).",
+      "done": "2026-10-02"
     },
     {
       "status": "done",
@@ -375,7 +535,8 @@
       "phase": 0,
       "size": "S",
       "note": "Reviewer SLOW 2 Oct, findings 1 and 2: HOLD on money, ids and the clock until it lands (F05M, M00, A06, B04, B05, F06, JH0, U02, V00 wait on it).",
-      "done": "2026-10-02"
+      "done": "2026-10-02",
+      "core": true
     },
     {
       "status": "done",
@@ -428,7 +589,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F09"
@@ -450,15 +611,41 @@
       "phase": 0,
       "size": "M",
       "core": true,
-      "note": "Split from F09 (A297): owns normaliseAmount, amountGroups, AMOUNT_FORMATS and checks 14 to 16, 19, 20; the grammar table and dash rule (A296); F09 findings 1 to 3 stay on main with no consumer until this lands."
+      "note": "Split from F09 (A297): owns normaliseAmount, amountGroups, AMOUNT_FORMATS and checks 14 to 16, 19, 20; the grammar table and dash rule (A296); F09 findings 1 to 3 stay on main with no consumer until this lands. Parked 2 Oct after its third failed check (A349): split into F09B, which lands its work."
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "F01",
+        "F09"
+      ],
+      "paths": [
+        "src/contracts/amount-grammar.ts",
+        "src/contracts/amount-grammar.test.ts",
+        "src/contracts/amount-grammar.acceptance.test.ts",
+        "src/contracts/reading.ts"
+      ],
+      "clauses": [
+        "EV-6",
+        "EV-5",
+        "ARC-8",
+        "ARC-15"
+      ],
+      "id": "F09B",
+      "title": "Amount grammar: geometry and edge repairs (F09A split)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/F09B starts from claude/F09A fc17ad4; lands F09A work plus the round 3 fixes (A349).",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "F01D",
         "F09",
-        "F09A",
+        "F09B",
         "F05M"
       ],
       "paths": [
@@ -480,10 +667,11 @@
       "title": "Schema and contract rules",
       "phase": 0,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00"
@@ -507,20 +695,27 @@
       "id": "TH",
       "title": "Test homes: every test runs, every file is typed and linted",
       "phase": 0,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
-        "TH"
+        "TH",
+        "DG2"
       ],
       "paths": [
         "testworld/model/**",
         "testworld/index.ts",
         "testworld/generate.ts",
-        "testworld/clients/**"
+        "testworld/clients/**",
+        "reference/sample-clients/**/taxprep/*.csv",
+        ".gitattributes",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/core/money.ts",
+        "src/contracts/__fixtures__/taxprep-bytes.ts"
       ],
       "clauses": [
         "ARC-8",
@@ -535,13 +730,84 @@
       "size": "L",
       "hard": true,
       "security": true,
-      "core": true
+      "core": true,
+      "note": " Parked 2 Oct before its last round (A364): split into W00a (model, loader, rolls) and W00b (guard)."
+    },
+    {
+      "status": "parked",
+      "spec": null,
+      "deps": [
+        "DG2"
+      ],
+      "paths": [
+        "testworld/model/checks.ts",
+        "testworld/model/load.ts",
+        "testworld/model/faults.ts",
+        "testworld/model/money.ts",
+        "testworld/model/schema.ts",
+        "testworld/model/__fixtures__/**",
+        "testworld/index.ts",
+        "testworld/generate.ts",
+        "testworld/clients/**",
+        "reference/sample-clients/**/taxprep/*.csv",
+        ".gitattributes",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/core/money.ts",
+        "src/contracts/__fixtures__/taxprep-bytes.ts"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16",
+        "END-9",
+        "TB-3"
+      ],
+      "id": "W00a",
+      "title": "Test world: model, loader and rolls (W00 split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Branch claude/W00a from claude/W00 round 2 head (A364). Parked 2 Oct: third failure of W00, split to W00c (reports/W00a-findings.md)."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "F03"
+        "W00c",
+        "FX8"
+      ],
+      "paths": [
+        "testworld/model/guard.ts",
+        "testworld/model/guard-fields.ts",
+        "testworld/model/made-up-data.acceptance.test.ts",
+        "testworld/model/kinds.ts",
+        "testworld/model/__fixtures__/guard/**",
+        "testworld/clients/load.ts",
+        "testworld/generate.ts",
+        "testworld/model/guard.test.ts",
+        "testworld/clients/made-up-data.acceptance.test.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-8"
+      ],
+      "id": "W00b",
+      "title": "Test world: the personal-data guard, closed-world (W00 split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "security": true,
+      "note": "Branch claude/W00b from claude/W00a after its build (A364)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "F03",
+        "F03R",
+        "W00c"
       ],
       "paths": [
         "src/modules/taxprep-sim/core/**",
@@ -646,17 +912,20 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
-        "F09"
+        "F09",
+        "F09B",
+        "F01D"
       ],
       "paths": [
         "src/modules/ocr/textlayer/**",
         "src/modules/ocr/index.ts",
         "package.json",
-        "package-lock.json"
+        "package-lock.json",
+        "src/contracts/reading.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -667,21 +936,23 @@
       "title": "Reading PDFs: text layer with word boxes",
       "phase": 0,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "F01",
-        "F00T"
+        "F01D",
+        "F00T",
+        "W00c"
       ],
       "paths": [
         "e2e/_harness/**",
         "package.json",
         "e2e/steps/README.md",
-        "package-lock.json"
+        "package-lock.json",
+        "testworld/harness/**"
       ],
       "clauses": [
         "END-9",
@@ -694,22 +965,24 @@
       "title": "Journey harness: load a kind, run the pipeline",
       "phase": 0,
       "size": "M",
-      "security": true
+      "security": true,
+      "note": "Journeys run next start (production mode): the harness sets every *_ENGINE explicitly (A06 findings, R62)."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01D",
         "F03",
         "F04",
         "F05",
-        "W00",
         "S00",
         "A01",
         "JH0",
         "F09",
-        "F09A"
+        "F09B",
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "e2e/skeleton/**",
@@ -728,10 +1001,10 @@
       "hard": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "F01"
+        "F01D"
       ],
       "paths": [
         "src/contracts/lifecycle.ts",
@@ -751,13 +1024,14 @@
       "title": "Lifecycle, due dates and holds",
       "phase": 1,
       "size": "M",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "F01",
+        "F01D",
         "F00T"
       ],
       "paths": [
@@ -774,7 +1048,8 @@
       "id": "F06",
       "title": "Jobs table and worker",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -789,7 +1064,8 @@
         ".dependency-cruiser.cjs",
         "e2e/skeleton/**",
         "e2e/steps/**",
-        "e2e/_harness/pipeline.ts"
+        "e2e/_harness/pipeline.ts",
+        "playwright.config.ts"
       ],
       "clauses": [
         "ARC-5",
@@ -805,16 +1081,17 @@
       "hard": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "F01",
+        "F01D",
         "P01"
       ],
       "paths": [
         "src/modules/bridge/**",
         "src/contracts/bridge.ts",
-        "db/schema/05_bridge.sql"
+        "db/schema/05_bridge.sql",
+        "db/schema/55_bridge_returns.sql"
       ],
       "clauses": [
         "END-1",
@@ -827,14 +1104,16 @@
       "title": "Client-app bridge on made-up data",
       "phase": 1,
       "size": "M",
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "W14"
+        "W14",
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K01/**"
@@ -856,7 +1135,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K02/**"
@@ -878,7 +1158,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K03/**"
@@ -895,13 +1176,15 @@
       "family": "kind",
       "params": {
         "kind": "K03"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K04/**"
@@ -923,8 +1206,9 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "W14"
+        "W14",
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K05/**"
@@ -947,8 +1231,9 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "W15"
+        "W15",
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K06/**"
@@ -970,7 +1255,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K07/**"
@@ -988,13 +1274,15 @@
       "family": "kind",
       "params": {
         "kind": "K07"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K08/**"
@@ -1019,7 +1307,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K09/**"
@@ -1038,13 +1327,14 @@
       "params": {
         "kind": "K09"
       },
-      "note": "Sample client 03's answer key says 'payment by day 179 (26 Dec 2025)'; under CK-47 (amber A71) payment on day 180 (27 Dec 2025) is in time and day 181 or later is late. Build K9's expected results on day 180; the 03 result (paid day 181, flagged) stands. Do not edit reference/sample-clients; the Lead fixes its wording."
+      "note": "Sample client 03's answer key says 'payment by day 179 (26 Dec 2025)'; under CK-47 (amber A71) payment on day 180 (27 Dec 2025) is in time and day 181 or later is late. Build K9's expected results on day 180; the 03 result (paid day 181, flagged) stands. Do not edit reference/sample-clients; the Lead fixes its wording. A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K10/**"
@@ -1062,13 +1352,15 @@
       "family": "kind",
       "params": {
         "kind": "K10"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K11/**"
@@ -1092,7 +1384,8 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00"
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K12/**"
@@ -1118,8 +1411,9 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
-        "W15"
+        "W15",
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/kinds/K13/**"
@@ -1173,7 +1467,7 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "W14"
@@ -1204,16 +1498,48 @@
       "phase": 1,
       "size": "M",
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "reference/sample-clients/clients/c03_04.mjs",
+        "reference/sample-clients/clients/c07_08.mjs",
+        "reference/sample-clients/clients/c09_10.mjs",
+        "reference/sample-clients/03-*/**",
+        "reference/sample-clients/04-*/**",
+        "reference/sample-clients/07-*/**",
+        "reference/sample-clients/08-*/**",
+        "reference/sample-clients/10-*/**",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md"
+      ],
+      "clauses": [
+        "END-2",
+        "ARC-8",
+        "ARC-16",
+        "SEC-11"
+      ],
+      "id": "W16",
+      "title": "Sample clients 03, 04, 07, 08, 10: asset registers so opening amortization and UCC recompute",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "done": "2026-10-03"
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "W00",
         "F09",
-        "F09A",
-        "A01"
+        "F09B",
+        "A01",
+        "W00c",
+        "W00b"
       ],
       "paths": [
         "testworld/render/_core/**",
@@ -1644,7 +1970,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "A01",
@@ -1664,19 +1990,24 @@
       "title": "Reading: recorded results for tests",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
-      "spec": null,
+      "status": "done",
+      "spec": "be09e312",
       "deps": [
         "F04",
-        "F06"
+        "F06",
+        "A06"
       ],
       "paths": [
         "src/modules/ai/runner/**",
         "src/modules/ai/index.ts",
-        "data/ai/approved.json"
+        "data/ai/approved.json",
+        "src/core/env.ts",
+        "src/core/safe-read.ts",
+        "src/core/safe-read.test.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -1696,7 +2027,31 @@
       "size": "M",
       "hard": true,
       "core": true,
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/runner.acceptance.test.ts",
+        "src/modules/ai/runner/exchange.acceptance.test.ts",
+        "src/modules/ai/runner/runner.ts"
+      ],
+      "clauses": [
+        "AI-9",
+        "ARC-15"
+      ],
+      "id": "A04C",
+      "title": "AI runner: one clock, pinned as a class",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "note": "Split from A04 (A477, Review 3 Oct finding 2).",
+      "done": "2026-10-03"
     },
     {
       "status": "done",
@@ -1722,17 +2077,20 @@
       "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
-        "F01",
+        "F01D",
         "F00T"
       ],
       "paths": [
         "src/modules/auth/**",
         "src/contracts/auth.ts",
-        "db/schema/15_auth.sql"
+        "db/schema/15_auth.sql",
+        "src/core/env.ts",
+        "src/core/env.settings.test.ts",
+        "src/contracts/auth.acceptance.test.ts"
       ],
       "clauses": [
         "SEC-1",
@@ -1748,15 +2106,16 @@
       "title": "Staff sign-in stand-in and roles",
       "phase": 1,
       "size": "S",
-      "security": true
+      "security": true,
+      "done": "2026-10-03"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
         "F09",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "src/modules/sheets/**",
@@ -1775,7 +2134,65 @@
       "title": "Spreadsheet and CSV reader",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "note": "Parked 2 Oct after round 2 (A366): split into A07B, which lands its work. Superseded: landed through A07C (2 Oct)."
+    },
+    {
+      "status": "parked",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09",
+        "F09B"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts",
+        "package.json",
+        "package-lock.json"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "A07B",
+      "title": "Spreadsheet reader: the last narrow repairs (A07 split)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/A07B from claude/A07 93ab657 (A366). Parked 2 Oct after its last round (A368): split into A07C. Superseded: landed through A07C (2 Oct)."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09",
+        "F09B"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts",
+        "package.json",
+        "package-lock.json"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "A07C",
+      "title": "Spreadsheet reader: closing repairs (A07B split)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "Branch claude/A07C from claude/A07B round head (A368). Lands at b80c251 with D1 to D3 moved to A07D (reports/A07C-findings.md).",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -1786,7 +2203,8 @@
       "paths": [
         "ai-project/**",
         "src/modules/ai/project/**",
-        "package.json"
+        "package.json",
+        "src/core/env.ts"
       ],
       "clauses": [
         "ARC-6",
@@ -1814,14 +2232,16 @@
       "security": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
         "TH"
       ],
       "paths": [
-        "design/basis/**"
+        "design/basis/**",
+        "package.json",
+        "package-lock.json"
       ],
       "clauses": [
         "RV-52",
@@ -1831,10 +2251,31 @@
       "id": "D00",
       "title": "Design basis: GOV.UK and MOJ components, Ashbridge brand",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
+      "spec": "n/a",
+      "deps": [
+        "D00"
+      ],
+      "paths": [
+        "design/basis/**"
+      ],
+      "clauses": [
+        "RV-55"
+      ],
+      "id": "D00L",
+      "title": "Design basis uses Zo's logo",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Decision 0020 Z20-8.",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
       "spec": null,
       "deps": [
         "TH"
@@ -1854,10 +2295,11 @@
       "id": "D01",
       "title": "Staff screen map and navigation",
       "phase": 1,
-      "size": "M"
+      "size": "M",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1883,10 +2325,11 @@
       "family": "design",
       "params": {
         "screen": "cpa-review"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1906,10 +2349,11 @@
       "family": "design",
       "params": {
         "screen": "source-viewer"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1929,10 +2373,11 @@
       "family": "design",
       "params": {
         "screen": "queue"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1952,10 +2397,11 @@
       "family": "design",
       "params": {
         "screen": "gaps"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -1976,10 +2422,11 @@
       "family": "design",
       "params": {
         "screen": "shell"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "F00",
@@ -2000,13 +2447,14 @@
       "title": "Staff component library (GOV.UK and MOJ in React)",
       "phase": 1,
       "size": "L",
-      "hard": true
+      "hard": true,
+      "note": "Parked 2 Oct (A354): starts only after Zo approves D00 at a design sitting (card \"When it starts\"); the queue offered it early."
     },
     {
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01D",
         "F02",
         "F04",
         "SK0"
@@ -2015,7 +2463,8 @@
         "src/modules/ledger/core/**",
         "src/modules/ledger/index.ts",
         "src/contracts/ledger.ts",
-        "db/schema/20_ledger.sql"
+        "db/schema/20_ledger.sql",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "EV-1",
@@ -2046,7 +2495,8 @@
         "src/modules/ledger/dots/**",
         "src/modules/ledger/index.ts",
         "data/ledger/origins.json",
-        "data/ledger/agree-rules.json"
+        "data/ledger/agree-rules.json",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "EV-10",
@@ -2064,14 +2514,14 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
+        "F01D",
         "F06",
         "F09",
         "F10",
         "A01",
         "A02",
         "A05",
-        "A07",
+        "A07C",
         "SK0"
       ],
       "paths": [
@@ -2079,7 +2529,11 @@
         "src/modules/documents/index.ts",
         "src/contracts/documents.ts",
         "db/schema/10_documents.sql",
-        "src/pipeline/steps/intake.ts"
+        "src/pipeline/steps/intake.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "EV-2",
@@ -2129,7 +2583,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2151,7 +2605,36 @@
       "title": "Fact catalogue: fact keys, value types, sensitive keys",
       "phase": 1,
       "size": "S",
-      "core": true
+      "core": true,
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "E03"
+      ],
+      "paths": [
+        "data/facts/catalogue.json",
+        "src/contracts/facts.test.ts",
+        "src/contracts/__fixtures__/fact-catalogue.ts",
+        "src/contracts/facts-askable.acceptance.test.ts",
+        ".gitleaks.toml"
+      ],
+      "clauses": [
+        "AI-12",
+        "ARC-2",
+        "END-7",
+        "R27",
+        "R28"
+      ],
+      "id": "E03A",
+      "title": "Fact catalogue: the client-askable facts the question bank needs",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From the G12 spec release (A362). Parked 2 Oct 16:30Z waiting on Zo to-do #1 (one gitleaks allowlist line). Unparked 2 Oct: Zo approved the allowlist line (decision 0021). Re-parked 17:20Z: Zo makes the gitleaks edit by hand (to-do #1). Unparked 17:35Z: Zo made the decision 0021 edit on claude/E03A (0462739).",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -2162,9 +2645,9 @@
         "E03",
         "L00",
         "A04",
-        "A07",
+        "A07C",
         "F10",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "src/modules/extraction/_core/**",
@@ -2173,7 +2656,10 @@
         "src/pipeline/steps/facts.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "tools/test/reading-rules.test.mjs",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "EV-5",
@@ -2293,7 +2779,7 @@
       "deps": [
         "E01",
         "W25",
-        "A07"
+        "A07D"
       ],
       "paths": [
         "src/modules/extraction/tb-sheet/**"
@@ -2606,16 +3092,19 @@
       "status": "carded",
       "spec": null,
       "deps": [
-        "F01",
-        "W00",
+        "F01D",
         "A05",
-        "F00T"
+        "F00T",
+        "W00c"
       ],
       "paths": [
         "src/modules/qbo/**",
         "src/contracts/qbo.ts",
-        "db/schema/35_qbo.sql",
-        "testworld/qbo/export.ts"
+        "db/schema/56_qbo.sql",
+        "testworld/qbo/export.ts",
+        "src/core/env.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/settings-rules.test.mjs"
       ],
       "clauses": [
         "TB-1",
@@ -2652,7 +3141,8 @@
         "src/modules/books/index.ts",
         "src/contracts/books.ts",
         "db/schema/30_books.sql",
-        "src/pipeline/steps/books.ts"
+        "src/pipeline/steps/books.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "TB-1",
@@ -2677,13 +3167,14 @@
       "deps": [
         "B05",
         "A05",
-        "A07"
+        "A07C"
       ],
       "paths": [
         "src/modules/books/gifi/**",
         "src/modules/books/index.ts",
         "data/gifi/**",
-        "testworld/qbo/gfi.ts"
+        "testworld/qbo/gfi.ts",
+        "tools/test/reading-rules.test.mjs"
       ],
       "clauses": [
         "TB-3",
@@ -2791,7 +3282,10 @@
         "src/modules/gaps/core/**",
         "src/modules/gaps/index.ts",
         "data/gaps/required.json",
-        "src/pipeline/steps/gaps.ts"
+        "src/pipeline/steps/gaps.ts",
+        "db/schema/05_bridge.sql",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "AI-12",
@@ -2807,7 +3301,49 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "src/core/egress-rules.acceptance.test.ts",
+        "tools/test/toolchain-rules.test.mjs"
+      ],
+      "clauses": [
+        "SEC-5",
+        "ARC-15"
+      ],
+      "id": "FX1",
+      "title": "Cold-tool tests get a load-proof timeout",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the red G01 train (A361).",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/next.mjs",
+        "tools/status.mjs",
+        "tools/test/claim.test.mjs",
+        "tools/test/__fixtures__/claims/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ1",
+      "title": "Queue: no wasted offers",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the Reviewer SLOW of 2 Oct 14:40Z.",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "done",
       "spec": null,
       "deps": [
         "F00",
@@ -2827,7 +3363,8 @@
       "id": "G01",
       "title": "Question bank format (ids, slots, answer shapes)",
       "phase": 1,
-      "size": "S"
+      "size": "S",
+      "done": "2026-10-02"
     },
     {
       "status": "carded",
@@ -2858,7 +3395,7 @@
       "core": true
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01"
@@ -2879,10 +3416,11 @@
       "family": "question",
       "params": {
         "topic": "revenue"
-      }
+      },
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
         "G01"
@@ -2903,13 +3441,15 @@
       "family": "question",
       "params": {
         "topic": "expenses"
-      }
+      },
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/assets-cca.json",
@@ -2927,13 +3467,16 @@
       "family": "question",
       "params": {
         "topic": "assets-cca"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/shareholders-dividends.json",
@@ -2951,13 +3494,16 @@
       "family": "question",
       "params": {
         "topic": "shareholders-dividends"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/payroll-bonuses.json",
@@ -2975,13 +3521,16 @@
       "family": "question",
       "params": {
         "topic": "payroll-bonuses"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/shareholder-loans.json",
@@ -2999,13 +3548,16 @@
       "family": "question",
       "params": {
         "topic": "shareholder-loans"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/vehicle-home-office.json",
@@ -3023,13 +3575,16 @@
       "family": "question",
       "params": {
         "topic": "vehicle-home-office"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
     },
     {
-      "status": "carded",
+      "status": "done",
       "spec": null,
       "deps": [
-        "G01"
+        "G01",
+        "E03A"
       ],
       "paths": [
         "data/question-bank/cra-hst-instalments.json",
@@ -3047,7 +3602,39 @@
       "family": "question",
       "params": {
         "topic": "cra-hst-instalments"
-      }
+      },
+      "note": "Parked 2 Oct until E03A lands (the queue offers specs on built-not-merged deps; CQ1). Lead unparks at the E03A landing.",
+      "done": "2026-10-02"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15",
+        "G16",
+        "G17"
+      ],
+      "paths": [
+        "data/question-coverage.json",
+        "data/question-bank/*.json",
+        "src/modules/gaps/bank/coverage.acceptance.test.ts"
+      ],
+      "clauses": [
+        "END-7",
+        "RULE-19",
+        "AI-12"
+      ],
+      "id": "G18",
+      "title": "Question banks: every sample flag mapped",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "Review 3 Oct finding 7 (A478)."
     },
     {
       "status": "carded",
@@ -3058,11 +3645,13 @@
         "E01",
         "E03",
         "L00",
-        "F09A"
+        "F09B"
       ],
       "paths": [
         "src/modules/ai/grounding/**",
-        "src/modules/ai/index.ts"
+        "src/modules/ai/index.ts",
+        "tools/test/security-rules.test.mjs",
+        "tools/test/__fixtures__/security-rules/harness.ts"
       ],
       "clauses": [
         "AI-1",
@@ -3313,6 +3902,41 @@
       "size": "M",
       "screens": true,
       "hard": true
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "V00",
+        "D02",
+        "U02",
+        "X01",
+        "V02",
+        "F02"
+      ],
+      "paths": [
+        "src/app/(staff)/review/queue/**",
+        "src/modules/review/queue/**",
+        "e2e/staff/review-queue.spec.ts"
+      ],
+      "clauses": [
+        "RV-8",
+        "FLOW-7",
+        "FLOW-2",
+        "SEC-2",
+        "RV-50",
+        "RV-53",
+        "RV-54"
+      ],
+      "id": "V15",
+      "title": "CPA review queue (/review): returns waiting for review, in Zo's order (Z20-4)",
+      "phase": 3,
+      "size": "M",
+      "core": false,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card.",
+      "security": true,
+      "screens": true,
+      "hard": false
     },
     {
       "status": "carded",
@@ -3978,7 +4602,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -3999,7 +4623,7 @@
       "params": {
         "screen": "roundtrip"
       },
-      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1). Also (review-phase2): the Ready button on the lock step (T12 markReady), and the \"Taxprep still holds\" list with its clear action and reason box (T01 stillHeld, requestClear)."
+      "note": "Include the .GFI upload (B01 importGfi: the preparer downloads the file from QBO and uploads it here; refusals and TB-3 flags shown) in the round-trip checklist brief (review-phase1). Also (review-phase2): the Ready button on the lock step (T12 markReady), and the \"Taxprep still holds\" list with its clear action and reason box (T01 stillHeld, requestClear). Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "parked",
@@ -4026,7 +4650,7 @@
       "note": "Removed by v1.1: no judgment input sheet in our app (amber A32). Replaced by D12."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -4047,10 +4671,11 @@
       "family": "design",
       "params": {
         "screen": "exceptions"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A421: add RV-12 to the clauses; D08 also designs the CPA comments page V04 builds (RV-25 moved from V09 to V04)."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -4071,7 +4696,8 @@
       "family": "design",
       "params": {
         "screen": "cite"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers."
     },
     {
       "status": "carded",
@@ -4544,7 +5170,10 @@
         "src/pipeline/steps/import.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "tools/test/reading-rules.test.mjs",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RT-1",
@@ -4745,7 +5374,9 @@
         "src/modules/roundtrip/resolve/**",
         "src/modules/roundtrip/index.ts",
         "src/contracts/roundtrip.ts",
-        "db/schema/45_roundtrip.sql"
+        "db/schema/45_roundtrip.sql",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RT-16",
@@ -4765,6 +5396,81 @@
       "hard": true,
       "core": true,
       "note": "Split from T04 on 2 Oct (reports/cards-phase2.md): T04 classes the cells, T12 resolves them and holds the sign-off gate."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "T09",
+        "E18",
+        "W29",
+        "N00",
+        "A05",
+        "T07"
+      ],
+      "paths": [
+        "src/modules/assessment/**",
+        "src/contracts/assessment.ts",
+        "db/schema/82_assessment.sql",
+        "data/assessment/**",
+        "src/pipeline/deps.ts",
+        "src/pipeline/handlers.ts",
+        "data/lifecycle/unbuilt-guards.json"
+      ],
+      "clauses": [
+        "FLOW-8",
+        "FLOW-2",
+        "LL-1",
+        "RV-30",
+        "EV-2",
+        "AI-7",
+        "SEC-2",
+        "SEC-7"
+      ],
+      "id": "T13",
+      "title": "Notice of assessment: compare with the filed return and the move from filed to assessed",
+      "phase": 4,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Carded 3 Oct from the unowned gap in reports/phase3-card-review-2026-10-03b.md (fix 31, A433). Registers guard filed_to_assessed. Independent review before first spec."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "T13",
+        "T11",
+        "T09",
+        "T10",
+        "F02",
+        "F07",
+        "L00"
+      ],
+      "paths": [
+        "src/modules/amended/**",
+        "src/contracts/amended.ts",
+        "db/schema/83_amended.sql"
+      ],
+      "clauses": [
+        "FLOW-8",
+        "FLOW-1",
+        "FLOW-2",
+        "FLOW-9",
+        "EV-8",
+        "AI-7",
+        "SEC-2",
+        "SEC-7"
+      ],
+      "id": "T14",
+      "title": "Amended return: a new cycle at prepare linked to the filed return",
+      "phase": 4,
+      "size": "M",
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Carded 3 Oct from the second unowned gap in reports/phase3-card-review-2026-10-03b.md (FLOW-8's amended return). Independent review before first spec. RED (go-live, LIVE-6; phase 4 card review RED 1): what the client app shows for an amended return's approval summary is client-facing; asked with the LIVE items at go-live; meanwhile one sent approval list per engagement (T11)."
     },
     {
       "status": "carded",
@@ -4817,7 +5523,6 @@
       "deps": [
         "V05",
         "B00",
-        "D06",
         "U02"
       ],
       "paths": [
@@ -4879,7 +5584,7 @@
         "T04",
         "T01",
         "L00",
-        "F01"
+        "F01D"
       ],
       "paths": [
         "src/modules/learning/versions/**",
@@ -5555,16 +6260,27 @@
       "note": "Removed by v1.1: gate 1 and the baseline and receipt exports are dropped (amber A30); its other parts are split. Replaced by T08 (approval fingerprint), T09 (check before transmit), T10 (frozen binder)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T04",
         "T07",
-        "F02"
+        "F02",
+        "N00",
+        "L00",
+        "V00",
+        "FX5",
+        "X00"
       ],
       "paths": [
         "src/modules/approval/**",
-        "db/schema/60_versions.sql"
+        "db/schema/60_versions.sql",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "src/contracts/security-rules.db.test.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "FLOW-4",
@@ -5575,18 +6291,20 @@
       "id": "T08",
       "title": "Approval fingerprint and approval record",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "hard": true,
-      "security": true
+      "security": true,
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "F05",
         "L00",
         "SK0",
-        "F10"
+        "F10",
+        "T07"
       ],
       "paths": [
         "src/modules/checks/engine/**",
@@ -5594,7 +6312,9 @@
         "src/pipeline/steps/checks.ts",
         "e2e/skeleton/stubs.ts",
         "e2e/skeleton/stubs.md",
-        "e2e/steps/skeleton-*.ts"
+        "e2e/steps/skeleton-*.ts",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "CK-1",
@@ -5608,10 +6328,11 @@
       "id": "Q00",
       "title": "Check engine",
       "phase": 3,
-      "size": "M"
+      "size": "L",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "Q00",
@@ -5631,7 +6352,8 @@
       "title": "Reconciling items: the type table as data, item records, the $1 rounding limit",
       "phase": 3,
       "size": "M",
-      "hard": true
+      "hard": true,
+      "core": true
     },
     {
       "status": "carded",
@@ -5849,7 +6571,8 @@
       "params": {
         "check": "CK-43",
         "kind": "ties"
-      }
+      },
+      "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
     },
     {
       "status": "carded",
@@ -5874,7 +6597,8 @@
       "params": {
         "check": "CK-20",
         "kind": "reconciliations"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -6100,7 +6824,8 @@
       "params": {
         "check": "CK-30",
         "kind": "flags"
-      }
+      },
+      "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
     },
     {
       "status": "carded",
@@ -6146,7 +6871,8 @@
       "params": {
         "check": "CK-32",
         "kind": "flags"
-      }
+      },
+      "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
     },
     {
       "status": "parked",
@@ -6239,7 +6965,8 @@
       "params": {
         "check": "CK-36",
         "kind": "flags"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
       "status": "carded",
@@ -6383,25 +7110,32 @@
       "params": {
         "check": "CK-47",
         "kind": "flags"
-      }
+      },
+      "note": "A499 (G18's findings review): four sample answer keys hold details under the CPA's check (reference/cpa-check.md items 37 to 39; amber A71): 03-F01's day count (CK-47: day 180 is in time; the result stands), 04-F01's line 101 and quick-method credit (CK-20), 05-F01's passive-income figure and year (CK-36) and 09-F07's incorporation costs. Where a test draws on one, the expected figure follows the clause, not the sample's detail, and the spec report names the gap."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "I00",
         "Q00"
       ],
       "paths": [
-        "src/modules/ai/checklist/_core/**"
+        "src/modules/ai/checklist/_core/**",
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
-        "AI-2"
+        "AI-2",
+        "CK-42",
+        "AI-6",
+        "AI-7"
       ],
       "id": "I01",
       "title": "AI tax checklist framework",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
       "status": "carded",
@@ -6691,112 +7425,159 @@
       "family": "aicheck",
       "params": {
         "topic": "shareholder-loan-signs"
-      }
+      },
+      "note": "A499 (G18's findings review): The shareholder accounts have two sides in the test world: due from the shareholder (account 1300, GIFI 1301: samples 01, 02 and 10) and due to (2080, GIFI 2781: 07, 08, 09 and 14; 12 and 15 carry a due-to balance). Test both sides, and take the side from the account and the amounts, never from a label."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "I00",
-        "T05",
-        "T07"
+        "T07",
+        "Q00",
+        "I01"
       ],
       "paths": [
-        "src/modules/ai/redteam/**"
+        "src/modules/ai/redteam/**",
+        "src/pipeline/steps/checks.ts",
+        "src/pipeline/handlers.ts",
+        "db/schema/73_redteam.sql"
       ],
       "clauses": [
-        "AI-3"
+        "AI-3",
+        "AI-1",
+        "AI-4",
+        "AI-5",
+        "AI-6",
+        "AI-8",
+        "SEC-7"
       ],
       "id": "I30",
       "title": "Red team (a different model, raw documents)",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A04",
-        "W00",
-        "A08"
+        "A08",
+        "W00c",
+        "W00b"
       ],
       "paths": [
-        "src/modules/ai/evals/**"
+        "src/modules/ai/evals/**",
+        "data/ai/evals/**",
+        "data/ai/approved.json"
       ],
       "clauses": [
         "AI-11",
-        "LL-9"
+        "LL-9",
+        "AI-4",
+        "AI-10"
       ],
       "id": "I40",
       "title": "AI evaluation harness on the test world",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "Q00"
       ],
       "paths": [
-        "src/modules/exceptions/**"
+        "src/modules/exceptions/**",
+        "data/exceptions/weak-answers.json",
+        "db/schema/71_exceptions.sql"
       ],
       "clauses": [
         "EX-1",
         "EX-2",
-        "EX-3"
+        "EX-3",
+        "AI-7",
+        "SEC-7"
       ],
       "id": "X00",
       "title": "Exception answers and their rules",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "X00"
       ],
       "paths": [
-        "src/modules/tiers/**"
+        "src/modules/tiers/**",
+        "data/tiers/rules.json",
+        "db/schema/72_tiers.sql"
       ],
       "clauses": [
         "CK-40",
-        "RV-8"
+        "RV-8",
+        "RULE-7",
+        "RULE-8"
       ],
       "id": "X01",
       "title": "Tiers (approved rules, testable terms)",
       "phase": 3,
-      "size": "M"
+      "size": "M",
+      "core": true,
+      "note": "Drafted 3 Oct by a helper (A395)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
         "T07",
         "X01",
-        "Q46",
+        "B03",
+        "T05",
+        "Q00",
+        "X00",
+        "T12",
         "D02",
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/review/brief/**"
+        "src/app/(staff)/review/brief/**",
+        "src/modules/review/brief/**",
+        "e2e/staff/review-brief.spec.ts"
       ],
       "clauses": [
         "RV-2",
+        "RV-1",
+        "RV-8",
+        "EX-4",
+        "EV-12",
+        "RT-17",
+        "RT-18",
+        "SEC-2",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "SEC-3"
       ],
       "id": "V02",
       "title": "CPA review: the brief",
       "phase": 3,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V02",
@@ -6808,67 +7589,119 @@
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/review/sections/**"
+        "src/app/(staff)/review/sections/**",
+        "src/app/(staff)/review/early/**",
+        "src/modules/review/marks/**",
+        "data/review/form-sections.json",
+        "db/schema/74_review.sql",
+        "e2e/staff/review-sections.spec.ts",
+        "e2e/staff/review-early.spec.ts"
       ],
       "clauses": [
         "RV-1",
         "RV-3",
+        "RV-4",
         "RV-5",
         "RV-6",
         "RV-8",
         "RV-9",
-        "RV-53",
-        "RV-54",
         "RV-10",
-        "RV-11"
+        "RV-11",
+        "EX-1",
+        "AI-7",
+        "SEC-2",
+        "SEC-3",
+        "SEC-7",
+        "RV-53",
+        "RV-54"
       ],
       "id": "V03",
       "title": "CPA review: sections, coverage, approve",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "screens": true,
-      "hard": true
+      "hard": true,
+      "security": true,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V03",
+        "V09",
         "U02",
-        "D02"
+        "D02",
+        "D08",
+        "N00"
       ],
       "paths": [
-        "src/app/(staff)/review/comments/**"
+        "src/app/(staff)/review/comments/**",
+        "src/app/(staff)/review/changes/**",
+        "src/app/(staff)/prepare/comments/**",
+        "src/app/(staff)/review/sections/actions.tsx",
+        "src/modules/comments/**",
+        "db/schema/75_comments.sql",
+        "src/pipeline/deps.ts",
+        "e2e/staff/review-comments.spec.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RV-7",
+        "RV-25",
+        "FLOW-2",
+        "FLOW-5",
+        "AI-7",
+        "SEC-2",
+        "SEC-7",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "RT-18",
+        "EX-1",
+        "RV-6"
       ],
       "id": "V04",
       "title": "CPA review: comments and rework view",
       "phase": 3,
-      "size": "M",
+      "size": "L",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V05",
+        "V12",
         "X00",
         "T04",
         "D08",
-        "U02"
+        "U02",
+        "T12",
+        "V00"
       ],
       "paths": [
-        "src/app/(staff)/prepare/exceptions/**"
+        "src/app/(staff)/prepare/exceptions/**",
+        "src/modules/respond/**",
+        "src/pipeline/deps.ts",
+        "e2e/staff/exceptions.spec.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RV-24",
-        "RV-25",
+        "EX-1",
+        "EX-2",
+        "EX-3",
+        "EX-4",
         "RT-16",
+        "RT-18",
+        "FLOW-2",
+        "AI-7",
+        "SEC-2",
         "RV-53",
         "RV-54"
       ],
@@ -6877,36 +7710,60 @@
       "phase": 3,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md.",
+      "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V04",
         "I00",
         "T01",
         "D02",
-        "U02"
+        "D08",
+        "U02",
+        "I40"
       ],
       "paths": [
         "src/app/(staff)/review/fixes/**",
-        "src/modules/ai/fixes/**"
+        "src/app/(staff)/prepare/comments/comment-card.tsx",
+        "src/modules/ai/fixes/**",
+        "src/contracts/ai.ts",
+        "db/schema/76_fixes.sql",
+        "src/pipeline/steps/fix-drafts.ts",
+        "src/pipeline/handlers.ts",
+        "e2e/staff/fixes.spec.ts",
+        "data/ai/evals/sets/fix_draft.json"
       ],
       "clauses": [
         "RV-12",
         "RV-7",
         "AI-1",
+        "AI-4",
+        "AI-6",
         "AI-7",
+        "AI-8",
+        "AI-10",
+        "RT-8",
+        "EV-8",
+        "SEC-2",
+        "SEC-7",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "AI-11"
       ],
       "id": "V13",
       "title": "CPA review: AI-drafted fixes for simple comments, approved by the preparer",
       "phase": 3,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": true,
+      "security": true,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; open questions in reports/cards-V02-V13-draft.md."
     },
     {
       "status": "carded",
@@ -8261,7 +9118,7 @@
       }
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -8281,10 +9138,11 @@
       "family": "design",
       "params": {
         "screen": "ops"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A444: the brief gains bulk assign on New returns, Close follow-up and Start amended return on the notice page (CPA and owner), and the staff-recorded client dispute form (V10). A499: the brief also gains F07's ops-confirms items (year end, which years to file, a year bought twice; END-1), each with a confirm action (V10)."
     },
     {
-      "status": "carded",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D00",
@@ -8304,10 +9162,11 @@
       "family": "design",
       "params": {
         "screen": "board"
-      }
+      },
+      "note": "Parked 2 Oct (A352): design lane, done by designers and Zo's sitting, never a queue spec or build; the Lead unparks into the design flow after the sitting answers. A444: the brief gains Mark fixed (owner and CPA, with a card id) and the period filter (V11)."
     },
     {
-      "status": "todo",
+      "status": "parked",
       "spec": null,
       "deps": [
         "D02",
@@ -8318,13 +9177,18 @@
         "D08",
         "D09",
         "D10",
-        "D12"
+        "D12",
+        "D13"
       ],
       "paths": [
         "design/review/**"
       ],
       "clauses": [
-        "RV-53"
+        "RV-53",
+        "RV-50",
+        "RV-52",
+        "RV-54",
+        "RV-55"
       ],
       "id": "D11",
       "title": "Design review pack for Zo (one look, all screens)",
@@ -8332,95 +9196,169 @@
       "size": "S"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "B04",
         "B05",
+        "B01",
         "T08"
       ],
       "paths": [
-        "src/modules/books/recheck/**"
+        "src/modules/books/recheck/**",
+        "src/modules/books/index.ts",
+        "src/contracts/books.ts",
+        "db/schema/77_recheck.sql",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "TB-11",
-        "FLOW-5"
+        "FLOW-5",
+        "TB-10",
+        "OUT-3",
+        "SEC-7",
+        "SEC-11",
+        "AI-7"
       ],
       "id": "B06",
       "title": "Books changed after approval: re-read QBO and compare with the approved snapshot",
       "phase": 4,
       "size": "M",
-      "hard": true
+      "hard": true,
+      "core": true,
+      "security": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T08",
         "T02",
-        "B06"
+        "B06",
+        "N00",
+        "T11"
       ],
       "paths": [
-        "src/modules/transmit/**"
+        "src/modules/transmit/**",
+        "src/contracts/transmit.ts",
+        "db/schema/78_transmit.sql",
+        "data/transmit/**",
+        "src/pipeline/steps/approval-watch.ts",
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "RT-19",
         "END-4",
-        "FLOW-5"
+        "FLOW-5",
+        "FLOW-2",
+        "RT-20",
+        "LL-1",
+        "LL-3",
+        "AI-7",
+        "SEC-7",
+        "OUT-3",
+        "TB-11",
+        "SEC-2"
       ],
       "id": "T09",
       "title": "The check before transmit: check export against the approval",
       "phase": 4,
-      "size": "M",
+      "size": "L",
       "hard": true,
-      "security": true
+      "security": true,
+      "core": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T09",
-        "T07"
+        "T07",
+        "T11",
+        "V04",
+        "A05",
+        "T13",
+        "W29"
       ],
       "paths": [
-        "src/modules/binder/**"
+        "src/modules/binder/**",
+        "src/contracts/binder.ts",
+        "db/schema/81_binder.sql",
+        "db/schema/99_closed.sql",
+        "src/pipeline/steps/binder.ts",
+        "src/pipeline/handlers.ts",
+        "src/pipeline/deps.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "FLOW-9",
         "SEC-8",
-        "RT-11"
+        "RT-11",
+        "SEC-7",
+        "FLOW-2",
+        "EV-1",
+        "SEC-2",
+        "AI-7"
       ],
       "id": "T10",
       "title": "The frozen binder and retention",
       "phase": 4,
-      "size": "M",
-      "security": true
+      "size": "L",
+      "security": true,
+      "core": true,
+      "hard": true,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "T08",
         "F07",
-        "F02"
+        "F02",
+        "T07",
+        "B03",
+        "A05",
+        "E00",
+        "W20",
+        "G01"
       ],
       "paths": [
-        "src/modules/clientsign/**"
+        "src/modules/clientsign/**",
+        "src/contracts/clientsign.ts",
+        "db/schema/79_clientsign.sql",
+        "data/clientsign/**",
+        "src/pipeline/deps.ts",
+        "src/pipeline/handlers.ts",
+        "data/lifecycle/unbuilt-guards.json"
       ],
       "clauses": [
         "FLOW-2",
+        "FLOW-5",
         "FLOW-8",
         "RV-30",
         "SEC-8",
-        "END-7"
+        "END-7",
+        "ARC-2",
+        "AI-7",
+        "SEC-7"
       ],
       "id": "T11",
       "title": "Approval summary data and the T183CORP record (client wording stays in the client app)",
       "phase": 4,
-      "size": "S"
+      "size": "M",
+      "core": true,
+      "security": true,
+      "hard": false,
+      "note": "Drafted 3 Oct by a helper; choices in reports/cards-V15-T11-draft.md. Status stays todo until the Lead accepts the card. RED (go-live, LIVE-6; phase 4 card review RED 1): the amended return's approval summary in the client app; asked with the LIVE items at go-live; meanwhile one sent approval list per engagement. federal_tax waits on reference/cpa-check.md item 34; T13's notice mapping is item 35."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
@@ -8428,26 +9366,41 @@
         "T11",
         "E19",
         "D09",
-        "U02"
+        "U02",
+        "T13",
+        "T14",
+        "E00",
+        "N01"
       ],
       "paths": [
-        "src/app/(staff)/ops/**"
+        "src/app/(staff)/ops/**",
+        "src/modules/ops/**",
+        "src/modules/access/assign.ts",
+        "e2e/staff/ops.spec.ts"
       ],
       "clauses": [
         "RV-30",
         "FLOW-8",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "FLOW-2",
+        "FLOW-7",
+        "SEC-2",
+        "RV-50",
+        "LL-6",
+        "END-1"
       ],
       "id": "V10",
       "title": "Ops screens",
       "phase": 4,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "security": true,
+      "core": false
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "V00",
@@ -8456,40 +9409,66 @@
         "U02"
       ],
       "paths": [
-        "src/app/(staff)/board/**"
+        "src/app/(staff)/board/**",
+        "src/modules/board/**",
+        "e2e/staff/board.spec.ts"
       ],
       "clauses": [
         "RV-40",
         "LL-9",
         "RV-53",
-        "RV-54"
+        "RV-54",
+        "FLOW-7",
+        "SEC-2",
+        "RV-50",
+        "LL-7",
+        "LL-8"
       ],
       "id": "V11",
       "title": "Owner board",
       "phase": 4,
       "size": "M",
       "screens": true,
-      "hard": false
+      "hard": false,
+      "security": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
-        "N00"
+        "N00",
+        "X00",
+        "I00"
       ],
       "paths": [
         "src/modules/learning/diffs/**",
-        "db/schema/90_learning.sql"
+        "db/schema/90_learning.sql",
+        "src/contracts/learning.ts",
+        "src/modules/learning/causes/_core/**",
+        "src/modules/learning/causes/*/index.ts",
+        "src/modules/learning/index.ts",
+        "db/schema/91_differences.sql",
+        "data/learning/earliest-stage.json",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "LL-3",
         "LL-5",
-        "LL-6"
+        "LL-6",
+        "LL-1",
+        "LL-2",
+        "LL-4",
+        "SEC-7",
+        "ARC-13",
+        "END-5"
       ],
       "id": "N01",
       "title": "Differences by natural key",
       "phase": 4,
-      "size": "M"
+      "size": "L",
+      "note": "T10 exempts returns.differences from the closed-return guard (99_closed.sql): N01 writes the CRA-assessed differences, causes and ranking after the return closes (reports/phase3-card-review-2026-10-03b.md fix 33). Insert rows only; never another table of a closed return.",
+      "core": true,
+      "security": true
     },
     {
       "status": "carded",
@@ -8681,7 +9660,42 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "N01",
+        "I00",
+        "A04",
+        "I40"
+      ],
+      "paths": [
+        "src/modules/learning/causes/_ai/**",
+        "data/ai/evals/sets/cause_tag.json",
+        "db/schema/93_cause_proposals.sql",
+        "src/pipeline/handlers.ts"
+      ],
+      "clauses": [
+        "LL-4",
+        "AI-1",
+        "AI-4",
+        "AI-6",
+        "AI-7",
+        "AI-8",
+        "AI-10",
+        "AI-11",
+        "SEC-7",
+        "ARC-10"
+      ],
+      "id": "N19",
+      "title": "AI cause proposal, unconfirmed (LL-4)",
+      "phase": 4,
+      "size": "M",
+      "core": true,
+      "note": "No card owned LL-4's last sentence: AI proposes a cause only when no rule applies, marked unconfirmed (reports/cards-D11-GL1-draft.md, A444). Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps N01, I00, A04, I40; Paths src/modules/learning/causes/_ai/** and data/ai/evals/sets/cause_proposal.json (AI-11, as V13 fix 19); core. Writes only confirmed_by = 'ai' cause rows marked unconfirmed, never over a code cause (LL-4); citations checked by I00's code (AI-7). Carded 3 Oct (A448): eval set named cause_tag.json after the F04 step type (I40 names sets by step); 93_cause_proposals.sql holds the stamp; handlers.ts for the ai:cause_tag job.",
+      "security": true
+    },
+    {
+      "status": "carded",
       "spec": null,
       "deps": [
         "N10",
@@ -8692,21 +9706,36 @@
         "N15",
         "N16",
         "N17",
-        "N18"
+        "N18",
+        "I30",
+        "I40"
       ],
       "paths": [
-        "src/modules/learning/ranking/**"
+        "src/modules/learning/ranking/**",
+        "src/modules/learning/measures/**",
+        "db/schema/92_lessons.sql",
+        "data/learning/ranking.json",
+        "data/learning/lesson-templates/**",
+        "tools/lessons.mjs",
+        "src/pipeline/handlers.ts"
       ],
       "clauses": [
         "LL-7",
         "LL-8",
         "LL-9",
-        "END-5"
+        "END-5",
+        "LL-5",
+        "LL-6",
+        "ARC-13",
+        "SEC-11"
       ],
       "id": "N20",
       "title": "Ranking, weekly list and lesson cards",
       "phase": 4,
-      "size": "M"
+      "size": "L",
+      "core": true,
+      "security": true,
+      "note": "RED (go-live): lesson cards leaving a live host (LL-8)."
     },
     {
       "status": "carded",
@@ -8731,7 +9760,10 @@
         "J5-K10",
         "J5-K11",
         "J5-K12",
-        "J5-K13"
+        "J5-K13",
+        "T13",
+        "T14",
+        "N19"
       ],
       "paths": [
         "e2e/kinds/learning.spec.ts"
@@ -8752,74 +9784,116 @@
       }
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A01",
         "A02",
         "A04",
         "A05",
-        "A06"
+        "A06",
+        "A08",
+        "B04",
+        "SC3",
+        "SC5",
+        "SC11",
+        "FX7",
+        "FX10",
+        "FX11",
+        "FX13"
       ],
       "paths": [
-        "src/modules/live/**"
+        "src/modules/live/**",
+        "src/core/env.ts",
+        "src/core/golive.ts",
+        "src/core/engines.ts",
+        "src/instrumentation.ts",
+        "src/modules/auth/**",
+        "src/modules/ai/runner/**",
+        "src/modules/ai/project/**",
+        "src/modules/ocr/index.ts",
+        "src/modules/storage/**",
+        "src/modules/qbo/**",
+        "data/live/**",
+        "tools/golive-check.mjs",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
       ],
       "clauses": [
         "ARC-6",
         "END-8",
         "LIVE-3",
         "SEC-9",
-        "ARC-20"
+        "ARC-20",
+        "SEC-1",
+        "SEC-10",
+        "SEC-11",
+        "LIVE-5",
+        "AI-7"
       ],
       "id": "GL1",
       "title": "Live adapters, switched off, no keys",
       "phase": 4,
-      "size": "M",
-      "security": true
+      "size": "L",
+      "security": true,
+      "note": "From A06 findings (2 Oct): the go-live switch makes every stand-in refuse to start (SEC-11 becomes a real switch). GL1 re-adds the go-live term in the AI runner (A04 removed GO_LIVE_ON) with both directions tested. From the A06 security review (3 Oct): real staff rows must be inserted with is_test = false (the column defaults to true), and the go-live run proves the lock-out on Postgres 16 under READ COMMITTED. From the FX2 security review (3 Oct, A435): a production host with NODE_ENV unset defaults to development and starts every stand-in; the go-live check refuses to start unless NODE_ENV is set explicitly. A441: the live database adapter follows code.md: a pooled connection carries only transaction-local state, or it is destroyed on release; never swallow a failed reset. Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): deps add SC3, SC5, SC11, FX7, FX10, FX11, FX13. LIVE-8 is owned by the go-live run (line in Not in this card). RED (go-live): SEC-9 for the Claude project; vendors.json stays empty until Zo's yes.",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "N20",
-        "T10"
+        "T10",
+        "T14",
+        "N19"
       ],
       "paths": [
-        "db/live/**"
+        "db/live/**",
+        "src/modules/golive/schema/**"
       ],
       "clauses": [
         "LIVE-4",
         "SEC-6",
-        "LIVE-9"
+        "ARC-3",
+        "SEC-11"
       ],
       "id": "GL2",
       "title": "Live schema migration draft and public-key test",
       "phase": 4,
-      "size": "S",
-      "security": true
+      "size": "M",
+      "security": true,
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add T14 (83_amended.sql) so the draft sees every schema file; LIVE-9 dropped from its clauses (LIVE-9 is the real-host walk; GL1's tool is that walk's command). Carded 3 Oct (A448): deps add N19 (93_cause_proposals.sql); tests live in src/modules/golive/schema/ (db/** is not a test home); no generated SQL committed. RED (go-live): applying the migration to any real database (LIVE-4).",
+      "core": true
     },
     {
-      "status": "todo",
+      "status": "done",
       "spec": null,
       "deps": [
         "F07",
         "G01"
       ],
       "paths": [
-        "db/bridge/**"
+        "db/bridge/**",
+        "src/modules/golive/bridge/**"
       ],
       "clauses": [
         "ARC-2",
         "LIVE-6",
-        "END-7"
+        "END-7",
+        "SEC-6"
       ],
       "id": "GL3",
       "title": "Client-app views and shared table (draft for the client repo)",
       "phase": 4,
-      "size": "S"
+      "size": "M",
+      "security": true,
+      "core": true,
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Draft only; never applied to the client repo by this build; the client repo's own Lead takes it at LIVE-6. Security and core: its views and grants decide what this system reads of the client app's data. Carded 3 Oct (A448). RED (go-live): applying the draft in the client repo and probing the client app database (LIVE-6, LIVE-4).",
+      "done": "2026-10-04"
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "J3-K01",
@@ -8834,23 +9908,29 @@
         "J3-K10",
         "J3-K11",
         "J3-K12",
-        "J3-K13"
+        "J3-K13",
+        "FX9"
       ],
       "paths": [
         "reference/golive/**",
-        "data/taxprep/proof/**"
+        "data/taxprep/proof/**",
+        "src/modules/golive/taxprep-proof/**"
       ],
       "clauses": [
         "LIVE-1",
-        "LIVE-2"
+        "LIVE-2",
+        "RT-22",
+        "ARC-14"
       ],
       "id": "GL4",
       "title": "Real Taxprep proof kit for ops",
       "phase": 4,
-      "size": "S"
+      "size": "M",
+      "core": true,
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add FX9 (no new Taxprep CSV on main before FX9 lands; data/taxprep/proof/** overlaps FX9's reference/**/*.csv rule); the kit uses the three made-up corporations LIVE-1 names, nothing else. Core (Taxprep CSV compare). Carded 3 Oct (A448): corporations C01, C07, C11; no CSV committed (kit.json holds hashes)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "I40",
@@ -8872,34 +9952,1191 @@
         "src/modules/ai/evals/report/**"
       ],
       "clauses": [
-        "LIVE-7"
+        "LIVE-7",
+        "AI-11",
+        "AI-10"
       ],
       "id": "GL5",
       "title": "AI evaluation report for go-live",
       "phase": 4,
-      "size": "S"
+      "size": "S",
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Carded 3 Oct (A448)."
     },
     {
-      "status": "todo",
+      "status": "carded",
       "spec": null,
       "deps": [
         "A01",
         "A02",
         "W37",
         "W38",
-        "F09"
+        "F09",
+        "FX11"
       ],
       "paths": [
         "src/modules/ocr/benchmark/**"
       ],
       "clauses": [
         "LIVE-3",
-        "ARC-6"
+        "ARC-6",
+        "EV-6",
+        "ARC-16",
+        "SEC-11"
       ],
       "id": "GL6",
       "title": "OCR benchmark on the test world (for choosing a vendor at go-live)",
       "phase": 4,
-      "size": "M"
+      "size": "M",
+      "note": "Phase 4 card review (reports/phase4-card-review-2026-10-03.md, A447): card file to write before the phase's first spec job. Deps add FX11 (Paths overlap src/modules/ocr/**); free engines only (textlayer, tesseract) on the test world; any paid vendor run is LIVE-3, never in this card. RED (go-live): LIVE-3 vendor choice and cost. Carded 3 Oct (A448)."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ1"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/next.mjs",
+        "tools/status.mjs",
+        "tools/scope.mjs",
+        "tools/test/claim.test.mjs",
+        "tools/test/scope.test.mjs",
+        "tools/test/__fixtures__/claims/**",
+        "tools/test/claim-needs-lead.test.mjs",
+        ".claude/skills/merge/SKILL.md"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ2",
+      "title": "Queue: released checks re-offered, honest counts",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "CQ1 follow-up plus what the Lead saw on 2 Oct evening.",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ2"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-wait.test.mjs",
+        "tools/test/claim.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ3",
+      "title": "Queue: no build while its spec is open, and wait: holds",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From the DB16 double offer, 3 Oct (A416).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ2"
+      ],
+      "paths": [
+        "tools/scope.mjs",
+        "tools/lib.mjs",
+        "tools/test/scope-spec-files.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ4",
+      "title": "scope.mjs: files the Spec names belong to the spec job (R82)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/FX8-findings.md, 3 Oct (A417).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ3"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-race.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ5",
+      "title": "claim.mjs: a claim is written on the tip it was decided on",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/CQ3-check.md, 3 Oct (A428).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ4"
+      ],
+      "paths": [
+        "tools/mutate-changed.mjs",
+        "tools/test-homes.json",
+        "tools/test/mutate-harness.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ6",
+      "title": "Mutation gate: core from slices.json and a Lead-kept harness list",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/DB16-findings.md, 3 Oct (A430).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ5"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/test/claim-race-update.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ7",
+      "title": "claim.mjs: update and beat write on the tip they read",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/CQ5-spec.md, 3 Oct (A431).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ5"
+      ],
+      "paths": [
+        "tools/next.mjs",
+        "tools/claim.mjs",
+        "tools/test/next-paths.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ8",
+      "title": "next.mjs names path holds; the Lead can reopen a check",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "3 Oct (A439).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ6"
+      ],
+      "paths": [
+        "stryker.config.mjs",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-args.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ9",
+      "title": "Mutation gate: long dry runs and extra Stryker arguments",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/W00c-findings-3.md, 3 Oct (A450).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "package.json",
+        "tools/flake-shifted.mjs",
+        "tools/test/flake-shifted.test.mjs",
+        "tools/test/__fixtures__/flake-shifted/**"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ10",
+      "title": "Flake run with the date shifted",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/A04-findings-6.md, 3 Oct (A469).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "CQ8"
+      ],
+      "paths": [
+        "tools/claim.mjs",
+        "tools/metrics.mjs",
+        "tools/test/claim-wait-check.test.mjs",
+        "tools/test/metrics-counts.test.mjs",
+        "tools/next.mjs",
+        "tools/lib.mjs",
+        "tools/test/next-paths.test.mjs",
+        "tools/scope.mjs",
+        "tools/test/scope-spec-files.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ11",
+      "title": "Queue: no re-offered checks after a wait, honest card counts",
+      "phase": 0,
+      "size": "M",
+      "core": false,
+      "note": "Decision 0027 (Critic 3 Oct, proposal 2).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "vitest.config.ts",
+        "src/core/test-assertions.ts",
+        "src/core/test-assertions.acceptance.test.ts",
+        "src/modules/gaps/bank/expenses.acceptance.test.ts",
+        "src/contracts/blank-rule.acceptance.test.ts",
+        "src/contracts/jobs.acceptance.test.ts",
+        "src/modules/bridge/**/*.test.ts",
+        "vitest.mutate.config.ts",
+        "src/contracts/facts.acceptance.test.ts",
+        "src/modules/gaps/bank/bank.acceptance.test.ts",
+        "src/modules/auth/rules.acceptance.test.ts",
+        "tools/test/vitest-projects.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "CQ12",
+      "title": "Assertion floor: no test passes without asserting",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "Review 3 Oct finding 7 (A478).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "DG2"
+      ],
+      "paths": [
+        "testworld/model/checks.ts",
+        "testworld/model/faults.ts",
+        "testworld/model/schema.ts",
+        "testworld/model/__fixtures__/**",
+        "testworld/index.ts",
+        "testworld/generate.ts",
+        "testworld/clients/**",
+        "reference/sample-clients/**/taxprep/*.csv",
+        ".gitattributes",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "src/core/money.ts",
+        "src/contracts/__fixtures__/taxprep-bytes.ts",
+        "testworld/__fixtures__/sample-copy.ts",
+        "testworld/model/generate.test.ts",
+        "testworld/model/index.ts",
+        "testworld/model/kinds.test.ts",
+        "testworld/model/money-converter.test.ts",
+        "testworld/model/schema.test.ts",
+        "testworld/model/guard.ts",
+        "testworld/model/guard.test.ts",
+        "testworld/model/kinds.ts",
+        "testworld/model/checks.test.ts",
+        "testworld/model/faults.test.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16",
+        "END-9",
+        "TB-3"
+      ],
+      "id": "W00c",
+      "title": "Test world: model and loader, fix round (W00a split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Split from W00a, 2 Oct; branch from claude/W00a 239b553."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00c"
+      ],
+      "paths": [
+        "testworld/clients/load.ts",
+        "testworld/clients/json-keys.ts",
+        "testworld/model/checks.ts",
+        "testworld/clients/w00d-*.acceptance.test.ts",
+        "testworld/model/__fixtures__/w00d-*.ts",
+        "testworld/model/__fixtures__/w00c-r3-walk.ts",
+        "reference/sample-clients/*/answer-key.json",
+        "reference/sample-clients/lib/**",
+        "reference/sample-clients/clients/**",
+        "vitest.mutate.config.ts",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-args.test.mjs",
+        "tools/mutate-shards.json",
+        "testworld/**/*.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16"
+      ],
+      "id": "W00d",
+      "title": "Test world loader: ids by rule and every typed field read (W00c split)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "Split from W00c by its landing rule (A450, A501)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00c"
+      ],
+      "paths": [
+        "tools/test/testworld-rules.test.mjs",
+        "tools/test/__fixtures__/testworld-rules/**"
+      ],
+      "clauses": [
+        "ARC-8",
+        "ARC-13",
+        "ARC-16"
+      ],
+      "id": "SC2",
+      "title": "Test-world rules R57 to R61",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/W00a-findings.md."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06",
+        "FX2"
+      ],
+      "paths": [
+        "tools/test/security-rules.test.mjs",
+        "src/contracts/security-rules.db.test.ts",
+        "tools/test/__fixtures__/security-rules/**",
+        "src/modules/auth/testusers/engine.ts"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-6",
+        "ARC-20",
+        "FLOW-1",
+        "ARC-15"
+      ],
+      "id": "SC3",
+      "title": "Security rules R62 to R66",
+      "phase": 0,
+      "size": "M",
+      "core": false,
+      "security": true,
+      "note": "From reports/A06-findings.md, 2 Oct."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "A06"
+      ],
+      "paths": [
+        "src/core/env.ts",
+        "src/modules/ocr/index.ts",
+        "src/modules/storage/safe.ts",
+        "src/modules/storage/files/index.ts",
+        "src/modules/storage/drive/index.ts",
+        "src/modules/auth/index.ts",
+        "src/modules/ocr/engine-setting.test.ts",
+        "src/modules/storage/engine-setting.test.ts"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-6",
+        "ARC-20"
+      ],
+      "id": "FX2",
+      "title": "Stand-ins refuse to start in production when their setting is unset (A01, A05)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/A06-findings.md, 2 Oct.",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "F00",
+        "F09",
+        "F09B",
+        "A07C"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "A07D",
+      "title": "Spreadsheet reader: formula slides, nested totals, number text (A07C split)",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "note": "Split from A07C, 2 Oct; landing rule: no more rounds, fallbacks are removals.",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "A07D"
+      ],
+      "paths": [
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/__fixtures__/reading-rules/**"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "ARC-10"
+      ],
+      "id": "SC4",
+      "title": "Reading rules R67 to R70, R74, and the R56 exemption",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/A07C-findings.md and reports/A07D-opus-read.md (A393).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A07D",
+        "SC4",
+        "SC"
+      ],
+      "paths": [
+        "src/modules/sheets/**",
+        "src/contracts/sheets.ts",
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
+      ],
+      "clauses": [
+        "EV-14",
+        "EV-5",
+        "EV-6",
+        "ARC-10",
+        "END-8"
+      ],
+      "id": "FX4",
+      "title": "Spreadsheet reader: the five A07D Opus findings",
+      "phase": 1,
+      "size": "M",
+      "core": true,
+      "note": "From reports/A07D-opus-read.md, 3 Oct (A393); landing rule: fallbacks are removals."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W00c",
+        "SC4",
+        "SC"
+      ],
+      "paths": [
+        "src/contracts/taxprep.ts",
+        "src/contracts/taxprep.acceptance.test.ts",
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
+      ],
+      "clauses": [
+        "EV-5",
+        "ARC-10"
+      ],
+      "id": "FX6",
+      "title": "Taxprep rate text invents digits at huge values (found by SC4)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC4-spec.md, 3 Oct (A406)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W00c",
+        "FX2",
+        "CQ6"
+      ],
+      "paths": [
+        "src/contracts/facts.ts",
+        "src/contracts/reading.ts",
+        "src/contracts/amount-grammar.ts",
+        "src/modules/ocr/textlayer/**",
+        "src/modules/storage/**",
+        "src/core/test-no-network.ts",
+        "src/contracts/auth.ts",
+        "tools/test/__fixtures__/planted-interpolated-log.ts.txt",
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/core/safe-read.ts",
+        "tools/test/schema-contract-rules.test.mjs",
+        "src/contracts/text.ts"
+      ],
+      "clauses": [
+        "EV-1",
+        "EV-5",
+        "ARC-10",
+        "ARC-15",
+        "SEC-11"
+      ],
+      "id": "FX7",
+      "title": "Rule defects in landed contracts and readers (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "W16"
+      ],
+      "paths": [
+        "reference/sample-clients/clients/c07_08.mjs",
+        "reference/sample-clients/clients/c09_10.mjs",
+        "reference/sample-clients/clients/c13_15.mjs",
+        "reference/sample-clients/07-*/**",
+        "reference/sample-clients/09-*/**",
+        "reference/sample-clients/14-*/**",
+        "reference/sample-clients/15-*/**",
+        "reference/sample-clients/verify.mjs",
+        "reference/sample-clients/README.md",
+        "tools/test/sample-names.test.mjs",
+        "tools/test/__fixtures__/schema-contract/known.json"
+      ],
+      "clauses": [
+        "SEC-11",
+        "ARC-8"
+      ],
+      "id": "FX8",
+      "title": "Sample clients: the four bare names in flag text",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/W00b-spec-review.md, 3 Oct (A409)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W16",
+        "FX8"
+      ],
+      "paths": [
+        ".gitattributes",
+        "reference/**/*.csv",
+        "tools/test/__fixtures__/schema-contract/known.json"
+      ],
+      "clauses": [
+        "ARC-10",
+        "RT-14"
+      ],
+      "id": "FX9",
+      "title": "CSV line endings: .gitattributes and the committed CSVs (R37)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "Split from FX7, 3 Oct (A415)."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "src/modules/auth/auth.acceptance.db.test.ts",
+        "src/modules/auth/**"
+      ],
+      "clauses": [
+        "ARC-6",
+        "SEC-1"
+      ],
+      "id": "FX10",
+      "title": "Auth db test flaky under full-run load",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "Seen in DB16's spec run, 3 Oct (A421).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC5"
+      ],
+      "paths": [
+        "src/modules/ocr/**"
+      ],
+      "clauses": [
+        "AI-10",
+        "EV-5"
+      ],
+      "id": "FX11",
+      "title": "Recorded OCR: the engine named by the result matches the source (R84)",
+      "phase": 1,
+      "size": "S",
+      "core": true,
+      "note": "From reports/A04-findings.md, 3 Oct (A426)."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "FX10"
+      ],
+      "paths": [
+        "vitest.config.ts",
+        "tools/test/db-budget.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15"
+      ],
+      "id": "FX12",
+      "title": "Db test time budget: workers by machine, tests near the budget",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/FX10-spec.md, 3 Oct (A429).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "FX2",
+        "SC5"
+      ],
+      "paths": [
+        "src/modules/ocr/index.ts",
+        "src/modules/ocr/ocr-guard.acceptance.test.ts"
+      ],
+      "clauses": [
+        "SEC-10",
+        "SEC-11"
+      ],
+      "id": "FX13",
+      "title": "Setting errors name the setting, never its value (R88)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/FX2-security.md, 3 Oct (A435)."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "FX12"
+      ],
+      "paths": [
+        "src/core/db/**/*.db.test.ts",
+        "src/modules/bridge/**/*.db.test.ts",
+        "src/modules/jobs/**/*.db.test.ts",
+        "tools/test/db-budget.test.mjs"
+      ],
+      "clauses": [
+        "ARC-4",
+        "ARC-5",
+        "ARC-16",
+        "RT-5",
+        "END-1"
+      ],
+      "id": "FX14",
+      "title": "One database per test: split the multi-world db tests",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/FX12-spec.md, 3 Oct (A443).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [],
+      "paths": [
+        "src/modules/jobs/queue.ts",
+        "src/modules/jobs/jobs.acceptance.db.test.ts",
+        "src/modules/jobs/runner.ts",
+        "src/contracts/jobs.ts",
+        "src/modules/jobs/lease.acceptance.db.test.ts"
+      ],
+      "clauses": [
+        "ARC-5",
+        "ARC-22"
+      ],
+      "id": "FX15",
+      "title": "Job queue: complete and fail check the lease holder",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "note": "From reports/A04-findings-5.md RC2, 3 Oct (A446).",
+      "done": "2026-10-03"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC5"
+      ],
+      "paths": [
+        "src/contracts/records.ts",
+        "src/contracts/records.acceptance.test.ts",
+        "src/contracts/bridge.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/runner/engines.ts",
+        "src/modules/ai/runner/runner.ts",
+        "src/modules/gaps/bank/index.ts"
+      ],
+      "clauses": [
+        "SEC-10",
+        "ARC-15"
+      ],
+      "id": "FX16",
+      "title": "Records and gaps bank refuse prototype-name keys (R101)",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/W00c-findings-3.md, 3 Oct (A450)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC3"
+      ],
+      "paths": [
+        "db/schema/94_actor_keys.sql",
+        "src/contracts/actors.acceptance.db.test.ts",
+        "tools/test/__fixtures__/security-rules/harness.ts"
+      ],
+      "clauses": [
+        "SEC-1",
+        "SEC-7",
+        "ARC-13"
+      ],
+      "id": "FX17",
+      "title": "Actor columns name a staff user or a named system actor",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "security": true,
+      "note": "From reports/SC3-findings.md, 3 Oct (A452). Schema file number 94: N19 holds 93."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "src/modules/ai/runner/engines.ts",
+        "src/modules/ai/runner/runner.ts",
+        "src/core/safe-read.ts",
+        "src/modules/ai/runner/exchange-errors.acceptance.test.ts",
+        "src/modules/ai/runner/schemas.ts",
+        "src/modules/ai/index.ts",
+        "data/ai/exchange-limits.json",
+        "src/core/safe-read.test.ts",
+        "src/modules/ai/runner/exchange-limits.build.test.ts",
+        "src/modules/ai/runner/runner.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-22",
+        "SEC-11",
+        "AI-9"
+      ],
+      "id": "FX18",
+      "title": "AI exchange: errors and waiting files told plainly",
+      "phase": 1,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/A04-check.md round 5b lows, 3 Oct (A465)."
+    },
+    {
+      "status": "carded",
+      "spec": "bd0e2fe2",
+      "deps": [
+        "F02",
+        "SC"
+      ],
+      "paths": [
+        "src/contracts/lifecycle.ts",
+        "src/modules/lifecycle/**",
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "data/lifecycle/unbuilt-guards.json"
+      ],
+      "clauses": [
+        "FLOW-1",
+        "FLOW-4"
+      ],
+      "id": "FX5",
+      "title": "F02 move inside a caller transaction (for T08)",
+      "phase": 3,
+      "size": "S",
+      "core": true,
+      "note": "From reports/phase3-card-review-2026-10-03.md fix 2 (A397). L00 and N00 take the caller transaction in their own builds."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A06",
+        "FX2",
+        "A04"
+      ],
+      "paths": [
+        "tools/test/settings-rules.test.mjs",
+        "tools/test/__fixtures__/settings-rules/**"
+      ],
+      "clauses": [
+        "ARC-20",
+        "ARC-15",
+        "ARC-22",
+        "SEC-11"
+      ],
+      "id": "SC5",
+      "title": "Settings and strictness rules R71 to R73",
+      "phase": 0,
+      "size": "S",
+      "core": true
+    },
+    {
+      "status": "parked",
+      "spec": null,
+      "deps": [
+        "SC",
+        "W16"
+      ],
+      "paths": [
+        "tools/test/spec-rules.test.mjs",
+        "tools/test/__fixtures__/spec-rules/**"
+      ],
+      "clauses": [
+        "ARC-12",
+        "ARC-16"
+      ],
+      "id": "SC6",
+      "title": "Card and verify rules R77 and R78",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/W16-findings.md, 3 Oct (A404). Parked 4 Oct (A535): R78 round 4 check FAIL (SEC-10 exec import; argv split at | and ;; quotes mid-word; option values read as subcommands). R77, R81 and R78 go to SC7. Branch claude/SC6 at 7355b03 keeps the work."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "SC2",
+        "SC3",
+        "SC4",
+        "SC5",
+        "SC10"
+      ],
+      "paths": [
+        "tools/test/lib/known.mjs",
+        "tools/test/lib/known.test.mjs",
+        "tools/test/lib/cards.mjs",
+        "tools/test/lib/cards.test.mjs",
+        "tools/test/schema-contract-rules.test.mjs",
+        "tools/test/reading-rules.test.mjs",
+        "tools/test/spec-rules.test.mjs",
+        "tools/test/card-rules.test.mjs",
+        "tools/mutate-changed.mjs",
+        "tools/test/mutate-harness.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC7",
+      "title": "One shared KNOWN helper for every rules file",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-findings.md, 3 Oct (A407)."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "SC",
+        "FX2",
+        "A04"
+      ],
+      "paths": [
+        "tools/test/source-read-rules.test.mjs",
+        "tools/test/__fixtures__/source-read-rules/**",
+        "src/core/testing/read-own-source.acceptance.test.ts",
+        "src/contracts/amount-grammar.acceptance.test.ts",
+        "src/contracts/reading.acceptance.test.ts",
+        "src/contracts/reading-strict.acceptance.test.ts",
+        "src/core/clock.acceptance.test.ts",
+        "src/core/env.acceptance.test.ts",
+        "src/core/ids.acceptance.test.ts",
+        "src/core/log.acceptance.test.ts",
+        "src/core/money.acceptance.test.ts",
+        "src/core/egress-rules.acceptance.test.ts",
+        "src/modules/auth/rules.acceptance.test.ts"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC8",
+      "title": "Source reads go through readOwnSource (R79)",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/FX2-findings.md, 3 Oct (A414).",
+      "done": "2026-10-04"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC",
+        "SC7",
+        "SC3"
+      ],
+      "paths": [
+        "tools/test/rule-walker.test.mjs",
+        "tools/test/__fixtures__/rule-walker/**",
+        "tools/test/lib/walk.mjs",
+        "tools/test/rules.test.mjs",
+        "src/core/db/db.test.ts",
+        "src/contracts/schema-rules.db.test.ts",
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "data/schema/contract-tables.json",
+        "tools/test/__fixtures__/security-rules/harness.ts",
+        "tools/test/security-rules.test.mjs"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16"
+      ],
+      "id": "SC9",
+      "title": "Rule walkers: no escape by name, kind or path",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From reports/SC-spec-review-3.md, 3 Oct (A415)."
+    },
+    {
+      "status": "done",
+      "spec": null,
+      "deps": [
+        "SC",
+        "CQ4",
+        "CQ6",
+        "F02"
+      ],
+      "paths": [
+        "tools/test/card-rules.test.mjs",
+        "tools/test/__fixtures__/card-rules/**",
+        "data/lifecycle/unbuilt-guards.json"
+      ],
+      "clauses": [
+        "ARC-15",
+        "ARC-16",
+        "FLOW-2"
+      ],
+      "id": "SC10",
+      "title": "Card rules R85 to R87 and R89: flags, harness, spec-owned files, guard owners",
+      "phase": 0,
+      "size": "S",
+      "core": true,
+      "note": "From the DB16 and CQ4 findings, 3 Oct (A430). R89 added 3 Oct from C1 of reports/phase3-card-review-2026-10-03b.md.",
+      "done": "2026-10-04"
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "DB16"
+      ],
+      "paths": [
+        "src/core/db/rules.acceptance.db.test.ts",
+        "src/core/db/__fixtures__/grants/**",
+        "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/vitest-setup.ts",
+        "tools/test-homes.json",
+        "src/core/db/pool-rules.acceptance.test.ts",
+        "src/core/db/__fixtures__/**"
+      ],
+      "clauses": [
+        "ARC-6",
+        "SEC-1",
+        "ARC-15"
+      ],
+      "id": "SC11",
+      "title": "Db rules R90 to R92: clean pooled connections, no leftover roles, no swallowed db errors",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/DB16-findings-4.md, 3 Oct (A441)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "A04"
+      ],
+      "paths": [
+        "tools/test/fs-rules.test.mjs",
+        "tools/test/__fixtures__/fs-rules/**",
+        "src/modules/auth/testusers/engine.ts",
+        "src/core/db/index.ts",
+        "src/modules/auth/auth.acceptance.db.test.ts"
+      ],
+      "clauses": [
+        "SEC-10",
+        "SEC-11",
+        "ARC-22",
+        "ARC-15"
+      ],
+      "id": "SC12",
+      "title": "Exchange and file-system rules R93 to R97",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From reports/A04-findings-5.md, 3 Oct (A446)."
+    },
+    {
+      "status": "carded",
+      "spec": null,
+      "deps": [
+        "SC"
+      ],
+      "paths": [
+        "db/schema/**",
+        "src/contracts/records.ts",
+        "src/contracts/jobs.ts",
+        "src/contracts/ai.ts",
+        "src/modules/gaps/index.ts",
+        "src/modules/gaps/bank/index.ts",
+        "src/modules/jobs/queue.ts",
+        "src/modules/bridge/run.ts",
+        "tools/test/__fixtures__/schema-contract/known.json",
+        "src/contracts/ids.ts",
+        "src/contracts/checks.ts"
+      ],
+      "clauses": [
+        "SEC-7",
+        "EV-1",
+        "ARC-10",
+        "EV-5",
+        "FLOW-1",
+        "ARC-15"
+      ],
+      "id": "FX3",
+      "title": "Rule defects in landed code (found by SC)",
+      "phase": 0,
+      "size": "M",
+      "core": true,
+      "note": "From reports/SC-build.md, 2 Oct. Lands before the first phase 4 build: its db/schema/** hold overlaps every phase 4 schema file (77, 78, 79, 81, 82, 83, 91, 92, 99) (phase 4 card review C4, A447)."
+    },
+    {
+      "status": "done",
+      "spec": "d69ac553",
+      "deps": [
+        "A06"
+      ],
+      "paths": [
+        "src/core/db/global-setup.ts",
+        "src/core/db/index.ts",
+        "src/core/db/target.ts",
+        "src/core/db/pg16.test.ts",
+        "vitest.config.ts",
+        "package.json",
+        "package-lock.json",
+        ".claude/agents/checker.md",
+        ".claude/cloud-worker-run.md"
+      ],
+      "clauses": [
+        "ARC-4",
+        "ARC-16",
+        "SEC-7"
+      ],
+      "id": "DB16",
+      "title": "The db test project runs on Postgres 16 in cloud checks",
+      "phase": 0,
+      "size": "S",
+      "core": false,
+      "security": true,
+      "note": "From the train report of 3 Oct (A405).",
+      "done": "2026-10-03"
     }
   ]
 }

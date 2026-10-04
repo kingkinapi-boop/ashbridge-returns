@@ -1,0 +1,15 @@
+{
+  "file": "cf-only.pdf",
+  "note": "Made up (A01 round 3). One page whose only text is one glyph that maps to U+00AD (a Cf character): no text layer.",
+  "pageCount": 1,
+  "pages": [
+    {
+      "number": 1,
+      "widthPt": 612,
+      "heightPt": 792,
+      "hasTextLayer": false
+    }
+  ],
+  "words": [],
+  "boxes": {}
+}

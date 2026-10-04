@@ -1,0 +1,5 @@
+# A01 spec round 3 (cloud-76f46b, Opus spec-writer subagent, 2 Oct 2026)
+Branch claude/A01 + claude/F01 (text.ts) + main 1c1da376. Validated on main 1c1da376afb6c94edb7e389241b2cf79edca2541: typecheck and lint clean; only the 24 new failing tests fail (unit 1508 with stub green, db 249). 6b: none retired.
+- 34 new tests: textlayer.acceptance.test.ts (A01 round 3 block), blank-rules.acceptance.test.ts (rule sweep over every engine and BLANK_RANGES endpoint, plus NEL and U+00AD); fixtures nel-only.pdf, cf-only.pdf (make-fixtures.ts gains invisibleTextPdf); old fixtures byte-identical.
+- Amber: pdfjs-dist 6.3.289 strips every Cf character tried, so "a Cf character pdfjs keeps" does not exist; cf-only.pdf uses U+00AD as a guard; the real gap is non-Cf invisibles (U+034F, U+3164, U+2800, U+0000, U+007F), covered by the sweep. Old textlayer.geometry.test.ts "only spaces" test left unedited (builder's file); rows live in the acceptance file. Not tested: WordSchema refuses exactly what isBlank refuses.
+- Permission gaps: none. Model: Opus 5.5 (spec), Sonnet 5.5 (worker).

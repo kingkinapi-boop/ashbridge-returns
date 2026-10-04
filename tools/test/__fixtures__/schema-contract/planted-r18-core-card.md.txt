@@ -1,0 +1,3 @@
+# PLC Planted core card (Test)
+
+Phase 0. Size S. Tags: core. Deps: none. Paths: `src/contracts/planted-unmarked.ts`, `src/contracts/planted-unmarked.test.ts`

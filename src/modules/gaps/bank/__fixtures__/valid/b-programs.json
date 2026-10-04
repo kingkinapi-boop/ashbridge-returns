@@ -1,0 +1,113 @@
+{
+  "items": [
+    {
+      "id": "Q-DIV-001",
+      "type": "ASK",
+      "resolves": "onboarding.dividend.amount",
+      "slots": [
+        {
+          "name": "amount",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Dividend amount",
+      "topic": "dividends",
+      "retired": false
+    },
+    {
+      "id": "Q-DIV-003",
+      "type": "ASK",
+      "resolves": "onboarding.dividend.amount",
+      "slots": [
+        {
+          "name": "amount",
+          "type": "money_cents",
+          "required": true
+        }
+      ],
+      "answer": {
+        "shape": "money"
+      },
+      "label": "Old dividend amount",
+      "topic": "dividends",
+      "retired": true
+    },
+    {
+      "id": "Q-CRA-001",
+      "type": "DECIDE",
+      "resolves": "onboarding.cra_program.program",
+      "slots": [
+        {
+          "name": "program",
+          "type": "choice",
+          "required": true,
+          "options": [
+            "corporate_tax",
+            "hst"
+          ]
+        }
+      ],
+      "answer": {
+        "shape": "choice",
+        "options": [
+          "corporate_tax",
+          "hst",
+          "payroll"
+        ]
+      },
+      "label": "Which program account",
+      "topic": "cra",
+      "retired": false
+    },
+    {
+      "id": "Q-OWN-001",
+      "type": "ASK",
+      "resolves": "onboarding.shareholder.percent_common",
+      "slots": [
+        {
+          "name": "holder",
+          "type": "fact_ref",
+          "required": true
+        },
+        {
+          "name": "share",
+          "type": "percent",
+          "required": false
+        }
+      ],
+      "answer": {
+        "shape": "number"
+      },
+      "label": "Owner share",
+      "topic": "owners",
+      "retired": false
+    },
+    {
+      "id": "Q-DOC-001",
+      "type": "ASK",
+      "resolves": "onboarding.client.notes",
+      "slots": [
+        {
+          "name": "resolution",
+          "type": "document_ref",
+          "required": true
+        },
+        {
+          "name": "account",
+          "type": "account_ref",
+          "required": false
+        }
+      ],
+      "answer": {
+        "shape": "file"
+      },
+      "label": "Supporting file",
+      "topic": "documents",
+      "retired": false
+    }
+  ]
+}

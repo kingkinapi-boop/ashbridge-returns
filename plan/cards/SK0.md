@@ -1,6 +1,7 @@
 # SK0 Walking skeleton: one sample client from document to trace, stubs allowed
 
-Phase 0. Size M. Hard. Deps: F01, F03, F04, F05, F09, F09A, W00, S00, A01, JH0. Where: cloud.
+Phase 0. Size M. Hard. Deps: F01, F03, F04, F05, F09, F09B (F09A split, A349), W00, S00, A01, JH0. Where: cloud.
+Tags: none.
 Paths: e2e/skeleton/**, e2e/steps/skeleton-*.ts
 Clauses: END-9, END-2, ARC-7, RT-14
 Read: `reference/lessons-deep.md` pattern 1, blueprint 00 (END-2, END-9), 04 (the lock export and the trace), `plan/cards/JH0.md`, `plan/cards/W00.md`, `reference/sample-clients/01-maple-ridge/` (answer key and `taxprep/import.csv`).
@@ -28,3 +29,6 @@ From the first week, one thin path runs end to end for sample client C01: a docu
 
 ## Not in this card
 Real extraction, books or checks. Any screen.
+
+## Trial day 4 (Auto-fill), 2 Oct 2026
+Taxprep's T2 Auto-fill fills 75 cells (all Current Year) that the "Imported" export filter returns, and no others. Consequence: none for the walking skeleton; any Auto-filled cell that appears is classed as imported from CRA, not an orphan. Source: `reference/taxprep/FINDINGS.md` O8 (one corporation only; structure only). Note only: this card's Paths, Clauses and acceptance tests are unchanged.

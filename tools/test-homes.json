@@ -1,0 +1,28 @@
+{
+  "unit": {
+    "include": ["src/**/*.test.ts", "tools/test/**/*.test.mjs", "design/**/*.test.ts", "testworld/**/*.test.ts"],
+    "exclude": ["**/*.db.test.ts", "**/*.eval.test.ts", "node_modules/**"]
+  },
+  "harness": [
+    "src/core/db/index.ts",
+    "src/core/db/global-setup.ts",
+    "src/core/db/vitest-setup.ts",
+    "src/core/test-no-network.ts",
+    "src/core/testing/read-own-source.ts"
+  ],
+  "db": { "include": ["src/**/*.db.test.ts", "testworld/**/*.db.test.ts"] },
+  "evals": { "include": ["evals/**/*.test.ts", "src/**/*.eval.test.ts"] },
+  "tsconfig": {
+    "include": [
+      "next-env.d.ts",
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "e2e/**/*.ts",
+      "*.ts",
+      "design/**/*.ts",
+      "testworld/**/*.ts",
+      ".next/types/**/*.ts",
+      ".next/dev/types/**/*.ts"
+    ]
+  }
+}

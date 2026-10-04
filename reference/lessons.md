@@ -39,3 +39,5 @@ From the client app build (items 1 to 25) and for this autonomous build (26 onwa
 32. The Lead's context is the scarcest resource in the build: it reads indexes, reports and tool summaries, never code.
 33. A simulator built from the vendor's published rules lets the build run without the vendor; the real proof still happens before go-live, and every simulator rule names its source.
 34. A helper that kills a hung browser by name kills Zo's browsers too (1 Oct: every Edge window closed). Kill only the process IDs you started.
+35. A spec writes every expectation for the finished state, counts included; a file the spec owns is never also the build's to write (W16, 3 Oct).
+36. Rule tests read the cards, so a card edit can turn main red: adding a src path to a core card, or tagging a card core, needs `// @mutate` on that file (SC's R18). The Lead runs the tools tests after such an edit, before pushing (A461, 3 Oct).
