@@ -4,9 +4,8 @@
  "round": 2,
  "spec": "eb8d158c",
  "worker": "cloud-725535",
- "state": "released",
- "at": "2026-10-04T00:05:06.726Z",
+ "state": "reopened",
+ "at": "2026-10-04T01:00:22.862Z",
  "mode": "turbo",
- "note": "wait: Opus spec review of FX18 round 2 (local, from 00:10Z; core) before the build",
- "waitKey": "{\"status\":\"carded\",\"deps\":[\"A04\"],\"depStatus\":[\"done\"]}"
+ "note": "A537 gaps patched (spec round 2 reported); build B1 to B8, then cloud mutate --force"
 }
