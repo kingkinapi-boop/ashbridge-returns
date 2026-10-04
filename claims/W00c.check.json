@@ -3,13 +3,9 @@
  "role": "check",
  "for": "2026-10-03T20:23:12.710Z",
  "worker": "cloud-331e27",
- "state": "released",
- "at": "2026-10-04T00:18:29.317Z",
+ "state": "reopened",
+ "at": "2026-10-04T00:38:30.189Z",
  "mode": "turbo",
  "beat": "2026-10-04T00:01:26.824Z",
- "note": "continue: A538 narrow-first cascade at the top of the card; session 1 pass 1a on all 11 targets, json-keys.ts first",
- "lastRelease": {
-  "tip": "04dff208d53d8c076f0d2a1257276b590c608db6"
- },
- "needsLead": true
+ "note": "continue: A538 narrow-first cascade at the top of the card; session 1 pass 1a on all 11 targets, json-keys.ts first"
 }
