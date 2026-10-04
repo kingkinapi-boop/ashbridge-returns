@@ -19,7 +19,38 @@
       "reason": "The first rollback of a transaction after a failure: the finally block repeats the rollback, then discards the connection or destroys it on failure, so a failed first rollback is never trusted or lost (DB16 security review, low 3)."
     }
   ],
-  "dbGrantAllow": [],
+  "dbGrantAllow": [
+    {
+      "file": "db/bridge/0002_grants.sql",
+      "statement": "grant usage on schema bridge to returns_app",
+      "owner": "GL3",
+      "reason": "GL3 (ARC-2, SEC-6): this system reads the bridge views only, select only, never a write and never a base table; a draft for the client repo, never applied to the client app from here."
+    },
+    {
+      "file": "db/bridge/0002_grants.sql",
+      "statement": "grant select on all tables in schema bridge to returns_app",
+      "owner": "GL3",
+      "reason": "GL3 (ARC-2, SEC-6): this system reads the bridge views only, select only, never a write and never a base table; a draft for the client repo, never applied to the client app from here."
+    },
+    {
+      "file": "db/bridge/0002_grants.sql",
+      "statement": "grant usage on schema returns to client_app_reader",
+      "owner": "GL3",
+      "reason": "GL3 (END-7): the client app reads returns.client_handoff, the hand-off row's columns only (ids, slot values and numbers, never a sentence) and only rows a person signed; a draft for the client repo, never applied from here."
+    },
+    {
+      "file": "db/bridge/0002_grants.sql",
+      "statement": "grant select ( id, corporation_id, engagement_id, tax_year, list_kind, list_version, position, status, sent_at, is_test, item_id, primitive, fact_id, answer_shape, choice_ids, slots, recommendation_id, reason_id, value_cents, prior_value_cents ) on returns.client_handoff to client_app_reader",
+      "owner": "GL3",
+      "reason": "GL3 (END-7): the client app reads returns.client_handoff, the hand-off row's columns only (ids, slot values and numbers, never a sentence) and only rows a person signed; a draft for the client repo, never applied from here."
+    }
+  ],
+  "dbGrantFixtures": [
+    {
+      "file": "db/bridge/__fixtures__/client-app-standin.sql",
+      "reason": "A made-up stand-in of the client app's base tables, roles and the default privileges a managed host may set (GL3's planted SEC-6 case), for the bridge draft's tests only: a stand-in of the client app, not a migration of ours, and never applied anywhere."
+    }
+  ],
   "definerAllow": [],
   "tsconfig": {
     "include": [

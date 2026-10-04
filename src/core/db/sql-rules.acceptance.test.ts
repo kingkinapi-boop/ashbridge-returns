@@ -13,6 +13,13 @@
 //   name, lower case). A stale entry fails.
 // - Both lists start empty on this card's base (db/ holds no grant and no definer today); GL3 adds its own.
 // - The plant for R107 is GL3's line 20 at e4d95939: __fixtures__/sql-rules/grants-e4d95939.sql.
+// - S20 (round 4, A540): GL3 landed its grants draft (a 0002_grants.sql in a folder of db/), so dbGrantAllow holds one
+//   entry per grant statement there (owner GL3, the reason from GL3's card). A client-app-standin.sql in that folder's
+//   __fixtures__ is a made-up stand-in of the client app, not a migration of ours: R107 skips it only through
+//   `dbGrantFixtures` in tools/test-homes.json, a list of { file, reason } whose one entry names that file. A fixture
+//   entry must name an existing file under a `__fixtures__` folder, with a reason; any other file, a planted
+//   default-privilege grant included, is scanned. GL3's own ARC-2 rule forbids naming the draft's folder anywhere in
+//   src outside its module, so these tests take both paths from tools/test-homes.json and pin their shape instead.
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, test } from 'vitest'
@@ -155,6 +162,30 @@ function sqlFiles(dir: string): { file: string; src: string }[] {
   })
 }
 
+interface FixtureEntry {
+  file: string
+  reason: string
+}
+
+/** S20: the files R107 reads (every file but a valid fixture entry's), and the problems of the fixture entries. */
+function grantScan(files: { file: string; src: string }[], fixtures: FixtureEntry[]): { files: { file: string; src: string }[]; problems: string[] } {
+  const problems: string[] = []
+  const exempt = new Set<string>()
+  for (const f of fixtures) {
+    if (!/(?:^|\/)__fixtures__\//.test(f.file)) problems.push(`grant fixture entry ${f.file} is not under a __fixtures__ folder: only a fixture is exempt`)
+    else if (!files.some((x) => x.file === f.file)) problems.push(`stale grant fixture entry ${f.file}`)
+    else exempt.add(f.file)
+    if (f.reason.trim() === '') problems.push(`grant fixture entry ${f.file} needs a reason`)
+  }
+  return { files: files.filter((x) => !exempt.has(x.file)), problems }
+}
+
+function fixtureList(): FixtureEntry[] {
+  const homes = JSON.parse(readOwnSource('tools/test-homes.json')) as Record<string, unknown>
+  expect(Array.isArray(homes['dbGrantFixtures']), 'tools/test-homes.json has a dbGrantFixtures array (S20)').toBe(true)
+  return homes['dbGrantFixtures'] as FixtureEntry[]
+}
+
 function list(key: 'dbGrantAllow' | 'definerAllow'): Allow[] {
   const homes = JSON.parse(readOwnSource('tools/test-homes.json')) as Record<string, unknown>
   expect(Array.isArray(homes[key]), `tools/test-homes.json has a ${key} array (Lead-owned)`).toBe(true)
@@ -217,10 +248,79 @@ describe('SC11 R107 every grant in db/**/*.sql is on an allow list (SEC-6, ARC-2
     expect(grantProblems(sql(src), [])).toEqual([])
   })
 
-  test('SEC-6 the real db/**/*.sql has no grant outside the allow list (which GL3 fills)', () => {
+  test('SEC-6 the real db/**/*.sql has no grant outside the allow list (which GL3 fills); a fixture is skipped only through its entry', () => {
     const files = sqlFiles('db')
     expect(files.length, 'sentinel: the scan read the schema files').toBeGreaterThan(0)
-    expect(grantProblems(files, list('dbGrantAllow'))).toEqual([])
+    const scan = grantScan(files, fixtureList())
+    expect(scan.problems).toEqual([])
+    expect(grantProblems(scan.files, list('dbGrantAllow'))).toEqual([])
+  })
+})
+
+describe('SC11 S20 R107 against GL3 landed grants (SEC-6, ARC-2, END-7)', () => {
+  /** The grants draft: the one file dbGrantAllow names, a 0002_grants.sql one folder below db/. */
+  function grantsFile(): string {
+    const files = [...new Set(list('dbGrantAllow').map((a) => a.file))]
+    expect(files, 'dbGrantAllow names exactly one file, GL3 grants draft (S20)').toHaveLength(1)
+    const file = files[0] ?? ''
+    expect(path.posix.basename(file)).toBe('0002_grants.sql')
+    expect(path.posix.dirname(path.posix.dirname(file)), 'the draft sits one folder below db/').toBe('db')
+    return file
+  }
+  /** The stand-in: client-app-standin.sql in the __fixtures__ folder beside the grants draft. */
+  function standinFile(): string {
+    return `${path.posix.dirname(grantsFile())}/__fixtures__/client-app-standin.sql`
+  }
+
+  test('SEC-6 S20 every grant statement of GL3 grants draft has exactly one allow entry, owned by GL3, with a reason', () => {
+    const GRANTS = grantsFile()
+    expect(sqlFiles('db').some((f) => f.file === GRANTS), 'sentinel: the scan reads the grants draft').toBe(true)
+    const grants = statements(GRANTS, readOwnSource(GRANTS)).filter((s) => GRANT.test(s.text))
+    expect(grants.length, 'sentinel: the GL3 draft holds grants').toBeGreaterThan(0)
+    const entries = list('dbGrantAllow').filter((a) => a.file === GRANTS)
+    expect(entries.map((a) => a.statement).sort()).toEqual(grants.map((s) => s.text).sort())
+    for (const a of entries) {
+      expect(a.owner).toBe('GL3')
+      expect(a.reason.trim().length, `${a.statement} has a reason`).toBeGreaterThan(20)
+    }
+    expect(grantProblems([{ file: GRANTS, src: readOwnSource(GRANTS) }], entries)).toEqual([])
+  })
+
+  test('SEC-6 S20 the client app stand-in is exempt only through its one fixture entry, naming that file and why; without it the scan refuses its default-privilege grants', () => {
+    const STANDIN = standinFile()
+    const fixtures = fixtureList()
+    expect(fixtures).toHaveLength(1)
+    expect(fixtures[0]?.file).toBe(STANDIN)
+    expect(fixtures[0]?.reason).toMatch(/stand-in of the client app/)
+    expect(fixtures[0]?.reason).toMatch(/not a migration of ours/)
+    const files = sqlFiles('db')
+    expect(files.some((f) => f.file === STANDIN), 'sentinel: the scan reads the stand-in').toBe(true)
+    const without = grantProblems(grantScan(files, []).files, list('dbGrantAllow'))
+    expect(without.filter((p) => p.startsWith(`${STANDIN}:`) && p.includes('refused outright: a default-privilege grant'))).toHaveLength(4)
+  })
+
+  test('SEC-6 S20 PLANT: a default-privilege grant in any other db/**/*.sql still fails with the fixture entry in place', () => {
+    const planted = [
+      { file: `${path.posix.dirname(grantsFile())}/0003_planted_test.sql`, src: 'alter default privileges grant select on tables to anon;' },
+      { file: 'db/schema/99_planted_test.sql', src: 'alter default privileges in schema returns grant select on tables to returns_app;' },
+    ]
+    const scan = grantScan([...sqlFiles('db'), ...planted], fixtureList())
+    expect(scan.problems).toEqual([])
+    const got = grantProblems(scan.files, list('dbGrantAllow'))
+    for (const p of planted) expect(got, p.file).toContainEqual(`${p.file}:1 refused outright: a default-privilege grant`)
+    expect(got).toHaveLength(planted.length)
+  })
+
+  test('SEC-6 S20 a fixture entry naming a file outside __fixtures__, a missing file, or no reason is a problem and exempts nothing', () => {
+    const GRANTS = grantsFile()
+    const STANDIN = standinFile()
+    const GONE = `${path.posix.dirname(STANDIN)}/gone.sql`
+    const files = sqlFiles('db')
+    const outside = grantScan(files, [{ file: GRANTS, reason: 'not a fixture (Test)' }])
+    expect(outside.problems).toEqual([`grant fixture entry ${GRANTS} is not under a __fixtures__ folder: only a fixture is exempt`])
+    expect(outside.files.some((f) => f.file === GRANTS)).toBe(true)
+    expect(grantScan(files, [{ file: GONE, reason: 'why (Test)' }]).problems).toEqual([`stale grant fixture entry ${GONE}`])
+    expect(grantScan(files, [{ file: STANDIN, reason: ' ' }]).problems).toEqual([`grant fixture entry ${STANDIN} needs a reason`])
   })
 })
 

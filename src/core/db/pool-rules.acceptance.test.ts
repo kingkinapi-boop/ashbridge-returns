@@ -39,12 +39,39 @@
 //   (<kind>): ..." with kind function, finally, catch, hook, teardown or Promise.all.
 // - Plants: __fixtures__/index-030e1d6f.ts, vitest-setup-030e1d6f.ts and global-setup-030e1d6f.ts are the harness
 //   as the round 2 build left it (git show 030e1d6f:src/core/db/<file>.ts, import paths edited only).
+//
+// SC11 round 4 (A540), same file, same rules for builders. What these tests fix (amber, reported with the spec):
+// - S14: closeClones closes every clone made since the last call and its rejection names each one that failed (the
+//   unit twin of round 3's S7, which left the db file). Plant: __fixtures__/clones-030e1d6f.ts (Promise.all).
+// - S16 (unit twin): index.ts exports `markPoolEnded(pool)`. endPool marks a pool ended only when its end resolved: after
+//   endPool rejects on its bound, an error on that pool still goes to its owner's problems (or "no owner" for a pool
+//   opened without a sink), and is late only after the owner called markPoolEnded (close and createPg16Template do so
+//   after their drop step).
+// - S17: settleAll takes opts.deadlineMs, a duration from the call. Each step's bound is min(its own bound, the time left
+//   minus DEADLINE_MARGIN_MS, exported from index.ts); a step whose bound so computed is not above 0 does not run and is
+//   named "<name> ... not reached". A nested settleAll given its outer step's bound minus the margin rejects first, so the
+//   outer rejection carries the inner names.
+// - S18: index.ts exports POOL_END_BOUND_MS (endPool's own bound, below close's endPool step) and TEARDOWN_BOUNDS_MS,
+//   keys in run order roleCheck, list, drop. The teardown worst case, their sum plus two margins (the teardown and
+//   dropRunDatabases inside it), is at most 0.8 of the db project's teardownTimeout in vitest.config.ts, else vitest's
+//   configDefaults.teardownTimeout. The afterEach worst case with the margin stays inside 0.8 of the hookTimeout.
+//   makeTeardown runs the role check first, then dropRunDatabases. `dropRunDatabases(url, io?)` takes
+//   io = { list(url), drop(url, name) } (the real list and drop when omitted), lists, then drops every database
+//   concurrently, each with its own bound, and rejects naming every database not dropped.
+// - S19: an error emitted on withAdmin's connection after withAdmin returned is in takeLateErrors().
+// - R119: in every harness file a `boundMs` or `deadlineMs` value (a property, a variable, a parameter default or an
+//   assignment) holds no number literal: it is a named constant or an expression of named constants.
+// - R120: no assignment to a flag whose name ends in ended or closed (an optional trailing _) inside a try statement's
+//   finally block in a harness file; a Promise `.finally` on the end itself is not a try statement and is allowed.
+// - Plants: __fixtures__/index-71b621d7.ts and global-setup-71b621d7.ts are the harness as the round 3 build left it.
 import fs from 'node:fs'
 import path from 'node:path'
 import pg from 'pg'
 import ts from 'typescript'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import { configDefaults } from 'vitest/config'
 import { readOwnSource } from '../testing/read-own-source'
+import * as oldClones from './__fixtures__/clones-030e1d6f'
 import * as globalSetupModule from './global-setup'
 import * as dbModule from './index'
 
@@ -438,7 +465,8 @@ describe('SC11 S10 the global teardown never skips the role check (ARC-6, SEC-1)
     const msg = messageOf(await rejectionOf(teardown()))
     expect(msg).toContain('drop of ashbridge_t_run_db1 refused (Test)')
     expect(msg).toContain('sc11_left_role_test')
-    expect(calls).toEqual([`drop ${url}`, `roles ${url}`])
+    // S18 (A540): the role check runs first, then the drop.
+    expect(calls).toEqual([`roles ${url}`, `drop ${url}`])
   })
 
   test('SEC-1 makeTeardown resolves when the drop succeeds and no role was left, and rejects naming a left role alone', async () => {
@@ -453,7 +481,7 @@ describe('SC11 S10 the global teardown never skips the role check (ARC-6, SEC-1)
     expect(messageOf(await rejectionOf(left()))).toContain('sc11_only_role_test')
   })
 
-  test('SEC-1 a failing listRoles is named too, after the drop ran', async () => {
+  test('SEC-1 a failing listRoles is named too, and the drop still runs after it', async () => {
     const calls: string[] = []
     const t = makeTeardown()(
       {
@@ -823,6 +851,559 @@ describe('SC11 R118 a cleanup sequence runs every step and keeps every failure (
         if (file === `${DB_DIR}/global-setup.ts`) expect(scan.regions.some((r) => r.kind === 'teardown'), 'sentinel: the teardown is judged').toBe(true)
         if (file === `${DB_DIR}/vitest-setup.ts`) expect(scan.regions.filter((r) => r.kind === 'hook').map((r) => r.name).sort()).toEqual(['afterAll', 'afterEach'])
         if (file === `${DB_DIR}/index.ts`) expect(scan.regions.some((r) => r.name === 'close'), 'sentinel: close is judged').toBe(true)
+        problems.push(...scan.problems)
+      }
+      expect(problems).toEqual([])
+    },
+    R118_MS,
+  )
+})
+
+// ---------------------------------------------------------------------------------------------------------------
+// SC11 round 4 (A540): S14, S16's unit twin, S17, S18, S19, R119 and R120.
+
+interface FakeClone {
+  readonly closed: boolean
+  close(): Promise<void>
+}
+interface FakeTemplate {
+  clone(): Promise<FakeClone>
+  close(): Promise<void>
+}
+interface RunDatabasesIo {
+  list(url: string): Promise<string[]>
+  drop(url: string, name: string): Promise<void>
+}
+interface Round4Api {
+  settleAll(label: string, steps: Step[], opts?: { primary?: unknown; boundMs?: number; deadlineMs?: number }): Promise<void>
+  DEADLINE_MARGIN_MS: number
+  POOL_END_BOUND_MS: number
+  TEARDOWN_BOUNDS_MS: Record<string, number>
+  markPoolEnded(pool: pg.Pool): void
+  setActiveTemplate(template: FakeTemplate | undefined): void
+  cloneTestDb(): Promise<unknown>
+  closeClones(): Promise<void>
+  dropRunDatabases(url: string, io?: RunDatabasesIo): Promise<void>
+  withAdmin<T>(url: string, run: (admin: pg.Client) => Promise<T>): Promise<T>
+}
+function r4<K extends keyof Round4Api>(k: K): Round4Api[K] {
+  const v = (dbModule as unknown as Partial<Round4Api>)[k]
+  if (v === undefined) throw new Error(`src/core/db/index.ts does not export ${k} (SC11 round 4 build)`)
+  return v
+}
+const OFFLINE: pg.PoolConfig = { host: '127.0.0.1', port: 1, user: 'postgres', database: 'sc11_offline_test', max: 1 }
+const OFFLINE_URL = 'postgres://postgres@127.0.0.1:1/postgres'
+const killed57P01 = (): Error => Object.assign(new Error('terminating connection due to administrator command'), { code: '57P01' })
+const PINNED_NOW = new Date('2026-10-04T12:00:00Z')
+const hang = (): Promise<never> => new Promise<never>(() => undefined)
+
+/** A promise's outcome, readable while fake timers run: 'pending' until it settles, then 'resolved' or the rejection. */
+function watch(p: Promise<unknown>): { now(): unknown; done: Promise<unknown> } {
+  let state: unknown = 'pending'
+  const done = p.then(
+    () => (state = 'resolved'),
+    (e: unknown) => (state = e),
+  )
+  return { now: () => state, done }
+}
+
+describe('SC11 S14 closeClones closes every clone and names every one that failed (ARC-6)', () => {
+  /** Two clones whose close rejects naming the clone: the first at once, the second a little later. */
+  const twoFailing = (names: [string, string]): FakeTemplate => {
+    let n = 0
+    return {
+      clone: () => {
+        const name = n === 0 ? names[0] : names[1]
+        const first = n === 0
+        n += 1
+        const clone = {
+          closed: false,
+          close: (): Promise<void> =>
+            first
+              ? Promise.reject(new Error(`drop of ${name} refused (Test)`))
+              : new Promise<void>((_resolve, reject) => {
+                  setTimeout(() => {
+                    reject(new Error(`drop of ${name} refused (Test)`))
+                  }, 5)
+                }),
+        }
+        return Promise.resolve(clone)
+      },
+      close: () => Promise.resolve(),
+    }
+  }
+
+  test('ARC-6 two clones whose close rejects: closeClones rejects naming both databases', async () => {
+    const names: [string, string] = ['ashbridge_t_s14_a_test', 'ashbridge_t_s14_b_test']
+    const setActive = r4('setActiveTemplate')
+    setActive(twoFailing(names))
+    try {
+      await r4('cloneTestDb')()
+      await r4('cloneTestDb')()
+      const msg = messageOf(await rejectionOf(r4('closeClones')()))
+      for (const n of names) expect(msg).toContain(n)
+    } finally {
+      setActive(undefined)
+    }
+  })
+
+  test('ARC-6 PLANT: closeClones with Promise.all (030e1d6f) names only the first clone that failed', async () => {
+    const names: [string, string] = ['ashbridge_t_s14_c_test', 'ashbridge_t_s14_d_test']
+    oldClones.setActiveTemplate(twoFailing(names))
+    try {
+      await oldClones.cloneTestDb()
+      await oldClones.cloneTestDb()
+      const msg = messageOf(await rejectionOf(oldClones.closeClones()))
+      expect(names.filter((n) => msg.includes(n))).toEqual([names[0]])
+      // Let the second clone's late rejection land here, not in another test.
+      await new Promise((r) => setTimeout(r, 20))
+    } finally {
+      oldClones.setActiveTemplate(undefined)
+    }
+  })
+})
+
+describe('SC11 S16 a pool whose end timed out stays owned until its owner marks it ended (RC-B2, ARC-6)', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  /** An openPool pool whose end never resolves (a client checked out and never released, in miniature). */
+  function stuckPool(sink?: { label: string; problems: string[] }): pg.Pool {
+    const pool = exported('openPool')({ ...OFFLINE, application_name: sink?.label ?? 'sc11_s16_nosink_test' }, sink)
+    Object.assign(pool, { end: hang })
+    return pool
+  }
+  async function endTimesOut(pool: pg.Pool): Promise<string> {
+    vi.useFakeTimers({ now: PINNED_NOW })
+    const ending = watch(exported('endPool')(pool))
+    await vi.advanceTimersByTimeAsync(60_000)
+    await ending.done
+    vi.useRealTimers()
+    expect(ending.now(), 'endPool rejects on its bound').toBeInstanceOf(Error)
+    return messageOf(ending.now())
+  }
+
+  test('ARC-6 after endPool rejects on its bound, an error on the pool goes to its owner, and is late only after markPoolEnded', async () => {
+    const takeLateErrors = exported('takeLateErrors')
+    takeLateErrors()
+    const problems: string[] = []
+    const pool = stuckPool({ label: 'sc11_s16_tpl_test', problems })
+    expect(await endTimesOut(pool)).toContain('sc11_s16_tpl_test')
+    pool.emit('error', killed57P01())
+    expect(problems.join('\n'), 'the owner still holds the error: its drop has not run yet').toMatch(/57P01/)
+    expect(takeLateErrors(), 'not late while the owner has not marked the pool ended').toEqual([])
+    r4('markPoolEnded')(pool)
+    pool.emit('error', killed57P01())
+    expect(takeLateErrors().join('\n')).toMatch(/57P01/)
+    expect(problems).toHaveLength(1)
+  })
+
+  test('ARC-6 a pool opened without a sink whose end timed out reports a later error as "no owner", never as late or lost', async () => {
+    exported('takeLateErrors')()
+    const pool = stuckPool()
+    await endTimesOut(pool)
+    pool.emit('error', killed57P01())
+    const msg = messageOf(await rejectionOf(exported('assertCleanClones')()))
+    expect(msg).toMatch(/no owner:[^\n]*57P01/)
+    expect(msg).not.toMatch(/late:/)
+  })
+})
+
+describe('SC11 S17 settleAll keeps every name inside a deadline (RC-C, ARC-6)', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('ARC-6 the margin is a named, exported constant, above 0 and below the default step bound', () => {
+    const m = r4('DEADLINE_MARGIN_MS')
+    expect(m).toBeGreaterThan(0)
+    expect(m).toBeLessThan(exported('STEP_BOUND_MS'))
+  })
+
+  test('ARC-6 each step is bounded by min(its own bound, the time left minus the margin); a step with no time left is named "not reached" and never runs (fake timers)', async () => {
+    const settleAll = r4('settleAll')
+    const m = r4('DEADLINE_MARGIN_MS')
+    vi.useFakeTimers({ now: PINNED_NOW })
+    const ran: string[] = []
+    // Deadline 10 margins: a (own 2 margins) is bounded by its own; b (own 100 margins) by the 8 margins left minus one;
+    // then one margin is left, which is the margin itself, so c is not reached.
+    const p = watch(
+      settleAll(
+        'deadline (Test)',
+        [
+          { name: 'stepA', run: hang, boundMs: 2 * m },
+          { name: 'stepB', run: hang, boundMs: 100 * m },
+          {
+            name: 'stepC',
+            run: () => {
+              ran.push('stepC')
+            },
+          },
+        ],
+        { deadlineMs: 10 * m },
+      ),
+    )
+    await vi.advanceTimersByTimeAsync(9 * m - 1)
+    expect(p.now(), `still waiting at ${String(9 * m - 1)} ms`).toBe('pending')
+    await vi.advanceTimersByTimeAsync(1)
+    await p.done
+    const msg = messageOf(p.now())
+    expect(ran, 'a step past the deadline never runs').toEqual([])
+    expect(msg).toMatch(new RegExp(`stepA[^\\n]*\\b${String(2 * m)} ?ms`))
+    expect(msg).toMatch(new RegExp(`stepB[^\\n]*\\b${String(7 * m)} ?ms`))
+    expect(msg).toMatch(/stepC[^\n]*not reached/)
+    expect(isAscending(positions(msg, ['stepA', 'stepB', 'stepC']))).toBe(true)
+  })
+
+  test('ARC-6 PLANT: a nested settleAll given its outer step bound minus the margin rejects first, so the outer rejection names every inner step (fake timers)', async () => {
+    const settleAll = r4('settleAll')
+    const m = r4('DEADLINE_MARGIN_MS')
+    vi.useFakeTimers({ now: PINNED_NOW })
+    // The card's plant, an outer 1000 around three hung 800 steps, in margins: an outer 10 around three hung 8.
+    // Without a deadline (71b621d7) the outer bound fires while the second inner step waits, and the inner names are lost.
+    const outer = 10 * m
+    const inner = ['drop ashbridge_t_s17_a_test', 'drop ashbridge_t_s17_b_test', 'drop ashbridge_t_s17_c_test']
+    const p = watch(
+      settleAll('db teardown (Test)', [
+        {
+          name: 'dropRunDatabases',
+          boundMs: outer,
+          run: () =>
+            settleAll(
+              'dropping the databases of this run (Test)',
+              inner.map((name) => ({ name, run: hang, boundMs: 8 * m })),
+              { deadlineMs: outer - m },
+            ),
+        },
+      ]),
+    )
+    await vi.advanceTimersByTimeAsync(outer + m)
+    await p.done
+    const msg = messageOf(p.now())
+    for (const name of inner) expect(msg, `the outer rejection names ${name}`).toContain(name)
+    expect(msg).toMatch(new RegExp(`${inner[0] ?? ''}[^\\n]*\\b${String(8 * m)} ?ms`))
+    expect(msg).toMatch(new RegExp(`${inner[2] ?? ''}[^\\n]*not reached`))
+  })
+})
+
+/** The db project's teardownTimeout in vitest.config.ts, else vitest's default. */
+function dbTeardownTimeout(): number {
+  const src = readOwnSource('vitest.config.ts')
+  const from = src.indexOf("'src/core/db/vitest-setup.ts'")
+  expect(from, 'sentinel: the db project block of vitest.config.ts').toBeGreaterThan(0)
+  const block = src.slice(from, src.indexOf("name: 'evals'"))
+  const m = /teardownTimeout:\s*([\d_]+)/.exec(block)
+  return m === null ? configDefaults.teardownTimeout : Number((m[1] ?? '').replaceAll('_', ''))
+}
+function dbHookTimeout(): number {
+  const src = readOwnSource('vitest.config.ts')
+  const from = src.indexOf("'src/core/db/vitest-setup.ts'")
+  const m = /hookTimeout:\s*([\d_]+)/.exec(src.slice(from))
+  expect(m, 'sentinel: the db project sets a hookTimeout').not.toBeNull()
+  return Number((m?.[1] ?? '').replaceAll('_', ''))
+}
+
+describe('SC11 S18 every outer bound outlives the steps inside it, and the teardown checks roles first (RC-C, ARC-6, SEC-1)', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('ARC-6 the teardown worst case (role check, list, drop and two margins, all exported constants) is at most 0.8 of the db teardownTimeout', () => {
+    const teardownTimeout = dbTeardownTimeout()
+    expect(teardownTimeout, 'sentinel: vitest default is 10 s').toBeGreaterThan(0)
+    const bounds = r4('TEARDOWN_BOUNDS_MS')
+    expect(Object.keys(bounds)).toEqual(['roleCheck', 'list', 'drop'])
+    for (const [k, v] of Object.entries(bounds)) expect(v, `${k} is a positive bound`).toBeGreaterThan(0)
+    const worst = Object.values(bounds).reduce((a, b) => a + b, 0) + 2 * r4('DEADLINE_MARGIN_MS')
+    expect(worst).toBeLessThanOrEqual(0.8 * teardownTimeout)
+  })
+
+  test("ARC-6 endPool's own bound sits inside close's endPool step, and the afterEach worst case with its margin stays inside 0.8 of the hookTimeout", () => {
+    const close = exported('CLOSE_BOUNDS_MS')
+    expect(r4('POOL_END_BOUND_MS')).toBeGreaterThan(0)
+    expect(r4('POOL_END_BOUND_MS')).toBeLessThan(close['endPool'] ?? 0)
+    const worst = exported('STEP_BOUND_MS') + Object.values(close).reduce((a, b) => a + b, 0) + r4('DEADLINE_MARGIN_MS')
+    expect(worst).toBeLessThanOrEqual(0.8 * dbHookTimeout())
+  })
+
+  test('SEC-1 makeTeardown runs the role check first: with a dropRunDatabases that hangs, the run still fails naming the role left behind, inside the budget (fake timers)', async () => {
+    const calls: string[] = []
+    const url = OFFLINE_URL
+    const teardown = makeTeardown()(
+      {
+        dropRunDatabases: () => {
+          calls.push('drop')
+          return hang()
+        },
+        listRoles: () => {
+          calls.push('roles')
+          return Promise.resolve(['postgres', 'sc11_s18_left_role_test'])
+        },
+      },
+      url,
+      ['postgres'],
+    )
+    vi.useFakeTimers({ now: PINNED_NOW })
+    const p = watch(teardown())
+    await vi.advanceTimersByTimeAsync(0)
+    expect(calls[0], 'the role check is the first step').toBe('roles')
+    await vi.advanceTimersByTimeAsync(0.8 * dbTeardownTimeout())
+    await p.done
+    expect(p.now(), 'the teardown settles inside 0.8 of the teardownTimeout').not.toBe('pending')
+    const msg = messageOf(p.now())
+    expect(msg).toContain('the run left roles behind')
+    expect(msg).toContain('sc11_s18_left_role_test')
+    expect(msg).toMatch(/dropRunDatabases/)
+    expect(calls).toEqual(['roles', 'drop'])
+  })
+
+  test('ARC-6 dropRunDatabases drops every database at once, each with its own bound: one hangs, the other two are dropped, and the rejection names the hung one (fake timers)', async () => {
+    const dropRunDatabases = r4('dropRunDatabases')
+    const dbs = ['ashbridge_t_s18_a_test', 'ashbridge_t_s18_b_test', 'ashbridge_t_s18_c_test']
+    const started: string[] = []
+    const dropped: string[] = []
+    const io: RunDatabasesIo = {
+      list: () => Promise.resolve([...dbs]),
+      drop: (_url, name) => {
+        started.push(name)
+        if (name === dbs[1]) return hang()
+        return Promise.resolve().then(() => void dropped.push(name))
+      },
+    }
+    vi.useFakeTimers({ now: PINNED_NOW })
+    const p = watch(dropRunDatabases(OFFLINE_URL, io))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(started.sort(), 'all three drops start together, none waits on the hung one').toEqual([...dbs].sort())
+    await vi.advanceTimersByTimeAsync(0.8 * dbTeardownTimeout())
+    await p.done
+    expect(dropped.sort()).toEqual([dbs[0], dbs[2]].sort())
+    expect(p.now(), 'a database not dropped fails the call').toBeInstanceOf(Error)
+    expect(messageOf(p.now())).toContain(dbs[1])
+  })
+})
+
+describe('SC11 S19 a withAdmin connection error is never lost (RC-B2, ARC-6)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  /** pg's own connect and end, faked: no socket is opened (the vendor is faked, never our module). */
+  function fakeConnection(): void {
+    const proto = pg.Client.prototype as unknown as { connect(): Promise<void>; end(): Promise<void> }
+    vi.spyOn(proto, 'connect').mockResolvedValue(undefined)
+    vi.spyOn(proto, 'end').mockResolvedValue(undefined)
+  }
+
+  test('ARC-6 an error emitted on the admin connection after withAdmin resolved is in takeLateErrors()', async () => {
+    fakeConnection()
+    const takeLateErrors = exported('takeLateErrors')
+    takeLateErrors()
+    let admin: pg.Client | undefined
+    const value = await r4('withAdmin')(OFFLINE_URL, (a) => {
+      admin = a
+      return Promise.resolve('listed (Test)')
+    })
+    expect(value).toBe('listed (Test)')
+    expect(admin, 'sentinel: the run got its connection').toBeInstanceOf(pg.Client)
+    expect(() => admin?.emit('error', killed57P01())).not.toThrow()
+    expect(takeLateErrors().join('\n')).toMatch(/57P01/)
+  })
+
+  test('ARC-6 an error emitted while the run is going makes withAdmin reject naming 57P01, and is not late', async () => {
+    fakeConnection()
+    const takeLateErrors = exported('takeLateErrors')
+    takeLateErrors()
+    const msg = messageOf(
+      await rejectionOf(
+        r4('withAdmin')(OFFLINE_URL, (a) => {
+          a.emit('error', killed57P01())
+          return Promise.resolve('listed (Test)')
+        }),
+      ),
+    )
+    expect(msg).toMatch(/57P01/)
+    expect(takeLateErrors()).toEqual([])
+  })
+})
+
+// R119 and R120: the scans.
+const BOUND_NAME = /^(?:boundMs|deadlineMs)$/
+const FLAG_NAME = /(?:ended|closed)_?$/i
+
+function hasNumberLiteral(n: ts.Node): boolean {
+  if (ts.isNumericLiteral(n) || ts.isBigIntLiteral(n)) return true
+  return ts.forEachChild(n, (c) => (hasNumberLiteral(c) ? true : undefined)) === true
+}
+function fnLabel(n: ts.Node): string {
+  for (let f = enclosingFn(n); f !== undefined; f = enclosingFn(f)) {
+    const own = ownName(f)
+    if (own !== undefined) return own
+    const hook = hookOf(f)
+    if (hook !== undefined) return hook
+  }
+  return '(top level)'
+}
+const assignedName = (e: ts.Expression): string | undefined =>
+  ts.isPropertyAccessExpression(e) ? e.name.text : ts.isIdentifier(e) ? e.text : ts.isElementAccessExpression(e) && ts.isStringLiteral(e.argumentExpression) ? e.argumentExpression.text : undefined
+const isAssignment = (k: ts.SyntaxKind): boolean => k >= ts.SyntaxKind.FirstAssignment && k <= ts.SyntaxKind.LastAssignment
+
+/** R119: one problem per boundMs or deadlineMs value that holds a number literal; `seen` counts every such value read. */
+function literalBounds(file: string, src: string): { problems: string[]; seen: number } {
+  const sf = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+  const problems: string[] = []
+  let seen = 0
+  const check = (at: ts.Node, name: string, value: ts.Node | undefined): void => {
+    if (value === undefined) return
+    seen += 1
+    if (!hasNumberLiteral(value)) return
+    const line = sf.getLineAndCharacterOfPosition(at.getStart(sf)).line + 1
+    problems.push(`${file}:${String(line)} ${fnLabel(at)}: ${name} ${value.getText(sf).replace(/\s+/g, ' ')} holds a number literal: use a named constant`)
+  }
+  const visit = (n: ts.Node): void => {
+    if (ts.isPropertyAssignment(n)) {
+      const name = nameText(n.name)
+      if (name !== undefined && BOUND_NAME.test(name)) check(n, name, n.initializer)
+    } else if ((ts.isVariableDeclaration(n) || ts.isParameter(n) || ts.isBindingElement(n)) && ts.isIdentifier(n.name) && BOUND_NAME.test(n.name.text)) {
+      check(n, n.name.text, n.initializer)
+    } else if (ts.isBinaryExpression(n) && isAssignment(n.operatorToken.kind)) {
+      const name = assignedName(n.left)
+      if (name !== undefined && BOUND_NAME.test(name)) check(n, name, n.right)
+    }
+    ts.forEachChild(n, visit)
+  }
+  visit(sf)
+  return { problems, seen }
+}
+
+/** R120: one problem per assignment to an ended or closed flag inside a try statement's finally block; `finallies` counts the blocks read. */
+function flagsSetInFinally(file: string, src: string): { problems: string[]; finallies: number } {
+  const sf = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+  const problems: string[] = []
+  let finallies = 0
+  const inFinally = (block: ts.Block): void => {
+    const visit = (n: ts.Node): void => {
+      if (ts.isBinaryExpression(n) && isAssignment(n.operatorToken.kind)) {
+        const name = assignedName(n.left)
+        if (name !== undefined && FLAG_NAME.test(name)) {
+          const line = sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1
+          problems.push(`${file}:${String(line)} ${fnLabel(block)}: ${n.left.getText(sf)} is set in a finally block: set it when the end has resolved`)
+        }
+      }
+      ts.forEachChild(n, visit)
+    }
+    visit(block)
+  }
+  const visit = (n: ts.Node): void => {
+    if (ts.isTryStatement(n) && n.finallyBlock !== undefined) {
+      finallies += 1
+      inFinally(n.finallyBlock)
+    }
+    ts.forEachChild(n, visit)
+  }
+  visit(sf)
+  return { problems, finallies }
+}
+
+const harnessFiles = (): string[] => {
+  const list = homes().harness
+  expect(Array.isArray(list), 'tools/test-homes.json has a harness list').toBe(true)
+  const files = list as string[]
+  expect(files).toEqual(expect.arrayContaining([`${DB_DIR}/index.ts`, `${DB_DIR}/global-setup.ts`, `${DB_DIR}/vitest-setup.ts`]))
+  for (const f of files) expect(fs.existsSync(f), `${f} (harness) exists`).toBe(true)
+  return files
+}
+const plantText = (f: string): string => fs.readFileSync(`${DB_DIR}/__fixtures__/${f}`, 'utf8')
+
+describe('SC11 R119 a time limit in the harness is a named constant, never a number literal (RC-C, ARC-15)', () => {
+  test(
+    'ARC-15 the scan flags a number literal in a boundMs or deadlineMs value, in every form, and passes named constants',
+    () => {
+      const bad = [
+        "await settleAll('x', [{ name: 'drop', run, boundMs: 7500 }])",
+        "await settleAll('x', steps, { deadlineMs: 2 * STEP_BOUND_MS })",
+        "await settleAll('x', [{ name: 'a', run, boundMs: 1_000 }])",
+        'const boundMs = 500',
+        'function f(run, boundMs = 100) { return run(boundMs) }',
+        'opts.deadlineMs = 9000',
+        "const steps = [{ name: 'close', run, boundMs: Object.values(CLOSE_BOUNDS_MS).reduce((a, b) => a + b, 0) }]",
+      ]
+      for (const src of bad) expect(literalBounds('f.ts', src).problems, src).toHaveLength(1)
+      const good = [
+        "await settleAll('x', [{ name: 'drop', run, boundMs: CLOSE_BOUNDS_MS.drop }])",
+        "await settleAll('x', steps, { deadlineMs: outer - DEADLINE_MARGIN_MS })",
+        "const boundMs = TEARDOWN_BOUNDS_MS.list\nawait settleAll('x', [{ name: 'a', run, boundMs }])",
+        'const POOL_END_BOUND_MS = 4500\nconst CLOSE_BOUNDS_MS = { endPool: 5000 }',
+        'const bound = step.boundMs ?? opts.boundMs ?? STEP_BOUND_MS',
+      ]
+      for (const src of good) expect(literalBounds('f.ts', src).problems, src).toEqual([])
+    },
+    R118_MS,
+  )
+
+  test(
+    'ARC-15 PLANT: the harness at 71b621d7 is flagged: dropRunDatabases bounds its drops with 7500 and the teardown its drop with 8000',
+    () => {
+      const index = literalBounds(`${DB_DIR}/__fixtures__/index-71b621d7.ts`, plantText('index-71b621d7.ts')).problems
+      expect(index.some((p) => / dropRunDatabases: boundMs 7500 /.test(p)), index.join('\n')).toBe(true)
+      const setup = literalBounds(`${DB_DIR}/__fixtures__/global-setup-71b621d7.ts`, plantText('global-setup-71b621d7.ts')).problems
+      expect(setup.some((p) => /: boundMs 8000 /.test(p)), setup.join('\n')).toBe(true)
+    },
+    R118_MS,
+  )
+
+  test(
+    'ARC-15 every harness file in tools/test-homes.json sets each boundMs and deadlineMs from named constants',
+    () => {
+      const problems: string[] = []
+      for (const file of harnessFiles()) {
+        const scan = literalBounds(file, readOwnSource(file))
+        if (file === `${DB_DIR}/index.ts`) expect(scan.seen, 'sentinel: the scan read the bounds of index.ts').toBeGreaterThan(0)
+        problems.push(...scan.problems)
+      }
+      expect(problems).toEqual([])
+    },
+    R118_MS,
+  )
+})
+
+describe('SC11 R120 an ended or closed flag is set when the end resolved, never in a finally block (RC-B2, ARC-15)', () => {
+  test(
+    "ARC-15 the scan flags an ended or closed flag set inside a try's finally block, and allows a Promise .finally on the end itself",
+    () => {
+      const bad = [
+        'async function endPool(pool) {\n  try { await pool.end() } finally { tracker.ended = true }\n}',
+        'async function close() {\n  try { await steps() } finally { this.closed_ = true }\n}',
+        'async function stop() {\n  try { await go() } finally { ended = true }\n}',
+        'async function stop() {\n  try { await go() } catch (e) { note(e) } finally { if (x) { state.mainEnded = true } }\n}',
+      ]
+      for (const src of bad) expect(flagsSetInFinally('f.ts', src).problems, src).toHaveLength(1)
+      const good = [
+        'async function close() {\n  await this.main.end().finally(() => { this.mainEnded = true })\n}',
+        'async function endPool(pool) {\n  try { await pool.end(); tracker.ended = true } finally { clearTimeout(t) }\n}',
+        'async function stop() {\n  try { await go() } finally { endedAt = now(); closing = false }\n}',
+      ]
+      for (const src of good) expect(flagsSetInFinally('f.ts', src).problems, src).toEqual([])
+    },
+    R118_MS,
+  )
+
+  test(
+    "ARC-15 PLANT: endPool at 71b621d7 sets tracker.ended in its try's finally and is flagged, naming endPool",
+    () => {
+      const scan = flagsSetInFinally(`${DB_DIR}/__fixtures__/index-71b621d7.ts`, plantText('index-71b621d7.ts'))
+      expect(scan.problems.some((p) => / endPool: tracker\.ended is set in a finally block/.test(p)), scan.problems.join('\n')).toBe(true)
+    },
+    R118_MS,
+  )
+
+  test(
+    'ARC-15 no harness file in tools/test-homes.json sets an ended or closed flag in a finally block',
+    () => {
+      const problems: string[] = []
+      for (const file of harnessFiles()) {
+        const scan = flagsSetInFinally(file, readOwnSource(file))
+        if (file === `${DB_DIR}/index.ts`) expect(scan.finallies, 'sentinel: the scan read the finally blocks of index.ts').toBeGreaterThan(0)
         problems.push(...scan.problems)
       }
       expect(problems).toEqual([])

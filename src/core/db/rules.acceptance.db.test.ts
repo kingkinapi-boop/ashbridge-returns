@@ -13,8 +13,8 @@
 //   own name. close() of a handle with a dirty idle connection also rejects naming the problem, after the
 //   database is dropped.
 // - R91: `leftoverRoles(before, after)` (the roles in after and not in before, sorted) and the global teardown:
-//   it compares pg_roles at setup with pg_roles at the end, drops this run's databases first, then rejects
-//   naming each leftover role.
+//   it compares pg_roles at setup with pg_roles at the end, checks the roles first, then drops this run's databases
+//   (round 4, S18), and rejects naming each leftover role.
 // - R92: no `.catch(() => undefined)` (or the same swallow written `() => {}`, `() => null`, `() => void 0`,
 //   `.catch(noop)`) in a non-test file of src/core/db outside `dbCatchAllow` in tools/test-homes.json, each
 //   entry { file, text, reason } with the exact text. The allow list starts empty. A stale entry fails.
@@ -27,8 +27,11 @@
 //   (it mints a fresh one and puts it in DB16_RUN_ID); R92 also scans the empty `catch {}` block, and the one in
 //   index.ts (the first rollback of `transaction`) is the allow list's only entry.
 // - The plant for R90 and R92 is __fixtures__/index-36672c88.ts, index.ts as the DB16 round 4 check found it.
-// - Round 3 (A508), at the end of this file: S6 to S9 and the S12 guard, on Postgres 16; S4, S5, S10, S11 and R118
-//   are unit tests in pool-rules.acceptance.test.ts. index.ts exports `withAdmin(url, run)` (S9, amber).
+// - Round 3 (A508), at the end of this file: S6, S8 and S9, on Postgres 16; S4, S5, S10, S11 and R118 are unit tests
+//   in pool-rules.acceptance.test.ts. index.ts exports `withAdmin(url, run)` (S9, amber).
+// - Round 4 (A540): S13, every test here builds one database at most: the SEC-1 role tests read and drop cluster roles
+//   through withAdmin on the cluster url, never a second clone; S16 on Postgres 16 at the end. S14, S16's unit twin,
+//   S17 to S19, R119 and R120 are unit tests in pool-rules.acceptance.test.ts.
 // This file imports no PGlite value: only src/core/db builds a database (the rule scan in pg16.acceptance.test.ts).
 import fs from 'node:fs'
 import os from 'node:os'
@@ -304,9 +307,25 @@ describe('SC11 R91 no role outlives the run (ARC-6, SEC-1)', () => {
 
 type Tx = Parameters<Parameters<Queryable['transaction']>[0]>[0]
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
-async function roleNamesIn(db: Queryable, names: string[]): Promise<string[]> {
-  const r = await db.query('select rolname from pg_roles where rolname = any($1) order by rolname', [names])
-  return r.rows.map((x) => String(x['rolname']))
+
+// S13 (A540): the observer of cluster-wide roles is one admin connection (withAdmin on the cluster url), never a second
+// database, so each of these tests builds one world (tools/test/db-budget.test.mjs).
+type AdminRun = <T>(url: string, run: (admin: { query: Queryable['query'] }) => Promise<T>) => Promise<T>
+function adminRun(): AdminRun {
+  const f = (dbModule as unknown as { withAdmin?: AdminRun }).withAdmin
+  if (typeof f !== 'function') throw new Error('src/core/db/index.ts does not export withAdmin (SC11 round 3 build)')
+  return f
+}
+async function clusterRoleNames(names: string[]): Promise<string[]> {
+  return adminRun()(pgUrl(), async (admin) => {
+    const r = await admin.query('select rolname from pg_roles where rolname = any($1) order by rolname', [names])
+    return r.rows.map((x) => String(x['rolname']))
+  })
+}
+async function dropClusterRole(name: string): Promise<void> {
+  await adminRun()(pgUrl(), async (admin) => {
+    await admin.query(`drop role if exists "${name.replaceAll('"', '""')}"`)
+  })
 }
 
 describe('SC11 R90 edge cases from the DB16 security review (A453)', () => {
@@ -396,7 +415,6 @@ describe('SC11 R91 role tracking is per handle and complete (A453, ARC-6, SEC-1)
   test.runIf(ON)(
     'SEC-1 a role another worker makes while this handle runs a statement is never dropped by this handle',
     async () => {
-      const real = (await cloneTestDb()) as unknown as Queryable
       const db = (await cloneTestDb()) as unknown as Queryable
       const mine = `sc11_mine_${PID}`
       const foreign = `sc11_foreign_${PID}`
@@ -409,10 +427,10 @@ describe('SC11 R91 role tracking is per handle and complete (A453, ARC-6, SEC-1)
         c.release()
         await slow
         await expect(db.close()).resolves.toBeUndefined()
-        expect(await roleNamesIn(real, [mine, foreign])).toEqual([foreign])
+        expect(await clusterRoleNames([mine, foreign])).toEqual([foreign])
       } finally {
-        await real.exec(`drop role if exists ${foreign}`)
-        await real.exec(`drop role if exists ${mine}`)
+        await dropClusterRole(foreign)
+        await dropClusterRole(mine)
       }
     },
     BOOT_MS,
@@ -431,7 +449,6 @@ describe('SC11 R91 role tracking is per handle and complete (A453, ARC-6, SEC-1)
   test.runIf(ON)(
     'SEC-1 a role made in a DO block or by create group is dropped when the handle closes',
     async () => {
-      const real = (await cloneTestDb()) as unknown as Queryable
       const db = (await cloneTestDb()) as unknown as Queryable
       const viaDo = `sc11_do_${PID}`
       const viaGroup = `sc11_grp_${PID}`
@@ -439,10 +456,10 @@ describe('SC11 R91 role tracking is per handle and complete (A453, ARC-6, SEC-1)
         await db.exec(`do $$ begin create role ${viaDo}; end $$`)
         await db.exec(`create group ${viaGroup}`)
         await expect(db.close()).resolves.toBeUndefined()
-        expect(await roleNamesIn(real, [viaDo, viaGroup])).toEqual([])
+        expect(await clusterRoleNames([viaDo, viaGroup])).toEqual([])
       } finally {
-        await real.exec(`drop role if exists ${viaDo}`)
-        await real.exec(`drop role if exists ${viaGroup}`)
+        await dropClusterRole(viaDo)
+        await dropClusterRole(viaGroup)
       }
     },
     BOOT_MS,
@@ -451,7 +468,6 @@ describe('SC11 R91 role tracking is per handle and complete (A453, ARC-6, SEC-1)
   test.runIf(ON)(
     'SEC-1 a handle left in an aborted block still has its roles dropped when it closes',
     async () => {
-      const real = (await cloneTestDb()) as unknown as Queryable
       const db = (await cloneTestDb()) as unknown as Queryable
       const name = `sc11_abort_${PID}`
       try {
@@ -459,9 +475,9 @@ describe('SC11 R91 role tracking is per handle and complete (A453, ARC-6, SEC-1)
         await db.exec('begin')
         await expect(db.query('select 1/0')).rejects.toThrow()
         await expect(db.close()).resolves.toBeUndefined()
-        expect(await roleNamesIn(real, [name])).toEqual([])
+        expect(await clusterRoleNames([name])).toEqual([])
       } finally {
-        await real.exec(`drop role if exists ${name}`)
+        await dropClusterRole(name)
       }
     },
     BOOT_MS,
@@ -470,15 +486,14 @@ describe('SC11 R91 role tracking is per handle and complete (A453, ARC-6, SEC-1)
   test.runIf(ON)(
     'SEC-1 a role name with a double quote is escaped as an identifier when it is dropped',
     async () => {
-      const real = (await cloneTestDb()) as unknown as Queryable
       const db = (await cloneTestDb()) as unknown as Queryable
       const name = `sc11_q"x_${PID}`
       try {
         await db.exec(`create role "${name.replaceAll('"', '""')}"`)
         await expect(db.close()).resolves.toBeUndefined()
-        expect(await roleNamesIn(real, [name])).toEqual([])
+        expect(await clusterRoleNames([name])).toEqual([])
       } finally {
-        await real.exec(`drop role if exists "${name.replaceAll('"', '""')}"`)
+        await dropClusterRole(name)
       }
     },
     BOOT_MS,
@@ -822,8 +837,9 @@ describe('SC11 R116 a connection error is recorded, never thrown (ARC-6, ARC-15)
   })
 })
 
-// SC11 round 3 (A508): close, closeClones, the template's failure path and withAdmin collect every failure (RC1),
-// and closing 25 clones at once stays well inside max_connections (S12, a guard). Postgres 16 only.
+// SC11 round 3 (A508): close, the template's failure path and withAdmin collect every failure (RC1). Postgres 16 only.
+// Round 4 (A540): S7 is the unit test S14 in pool-rules.acceptance.test.ts (it built two databases); the S12 guard left
+// this file for SC11b (a measurement script, S15); S16 adds close with a client never released (RC-B2).
 interface AdminPool {
   query(sql: string, params?: unknown[]): Promise<{ rows: Record<string, unknown>[] }>
 }
@@ -885,25 +901,6 @@ describe('SC11 round 3 cleanup collects every failure on Postgres 16 (RC1, ARC-6
   )
 
   test.runIf(ON)(
-    'ARC-6 S7 closeClones with two undroppable clones rejects naming both databases',
-    async () => {
-      const admin = poolApi().openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_s7_${PID}` }) as unknown as AdminPool
-      const a = (await cloneTestDb()) as unknown as Clone
-      const b = (await cloneTestDb()) as unknown as Clone
-      const names = [await nameOf(a), await nameOf(b)]
-      try {
-        for (const n of names) await undroppable(admin, n)
-        const msg = await failureOf(dbModule.closeClones())
-        for (const n of names) expect(msg).toContain(n)
-      } finally {
-        for (const n of names) await unblockAndDrop(admin, n)
-        await poolApi().endPool(admin as never)
-      }
-    },
-    BOOT_MS,
-  )
-
-  test.runIf(ON)(
     'ARC-6 S8 a schema file that kills its own backend fails createTemplate naming the file and 57P01, and leaves no template database',
     async () => {
       const admin = poolApi().openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_s8_${PID}` }) as unknown as AdminPool
@@ -947,49 +944,27 @@ describe('SC11 round 3 cleanup collects every failure on Postgres 16 (RC1, ARC-6
     BOOT_MS,
   )
 
-  /** Throws when the peak passes the limit (S12's check; proved below by a limit one under the peak). */
-  const assertPeak = (peak: number, limit: number): void => {
-    if (peak > limit) throw new Error(`connection peak ${String(peak)} is over the limit ${String(limit)}`)
-  }
-
   test.runIf(ON)(
-    'ARC-6 S12 GUARD closing 25 clones, each after a transaction, peaks at most 0.8 of max_connections (the peak is printed)',
+    "ARC-6 S16 close with a client checked out and never released names endPool's bound and 57P01, and leaves nothing late",
     async () => {
-      const sampler = poolApi().openPool({ connectionString: pgUrl(), max: 1, application_name: `sc11_s12_${PID}` }) as unknown as AdminPool
+      const db = (await cloneTestDb()) as unknown as Clone
+      poolApi().takeLateErrors()
+      const held = (await db.pool.connect()) as unknown as ClientHandle
+      await held.query('select 1')
       try {
-        const max = Number((await sampler.query('show max_connections')).rows[0]?.['max_connections'])
-        expect(max).toBeGreaterThan(0)
-        const dbs: Queryable[] = []
-        for (let i = 0; i < 25; i += 1) dbs.push((await cloneTestDb()) as unknown as Queryable)
-        await Promise.all(dbs.map((d) => d.transaction((tx) => tx.query('select 1'))))
-        const count = async (): Promise<number> =>
-          Number(
-            (await sampler.query(`select count(*)::int as n from pg_stat_activity where backend_type = 'client backend'`)).rows[0]?.['n'],
-          )
-        let peak = await count()
-        const sampling = { on: true }
-        const loop = (async (): Promise<void> => {
-          while (sampling.on) {
-            peak = Math.max(peak, await count())
-            await sleep(10)
-          }
-        })()
-        try {
-          await dbModule.closeClones()
-        } finally {
-          sampling.on = false
-          await loop
-        }
-        process.stdout.write(`SC11 S12: connection peak ${String(peak)} of max_connections ${String(max)} (0.6 is ${String(0.6 * max)})\n`)
-        expect(peak, 'sentinel: the sampler saw every clone').toBeGreaterThanOrEqual(25)
-        expect(() => {
-          assertPeak(peak, peak - 1)
-        }, 'PLANT: a limit one under the peak fails').toThrow(/over the limit/)
-        assertPeak(peak, Math.floor(0.8 * max))
+        const msg = await failureOf(db.close())
+        // A 57P01 that missed close would land in the late list a moment later: give it the time.
+        await sleep(500)
+        expect(msg, 'the forced drop killed the held client while its pool was still owned by close').toMatch(/57P01/)
+        expect(poolApi().takeLateErrors(), 'nothing from this close reaches the next test').toEqual([])
+        const bound = (dbModule as unknown as { POOL_END_BOUND_MS?: number }).POOL_END_BOUND_MS
+        expect(bound, 'index.ts exports POOL_END_BOUND_MS (SC11 round 4 build)').toBeTypeOf('number')
+        expect(msg, "endPool's own bound fires first, inside close's step, and is named").toMatch(new RegExp(`endPool[^\\n]*\\b${String(bound)} ?ms`))
+        expect(msg, 'endPool names what it waited for (B20)').toContain('checked out and never released?')
       } finally {
-        await poolApi().endPool(sampler as never)
+        held.release(true)
       }
     },
-    120_000,
+    BOOT_MS,
   )
 })
