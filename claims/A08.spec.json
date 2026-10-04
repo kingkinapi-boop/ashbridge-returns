@@ -1,11 +1,12 @@
 {
  "card": "A08",
  "role": "spec",
- "note": "A551: S0 to S14 at the top of the card (replaces A548)",
- "reopenedFrom": "7e9890ba",
+ "note": "22 new tests (S1 to S14); 5 fail first (S1, S8, S3 x2, S14); 23 plants caught",
  "worker": "cloud-7d3564",
- "state": "working",
- "at": "2026-10-04T04:06:36.567Z",
+ "state": "reported",
+ "at": "2026-10-04T04:38:08.913Z",
  "mode": "turbo",
- "beat": "2026-10-04T04:11:14.247Z"
+ "beat": "2026-10-04T04:11:14.247Z",
+ "commit": "f46b303d",
+ "validated": "ed67e3dd"
 }
